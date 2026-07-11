@@ -1,8 +1,16 @@
-# NK-Pro V99.2 – Konsolidierte Darstellungsarchitektur für alle Tabs
+# NK-Pro V99.2.1 – UI-Feinschliff für Arbeitsfläche und Tabellen
 
 NK-Pro ist eine lokal nutzbare HTML-/JavaScript-Anwendung zur Erstellung von Nebenkostenabrechnungen. Die Anwendung kann direkt im Browser oder als GitHub-Pages-PWA betrieben werden; die Arbeitsdaten bleiben im Browser gespeichert.
 
-## Schwerpunkt dieser Version
+
+## Änderungen in V99.2.1
+
+- Das blaue Buttondesign der vorherigen Arbeitsoberfläche wurde wiederhergestellt. Primäraktionen erscheinen kräftig blau, Nebenaktionen weiß mit blauer Kontur.
+- Die ältere Begrenzung auf 1500 px wurde endgültig überschrieben. Die Arbeitsfläche nutzt auf großen Monitoren die verfügbare Breite bis auf einen schmalen, symmetrischen Rand.
+- Breite Datentabellen behalten wieder ihre natürliche Spaltenbreite. Horizontale Scrollleisten werden im Tabellenrahmen sichtbar bereitgestellt.
+- Längere dafür vorgesehene Textfelder dürfen weiterhin umbrechen; Zahlen-, Datums-, Status- und Aktionsspalten bleiben kompakt.
+
+## Schwerpunkt der V99.2-Grundarchitektur
 
 V99.2 führt alle 14 vorhandenen Tabs auf eine gemeinsame, statische Darstellungsarchitektur zurück:
 
@@ -44,7 +52,7 @@ Parallele Kartenrenderer, tababhängige Layoutschichten und nachträgliche DOM-U
 
 Den Inhalt der ZIP-Datei unverändert in das Veröffentlichungsverzeichnis des GitHub-Repositories kopieren und GitHub Pages für diesen Branch/Ordner aktivieren. Die Datei `.nojekyll` verhindert eine unnötige Jekyll-Verarbeitung.
 
-Der Service Worker verwendet den neuen Cache-Namen `nk-pro-v99-2`. Dadurch werden alte V99.1-Caches beim Aktivieren der neuen Version entfernt.
+Der Service Worker verwendet den neuen Cache-Namen `nk-pro-v99-2-1`. Dadurch werden alte V99.1-Caches beim Aktivieren der neuen Version entfernt.
 
 ## Dateien
 
@@ -54,13 +62,13 @@ Der Service Worker verwendet den neuen Cache-Namen `nk-pro-v99-2`. Dadurch werde
 - `README.md` – Nutzung und Auslieferung
 - `CHANGELOG.md` – Änderungen der Version
 - `WORKBOOK.md` – verbindliche Architekturregeln
-- `UI_ARCHITEKTUR_V99_2.md` – technische Konsolidierungsdokumentation
-- `V99_2_Pruefbericht.json` – strukturierter Prüfbericht
+- `UI_ARCHITEKTUR_V99_2_1.md` – technische Konsolidierungsdokumentation
+- `V99_2_1_Pruefbericht.json` – strukturierter Prüfbericht
 - `SHA256SUMS.txt` – Prüfsummen der ausgelieferten Dateien
 
 ## Prüfung
 
-Die Anwendung wurde statisch, per JavaScript-Syntaxprüfung und in Chromium geprüft. Getestet wurden alle 14 Tabs bei 1440, 1180, 900 und 520 Pixel Breite sowie programmgesteuerte Tabwechsel, Schnellaktion, nächster Schritt, Eingabe, Neuberechnung und Speichern. Ein Vergleich zentraler fachlicher Ergebnisobjekte zwischen V99.1 und V99.2 ergab keine Abweichung im verwendeten mitgelieferten Arbeitsstand.
+Die Anwendung wurde statisch, per JavaScript-Syntaxprüfung und in Chromium geprüft. Getestet wurden alle 14 Tabs bei 1440, 1180, 900 und 520 Pixel Breite sowie programmgesteuerte Tabwechsel, Schnellaktion, nächster Schritt, Eingabe, Neuberechnung und Speichern. Ein Vergleich zentraler fachlicher Ergebnisobjekte zwischen V99.1 und der V99.2-Grundarchitektur ergab keine Abweichung im verwendeten mitgelieferten Arbeitsstand.
 
 Die Browserumgebung erlaubte keine normale Navigation zu einer lokalen HTTP-/Datei-URL. Deshalb wurde die tatsächliche vollständige HTML-Datei in einem isolierten Chromium-Dokument geladen und dort ausgeführt und gerendert. Der Service-Worker-Lebenszyklus wurde dadurch nicht als echte GitHub-Pages-Installation ausgeführt; Cache-Name, Assetliste und JavaScript wurden statisch geprüft.
 

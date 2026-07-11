@@ -1,5 +1,22 @@
 # Changelog
 
+## V99.2.1 – UI-Feinschliff nach Praxistest
+
+### Angepasst
+
+- Blaues Buttondesign der vorherigen Arbeitsoberfläche wiederhergestellt.
+- Primäraktionen kräftig blau; Nebenaktionen weiß mit blauer Kontur.
+- Verbliebene 1500-px-Maximalbreite aufgehoben und seitlichen Außenabstand reduziert.
+- Horizontales Scrollen für breite Tabellen sichtbar und dauerhaft im Tabellenrahmen aktiviert.
+- Tabellenzellen standardmäßig einzeilig gehalten, damit breite Datentabellen nicht künstlich in die verfügbare Breite gedrückt werden.
+- Ausgewiesene Langtextzellen bleiben umbrechbar.
+- PWA-Cache auf `nk-pro-v99-2-1` erhöht.
+
+### Unverändert
+
+- Fachliche Berechnungs-, Umlage-, Vorauszahlungs-, Brief-, Archiv- und Exportlogik.
+- Zentrale V99.2-Seiten-, Header-, Kachel- und Klappboxarchitektur.
+
 ## V99.2 – Konsolidierte Darstellungsarchitektur für alle Tabs
 
 ### Neu und vereinheitlicht

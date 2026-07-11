@@ -1,6 +1,16 @@
-# WORKBOOK – NK-Pro V99.2
+# WORKBOOK – NK-Pro V99.2.1
 
 Dieses Dokument enthält die verbindlichen technischen Regeln für die weitere Entwicklung von NK-Pro.
+
+
+## UI-Feinschliff V99.2.1
+
+- Die Arbeitsfläche darf auf großen Monitoren nicht durch eine alte feste Maximalbreite begrenzt werden.
+- Der äußere Seitenabstand bleibt schmal, symmetrisch und über `--page-inline-space` zentral steuerbar.
+- Das verbindliche Aktionsdesign ist blau: Primäraktion vollflächig blau, Nebenaktion weiß mit blauer Kontur.
+- Breite Datentabellen liegen in einem horizontal scrollbaren Tabellenrahmen.
+- Tabellen dürfen nicht allein durch generelles Umbrechen so zusammengestaucht werden, dass der horizontale Überlauf verschwindet.
+- Nur ausdrücklich als Langtext gekennzeichnete Zellen brechen um.
 
 ## 1. Gemeinsamer Seitenrahmen
 
