@@ -36,3 +36,7 @@ Der Kostenarten-Pilot verwendet nun das freigegebene Mock-up als konkrete visuel
 ## V97.4 – Einheitlicher Kostenarten-Tab
 
 Der Kostenarten-Tab besitzt nur noch eine vollständige Ansicht. Kostenarten werden über ein integriertes Auswahlfenster aktiviert und erscheinen direkt in der zentralen Bearbeitungstabelle.
+
+## V97.5 – Tabellenhierarchie und sichere Deaktivierung
+
+Kostenarten werden explizit über eine Auswahlspalte markiert und ausschließlich über den eindeutig beschrifteten Button oberhalb der Tabelle deaktiviert.

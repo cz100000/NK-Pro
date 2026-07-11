@@ -51,3 +51,13 @@
 - Freie Kostenarten können im Auswahlfenster neu angelegt werden.
 - Sämtliche Tabellen, Dialoge, Buttons und Sonderbereiche an ein gemeinsames Look-and-feel angepasst.
 - Keine Änderung an Berechnungs-, Speicher-, Archiv- oder Brieflogik.
+
+## V97.5 – Tabellenhierarchie und sichere Deaktivierung
+- Alle Tabellen und Kontrollbereiche bündig an derselben linken Position ausgerichtet.
+- Klappbox-Kopfzeilen dunkelblau gestaltet.
+- Tabellenkopfzeilen in einem etwas helleren Blau gestaltet.
+- Auswahlspalte am Tabellenanfang ergänzt.
+- Deaktivierung ausschließlich über den oberen Button.
+- Drei-Punkte-Aktion am Zeilenende entfernt.
+- Zweite Klappbox in „Umlage pro Mietverhältnis / Wohnung“ umbenannt.
+- Keine Änderung an Berechnungs-, Speicher-, Archiv- oder Brieflogik.
