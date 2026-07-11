@@ -122,3 +122,15 @@
 - Dynamische Kacheln für Einnahmen, Briefe und Export ergänzt.
 - Bestehende Tabellen, Eingaben, IDs und Renderfunktionen bleiben erhalten.
 - Keine Änderung an Berechnungs-, Speicher-, Archiv- oder Brieflogik.
+
+## V98.8 – Kompakte Sammelkacheln und einheitliche Bearbeitungstabs
+- Doppelte Hauptüberschriften entfernt; pro Tab bleibt genau ein Seitenkopf.
+- Kacheln in allen Bearbeitungstabs auf die Größe aus Kostenarten & Einstellungen begrenzt.
+- Verwandte Kennzahlen zu kompakten Sammelkacheln zusammengeführt.
+- In jedem Arbeitstab stehen rechts „Empfohlener nächster Schritt“ und „Schnellaktionen“.
+- Dezente, einheitliche Icons ergänzt.
+- Kachelbuttons horizontal mittig und je Reihe auf gleicher Höhe ausgerichtet.
+- Farben, Schriften, Rahmen, Hover-Zustände und Buttonarten am Muster-Tab vereinheitlicht.
+- Alle Klappboxen sind beim Start und nach Tabwechsel standardmäßig geschlossen.
+- WORKBOOK.md ist fester Bestandteil des Versionspakets.
+- Keine Änderung an Berechnungs-, Speicher-, Archiv- oder Brieflogik.

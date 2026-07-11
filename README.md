@@ -57,3 +57,6 @@ Einheitliches Look & Feel auf allen Tabs. Fachlogik und Datenmodell unverändert
 
 ## V98.7
 Alle Arbeitstabs verwenden nun tatsächlich die Struktur Seitenkopf, Kachelübersicht und nummerierte Klappboxen.
+
+## V98.8
+Einheitliche kompakte Sammelkacheln, feste rechte Kacheln für nächsten Schritt und Schnellaktionen sowie standardmäßig geschlossene Klappboxen.
