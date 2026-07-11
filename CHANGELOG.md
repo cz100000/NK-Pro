@@ -61,3 +61,19 @@
 - Drei-Punkte-Aktion am Zeilenende entfernt.
 - Zweite Klappbox in „Umlage pro Mietverhältnis / Wohnung“ umbenannt.
 - Keine Änderung an Berechnungs-, Speicher-, Archiv- oder Brieflogik.
+
+## V97.6 – Abnahme und Sicherheit Kostenarten
+- Sicherheitsabfrage vor dem Deaktivieren einer oder mehrerer Kostenarten.
+- Hinweis, dass vorhandene Eingaben erhalten bleiben.
+- Auswahlzustand wird nach Aktivierung, Deaktivierung und Neurendern bereinigt.
+- Deaktivierungsaktion in Archivansichten gesperrt.
+- Keine Änderung an Berechnungs-, Speicher-, Archiv- oder Brieflogik.
+
+## V98.1 – Zählerstände-Pilot
+- Zählerstände-Tab in das neue Bedien- und Designkonzept überführt.
+- Übersichtskarten für Kostenarten, Verbräuche, Endwerte und Umlageübernahme.
+- Vier einheitliche Klappboxen: Erfassung, Verbrauch je Mietverhältnis/Wohnung, Historie und Kontrollen.
+- Dunkelblaue Klappbox-Kopfzeilen und hellblaue Tabellenkopfzeilen.
+- Tabellen und Kontrollbereiche bündig ausgerichtet.
+- Bestehende Eingabefunktionen und Zählerberechnungen weiterverwendet.
+- Keine Änderung an Berechnungs-, Speicher-, Archiv- oder Brieflogik.
