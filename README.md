@@ -51,3 +51,6 @@ Diese Version ist optisch und funktional identisch zu V98.3. Sie besitzt ledigli
 
 ## V98.5
 Kostenarten-Feinschliff und vollständige Überführung des Tabs Mieter & Wohnungen in das einheitliche Bedienkonzept. Berechnungslogik unverändert.
+
+## V98.6
+Einheitliches Look & Feel auf allen Tabs. Fachlogik und Datenmodell unverändert.

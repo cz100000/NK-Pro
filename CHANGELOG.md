@@ -106,3 +106,11 @@
 - Rundere Tabelle aus Abschnitt 2 als Tabellenstandard auf alle Tabellen übertragen.
 - Tab Mieter & Wohnungen mit Seitenkopf, Übersichtskacheln, sanften Klappboxen, Innenrändern und Kontrollsummen neu gestaltet.
 - Keine Änderung an Berechnungs-, Speicher-, Archiv- oder Brieflogik.
+
+## V98.6 – Einheitliches Look & Feel für alle Tabs
+- Visuelle Grundstruktur aus „Kosten und Einstellungen bearbeiten“ appweit übertragen.
+- Einheitliche Seitenköpfe, Karten, Klappboxen, Tabellen, Innenabstände, Eingabefelder und Buttons.
+- Sanfte Abschnittsköpfe mit linker Akzentleiste auch für bestehende Details/Klappbereiche.
+- Rundungen und Tabellenkopf-Stil auf alle Datentabellen übertragen.
+- Bestehende Inhalte, Funktionen und Tab-Strukturen bleiben erhalten.
+- Keine Änderung an Berechnungs-, Speicher-, Archiv- oder Brieflogik.
