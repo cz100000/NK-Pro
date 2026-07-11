@@ -1,4 +1,4 @@
-# WORKBOOK – NK-Pro V99.2.4
+# WORKBOOK – NK-Pro V99.2.6
 
 Dieses Dokument enthält die verbindlichen technischen Regeln für die weitere Entwicklung von NK-Pro.
 
@@ -13,7 +13,7 @@ Dieses Dokument enthält die verbindlichen technischen Regeln für die weitere E
 - Nur ausdrücklich als Langtext gekennzeichnete Zellen brechen um.
 
 
-## Verbindliche Navigation V99.2.4
+## Verbindliche Navigation V99.2.5
 
 Das freigegebene Navigations-Mock-up ist die verbindliche visuelle Referenz. Von Texten, Symbolen, Reihenfolge, Einzügen, Abständen, Trennlinien, Aufklapppfeilen, Dokument-Icons, Statuspunkten, Farben oder Hervorhebungen darf ohne vorherige ausdrückliche Abstimmung nicht abgewichen werden.
 
@@ -38,6 +38,8 @@ Verbindliche sichtbare Struktur:
 
 Verbindliche Gestaltungsregeln:
 
+- feste Desktopbreite der Navigation: **324 px** (10 % schmaler als die freigegebene V99.2.4-Ausführung mit 360 px),
+
 - ruhiger dunkelblauer Verlauf ohne Kartenrahmen, Schattenkarten oder Baumlinien,
 - kleine graue Versalüberschriften für die vier Bereiche,
 - dezente horizontale Trennlinien zwischen Bereichen und Workflowphasen,
@@ -58,6 +60,30 @@ Verbindliche Gestaltungsregeln:
 - In **Kostenarten & Einstellungen → Umlage pro Mietverhältnis / Wohnung** werden ausschließlich die Mieter-ID und der Mietername in den Mieter-Spalten größer dargestellt. Andere Spalten bleiben typografisch unverändert.
 - Der einleitende blaue Hinweisblock in **Kaltmiete & NK-Vorauszahlungen → Kaltmieteinnahmen** entfällt.
 - Tabellen im Tab **Zählerstände** beginnen horizontal an derselben Standardposition wie Tabellen in **Kaltmiete & NK-Vorauszahlungen**. Tabbezogene Vollbreiten-Sonderformatierungen dürfen diesen gemeinsamen Tabellenbeginn nicht mehr aufheben.
+
+
+## Verbindliche Ergänzungen V99.2.6
+
+### Status und Prüfung
+
+- Der mittlere Seitenkopf zeigt immer den tatsächlichen Zustand der geöffneten Abrechnung. Ein archivierter Status darf niemals allein durch ein CSS-Überschreiben des `hidden`-Attributs sichtbar werden.
+- Zulässige Statuswerte sind „In Bearbeitung · bearbeitbar“, „Finalisiert · schreibgeschützt“, „Archiviert · schreibgeschützt“ und „Keine Abrechnung geöffnet“.
+- Prüfungskacheln kennzeichnen jeden einzelnen Prüfpunkt semantisch: `ok` mit grünem Haken, `warn` mit orangem Warndreieck und `error` mit rotem Fehlerzeichen. Reine Aufzählungspunkte sind dort nicht zulässig.
+
+### Zählerstände
+
+- Hauszählerverbrauch, Verbrauch laut Wasserwerksrechnung und Summe der Wohnungs-/Unterzähler sind getrennte Größen. Sie dürfen weder automatisch gleichgesetzt noch durch denselben Eingabewert ersetzt werden.
+- Die automatische Übernahme berechneter Zählerverbräuche in Kostenarten mit Umlageschlüssel „Verbrauch“ ist verbindlicher Standard und besitzt keinen sichtbaren Abschaltschalter.
+- K002 zeigt Summen ausschließlich für Verbrauchsspalten. Anfangs- und Endstände werden nicht summiert.
+- Filterleiste und zugehöriger Tabellenrahmen bilden ein gemeinsames Tabellenmodul und beginnen sowie enden horizontal an derselben Position. Diese Regel gilt für jede bestehende und zukünftige Tabelle im Tab.
+- Technische Fortschreibungserklärungen bleiben im Normalzustand unsichtbar. Eine Meldung erscheint nur bei einer konkreten Auffälligkeit und nennt deren Umfang.
+- Historienquellen und Erläuterungen stehen nach der zugehörigen Tabelle.
+
+### Umlage und Vorauszahlungsanpassung
+
+- Die Umlage wird aus dem aktuellen Datenstand live berechnet. Eine sichtbare Aktion „Umlage neu berechnen“ darf nicht wieder eingeführt werden, solange sie keine eigenständige fachliche Berechnung auslöst.
+- Rücksetzfunktionen stehen im fachlich betroffenen Eingabebereich, sind klar bezeichnet und benötigen eine Sicherheitsabfrage.
+- Umfangreiche Einstellungsblöcke verwenden auf Desktop ein kompaktes, responsives Raster; doppelte Überschriften innerhalb gleichnamiger Klappboxen sind zu vermeiden.
 
 ## Fachlicher Entwicklungsauftrag: Vorjahresübernahme der NK-Vorauszahlungen
 

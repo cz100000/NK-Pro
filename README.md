@@ -1,52 +1,55 @@
-# NK-Pro V99.2.4 – Mock-up-genaue Navigation
+# NK-Pro V99.2.6 – Zähler-, Status- und Umlageoptimierung
 
 NK-Pro ist eine lokal nutzbare HTML-/JavaScript-Anwendung zur Erstellung von Nebenkostenabrechnungen. Die Anwendung kann direkt im Browser oder als GitHub-Pages-PWA betrieben werden; die Arbeitsdaten bleiben im Browser gespeichert.
 
-## Änderungen in V99.2.4
+## Änderungen in V99.2.6
 
-Die linke Navigation wurde exakt nach dem freigegebenen schlichten Zielbild neu gestaltet:
+### Einheitlicher Abrechnungsstatus
 
-- dunkelblaue, ruhige Seitenleiste mit NK-PRO-Logo und doppeltem Einklapppfeil,
-- eigene Kopfzeile für Abrechnungsjahr und Bearbeitungsstatus,
-- vier klar getrennte Bereiche: **Übersicht**, **Stammdaten**, **Abrechnung** und **System**,
-- feste Symbole vor Abrechnungsübersicht, Abrechnungsstatus, Mieter, Wohnungen und Datensicherung,
-- vier nummerierte Workflowphasen mit Aufklapppfeil und Dokument-Icon,
-- immer genau eine geöffnete Workflowphase,
-- aktiver Tab mit hellblauer Fläche, blauem Balken links und blauem Punkt rechts,
-- inaktive Unterpunkte mit dezent grauem Punkt,
-- schlichte Trennlinien, einheitliche Einzüge und Abstände,
-- untere Aktion **Navigation einklappen**,
-- sichtbare Kurzbezeichnungen entsprechend dem Zielbild; technische Tab-IDs bleiben unverändert.
+Der Status im mittleren Seitenkopf wird jetzt aus dem tatsächlichen Zustand der geöffneten Abrechnung erzeugt:
 
-Programmgesteuerte Tabwechsel öffnen weiterhin automatisch die passende Workflowphase. Der geöffnete Phasenzustand wird lokal gespeichert. Abrechnungsjahr und Status werden aus der aktuell geöffneten Abrechnung übernommen.
+- **In Bearbeitung · bearbeitbar**
+- **Finalisiert · schreibgeschützt**
+- **Archiviert · schreibgeschützt**
+- **Keine Abrechnung geöffnet**
 
-## Änderungen in V99.2.3
+Der Zeitraum wird zweistellig als `TT.MM.JJJJ – TT.MM.JJJJ` angezeigt. Finalisierte und archivierte Abrechnungen sperren den Speichern-Button.
 
-- Die zuvor flache Navigation wurde erstmals nach Arbeitsphasen gegliedert.
-- V99.2.4 ersetzt deren kartenartige Baumdarstellung durch das verbindliche schlichte Mock-up.
+### Prüfungskacheln
 
-## Schwerpunkt der V99.2-Grundarchitektur
+Die zentrale Kachel **Prüfung** verwendet wieder eindeutige Symbole pro Prüfpunkt:
 
-Alle 14 Tabs verwenden weiterhin die gemeinsame statische Darstellungsarchitektur mit globaler Kopfleiste, dreispaltigem Tab-Kopf, genau vier Übersichtskacheln, statischen Klappboxen und abschließender Prüfbox. Die fachliche Berechnungs-, Umlage-, Vorauszahlungs-, Brief-, Export-, Archiv- und Migrationslogik wurde in V99.2.4 nicht verändert.
+- grüner Haken für bestandene Prüfungen,
+- oranges Warndreieck für zu kontrollierende Hinweise,
+- rotes Fehlersymbol für blockierende Fehler.
 
-## Enthaltene Navigationsziele
+### Zählerstände
 
-1. Abrechnungsübersicht
-2. Abrechnungsstatus
-3. Mieter
-4. Wohnungen
-5. Mieter & Wohnungen
-6. Kostenarten
-7. Miete & Vorauszahlungen
-8. Zählerstände
-9. Nebenkostenumlage
-10. Neue Vorauszahlungen
-11. Qualitätsprüfung
-12. Abrechnungsbriefe
-13. Export
-14. Datensicherung
+Der Tab wurde fachlich neu geordnet:
 
-Die verkürzten Navigationsbezeichnungen ändern nicht die vollständigen Titel innerhalb der Tabs.
+1. Hauszähler und Wasserwerksrechnung
+2. Zählerstände erfassen
+3. Verbrauch pro Mietverhältnis / Wohnung
+4. Historie und Vorjahresübernahme
+5. Prüfung und Plausibilität
+
+Die neue erste Klappbox erfasst Anfangs- und Endstand des Hauszählers, die zugehörigen Ablesedaten, den Verbrauch laut Wasserwerksrechnung und eine optionale Rechnungsnotiz. Hauszählerverbrauch, Rechnungsverbrauch und Summe der Wohnungszähler werden getrennt verglichen. Abweichungen bis einschließlich 5 % gelten als plausibel; größere Abweichungen werden markiert.
+
+Die Verbrauchstabelle **K002 · Wasserversorgung** besitzt eine Summenzeile für Kaltwasser-, Warmwasser- und Gesamtverbrauch. Tabellenfilter und Tabellen verwenden im gesamten Zählertab denselben horizontalen Start- und Endpunkt. Der Quellenhinweis zur Wasseruhren-Historie steht unter der Historientabelle. Der frühere technische Fortschreibungshinweis erscheint nur noch bei unerwartet vorbelegten Endwerten.
+
+Die Übernahme berechneter Zählerverbräuche in Verbrauchskosten ist dauerhaft aktiv. Der bisher sichtbare Ja/Nein-Schalter wurde entfernt.
+
+### Nebenkostenumlage
+
+Die nicht mehr erforderliche Klappbox **Berechnung und Aktionen** wurde entfernt. Die Umlage wird weiterhin bei jeder Darstellung aus dem aktuellen Datenstand berechnet. Die Rücksetzfunktion befindet sich jetzt in **Verbrauchswerte und manuelle Einzelbeträge** und behält ihre Sicherheitsabfrage.
+
+### Neue Vorauszahlungen
+
+Der Block **Berechnungsregeln** verwendet ein kompaktes zweispaltiges Raster. Die doppelte Überschrift wurde entfernt; auf schmalen Bildschirmen werden die Felder weiterhin einspaltig dargestellt. Die Berechnungslogik blieb unverändert.
+
+### Navigation
+
+Das verbindliche Navigations-Mock-up aus V99.2.5 bleibt unverändert: 324 px Breite, dieselben Texte, Symbole, Einzüge, Trennlinien, Phasen und Zustände.
 
 ## Start und Veröffentlichung
 
@@ -56,9 +59,9 @@ Die verkürzten Navigationsbezeichnungen ändern nicht die vollständigen Titel 
 
 ### GitHub Pages
 
-Den Inhalt der ZIP-Datei unverändert in das Veröffentlichungsverzeichnis des GitHub-Repositories kopieren und GitHub Pages für diesen Branch/Ordner aktivieren. Die Datei `.nojekyll` verhindert eine unnötige Jekyll-Verarbeitung.
+Den Inhalt der ZIP-Datei unverändert in das Veröffentlichungsverzeichnis des GitHub-Repositories kopieren und GitHub Pages für diesen Branch oder Ordner aktivieren. `.nojekyll` verhindert eine unnötige Jekyll-Verarbeitung.
 
-Der Service Worker verwendet den Cache-Namen `nk-pro-v99-2-4`. Dadurch werden ältere V99.2.x-Caches beim Aktivieren der neuen Version entfernt.
+Der Service Worker verwendet den Cache-Namen `nk-pro-v99-2-6`. Beim Aktivieren werden ältere NK-Pro-Caches entfernt.
 
 ## Dateien
 
@@ -67,26 +70,22 @@ Der Service Worker verwendet den Cache-Namen `nk-pro-v99-2-4`. Dadurch werden ä
 - `manifest.webmanifest` – PWA-Metadaten
 - `README.md` – Nutzung und Auslieferung
 - `CHANGELOG.md` – Änderungen der Version
-- `WORKBOOK.md` – verbindliche Architekturregeln
-- `UI_ARCHITEKTUR_V99_2_4.md` – technische Dokumentation der Navigation
-- `V99_2_4_Pruefbericht.json` – strukturierter Prüfbericht
+- `WORKBOOK.md` – verbindliche Architektur- und Fachregeln
+- `UI_ARCHITEKTUR_V99_2_6.md` – technische Dokumentation
+- `V99_2_6_Pruefbericht.json` – strukturierter Prüfbericht
 - `SHA256SUMS.txt` – Prüfsummen der ausgelieferten Dateien
 
 ## Prüfung
 
-Für V99.2.4 wurden geprüft:
+Für V99.2.6 wurden ausgeführt:
 
-- alle Texte, Bereiche, Symbole, Pfeile, Dokument-Icons, Punkte und Trennlinien des freigegebenen Zielbilds,
-- genau eine geöffnete Workflowphase,
-- automatische Phasenöffnung bei direkten und programmgesteuerten Tabwechseln,
-- Desktop-Einklappen und Wiederöffnen der Navigation,
-- mobile Off-Canvas-Navigation,
-- JavaScript-Syntax, DOM-Struktur und interner App-Selbsttest,
-- alle 14 Tabs und die bestehende Vier-Kachel-/Klappboxarchitektur,
-- bytegleicher Vergleich geschützter Kernfunktionen mit V99.2.3,
+- statische HTML-, ID- und Klappboxstrukturprüfung,
+- JavaScript-Syntaxprüfung aller vier Scriptblöcke mit Node.js,
+- gezielte Logiktests für Hauszählerverbrauch, 5-%-Plausibilitätsgrenze, Statussymbole, Zeitraumformat und Fortschreibungswarnung,
+- Quellcodeprüfungen für automatische Zählerübernahme, K002-Summenzeile, Filterausrichtung, dynamischen Seitenstatus, Umlage-Neuordnung und kompaktes Regelraster,
 - ZIP-Integrität und SHA-256-Prüfsummen.
 
-Der Service-Worker-Lebenszyklus wurde nicht als echte GitHub-Pages-Installation Ende-zu-Ende ausgeführt; Cache-Name, Manifest und Assetliste wurden statisch geprüft.
+Eine Live-Navigation der lokalen Anwendung in Chromium konnte in der bereitgestellten Ausführungsumgebung wegen einer verwalteten Browserrichtlinie nicht ausgeführt werden. Nach Veröffentlichung sollte deshalb zusätzlich ein kurzer GitHub-Pages-/PWA-Smoke-Test erfolgen. Der Service-Worker-Lebenszyklus wurde nicht als echte Installation Ende-zu-Ende getestet.
 
 ## Datenschutz und Sicherung
 

@@ -1,5 +1,48 @@
 # Changelog
 
+## V99.2.6 – Zähler-, Status- und Umlageoptimierung
+
+### Seitenstatus und Prüfung
+
+- Dynamischen Status im Seitenkopf für Bearbeitung, Finalisierung, Archiv und fehlende Abrechnung ergänzt.
+- Fehlerhafte dauerhafte Anzeige „Archiviert · schreibgeschützt“ durch verbindliche Hidden-Regel und zentralen Statusrenderer beseitigt.
+- Zeitraumdarstellung auf zweistelliges deutsches Datumsformat vereinheitlicht.
+- Prüfungskacheln zentral auf grüne Haken, orange Warnungen und rote Fehlerzeichen umgestellt.
+
+### Zählerstände
+
+- Neue erste Klappbox „Hauszähler und Wasserwerksrechnung“ ergänzt.
+- Hauszähler-Anfangs-/Endstand, Ablesedaten, Rechnungsverbrauch und Rechnungsnotiz als getrennte Datenfelder ergänzt.
+- Automatische Verbrauchs- und Differenzberechnung zwischen Hauszähler, Wasserwerksrechnung und Wohnungszählern ergänzt.
+- Plausibilitätsstatus mit 5-%-Grenze ergänzt.
+- Historischen Hausanschluss-Hinweis in die neue erste Klappbox verschoben.
+- K002-Verbrauchstabelle um Summenzeile für Kaltwasser, Warmwasser und Gesamtverbrauch erweitert.
+- Tabellenfilter im gesamten Zählertab bündig zu den Tabellen ausgerichtet.
+- Quellenhinweis zur Excel-Wasseruhrenhistorie unter die Historientabelle verschoben.
+- Technischen Fortschreibungshinweis im Normalzustand entfernt; konkrete Warnung nur bei unerwartet vorbelegten Endwerten.
+- Sichtbaren Automatikschalter entfernt und Zählerübernahme in Verbrauchskosten dauerhaft aktiviert.
+- Feld „Hauswasser laut Wasserversorger“ aus der Prüfbox in die neue Hauszählerbox überführt.
+
+### Nebenkostenumlage und Vorauszahlungen
+
+- Überflüssige Klappbox „Berechnung und Aktionen“ und sichtbare Aktion „Umlage neu berechnen“ entfernt.
+- Reset-Aktion in „Verbrauchswerte und manuelle Einzelbeträge“ verschoben.
+- Verbleibende Umlage-Klappboxen auf 1 bis 4 neu nummeriert.
+- Berechnungsregeln der Vorauszahlungsanpassung in ein kompaktes responsives Zweispaltenraster überführt.
+- Doppelte Zwischenüberschrift und überlangen Erklärungstext entfernt.
+
+### Technik
+
+- PWA-Metadaten und Cache auf V99.2.6 erhöht.
+- Navigation aus V99.2.5 ohne visuelle oder funktionale Abweichung beibehalten.
+
+## V99.2.5 – Navigation 10 % schmaler
+
+- Breite der freigegebenen Sidebar exakt von 360 px auf 324 px reduziert.
+- Mobile Maximalbreite entsprechend von 360 px auf 324 px reduziert.
+- Keine sonstigen Änderungen an Gestaltung, Texten, Icons, Abständen, Trennlinien, Navigation oder Fachlogik.
+- PWA-Cache auf `nk-pro-v99-2-5` erhöht.
+
 ## V99.2.4 – Mock-up-genaue Navigation
 
 ### Neu und angepasst

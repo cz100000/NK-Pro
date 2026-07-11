@@ -1,0 +1,342 @@
+{
+  "version": "V99.2.6",
+  "versionName": "Zähler-, Status- und Umlageoptimierung",
+  "releaseDate": "2026-07-12",
+  "generatedAt": "2026-07-11T22:38:40.452459+00:00",
+  "summary": {
+    "staticChecksPassed": 29,
+    "staticChecksFailed": 0,
+    "scriptBlocksPassed": 4,
+    "scriptBlocksFailed": 0,
+    "logicChecksPassed": 12,
+    "logicChecksFailed": 0,
+    "navigationChecksPassed": 16,
+    "navigationChecksFailed": 0,
+    "allAvailableChecksPassed": true
+  },
+  "staticStructure": {
+    "allPassed": true,
+    "checks": [
+      {
+        "name": "Version V99.2.6",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "Keine doppelten IDs",
+        "ok": true,
+        "detail": "{}"
+      },
+      {
+        "name": "Zählerstände fünf Klappboxen",
+        "ok": true,
+        "detail": "['meterHouseSection', 'meterEntrySection', 'meterTenantSection', 'meterHistorySection', 'meterControlSection']"
+      },
+      {
+        "name": "Zählerstände Nummerierung 1-5",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "Neue Hauszählerbox zuerst",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "Validierung letzte Box",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "Hausanschlusstext vorhanden",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "Wasserwerksverbrauchsfeld vorhanden",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "K002 Summenzeile vorhanden",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "Filterausrichtung CSS",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "Historientext nach Tabelle",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "Fortschreibung Normalzustand leer",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "Automatische Wasserübernahme erzwungen",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "Umlage vier Klappboxen",
+        "ok": true,
+        "detail": "['allocationTenantResultSection', 'allocationCostControlSection', 'allocationInputSection', 'allocationValidationSection']"
+      },
+      {
+        "name": "Umlage Aktionsbox entfernt",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "Umlage Nummerierung 1-4",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "Reset in Eingabebox",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "Umlage-neu-berechnen UI entfernt",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "Keine doppelte Berechnungsregeln-Überschrift",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "Kompaktes Raster vorhanden",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "Sieben Regel-Felder",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "Status In Bearbeitung · bearbeitbar",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "Status Finalisiert · schreibgeschützt",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "Status Archiviert · schreibgeschützt",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "Status Keine Abrechnung geöffnet",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "Hidden CSS korrigiert",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "Prüficon Renderer",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "Vier Scriptblöcke",
+        "ok": true,
+        "detail": "4"
+      },
+      {
+        "name": "V99.2.6 steht an erster Stelle im Änderungsverlauf",
+        "ok": true,
+        "detail": ""
+      }
+    ]
+  },
+  "javascriptSyntax": {
+    "version": "V99.2.6",
+    "testType": "JavaScript-Syntaxprüfung aller Inline-Scriptblöcke",
+    "generatedAt": "2026-07-11T22:36:22.125760+00:00",
+    "scriptCount": 4,
+    "passed": 4,
+    "failed": 0,
+    "allPassed": true,
+    "results": [
+      {
+        "script": 0,
+        "passed": true,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "script": 1,
+        "passed": true,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "script": 2,
+        "passed": true,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "script": 3,
+        "passed": true,
+        "stdout": "",
+        "stderr": ""
+      }
+    ]
+  },
+  "targetedLogic": {
+    "version": "V99.2.6",
+    "testType": "Gezielte Logiktests mit aus index.html extrahierten Originalfunktionen",
+    "generatedAt": "2026-07-11T22:35:11.004Z",
+    "passed": 12,
+    "failed": 0,
+    "allPassed": true,
+    "results": [
+      {
+        "name": "Standardwerte Hauszähler vollständig",
+        "passed": true
+      },
+      {
+        "name": "Hauszählerverbrauch 911 bis 1206 ergibt 295 m³",
+        "passed": true
+      },
+      {
+        "name": "Rückwärts laufender Hauszähler wird als Fehler erkannt",
+        "passed": true
+      },
+      {
+        "name": "Fehlender Endstand bleibt unvollständig",
+        "passed": true
+      },
+      {
+        "name": "Identische Wasserverbräuche sind plausibel",
+        "passed": true
+      },
+      {
+        "name": "Abweichung über 5 Prozent wird gewarnt",
+        "passed": true
+      },
+      {
+        "name": "Ungültiger Zählerstand erzeugt Fehlerstatus",
+        "passed": true
+      },
+      {
+        "name": "Prüfkarte mischt Warnung und grünen Haken",
+        "passed": true
+      },
+      {
+        "name": "Seitenkopf formatiert Zeitraum zweistellig",
+        "passed": true
+      },
+      {
+        "name": "Fortschreibungshinweis bleibt im Normalzustand leer",
+        "passed": true
+      },
+      {
+        "name": "Manuell eingetragene Endwerte erzeugen keinen Altwert-Hinweis",
+        "passed": true
+      },
+      {
+        "name": "Unerwartet vorbelegte Endwerte erzeugen konkrete Warnung",
+        "passed": true
+      }
+    ]
+  },
+  "navigationRegression": {
+    "version": "V99.2.6",
+    "allPassed": true,
+    "checks": [
+      {
+        "name": "Sidebar-HTML bytegleich V99.2.5",
+        "passed": true,
+        "oldSha256": "949ab52981d4b0b9f320c8ace34e29de1c216ccc7c5ec5355e68a281e4edf2e7",
+        "newSha256": "949ab52981d4b0b9f320c8ace34e29de1c216ccc7c5ec5355e68a281e4edf2e7"
+      },
+      {
+        "name": "Desktopbreite weiterhin 324 px",
+        "passed": true
+      },
+      {
+        "name": "Mobile Breite weiterhin höchstens 324 px",
+        "passed": true
+      },
+      {
+        "name": "Navigation enthält Navigation einklappen",
+        "passed": true
+      },
+      {
+        "name": "Navigation enthält Abrechnungsübersicht",
+        "passed": true
+      },
+      {
+        "name": "Navigation enthält Abrechnungsstatus",
+        "passed": true
+      },
+      {
+        "name": "Navigation enthält Mieter & Wohnungen",
+        "passed": true
+      },
+      {
+        "name": "Navigation enthält Kostenarten",
+        "passed": true
+      },
+      {
+        "name": "Navigation enthält Miete & Vorauszahlungen",
+        "passed": true
+      },
+      {
+        "name": "Navigation enthält Zählerstände",
+        "passed": true
+      },
+      {
+        "name": "Navigation enthält Nebenkostenumlage",
+        "passed": true
+      },
+      {
+        "name": "Navigation enthält Neue Vorauszahlungen",
+        "passed": true
+      },
+      {
+        "name": "Navigation enthält Qualitätsprüfung",
+        "passed": true
+      },
+      {
+        "name": "Navigation enthält Abrechnungsbriefe",
+        "passed": true
+      },
+      {
+        "name": "Navigation enthält Export",
+        "passed": true
+      },
+      {
+        "name": "Navigation enthält Datensicherung",
+        "passed": true
+      }
+    ]
+  },
+  "coverageNotes": [
+    "Geprüft wurden die neuen Statuszustände, Prüficon-Renderer, Zähler-Klappboxstruktur, Hauszählerfelder, K002-Summenzeile, Tabellenfilterausrichtung, Historienhinweis, bedingte Fortschreibungswarnung, dauerhafte Zählerübernahme, Umlage-Neuordnung und kompaktes Vorauszahlungsraster.",
+    "Die Logiktests verwenden aus index.html extrahierte Originalfunktionen für Hauszählerverbrauch, Differenzstatus, Prüfstatus, Zeitraumformat und Fortschreibungswarnung.",
+    "Das vollständige Sidebar-HTML ist bytegleich mit V99.2.5; Desktop- und Mobilebreite bleiben 324 px."
+  ],
+  "limitations": [
+    "Eine Live-Navigation der lokalen Anwendung in Chromium wurde durch eine verwaltete Browserrichtlinie der Ausführungsumgebung blockiert.",
+    "Der Service-Worker-Lebenszyklus und die Installation unter GitHub Pages wurden nicht Ende-zu-Ende ausgeführt.",
+    "Nach Veröffentlichung ist ein kurzer Browser-/PWA-Smoke-Test erforderlich."
+  ]
+}
