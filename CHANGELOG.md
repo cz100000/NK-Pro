@@ -134,3 +134,14 @@
 - Alle Klappboxen sind beim Start und nach Tabwechsel standardmäßig geschlossen.
 - WORKBOOK.md ist fester Bestandteil des Versionspakets.
 - Keine Änderung an Berechnungs-, Speicher-, Archiv- oder Brieflogik.
+
+## V98.9 – Einheitliche Tabstruktur, Prüfbereiche und kompakte Tabellen
+
+- Doppelte Arbeitsbereichsüberschriften in den Abrechnungstabs beseitigt.
+- Abrechnungszeitraum in die Kopfzeile jedes Bearbeitungstabs übernommen; Archivansichten werden als schreibgeschützt gekennzeichnet.
+- Einheitliche Vier-Kachel-Struktur für alle Bearbeitungstabs außer Dashboard eingeführt: Sammelinfo, Prüfung, empfohlener nächster Schritt, Schnellaktionen.
+- Letzte Klappbox jedes Bearbeitungstabs als Prüf-/Plausibilitätsbereich vereinheitlicht und standardmäßig geschlossen.
+- Tabellenbreiten an den tatsächlichen Spalteninhalt angepasst.
+- „Neu berechnen“ im Tab „Kostenarten & Einstellungen“ entfernt.
+- Platzhalter-Klappbox für die spätere Überführung der einmaligen Korrektur/Gutschrift ergänzt.
+- Keine fachlichen Änderungen an Datenmodell, Rechenlogik, Briefen oder Exporten.

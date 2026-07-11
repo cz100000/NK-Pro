@@ -28,3 +28,32 @@ Geplante Maßnahmen:
 ### Umsetzungsvoraussetzung
 
 Vor Beginn dieser Architekturarbeit wird eine stabile Referenzversion festgelegt. Danach werden die Tabs schrittweise umgebaut und jeweils gegen identische Testdaten geprüft. Berechnungs-, Speicher-, Archiv- und Brieflogik dürfen dabei nicht verändert werden.
+
+## Zurückgestellte Fachfunktion: Einmalige Korrekturen und Gutschriften
+
+Die fachliche Erweiterung für kostenartenbezogene Korrekturen wird bewusst auf eine spätere Ausbaustufe verschoben.
+
+Später vorgesehen:
+- eigenes Datenmodell für mehrere Korrekturen je Mieter
+- Zuordnung zu einer Nebenkostenart
+- Richtung „zugunsten des Mieters“ oder „zulasten des Mieters“
+- Begründung und gegebenenfalls Buchungsdatum
+- Anpassung von Umlageergebnis, Briefen, Qualitätsprüfung, Export und Archiv
+- Migration bestehender Werte aus `vorjahresKorrektur`
+
+Für die nächste rein strukturelle Version gilt:
+- keine Änderung der Rechenlogik
+- keine Änderung des Datenmodells
+- die bisherige Korrekturspalte bleibt fachlich zunächst unverändert
+- zusätzlich wird im Tab „Kaltmiete & NK-Vorauszahlungen“ eine eigene, standardmäßig geschlossene Klappbox angelegt
+- Inhalt der Klappbox zunächst nur als Platzhalter:
+
+> Korrektur hierher überführen
+
+Die spätere fachliche Umsetzung darf erst nach Definition und Test der vollständigen Rechen-, Brief-, Export- und Migrationslogik erfolgen.
+
+## V98.9 – Zwischenstand der Korrektur-Umsortierung
+
+In V98.9 wird ausschließlich eine neue, standardmäßig geschlossene Klappbox „Einmalige Korrektur / Gutschrift“ mit dem Platzhalter „Korrektur hierher überführen“ angelegt.
+
+Die bestehende Spalte „Einmalige Korrektur / Gutschrift“ verbleibt vorerst unverändert in der Tabelle „Kaltmieteinnahmen“. Datenmodell, Rechenlogik, Briefe und Exporte bleiben unverändert. Die vollständige fachliche Überführung erfolgt erst in einer späteren, separat definierten Ausbaustufe.
