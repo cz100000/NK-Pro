@@ -77,3 +77,8 @@
 - Tabellen und Kontrollbereiche bündig ausgerichtet.
 - Bestehende Eingabefunktionen und Zählerberechnungen weiterverwendet.
 - Keine Änderung an Berechnungs-, Speicher-, Archiv- oder Brieflogik.
+
+## V98.2 – Wiederherstellung und Browserprüfung
+- Neue Versions- und Cache-Kennung.
+- Vollständiger Browser-Smoke-Test über Startseite, aktive Abrechnung und sämtliche Tabs.
+- Keine Fach- oder Berechnungslogik geändert.
