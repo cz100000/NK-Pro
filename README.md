@@ -40,3 +40,7 @@ Der Kostenarten-Tab besitzt nur noch eine vollständige Ansicht. Kostenarten wer
 ## V97.5 – Tabellenhierarchie und sichere Deaktivierung
 
 Kostenarten werden explizit über eine Auswahlspalte markiert und ausschließlich über den eindeutig beschrifteten Button oberhalb der Tabelle deaktiviert.
+
+## V98.3 – Sanfte Abschnittshierarchie
+
+Klappbox-Kopfzeilen verwenden nun eine helle Blaugrau-Fläche mit dunkelblauem Akzentbalken. Tabellenköpfe bleiben mittelblau. Tabellen und Kontrollbereiche beginnen innerhalb jeder Klappbox nach einem einheitlichen weißen Innenabstand.

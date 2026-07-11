@@ -82,3 +82,11 @@
 - Neue Versions- und Cache-Kennung.
 - Vollständiger Browser-Smoke-Test über Startseite, aktive Abrechnung und sämtliche Tabs.
 - Keine Fach- oder Berechnungslogik geändert.
+
+## V98.3 – Sanfte Abschnittshierarchie
+- Vollflächig dunkelblaue Klappbox-Kopfzeilen durch helle Blaugrau-Flächen ersetzt.
+- Dunkelblauer Akzentbalken links kennzeichnet weiterhin die übergeordnete Abschnittsebene.
+- Tabellenkopfzeilen bleiben mittelblau mit weißer Schrift.
+- Einheitlicher weißer Innenrand zwischen Klappbox-Rand und Tabellen/Kontrollbereichen.
+- Innenabstand gilt im Kostenarten- und Zählerstände-Tab für alle Klappboxen.
+- Keine Änderung an Berechnungs-, Speicher-, Archiv- oder Brieflogik.
