@@ -114,3 +114,11 @@
 - Rundungen und Tabellenkopf-Stil auf alle Datentabellen übertragen.
 - Bestehende Inhalte, Funktionen und Tab-Strukturen bleiben erhalten.
 - Keine Änderung an Berechnungs-, Speicher-, Archiv- oder Brieflogik.
+
+## V98.7 – Echte Kachel- und Klappboxstruktur
+- Nicht nur Farben, sondern die vollständige Bedienstruktur aus Kostenarten & Einstellungen übertragen.
+- Dashboard, Kaltmiete & NK-Vorauszahlungen, Nebenkostenumlage, Vorauszahlungsanpassung, Qualitätsprüfung, Abrechnungsbriefe und Export erhalten Seitenkopf, Kachelübersicht und nummerierte Klappboxen.
+- Mieter & Wohnungen, Kostenarten & Einstellungen und Zählerstände behalten ihre bereits angepasste Struktur.
+- Dynamische Kacheln für Einnahmen, Briefe und Export ergänzt.
+- Bestehende Tabellen, Eingaben, IDs und Renderfunktionen bleiben erhalten.
+- Keine Änderung an Berechnungs-, Speicher-, Archiv- oder Brieflogik.

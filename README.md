@@ -54,3 +54,6 @@ Kostenarten-Feinschliff und vollständige Überführung des Tabs Mieter & Wohnun
 
 ## V98.6
 Einheitliches Look & Feel auf allen Tabs. Fachlogik und Datenmodell unverändert.
+
+## V98.7
+Alle Arbeitstabs verwenden nun tatsächlich die Struktur Seitenkopf, Kachelübersicht und nummerierte Klappboxen.
