@@ -3114,6 +3114,145 @@
       body.unified-workspace-tab .meter-overview-card { height:auto !important; max-height:none !important; }
     }
 
+
+    /* V99.1 – eine verbindliche Grundregel für Dashboard und alle Abrechnungstabs */
+    body.tool-standard-active .workspace-header {
+      display:flex !important;
+      min-height:42px !important;
+      padding:4px 18px !important;
+      background:#fff !important;
+      border-bottom:1px solid #e1e7ef !important;
+      box-sizing:border-box;
+    }
+    body.tool-standard-active .app-main > .wrap {
+      padding:20px 18px 28px !important;
+    }
+    body.tool-standard-active .app-main > .wrap > section.tab {
+      width:100% !important;
+      max-width:none !important;
+      margin:0 !important;
+      box-sizing:border-box;
+    }
+    body.tool-standard-active .workspace-page-header,
+    body.tool-standard-active .cost-page-header,
+    body.tool-standard-active .tenant-page-header,
+    body.tool-standard-active .meter-page-header {
+      position:sticky !important;
+      top:42px !important;
+      display:flex !important;
+      align-items:center !important;
+      justify-content:space-between !important;
+      min-height:84px !important;
+      margin:0 0 14px !important;
+      padding:0 18px !important;
+      gap:20px !important;
+      background:#fff !important;
+      border:1px solid #e1e7ef !important;
+      border-radius:7px !important;
+      box-sizing:border-box;
+      z-index:37;
+    }
+    body.tool-standard-active .workspace-period-line {
+      position:absolute !important;
+      left:50% !important;
+      top:50% !important;
+      transform:translate(-50%,-50%) !important;
+      margin:0 !important;
+      padding:7px 13px !important;
+      border:1px solid #c9d8e8 !important;
+      border-radius:6px !important;
+      background:#f7faff !important;
+      color:#173b5a !important;
+      font-size:13px !important;
+      line-height:1.25 !important;
+      font-weight:700 !important;
+      white-space:nowrap !important;
+      text-align:center !important;
+    }
+    body.tool-standard-active .workspace-overview-grid,
+    body.tool-standard-active .cost-overview-grid,
+    body.tool-standard-active .tenant-overview-grid,
+    body.tool-standard-active .meter-overview-grid,
+    body.tool-standard-active #kpiCards {
+      display:grid !important;
+      grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+      gap:14px !important;
+      align-items:stretch !important;
+      margin:0 0 14px !important;
+    }
+    body.tool-standard-active .workspace-overview-card,
+    body.tool-standard-active .cost-overview-card,
+    body.tool-standard-active .tenant-overview-card,
+    body.tool-standard-active .meter-overview-card,
+    body.tool-standard-active #kpiCards > .card {
+      min-height:168px !important;
+      height:168px !important;
+      max-height:168px !important;
+      padding:14px 16px !important;
+      border:1px solid #cfd9e5 !important;
+      border-radius:4px !important;
+      background:#fff !important;
+      box-sizing:border-box !important;
+      overflow:hidden !important;
+      display:flex !important;
+      flex-direction:column !important;
+      position:relative !important;
+      box-shadow:none !important;
+    }
+    body.tool-standard-active .workspace-overview-actions,
+    body.tool-standard-active .cost-overview-actions,
+    body.tool-standard-active .tenant-overview-actions,
+    body.tool-standard-active .meter-overview-actions,
+    body.tool-standard-active .workspace-quick-list {
+      margin-top:auto !important;
+      padding-top:12px !important;
+    }
+    body.tool-standard-active .workspace-overview-actions {
+      min-height:31px !important;
+      display:flex !important;
+      align-items:flex-end !important;
+      justify-content:center !important;
+    }
+    body.tool-standard-active .workspace-quick-list {
+      display:grid !important;
+      gap:5px !important;
+    }
+    @media(max-width:1200px){
+      body.tool-standard-active .workspace-overview-grid,
+      body.tool-standard-active .cost-overview-grid,
+      body.tool-standard-active .tenant-overview-grid,
+      body.tool-standard-active .meter-overview-grid,
+      body.tool-standard-active #kpiCards { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
+    }
+    @media(max-width:760px){
+      body.tool-standard-active .app-main > .wrap { padding:12px 10px 20px !important; }
+      body.tool-standard-active .workspace-page-header,
+      body.tool-standard-active .cost-page-header,
+      body.tool-standard-active .tenant-page-header,
+      body.tool-standard-active .meter-page-header {
+        top:42px !important;
+        padding:10px !important;
+        flex-wrap:wrap !important;
+      }
+      body.tool-standard-active .workspace-period-line {
+        position:static !important;
+        width:100% !important;
+        transform:none !important;
+        order:3 !important;
+        box-sizing:border-box !important;
+      }
+      body.tool-standard-active .workspace-overview-grid,
+      body.tool-standard-active .cost-overview-grid,
+      body.tool-standard-active .tenant-overview-grid,
+      body.tool-standard-active .meter-overview-grid,
+      body.tool-standard-active #kpiCards { grid-template-columns:1fr !important; }
+      body.tool-standard-active .workspace-overview-card,
+      body.tool-standard-active .cost-overview-card,
+      body.tool-standard-active .tenant-overview-card,
+      body.tool-standard-active .meter-overview-card,
+      body.tool-standard-active #kpiCards > .card { height:auto !important; max-height:none !important; min-height:168px !important; }
+    }
+
   </style>
 
   <meta name="theme-color" content="#183b56">
@@ -3156,7 +3295,7 @@
       </div>
       <div class="sidebar-footer">
         <div>Offline · lokal</div>
-        <small>Version V99.0</small>
+        <small>Version V99.1</small>
       </div>
     </aside>
 
@@ -3711,6 +3850,8 @@
     document.body.classList.toggle('cost-tab-active', !!(activeButton && activeButton.dataset.tab === 'einstellungen'));
     document.body.classList.toggle('meter-tab-active', !!(activeButton && activeButton.dataset.tab === 'wasser'));
     document.body.classList.toggle('tenant-tab-active', !!(activeButton && activeButton.dataset.tab === 'mieter'));
+    const standardTabs = ['dashboard','mieter','einstellungen','einnahmen','wasser','umlage','vorauszahlungsanpassung','qualitaet','briefe','export'];
+    document.body.classList.toggle('tool-standard-active', !!(activeButton && standardTabs.includes(activeButton.dataset.tab)));
     if (typeof v989UpdateBillingContext === 'function') v989UpdateBillingContext();
   }
 
@@ -13554,7 +13695,7 @@ function initializeV988ClosedAccordions() {
 
 // V98.9 – Strukturangleichung ohne Änderung von Datenmodell oder Rechenlogik
 function v989BillingTabs() {
-  return ['mieter','einstellungen','einnahmen','wasser','umlage','vorauszahlungsanpassung','qualitaet','briefe','export'];
+  return ['dashboard','mieter','einstellungen','einnahmen','wasser','umlage','vorauszahlungsanpassung','qualitaet','briefe','export'];
 }
 
 function v989UpdateBillingContext() {
@@ -13653,10 +13794,50 @@ function applyV989Structure() {
 
 // V99.0 – Referenzformat systematisch auf alle Bearbeitungstabs übertragen.
 function v990ReferenceTabs() {
-  return ['mieter','einstellungen','einnahmen','wasser','umlage','vorauszahlungsanpassung','qualitaet','briefe','export'];
+  return ['dashboard','mieter','einstellungen','einnahmen','wasser','umlage','vorauszahlungsanpassung','qualitaet','briefe','export'];
+}
+
+
+function v991EnsureStandardHeader(tabId) {
+  const tab = document.getElementById(tabId);
+  if (!tab) return null;
+  let header = tab.querySelector(':scope > .workspace-page-header, :scope > .cost-page-header, :scope > .tenant-page-header, :scope > .meter-page-header');
+  if (!header) {
+    const directTitle = tab.querySelector(':scope > h2');
+    const titleText = directTitle ? directTitle.textContent.trim() : tabId;
+    header = document.createElement('div');
+    header.className = 'workspace-page-header v991-standard-header';
+    header.innerHTML = '<div><div class="workspace-page-kicker">Abrechnung</div><h2>' + escapeHtml(titleText) + '</h2><div class="workspace-period-line"></div></div><div class="workspace-page-actions"><span class="status ok">Gespeichert</span><button type="button" onclick="saveState()">Speichern</button></div>';
+    tab.insertBefore(header, tab.firstChild);
+    if (directTitle) directTitle.style.display = 'none';
+  }
+  let period = header.querySelector('.workspace-period-line');
+  if (!period) {
+    period = document.createElement('div');
+    period.className = 'workspace-period-line';
+    const titleSide = header.firstElementChild || header;
+    titleSide.appendChild(period);
+  }
+  const archived = typeof isArchiveViewer === 'function' && isArchiveViewer();
+  const label = typeof periodLabelShort === 'function' ? periodLabelShort() : '';
+  period.innerHTML = 'Abrechnungszeitraum: <strong>' + escapeHtml(label) + '</strong>' + (archived ? '<span class="readonly-badge">Archiviert · schreibgeschützt</span>' : '');
+  return header;
+}
+
+function v991ApplyGlobalStandard() {
+  v990ReferenceTabs().forEach(tabId => v991EnsureStandardHeader(tabId));
+  const dash = document.getElementById('dashboard');
+  const dashGrid = document.getElementById('kpiCards');
+  if (dash) dash.classList.add('unified-workspace-page','v990-reference-format','v991-global-standard');
+  if (dashGrid) dashGrid.classList.add('workspace-overview-grid','v990-reference-grid');
+  if (dashGrid) Array.from(dashGrid.children).slice(0,4).forEach((card,index) => {
+    card.classList.add('workspace-overview-card','v990-reference-card');
+    card.dataset.v990Position = String(index + 1);
+  });
 }
 
 function v990ApplyReferenceFormat() {
+  v991ApplyGlobalStandard();
   v990ReferenceTabs().forEach(tabId => {
     const tab = document.getElementById(tabId);
     if (!tab) return;
@@ -13698,14 +13879,16 @@ function v990AuditReferenceFormat() {
       cardGrid: !!grid,
       fourCards: cards.length >= 4,
       standardTitles: expectedTitles.every((title,i) => titles[i] === title),
-      lastSectionIsCheck: /prüfung|plausibil|kontroll|qualität/.test(lastTitle)
+      lastSectionIsCheck: tabId === 'dashboard' ? true : /prüfung|plausibil|kontroll|qualität/.test(lastTitle),
+      globalWhiteHeaderVisible: getComputedStyle(document.querySelector('.workspace-header')).display !== 'none',
+      uniformCardHeight: cards.length >= 4 && cards.slice(0,4).every(card => Math.abs(card.getBoundingClientRect().height - cards[0].getBoundingClientRect().height) < 1)
     };
     return {tabId, checks, passed:Object.values(checks).every(Boolean), titles, lastSection:lastTitle};
   });
   const report = {
-    version:'V99.0',
+    version:'V99.1',
     referenceTab:'einnahmen',
-    dashboardExcluded:true,
+    dashboardExcluded:false,
     allPassed:results.every(r=>r.passed),
     results
   };
@@ -13737,10 +13920,10 @@ function renderAll(options = {}) {
       if (typeof console !== "undefined" && console.error) console.error("Workspace-Kacheln konnten nicht aktualisiert werden", workspaceCardError);
     }
     try { renderV988OverviewCards(); } catch(v988CardError) {
-      if (typeof console !== "undefined" && console.error) console.error("V99.0-Kacheln konnten nicht aktualisiert werden", v988CardError);
+      if (typeof console !== "undefined" && console.error) console.error("V99.1-Kacheln konnten nicht aktualisiert werden", v988CardError);
     }
-    try { applyV989Structure(); v990ApplyReferenceFormat(); v990AuditReferenceFormat(); } catch(v989Error) {
-      if (typeof console !== "undefined" && console.error) console.error("V99.0-Struktur konnte nicht aktualisiert werden", v989Error);
+    try { applyV989Structure(); v991ApplyGlobalStandard(); v990ApplyReferenceFormat(); v990AuditReferenceFormat(); } catch(v989Error) {
+      if (typeof console !== "undefined" && console.error) console.error("V99.1-Struktur konnte nicht aktualisiert werden", v989Error);
     }
     if (renderQueued) {
       renderQueued = false;
@@ -13757,6 +13940,7 @@ try {
   renderUnifiedWorkspaceCards();
   renderV988OverviewCards();
   applyV989Structure();
+  v991ApplyGlobalStandard();
   v990ApplyReferenceFormat();
   v990AuditReferenceFormat();
   initializeV988ClosedAccordions();

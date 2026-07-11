@@ -62,3 +62,21 @@ Die bestehende Spalte „Einmalige Korrektur / Gutschrift“ verbleibt vorerst u
 ## Verbindlicher UI-Referenzstandard ab V99.0
 
 Der Tab „Kaltmiete & NK-Vorauszahlungen“ ist die verbindliche Layoutreferenz für alle Bearbeitungstabs außer Dashboard. Übertragen werden Kopfzeile, prominente mittige Zeitraumdarstellung, Kachelaufbau, Schriftgrößen, Abstände, Buttonpositionierung, Inhaltsbreite und seitliche Außenabstände. Jede künftige Version muss explizit prüfen, ob alle neun Bearbeitungstabs diesen Standard erhalten haben.
+
+## V99.1 – Verbindliche globale Formatgrundregel
+
+Die visuelle Grundregel gilt für Dashboard und alle Abrechnungstabs.
+
+Verbindlich:
+- die obere weiße Kopfzeile bleibt auf jeder Seite sichtbar
+- identischer Seitenabstand und identische Inhaltsbreite
+- einheitlicher Tab-Kopf mit Titel, prominentem Abrechnungszeitraum und Aktionen
+- vier gleich hohe Übersichtskacheln, soweit der Tab Übersichtskacheln besitzt
+- Kachelhöhe 168 px auf Desktop
+- definierter Abstand von 12 px zwischen letztem Textinhalt und Buttonbereich
+- Buttons stehen auf derselben Grundlinie
+- alte tab-spezifische Regeln dürfen die globale Kopfzeile oder das Standardlayout nicht ausblenden
+- Dashboard wird zunächst bewusst nach derselben Regel formatiert; spätere Dashboard-Sonderregeln werden separat definiert
+
+Die Prüfung muss den tatsächlich gerenderten Zustand erfassen, insbesondere Sichtbarkeit der weißen Kopfzeile und gleiche Kachelhöhen.
+

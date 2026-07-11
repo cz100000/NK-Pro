@@ -1,3 +1,14 @@
+# V99.1
+
+- globale weiße Kopfzeile für Dashboard und alle Abrechnungstabs verbindlich sichtbar
+- zentrale Standardklasse wird beim Tabwechsel tatsächlich aktiviert
+- Dashboard in das Referenzformat aufgenommen
+- einheitliche Kopfbereiche mit prominentem Abrechnungszeitraum
+- einheitliche Kachelhöhe von 168 px
+- einheitlicher Abstand von 12 px zwischen Inhalt und Buttonbereich
+- Audit um sichtbare Kopfzeile und gleiche Kachelhöhen erweitert
+- keine Änderung an Datenmodell oder Rechenlogik
+
 # V99.0 – Referenzformat für alle Bearbeitungstabs
 
 - „Kaltmiete & NK-Vorauszahlungen“ als verbindliches Referenzformat festgelegt.
