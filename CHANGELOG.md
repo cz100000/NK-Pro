@@ -90,3 +90,9 @@
 - Einheitlicher weißer Innenrand zwischen Klappbox-Rand und Tabellen/Kontrollbereichen.
 - Innenabstand gilt im Kostenarten- und Zählerstände-Tab für alle Klappboxen.
 - Keine Änderung an Berechnungs-, Speicher-, Archiv- oder Brieflogik.
+
+## V98.4 – Neuveröffentlichung
+- Funktional und optisch identisch zu V98.3.
+- Neue Versionskennung V98.4.
+- Neue Service-Worker-Cache-Kennung `nk-pro-v98-4`.
+- Keine Änderung an Berechnungs-, Speicher-, Archiv- oder Brieflogik.

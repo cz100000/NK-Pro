@@ -44,3 +44,7 @@ Kostenarten werden explizit über eine Auswahlspalte markiert und ausschließlic
 ## V98.3 – Sanfte Abschnittshierarchie
 
 Klappbox-Kopfzeilen verwenden nun eine helle Blaugrau-Fläche mit dunkelblauem Akzentbalken. Tabellenköpfe bleiben mittelblau. Tabellen und Kontrollbereiche beginnen innerhalb jeder Klappbox nach einem einheitlichen weißen Innenabstand.
+
+## V98.4 – Neuveröffentlichung
+
+Diese Version ist optisch und funktional identisch zu V98.3. Sie besitzt lediglich eine neue Versions- und Cache-Kennung, damit GitHub Pages die Veröffentlichung eindeutig neu lädt.
