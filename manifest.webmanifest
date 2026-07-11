@@ -1,7 +1,7 @@
 {
-  "name": "NK-Pro Nebenkostenabrechnung",
+  "name": "NK-Pro V94 Nebenkostenabrechnung",
   "short_name": "NK-Pro",
-  "description": "Lokales Tool zur Erstellung, Prüfung und Archivierung von Nebenkostenabrechnungen.",
+  "description": "NK-Pro mit Entwicklerdiagnose, Offline-Nutzung und lokaler Datenspeicherung.",
   "lang": "de-DE",
   "id": "./",
   "start_url": "./",
