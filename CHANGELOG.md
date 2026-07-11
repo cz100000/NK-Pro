@@ -30,3 +30,13 @@
 - Kompakte, rein lesende Zusammenfassung ergänzt.
 - Bestehende Eingabefelder, Event-Handler und Fachregeln beibehalten.
 - Keine Berechnungs-, Speicher-, Archiv- oder Brieflogik verändert.
+
+## V97.3 – Mock-up-Abgleich Kostenarten
+- Pilot-Tab visuell eng an das freigegebene Mock-up angeglichen.
+- Eigene Kopfzeile mit Ansichtsumschalter, Speicherstatus und Speichern-Aktion.
+- Vier Übersichtskarten: Zusammenfassung, Prüfstatus, nächster Schritt und Schnellaktionen.
+- Kompakte nummerierte Abschnittsleisten.
+- Werkzeugleiste und Tabellenstruktur entsprechend dem Mock-up.
+- Kontrollsummen als horizontale Abschlussleiste.
+- Erweiterte Sonderoptionen bleiben vollständig erreichbar.
+- Keine Berechnungs-, Speicher-, Archiv- oder Brieflogik verändert.

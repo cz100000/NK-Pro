@@ -28,3 +28,7 @@ Die Inhalte und Funktionen der einzelnen Tabs entsprechen V96.2.
 ## V97.2 – Pilot-Tab Kostenarten
 
 Der Tab „Kostenarten & Einstellungen“ dient als Pilot für die schrittweise Vereinfachung datenreicher Ansichten. Die Standardansicht reduziert die gleichzeitig sichtbaren Spalten; die erweiterte Ansicht erhält den vollständigen bisherigen Funktionsumfang.
+
+## V97.3 – Mock-up-Abgleich
+
+Der Kostenarten-Pilot verwendet nun das freigegebene Mock-up als konkrete visuelle Vorgabe. Das betrifft ausschließlich Darstellung und Bedienhierarchie; die bestehende Fachlogik bleibt erhalten.
