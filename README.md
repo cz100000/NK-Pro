@@ -1,82 +1,69 @@
-# NK-Pro V96.1 Workflow-Dashboard
+# NK-Pro V99.2 – Konsolidierte Darstellungsarchitektur für alle Tabs
 
-Fachlich auf V93 basierend. Ergänzt wurden Entwicklerdiagnose, Diagnoseexport, Performance-/Speicheranzeige und kontrollierte Updateprüfung. Berechnungslogik unverändert.
+NK-Pro ist eine lokal nutzbare HTML-/JavaScript-Anwendung zur Erstellung von Nebenkostenabrechnungen. Die Anwendung kann direkt im Browser oder als GitHub-Pages-PWA betrieben werden; die Arbeitsdaten bleiben im Browser gespeichert.
 
-## Veröffentlichung
-1. Alle Dateien dieses Ordners in den lokalen Repository-Ordner kopieren.
-2. GitHub Desktop: Summary `NK-Pro V94 Entwicklerdiagnose`.
-3. `Commit to main`, danach `Push origin`.
-4. GitHub: Settings → Pages → Deploy from a branch → main → /(root).
+## Schwerpunkt dieser Version
 
-Adresse: https://cz100000.github.io/NK-Pro/
+V99.2 führt alle 14 vorhandenen Tabs auf eine gemeinsame, statische Darstellungsarchitektur zurück:
 
-Keine JSON-Backups oder personenbezogenen Daten ins öffentliche Repository laden.
+- globale weiße Kopfleiste und einheitlicher dreispaltiger Tab-Kopf,
+- genau vier direkte Übersichtskacheln je Tab,
+- ein zentraler Kachelrenderer und eine zentrale Tabregistrierung,
+- standardisierte Schnellaktionsbuttons,
+- dynamische Kartenhöhen ohne abgeschnittene Inhalte,
+- statische, standardmäßig geschlossene Klappboxen,
+- technisch markierte Prüfbox als letzter Abschnitt,
+- responsive Darstellung mit 4, 2 oder 1 Kachel pro Zeile.
 
-## V96.1
-Erste kleine Workflow-Ausbaustufe. Die Startseite zeigt vorhandene Qualitätsprüfungen kompakt nach Arbeitsbereichen.
+Parallele Kartenrenderer, tababhängige Layoutschichten und nachträgliche DOM-Umbauten wurden entfernt. Die fachliche Berechnungs-, Umlage-, Vorauszahlungs-, Brief-, Export-, Archiv- und Migrationslogik wurde nicht neu konzipiert.
 
-## V97.1 – Neues Grundgerüst
+## Enthaltene Tabs
 
-V97.1 führt ausschließlich einen neuen visuellen Seitenrahmen ein:
+1. Abrechnungsübersicht
+2. Mieterverwaltung
+3. Wohnungsverwaltung
+4. Sicherung & Version
+5. Dashboard
+6. Mieter & Wohnungen
+7. Kostenarten & Einstellungen
+8. Kaltmiete & NK-Vorauszahlungen
+9. Zählerstände
+10. Nebenkostenumlage
+11. Vorauszahlungsanpassung
+12. Qualitätsprüfung
+13. Abrechnungsbriefe
+14. Abrechnung sichern/exportieren
 
-- linke Navigation
-- kompakte Arbeitskopfzeile
-- responsive mobile Navigation
+## Start und Veröffentlichung
 
-Die Inhalte und Funktionen der einzelnen Tabs entsprechen V96.2.
+### Lokal
 
-## V97.2 – Pilot-Tab Kostenarten
+`index.html` in einem modernen Browser öffnen. Für eine verlässliche PWA-/Service-Worker-Nutzung sollte die Anwendung über einen lokalen Webserver oder HTTPS bereitgestellt werden.
 
-Der Tab „Kostenarten & Einstellungen“ dient als Pilot für die schrittweise Vereinfachung datenreicher Ansichten. Die Standardansicht reduziert die gleichzeitig sichtbaren Spalten; die erweiterte Ansicht erhält den vollständigen bisherigen Funktionsumfang.
+### GitHub Pages
 
-## V97.3 – Mock-up-Abgleich
+Den Inhalt der ZIP-Datei unverändert in das Veröffentlichungsverzeichnis des GitHub-Repositories kopieren und GitHub Pages für diesen Branch/Ordner aktivieren. Die Datei `.nojekyll` verhindert eine unnötige Jekyll-Verarbeitung.
 
-Der Kostenarten-Pilot verwendet nun das freigegebene Mock-up als konkrete visuelle Vorgabe. Das betrifft ausschließlich Darstellung und Bedienhierarchie; die bestehende Fachlogik bleibt erhalten.
+Der Service Worker verwendet den neuen Cache-Namen `nk-pro-v99-2`. Dadurch werden alte V99.1-Caches beim Aktivieren der neuen Version entfernt.
 
-## V97.4 – Einheitlicher Kostenarten-Tab
+## Dateien
 
-Der Kostenarten-Tab besitzt nur noch eine vollständige Ansicht. Kostenarten werden über ein integriertes Auswahlfenster aktiviert und erscheinen direkt in der zentralen Bearbeitungstabelle.
+- `index.html` – vollständige Anwendung
+- `service-worker.js` – Offline-Cache und Updatewechsel
+- `manifest.webmanifest` – PWA-Metadaten
+- `README.md` – Nutzung und Auslieferung
+- `CHANGELOG.md` – Änderungen der Version
+- `WORKBOOK.md` – verbindliche Architekturregeln
+- `UI_ARCHITEKTUR_V99_2.md` – technische Konsolidierungsdokumentation
+- `V99_2_Pruefbericht.json` – strukturierter Prüfbericht
+- `SHA256SUMS.txt` – Prüfsummen der ausgelieferten Dateien
 
-## V97.5 – Tabellenhierarchie und sichere Deaktivierung
+## Prüfung
 
-Kostenarten werden explizit über eine Auswahlspalte markiert und ausschließlich über den eindeutig beschrifteten Button oberhalb der Tabelle deaktiviert.
+Die Anwendung wurde statisch, per JavaScript-Syntaxprüfung und in Chromium geprüft. Getestet wurden alle 14 Tabs bei 1440, 1180, 900 und 520 Pixel Breite sowie programmgesteuerte Tabwechsel, Schnellaktion, nächster Schritt, Eingabe, Neuberechnung und Speichern. Ein Vergleich zentraler fachlicher Ergebnisobjekte zwischen V99.1 und V99.2 ergab keine Abweichung im verwendeten mitgelieferten Arbeitsstand.
 
-## V98.3 – Sanfte Abschnittshierarchie
+Die Browserumgebung erlaubte keine normale Navigation zu einer lokalen HTTP-/Datei-URL. Deshalb wurde die tatsächliche vollständige HTML-Datei in einem isolierten Chromium-Dokument geladen und dort ausgeführt und gerendert. Der Service-Worker-Lebenszyklus wurde dadurch nicht als echte GitHub-Pages-Installation ausgeführt; Cache-Name, Assetliste und JavaScript wurden statisch geprüft.
 
-Klappbox-Kopfzeilen verwenden nun eine helle Blaugrau-Fläche mit dunkelblauem Akzentbalken. Tabellenköpfe bleiben mittelblau. Tabellen und Kontrollbereiche beginnen innerhalb jeder Klappbox nach einem einheitlichen weißen Innenabstand.
+## Datenschutz und Sicherung
 
-## V98.4 – Neuveröffentlichung
-
-Diese Version ist optisch und funktional identisch zu V98.3. Sie besitzt lediglich eine neue Versions- und Cache-Kennung, damit GitHub Pages die Veröffentlichung eindeutig neu lädt.
-
-## V98.5
-Kostenarten-Feinschliff und vollständige Überführung des Tabs Mieter & Wohnungen in das einheitliche Bedienkonzept. Berechnungslogik unverändert.
-
-## V98.6
-Einheitliches Look & Feel auf allen Tabs. Fachlogik und Datenmodell unverändert.
-
-## V98.7
-Alle Arbeitstabs verwenden nun tatsächlich die Struktur Seitenkopf, Kachelübersicht und nummerierte Klappboxen.
-
-## V98.8
-Einheitliche kompakte Sammelkacheln, feste rechte Kacheln für nächsten Schritt und Schnellaktionen sowie standardmäßig geschlossene Klappboxen.
-
-## V99.1
-
-- Einheitliche Kachelstruktur in allen Bearbeitungstabs außer Dashboard: Sammelinfo, Prüfung, empfohlener nächster Schritt und Schnellaktionen.
-- „Kaltmiete & NK-Vorauszahlungen“ dient als visuelle Referenz für Kachel- und Schriftgrößen.
-- Doppelte Hauptüberschriften werden vermieden; der Abrechnungszeitraum steht direkt in der Tab-Kopfzeile.
-- Alte Perioden-/Arbeitsstandsboxen in den Bearbeitungstabs werden nicht mehr angezeigt.
-- Die Prüf- und Plausibilitätsklappbox steht in jedem Bearbeitungstab zuletzt und ist standardmäßig geschlossen.
-- Tabellen verwenden inhaltsbezogene Spaltenbreiten statt künstlich breiter Spalten.
-- Der Button „Neu berechnen“ wurde im Bereich „Kostenarten & Einstellungen“ entfernt; die fachlich passende Neuberechnung im Umlagetab bleibt bestehen.
-- Neue geschlossene Platzhalter-Klappbox „Einmalige Korrektur / Gutschrift“ mit dem Text „Korrektur hierher überführen“.
-- Keine Änderung von Datenmodell, Berechnungs-, Brief-, Speicher-, Archiv- oder Exportlogik.
-
-
-## V99.1 Referenzformat
-Der optimierte Tab „Kaltmiete & NK-Vorauszahlungen“ dient als verbindliche Layoutreferenz für alle Bearbeitungstabs außer Dashboard. Der Zeitraum steht prominent mittig im Kopf, die Kacheln erhalten mehr Abstand vor den Buttons und die seitlichen Außenabstände wurden reduziert.
-
-
-## V99.1
-Dashboard und alle Abrechnungstabs verwenden nun dieselbe globale Kopf-, Seiten- und Kachelformatregel.
+NK-Pro arbeitet lokal im Browser. Browserdaten können dennoch durch Bereinigung, Profilwechsel oder technische Probleme verloren gehen. Vor wesentlichen Änderungen und regelmäßig während der Abrechnung sollte eine vollständige JSON-Sicherung erstellt und extern aufbewahrt werden.

@@ -1,7 +1,7 @@
 {
-  "name": "NK-Pro V94 Nebenkostenabrechnung",
-  "short_name": "NK-Pro",
-  "description": "NK-Pro mit Entwicklerdiagnose, Offline-Nutzung und lokaler Datenspeicherung.",
+  "name": "NK-Pro V99.2 – Nebenkostenabrechnung",
+  "short_name": "NK-Pro V99.2",
+  "description": "Lokale Nebenkostenabrechnung mit konsolidierter Darstellungsarchitektur für alle Tabs.",
   "lang": "de-DE",
   "id": "./",
   "start_url": "./",
@@ -9,6 +9,7 @@
   "display": "standalone",
   "background_color": "#f6f8fa",
   "theme_color": "#183b56",
+  "version": "99.2",
   "icons": [
     {
       "src": "./icons/icon-192.png",

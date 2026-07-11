@@ -1,82 +1,114 @@
-# NK-Pro – Projekt-Workbook
+# WORKBOOK – NK-Pro V99.2
 
-## Zurückgestellte Architekturmaßnahme
+Dieses Dokument enthält die verbindlichen technischen Regeln für die weitere Entwicklung von NK-Pro.
 
-**Status:** später umsetzen – aktuell keine Änderung an V98.7
+## 1. Gemeinsamer Seitenrahmen
 
-### Ziel: langfristig stabile und technisch schlichte Oberfläche
+Jeder bestehende und zukünftige Tab verwendet direkt im statischen Tab-Container genau diese äußere Reihenfolge:
 
-Für eine langfristig stabile App soll die derzeitige dynamische Umstrukturierung der Tabs später durch einen festen, klaren Aufbau ersetzt werden.
+1. globale weiße Kopfleiste,
+2. `header.page-header`,
+3. `div.overview-grid`,
+4. `div.page-sections` mit statischen `details.page-section`,
+5. optional `p.page-footnote` nach allen Klappboxen.
 
-Geplante Maßnahmen:
+Das gemeinsame Layout darf nicht nachträglich durch Verschieben bereits gerenderter DOM-Elemente hergestellt werden.
 
-1. Klappboxen und Kacheln fest im HTML aufbauen.
-2. Bestehende Inhalte direkt in den vorgesehenen Klappboxen und Kacheln platzieren.
-3. Keine nachträgliche Verschiebung vieler DOM-Elemente beim Start der App.
-4. Pro Tab einen klar abgegrenzten Renderer verwenden.
-5. Gemeinsame kleine UI-Komponenten für Seitenkopf, Kacheln, Klappboxen, Tabellen und Statusanzeigen einsetzen, statt einer großen zentralen Umbaufunktion.
+## 2. Zentraler Kopfbereich
 
-### Begründung
+Jeder Tab besitzt genau einen sichtbaren Haupttitel. Der Kopfbereich nutzt ein echtes dreispaltiges Grid:
 
-- geringeres Risiko von Darstellungs- und Initialisierungsfehlern
-- leichter prüfbare Tabs
-- klarere Trennung zwischen Daten, Berechnung und Darstellung
-- einfachere Wartung und Weiterentwicklung
-- bessere Grundlage für Regressionstests
-- Einhaltung des Projektgrundsatzes: **„Fachlich vollständig, technisch schlicht.“**
+- links: Kategorie und Haupttitel,
+- Mitte: tatsächlicher Abrechnungszeitraum der geöffneten Abrechnung,
+- rechts: Speicher-/Archivstatus und Aktionen.
 
-### Umsetzungsvoraussetzung
+Der Tab-Kopf ist nicht sticky. Die globale weiße Kopfleiste darf sticky bleiben. Tabbezogene Styles dürfen die globale Kopfleiste nicht ausblenden.
 
-Vor Beginn dieser Architekturarbeit wird eine stabile Referenzversion festgelegt. Danach werden die Tabs schrittweise umgebaut und jeweils gegen identische Testdaten geprüft. Berechnungs-, Speicher-, Archiv- und Brieflogik dürfen dabei nicht verändert werden.
+## 3. Zentrales Vier-Kachel-System
 
-## Zurückgestellte Fachfunktion: Einmalige Korrekturen und Gutschriften
+Jeder Tab besitzt genau ein `overview-grid` mit exakt vier direkten `overview-card`-Kindern in dieser Reihenfolge:
 
-Die fachliche Erweiterung für kostenartenbezogene Korrekturen wird bewusst auf eine spätere Ausbaustufe verschoben.
+1. Sammelinfo
+2. Prüfung
+3. Empfohlener nächster Schritt
+4. Schnellaktionen
+
+Nur `renderOverviewCards()` erzeugt diese Kacheln. Fachrenderer liefern Daten, Status, Hinweise, nächsten Schritt und Aktionen, aber kein eigenes Übersichtskarten-HTML.
+
+Die Höhe ist dynamisch. `--overview-card-min-height: 184px` ist nur eine Mindesthöhe. Es gibt keine feste Maximalhöhe und kein `overflow: hidden` für normale Kachelinhalte.
+
+## 4. Zentrale Schnellaktionen und Buttons
+
+Schnellaktionen sind echte Buttons im Container `overview-card__actions quick-actions`. Linklisten, Trennlinien und tabbezogene Sonderstile sind nicht zulässig. Breite, Höhe, Schrift, Rundung und Innenabstände werden zentral definiert.
+
+## 5. Zentrale Tabregistrierung
+
+Alle Tabs werden einmal in `TAB_DEFINITIONS` registriert. Die Definition enthält mindestens:
+
+- Titel,
+- Kategorie/Kicker,
+- fachlichen Renderer,
+- Übersichtsdaten-Provider,
+- Standardziel für den nächsten Schritt,
+- bei Bedarf Zieltab der Prozesskette.
+
+Ein neuer Tab muss nach Registrierung automatisch den gemeinsamen Kopf, die vier Kacheln, Standardbuttons und die Strukturprüfung erhalten. Neue parallele Header-, Karten- oder Upgrade-Systeme sind nicht zulässig.
+
+## 6. Statische Klappboxstruktur
+
+Fachliche Bereiche stehen statisch als `details.page-section` an ihrer endgültigen Position. Sie beginnen beim erstmaligen Öffnen des Tabs geschlossen. Eine Eingabe oder Teilrendering darf einen vom Nutzer geöffneten Bereich nicht unerwartet schließen.
+
+Die letzte Klappbox jedes Tabs trägt `data-section-role="validation"`. Die Prüfbox wird nicht anhand sichtbarer Wörter erkannt. Ein Tab ohne ausgearbeitete Prüfregeln enthält dennoch eine Prüfbox mit einem klaren Platzhalterhinweis.
+
+Eine fachlich notwendige Fußnote steht nach der Prüfbox, niemals in ihr und niemals als eigene Karte oder Klappbox.
+
+## 7. Tabellen
+
+Tabellenbreiten folgen dem Inhalt. Kurze, numerische, Datums-, Status- und Aktionsspalten bleiben kompakt; Textspalten dürfen wachsen und umbrechen. Zahlen und Währungen sind rechtsbündig. Horizontales Scrollen wird nur bei tatsächlich breiten Datentabellen verwendet.
+
+## 8. Verbotene Architekturpfade
+
+Nicht erneut einführen:
+
+- Laufzeit-DOM-Verschiebungen zur Herstellung der Seitenstruktur,
+- parallele Kartenrenderer oder verschachtelte Kartengitter,
+- mehrere nachträgliche UI-Upgrade-Schichten,
+- tababhängige Body-Klassen zur Steuerung des allgemeinen Seitenlayouts,
+- Textsuche zur Erkennung der Prüfbox,
+- feste Kartenhöhen mit abgeschnittenem Inhalt,
+- Layoutkorrekturen, deren Ergebnis von der Aufrufreihenfolge abhängt.
+
+## 9. Fachlogik schützen
+
+UI-Änderungen dürfen Berechnungs-, Umlage-, Vorauszahlungs-, Salden-, Brief-, Export-, Archiv-, Sicherungs- oder Migrationslogik nicht beiläufig verändern. Bestehende IDs und Eingabefelder bleiben erhalten, soweit fachliche Renderer davon abhängen. Nach strukturellen Änderungen sind Syntax-, Struktur-, Interaktions- und Ergebnisvergleichstests auszuführen.
+
+## 10. Späterer Fachpunkt: Einmalige Korrekturen und Gutschriften
+
+V99.2 setzt diesen Fachpunkt ausdrücklich nicht um. Die bestehende Tabellenspalte bleibt erhalten; die neue Klappbox enthält nur den Platzhalter „Korrektur hierher überführen“.
 
 Später vorgesehen:
-- eigenes Datenmodell für mehrere Korrekturen je Mieter
-- Zuordnung zu einer Nebenkostenart
-- Richtung „zugunsten des Mieters“ oder „zulasten des Mieters“
-- Begründung und gegebenenfalls Buchungsdatum
-- Anpassung von Umlageergebnis, Briefen, Qualitätsprüfung, Export und Archiv
-- Migration bestehender Werte aus `vorjahresKorrektur`
 
-Für die nächste rein strukturelle Version gilt:
-- keine Änderung der Rechenlogik
-- keine Änderung des Datenmodells
-- die bisherige Korrekturspalte bleibt fachlich zunächst unverändert
-- zusätzlich wird im Tab „Kaltmiete & NK-Vorauszahlungen“ eine eigene, standardmäßig geschlossene Klappbox angelegt
-- Inhalt der Klappbox zunächst nur als Platzhalter:
+- eigenes Datenmodell,
+- mehrere Korrekturen pro Mieter,
+- Kostenartenzuordnung,
+- Belastung oder Gutschrift zugunsten beziehungsweise zulasten des Mieters,
+- Anpassung von Berechnung, Briefen und Export.
 
-> Korrektur hierher überführen
+Diese Erweiterung braucht eine eigene fachliche Spezifikation und Regressionstests.
 
-Die spätere fachliche Umsetzung darf erst nach Definition und Test der vollständigen Rechen-, Brief-, Export- und Migrationslogik erfolgen.
+## 11. Abnahme eines neuen Tabs
 
-## V98.9 – Zwischenstand der Korrektur-Umsortierung
+Vor Freigabe ist mindestens zu prüfen:
 
-In V98.9 wird ausschließlich eine neue, standardmäßig geschlossene Klappbox „Einmalige Korrektur / Gutschrift“ mit dem Platzhalter „Korrektur hierher überführen“ angelegt.
-
-Die bestehende Spalte „Einmalige Korrektur / Gutschrift“ verbleibt vorerst unverändert in der Tabelle „Kaltmieteinnahmen“. Datenmodell, Rechenlogik, Briefe und Exporte bleiben unverändert. Die vollständige fachliche Überführung erfolgt erst in einer späteren, separat definierten Ausbaustufe.
-
-
-## Verbindlicher UI-Referenzstandard ab V99.0
-
-Der Tab „Kaltmiete & NK-Vorauszahlungen“ ist die verbindliche Layoutreferenz für alle Bearbeitungstabs außer Dashboard. Übertragen werden Kopfzeile, prominente mittige Zeitraumdarstellung, Kachelaufbau, Schriftgrößen, Abstände, Buttonpositionierung, Inhaltsbreite und seitliche Außenabstände. Jede künftige Version muss explizit prüfen, ob alle neun Bearbeitungstabs diesen Standard erhalten haben.
-
-## V99.1 – Verbindliche globale Formatgrundregel
-
-Die visuelle Grundregel gilt für Dashboard und alle Abrechnungstabs.
-
-Verbindlich:
-- die obere weiße Kopfzeile bleibt auf jeder Seite sichtbar
-- identischer Seitenabstand und identische Inhaltsbreite
-- einheitlicher Tab-Kopf mit Titel, prominentem Abrechnungszeitraum und Aktionen
-- vier gleich hohe Übersichtskacheln, soweit der Tab Übersichtskacheln besitzt
-- Kachelhöhe 168 px auf Desktop
-- definierter Abstand von 12 px zwischen letztem Textinhalt und Buttonbereich
-- Buttons stehen auf derselben Grundlinie
-- alte tab-spezifische Regeln dürfen die globale Kopfzeile oder das Standardlayout nicht ausblenden
-- Dashboard wird zunächst bewusst nach derselben Regel formatiert; spätere Dashboard-Sonderregeln werden separat definiert
-
-Die Prüfung muss den tatsächlich gerenderten Zustand erfassen, insbesondere Sichtbarkeit der weißen Kopfzeile und gleiche Kachelhöhen.
-
+- eine Hauptüberschrift und ein Kopfbereich,
+- tatsächlicher Zeitraum sichtbar,
+- genau ein Kachelgrid mit vier direkten Kacheln,
+- korrekte Titel und Reihenfolge,
+- Schnellaktionen ausschließlich als Buttons,
+- keine alten oder verschachtelten Karten,
+- Klappboxen beim ersten Öffnen geschlossen,
+- Prüfbox zuletzt,
+- Fußnote gegebenenfalls danach,
+- keine Überlagerung oder abgeschnittene Inhalte,
+- stabil bei Navigation, programmgesteuertem Wechsel, Teilrendering, Speichern und Laden,
+- responsive Darstellung auf großen, mittleren und schmalen Ansichten.
