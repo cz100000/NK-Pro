@@ -48,3 +48,6 @@ Klappbox-Kopfzeilen verwenden nun eine helle Blaugrau-Fläche mit dunkelblauem A
 ## V98.4 – Neuveröffentlichung
 
 Diese Version ist optisch und funktional identisch zu V98.3. Sie besitzt lediglich eine neue Versions- und Cache-Kennung, damit GitHub Pages die Veröffentlichung eindeutig neu lädt.
+
+## V98.5
+Kostenarten-Feinschliff und vollständige Überführung des Tabs Mieter & Wohnungen in das einheitliche Bedienkonzept. Berechnungslogik unverändert.

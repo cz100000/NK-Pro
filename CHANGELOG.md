@@ -96,3 +96,13 @@
 - Neue Versionskennung V98.4.
 - Neue Service-Worker-Cache-Kennung `nk-pro-v98-4`.
 - Keine Änderung an Berechnungs-, Speicher-, Archiv- oder Brieflogik.
+
+## V98.5 – Mieter & Wohnungen im einheitlichen Look
+- Browser-Tab-Titel eindeutig auf V98.5 korrigiert.
+- Ungenutzten Kopieren-Button im Kostenarten-Tab entfernt.
+- Kostenarten-Zeilen vereinheitlicht; Preis je Einheit kompakt mit Stift-Symbol.
+- Einheitspreis wird in einem kleinen Bearbeitungsdialog geändert; Auto-Preis-Funktion bleibt erhalten.
+- Buttons in den oberen Übersichtskacheln auf gleiche Höhe ausgerichtet.
+- Rundere Tabelle aus Abschnitt 2 als Tabellenstandard auf alle Tabellen übertragen.
+- Tab Mieter & Wohnungen mit Seitenkopf, Übersichtskacheln, sanften Klappboxen, Innenrändern und Kontrollsummen neu gestaltet.
+- Keine Änderung an Berechnungs-, Speicher-, Archiv- oder Brieflogik.
