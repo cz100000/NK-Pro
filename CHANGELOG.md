@@ -1,5 +1,22 @@
 # Changelog
 
+## V99.2.2 – Praxisanpassungen aus dem Abnahmelauf
+
+### Angepasst
+
+- Im Tab „Mieter & Wohnungen“ den Bestandsabgleich in „Prüfung und Plausibilität“ verschoben und die separate erste Klappbox entfernt.
+- Verbleibende Klappboxen in „Mieter & Wohnungen“ neu nummeriert und zentrale Schnellaktionen auf die neue Struktur umgestellt.
+- Mieter-ID und Mietername ausschließlich in der Tabelle „Umlage pro Mietverhältnis / Wohnung“ größer dargestellt.
+- Blauen Einleitungshinweis im Bereich „Kaltmieteinnahmen“ vollständig entfernt.
+- Tabellen im Tab „Zählerstände“ horizontal bündig zum Referenztab „Kaltmiete & NK-Vorauszahlungen“ ausgerichtet.
+- WORKBOOK um die fachliche Überarbeitung der Vorjahresübernahme und die noch zu entwickelnde Prüfroutine für Kaltmiete und NK-Vorauszahlungen ergänzt.
+- PWA-Cache auf `nk-pro-v99-2-2` erhöht.
+
+### Unverändert
+
+- Berechnungs-, Umlage-, Vorauszahlungs-, Brief-, Archiv-, Export- und Datenmigrationslogik.
+- Bestehende Platzhalter-Klappbox „Einmalige Korrektur / Gutschrift“ und deren späterer Fachauftrag.
+
 ## V99.2.1 – UI-Feinschliff nach Praxistest
 
 ### Angepasst

@@ -1,7 +1,7 @@
 {
-  "name": "NK-Pro V99.2.1 – Nebenkostenabrechnung",
-  "short_name": "NK-Pro V99.2.1",
-  "description": "Lokale Nebenkostenabrechnung mit breiter Arbeitsfläche, blauem Buttonsystem und horizontal scrollbaren Datentabellen.",
+  "name": "NK-Pro V99.2.2 – Nebenkostenabrechnung",
+  "short_name": "NK-Pro V99.2.2",
+  "description": "Lokale Nebenkostenabrechnung mit konsolidierter Oberfläche und gezielten Praxisanpassungen an Tabs und Tabellen.",
   "lang": "de-DE",
   "id": "./",
   "start_url": "./",
@@ -9,7 +9,7 @@
   "display": "standalone",
   "background_color": "#f6f8fa",
   "theme_color": "#183b56",
-  "version": "99.2.1",
+  "version": "99.2.2",
   "icons": [
     {
       "src": "./icons/icon-192.png",

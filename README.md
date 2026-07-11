@@ -1,7 +1,15 @@
-# NK-Pro V99.2.1 – UI-Feinschliff für Arbeitsfläche und Tabellen
+# NK-Pro V99.2.2 – Praxisanpassungen an Tabs und Tabellen
 
 NK-Pro ist eine lokal nutzbare HTML-/JavaScript-Anwendung zur Erstellung von Nebenkostenabrechnungen. Die Anwendung kann direkt im Browser oder als GitHub-Pages-PWA betrieben werden; die Arbeitsdaten bleiben im Browser gespeichert.
 
+
+## Änderungen in V99.2.2
+
+- **Mieter & Wohnungen:** Der Bestandsabgleich wurde in die letzte Klappbox „Prüfung und Plausibilität“ verschoben; die ehemalige erste Klappbox entfällt und die verbleibenden Bereiche sind neu nummeriert.
+- **Kostenarten & Einstellungen:** In „Umlage pro Mietverhältnis / Wohnung“ sind nur Mieter-ID und Mietername größer und besser lesbar.
+- **Kaltmiete & NK-Vorauszahlungen:** Der blaue Einleitungshinweis oberhalb der Kaltmiettabelle wurde entfernt.
+- **Zählerstände:** Alle breiten Zählertabellen beginnen nun bündig an derselben horizontalen Position wie die Tabellen im Referenztab „Kaltmiete & NK-Vorauszahlungen“.
+- **WORKBOOK:** Die fachliche Überarbeitung der Vorjahresübernahme sowie die Entwicklung einer eigenen Prüfroutine für Kaltmiete und NK-Vorauszahlungen sind verbindlich dokumentiert.
 
 ## Änderungen in V99.2.1
 
@@ -52,7 +60,7 @@ Parallele Kartenrenderer, tababhängige Layoutschichten und nachträgliche DOM-U
 
 Den Inhalt der ZIP-Datei unverändert in das Veröffentlichungsverzeichnis des GitHub-Repositories kopieren und GitHub Pages für diesen Branch/Ordner aktivieren. Die Datei `.nojekyll` verhindert eine unnötige Jekyll-Verarbeitung.
 
-Der Service Worker verwendet den neuen Cache-Namen `nk-pro-v99-2-1`. Dadurch werden alte V99.1-Caches beim Aktivieren der neuen Version entfernt.
+Der Service Worker verwendet den neuen Cache-Namen `nk-pro-v99-2-2`. Dadurch werden ältere V99.2.x-Caches beim Aktivieren der neuen Version entfernt.
 
 ## Dateien
 
@@ -62,8 +70,8 @@ Der Service Worker verwendet den neuen Cache-Namen `nk-pro-v99-2-1`. Dadurch wer
 - `README.md` – Nutzung und Auslieferung
 - `CHANGELOG.md` – Änderungen der Version
 - `WORKBOOK.md` – verbindliche Architekturregeln
-- `UI_ARCHITEKTUR_V99_2_1.md` – technische Konsolidierungsdokumentation
-- `V99_2_1_Pruefbericht.json` – strukturierter Prüfbericht
+- `UI_ARCHITEKTUR_V99_2_2.md` – technische Konsolidierungsdokumentation
+- `V99_2_2_Pruefbericht.json` – strukturierter Prüfbericht
 - `SHA256SUMS.txt` – Prüfsummen der ausgelieferten Dateien
 
 ## Prüfung

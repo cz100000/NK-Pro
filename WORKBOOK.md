@@ -1,4 +1,4 @@
-# WORKBOOK – NK-Pro V99.2.1
+# WORKBOOK – NK-Pro V99.2.2
 
 Dieses Dokument enthält die verbindlichen technischen Regeln für die weitere Entwicklung von NK-Pro.
 
@@ -11,6 +11,39 @@ Dieses Dokument enthält die verbindlichen technischen Regeln für die weitere E
 - Breite Datentabellen liegen in einem horizontal scrollbaren Tabellenrahmen.
 - Tabellen dürfen nicht allein durch generelles Umbrechen so zusammengestaucht werden, dass der horizontale Überlauf verschwindet.
 - Nur ausdrücklich als Langtext gekennzeichnete Zellen brechen um.
+
+
+## Praxisanpassungen V99.2.2
+
+- Im Tab **Mieter & Wohnungen** liegt der Bestands- und Abrechnungsabgleich nicht mehr in einer eigenen ersten Klappbox. Die Inhalte und die Übernahmeaktion stehen in **Prüfung und Plausibilität**. Die verbleibenden Klappboxen werden fortlaufend neu nummeriert.
+- In **Kostenarten & Einstellungen → Umlage pro Mietverhältnis / Wohnung** werden ausschließlich die Mieter-ID und der Mietername in den Mieter-Spalten größer dargestellt. Andere Spalten bleiben typografisch unverändert.
+- Der einleitende blaue Hinweisblock in **Kaltmiete & NK-Vorauszahlungen → Kaltmieteinnahmen** entfällt.
+- Tabellen im Tab **Zählerstände** beginnen horizontal an derselben Standardposition wie Tabellen in **Kaltmiete & NK-Vorauszahlungen**. Tabbezogene Vollbreiten-Sonderformatierungen dürfen diesen gemeinsamen Tabellenbeginn nicht mehr aufheben.
+
+## Fachlicher Entwicklungsauftrag: Vorjahresübernahme der NK-Vorauszahlungen
+
+Die heutige Meldung zur Vorjahresübernahme, beispielsweise „144 Werte übernommen, davon 19 mit Vorauszahlungsanpassung“, ist fachlich und sprachlich nicht ausreichend nachvollziehbar. Vor einer Überarbeitung der Oberfläche muss geklärt und dokumentiert werden:
+
+- welche konkrete Dateneinheit als „übernommener Wert“ gezählt wird,
+- wie Anpassungen innerhalb des Vorjahres in den neuen Anfangswert einfließen,
+- ob die bestehende Übernahmelogik für alle Kostenarten und unterjährige Mietverhältnisse fachlich richtig ist,
+- welche Ausgangs- und Zielwerte dem Nutzer gezeigt werden müssen,
+- wie eine verständliche, prüfbare Meldung ohne missverständliche Gesamtzahl formuliert wird.
+
+Die Logik und die Meldung dürfen erst nach dieser fachlichen Definition geändert werden.
+
+## Fachlicher Entwicklungsauftrag: Prüfung Kaltmiete & NK-Vorauszahlungen
+
+Für die Klappbox **Prüfung und Plausibilität** im Tab **Kaltmiete & NK-Vorauszahlungen** muss eine eigene fachliche Prüfroutine entwickelt werden. Der aktuelle allgemeine Prüfstatus reicht dafür nicht aus. Die spätere Routine soll mindestens untersuchen:
+
+- Vollständigkeit der Kaltmieten und NK-Vorauszahlungen,
+- Soll-/Ist-Abweichungen der Kaltmiete,
+- fehlende, negative oder offensichtlich unplausible Beträge,
+- auffällige Abweichungen zum Vorjahr,
+- Besonderheiten bei unterjährigen Mietverhältnissen und Mieterwechseln,
+- Widersprüche zwischen aktivierten Kostenarten und erfassten Vorauszahlungen.
+
+Bis zur fachlichen Spezifikation bleibt die bestehende Platzhalteranzeige erhalten. Diese Dokumentation ist kein Auftrag, die Prüflogik ohne abgestimmte Regeln vorzeitig zu implementieren.
 
 ## 1. Gemeinsamer Seitenrahmen
 
