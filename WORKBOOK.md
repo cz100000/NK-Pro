@@ -57,3 +57,8 @@ Die spätere fachliche Umsetzung darf erst nach Definition und Test der vollstä
 In V98.9 wird ausschließlich eine neue, standardmäßig geschlossene Klappbox „Einmalige Korrektur / Gutschrift“ mit dem Platzhalter „Korrektur hierher überführen“ angelegt.
 
 Die bestehende Spalte „Einmalige Korrektur / Gutschrift“ verbleibt vorerst unverändert in der Tabelle „Kaltmieteinnahmen“. Datenmodell, Rechenlogik, Briefe und Exporte bleiben unverändert. Die vollständige fachliche Überführung erfolgt erst in einer späteren, separat definierten Ausbaustufe.
+
+
+## Verbindlicher UI-Referenzstandard ab V99.0
+
+Der Tab „Kaltmiete & NK-Vorauszahlungen“ ist die verbindliche Layoutreferenz für alle Bearbeitungstabs außer Dashboard. Übertragen werden Kopfzeile, prominente mittige Zeitraumdarstellung, Kachelaufbau, Schriftgrößen, Abstände, Buttonpositionierung, Inhaltsbreite und seitliche Außenabstände. Jede künftige Version muss explizit prüfen, ob alle neun Bearbeitungstabs diesen Standard erhalten haben.

@@ -61,7 +61,7 @@ Alle Arbeitstabs verwenden nun tatsächlich die Struktur Seitenkopf, Kachelüber
 ## V98.8
 Einheitliche kompakte Sammelkacheln, feste rechte Kacheln für nächsten Schritt und Schnellaktionen sowie standardmäßig geschlossene Klappboxen.
 
-## V98.9
+## V99.0
 
 - Einheitliche Kachelstruktur in allen Bearbeitungstabs außer Dashboard: Sammelinfo, Prüfung, empfohlener nächster Schritt und Schnellaktionen.
 - „Kaltmiete & NK-Vorauszahlungen“ dient als visuelle Referenz für Kachel- und Schriftgrößen.
@@ -72,3 +72,7 @@ Einheitliche kompakte Sammelkacheln, feste rechte Kacheln für nächsten Schritt
 - Der Button „Neu berechnen“ wurde im Bereich „Kostenarten & Einstellungen“ entfernt; die fachlich passende Neuberechnung im Umlagetab bleibt bestehen.
 - Neue geschlossene Platzhalter-Klappbox „Einmalige Korrektur / Gutschrift“ mit dem Text „Korrektur hierher überführen“.
 - Keine Änderung von Datenmodell, Berechnungs-, Brief-, Speicher-, Archiv- oder Exportlogik.
+
+
+## V99.0 Referenzformat
+Der optimierte Tab „Kaltmiete & NK-Vorauszahlungen“ dient als verbindliche Layoutreferenz für alle Bearbeitungstabs außer Dashboard. Der Zeitraum steht prominent mittig im Kopf, die Kacheln erhalten mehr Abstand vor den Buttons und die seitlichen Außenabstände wurden reduziert.

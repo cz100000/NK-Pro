@@ -1,3 +1,14 @@
+# V99.0 – Referenzformat für alle Bearbeitungstabs
+
+- „Kaltmiete & NK-Vorauszahlungen“ als verbindliches Referenzformat festgelegt.
+- Abrechnungszeitraum prominent und mittig auf Höhe des Haupttitels dargestellt.
+- Etwas mehr Abstand zwischen Kacheltext und Aktionsbuttons.
+- Seitliche graue Außenflächen reduziert; obere weiße Leiste bleibt bestehen.
+- Format auf Mieter & Wohnungen, Kostenarten & Einstellungen, Zählerstände, Nebenkostenumlage, Vorauszahlungsanpassung, Qualitätsprüfung, Abrechnungsbriefe und Export übertragen.
+- Dashboard bewusst ausgenommen.
+- Laufende Formatprüfung für alle neun Bearbeitungstabs ergänzt.
+- Keine Änderung an Datenmodell oder Rechenlogik.
+
 # Changelog
 
 ## V96.1 – Workflow-Dashboard · Stufe 1
