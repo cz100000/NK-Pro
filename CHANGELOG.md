@@ -1,5 +1,25 @@
 # Changelog
 
+## V99.2.4 – Mock-up-genaue Navigation
+
+### Neu und angepasst
+
+- Linke Navigation exakt nach dem freigegebenen schlichten Zielbild umgesetzt.
+- Dunkelblaue Seitenleiste mit NK-PRO-Logo, doppeltem Einklapppfeil, Abrechnungsjahr und grünem Bearbeitungsstatus.
+- Feste Bereiche Übersicht, Stammdaten, Abrechnung und System ohne Kartenrahmen oder Baumlinien.
+- Symbole, Einzüge, Abstände und Trennlinien entsprechend dem Zielbild vereinheitlicht.
+- Vier Workflowphasen als Accordion; immer genau eine Phase geöffnet.
+- Aktiven Unterpunkt mit hellblauer Fläche, linkem blauen Balken und blauem Statuspunkt dargestellt.
+- Inaktive Unterpunkte mit grauem Statuspunkt und Phasen mit Dokument-Icon dargestellt.
+- Sichtbare Navigationsbezeichnungen auf die im Zielbild freigegebenen Kurztexte umgestellt.
+- Navigation oben und unten einklappbar; Wiederöffnung über den bestehenden Kopfleisten-Schalter.
+- PWA-Cache auf `nk-pro-v99-2-4` erhöht.
+
+### Unverändert
+
+- Technische Tab-IDs und vollständige Tab-Titel.
+- Datenmodell sowie Berechnungs-, Umlage-, Vorauszahlungs-, Brief-, Archiv-, Export- und Migrationslogik.
+
 ## V99.2.3 – Aufklappbare Workflow-Navigation
 
 ### Neu und angepasst

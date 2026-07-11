@@ -1,7 +1,7 @@
 {
-  "name": "NK-Pro V99.2.3 – Nebenkostenabrechnung",
-  "short_name": "NK-Pro V99.2.3",
-  "description": "Lokale Nebenkostenabrechnung mit konsolidierter Oberfläche und aufklappbarer Workflow-Navigation.",
+  "name": "NK-Pro V99.2.4 – Nebenkostenabrechnung",
+  "short_name": "NK-Pro V99.2.4",
+  "description": "Lokale Nebenkostenabrechnung mit mock-up-genauer, schlichter Workflow-Navigation.",
   "lang": "de-DE",
   "id": "./",
   "start_url": "./",
@@ -9,7 +9,7 @@
   "display": "standalone",
   "background_color": "#f6f8fa",
   "theme_color": "#183b56",
-  "version": "99.2.3",
+  "version": "99.2.4",
   "icons": [
     {
       "src": "./icons/icon-192.png",

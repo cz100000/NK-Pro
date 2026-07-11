@@ -1,4 +1,4 @@
-# WORKBOOK – NK-Pro V99.2.3
+# WORKBOOK – NK-Pro V99.2.4
 
 Dieses Dokument enthält die verbindlichen technischen Regeln für die weitere Entwicklung von NK-Pro.
 
@@ -13,34 +13,44 @@ Dieses Dokument enthält die verbindlichen technischen Regeln für die weitere E
 - Nur ausdrücklich als Langtext gekennzeichnete Zellen brechen um.
 
 
-## Workflow-Navigation V99.2.3
+## Verbindliche Navigation V99.2.4
 
-Die linke Hauptnavigation bildet den fachlichen Arbeitsablauf ab und verwendet maximal drei sichtbare Stufen: Hauptbereich, Abrechnungsphase und Tab. Die verbindliche Struktur lautet:
+Das freigegebene Navigations-Mock-up ist die verbindliche visuelle Referenz. Von Texten, Symbolen, Reihenfolge, Einzügen, Abständen, Trennlinien, Aufklapppfeilen, Dokument-Icons, Statuspunkten, Farben oder Hervorhebungen darf ohne vorherige ausdrückliche Abstimmung nicht abgewichen werden.
 
-1. **Start & Stammdaten**
-   - Abrechnungsübersicht
-   - Mieterverwaltung
-   - Wohnungsverwaltung
-2. **Aktuelle Abrechnung [Jahr]**
-   - Abrechnungsstatus
-   - 1. Grundlagen: Mieter & Wohnungen; Kostenarten & Einstellungen
-   - 2. Einnahmen & Verbräuche: Kaltmiete & NK-Vorauszahlungen; Zählerstände
-   - 3. Berechnung: Nebenkostenumlage; Vorauszahlungsanpassung
-   - 4. Prüfung & Ausgabe: Qualitätsprüfung; Abrechnungsbriefe; Abrechnung exportieren
-3. **System**
-   - Datensicherung & System
+Verbindliche sichtbare Struktur:
 
-Verbindliche Regeln:
+1. Kopfbereich mit Gebäudelogo, **NK-PRO** und doppeltem Einklapppfeil.
+2. Statuszeile **ABRECHNUNG [Jahr]** mit grünem Status **in Bearbeitung**; bei Archiv, Finalisierung oder fehlender Abrechnung darf ausschließlich der Statustext fachlich angepasst werden.
+3. **ÜBERSICHT**
+   - Abrechnungsübersicht mit Tacho-Icon
+   - Abrechnungsstatus mit Prüflisten-Icon
+4. **STAMMDATEN**
+   - Mieter mit Personen-Icon
+   - Wohnungen mit Haus-Icon
+5. **ABRECHNUNG**
+   - 1 Grundlagen: Mieter & Wohnungen; Kostenarten
+   - 2 Einnahmen & Verbräuche: Miete & Vorauszahlungen; Zählerstände
+   - 3 Berechnung: Nebenkostenumlage; Neue Vorauszahlungen
+   - 4 Prüfung & Ausgabe: Qualitätsprüfung; Abrechnungsbriefe; Export
+6. **SYSTEM**
+   - Datensicherung mit Datenbank-Icon
+7. Abschlusszeile mit Linkspfeil und **Navigation einklappen**.
 
-- Technische Tab-IDs bleiben stabil und werden durch die Navigation nicht umbenannt.
-- Jeder Tab ist genau einmal in der Navigation enthalten.
-- Direkte Klicks, Schnellaktionen und programmgesteuerte Tabwechsel öffnen automatisch den vollständigen Pfad des aktiven Tabs.
-- Manuelle Aufklappzustände werden lokal gespeichert; ein aktiver Pfad darf dennoch niemals verborgen bleiben.
-- Ohne aktive Abrechnung sind die Abrechnungspunkte gesperrt, aber als Workflow sichtbar.
-- In einer Archivansicht werden Start- und Systemzweig ausgeblendet; der Abrechnungszweig zeigt den Archivstatus.
-- Die Baumstruktur darf keine Fachinhalte oder Klappboxen innerhalb eines Tabs duplizieren.
-- Statussymbole dürfen später nur aus echten fachlichen Prüfungen abgeleitet werden. Bereiche ohne Prüfroutine dürfen nicht als vollständig markiert werden.
+Verbindliche Gestaltungsregeln:
 
+- ruhiger dunkelblauer Verlauf ohne Kartenrahmen, Schattenkarten oder Baumlinien,
+- kleine graue Versalüberschriften für die vier Bereiche,
+- dezente horizontale Trennlinien zwischen Bereichen und Workflowphasen,
+- Aufklapppfeil links und Dokument-Icon rechts in jeder Workflowphase,
+- immer genau eine Workflowphase geöffnet,
+- Unterpunkte nur in der geöffneten Phase sichtbar,
+- aktiver Tab mit hellblauer Fläche, blauem Balken links und blauem Punkt rechts,
+- inaktive Workflow-Unterpunkte mit grauem Punkt rechts,
+- keine zusätzlichen Statussymbole oder Badges, solange sie nicht ausdrücklich freigegeben sind,
+- technische Tab-IDs bleiben stabil und jeder Tab ist genau einmal erreichbar,
+- direkte Klicks, Schnellaktionen und programmgesteuerte Tabwechsel öffnen automatisch die passende Phase,
+- der zuletzt geöffnete Phasenzustand wird lokal gespeichert,
+- verkürzte Texte gelten nur in der Navigation; vollständige Seitentitel bleiben erhalten.
 
 ## Praxisanpassungen V99.2.2
 
