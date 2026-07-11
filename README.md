@@ -32,3 +32,7 @@ Der Tab „Kostenarten & Einstellungen“ dient als Pilot für die schrittweise 
 ## V97.3 – Mock-up-Abgleich
 
 Der Kostenarten-Pilot verwendet nun das freigegebene Mock-up als konkrete visuelle Vorgabe. Das betrifft ausschließlich Darstellung und Bedienhierarchie; die bestehende Fachlogik bleibt erhalten.
+
+## V97.4 – Einheitlicher Kostenarten-Tab
+
+Der Kostenarten-Tab besitzt nur noch eine vollständige Ansicht. Kostenarten werden über ein integriertes Auswahlfenster aktiviert und erscheinen direkt in der zentralen Bearbeitungstabelle.

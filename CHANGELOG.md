@@ -40,3 +40,14 @@
 - Kontrollsummen als horizontale Abschlussleiste.
 - Erweiterte Sonderoptionen bleiben vollständig erreichbar.
 - Keine Berechnungs-, Speicher-, Archiv- oder Brieflogik verändert.
+
+## V97.4 – Einheitlicher Kostenarten-Tab
+- Standard-/Erweitert-Umschalter entfernt.
+- Eine vollständige Ansicht enthält alle Kostenartenfelder und Sonderbereiche.
+- Separaten Abschnitt „Kostenarten auswählen“ entfernt.
+- „Kostenart hinzufügen“ öffnet ein Such- und Auswahlfenster.
+- Inaktive vordefinierte Kostenarten werden über den bestehenden `inNK`-Mechanismus aktiviert.
+- Bereits aktive Kostenarten sind im Auswahlfenster gekennzeichnet und nicht doppelt auswählbar.
+- Freie Kostenarten können im Auswahlfenster neu angelegt werden.
+- Sämtliche Tabellen, Dialoge, Buttons und Sonderbereiche an ein gemeinsames Look-and-feel angepasst.
+- Keine Änderung an Berechnungs-, Speicher-, Archiv- oder Brieflogik.
