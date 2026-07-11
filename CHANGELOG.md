@@ -13,3 +13,11 @@
 - Workflow-Status in den Dashboard-Tab der geöffneten Abrechnung verschoben.
 - Fehlplatzierten V96.1-Architekturtest in den regulären App-Selbsttest verschoben.
 - Keine Berechnungs-, Umlage-, Brief-, Archiv- oder Speicherlogik verändert.
+
+## V97.1 – Neues Grundgerüst
+- Neues visuelles App-Grundgerüst mit fester linker Navigation.
+- Kompakte Arbeitskopfzeile mit dem Namen des aktiven Tabs.
+- Bestehende Start- und Abrechnungstabs in der Navigation gruppiert.
+- Mobile Navigation als einblendbare Seitenleiste.
+- Druckansichten blenden Navigationsrahmen weiterhin aus.
+- Keine Tabellen, Formulare, Berechnungs-, Speicher-, Archiv- oder Brieflogik verändert.

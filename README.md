@@ -14,3 +14,13 @@ Keine JSON-Backups oder personenbezogenen Daten ins öffentliche Repository lade
 
 ## V96.1
 Erste kleine Workflow-Ausbaustufe. Die Startseite zeigt vorhandene Qualitätsprüfungen kompakt nach Arbeitsbereichen.
+
+## V97.1 – Neues Grundgerüst
+
+V97.1 führt ausschließlich einen neuen visuellen Seitenrahmen ein:
+
+- linke Navigation
+- kompakte Arbeitskopfzeile
+- responsive mobile Navigation
+
+Die Inhalte und Funktionen der einzelnen Tabs entsprechen V96.2.
