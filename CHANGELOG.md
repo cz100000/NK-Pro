@@ -1,5 +1,23 @@
 # Changelog
 
+## V99.2.3 – Aufklappbare Workflow-Navigation
+
+### Neu und angepasst
+
+- Linke Navigation als aufklappbare Baumstruktur mit drei Hauptbereichen aufgebaut.
+- Abrechnungsworkflow in vier nummerierte Phasen gegliedert.
+- Abrechnungsjahr und Bearbeitungs-/Archivstatus direkt im Navigationszweig angezeigt.
+- Aktiven Navigationspfad bei direkten und programmgesteuerten Tabwechseln automatisch geöffnet.
+- Aufklappzustände lokal gespeichert.
+- Abrechnungsnavigation ohne aktive Abrechnung gesperrt und in der Archivansicht auf den relevanten Zweig reduziert.
+- Sichtbare Titel auf „Abrechnungsstatus“, „Abrechnung exportieren“ und „Datensicherung & System“ präzisiert.
+- PWA-Cache auf `nk-pro-v99-2-3` erhöht.
+
+### Unverändert
+
+- Technische Tab-IDs, Datenmodell und fachliche Renderer.
+- Berechnungs-, Umlage-, Vorauszahlungs-, Brief-, Archiv-, Export- und Migrationslogik.
+
 ## V99.2.2 – Praxisanpassungen aus dem Abnahmelauf
 
 ### Angepasst

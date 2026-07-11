@@ -1,0 +1,926 @@
+{
+  "version": "V99.2.3",
+  "name": "NK-Pro V99.2.3 – Aufklappbare Workflow-Navigation",
+  "generatedAt": "2026-07-11T21:18:14.339674+00:00",
+  "sourceVersion": "V99.2.2",
+  "scope": "UI- und Navigationsumbau; keine fachliche Berechnungsänderung",
+  "summary": {
+    "allPassed": true,
+    "tabCount": 14,
+    "rootNavigationGroups": 3,
+    "billingWorkflowPhases": 4,
+    "uniqueNavigationTargets": 14,
+    "pageErrors": 0,
+    "consoleErrors": 0
+  },
+  "navigationArchitecture": {
+    "rootGroups": [
+      "start",
+      "billing",
+      "system"
+    ],
+    "labels": [
+      "Start & Stammdaten",
+      "Aktuelle Abrechnung [Jahr]",
+      "System"
+    ],
+    "billingPhases": {
+      "grundlagen": [
+        "mieter",
+        "einstellungen"
+      ],
+      "einnahmen": [
+        "einnahmen",
+        "wasser"
+      ],
+      "berechnung": [
+        "umlage",
+        "vorauszahlungsanpassung"
+      ],
+      "ausgabe": [
+        "qualitaet",
+        "briefe",
+        "export"
+      ]
+    },
+    "technicalTabIdsUnchanged": true,
+    "activePathAutoExpansion": true,
+    "localStateKey": "nkpro.workflowNavigation.v1",
+    "inactiveBillingTabsDisabled": true,
+    "archiveModeReducesNavigationToBillingBranch": true
+  },
+  "staticChecks": {
+    "ok": true,
+    "errors": [],
+    "navigation": {
+      "rootGroups": [
+        "start",
+        "billing",
+        "system"
+      ],
+      "phases": {
+        "grundlagen": [
+          "mieter",
+          "einstellungen"
+        ],
+        "einnahmen": [
+          "einnahmen",
+          "wasser"
+        ],
+        "berechnung": [
+          "umlage",
+          "vorauszahlungsanpassung"
+        ],
+        "ausgabe": [
+          "qualitaet",
+          "briefe",
+          "export"
+        ]
+      },
+      "tabs": [
+        "start",
+        "mieterverwaltung",
+        "wohnungsverwaltung",
+        "dashboard",
+        "mieter",
+        "einstellungen",
+        "einnahmen",
+        "wasser",
+        "umlage",
+        "vorauszahlungsanpassung",
+        "qualitaet",
+        "briefe",
+        "export",
+        "sicherung"
+      ]
+    },
+    "coreFunctions": {
+      "calculateUmlage": {
+        "foundOld": true,
+        "foundNew": true,
+        "unchanged": true
+      },
+      "syncVorauszahlungen": {
+        "foundOld": true,
+        "foundNew": true,
+        "unchanged": true
+      },
+      "updateTenantPrepaymentTotals": {
+        "foundOld": true,
+        "foundNew": true,
+        "unchanged": true
+      },
+      "validateBriefResult": {
+        "foundOld": true,
+        "foundNew": true,
+        "unchanged": true
+      },
+      "collectQualityChecks": {
+        "foundOld": true,
+        "foundNew": true,
+        "unchanged": true
+      },
+      "renderBrief": {
+        "foundOld": true,
+        "foundNew": true,
+        "unchanged": true
+      },
+      "renderUmlage": {
+        "foundOld": true,
+        "foundNew": true,
+        "unchanged": true
+      },
+      "applyWaterMetersToUmlage": {
+        "foundOld": true,
+        "foundNew": true,
+        "unchanged": true
+      },
+      "createYearSnapshot": {
+        "foundOld": true,
+        "foundNew": true,
+        "unchanged": true
+      },
+      "normalizeLegacyData": {
+        "foundOld": true,
+        "foundNew": true,
+        "unchanged": true
+      }
+    }
+  },
+  "browserInteractionChecks": {
+    "no_page_errors": {
+      "ok": true,
+      "detail": []
+    },
+    "no_relevant_console_errors": {
+      "ok": true,
+      "detail": []
+    },
+    "initial_start_active": {
+      "ok": true,
+      "detail": null
+    },
+    "three_root_groups": {
+      "ok": true,
+      "detail": null
+    },
+    "start_open_initially": {
+      "ok": true,
+      "detail": null
+    },
+    "sidebar_width": {
+      "ok": true,
+      "detail": {
+        "x": 0,
+        "y": 0,
+        "width": 284,
+        "height": 950
+      }
+    },
+    "billing_year_shown": {
+      "ok": true,
+      "detail": "2025"
+    },
+    "billing_context_shown": {
+      "ok": true,
+      "detail": "Abrechnung in Bearbeitung"
+    },
+    "water_active": {
+      "ok": true,
+      "detail": null
+    },
+    "billing_open_for_water": {
+      "ok": true,
+      "detail": null
+    },
+    "income_phase_open_for_water": {
+      "ok": true,
+      "detail": null
+    },
+    "water_button_active": {
+      "ok": true,
+      "detail": null
+    },
+    "income_phase_manual_collapse": {
+      "ok": true,
+      "detail": null
+    },
+    "active_path_reopens": {
+      "ok": true,
+      "detail": null
+    },
+    "system_tab_active": {
+      "ok": true,
+      "detail": null
+    },
+    "system_branch_open": {
+      "ok": true,
+      "detail": null
+    },
+    "system_title": {
+      "ok": true,
+      "detail": "Datensicherung & System"
+    },
+    "letters_active": {
+      "ok": true,
+      "detail": null
+    },
+    "output_phase_open": {
+      "ok": true,
+      "detail": null
+    },
+    "nav_state_stored": {
+      "ok": true,
+      "detail": {
+        "start": true,
+        "billing": true,
+        "system": true,
+        "phase-grundlagen": true,
+        "phase-einnahmen": true,
+        "phase-berechnung": false,
+        "phase-ausgabe": true
+      }
+    },
+    "mobile_sidebar_offcanvas": {
+      "ok": true,
+      "detail": "matrix(1, 0, 0, 1, -285.6, 0)"
+    },
+    "mobile_sidebar_open": {
+      "ok": true,
+      "detail": {
+        "x": 0,
+        "y": 0,
+        "width": 280,
+        "height": 900
+      }
+    },
+    "tree_toggle_visible_mobile": {
+      "ok": true,
+      "detail": null
+    },
+    "no_page_horizontal_overflow": {
+      "ok": true,
+      "detail": {
+        "sw": 1440,
+        "cw": 1440
+      }
+    }
+  },
+  "browserAllTabChecks": {
+    "checks": {
+      "audit_all_tabs": {
+        "ok": true,
+        "detail": {
+          "allPassed": true,
+          "tabCount": 14,
+          "failed": []
+        }
+      },
+      "selftest_navigation": {
+        "ok": true,
+        "detail": [
+          {
+            "severity": "OK",
+            "area": "Navigation",
+            "point": "Workflow-Baumstruktur V99.2.3",
+            "detail": "3 Hauptzweige, 4 Workflowphasen und 14 eindeutige Tabziele"
+          }
+        ]
+      },
+      "no_page_errors": {
+        "ok": true,
+        "detail": []
+      },
+      "no_relevant_console_errors": {
+        "ok": true,
+        "detail": []
+      }
+    },
+    "tabs": {
+      "start": {
+        "ok": true,
+        "active": "start",
+        "buttonActive": true,
+        "path": {
+          "start": true
+        }
+      },
+      "mieterverwaltung": {
+        "ok": true,
+        "active": "mieterverwaltung",
+        "buttonActive": true,
+        "path": {
+          "start": true
+        }
+      },
+      "wohnungsverwaltung": {
+        "ok": true,
+        "active": "wohnungsverwaltung",
+        "buttonActive": true,
+        "path": {
+          "start": true
+        }
+      },
+      "sicherung": {
+        "ok": true,
+        "active": "sicherung",
+        "buttonActive": true,
+        "path": {
+          "system": true
+        }
+      },
+      "dashboard": {
+        "ok": true,
+        "active": "dashboard",
+        "buttonActive": true,
+        "path": {
+          "billing": true
+        }
+      },
+      "mieter": {
+        "ok": true,
+        "active": "mieter",
+        "buttonActive": true,
+        "path": {
+          "billing": true,
+          "phase-grundlagen": true
+        }
+      },
+      "einstellungen": {
+        "ok": true,
+        "active": "einstellungen",
+        "buttonActive": true,
+        "path": {
+          "billing": true,
+          "phase-grundlagen": true
+        }
+      },
+      "einnahmen": {
+        "ok": true,
+        "active": "einnahmen",
+        "buttonActive": true,
+        "path": {
+          "billing": true,
+          "phase-einnahmen": true
+        }
+      },
+      "wasser": {
+        "ok": true,
+        "active": "wasser",
+        "buttonActive": true,
+        "path": {
+          "billing": true,
+          "phase-einnahmen": true
+        }
+      },
+      "umlage": {
+        "ok": true,
+        "active": "umlage",
+        "buttonActive": true,
+        "path": {
+          "billing": true,
+          "phase-berechnung": true
+        }
+      },
+      "vorauszahlungsanpassung": {
+        "ok": true,
+        "active": "vorauszahlungsanpassung",
+        "buttonActive": true,
+        "path": {
+          "billing": true,
+          "phase-berechnung": true
+        }
+      },
+      "qualitaet": {
+        "ok": true,
+        "active": "qualitaet",
+        "buttonActive": true,
+        "path": {
+          "billing": true,
+          "phase-ausgabe": true
+        }
+      },
+      "briefe": {
+        "ok": true,
+        "active": "briefe",
+        "buttonActive": true,
+        "path": {
+          "billing": true,
+          "phase-ausgabe": true
+        }
+      },
+      "export": {
+        "ok": true,
+        "active": "export",
+        "buttonActive": true,
+        "path": {
+          "billing": true,
+          "phase-ausgabe": true
+        }
+      }
+    }
+  },
+  "browserModeChecks": {
+    "archiveMode": {
+      "archive_start_hidden": {
+        "ok": true,
+        "detail": null
+      },
+      "archive_system_hidden": {
+        "ok": true,
+        "detail": null
+      },
+      "archive_billing_visible": {
+        "ok": true,
+        "detail": null
+      },
+      "archive_context": {
+        "ok": true,
+        "detail": "Archiv · schreibgeschützt"
+      }
+    },
+    "noActiveBilling": {
+      "all_billing_tabs_disabled": {
+        "ok": true,
+        "detail": {
+          "disabled": 10,
+          "total": 10
+        }
+      },
+      "no_active_context": {
+        "ok": true,
+        "detail": "Keine Abrechnung geöffnet"
+      },
+      "billing_workflow_still_visible": {
+        "ok": true,
+        "detail": null
+      }
+    }
+  },
+  "protectedLogicComparison": {
+    "coreFunctions": {
+      "calculateUmlage": {
+        "foundOld": true,
+        "foundNew": true,
+        "unchanged": true
+      },
+      "syncVorauszahlungen": {
+        "foundOld": true,
+        "foundNew": true,
+        "unchanged": true
+      },
+      "updateTenantPrepaymentTotals": {
+        "foundOld": true,
+        "foundNew": true,
+        "unchanged": true
+      },
+      "validateBriefResult": {
+        "foundOld": true,
+        "foundNew": true,
+        "unchanged": true
+      },
+      "collectQualityChecks": {
+        "foundOld": true,
+        "foundNew": true,
+        "unchanged": true
+      },
+      "renderBrief": {
+        "foundOld": true,
+        "foundNew": true,
+        "unchanged": true
+      },
+      "renderUmlage": {
+        "foundOld": true,
+        "foundNew": true,
+        "unchanged": true
+      },
+      "applyWaterMetersToUmlage": {
+        "foundOld": true,
+        "foundNew": true,
+        "unchanged": true
+      },
+      "createYearSnapshot": {
+        "foundOld": true,
+        "foundNew": true,
+        "unchanged": true
+      },
+      "normalizeLegacyData": {
+        "foundOld": true,
+        "foundNew": true,
+        "unchanged": true
+      }
+    },
+    "calculationOutputEqualToV99_2_2": true,
+    "stateDifferencesOnlyExpectedReleaseMetadata": true,
+    "expectedReleaseMetadataDifferenceCount": 31,
+    "unexpectedDifferences": []
+  },
+  "tabs": [
+    {
+      "tab": "start",
+      "title": "Abrechnungsübersicht",
+      "headerCount": 1,
+      "overviewGridCount": 1,
+      "directCardCount": 4,
+      "cardTitles": [
+        "Sammelinfo",
+        "Prüfung",
+        "Empfohlener nächster Schritt",
+        "Schnellaktionen"
+      ],
+      "sectionCount": 2,
+      "navigationPath": {
+        "start": true
+      },
+      "checks": {
+        "headerCountIsOne": true,
+        "overviewGridCountIsOne": true,
+        "directCardCountIsFour": true,
+        "cardTitlesCorrect": true,
+        "validationSectionIsLast": true,
+        "navigationTabUnique": true,
+        "programmaticNavigationPathPassed": true
+      },
+      "result": "ok"
+    },
+    {
+      "tab": "mieterverwaltung",
+      "title": "Mieterverwaltung",
+      "headerCount": 1,
+      "overviewGridCount": 1,
+      "directCardCount": 4,
+      "cardTitles": [
+        "Sammelinfo",
+        "Prüfung",
+        "Empfohlener nächster Schritt",
+        "Schnellaktionen"
+      ],
+      "sectionCount": 3,
+      "navigationPath": {
+        "start": true
+      },
+      "checks": {
+        "headerCountIsOne": true,
+        "overviewGridCountIsOne": true,
+        "directCardCountIsFour": true,
+        "cardTitlesCorrect": true,
+        "validationSectionIsLast": true,
+        "navigationTabUnique": true,
+        "programmaticNavigationPathPassed": true
+      },
+      "result": "ok"
+    },
+    {
+      "tab": "wohnungsverwaltung",
+      "title": "Wohnungsverwaltung",
+      "headerCount": 1,
+      "overviewGridCount": 1,
+      "directCardCount": 4,
+      "cardTitles": [
+        "Sammelinfo",
+        "Prüfung",
+        "Empfohlener nächster Schritt",
+        "Schnellaktionen"
+      ],
+      "sectionCount": 2,
+      "navigationPath": {
+        "start": true
+      },
+      "checks": {
+        "headerCountIsOne": true,
+        "overviewGridCountIsOne": true,
+        "directCardCountIsFour": true,
+        "cardTitlesCorrect": true,
+        "validationSectionIsLast": true,
+        "navigationTabUnique": true,
+        "programmaticNavigationPathPassed": true
+      },
+      "result": "ok"
+    },
+    {
+      "tab": "sicherung",
+      "title": "Datensicherung & System",
+      "headerCount": 1,
+      "overviewGridCount": 1,
+      "directCardCount": 4,
+      "cardTitles": [
+        "Sammelinfo",
+        "Prüfung",
+        "Empfohlener nächster Schritt",
+        "Schnellaktionen"
+      ],
+      "sectionCount": 3,
+      "navigationPath": {
+        "system": true
+      },
+      "checks": {
+        "headerCountIsOne": true,
+        "overviewGridCountIsOne": true,
+        "directCardCountIsFour": true,
+        "cardTitlesCorrect": true,
+        "validationSectionIsLast": true,
+        "navigationTabUnique": true,
+        "programmaticNavigationPathPassed": true
+      },
+      "result": "ok"
+    },
+    {
+      "tab": "dashboard",
+      "title": "Abrechnungsstatus",
+      "headerCount": 1,
+      "overviewGridCount": 1,
+      "directCardCount": 4,
+      "cardTitles": [
+        "Sammelinfo",
+        "Prüfung",
+        "Empfohlener nächster Schritt",
+        "Schnellaktionen"
+      ],
+      "sectionCount": 3,
+      "navigationPath": {
+        "billing": true
+      },
+      "checks": {
+        "headerCountIsOne": true,
+        "overviewGridCountIsOne": true,
+        "directCardCountIsFour": true,
+        "cardTitlesCorrect": true,
+        "validationSectionIsLast": true,
+        "navigationTabUnique": true,
+        "programmaticNavigationPathPassed": true
+      },
+      "result": "ok"
+    },
+    {
+      "tab": "qualitaet",
+      "title": "Qualitätsprüfung",
+      "headerCount": 1,
+      "overviewGridCount": 1,
+      "directCardCount": 4,
+      "cardTitles": [
+        "Sammelinfo",
+        "Prüfung",
+        "Empfohlener nächster Schritt",
+        "Schnellaktionen"
+      ],
+      "sectionCount": 4,
+      "navigationPath": {
+        "billing": true,
+        "phase-ausgabe": true
+      },
+      "checks": {
+        "headerCountIsOne": true,
+        "overviewGridCountIsOne": true,
+        "directCardCountIsFour": true,
+        "cardTitlesCorrect": true,
+        "validationSectionIsLast": true,
+        "navigationTabUnique": true,
+        "programmaticNavigationPathPassed": true
+      },
+      "result": "ok"
+    },
+    {
+      "tab": "einstellungen",
+      "title": "Kostenarten & Einstellungen",
+      "headerCount": 1,
+      "overviewGridCount": 1,
+      "directCardCount": 4,
+      "cardTitles": [
+        "Sammelinfo",
+        "Prüfung",
+        "Empfohlener nächster Schritt",
+        "Schnellaktionen"
+      ],
+      "sectionCount": 3,
+      "navigationPath": {
+        "billing": true,
+        "phase-grundlagen": true
+      },
+      "checks": {
+        "headerCountIsOne": true,
+        "overviewGridCountIsOne": true,
+        "directCardCountIsFour": true,
+        "cardTitlesCorrect": true,
+        "validationSectionIsLast": true,
+        "navigationTabUnique": true,
+        "programmaticNavigationPathPassed": true
+      },
+      "result": "ok"
+    },
+    {
+      "tab": "mieter",
+      "title": "Mieter & Wohnungen",
+      "headerCount": 1,
+      "overviewGridCount": 1,
+      "directCardCount": 4,
+      "cardTitles": [
+        "Sammelinfo",
+        "Prüfung",
+        "Empfohlener nächster Schritt",
+        "Schnellaktionen"
+      ],
+      "sectionCount": 3,
+      "navigationPath": {
+        "billing": true,
+        "phase-grundlagen": true
+      },
+      "checks": {
+        "headerCountIsOne": true,
+        "overviewGridCountIsOne": true,
+        "directCardCountIsFour": true,
+        "cardTitlesCorrect": true,
+        "validationSectionIsLast": true,
+        "navigationTabUnique": true,
+        "programmaticNavigationPathPassed": true
+      },
+      "result": "ok"
+    },
+    {
+      "tab": "einnahmen",
+      "title": "Kaltmiete & NK-Vorauszahlungen",
+      "headerCount": 1,
+      "overviewGridCount": 1,
+      "directCardCount": 4,
+      "cardTitles": [
+        "Sammelinfo",
+        "Prüfung",
+        "Empfohlener nächster Schritt",
+        "Schnellaktionen"
+      ],
+      "sectionCount": 4,
+      "navigationPath": {
+        "billing": true,
+        "phase-einnahmen": true
+      },
+      "checks": {
+        "headerCountIsOne": true,
+        "overviewGridCountIsOne": true,
+        "directCardCountIsFour": true,
+        "cardTitlesCorrect": true,
+        "validationSectionIsLast": true,
+        "navigationTabUnique": true,
+        "programmaticNavigationPathPassed": true
+      },
+      "result": "ok"
+    },
+    {
+      "tab": "wasser",
+      "title": "Zählerstände",
+      "headerCount": 1,
+      "overviewGridCount": 1,
+      "directCardCount": 4,
+      "cardTitles": [
+        "Sammelinfo",
+        "Prüfung",
+        "Empfohlener nächster Schritt",
+        "Schnellaktionen"
+      ],
+      "sectionCount": 4,
+      "navigationPath": {
+        "billing": true,
+        "phase-einnahmen": true
+      },
+      "checks": {
+        "headerCountIsOne": true,
+        "overviewGridCountIsOne": true,
+        "directCardCountIsFour": true,
+        "cardTitlesCorrect": true,
+        "validationSectionIsLast": true,
+        "navigationTabUnique": true,
+        "programmaticNavigationPathPassed": true
+      },
+      "result": "ok"
+    },
+    {
+      "tab": "umlage",
+      "title": "Nebenkostenumlage",
+      "headerCount": 1,
+      "overviewGridCount": 1,
+      "directCardCount": 4,
+      "cardTitles": [
+        "Sammelinfo",
+        "Prüfung",
+        "Empfohlener nächster Schritt",
+        "Schnellaktionen"
+      ],
+      "sectionCount": 5,
+      "navigationPath": {
+        "billing": true,
+        "phase-berechnung": true
+      },
+      "checks": {
+        "headerCountIsOne": true,
+        "overviewGridCountIsOne": true,
+        "directCardCountIsFour": true,
+        "cardTitlesCorrect": true,
+        "validationSectionIsLast": true,
+        "navigationTabUnique": true,
+        "programmaticNavigationPathPassed": true
+      },
+      "result": "ok"
+    },
+    {
+      "tab": "vorauszahlungsanpassung",
+      "title": "Vorauszahlungsanpassung",
+      "headerCount": 1,
+      "overviewGridCount": 1,
+      "directCardCount": 4,
+      "cardTitles": [
+        "Sammelinfo",
+        "Prüfung",
+        "Empfohlener nächster Schritt",
+        "Schnellaktionen"
+      ],
+      "sectionCount": 4,
+      "navigationPath": {
+        "billing": true,
+        "phase-berechnung": true
+      },
+      "checks": {
+        "headerCountIsOne": true,
+        "overviewGridCountIsOne": true,
+        "directCardCountIsFour": true,
+        "cardTitlesCorrect": true,
+        "validationSectionIsLast": true,
+        "navigationTabUnique": true,
+        "programmaticNavigationPathPassed": true
+      },
+      "result": "ok"
+    },
+    {
+      "tab": "briefe",
+      "title": "Abrechnungsbriefe",
+      "headerCount": 1,
+      "overviewGridCount": 1,
+      "directCardCount": 4,
+      "cardTitles": [
+        "Sammelinfo",
+        "Prüfung",
+        "Empfohlener nächster Schritt",
+        "Schnellaktionen"
+      ],
+      "sectionCount": 2,
+      "navigationPath": {
+        "billing": true,
+        "phase-ausgabe": true
+      },
+      "checks": {
+        "headerCountIsOne": true,
+        "overviewGridCountIsOne": true,
+        "directCardCountIsFour": true,
+        "cardTitlesCorrect": true,
+        "validationSectionIsLast": true,
+        "navigationTabUnique": true,
+        "programmaticNavigationPathPassed": true
+      },
+      "result": "ok"
+    },
+    {
+      "tab": "export",
+      "title": "Abrechnung exportieren",
+      "headerCount": 1,
+      "overviewGridCount": 1,
+      "directCardCount": 4,
+      "cardTitles": [
+        "Sammelinfo",
+        "Prüfung",
+        "Empfohlener nächster Schritt",
+        "Schnellaktionen"
+      ],
+      "sectionCount": 3,
+      "navigationPath": {
+        "billing": true,
+        "phase-ausgabe": true
+      },
+      "checks": {
+        "headerCountIsOne": true,
+        "overviewGridCountIsOne": true,
+        "directCardCountIsFour": true,
+        "cardTitlesCorrect": true,
+        "validationSectionIsLast": true,
+        "navigationTabUnique": true,
+        "programmaticNavigationPathPassed": true
+      },
+      "result": "ok"
+    }
+  ],
+  "syntax": {
+    "javascriptNodeCheck": "ok",
+    "manifestJson": "ok",
+    "serviceWorkerCache": "nk-pro-v99-2-3"
+  },
+  "browserTestMethod": {
+    "engine": "Chromium headless",
+    "desktopViewport": "1440x950",
+    "mobileViewport": "800x900",
+    "method": "Vollständige tatsächliche index.html als isoliertes Dokument mit ausgeführten Inline-Skripten",
+    "limitation": "Normale Navigation zu lokalen HTTP- und Datei-URLs war administrativ blockiert. Deshalb wurde der Service-Worker-Lebenszyklus nicht als echte GitHub-Pages-Installation Ende-zu-Ende getestet."
+  },
+  "packaging": {
+    "zipFile": "NK-Pro_V99_2_3_Workflow_Navigation_Baumstruktur_GitHub_Edition.zip",
+    "zipIntegrity": "ok",
+    "sha256File": "NK-Pro_V99_2_3_SHA256.txt",
+    "payloadFileCount": 12,
+    "zipTest": "No errors detected in compressed data"
+  }
+}

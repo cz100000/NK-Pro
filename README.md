@@ -1,7 +1,17 @@
-# NK-Pro V99.2.2 – Praxisanpassungen an Tabs und Tabellen
+# NK-Pro V99.2.3 – Aufklappbare Workflow-Navigation
 
 NK-Pro ist eine lokal nutzbare HTML-/JavaScript-Anwendung zur Erstellung von Nebenkostenabrechnungen. Die Anwendung kann direkt im Browser oder als GitHub-Pages-PWA betrieben werden; die Arbeitsdaten bleiben im Browser gespeichert.
 
+
+## Änderungen in V99.2.3
+
+- Die bisher flache linke Seitenleiste wurde durch eine aufklappbare Workflow-Navigation ersetzt.
+- Drei Hauptzweige strukturieren die Anwendung: **Start & Stammdaten**, **Aktuelle Abrechnung [Jahr]** und **System**.
+- Die aktuelle Abrechnung ist in vier Phasen gegliedert: Grundlagen, Einnahmen & Verbräuche, Berechnung sowie Prüfung & Ausgabe.
+- Der aktive Tab öffnet seinen vollständigen Navigationspfad automatisch – auch bei Schnellaktionen und programmgesteuerten Tabwechseln.
+- Manuell geöffnete oder geschlossene Zweige werden lokal im Browser gespeichert.
+- Ohne aktive Abrechnung bleiben die Abrechnungspunkte sichtbar, sind aber gesperrt; in der Archivansicht wird ausschließlich der Abrechnungszweig angezeigt.
+- Sichtbare Bezeichnungen wurden präzisiert: **Abrechnungsstatus**, **Abrechnung exportieren** und **Datensicherung & System**. Technische Tab-IDs und Fachrenderer bleiben unverändert.
 
 ## Änderungen in V99.2.2
 
@@ -38,8 +48,8 @@ Parallele Kartenrenderer, tababhängige Layoutschichten und nachträgliche DOM-U
 1. Abrechnungsübersicht
 2. Mieterverwaltung
 3. Wohnungsverwaltung
-4. Sicherung & Version
-5. Dashboard
+4. Datensicherung & System
+5. Abrechnungsstatus
 6. Mieter & Wohnungen
 7. Kostenarten & Einstellungen
 8. Kaltmiete & NK-Vorauszahlungen
@@ -48,7 +58,7 @@ Parallele Kartenrenderer, tababhängige Layoutschichten und nachträgliche DOM-U
 11. Vorauszahlungsanpassung
 12. Qualitätsprüfung
 13. Abrechnungsbriefe
-14. Abrechnung sichern/exportieren
+14. Abrechnung exportieren
 
 ## Start und Veröffentlichung
 
@@ -60,7 +70,7 @@ Parallele Kartenrenderer, tababhängige Layoutschichten und nachträgliche DOM-U
 
 Den Inhalt der ZIP-Datei unverändert in das Veröffentlichungsverzeichnis des GitHub-Repositories kopieren und GitHub Pages für diesen Branch/Ordner aktivieren. Die Datei `.nojekyll` verhindert eine unnötige Jekyll-Verarbeitung.
 
-Der Service Worker verwendet den neuen Cache-Namen `nk-pro-v99-2-2`. Dadurch werden ältere V99.2.x-Caches beim Aktivieren der neuen Version entfernt.
+Der Service Worker verwendet den neuen Cache-Namen `nk-pro-v99-2-3`. Dadurch werden ältere V99.2.x-Caches beim Aktivieren der neuen Version entfernt.
 
 ## Dateien
 
@@ -70,15 +80,24 @@ Der Service Worker verwendet den neuen Cache-Namen `nk-pro-v99-2-2`. Dadurch wer
 - `README.md` – Nutzung und Auslieferung
 - `CHANGELOG.md` – Änderungen der Version
 - `WORKBOOK.md` – verbindliche Architekturregeln
-- `UI_ARCHITEKTUR_V99_2_2.md` – technische Konsolidierungsdokumentation
-- `V99_2_2_Pruefbericht.json` – strukturierter Prüfbericht
+- `UI_ARCHITEKTUR_V99_2_3.md` – technische Konsolidierungsdokumentation
+- `V99_2_3_Pruefbericht.json` – strukturierter Prüfbericht
 - `SHA256SUMS.txt` – Prüfsummen der ausgelieferten Dateien
 
 ## Prüfung
 
-Die Anwendung wurde statisch, per JavaScript-Syntaxprüfung und in Chromium geprüft. Getestet wurden alle 14 Tabs bei 1440, 1180, 900 und 520 Pixel Breite sowie programmgesteuerte Tabwechsel, Schnellaktion, nächster Schritt, Eingabe, Neuberechnung und Speichern. Ein Vergleich zentraler fachlicher Ergebnisobjekte zwischen V99.1 und der V99.2-Grundarchitektur ergab keine Abweichung im verwendeten mitgelieferten Arbeitsstand.
+Für V99.2.3 wurden zusätzlich zur bestehenden 14-Tab-Strukturprüfung folgende Navigationsszenarien getestet:
 
-Die Browserumgebung erlaubte keine normale Navigation zu einer lokalen HTTP-/Datei-URL. Deshalb wurde die tatsächliche vollständige HTML-Datei in einem isolierten Chromium-Dokument geladen und dort ausgeführt und gerendert. Der Service-Worker-Lebenszyklus wurde dadurch nicht als echte GitHub-Pages-Installation ausgeführt; Cache-Name, Assetliste und JavaScript wurden statisch geprüft.
+- alle 14 Tabs per programmgesteuertem Wechsel,
+- automatisches Öffnen des richtigen Hauptzweigs und der richtigen Workflowphase,
+- manuelles Auf- und Zuklappen,
+- Speicherung der Baumzustände im lokalen Browser-Speicher,
+- Jahres- und Bearbeitungsstatus im Abrechnungszweig,
+- mobile Off-Canvas-Navigation bei 800 Pixel Breite,
+- JavaScript-Syntax und interner App-Selbsttest,
+- Vergleich der geschützten Kernfunktionen mit V99.2.2.
+
+Die normale Navigation zu lokalen HTTP-/Datei-URLs war in der Prüfungsumgebung administrativ blockiert. Deshalb wurde die vollständige tatsächliche `index.html` als isoliertes Chromium-Dokument ausgeführt und gerendert. Der Service-Worker-Lebenszyklus konnte dadurch nicht als echte GitHub-Pages-Installation geprüft werden; Cache-Name, Manifest und Assetliste wurden statisch kontrolliert.
 
 ## Datenschutz und Sicherung
 

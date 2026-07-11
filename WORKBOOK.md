@@ -1,4 +1,4 @@
-# WORKBOOK – NK-Pro V99.2.2
+# WORKBOOK – NK-Pro V99.2.3
 
 Dieses Dokument enthält die verbindlichen technischen Regeln für die weitere Entwicklung von NK-Pro.
 
@@ -11,6 +11,35 @@ Dieses Dokument enthält die verbindlichen technischen Regeln für die weitere E
 - Breite Datentabellen liegen in einem horizontal scrollbaren Tabellenrahmen.
 - Tabellen dürfen nicht allein durch generelles Umbrechen so zusammengestaucht werden, dass der horizontale Überlauf verschwindet.
 - Nur ausdrücklich als Langtext gekennzeichnete Zellen brechen um.
+
+
+## Workflow-Navigation V99.2.3
+
+Die linke Hauptnavigation bildet den fachlichen Arbeitsablauf ab und verwendet maximal drei sichtbare Stufen: Hauptbereich, Abrechnungsphase und Tab. Die verbindliche Struktur lautet:
+
+1. **Start & Stammdaten**
+   - Abrechnungsübersicht
+   - Mieterverwaltung
+   - Wohnungsverwaltung
+2. **Aktuelle Abrechnung [Jahr]**
+   - Abrechnungsstatus
+   - 1. Grundlagen: Mieter & Wohnungen; Kostenarten & Einstellungen
+   - 2. Einnahmen & Verbräuche: Kaltmiete & NK-Vorauszahlungen; Zählerstände
+   - 3. Berechnung: Nebenkostenumlage; Vorauszahlungsanpassung
+   - 4. Prüfung & Ausgabe: Qualitätsprüfung; Abrechnungsbriefe; Abrechnung exportieren
+3. **System**
+   - Datensicherung & System
+
+Verbindliche Regeln:
+
+- Technische Tab-IDs bleiben stabil und werden durch die Navigation nicht umbenannt.
+- Jeder Tab ist genau einmal in der Navigation enthalten.
+- Direkte Klicks, Schnellaktionen und programmgesteuerte Tabwechsel öffnen automatisch den vollständigen Pfad des aktiven Tabs.
+- Manuelle Aufklappzustände werden lokal gespeichert; ein aktiver Pfad darf dennoch niemals verborgen bleiben.
+- Ohne aktive Abrechnung sind die Abrechnungspunkte gesperrt, aber als Workflow sichtbar.
+- In einer Archivansicht werden Start- und Systemzweig ausgeblendet; der Abrechnungszweig zeigt den Archivstatus.
+- Die Baumstruktur darf keine Fachinhalte oder Klappboxen innerhalb eines Tabs duplizieren.
+- Statussymbole dürfen später nur aus echten fachlichen Prüfungen abgeleitet werden. Bereiche ohne Prüfroutine dürfen nicht als vollständig markiert werden.
 
 
 ## Praxisanpassungen V99.2.2
