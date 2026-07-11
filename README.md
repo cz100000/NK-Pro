@@ -1,4 +1,4 @@
-# NK-Pro V94 Entwicklerdiagnose
+# NK-Pro V96.1 Workflow-Dashboard
 
 Fachlich auf V93 basierend. Ergänzt wurden Entwicklerdiagnose, Diagnoseexport, Performance-/Speicheranzeige und kontrollierte Updateprüfung. Berechnungslogik unverändert.
 
@@ -11,3 +11,6 @@ Fachlich auf V93 basierend. Ergänzt wurden Entwicklerdiagnose, Diagnoseexport, 
 Adresse: https://cz100000.github.io/NK-Pro/
 
 Keine JSON-Backups oder personenbezogenen Daten ins öffentliche Repository laden.
+
+## V96.1
+Erste kleine Workflow-Ausbaustufe. Die Startseite zeigt vorhandene Qualitätsprüfungen kompakt nach Arbeitsbereichen.
