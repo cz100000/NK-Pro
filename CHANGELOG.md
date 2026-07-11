@@ -21,3 +21,12 @@
 - Mobile Navigation als einblendbare Seitenleiste.
 - Druckansichten blenden Navigationsrahmen weiterhin aus.
 - Keine Tabellen, Formulare, Berechnungs-, Speicher-, Archiv- oder Brieflogik verändert.
+
+## V97.2 – Pilot-Tab Kostenarten
+- Tab „Kostenarten & Einstellungen“ visuell neu strukturiert.
+- Standardansicht zeigt die häufig benötigten Kernfelder.
+- Erweiterte Ansicht zeigt alle bisherigen Felder und Sonderoptionen.
+- Arbeitsbereiche als einklappbare Abschnitte gegliedert.
+- Kompakte, rein lesende Zusammenfassung ergänzt.
+- Bestehende Eingabefelder, Event-Handler und Fachregeln beibehalten.
+- Keine Berechnungs-, Speicher-, Archiv- oder Brieflogik verändert.
