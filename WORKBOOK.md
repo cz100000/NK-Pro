@@ -1,4 +1,4 @@
-# WORKBOOK – NK-Pro V99.2.7
+# WORKBOOK – NK-Pro V99.2.9
 
 Dieses Dokument enthält die verbindlichen technischen Regeln für die weitere Entwicklung von NK-Pro.
 
@@ -222,7 +222,7 @@ Vor Freigabe ist mindestens zu prüfen:
 - responsive Darstellung auf großen, mittleren und schmalen Ansichten.
 
 
-## Verbindliche Ergänzungen V99.2.7
+## Verbindliche Ergänzungen V99.2.9
 
 ### Physischer Bestand und Periodenstatus
 
@@ -267,3 +267,12 @@ Ein Quellenwechsel mit vorhandenen Werten verlangt eine bewusste Bestätigung. W
 - Eine Vorauszahlungsseite wird nur erzeugt, wenn die Ausgabe aktiviert ist und sich die monatliche Summe des konkreten Empfängers um mindestens 0,01 Euro ändert.
 - Platzmangel wird am gerenderten A4-Blatt gemessen. Eine feste Zeichenzahl ist nicht die alleinige Seitenumbruchregel.
 - Grußformel, Signatur und Fußzeile dürfen weder überlappen noch auf eine unbeabsichtigte Leerseite geraten.
+
+
+## Umgesetzt in V99.2.9 – Bereinigungsstufe 1
+
+- Tab Abrechnungsstatus entfernt.
+- Stammdatenblock vor Übersicht verschoben.
+- Sicherer Einstieg in Abrechnungen über Mieter & Wohnungen.
+- Unreferenzierter Altcode und verwaiste Dashboard-/Zählerreste entfernt.
+- Keine Änderung an Berechnung, Datenschema oder Archiven.

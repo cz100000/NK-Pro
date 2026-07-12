@@ -1,6 +1,22 @@
-# NK-Pro V99.2.7 – Periodenstatus, Eingabestruktur und Briefoptimierung
+# NK-Pro V99.2.9 – Hotfix Bereinigungsstufe 1
 
 NK-Pro ist eine lokal nutzbare HTML-/JavaScript-Anwendung zur Erstellung von Nebenkostenabrechnungen. Sie kann direkt im Browser oder als GitHub-Pages-PWA betrieben werden. Arbeitsdaten bleiben im Browser und sollten regelmäßig als JSON gesichert werden.
+
+
+V99.2.9 korrigiert die im Browsertest erkannten indirekten Funktionsabhängigkeiten aus V99.2.8.
+
+## Basisänderungen der Bereinigungsstufe
+
+- Eigenständiges Tab **Abrechnungsstatus** vollständig entfernt.
+- Navigationsblock **Stammdaten** vor **Übersicht** angeordnet.
+- Abrechnungen öffnen nun direkt den Arbeitsbereich **Mieter & Wohnungen**.
+- Finalisieren und Wiederbearbeiten bleiben in der **Qualitätsprüfung** verfügbar.
+- Optischer Schreibschutz finalisierter Abrechnungen vom entfernten Dashboard entkoppelt.
+- 25 eindeutig ungenutzte JavaScript-Funktionen entfernt.
+- Verwaiste Workflow-Dashboard-Stile und der alte versteckte Zählercontainer entfernt.
+- HTML-Snapshot für Exportzwecke wird erst bei tatsächlicher Verwendung erzeugt.
+
+Die Berechnungslogik, Datenstruktur, Archive und bestehenden Migrationen wurden nicht verändert.
 
 ## Wichtigste Änderungen
 

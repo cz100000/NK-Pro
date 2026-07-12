@@ -1,5 +1,38 @@
 # Changelog
 
+## V99.2.9 – Hotfix Bereinigungsstufe 1
+
+- Bei der Bereinigung versehentlich entfernte, indirekt benötigte Hilfsfunktionen wiederhergestellt.
+- Initialisierung, Zählerlogik und Vorjahresübernahme der NK-Vorauszahlungen repariert.
+- Abhängigkeiten der Vorjahresübernahme konservativ wiederhergestellt.
+- Keine neue Fachlogik und keine Änderung des Datenschemas.
+- Automatischer Chromium-/Playwright-Test: 18 von 18 Prüfungen bestanden, 0 Fehler.
+
+## V99.2.9 – Bereinigungsstufe 1
+
+### Navigation und Oberfläche
+
+- Tab „Abrechnungsstatus“ einschließlich Dashboard-Inhalt entfernt.
+- Stammdatenblock vor der Abrechnungsübersicht angeordnet.
+- Standard-Einstieg in eine Abrechnung auf „Mieter & Wohnungen“ umgestellt.
+- Finalisieren und Wiederbearbeiten in der Qualitätsprüfung erhalten.
+- Schreibschutzanzeige finalisierter Abrechnungen vom entfernten Dashboard entkoppelt.
+
+### Technische Bereinigung
+
+- 25 nachweislich unreferenzierte JavaScript-Funktionen entfernt.
+- Alte Workflow-Dashboard-Funktionen und zugehörige CSS-Regeln entfernt.
+- Versteckten Altcontainer `meterSections` samt Leerlogik entfernt.
+- Permanenten HTML-Snapshot im Arbeitsspeicher durch bedarfsgesteuerte Erzeugung ersetzt.
+- Selbsttests und Navigationsfallbacks an die bereinigte Struktur angepasst.
+- PWA-Cache und Versionsangaben auf V99.2.9 aktualisiert.
+
+### Unverändert
+
+- Keine Änderung an Berechnung, Datenschema, Kosten-IDs, Archiven oder Migrationslogik.
+- Die tiefere Bereinigung der festen 20-Datensatz-Struktur und historischer Standardwerte bleibt einer gesonderten Datenmodellstufe vorbehalten.
+
+
 ## V99.2.7 – Periodenstatus, Eingabestruktur und Briefoptimierung
 
 ### Wohnungen und Umlagebasis

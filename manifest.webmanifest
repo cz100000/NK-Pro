@@ -1,7 +1,7 @@
 {
-  "name": "NK-Pro V99.2.7 – Nebenkostenabrechnung",
-  "short_name": "NK-Pro V99.2.7",
-  "description": "Lokale Nebenkostenabrechnung mit Periodenstatus, getrennten Eingabequellen, dynamischer Zählerhistorie und optimierten Fensterbriefen.",
+  "name": "NK-Pro V99.2.9 – Hotfix Bereinigungsstufe 1",
+  "short_name": "NK-Pro V99.2.9",
+  "description": "Lokale Nebenkostenabrechnung mit bereinigter Navigation, entferntem Abrechnungsstatus-Dashboard und reduziertem Altcode.",
   "lang": "de-DE",
   "id": "./",
   "start_url": "./",
@@ -9,7 +9,7 @@
   "display": "standalone",
   "background_color": "#f6f8fa",
   "theme_color": "#183b56",
-  "version": "99.2.7",
+  "version": "99.2.9",
   "icons": [
     {
       "src": "./icons/icon-192.png",

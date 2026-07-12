@@ -1,0 +1,60 @@
+{
+  "version": "V99.2.9",
+  "generated_at": "2026-07-12T10:40:49.550883+00:00",
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "browser_passed": 18,
+    "browser_failed": 0
+  },
+  "changes": [
+    "Indirekt benötigte Hilfsfunktionen aus V99.2.7 konservativ wiederhergestellt",
+    "Initialisierung, Zählerlogik und Vorjahresübernahme repariert",
+    "Keine Änderung des Datenschemas oder der Fachlogik"
+  ],
+  "checks": [
+    {
+      "name": "Versionsangabe",
+      "status": "PASS",
+      "detail": "V99.2.9 in index.html"
+    },
+    {
+      "name": "Status-Tab entfernt",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Stammdaten vor Übersicht",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Vier reparierte Kernfunktionen vorhanden",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Manifest Version",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Service Worker Cache",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "Browserprüfung vollständig",
+      "status": "PASS",
+      "detail": "18 bestanden, 0 fehlgeschlagen"
+    },
+    {
+      "name": "JavaScript-Syntax",
+      "status": "PASS",
+      "detail": "4 Skriptblöcke geprüft"
+    }
+  ],
+  "limitations": [
+    "Service-Worker-Registrierung und echter Offline-PWA-Start konnten wegen der lokalen Testumgebung nicht über HTTP geprüft werden."
+  ]
+}

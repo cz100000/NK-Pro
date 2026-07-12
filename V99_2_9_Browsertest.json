@@ -1,0 +1,155 @@
+{
+  "generatedAt": "2026-07-12T10:40:09.944Z",
+  "browser": "144.0.7559.96",
+  "viewportTests": [
+    "1440x1000",
+    "390x844"
+  ],
+  "passed": 18,
+  "failed": 0,
+  "results": [
+    {
+      "name": "HTML in Chromium geladen",
+      "ok": true,
+      "details": "page.setContent"
+    },
+    {
+      "name": "Dokument geladen",
+      "ok": true,
+      "details": "NK-Pro V99.2.9 – Periodenstatus, Eingabestruktur und Briefoptimierung"
+    },
+    {
+      "name": "Keine JavaScript-Seitenfehler beim Start",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "Keine Konsolenfehler beim Start",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "Abrechnungsstatus-Tab vollständig entfernt",
+      "ok": true,
+      "details": "Treffer: 0"
+    },
+    {
+      "name": "Stammdaten steht vor Übersicht",
+      "ok": true,
+      "details": "Mieter > Wohnungen > Abrechnungsübersicht > Datensicherung"
+    },
+    {
+      "name": "Alle Navigationsziele öffnen ohne Abbruch",
+      "ok": true,
+      "details": "14 Tabs geprüft"
+    },
+    {
+      "name": "Einstieg Mieter & Wohnungen funktioniert",
+      "ok": true,
+      "details": "{\"visible\":true,\"active\":true}"
+    },
+    {
+      "name": "Qualitätsprüfung rendert",
+      "ok": true,
+      "details": "Textlänge: 656"
+    },
+    {
+      "name": "Finalisierungssteuerung vorhanden",
+      "ok": true,
+      "details": "Finalisieren=true, Wiederbearbeitung=false"
+    },
+    {
+      "name": "Desktop-Rendering ohne globale horizontale Überbreite",
+      "ok": true,
+      "details": "{\"bodyScrollWidth\":1440,\"viewportWidth\":1440,\"bodyScrollHeight\":1000,\"navVisible\":true,\"activeTabs\":1,\"visibleTabs\":1}"
+    },
+    {
+      "name": "Navigation sichtbar",
+      "ok": true,
+      "details": "{\"bodyScrollWidth\":1440,\"viewportWidth\":1440,\"bodyScrollHeight\":1000,\"navVisible\":true,\"activeTabs\":1,\"visibleTabs\":1}"
+    },
+    {
+      "name": "Genau ein Inhalts-Tab sichtbar",
+      "ok": true,
+      "details": "{\"bodyScrollWidth\":1440,\"viewportWidth\":1440,\"bodyScrollHeight\":1000,\"navVisible\":true,\"activeTabs\":1,\"visibleTabs\":1}"
+    },
+    {
+      "name": "Mobile-Rendering ohne globale horizontale Überbreite",
+      "ok": true,
+      "details": "{\"bodyScrollWidth\":390,\"viewportWidth\":390,\"visibleTabs\":1,\"activeButtons\":1}"
+    },
+    {
+      "name": "Mobile: genau ein Inhalts-Tab sichtbar",
+      "ok": true,
+      "details": "{\"bodyScrollWidth\":390,\"viewportWidth\":390,\"visibleTabs\":1,\"activeButtons\":1}"
+    },
+    {
+      "name": "Keine JavaScript-Seitenfehler nach Navigation",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "Keine Konsolenfehler nach Navigation",
+      "ok": true,
+      "details": ""
+    },
+    {
+      "name": "Keine fehlgeschlagenen Ressourcen",
+      "ok": true,
+      "details": "[]"
+    }
+  ],
+  "consoleErrors": [],
+  "pageErrors": [],
+  "failedRequests": [],
+  "warnings": [
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at readStoredData (<anonymous>:271:18)\n    at loadData (<anonymous>:306:25)\n    at loadInitialState (<anonymous>:691:40)\n    at <anonymous>:169:13",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v84_audit_dom_fix_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v83_release_audit_details_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v82_kostenarten_auswahl_verbrauchspreis_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v81_preis_je_einheit_quelle_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v80_wasser_endwerte_wirklich_leer_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v79_wasseruhren_endwerte_leer_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v78_umlage_kostenart_kontrolltabelle_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v77_korrektur_vorjahr_zaehler_umlage_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v76_vorjahreswerte_umlage_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v75_startseite_kein_autoarchiv_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v74_neue_abrechnung_bleibt_startseite_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v73_startseite_keine_autoabrechnung_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v72_startseite_entschlackt_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v71_finalisierung_je_abrechnung_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v70_druck_pdf_haertung_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v69_abnahmeprotokoll_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v68_finalisieren_eingabeschutz_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v67_sonderfall_waechter_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v66_backup_schutz_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v65_brief_preflight_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v64_rechenlogik_schutz_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v63_tabellenkopf_lesbar_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v62_lesbare_tabellen_nowrap_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v61_eigentuemerbrief_fix_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v60_audit_stabilitaet_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v59_summenblock_abstand_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v58_brief_dynamik_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v57_brief_feinschliff_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v56_lesbarer_brief_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v55_brieflayout_fix_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v54_brieftext_format_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v53_heizkostenbrief_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v52_briefformat_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v51_vorauszahlungsanpassung_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v50_getrennte_sicherung_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v49_fachcheck_exportpaket_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v48_stabilitaetsbasis_plus_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v47_stabilitaetsbasis_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v46_startseite_loeschen_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v45_wasseruhren_historie_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v44_einheitliches_abrechnungsmodell_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v43_startseite_archiv_vereinfacht_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v42_startseite_ohne_topbuttons_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v41_1_legacy_sammelarchiv_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v40_auditfix_data",
+    "NK-Pro: Lokale gespeicherte Daten konnten nicht sicher gelesen werden. Es wurden Ausgangsdaten oder ein gültiger kompatibler Datenstand geladen. Bitte prüfe deine letzte Sicherung. Betroffener Speicherbereich: nkpro_browser_v39_saldo_korrekturen_data",
+    "NK-Pro: Wasser-Endwert-Korrektur wurde im aktuellen Fenster angewendet, konnte aber nicht dauerhaft gespeichert werden. Bitte Gesamt-JSON sichern. SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at loadInitialState (<anonymous>:693:5)\n    at <anonymous>:169:13"
+  ]
+}
