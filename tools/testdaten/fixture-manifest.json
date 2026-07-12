@@ -1,0 +1,43 @@
+{
+  "format": "nk-pro-fixture-manifest/v1",
+  "description": "Logical reference fixtures reconstructed from one immutable base plus small patches.",
+  "base": "basis/standardfall.json",
+  "fixtures": {
+    "standardfall.json": {
+      "canonicalSha256": "b685897f145e720e733eb74e57c1172c42b50ba0529f4e2033af6e2c9ab6d6c0",
+      "description": "Vollständiger normaler Abrechnungsfall",
+      "patch": null,
+      "operationCount": 0
+    },
+    "mieterwechsel.json": {
+      "canonicalSha256": "aff5e47e325b7ec7303d359dff697b616aa801ddd86ef3d3f5ac72e0edb506fe",
+      "description": "Zwei Mietperioden auf derselben Wohnung",
+      "patch": "faelle/mieterwechsel.patch.json",
+      "operationCount": 26
+    },
+    "leerstand.json": {
+      "canonicalSha256": "7d60bec9ebd25e4f9af9abd0001fba33f0314dca6973cbd39f1a0ba3e6694984",
+      "description": "Aktive Wohnung ohne Mietverhältnis",
+      "patch": "faelle/leerstand.patch.json",
+      "operationCount": 3
+    },
+    "eigentuemer-m000.json": {
+      "canonicalSha256": "6eb427e0825cd85305d3aceee4eb1fb0becd10b3272b6304c804cba00f006fcf",
+      "description": "Eigentümer-/Privatanteil M000",
+      "patch": "faelle/eigentuemer-m000.patch.json",
+      "operationCount": 2
+    },
+    "alle-eingabequellen.json": {
+      "canonicalSha256": "fb41607750c448abed1b3cc011841be476ec880aeaaef1c1cf56f0f653a5ad68",
+      "description": "Vier getrennte Eingabequellen",
+      "patch": "faelle/alle-eingabequellen.patch.json",
+      "operationCount": 25
+    },
+    "altdaten-migration.json": {
+      "canonicalSha256": "7a8d89854aed8c4af5856958db28384d63c4ab99dd950581a20c8fef1172faf4",
+      "description": "Kontrollierte Migration von Schema 4 auf 5",
+      "patch": "faelle/altdaten-migration.patch.json",
+      "operationCount": 16
+    }
+  }
+}

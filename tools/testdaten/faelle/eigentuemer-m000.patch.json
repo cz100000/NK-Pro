@@ -1,0 +1,17 @@
+{
+  "format": "nk-pro-fixture-patch/v1",
+  "base": "basis/standardfall.json",
+  "fixture": "eigentuemer-m000.json",
+  "operations": [
+    {
+      "op": "replace",
+      "path": "/meta/testFixture",
+      "value": "eigentuemer-m000"
+    },
+    {
+      "op": "replace",
+      "path": "/mieter/4/name",
+      "value": "Test Eigentümer"
+    }
+  ]
+}

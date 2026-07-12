@@ -1,0 +1,84 @@
+{
+  "format": "nk-pro-fixture-patch/v1",
+  "base": "basis/standardfall.json",
+  "fixture": "altdaten-migration.json",
+  "operations": [
+    {
+      "op": "remove",
+      "path": "/meta/migrationHistory"
+    },
+    {
+      "op": "add",
+      "path": "/meta/schemaVersion",
+      "value": 4
+    },
+    {
+      "op": "replace",
+      "path": "/meta/dataSchemaVersion",
+      "value": 4
+    },
+    {
+      "op": "replace",
+      "path": "/meta/testFixture",
+      "value": "altdaten-migration"
+    },
+    {
+      "op": "replace",
+      "path": "/mieter/4/id",
+      "value": "M005"
+    },
+    {
+      "op": "replace",
+      "path": "/stammdaten/mieter/4/id",
+      "value": "M005"
+    },
+    {
+      "op": "add",
+      "path": "/stammdaten/wohnungen/0/status",
+      "value": "aktiv"
+    },
+    {
+      "op": "add",
+      "path": "/stammdaten/wohnungen/1/status",
+      "value": "aktiv"
+    },
+    {
+      "op": "add",
+      "path": "/stammdaten/wohnungen/2/status",
+      "value": "aktiv"
+    },
+    {
+      "op": "add",
+      "path": "/stammdaten/wohnungen/3/status",
+      "value": "aktiv"
+    },
+    {
+      "op": "add",
+      "path": "/stammdaten/wohnungen/4/status",
+      "value": "aktiv"
+    },
+    {
+      "op": "add",
+      "path": "/stammdaten/wohnungen/5/status",
+      "value": "aktiv"
+    },
+    {
+      "op": "add",
+      "path": "/stammdaten/wohnungen/6/status",
+      "value": "aktiv"
+    },
+    {
+      "op": "remove",
+      "path": "/umlageInputs/K002/mode"
+    },
+    {
+      "op": "remove",
+      "path": "/umlageInputs/K006/mode"
+    },
+    {
+      "op": "replace",
+      "path": "/umlageInputs/K006/art",
+      "value": "Einzelbeträge je Mieter"
+    }
+  ]
+}
