@@ -1,3 +1,24 @@
+# Changelog
+
+## V99.4.1 – ChatGPT-Arbeitsbasis und Testdatenstruktur – 2026-07-12
+
+### Geändert
+
+- großen SEED unverändert aus `js/app.js` nach `js/default-seed.js` ausgelagert,
+- sechs vollständige Referenzdatenkopien durch eine Basis und fünf Patches ersetzt,
+- semantische SHA-256-Prüfung und Materialisierung der Referenzfälle ergänzt,
+- historische Prüfberichte und überholte Arbeitsdokumente aus der aktiven ZIP ausgelagert,
+- kompakter Projektstand, Arbeitsregeln und maschinenlesbare Versionsdatei ergänzt,
+- App-, Manifest-, Test- und PWA-Cacheversion auf V99.4.1 aktualisiert.
+
+### Unverändert
+
+- Datenschema 5,
+- Fachberechnungen und Ergebnislogik,
+- Archive und Migrationen,
+- Import- und Exportformate,
+- sechs logische Referenzfälle.
+
 # CHANGELOG
 
 ## V99.4.0 – UX-Grundgerüst und Arbeitskontext – 2026-07-12

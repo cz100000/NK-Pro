@@ -1,0 +1,137 @@
+{
+  "format": "nk-pro-fixture-patch/v1",
+  "base": "basis/standardfall.json",
+  "fixture": "mieterwechsel.json",
+  "operations": [
+    {
+      "op": "replace",
+      "path": "/meta/testFixture",
+      "value": "mieterwechsel"
+    },
+    {
+      "op": "replace",
+      "path": "/mieter/0/aktiveTage",
+      "value": 181
+    },
+    {
+      "op": "replace",
+      "path": "/mieter/0/auszug",
+      "value": "2025-06-30"
+    },
+    {
+      "op": "replace",
+      "path": "/mieter/0/bemerkung",
+      "value": "Playwright-Referenzfall: Mieterwechsel zum 30.06.2025."
+    },
+    {
+      "op": "replace",
+      "path": "/mieter/0/personentage",
+      "value": 181
+    },
+    {
+      "op": "replace",
+      "path": "/mieter/0/status",
+      "value": "Beendet"
+    },
+    {
+      "op": "replace",
+      "path": "/mieter/5/aktiveTage",
+      "value": 184
+    },
+    {
+      "op": "replace",
+      "path": "/mieter/5/bemerkung",
+      "value": "Playwright-Referenzfall: Einzug 01.07.2025."
+    },
+    {
+      "op": "replace",
+      "path": "/mieter/5/einnahmen",
+      "value": 2400
+    },
+    {
+      "op": "replace",
+      "path": "/mieter/5/einzug",
+      "value": "2025-07-01"
+    },
+    {
+      "op": "replace",
+      "path": "/mieter/5/geschlecht",
+      "value": "Herr"
+    },
+    {
+      "op": "replace",
+      "path": "/mieter/5/kaltErhalten",
+      "value": 1800
+    },
+    {
+      "op": "replace",
+      "path": "/mieter/5/kaltSoll",
+      "value": 1800
+    },
+    {
+      "op": "replace",
+      "path": "/mieter/5/name",
+      "value": "Test Nachmieter"
+    },
+    {
+      "op": "replace",
+      "path": "/mieter/5/nkVoraus",
+      "value": 600
+    },
+    {
+      "op": "replace",
+      "path": "/mieter/5/personen",
+      "value": 2
+    },
+    {
+      "op": "replace",
+      "path": "/mieter/5/personentage",
+      "value": 368
+    },
+    {
+      "op": "replace",
+      "path": "/mieter/5/status",
+      "value": "Aktiv"
+    },
+    {
+      "op": "replace",
+      "path": "/mieter/5/wohnflaeche",
+      "value": 55
+    },
+    {
+      "op": "replace",
+      "path": "/mieter/5/wohnung",
+      "value": "W001.EG-L"
+    },
+    {
+      "op": "replace",
+      "path": "/stammdaten/mieter/0/aktiveTage",
+      "value": 181
+    },
+    {
+      "op": "replace",
+      "path": "/stammdaten/mieter/0/auszug",
+      "value": "2025-06-30"
+    },
+    {
+      "op": "replace",
+      "path": "/stammdaten/mieter/0/bemerkung",
+      "value": "Playwright-Referenzfall: Mieterwechsel zum 30.06.2025."
+    },
+    {
+      "op": "replace",
+      "path": "/stammdaten/mieter/0/einzug",
+      "value": "2024-01-01"
+    },
+    {
+      "op": "replace",
+      "path": "/stammdaten/mieter/0/personentage",
+      "value": 181
+    },
+    {
+      "op": "replace",
+      "path": "/stammdaten/mieter/0/status",
+      "value": "Beendet"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "appVersion": "99.4.1",
+  "displayVersion": "V99.4.1",
+  "versionName": "ChatGPT-Arbeitsbasis und Testdatenstruktur",
+  "schemaVersion": 5,
+  "basedOn": "99.4.0",
+  "releaseDate": "2026-07-12",
+  "runtime": [
+    "HTML",
+    "CSS",
+    "JavaScript"
+  ],
+  "framework": null,
+  "buildSystem": null,
+  "nextWorkPackage": "Verbindliche Datenebenen und Snapshot-Grenzen"
+}

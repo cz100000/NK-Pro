@@ -1,110 +1,35 @@
-# NK-Pro – Testing
+# Test- und Freigabekonzept
 
-**Ausgangsversion:** V99.3.0  
-**Testframework:** Playwright 1.61.1  
-**Browser:** Chromium  
-**Zeitzone:** Europe/Berlin
+**Aktueller Stand:** V99.4.1, Datenschema 5
 
-## 1. Freigabegrundsatz
-
-Eine Version ist erst freigabefähig, wenn alle blockierenden Prüfungen erfolgreich abgeschlossen sind. Einzelne grüne Tests ersetzen keine vollständige Freigabeprüfung.
-
-Verpflichtend sind:
-
-- Syntaxprüfung,
-- Browserkonsole,
-- Chromium,
-- Playwright,
-- Referenzfälle,
-- Export,
-- Import,
-- Migration,
-- PWA,
-- Cache,
-- Release Audit,
-- App Self Test.
-
-## 2. Voraussetzungen
+## 1. Pflichtprüfungen
 
 ```bash
 npm ci
-```
-
-Entweder Playwright-Chromium installieren:
-
-```bash
-npx playwright install chromium
-```
-
-oder ein vorhandenes Chromium verwenden:
-
-```bash
-CHROMIUM_EXECUTABLE_PATH=/pfad/zu/chromium npm test
-```
-
-Unter Windows kann beispielsweise ein vorhandenes Chrome-, Edge- oder Chromium-Binary über `CHROMIUM_EXECUTABLE_PATH` angegeben werden.
-
-## 3. Testbefehle
-
-```bash
 npm run test:syntax
+npm run test:fixtures
+npm run test:release
 npm run test:browser
-npm test
-npm run test:report
 ```
 
-### Bedeutung
+`npm test` führt alle Prüfgruppen in dieser Reihenfolge aus.
 
-| Befehl | Prüfung |
-|---|---|
-| `npm run test:syntax` | alle produktiven JavaScript-Dateien per `node --check` |
-| `npm run test:browser` | gesamte Playwright-Suite |
-| `npm test` | Syntax und Browser in Reihenfolge |
-| `npm run test:report` | öffnet den vorhandenen HTML-Testbericht |
+## 2. Syntaxprüfung
 
-## 4. Vorhandene Tests
+`tools/check-js-syntax.cjs` liest die produktiven Skripte aus `index.html` und prüft zusätzlich `service-worker.js`. Seit V99.4.1 gehören sechs JavaScript-Einheiten zur Prüfung:
 
-### `tests/app-smoke.spec.js`
+- `js/navigation.js`
+- `js/modal-events.js`
+- `js/default-seed.js`
+- `js/app.js`
+- `js/service-worker-register.js`
+- `service-worker.js`
 
-- Titel, Version und Schema,
-- aktiver Start-Tab,
-- internes Struktur-Audit,
-- Release Audit,
-- App Self Test,
-- Renderfehler,
-- vollständige Navigation aller 14 Tabs,
-- Manifest- und Cacheversion,
-- externe CSS-/JS-Dateien,
-- keine produktiven Inline-Skripte oder Inline-Styles,
-- K002 ausschließlich im Zählerpfad.
+## 3. Referenzdaten
 
-### `tests/persistence-backup.spec.js`
+Die sechs logischen Referenzfälle bleiben fachlich unverändert, werden aber speichersparend rekonstruiert:
 
-- Speichern mit Prüfsumme,
-- Reload eines gespeicherten Datenstands,
-- Rückfallstand bei beschädigtem Hauptspeicher,
-- Export-/Import-Rundlauf nur der aktuellen Abrechnung.
-
-### `tests/reference-cases.spec.js`
-
-- Standardfall,
-- unterjähriger Mieterwechsel,
-- Leerstand,
-- Eigentümer-/Privatrolle M000,
-- vier getrennte Eingabequellen,
-- Migration von Schema 4 auf Schema 5.
-
-### `tests/service-worker.spec.js`
-
-- Installation der App-Shell,
-- `skipWaiting`,
-- Client-Übernahme,
-- Löschen alter und fremder Caches,
-- Erhalt der aktuellen Cachekennung.
-
-## 5. Referenzdaten
-
-| Datei | Zweck |
+| Logischer Name | Zweck |
 |---|---|
 | `standardfall.json` | vollständiger normaler Abrechnungsfall |
 | `mieterwechsel.json` | zwei Mietperioden auf einer Wohnung |
@@ -113,105 +38,57 @@ npm run test:report
 | `alle-eingabequellen.json` | Zähler, Verbrauch, direkter Betrag, externe Abrechnung |
 | `altdaten-migration.json` | kontrollierte Migration von Schema 4 auf 5 |
 
-Referenzdaten dürfen nur nach dokumentierter fachlicher Entscheidung geändert werden. Eine reine UI-Version darf sie nicht verändern.
+Physische Struktur:
 
-## 6. Prüfergebnisse
+- `testdaten/basis/standardfall.json`
+- `testdaten/faelle/*.patch.json`
+- `testdaten/fixture-manifest.json`
+- `tests/fixture-loader.cjs`
 
-| Prüfung | Ergebnis |
-|---|---|
-| JavaScript-Einheiten V99.4.0 | 5 bestanden, 0 fehlgeschlagen |
-| Playwright-Tests V99.4.0 | 19 bestanden, 0 fehlgeschlagen |
-| Browserkonsole | keine Fehler |
-| Page Errors | keine Fehler |
-| fehlgeschlagene Requests | keine |
-| Release Audit | 28 OK, 0 Warnungen, 0 Fehler |
-| Struktur-Audit | bestanden |
-| Datenschema | 5 |
+`npm run test:fixtures` rekonstruiert jeden Fall und vergleicht eine kanonische SHA-256-Prüfsumme. Eine Änderung an Basis oder Patch ist nur zulässig, wenn die fachliche Änderung beschlossen, der neue Hash dokumentiert und die Regressionstests angepasst wurden.
 
+Vollständige Dateien können bei Bedarf außerhalb der aktiven Arbeitsstruktur erzeugt werden:
 
-### V99.4.0 – 12. Juli 2026
+```bash
+npm run fixtures:materialize
+```
 
-- 5/5 JavaScript-Syntaxeinheiten bestanden,
-- 19/19 Playwright-/Chromium-Tests bestanden,
-- keine `console.error`, Page Errors oder fehlgeschlagenen App-Requests in der Testhülle,
-- interne Release- und Struktur-Audits ohne Fehler,
-- sechs unveränderte Referenz-/Migrationsfälle bestanden,
-- Desktop 1440 × 1000 und Mobil 390 × 844 visuell kontrolliert,
-- Service-Worker-App-Shell und Entfernung alter Caches simuliert bestanden.
+## 4. Browser- und Regressionstests
 
-Ein echter PWA-Installations- und Offline-Neustart über den lokalen Server war in der Ausführungsumgebung durch `ERR_BLOCKED_BY_ADMINISTRATOR` blockiert. Dies ist als Umgebungsgrenze dokumentiert und kein bestandener End-to-End-Nachweis.
+Die Playwright-Suite prüft insbesondere:
 
-## 7. Release-Matrix
+- Start, Landingpage und Navigation,
+- Arbeitskontext und Archivansicht,
+- Persistenz, Prüfsumme und Recovery,
+- JSON-Rundlauf,
+- Standardfall, Mieterwechsel, Leerstand und M000,
+- vier Eingabequellen,
+- Migration Schema 4 auf 5,
+- Manifest, App-Shell und Cachewechsel.
 
-Vor jeder Freigabe wird folgende Matrix protokolliert:
+## 5. Release-Matrix
 
 | Bereich | Pflichtnachweis |
 |---|---|
-| Syntax | Ausgabe `test:syntax` |
-| Start | App lädt ohne Fehler |
-| Navigation | jeder Eintrag öffnet genau einen Tab |
+| Syntax | alle produktiven JavaScript-Einheiten fehlerfrei |
+| Referenzdaten | alle kanonischen Prüfsummen identisch |
+| Start | Anwendung lädt ohne Console- oder Page-Errors |
+| Navigation | jeder Eintrag öffnet genau einen Bereich |
 | Daten | Speichern und Neuladen identisch |
 | Backup | Hauptstand und Rückfallstand gültig |
-| Import | gültiger Export importierbar |
-| Export | alle vorgesehenen Dateien erzeugbar |
-| Migration | Altstand → Zielstand reproduzierbar |
-| Rollback | Vor-Migrationsstand wiederherstellbar |
-| Berechnung | Referenzsummen und Salden |
-| Zähler | Anfang, Ende, Verbrauch, Fortschreibung |
-| Archiv | öffnen, schließen, schreibgeschützt |
-| Briefe | Einzel- und Sammeldruck, A4, Überlauf |
-| PWA | Manifest, Installation, Offline-Start |
-| Cache | neue Version ersetzt alte App-Shell |
-| Datenschutz | keine unbeabsichtigte Veröffentlichung realer Daten |
-| Dokumentation | vollständig und versionskonsistent |
+| Import/Export | vorgesehene Rundläufe funktionieren |
+| Migration | Altstand zum Zielstand reproduzierbar |
+| Berechnung | Referenzsummen und Rollen unverändert |
+| Archiv | schreibgeschützte Ansicht und Rückkehr funktionieren |
+| PWA | Manifest, App-Shell und Cachekennung konsistent |
+| Dokumentation | Versionen und SHA-256-Summen konsistent |
 
-## 8. UX-Tests V99.4.0
-
-Folgende Prüfungen sind umgesetzt und Bestandteil der Freigabesuite:
-
-1. Landingpage besitzt genau zwei primäre Einstiege.
-2. Alle Zielfunktionen bleiben über die gruppierte Navigation erreichbar.
-3. „Aktive Abrechnung“ ist ohne geöffnete Abrechnung vollständig ausgeblendet.
-4. Objekt, Jahr und Status werden nur aus einer tatsächlich geöffneten Abrechnung angezeigt.
-5. Accordion-Gruppen sind per Tastatur bedienbar und besitzen korrekte ARIA-Zustände.
-6. Archiv und Extras bleiben jederzeit erreichbar.
-7. Öffnen und Schließen des UI-Kontexts führt keine Datenmigration ein.
-8. Bearbeitung, Nur Ansicht und Finalisiert werden eindeutig abgeleitet.
-
-## 9. Neue Tests für Datenmodell und Migration
-
-Vor jeder neuen Schemaversion sind verpflichtend:
+## 6. Zusätzliche Anforderungen vor einer neuen Schemaversion
 
 - automatische Vor-Migrationssicherung,
 - unveränderte Originaldatei,
 - idempotente Mehrfachausführung,
-- erfolgreicher Abbruch bei ungültigem Eingang,
-- Wiederherstellung des Vorzustands,
-- aktuelle Abrechnung und jedes Archivjahr,
-- alte Exportformate,
-- neue Exportformate,
-- Zähler-ID-Zuordnung über Mieterwechsel und Zählerwechsel,
-- Objektstandard ändert keine bestehende Abrechnung.
-
-## 10. Manuelle Prüfungen
-
-Automatisierung ersetzt nicht vollständig:
-
-- Sichtprüfung in Chromium bei Desktop- und schmaler Breite,
-- Browserkonsole mit realem `localStorage`,
-- PWA-Installation über HTTPS oder localhost,
-- Offline-Neustart,
-- Druckvorschau und PDF-Ausgabe,
-- tatsächliche Downloadpakete,
-- Import einer extern gesicherten Datei,
-- Bedienung mit Tastatur.
-
-## 11. Testartefakte
-
-Playwright erzeugt:
-
-- `test-results/playwright-results.json`,
-- `test-results/html/`,
-- Fehler-Screenshots und Traces unter `test-results/artifacts/`.
-
-Diese Laufzeitartefakte gehören nicht in die Auslieferungs-ZIP, außer sie werden ausdrücklich als Release-Nachweis bereitgestellt.
+- definierter Abbruch bei ungültigem Eingang,
+- getestete Wiederherstellung,
+- Prüfung aktueller Abrechnung und aller Archivjahre,
+- dokumentierter Rückweg.

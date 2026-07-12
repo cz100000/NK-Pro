@@ -1,6 +1,6 @@
 {
-  "name": "NK-Pro V99.4.0 – Nebenkostenabrechnung",
-  "short_name": "NK-Pro V99.4.0",
+  "name": "NK-Pro V99.4.1 – Nebenkostenabrechnung",
+  "short_name": "NK-Pro V99.4.1",
   "description": "Lokale Nebenkostenabrechnung mit Arbeitsweiche, logisch gruppierter Navigation, sichtbarem Abrechnungskontext und vollständiger Qualitätsprüfung.",
   "lang": "de-DE",
   "id": "./",
@@ -9,7 +9,7 @@
   "display": "standalone",
   "background_color": "#f6f8fa",
   "theme_color": "#183b56",
-  "version": "99.4.0",
+  "version": "99.4.1",
   "icons": [
     {
       "src": "./icons/icon-192.png",

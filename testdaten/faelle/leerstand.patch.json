@@ -1,0 +1,22 @@
+{
+  "format": "nk-pro-fixture-patch/v1",
+  "base": "basis/standardfall.json",
+  "fixture": "leerstand.json",
+  "operations": [
+    {
+      "op": "replace",
+      "path": "/meta/testFixture",
+      "value": "leerstand"
+    },
+    {
+      "op": "replace",
+      "path": "/wohnungen/5/bemerkung",
+      "value": "Playwright-Referenzfall: aktive Wohnung ohne zugeordnetes Mietverhältnis."
+    },
+    {
+      "op": "replace",
+      "path": "/wohnungen/5/status",
+      "value": "aktiv"
+    }
+  ]
+}

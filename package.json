@@ -1,13 +1,16 @@
 {
-  "name": "nk-pro-v99-4-0",
-  "version": "99.4.0",
+  "name": "nk-pro-v99-4-1",
+  "version": "99.4.1",
   "private": true,
-  "description": "Syntax-, Chromium- und Playwright-Pruefungen fuer NK-Pro V99.4.0 UX-Grundgeruest",
+  "description": "Syntax-, Chromium- und Playwright-Pruefungen fuer NK-Pro V99.4.1 ChatGPT-Arbeitsbasis",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
+    "test:fixtures": "node tools/check-fixtures.cjs",
+    "fixtures:materialize": "node tools/materialize-fixtures.cjs",
     "test:browser": "playwright test",
-    "test": "npm run test:syntax && npm run test:browser",
-    "test:report": "playwright show-report"
+    "test": "npm run test:syntax && npm run test:fixtures && npm run test:release && npm run test:browser",
+    "test:report": "playwright show-report",
+    "test:release": "node tools/check-release-consistency.cjs"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1"

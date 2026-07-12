@@ -3,6 +3,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { expect } = require("@playwright/test");
+const { loadFixtureData } = require("./fixture-loader.cjs");
 
 const root = path.resolve(__dirname, "..");
 const appHtml = fs.readFileSync(path.join(root, "index.html"), "utf8");
@@ -87,7 +88,7 @@ async function openFreshApp(page, initialEntries = {}) {
 }
 
 async function loadFixture(page, fixtureName) {
-  const fixture = JSON.parse(fs.readFileSync(path.join(root, "testdaten", fixtureName), "utf8"));
+  const fixture = loadFixtureData(fixtureName);
   await page.evaluate(data => {
     state = normalizeLoadedData(JSON.parse(JSON.stringify(data)));
     prepareStateForPersistence("Playwright-Referenzfall");
@@ -118,4 +119,4 @@ async function stableStateSnapshot(page) {
   });
 }
 
-module.exports = { root, appHtml, attachRuntimeGuards, openFreshApp, loadFixture, stableStateSnapshot };
+module.exports = { root, appHtml, attachRuntimeGuards, openFreshApp, loadFixture, loadFixtureData, stableStateSnapshot };

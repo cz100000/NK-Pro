@@ -1,7 +1,7 @@
 "use strict";
 
 const { test, expect } = require("@playwright/test");
-const { attachRuntimeGuards, openFreshApp, loadFixture } = require("./test-helpers.cjs");
+const { attachRuntimeGuards, openFreshApp, loadFixture, loadFixtureData } = require("./test-helpers.cjs");
 
 test("Referenzfall Standard bleibt vollständig und berechenbar", async ({ page }) => {
   const runtime = attachRuntimeGuards(page);
@@ -112,7 +112,7 @@ test("Referenzfall trennt alle vier Eingabequellen eindeutig", async ({ page }) 
 test("Referenzfall Altdaten wird kontrolliert auf Schema 5 migriert", async ({ page }) => {
   const runtime = attachRuntimeGuards(page);
   await openFreshApp(page);
-  const legacy = require("../testdaten/altdaten-migration.json");
+  const legacy = loadFixtureData("altdaten-migration.json");
   const result = await page.evaluate(data => {
     const migrated = normalizeLoadedData(JSON.parse(JSON.stringify(data)));
     return {
