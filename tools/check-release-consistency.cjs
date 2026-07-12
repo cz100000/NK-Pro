@@ -16,23 +16,25 @@ async function main() {
   const app = read("js/app.js");
   const persistence = read("js/persistence.js");
   const migration = read("js/migration.js");
+  const backupRecovery = read("js/backup-recovery.js");
   const archive = read("js/archive.js");
   const seed = read("js/default-seed.js");
   const html = read("index.html");
   const workerSource = read("service-worker.js");
 
-  assert(packageJson.version === "99.4.3", "package.json besitzt nicht Version 99.4.3.");
-  assert(manifest.version === "99.4.3", "Manifest besitzt nicht Version 99.4.3.");
-  assert(project.appVersion === "99.4.3" && project.schemaVersion === 5 && project.dataLayerContractVersion === 1, "Projektmetadaten sind inkonsistent.");
-  assert(project.basedOn === "99.4.2", "Ausgangsversion ist nicht V99.4.2.");
-  assert(app.includes('const APP_VERSION = "V99.4.3";'), "APP_VERSION ist inkonsistent.");
-  assert(app.includes('const APP_VERSION_NAME = "Modularisierung von Persistenz, Migration und Archiv";'), "APP_VERSION_NAME ist inkonsistent.");
+  assert(packageJson.version === "99.4.4", "package.json besitzt nicht Version 99.4.4.");
+  assert(manifest.version === "99.4.4", "Manifest besitzt nicht Version 99.4.4.");
+  assert(project.appVersion === "99.4.4" && project.schemaVersion === 5 && project.dataLayerContractVersion === 1, "Projektmetadaten sind inkonsistent.");
+  assert(project.basedOn === "99.4.3", "Ausgangsversion ist nicht V99.4.3.");
+  assert(app.includes('const APP_VERSION = "V99.4.4";'), "APP_VERSION ist inkonsistent.");
+  assert(app.includes('const APP_VERSION_NAME = "Migrations-, Sicherungs-, Restore- und Rollback-Fundament";'), "APP_VERSION_NAME ist inkonsistent.");
   assert(!/^const SEED\s*=/m.test(app), "SEED ist weiterhin in app.js eingebettet.");
   assert(/^const SEED\s*=/m.test(seed), "js/default-seed.js enthält keinen SEED.");
   assert(!/\bUMLAGE_MANUAL\b/.test(seed), "js/default-seed.js besitzt weiterhin eine Ladeabhängigkeit zu app.js.");
 
   assert(persistence.includes("global.NKProPersistence = Object.freeze"), "Persistenzmodul exportiert keine feste Modulschnittstelle.");
   assert(migration.includes("global.NKProMigration = Object.freeze"), "Migrationsmodul exportiert keine feste Modulschnittstelle.");
+  assert(backupRecovery.includes("global.NKProBackupRecovery = Object.freeze"), "Backup-/Restore-Modul exportiert keine feste Modulschnittstelle.");
   assert(archive.includes("global.NKProArchive = Object.freeze"), "Archivmodul exportiert keine feste Modulschnittstelle.");
   assert(app.includes("const NK_PRO_MODULES = (() =>"), "Kompatibilitätsschicht für Produktivmodule fehlt.");
   for (const compatibilityFunction of [
@@ -44,7 +46,15 @@ async function main() {
   }
   assert(!/\blocalStorage\b/.test(app), "app.js greift weiterhin direkt auf localStorage zu.");
   assert(/\blocalStorage\b/.test(persistence), "Persistenzmodul enthält keinen Browser-Speicheradapter.");
-  assert(!/\blocalStorage\b/.test(migration) && !/\blocalStorage\b/.test(archive), "Migration oder Archiv greifen direkt auf localStorage zu.");
+  assert(!/\blocalStorage\b/.test(migration) && !/\blocalStorage\b/.test(backupRecovery) && !/\blocalStorage\b/.test(archive), "Migration, Backup/Restore oder Archiv greifen direkt auf localStorage zu.");
+  assert(migration.includes("const MIGRATION_REGISTRY = Object.freeze"), "Zentrale Migrationsregistry fehlt.");
+  for (const migrationId of ["schema-1-to-2", "schema-2-to-4", "schema-3-to-4", "schema-4-to-5"]) assert(migration.includes(migrationId), `Migrationspfad fehlt: ${migrationId}`);
+  assert(migration.includes("executeMigrationTransaction"), "Transaktionale Migration fehlt.");
+  assert(backupRecovery.includes("createBackupEnvelope") && backupRecovery.includes("validateBackupEnvelope") && backupRecovery.includes("restoreBackupEnvelope"), "Backup-/Restore-Fundament ist unvollständig.");
+  assert(backupRecovery.includes("Quellschema der Sicherungsmetadaten stimmt nicht mit den Nutzdaten überein"), "Sicherungshüllen prüfen das deklarierte Quellschema nicht.");
+  assert(app.includes("STORAGE_PRE_MIGRATION_BACKUP_KEY") && app.includes("STORAGE_RESTORE_CHECKPOINT_KEY"), "Getrennte Migrations- und Restore-Speicherbereiche fehlen.");
+  assert(app.includes("parsedFile.format === NK_PRO_MODULES.backupRecovery.BACKUP_FORMAT"), "Externer Restore über den JSON-Import fehlt.");
+  assert(app.includes('createRestoreCheckpoint("Checkpoint vor Restore aus externer Sicherung'), "Externer Restore erzeugt keinen Rollback-Checkpoint.");
 
   assert(app.includes("const DATA_SCHEMA_VERSION = 5;"), "Datenschema ist inkonsistent.");
   assert(app.includes("const DATA_LAYER_CONTRACT_VERSION = 1;"), "Datenebenenvertrag ist inkonsistent.");
@@ -53,13 +63,14 @@ async function main() {
     const allowList = app.slice(app.indexOf("const ARCHIVE_SNAPSHOT_DATA_KEYS"), app.indexOf("const SNAPSHOT_TECHNICAL_META_KEYS"));
     assert(!allowList.includes(forbiddenSnapshotKey), `Snapshot-Feldliste enthält verbotenen Schlüssel ${forbiddenSnapshotKey}.`);
   }
-  assert(html.includes("<title>NK-Pro V99.4.3 – Modularisierung von Persistenz, Migration und Archiv</title>"), "HTML-Titel ist inkonsistent.");
+  assert(html.includes("<title>NK-Pro V99.4.4 – Migrations-, Sicherungs-, Restore- und Rollback-Fundament</title>"), "HTML-Titel ist inkonsistent.");
 
   const expectedScripts = [
     "./js/navigation.js",
     "./js/modal-events.js",
     "./js/persistence.js",
     "./js/migration.js",
+    "./js/backup-recovery.js",
     "./js/archive.js",
     "./js/default-seed.js",
     "./js/app.js",
@@ -68,10 +79,11 @@ async function main() {
   const actualScripts = [...html.matchAll(/<script\s+defer(?:="")?\s+src="([^"]+)"><\/script>/g)].map(match => match[1]);
   assert(JSON.stringify(actualScripts) === JSON.stringify(expectedScripts), `Skriptreihenfolge abweichend: ${JSON.stringify(actualScripts)}`);
 
-  assert(workerSource.includes('const CACHE_NAME = "nk-pro-v99-4-3";'), "Service-Worker-Cache ist inkonsistent.");
+  assert(workerSource.includes('const CACHE_NAME = "nk-pro-v99-4-4";'), "Service-Worker-Cache ist inkonsistent.");
   for (const resource of [
     "./js/persistence.js",
     "./js/migration.js",
+    "./js/backup-recovery.js",
     "./js/archive.js",
     "./js/default-seed.js",
     "./js/app.js",
@@ -82,7 +94,7 @@ async function main() {
 
   const listeners = {};
   const log = { added: [], deleted: [], skipWaiting: 0, claimed: 0 };
-  const cacheNames = new Set(["nk-pro-v99-3-0", "nk-pro-v99-4-0", "nk-pro-v99-4-1", "nk-pro-v99-4-2", "fremder-cache"]);
+  const cacheNames = new Set(["nk-pro-v99-3-0", "nk-pro-v99-4-0", "nk-pro-v99-4-1", "nk-pro-v99-4-2", "nk-pro-v99-4-3", "fremder-cache"]);
   const cacheApi = { async addAll(items) { log.added.push(...items); }, async put() {} };
   const caches = {
     async open(name) { cacheNames.add(name); return cacheApi; },
@@ -102,10 +114,10 @@ async function main() {
   let activatePromise;
   listeners.activate({ waitUntil(promise) { activatePromise = promise; } });
   await activatePromise;
-  for (const moduleResource of ["./js/persistence.js", "./js/migration.js", "./js/archive.js"]) {
+  for (const moduleResource of ["./js/persistence.js", "./js/migration.js", "./js/backup-recovery.js", "./js/archive.js"]) {
     assert(log.added.includes(moduleResource), `${moduleResource} wurde nicht in den App-Shell aufgenommen.`);
   }
-  assert(cacheNames.size === 1 && cacheNames.has("nk-pro-v99-4-3"), "Alt-Caches wurden nicht vollständig entfernt.");
+  assert(cacheNames.size === 1 && cacheNames.has("nk-pro-v99-4-4"), "Alt-Caches wurden nicht vollständig entfernt.");
   assert(log.skipWaiting === 1 && log.claimed === 1, "Service-Worker-Lebenszyklus ist unvollständig.");
 
   for (const required of [
@@ -113,6 +125,7 @@ async function main() {
     "NK-PRO-ARBEITSREGELN.md",
     "DATENEBENEN_UND_SNAPSHOT_GRENZEN.md",
     "MODULARISIERUNG_PERSISTENZ_MIGRATION_ARCHIV.md",
+    "MIGRATIONS_SICHERUNGS_RESTORE_ROLLBACK_FUNDAMENT.md",
     "testdaten/fixture-manifest.json"
   ]) {
     assert(fs.existsSync(path.join(root, required)), `${required} fehlt.`);
@@ -128,7 +141,7 @@ async function main() {
     assert(!fs.existsSync(path.join(root, removed)), `Redundante Vollkopie vorhanden: ${removed}`);
   }
 
-  process.stdout.write("Release-Konsistenzprüfung abgeschlossen: Version, Module, Kompatibilitätsschicht, Datenvertrag, Skriptreihenfolge, PWA-App-Shell und Cachewechsel sind konsistent.\n");
+  process.stdout.write("Release-Konsistenzprüfung abgeschlossen: Version, Module, Migrationsregistry, Backup-/Restore-Fundament, Kompatibilitätsschicht, Datenvertrag, Skriptreihenfolge, PWA-App-Shell und Cachewechsel sind konsistent.\n");
 }
 
 main().catch(error => {

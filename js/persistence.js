@@ -100,6 +100,11 @@
     (Array.isArray(keys) ? keys : [keys]).filter(Boolean).forEach(key => storage.removeItem(key));
   }
 
+  function writeRawStorage(key, raw, options = {}) {
+    storageFrom(options).setItem(key, String(raw ?? ""));
+    return String(raw ?? "");
+  }
+
   function rawStorageValue(key, options = {}) {
     try {
       return storageFrom(options).getItem(key) || "";
@@ -144,6 +149,7 @@
     readStoredDataResult,
     writeProtectedStorage,
     removeStoredData,
+    writeRawStorage,
     rawStorageValue,
     totalStorageUsageBytes,
     storageWritable

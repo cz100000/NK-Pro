@@ -19,7 +19,7 @@ test("Start, Version, Seitenstruktur und interne Audits sind fehlerfrei", async 
   const runtime = attachRuntimeGuards(page);
   await openFreshApp(page);
 
-  await expect(page).toHaveTitle("NK-Pro V99.4.3 – Modularisierung von Persistenz, Migration und Archiv");
+  await expect(page).toHaveTitle("NK-Pro V99.4.4 – Migrations-, Sicherungs-, Restore- und Rollback-Fundament");
   const result = await page.evaluate(() => {
     const release = releaseAuditReport();
     const selfRows = appSelfTestReport();
@@ -42,8 +42,8 @@ test("Start, Version, Seitenstruktur und interne Audits sind fehlerfrei", async 
     };
   });
 
-  expect(result.version).toBe("V99.4.3");
-  expect(result.versionName).toBe("Modularisierung von Persistenz, Migration und Archiv");
+  expect(result.version).toBe("V99.4.4");
+  expect(result.versionName).toBe("Migrations-, Sicherungs-, Restore- und Rollback-Fundament");
   expect(result.schema).toBe(5);
   expect(result.activeTab).toBe("landing");
   expect(result.structure.allPassed).toBe(true);
@@ -184,14 +184,14 @@ test("Archiv ist eigenständig erreichbar und öffnet die Nur-Ansicht", async ({
 test("Manifest und PWA-Version stimmen mit der Anwendung überein", async () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(root, "manifest.webmanifest"), "utf8"));
   const worker = fs.readFileSync(path.join(root, "service-worker.js"), "utf8");
-  expect(manifest.version).toBe("99.4.3");
-  expect(manifest.name).toContain("V99.4.3");
-  expect(worker).toContain('const CACHE_NAME = "nk-pro-v99-4-3";');
+  expect(manifest.version).toBe("99.4.4");
+  expect(manifest.name).toContain("V99.4.4");
+  expect(worker).toContain('const CACHE_NAME = "nk-pro-v99-4-4";');
   expect(worker).toContain('"./index.html"');
   expect(worker).toContain('"./manifest.webmanifest"');
 });
 
-test("V99.4.3 lädt produktive Styles und Skripte ausschließlich aus separaten Dateien", async ({ page, request }) => {
+test("V99.4.4 lädt produktive Styles und Skripte ausschließlich aus separaten Dateien", async ({ page, request }) => {
   const response = await request.get("/index.html");
   expect(response.ok()).toBeTruthy();
   const html = await response.text();
@@ -206,7 +206,7 @@ test("V99.4.3 lädt produktive Styles und Skripte ausschließlich aus separaten 
     scripts: [...document.scripts].map(script => script.src || "")
   }));
   expect(loaded.styles.some(resource => resource.includes("assets/app.css"))).toBeTruthy();
-  for (const expected of ["js/navigation.js", "js/modal-events.js", "js/persistence.js", "js/migration.js", "js/archive.js", "js/default-seed.js", "js/app.js", "js/service-worker-register.js"]) {
+  for (const expected of ["js/navigation.js", "js/modal-events.js", "js/persistence.js", "js/migration.js", "js/backup-recovery.js", "js/archive.js", "js/default-seed.js", "js/app.js", "js/service-worker-register.js"]) {
     expect(loaded.scripts.some(resource => resource.includes(expected))).toBeTruthy();
   }
 });

@@ -1,5 +1,19 @@
 # Changelog
 
+## V99.4.4 – Migrations-, Sicherungs-, Restore- und Rollback-Fundament – 2026-07-12
+
+- Eingefrorene zentrale Migrationsregistry für `1→2`, `2→4`, `3→4` und `4→5` eingeführt.
+- Migrationen auf isolierten Kopien mit Vor-, Schritt- und Nachvalidierung transaktional ausgeführt; fehlgeschlagene Schritte hinterlassen keine Teiländerung.
+- `js/backup-recovery.js` für eindeutig identifizierte, prüfsummengeschützte Sicherungshüllen, Validierung und Restore ergänzt.
+- Vor erforderlichen Start- und Importmigrationen wird ein unveränderter Ausgangsstand unter einem getrennten Vor-Migrationsschlüssel gesichert.
+- Vor-Migrationssicherung kann im bestehenden Sicherungsbereich heruntergeladen und über den vorhandenen JSON-Import wiederhergestellt werden.
+- Restore erzeugt vorher einen getrennten Checkpoint; der letzte Restore kann kontrolliert zurückgenommen werden.
+- Externe Sicherungshüllen werden vor dem Import vollständig validiert und bei Bedarf über die Registry auf Schema 5 migriert.
+- Archiv-JSON-Import prüft und sammelt Datensätze vor der Bestätigung, ohne den Produktivzustand vorzeitig zu verändern.
+- App-, Paket-, Manifest-, Dokumentations- und PWA-Cacheversion auf V99.4.4 aktualisiert.
+- JavaScript-Syntax 10/10, Referenzfälle 6/6, Releaseprüfung und Playwright/Chromium 28/28 bestanden.
+- Datenschema 5, Datenebenenvertrag 1, Snapshot-Grenzen, bestehende Datenformate, Fachberechnung und allgemeine Oberfläche unverändert.
+
 ## V99.4.3 – Modularisierung von Persistenz, Migration und Archiv – 2026-07-12
 
 - `js/persistence.js` für Prüfsumme, Integritätsmetadaten, Speicheradapter, Speicherdiagnostik und sämtliche direkten `localStorage`-Zugriffe eingeführt.

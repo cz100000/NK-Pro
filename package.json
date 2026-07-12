@@ -1,8 +1,8 @@
 {
-  "name": "nk-pro-v99-4-3",
-  "version": "99.4.3",
+  "name": "nk-pro-v99-4-4",
+  "version": "99.4.4",
   "private": true,
-  "description": "Syntax-, Modul-, Chromium- und Playwright-Pruefungen fuer NK-Pro V99.4.3 Modularisierung von Persistenz, Migration und Archiv",
+  "description": "Syntax-, Modul-, Migrations-, Restore-, Chromium- und Playwright-Pruefungen fuer NK-Pro V99.4.4",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
     "test:fixtures": "node tools/check-fixtures.cjs",

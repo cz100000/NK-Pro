@@ -1,4 +1,4 @@
-# NK-Pro V99.4.3
+# NK-Pro V99.4.4
 
 Lokale, frameworkfreie Browseranwendung zur Erstellung, Prüfung, Archivierung und Ausgabe von Nebenkostenabrechnungen.
 
@@ -6,37 +6,36 @@ Lokale, frameworkfreie Browseranwendung zur Erstellung, Prüfung, Archivierung u
 
 | Merkmal | Stand |
 |---|---|
-| App-Version | V99.4.3 |
-| Versionsname | Modularisierung von Persistenz, Migration und Archiv |
+| App-Version | V99.4.4 |
+| Versionsname | Migrations-, Sicherungs-, Restore- und Rollback-Fundament |
 | Datenschema | 5 – unverändert |
 | Datenebenenvertrag | 1 – unverändert |
-| Ausgangsversion | V99.4.2 |
+| Ausgangsversion | V99.4.3 |
 | Technik | HTML, CSS, JavaScript; kein Framework, kein Buildsystem |
-| PWA-Cache | `nk-pro-v99-4-3` |
+| PWA-Cache | `nk-pro-v99-4-4` |
 
-V99.4.3 trennt die technische Kernlogik für Browser-Persistenz und Integrität, Schemamigration sowie Archiv- und Snapshot-Projektion aus `js/app.js` heraus. Eine kleine Kompatibilitätsschicht erhält die bestehenden globalen Funktionen. Fachberechnung, Oberfläche, Datenschema 5, Datenebenenvertrag 1, Snapshot-Grenzen und Austauschformate bleiben unverändert.
+V99.4.4 ergänzt die in V99.4.3 getrennten Persistenz-, Migrations- und Archivmodule um ein belastbares Sicherungs- und Restore-Fundament. Migrationen werden über eine zentrale Registry geplant, auf einer Kopie ausgeführt und vor sowie nach jedem Schritt validiert. Vor notwendigen Migrationen wird ein vollständiger, eindeutig identifizierter und prüfsummengeschützter Ausgangsstand erzeugt und im vorhandenen Sicherungsbereich zum externen Download bereitgestellt.
 
-## Änderungen gegenüber V99.4.2
+Datenschema 5, Datenebenenvertrag 1, Snapshot-Grenzen, Fachberechnung und allgemeine Oberfläche bleiben unverändert.
 
-- `js/persistence.js` bündelt Prüfsumme, Integritätsmetadaten und sämtliche direkten `localStorage`-Zugriffe,
-- `js/migration.js` kapselt Schemaversionsprüfung, Migrationshistorie, Schema-5-Migration und Altarchivübernahme,
-- `js/archive.js` kapselt Snapshot-Projektion, Archivnormalisierung und Durchsetzung des Datenebenenvertrags,
-- bestehende globale Aufrufe in `js/app.js` delegieren über eine kleine Kompatibilitätsschicht,
-- eindeutige produktive Skriptreihenfolge und vollständiger PWA-App-Shell für alle Module,
-- neue statische und browserbasierte Modultests,
-- keine optischen oder allgemeinen UI-Änderungen,
-- keine Änderung an Datenbeständen, Berechnungslogik, Backups, Recovery oder Import-/Exportformaten.
+## Änderungen gegenüber V99.4.3
 
-Analyse, Variantenvergleich, Rückweg und Teststrategie stehen in `MODULARISIERUNG_PERSISTENZ_MIGRATION_ARCHIV.md`. Der unveränderte Datenebenenvertrag steht in `DATENEBENEN_UND_SNAPSHOT_GRENZEN.md`.
+- `js/migration.js` besitzt eine eingefrorene Registry für die Pfade `1→2`, `2→4`, `3→4` und `4→5`,
+- Migrationen laufen transaktional auf Datenkopien und übernehmen Ergebnisse nur nach vollständiger Validierung,
+- `js/backup-recovery.js` erzeugt, prüft, persistiert und restauriert Sicherungshüllen,
+- Vor-Migrationssicherungen enthalten eindeutige IDs, unveränderliche Metadaten und drei Prüfsummenebenen,
+- der bestehende Sicherungsbereich bietet Download, Restore und Rücknahme des letzten Restore-Vorgangs,
+- extern heruntergeladene Sicherungshüllen sind über den vorhandenen JSON-Import validiert wiederherstellbar,
+- Restore erzeugt vorher einen getrennten Checkpoint,
+- Archiv-JSON-Dateien werden vor der Bestätigung nur gestaged und validiert,
+- direkte Browser-Speicherzugriffe bleiben ausschließlich in `js/persistence.js`,
+- PWA-App-Shell, Tests, Dokumentation und Versionsangaben wurden auf V99.4.4 aktualisiert.
+
+Die vollständige Analyse und der Rückweg stehen in `MIGRATIONS_SICHERUNGS_RESTORE_ROLLBACK_FUNDAMENT.md`.
 
 ## Start
 
-Direkt: `index.html` in einem modernen Browser öffnen. Für PWA und Offline-Cache einen lokalen Webserver verwenden:
-
-```bash
-npm ci
-node tools/static-server.cjs
-```
+`index.html` in einem modernen Chromium-Browser öffnen. Für PWA- und Updatefunktionen die Dateien über HTTPS oder einen lokalen Webserver bereitstellen.
 
 ## Tests
 
@@ -45,35 +44,40 @@ npm ci
 npm run test:syntax
 npm run test:fixtures
 npm run test:release
+npm run test:browser
+```
+
+Mit einem vorhandenen System-Chromium:
+
+```bash
 CHROMIUM_EXECUTABLE_PATH=/pfad/zu/chromium npm run test:browser
 ```
 
-`npm test` führt alle Prüfgruppen aus. Playwright benötigt einen installierten Chromium-Browser oder `CHROMIUM_EXECUTABLE_PATH`.
+Die Freigabeprüfung umfasst 10 JavaScript-Einheiten, 6 semantisch identische Referenzfälle und 28 Playwright-/Chromium-Tests.
 
 ## Projektstruktur
 
-| Pfad | Inhalt |
+| Pfad | Verantwortung |
 |---|---|
-| `index.html` | statische Anwendungsstruktur und verbindliche Skriptreihenfolge |
-| `assets/app.css` | Bildschirm-, Responsive- und Druckdarstellung |
-| `js/persistence.js` | Browser-Speicheradapter und Integritätsschutz |
-| `js/migration.js` | Schemamigration und Altarchivübernahme |
-| `js/archive.js` | Snapshot-Grenzen, Archivnormalisierung und Datenvertrag |
-| `js/default-seed.js` | Ausgangsdaten, getrennt von der Fachlogik |
-| `js/app.js` | zentraler Zustand, Fachlogik, UI-Orchestrierung, Briefe und Export; Kompatibilitätsfassaden für die drei Module |
-| `js/navigation.js` | Navigation und Arbeitskontext |
-| `js/modal-events.js` | globale Modalereignisse |
-| `tests/module-boundaries.spec.js` | Lade-, Schnittstellen- und Kompatibilitätsprüfung der Module |
-| `testdaten/basis/` | eine vollständige Referenzbasis |
-| `testdaten/faelle/` | kleine Abweichungspatches |
-| `tests/fixture-loader.cjs` | reproduzierbarer Aufbau der logischen Referenzfälle |
+| `index.html` | statische Oberfläche und definierte Skriptreihenfolge |
+| `assets/app.css` | produktive Styles |
+| `js/persistence.js` | Browser-Speicheradapter und Integrität |
+| `js/migration.js` | Migrationsregistry, Pfadplanung und Transaktion |
+| `js/backup-recovery.js` | Sicherungshüllen, Restore und Checkpoint-Grundlage |
+| `js/archive.js` | Snapshot-Projektion, Archivnormalisierung und Datenvertrag |
+| `js/default-seed.js` | Ausgangsdaten |
+| `js/app.js` | Zustand, Fachlogik, UI- und Ablaufsteuerung |
+| `tests/` | Browser-, Migrations-, Restore- und Regressionstests |
+| `tools/` | Syntax-, Fixture- und Releaseprüfungen |
 
-## Für die Weiterentwicklung verbindlich
+## Verbindliche Projektunterlagen
 
 - `NK-PRO-PROJEKTSTAND.md`
 - `NK-PRO-ARBEITSREGELN.md`
 - `DATENEBENEN_UND_SNAPSHOT_GRENZEN.md`
 - `MODULARISIERUNG_PERSISTENZ_MIGRATION_ARCHIV.md`
+- `MIGRATIONS_SICHERUNGS_RESTORE_ROLLBACK_FUNDAMENT.md`
+- `TESTING.md`
 - tatsächlicher Quellcode und automatisierte Tests dieser ZIP
 
-Historische Dokumente bleiben als Historiennachweis erhalten, sind aber keine aktuelle technische Grundlage.
+Historische Dokumente bleiben als Nachweis erhalten, sind aber keine aktuelle technische Grundlage.

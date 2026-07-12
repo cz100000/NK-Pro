@@ -1,6 +1,6 @@
 # NK-Pro – Roadmap
 
-**Basis:** V99.4.3 vom 12. Juli 2026  
+**Basis:** V99.4.4 vom 12. Juli 2026  
 **Datenschema:** 5  
 **Datenebenenvertrag:** 1
 
@@ -52,22 +52,25 @@
 
 ## Phase 4 – Migrations- und Sicherungsfundament
 
-**Status: Nächster technischer Schritt**
+**Status: Abgeschlossen in V99.4.4**
 
-Vor Datenschema 6 erforderlich:
+- eigenes `js/backup-recovery.js`,
+- unveränderliche und eindeutig identifizierte Sicherungshüllen,
+- automatische getrennte Vor-Migrationssicherung vor erforderlichen Migrationen,
+- externer Download über den bestehenden Sicherungsbereich,
+- zentrale Migrationsregistry,
+- Pfadplanung für Schema 1 bis 5,
+- Vor-, Schritt- und Nachvalidierung,
+- transaktionaler Abbruch ohne Teilpersistenz,
+- Restore mit vorherigem Checkpoint,
+- Rücknahme des letzten Restore-Vorgangs,
+- Migrations-, Restore- und Regressionstests.
 
-- unveränderliches externes Vor-Migrationsbackup,
-- formalisierte Migrationsregistry,
-- Vor- und Nachvalidierung je Schritt,
-- Abbruch ohne Teilpersistenz bei Fehlern,
-- allgemeiner Rollback über mehrere Migrationsschritte,
-- Restore-Test für Arbeitsstand und sämtliche Archive.
-
-V99.4.3 besitzt weiterhin nur einen getrennten, integritätsgeschützten Ein-Schritt-Recovery-Stand. Dieser ersetzt kein externes Vor-Migrationsbackup.
+Datenschema 5 und Datenebenenvertrag 1 wurden nicht verändert.
 
 ## Phase 5 – Zählerverwaltung und Zählerstände trennen
 
-**Status: Entscheidung erforderlich**
+**Status: Nächster technischer Schritt; Datenmodellentscheidung erforderlich**
 
 Zielmodell:
 
@@ -75,9 +78,9 @@ Zielmodell:
 - getrennte Zählerstammdaten und periodische Messwerte,
 - eindeutige Zuordnung bei Zähler- und Mieterwechsel,
 - Migration der historischen Referenzen,
-- Archiv- und Restore-Tests.
+- Archiv-, Sicherungs- und Restore-Tests.
 
-Diese Phase darf erst nach dem Migrations- und Sicherungsfundament umgesetzt werden.
+Das in V99.4.4 geschaffene Migrations- und Sicherungsfundament ist hierfür verbindlich zu verwenden.
 
 ## Phase 6 – Weitere schrittweise Modularisierung
 
@@ -113,4 +116,4 @@ Jede Auslagerung bleibt ein eigenes Arbeitspaket. Keine gleichzeitige Fach-, Sch
 
 ## Nächster empfohlener Schritt
 
-Externes Vor-Migrationsbackup und allgemeiner Rollback vor Datenschema 6. Das Arbeitspaket muss die neue Modulstruktur verwenden, darf aber Datenschema 5 und bestehende Austauschformate nur nach gesonderter Freigabe verändern.
+Zählerverwaltung und periodische Zählerstände fachlich trennen und eine dauerhafte Zähler-ID einführen. Vor einer Umsetzung sind Zielmodell, Migrationspfad und Archivzuordnung ausdrücklich festzulegen.

@@ -1,12 +1,12 @@
 # UI-Architektur – aktueller Stand
 
-**Version:** V99.4.3  
+**Version:** V99.4.4  
 **Datenschema:** 5, unverändert  
 **Zweck:** verbindliche Alt-zu-Neu-Zuordnung der Phase-1-Navigation
 
 ## Grundentscheidung
 
-Die vorhandenen Funktionen werden nicht neu entwickelt. V99.4.3 übernimmt unverändert die in V99.4.0 eingeführte Ordnung im tatsächlichen Arbeitsablauf. Neue UI-Hubs verwenden bestehende Daten und Renderer. Es entstehen keine getrennten Programme, Datenbestände oder Fachmodelle.
+Die vorhandenen Funktionen werden nicht neu entwickelt. V99.4.4 übernimmt unverändert die in V99.4.0 eingeführte Ordnung im tatsächlichen Arbeitsablauf. Neue UI-Hubs verwenden bestehende Daten und Renderer. Es entstehen keine getrennten Programme, Datenbestände oder Fachmodelle.
 
 ## Landingpage
 

@@ -1,11 +1,11 @@
 {
-  "appVersion": "99.4.3",
-  "displayVersion": "V99.4.3",
-  "versionName": "Modularisierung von Persistenz, Migration und Archiv",
+  "appVersion": "99.4.4",
+  "displayVersion": "V99.4.4",
+  "versionName": "Migrations-, Sicherungs-, Restore- und Rollback-Fundament",
   "schemaVersion": 5,
   "dataLayerContractVersion": 1,
   "snapshotScope": "billingSnapshot",
-  "basedOn": "99.4.2",
+  "basedOn": "99.4.3",
   "releaseDate": "2026-07-12",
   "runtime": [
     "HTML",
@@ -14,5 +14,5 @@
   ],
   "framework": null,
   "buildSystem": null,
-  "nextWorkPackage": "Externes Vor-Migrationsbackup und allgemeiner Rollback vor Datenschema 6"
+  "nextWorkPackage": "Zählerverwaltung und Zählerstände mit dauerhafter Zähler-ID trennen"
 }

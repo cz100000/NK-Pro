@@ -2,7 +2,8 @@ const NK_PRO_MODULES = (() => {
   const required = {
     persistence:globalThis.NKProPersistence,
     migration:globalThis.NKProMigration,
-    archive:globalThis.NKProArchive
+    archive:globalThis.NKProArchive,
+    backupRecovery:globalThis.NKProBackupRecovery
   };
   const missing = Object.entries(required).filter(([, value]) => !value).map(([name]) => name);
   if (missing.length) throw new Error("NK-Pro-Modulladereihenfolge unvollständig: " + missing.join(", "));
@@ -12,8 +13,8 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.3";
-const APP_VERSION_NAME = "Modularisierung von Persistenz, Migration und Archiv";
+const APP_VERSION = "V99.4.4";
+const APP_VERSION_NAME = "Migrations-, Sicherungs-, Restore- und Rollback-Fundament";
 const APP_RELEASE_DATE = "2026-07-12";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
@@ -55,6 +56,9 @@ const SNAPSHOT_TECHNICAL_META_KEYS = new Set([
   "recoveryCreatedWithAppVersion",
   "recoverySourceStorageKey",
   "snapshotBoundaryMigration",
+  "lastMigrationTransaction",
+  "restoreCheckpointCreatedAt",
+  "restoreCheckpointBackupId",
   "startupFallback",
   "startupMeterEndValueRepairAt",
   "startupMeterEndValueRepairCleared",
@@ -74,6 +78,10 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
+  "V99.4.4 führt eine zentrale Registry für die unterstützten Migrationspfade 1→2, 2→4, 3→4 und 4→5 ein.",
+  "Schemaänderungen laufen transaktional auf einer Datenkopie mit Vor- und Nachvalidierung; bei Fehlern bleibt der Ausgangsdatensatz unverändert.",
+  "Vor notwendigen Migrationen wird eine eindeutig identifizierte, prüfsummengeschützte Sicherungshülle im getrennten Speicherbereich erzeugt und für externen Download bereitgestellt.",
+  "Restore und Rücknahme eines Restore-Vorgangs verwenden validierte Sicherungshüllen und einen getrennten Wiederherstellungs-Checkpoint; Datenschema 5 und Datenebenenvertrag 1 bleiben unverändert.",
   "V99.4.3 gliedert Persistenz und Integrität, Schemamigration sowie Archiv- und Snapshot-Projektion in drei eigenständige JavaScript-Module aus.",
   "Eine kleine Kompatibilitätsschicht in app.js erhält die bestehenden globalen Aufrufe; Datenschema 5, Datenebenenvertrag 1 und alle Austauschformate bleiben unverändert.",
   "Die produktive Skriptreihenfolge und der PWA-App-Shell sichern die Module vor default-seed.js und app.js eindeutig ab; direkte Browser-Speicherzugriffe liegen nur noch im Persistenzmodul.",
@@ -201,6 +209,8 @@ const APP_CHANGELOG = [
 ];
 const STORAGE_KEY = "nkpro_browser_v85_qualitaets_cockpit_data";
 const STORAGE_RECOVERY_KEY = STORAGE_KEY + "_last_valid";
+const STORAGE_PRE_MIGRATION_BACKUP_KEY = STORAGE_KEY + "_pre_migration_backup";
+const STORAGE_RESTORE_CHECKPOINT_KEY = STORAGE_KEY + "_restore_checkpoint";
 const STORAGE_INTEGRITY_ALGORITHM = "FNV1A32";
 const APP_HTML_TEMPLATE = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
 const LEGACY_STORAGE_KEYS = ["nkpro_browser_v84_audit_dom_fix_data","nkpro_browser_v83_release_audit_details_data","nkpro_browser_v82_kostenarten_auswahl_verbrauchspreis_data","nkpro_browser_v81_preis_je_einheit_quelle_data","nkpro_browser_v80_wasser_endwerte_wirklich_leer_data","nkpro_browser_v79_wasseruhren_endwerte_leer_data","nkpro_browser_v78_umlage_kostenart_kontrolltabelle_data","nkpro_browser_v77_korrektur_vorjahr_zaehler_umlage_data","nkpro_browser_v76_vorjahreswerte_umlage_data","nkpro_browser_v75_startseite_kein_autoarchiv_data","nkpro_browser_v74_neue_abrechnung_bleibt_startseite_data","nkpro_browser_v73_startseite_keine_autoabrechnung_data","nkpro_browser_v72_startseite_entschlackt_data","nkpro_browser_v71_finalisierung_je_abrechnung_data","nkpro_browser_v70_druck_pdf_haertung_data","nkpro_browser_v69_abnahmeprotokoll_data","nkpro_browser_v68_finalisieren_eingabeschutz_data","nkpro_browser_v67_sonderfall_waechter_data","nkpro_browser_v66_backup_schutz_data","nkpro_browser_v65_brief_preflight_data","nkpro_browser_v64_rechenlogik_schutz_data","nkpro_browser_v63_tabellenkopf_lesbar_data","nkpro_browser_v62_lesbare_tabellen_nowrap_data","nkpro_browser_v61_eigentuemerbrief_fix_data","nkpro_browser_v60_audit_stabilitaet_data","nkpro_browser_v59_summenblock_abstand_data","nkpro_browser_v58_brief_dynamik_data","nkpro_browser_v57_brief_feinschliff_data","nkpro_browser_v56_lesbarer_brief_data","nkpro_browser_v55_brieflayout_fix_data","nkpro_browser_v54_brieftext_format_data","nkpro_browser_v53_heizkostenbrief_data","nkpro_browser_v52_briefformat_data","nkpro_browser_v51_vorauszahlungsanpassung_data","nkpro_browser_v50_getrennte_sicherung_data","nkpro_browser_v49_fachcheck_exportpaket_data","nkpro_browser_v48_stabilitaetsbasis_plus_data","nkpro_browser_v47_stabilitaetsbasis_data","nkpro_browser_v46_startseite_loeschen_data","nkpro_browser_v45_wasseruhren_historie_data","nkpro_browser_v44_einheitliches_abrechnungsmodell_data","nkpro_browser_v43_startseite_archiv_vereinfacht_data","nkpro_browser_v42_startseite_ohne_topbuttons_data","nkpro_browser_v41_1_legacy_sammelarchiv_data","nkpro_browser_v40_auditfix_data","nkpro_browser_v39_saldo_korrekturen_data"];
@@ -248,12 +258,36 @@ function persistenceModuleOptions(overrides = {}) {
   };
 }
 
+function backupRecoveryModuleOptions(overrides = {}) {
+  return {
+    clone,
+    hash:integrityHash,
+    sourceAppVersion:APP_VERSION,
+    dataLayerContractVersion:DATA_LAYER_CONTRACT_VERSION,
+    schemaVersionOfData:currentDataSchemaVersion,
+    persistence:NK_PRO_MODULES.persistence,
+    persistenceOptions:persistenceModuleOptions(),
+    ...overrides
+  };
+}
+
+function validateMigrationData(data, context = {}) {
+  const errors = [];
+  const warnings = [];
+  if (!isAppDataShape(data)) errors.push("NK-Pro-Kernstruktur mit Wohnungen, Mietern und Kostenarten fehlt.");
+  const version = currentDataSchemaVersion(data);
+  if (version > DATA_SCHEMA_VERSION) errors.push("Datenschema " + version + " ist neuer als die unterstützte Version " + DATA_SCHEMA_VERSION + ".");
+  if ((context.phase === "afterMigration" || context.phase === "restoreCurrent") && version !== DATA_SCHEMA_VERSION) errors.push("Erwartetes Datenschema " + DATA_SCHEMA_VERSION + " wurde nicht erreicht.");
+  return { valid:errors.length === 0, errors, warnings };
+}
+
 function migrationModuleOptions(overrides = {}) {
   return {
     clone,
     appVersion:APP_VERSION,
     targetSchemaVersion:DATA_SCHEMA_VERSION,
     manualAllocationKey:UMLAGE_MANUAL,
+    validateData:validateMigrationData,
     dependencies:{
       ensureUnitIdentityData,
       ensureTenantIdentityFields,
@@ -381,6 +415,119 @@ function readStoredData(key) {
 
 function writeProtectedStorage(key, data) {
   return NK_PRO_MODULES.persistence.writeProtectedStorage(key, data, persistenceModuleOptions());
+}
+
+function migrationCandidatesForData(data) {
+  return NK_PRO_MODULES.migration.collectMigrationCandidates(data, DATA_SCHEMA_VERSION).filter(candidate => candidate.path === "workingState");
+}
+
+function migrationPathLabelsForCandidates(candidates) {
+  return (candidates || []).map(candidate => {
+    try {
+      const path = NK_PRO_MODULES.migration.findMigrationPath(candidate.version, DATA_SCHEMA_VERSION);
+      return candidate.path + ":" + path.map(step => step.id).join(">");
+    } catch (error) {
+      return candidate.path + ":unsupported-" + candidate.version + "-to-" + DATA_SCHEMA_VERSION;
+    }
+  });
+}
+
+function createPreMigrationBackup(data, options = {}) {
+  const candidates = options.candidates || migrationCandidatesForData(data);
+  if (!candidates.length) return null;
+  const envelope = NK_PRO_MODULES.backupRecovery.createBackupEnvelope(data, backupRecoveryModuleOptions({
+    backupType:"preMigrationBackup",
+    sourceSchemaVersion:currentDataSchemaVersion(data),
+    targetSchemaVersion:DATA_SCHEMA_VERSION,
+    sourceStorageKey:options.sourceStorageKey || STORAGE_KEY,
+    reason:options.reason || "Vor datenverändernder Migration",
+    migrationPath:migrationPathLabelsForCandidates(candidates)
+  }));
+  NK_PRO_MODULES.backupRecovery.persistBackupEnvelope(STORAGE_PRE_MIGRATION_BACKUP_KEY, envelope, backupRecoveryModuleOptions());
+  return envelope;
+}
+
+function ensurePreMigrationBackup(data, options = {}) {
+  const candidates = migrationCandidatesForData(data);
+  if (!candidates.length) return null;
+  return createPreMigrationBackup(data, { ...options, candidates });
+}
+
+function readPreMigrationBackupResult() {
+  return NK_PRO_MODULES.backupRecovery.readBackupEnvelopeResult(STORAGE_PRE_MIGRATION_BACKUP_KEY, backupRecoveryModuleOptions());
+}
+
+function readRestoreCheckpointResult() {
+  return NK_PRO_MODULES.backupRecovery.readBackupEnvelopeResult(STORAGE_RESTORE_CHECKPOINT_KEY, backupRecoveryModuleOptions());
+}
+
+function migrationBackupFileName(envelope) {
+  const meta = envelope && envelope.metadata || {};
+  const stamp = String(meta.createdAt || new Date().toISOString()).slice(0, 19).replace(/[:T]/g, "-");
+  return "NK-Pro-Vor-Migrationssicherung-" + safeFilePart(meta.backupId || "backup") + "-" + stamp + ".json";
+}
+
+function downloadPreMigrationBackup() {
+  const result = readPreMigrationBackupResult();
+  if (!result.valid || !result.envelope) return alert("Es ist keine gültige Vor-Migrationssicherung vorhanden.");
+  const filename = migrationBackupFileName(result.envelope);
+  const text = NK_PRO_MODULES.backupRecovery.serializeBackupEnvelope(result.envelope, backupRecoveryModuleOptions());
+  download(filename, text, "application/json;charset=utf-8");
+  setActionMessage("Vor-Migrationssicherung heruntergeladen: " + result.envelope.metadata.backupId);
+  renderActionFeedback();
+}
+
+function createRestoreCheckpoint(reason) {
+  const envelope = NK_PRO_MODULES.backupRecovery.createBackupEnvelope(state, backupRecoveryModuleOptions({
+    backupType:"restoreCheckpoint",
+    sourceSchemaVersion:currentDataSchemaVersion(state),
+    targetSchemaVersion:DATA_SCHEMA_VERSION,
+    sourceStorageKey:STORAGE_KEY,
+    reason:reason || "Checkpoint vor Restore",
+    migrationPath:[]
+  }));
+  NK_PRO_MODULES.backupRecovery.persistBackupEnvelope(STORAGE_RESTORE_CHECKPOINT_KEY, envelope, backupRecoveryModuleOptions());
+  return envelope;
+}
+
+function restorePreMigrationBackup() {
+  if (isArchiveViewer()) return alert("Restore ist in der Archivansicht nicht möglich.");
+  const result = readPreMigrationBackupResult();
+  if (!result.valid || !result.envelope) return alert("Es ist keine gültige Vor-Migrationssicherung vorhanden.");
+  const code = "RESTORE";
+  const entered = prompt("Vor-Migrationssicherung wiederherstellen?\n\nDer aktuelle Arbeitsstand wird vorher als Restore-Checkpoint gesichert. Eingabe zur Bestätigung: " + code, "");
+  if (String(entered || "").trim().toUpperCase() !== code) return alert("Restore wurde abgebrochen.");
+  try {
+    const checkpoint = createRestoreCheckpoint("Checkpoint vor Wiederherstellung von " + result.envelope.metadata.backupId);
+    const restoredRaw = NK_PRO_MODULES.backupRecovery.restoreBackupEnvelope(result.envelope, backupRecoveryModuleOptions({ validateData:(data) => validateMigrationData(data, { phase:"beforeMigration" }) }));
+    state = normalizeLoadedData(restoredRaw);
+    if (!state.meta) state.meta = {};
+    state.meta.restoreCheckpointCreatedAt = checkpoint.metadata.createdAt;
+    state.meta.restoreCheckpointBackupId = checkpoint.metadata.backupId;
+    const saved = withFinalizationWriteBypass(() => saveData());
+    renderAll();
+    alert(saved ? "Vor-Migrationssicherung wurde validiert, auf den aktuellen Stand migriert und wiederhergestellt." : "Daten wurden wiederhergestellt, konnten aber nicht dauerhaft gespeichert werden.");
+  } catch (error) {
+    alert("Restore fehlgeschlagen. Der aktuelle Arbeitsstand blieb erhalten.\n\n" + errorMessage(error));
+  }
+}
+
+function rollbackLastRestore() {
+  if (isArchiveViewer()) return alert("Rollback ist in der Archivansicht nicht möglich.");
+  const result = readRestoreCheckpointResult();
+  if (!result.valid || !result.envelope) return alert("Es ist kein gültiger Restore-Checkpoint vorhanden.");
+  const code = "ROLLBACK";
+  const entered = prompt("Letzten Restore zurücknehmen?\n\nEingabe zur Bestätigung: " + code, "");
+  if (String(entered || "").trim().toUpperCase() !== code) return alert("Rollback wurde abgebrochen.");
+  try {
+    const restored = NK_PRO_MODULES.backupRecovery.restoreBackupEnvelope(result.envelope, backupRecoveryModuleOptions({ validateData:(data) => validateMigrationData(data, { phase:"restoreCurrent" }) }));
+    state = normalizeLoadedData(restored);
+    const saved = withFinalizationWriteBypass(() => saveData());
+    renderAll();
+    alert(saved ? "Der letzte Restore wurde zurückgenommen." : "Rollback wurde geladen, konnte aber nicht dauerhaft gespeichert werden.");
+  } catch (error) {
+    alert("Rollback fehlgeschlagen. Der aktuelle Arbeitsstand blieb erhalten.\n\n" + errorMessage(error));
+  }
 }
 
 // ===== Bereich: Speicher, Importprüfung und Migration =====
@@ -572,6 +719,8 @@ function backupStatusReport() {
   const days = daysSinceIso(last);
   const storage = currentStorageUsage();
   const events = Array.isArray(meta.backupEvents) ? meta.backupEvents : [];
+  const preMigrationBackup = readPreMigrationBackupResult();
+  const restoreCheckpoint = readRestoreCheckpointResult();
   let level = "ok";
   let message = "Gesamtbackup dokumentiert.";
   if (!last) {
@@ -585,7 +734,7 @@ function backupStatusReport() {
     level = "err";
     message = "Letzter Speichervorgang hatte einen Fehler. Bitte sofort Gesamt-JSON herunterladen.";
   }
-  return { level, message, last, days, storage, events, meta };
+  return { level, message, last, days, storage, events, meta, preMigrationBackup, restoreCheckpoint };
 }
 
 function backupStatusHint(report) {
@@ -607,11 +756,15 @@ function renderBackupStatus() {
   const lastLabel = report.last ? (new Date(report.last).toLocaleString("de-DE") + (report.days !== null ? " · vor " + report.days + " Tag(en)" : "")) : "Noch kein Gesamtbackup dokumentiert";
   const eventHtml = report.events.slice(0, 3).map(e => '<div class="backup-pill"><strong>' + escapeHtml(e.label || backupEventLabel(e.type)) + '</strong><br>' + escapeHtml(e.at ? new Date(e.at).toLocaleString("de-DE") : "") + '<br><span class="small">' + escapeHtml(e.filename || "") + '</span></div>').join("");
   el.innerHTML = '<div class="backup-status-box ' + report.level + '"><div class="inline-titlebar"><div><strong>Backup-Status</strong><div class="small">' + escapeHtml(report.message) + '</div></div>' +
-    '<div class="start-action-stack"><button type="button" data-app-action="download-full-json">Gesamt-JSON</button><button type="button" data-app-action="download-full-export-package">Exportpaket</button></div></div>' +
+    '<div class="start-action-stack"><button type="button" data-app-action="download-full-json">Gesamt-JSON</button><button type="button" data-app-action="download-full-export-package">Exportpaket</button>' +
+      (report.preMigrationBackup && report.preMigrationBackup.valid ? '<button type="button" data-app-action="download-pre-migration-backup">Vor-Migrationssicherung</button>' : '') +
+      '</div></div>' +
     '<div class="backup-grid">' +
       '<div class="backup-pill"><strong>Letztes Gesamtbackup</strong><br>' + escapeHtml(lastLabel) + '<br><span class="small">' + escapeHtml(meta.lastFullBackupType || "") + '</span></div>' +
       '<div class="backup-pill"><strong>Aktueller Speicher</strong><br>' + escapeHtml(report.storage.label) + '<br><span class="small">Browser-Speicher lokal</span></div>' +
       '<div class="backup-pill"><strong>Aktuelle Version</strong><br>' + escapeHtml(APP_VERSION) + '<br><span class="small">' + escapeHtml(APP_VERSION_NAME) + '</span></div>' +
+      (report.preMigrationBackup && report.preMigrationBackup.valid ? '<div class="backup-pill"><strong>Vor-Migrationssicherung</strong><br>' + escapeHtml(report.preMigrationBackup.envelope.metadata.backupId) + '<br><span class="small"><button type="button" data-app-action="restore-pre-migration-backup">Wiederherstellen</button></span></div>' : '') +
+      (report.restoreCheckpoint && report.restoreCheckpoint.valid ? '<div class="backup-pill"><strong>Restore-Checkpoint</strong><br>' + escapeHtml(report.restoreCheckpoint.envelope.metadata.backupId) + '<br><span class="small"><button type="button" data-app-action="rollback-last-restore">Restore zurücknehmen</button></span></div>' : '') +
       (eventHtml || '<div class="backup-pill"><strong>Historie</strong><br>Noch keine Backup-Ereignisse</div>') +
     '</div></div>';
 }
@@ -799,7 +952,9 @@ function persistStartupMeterRepair(data, cleared) {
 
 function loadInitialState() {
   try {
-    const loaded = normalizeLoadedData(loadData());
+    const rawLoaded = loadData();
+    ensurePreMigrationBackup(rawLoaded, { reason:"Automatische Migration beim Anwendungsstart", sourceStorageKey:STORAGE_KEY });
+    const loaded = normalizeLoadedData(rawLoaded);
     const cleared = clearAutofilledMeterEndValuesForNewBilling(loaded, { repairExistingNewBilling:true });
     persistStartupMeterRepair(loaded, cleared);
     return loaded;
@@ -884,7 +1039,7 @@ function normalizeLoadedData(data) {
 function importAppData(data, fileName) {
   const report = importValidationReport(data);
   if (report.errors.length) throw new Error(report.errors.join("\n"));
-  return addImportMetadata(normalizeLegacyData(data), fileName);
+  return addImportMetadata(normalizeLegacyData(clone(data)), fileName);
 }
 
 function simpleArchiveIdentityForMerge(item) {
@@ -4874,6 +5029,8 @@ function localStorageUsageBytes() {
 function developerDiagnosticsData() {
   const integrity = validateStoredDataIntegrity(state);
   const recoveryRaw = NK_PRO_MODULES.persistence.rawStorageValue(STORAGE_RECOVERY_KEY, persistenceModuleOptions());
+  const preMigrationBackup = readPreMigrationBackupResult();
+  const restoreCheckpoint = readRestoreCheckpointResult();
   const errors = Array.isArray(renderErrors) ? renderErrors.slice(-10) : [];
   return {
     generatedAt: new Date().toISOString(),
@@ -4894,7 +5051,10 @@ function developerDiagnosticsData() {
       valid: !!integrity.valid,
       reason: integrity.reason || "",
       recoveryAvailable: !!recoveryRaw,
-      recoveryBytes: jsonByteLength(recoveryRaw)
+      recoveryBytes: jsonByteLength(recoveryRaw),
+      preMigrationBackupAvailable:!!preMigrationBackup.valid,
+      preMigrationBackupId:preMigrationBackup.valid ? preMigrationBackup.envelope.metadata.backupId : "",
+      restoreCheckpointAvailable:!!restoreCheckpoint.valid
     },
     rendering: {
       renderCount,
@@ -6038,6 +6198,7 @@ async function importLegacyBillingFiles(ev) {
   const entries = [];
   const failedFiles = [];
   let archiveJsonImports = 0;
+  const archiveJsonItems = [];
   for (const file of files) {
     try {
       const name = file.name || "";
@@ -6045,7 +6206,14 @@ async function importLegacyBillingFiles(ev) {
         const json = parseJsonFileText(await file.text());
         if (Array.isArray(json)) json.forEach(e => entries.push(e));
         else if (Array.isArray(json.legacyEinzelabrechnungen)) json.legacyEinzelabrechnungen.forEach(e => entries.push(e));
-        else if (json.summary && json.data) { if (!upsertYearArchive(json)) throw new Error("Archivdatensatz ungültig"); archiveJsonImports++; continue; }
+        else if (json.summary && json.data) {
+          const prepared = prepareArchiveItemForUse(json);
+          const validation = archiveItemValidation(prepared);
+          if (validation.errors.length) throw new Error("Archivdatensatz ungültig: " + validation.errors.join(" "));
+          archiveJsonItems.push(prepared);
+          archiveJsonImports++;
+          continue;
+        }
         else throw new Error("JSON-Format wurde nicht als Archiv oder Einzelabrechnung erkannt.");
       } else {
         const text = decodeLegacyArrayBuffer(await file.arrayBuffer());
@@ -6061,6 +6229,9 @@ async function importLegacyBillingFiles(ev) {
   input.value = "";
   if (!entries.length) {
     if (archiveJsonImports) {
+      const msg = archiveJsonImports + " Archivdatensatz/Archivdatensätze importieren?" + backupStatusHint(backupStatusReport());
+      if (!confirm(msg)) return;
+      archiveJsonItems.forEach(item => upsertYearArchive(item));
       const saved = commitStateChange({ reason:"Benutzereingabe" });
       alert(archiveJsonImports + " Archivdatensatz/Archivdatensätze wurden importiert" + (saved ? " und gespeichert." : ", konnten aber nicht im Browser-Speicher gespeichert werden. Bitte sofort eine JSON-Sicherung herunterladen."));
       return;
@@ -6073,6 +6244,7 @@ async function importLegacyBillingFiles(ev) {
   const label = archivePeriodLabel(item);
   const msg = entries.length + " Einzelabrechnung(en) als Archivsatz " + item.year + " / " + label + " importieren?\n\nSaldo: " + (saldo >= 0 ? "Nachzahlung " : "Guthaben ") + fmtMoney(Math.abs(saldo)) + backupStatusHint(backupStatusReport()) + (archiveJsonImports ? "\n\nZusätzlich wurden " + archiveJsonImports + " Archiv-JSON-Datensatz/Datensätze erkannt." : "") + (failedFiles.length ? "\n\nNicht importiert:\n- " + failedFiles.slice(0, 6).join("\n- ") : "");
   if (!confirm(msg)) return;
+  archiveJsonItems.forEach(archiveItem => upsertYearArchive(archiveItem));
   if (!upsertYearArchive(item)) return;
   const saved = commitStateChange({ reason:"Benutzereingabe" });
   alert(saved ? "Abrechnung wurde dem Archiv hinzugefügt." : "Abrechnung wurde hinzugefügt, konnte aber nicht gespeichert werden. Bitte sofort eine JSON-Sicherung herunterladen.");
@@ -6217,15 +6389,32 @@ if (jsonImportEl) jsonImportEl.addEventListener("change", async (ev) => {
   if (!file) return;
   try {
     const text = await file.text();
-    const parsed = parseJsonFileText(text);
+    const parsedFile = parseJsonFileText(text);
+    let parsed = parsedFile;
+    let importedBackupEnvelope = null;
+    if (parsedFile && parsedFile.format === NK_PRO_MODULES.backupRecovery.BACKUP_FORMAT) {
+      const envelopeValidation = NK_PRO_MODULES.backupRecovery.validateBackupEnvelope(parsedFile, backupRecoveryModuleOptions());
+      if (!envelopeValidation.valid) throw new Error("Sicherungshülle ist ungültig: " + envelopeValidation.errors.join(" "));
+      importedBackupEnvelope = parsedFile;
+      parsed = NK_PRO_MODULES.backupRecovery.restoreBackupEnvelope(parsedFile, backupRecoveryModuleOptions({
+        validateData:(data) => validateMigrationData(data, { phase:"beforeMigration" })
+      }));
+    }
     const report = importValidationReport(parsed);
     if (report.errors.length) throw new Error(report.errors.join("\n"));
     const nextState = importAppData(parsed, file.name || "");
     const summary = importSummaryText(nextState, file.name || "", report);
-    if (!confirm(summary + "\n\nDer aktuelle lokale Arbeitsstand wird ersetzt." + backupStatusHint(backupStatusReport()) + "\n\nImport wirklich durchführen?")) return;
+    const restoreNotice = importedBackupEnvelope
+      ? "\n\nValidierte Sicherung: " + importedBackupEnvelope.metadata.backupId + ". Der aktuelle Arbeitsstand wird vorher als Restore-Checkpoint gesichert."
+      : "";
+    if (!confirm(summary + restoreNotice + "\n\nDer aktuelle lokale Arbeitsstand wird ersetzt." + backupStatusHint(backupStatusReport()) + "\n\nImport wirklich durchführen?")) return;
+    ensurePreMigrationBackup(parsed, { reason:"Migration eines importierten JSON-Datenstands", sourceStorageKey:file.name || "external-json" });
+    if (importedBackupEnvelope) createRestoreCheckpoint("Checkpoint vor Restore aus externer Sicherung " + importedBackupEnvelope.metadata.backupId);
     state = nextState;
-    const saved = commitStateChange({ reason:"Benutzereingabe" });
-    alert(saved ? "Daten wurden importiert und gespeichert." : "Daten wurden importiert, konnten aber nicht im Browser-Speicher gespeichert werden. Bitte sofort eine JSON-Sicherung herunterladen.");
+    const saved = commitStateChange({ reason:importedBackupEnvelope ? "Restore aus externer Sicherung" : "Benutzereingabe" });
+    alert(saved
+      ? (importedBackupEnvelope ? "Sicherung wurde validiert, auf den aktuellen Stand migriert und wiederhergestellt." : "Daten wurden importiert und gespeichert.")
+      : "Daten wurden geladen, konnten aber nicht im Browser-Speicher gespeichert werden. Bitte sofort eine JSON-Sicherung herunterladen.");
   } catch(e) {
     console.warn("NK-Pro: JSON-Import fehlgeschlagen", e);
     alert("Die Datei konnte nicht importiert werden.\n\n" + String(e && (e.message || e.name) || e));
@@ -6257,6 +6446,9 @@ function handleAppAction(action) {
   if (action === "download-archive") return downloadFullArchive();
   if (action === "download-full-json") return downloadFullJson();
   if (action === "download-full-export-package") return downloadFullExportPackage();
+  if (action === "download-pre-migration-backup") return downloadPreMigrationBackup();
+  if (action === "restore-pre-migration-backup") return restorePreMigrationBackup();
+  if (action === "rollback-last-restore") return rollbackLastRestore();
   if (action === "self-test") return runAppSelfTest();
   if (action === "final-check") return showFinalBillingReport();
   if (action === "acceptance-report") return showAcceptanceProtocol();
@@ -9424,7 +9616,7 @@ function appSelfTestReport() {
     return "Finalisieren/Entsperren-Status OK";
   }));
 
-  runCheck("Navigation", "Datenebenen und Snapshot-Grenzen V99.4.3", () => {
+  runCheck("Navigation", "Migrations-, Sicherungs-, Restore- und Rollback-Fundament V99.4.4", () => {
     const nav = document.querySelector(".workflow-nav");
     if (!nav) throw new Error("Workflow-Navigation fehlt");
     const groups = Array.from(nav.querySelectorAll(":scope > .nav-group")).map(group => group.dataset.navGroupSection);
@@ -9710,7 +9902,7 @@ function buildOverviewData(tabId) {
     archiv:{summary:[["Archivierte Abrechnungen",s.archives],["Aktuelle Abrechnung",hasActiveCurrentBilling()?s.year:"Keine"],["Datenbestand","Lokal"],["Schema",DATA_SCHEMA_VERSION]],validation:{status:"ok",headline:"Archiv getrennt erreichbar",items:[{text:"Historische Datensätze bleiben unverändert",status:"ok"},{text:"Öffnen erfolgt schreibgeschützt",status:"ok"}]},next:next("Archivierte Abrechnung auswählen und in der Nur-Ansicht prüfen.","archiveRecordsSection"),actions:[open("Archiv öffnen","archiveRecordsSection",true),{label:"Archiv herunterladen",run:()=>downloadFullArchive()},go("Abrechnungsübersicht","start")]},
     mieterverwaltung:{summary:[["Mietverhältnisse",s.tenants.length],["Archiviert",s.archivedTenants.length],["Wohnungen",s.units.length],["Abrechnungsjahr",s.year]],validation:commonValidation,next:next("Mieterstammdaten und archivierte Mietverhältnisse vollständig prüfen.","masterTenantSection"),actions:[open("Mietverhältnisse öffnen","masterTenantSection",true),open("Archiv öffnen","masterTenantArchiveSection"),save]},
     wohnungsverwaltung:{summary:[["Wohnungen gesamt",s.units.length],["Aktiv",s.activeUnits.length],["Inaktiv",Math.max(0,s.units.length-s.activeUnits.length)],["Wohnfläche aktiv",s.activeUnits.reduce((a,w)=>a+num(w.wohnflaeche),0).toLocaleString("de-DE")+" m²"]],validation:commonValidation,next:next("Wohnungsbestand und Flächenangaben kontrollieren.","masterUnitSection"),actions:[open("Wohnungsbestand öffnen","masterUnitSection",true),go("Mieterverwaltung","mieterverwaltung"),save]},
-    sicherung:{summary:[["Version",APP_VERSION],["Archivstände",s.archives],["Betriebsart","Offline · lokal"],["Abrechnungsjahr",s.year]],validation:{status:"ok",headline:"Sicherung verfügbar",items:[{text:"Lokale Gesamtsicherung vorhanden",status:"ok"},{text:"Neuer PWA-Cache für V99.4.3",status:"ok"}]},next:next("Vollständige JSON-Sicherung erstellen und Versionsinformationen prüfen.","backupMainSection"),actions:[open("Gesamtsicherung öffnen","backupMainSection",true),open("Version anzeigen","backupVersionSection"),save]},
+    sicherung:{summary:[["Version",APP_VERSION],["Archivstände",s.archives],["Betriebsart","Offline · lokal"],["Abrechnungsjahr",s.year]],validation:{status:"ok",headline:"Sicherung verfügbar",items:[{text:"Lokale Gesamtsicherung vorhanden",status:"ok"},{text:"Neuer PWA-Cache für V99.4.4",status:"ok"}]},next:next("Vollständige JSON-Sicherung erstellen und Versionsinformationen prüfen.","backupMainSection"),actions:[open("Gesamtsicherung öffnen","backupMainSection",true),open("Version anzeigen","backupVersionSection"),save]},
     mieter:{summary:[["Wohnungen gesamt",s.units.length],["Wohnungen aktiv",s.activeUnits.length],["Mietverhältnisse",s.tenants.length],["Archivierte Mieter",s.archivedTenants.length]],validation:commonValidation,next:next("Bestand und Abrechnung in der Prüfbox abgleichen; danach Kostenarten bearbeiten.","tenantControlSection"),actions:[open("Prüfung öffnen","tenantControlSection",true),open("Mietverhältnisse öffnen","tenantRelationsSection"),go("Kostenarten öffnen","einstellungen")]},
     einstellungen:{summary:[["Kostenarten",s.costs.length],["Aktiv in NK",s.activeCosts.length],["Vollständig",s.completeCosts.length],["Gesamtkosten",overviewMoney(s.activeCosts.reduce((a,k)=>a+num(k.gesamtbetrag),0))]],validation:{status:s.completeCosts.length===s.activeCosts.length?"ok":"warn",headline:s.completeCosts.length+" von "+s.activeCosts.length+" vollständig",items:[{text:"Umlageschlüssel und Beträge prüfen",status:s.completeCosts.length===s.activeCosts.length?"ok":"warn"},{text:"Umlage wird automatisch berechnet",status:"ok"}]},next:next("Fehlende Beträge und Umlageschlüssel vervollständigen.","costEditSection"),actions:[open("Kostenarten bearbeiten","costEditSection",true),()=>{}].filter(Boolean)},
     einnahmen:{summary:[["Kaltmiete erhalten",overviewMoney(s.income.rent)],["NK-Vorauszahlungen",overviewMoney(s.income.prepayments)],["Korrekturen",overviewMoney(s.income.corrections)],["Mietverhältnisse",s.tenants.length]],validation:commonValidation,next:next("Kaltmieten und Vorauszahlungen vollständig prüfen; danach Zählerstände erfassen.","incomeRentSection"),actions:[open("Kaltmiete öffnen","incomeRentSection",true),open("Vorauszahlungen öffnen","incomePrepaymentSection"),go("Zählerstände","wasser")]},
@@ -9860,7 +10052,7 @@ function renderAll(options = {}) {
       renderAllOverviewCards();
       auditV992Structure();
     } catch(uiError) {
-      if (typeof console !== "undefined" && console.error) console.error("V99.4.3-Darstellung konnte nicht aktualisiert werden", uiError);
+      if (typeof console !== "undefined" && console.error) console.error("V99.4.4-Darstellung konnte nicht aktualisiert werden", uiError);
     }
     if (renderQueued) {
       renderQueued = false;
