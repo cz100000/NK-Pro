@@ -1,5 +1,21 @@
 # Changelog
 
+## V99.4.7 – Weitere fachliche Modularisierung (12. Juli 2026)
+
+- zentrale Abrechnungs- und Vorauszahlungsberechnung in `billing-calculation.js` ausgelagert,
+- fachliche Brief-/Dokumentdaten und Brief-/Druck-HTML in getrennte Module überführt,
+- JSON-/CSV-/Downloadtechnik in `export-service.js` zentralisiert,
+- Tabellenfilter und Sortierung in `ui-table-tools.js` getrennt,
+- direkte UI-`localStorage`-Zugriffe aus `navigation.js` entfernt und über `ui-preferences.js` gekapselt,
+- benannten, prüfbaren Anwendungsstart über `app-bootstrap.js` eingeführt,
+- 112 globale Legacy-Aufrufe auf reine Einzeilen-Weiterleitungen reduziert und registriert,
+- `app.js` von 10.248 auf 9.030 Zeilen verkleinert,
+- vollständiges Inventar der 646 Top-Level-Funktionen und 71 globalen Bindungen erstellt,
+- Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Zählerstandard 1 und Snapshot 2 unverändert erhalten,
+- zusätzliche Architektur-, Kompatibilitäts-, Berechnungs-, Start- und Speichergrenzentests ergänzt,
+- vollständige Browserregression mit 39/39 Fällen einschließlich zustandsneutraler Dokument- und Exporterzeugung bestanden,
+- PWA-App-Shell, Dokumentation, Roadmap und Release-Metadaten auf V99.4.7 aktualisiert.
+
 ## V99.4.6 – Zählerstammdaten und Messperioden (12. Juli 2026)
 
 - Zählerstammdaten, Messwerte, Messperioden, zeitabhängige Zuordnungen und Zählerwechsel in vier Fachmodule und einen zentralen Validierungs-/Migrationsdienst getrennt,
@@ -139,8 +155,6 @@
 - Strukturtest ergänzt: keine produktiven Inline-Skripte oder Inline-Styles mehr.
 - Fachliche Berechnungslogik, Datenschema 5 und Referenzdaten unverändert.
 - Vollständige Chromium-/Playwright-Regression bleibt Freigabebedingung.
-
-# Changelog
 
 ## V99.2.8 – Stabilitätsfundament und automatisierte Chromium-Tests
 

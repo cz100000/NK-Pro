@@ -1,17 +1,18 @@
 {
-  "name": "nk-pro-v99-4-6",
-  "version": "99.4.6",
+  "name": "nk-pro-v99-4-7",
+  "version": "99.4.7",
   "private": true,
-  "description": "Syntax-, Zählerstandard-, Messperioden-, Snapshot-, Migrations-, Restore-, Chromium- und Playwright-Pruefungen fuer NK-Pro V99.4.6",
+  "description": "Syntax-, Architektur-, Berechnungs-, Dokument-, Export-, Snapshot-, Migrations-, Restore-, PWA- und Playwright-Prüfungen für NK-Pro V99.4.7",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
     "test:fixtures": "node tools/check-fixtures.cjs",
     "fixtures:materialize": "node tools/materialize-fixtures.cjs",
     "test:browser": "playwright test",
-    "test": "npm run test:syntax && npm run test:fixtures && npm run test:metering && npm run test:release && npm run test:browser",
+    "test": "npm run test:syntax && npm run test:fixtures && npm run test:metering && npm run test:architecture && npm run test:release && npm run test:browser",
     "test:report": "playwright show-report",
     "test:release": "node tools/check-release-consistency.cjs",
-    "test:metering": "node tests/metering-domain.test.cjs"
+    "test:metering": "node tests/metering-domain.test.cjs",
+    "test:architecture": "node tests/ap6-modularization.test.cjs"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1"

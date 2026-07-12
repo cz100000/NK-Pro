@@ -1,6 +1,6 @@
 # UI-Architektur – aktueller Stand
 
-**Version:** V99.4.6  
+**Version:** V99.4.7  
 **Datenschema:** 5, unverändert  
 **Zweck:** verbindliche Alt-zu-Neu-Zuordnung der Phase-1-Navigation
 
@@ -75,3 +75,8 @@ Diese Punkte gehören zu Phase 2 und Phase 3 und unterliegen der Stop-Regel.
 ## Ergänzung V99.4.6
 
 AP5 enthält keine allgemeinen optischen Änderungen. Die bestehende Zähleroberfläche bleibt ein kompatibler Eingabeadapter; Validierung, Messperiodenbildung und Verbrauchsermittlung liegen außerhalb der UI in den neuen Fachmodulen.
+
+
+## Ergänzung V99.4.7
+
+Die sichtbare UI-Struktur und das Design bleiben unverändert. Tabellenfilter und Sortierung liegen technisch in `ui-table-tools.js`; Navigationspräferenzen werden über `ui-preferences.js` gespeichert. Fachliche Berechnung, Dokumentdaten, Brief-HTML und Exporttechnik sind aus dem UI-Controller ausgelagert.

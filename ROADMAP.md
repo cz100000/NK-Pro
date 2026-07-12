@@ -1,6 +1,6 @@
 # NK-Pro – Roadmap
 
-**Basis:** V99.4.6 vom 12. Juli 2026
+**Basis:** V99.4.7 vom 12. Juli 2026
 
 ## Abgeschlossen
 
@@ -8,26 +8,25 @@
 - V99.4.2: verbindliche Datenebenen und Snapshot-Grenzen.
 - V99.4.3: Modularisierung von Persistenz, Migration und Archiv.
 - V99.4.4: Migrations-, Sicherungs-, Restore- und Rollback-Fundament.
-- V99.4.5: Objektstandard 1 und unveränderlicher Abrechnungssnapshot 1.
-- V99.4.6: getrennte Zählerstammdaten, Messwerte, Messperioden, zeitabhängige Zuordnungen, Zählerwechsel und Snapshot 2.
+- V99.4.5: Objektstandard 1 und unveränderlicher Abrechnungssnapshot.
+- V99.4.6: getrennte Zählerstammdaten, Messwerte, Messperioden, Zuordnungen, Wechsel und Snapshot 2.
+- V99.4.7: weitere fachliche Modularisierung von Berechnung, Dokumentdaten, Brief-HTML, Export, Tabellenhilfen, UI-Präferenzen, Start und Kompatibilität.
 
-## Nächste Arbeitspakete
+## Nächstes Arbeitspaket
 
-### AP6 – Native Zähler- und Messwertverwaltung
+### Native UI-Anbindung an die modularisierten Dienste
 
-- Formulare direkt an `zaehlerDaten` anbinden,
-- Stammdaten- und Messwerterfassung sichtbar trennen,
-- Zählerwechsel, Korrektur, Storno und Schätzung bedienbar machen,
-- zentrale Validierungsfehler im bestehenden UI-Konzept darstellen,
-- Legacy-Adapter schrittweise auf reine Importkompatibilität reduzieren.
+- Zähler- und Messwertformulare direkt an die AP5-Fachmodule anbinden,
+- UI-Controller schrittweise aus `app.js` ausgliedern,
+- globalen Laufzeitkontext durch explizite Kontext- oder Controller-Schnittstellen reduzieren,
+- Inline-Handler und verbleibende globale Aufrufe abbauen,
+- Dokument- und Exportaktionen direkt gegen definierte View-Modelle ausführen,
+- jede weitere Extraktion mit Referenz-, UI- und Kompatibilitätstests absichern.
 
-### Danach
+## Danach
 
-- fachliche Kosten- und Verteilungsregeln weiter modularisieren,
-- nachvollziehbare Abrechnungsfreigabe und Abschlussworkflow ergänzen,
-- Export-/Druckpipeline gegen Snapshot 2 vereinheitlichen,
-- technische Schulden im verbleibenden monolithischen `app.js` abbauen.
-
-## Unveränderte Leitplanken
-
-Kein Frameworkwechsel, kein Buildsystem und keine allgemeinen UI-Redesigns ohne eigenes Arbeitspaket. Datenmigrationen bleiben sicherungs-, validierungs- und rollbackpflichtig.
+- Stammdaten- und Mietverhältnisverwaltung modularisieren,
+- Archiv-/Jahreswechsel-Orchestrierung trennen,
+- Qualitäts- und Diagnosefunktionen ausgliedern,
+- globale Kompatibilitätsschicht schrittweise verkleinern,
+- Bedienbarkeit und Optik auf der stabilisierten Architektur verbessern.

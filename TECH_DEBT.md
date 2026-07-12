@@ -1,24 +1,26 @@
 # NK-Pro – Technische Schulden
 
-**Basis:** V99.4.6
+**Basis:** V99.4.7
 
 | ID | Thema | Priorität | Stand |
 |---|---|---:|---|
-| TD-001 | Umfang und Verantwortungsdichte von `app.js` | hoch | reduziert, aber weiterhin wesentlich |
-| TD-002 | Parallele Legacy-Erfassungsfelder und `zaehlerDaten` | hoch | als kompatibler Eingabeadapter akzeptiert; native UI ausstehend |
-| TD-003 | Zählerstammdatenfelder im historischen Objektstandard 1 | mittel | Snapshot-kompatibel; operative Quelle ist `zaehlerDaten` |
-| TD-004 | Alte Archive ohne vollständig rekonstruierbare Messwertbezüge | mittel | unverändert als `legacy-partial` gekennzeichnet |
-| TD-005 | Tagesanteilige Verbrauchsschätzung bei Nutzerwechsel ohne Zwischenablesung | mittel | explizit als `estimated` markiert; fachliche UI-Freigabe ausstehend |
-| TD-006 | Browserabhängige lokale Persistenz | mittel | durch Backup-/Recovery-Fundament abgesichert |
-| TD-007 | Native CRUD-Tests für künftige Zähler-UI | niedrig | Folgearbeitspaket |
+| TD-001 | Umfang und Verantwortungsdichte von `app.js` | hoch | von 10.248 auf 9.030 Zeilen reduziert; 534 Implementierungsfunktionen verbleiben |
+| TD-002 | globaler Laufzeitkontext und 71 Top-Level-Bindungen | hoch | inventarisiert; schrittweiser Controller-/Dependency-Injection-Umbau ausstehend |
+| TD-003 | 112 globale Kompatibilitätswrapper | mittel | rein und registriert; Entfernung erst nach Ablösung von Inline- und Legacy-Aufrufen |
+| TD-004 | parallele Legacy-Erfassungsfelder und `zaehlerDaten` | hoch | kompatibler Eingabeadapter; native UI ausstehend |
+| TD-005 | UI-, Archiv- und Stammdatenabläufe in `app.js` | hoch | klar dokumentiert; weitere Extraktion benötigt getrennte Regressionpakete |
+| TD-006 | alte Archive ohne vollständig rekonstruierbare Messwertbezüge | mittel | unverändert als `legacy-partial` gekennzeichnet |
+| TD-007 | tagesanteilige Verbrauchsschätzung ohne Zwischenablesung | mittel | als `estimated` markiert; fachliche UI-Freigabe ausstehend |
+| TD-008 | browserabhängige lokale Persistenz | mittel | durch Backup-/Recovery-Fundament abgesichert |
 
-## Erreichte Schutzmaßnahmen V99.4.6
+## Erreichte Schutzmaßnahmen V99.4.7
 
-- stabile Zähler- und Messwert-IDs,
-- getrennte Fachmodule und zentrale Validierung,
-- revisionsfähige Messwerte statt stillschweigender Überschreibung,
-- zeitabhängige Zuordnungen und explizite Zählerwechsel,
-- Snapshot 2 mit vollständiger Zählerprojektion,
-- historischer Snapshot-1-Erhalt,
-- transaktionale, idempotente Standardmigration,
-- zentraler Ausschluss nicht abrechnungsrelevanter Zähler.
+- zentrale Berechnungsengine ohne DOM und Speicherzugriff,
+- getrennte Dokumentdaten und Dokumentdarstellung,
+- Exportservice ohne Parallelberechnung,
+- Tabellenhilfen aus dem Monolithen entfernt,
+- direkter Speicherzugriff auf zwei Adapter begrenzt,
+- benannte Startorchestrierung,
+- registrierte reine Kompatibilitätswrapper,
+- vollständiges globales Inventar,
+- zusätzliche Architektur- und Regressionstests.

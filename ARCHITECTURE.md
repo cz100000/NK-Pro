@@ -1,73 +1,71 @@
 # NK-Pro – Architektur
 
-**Ist-Stand:** V99.4.6  
+**Ist-Stand:** V99.4.7  
 **Datenschema:** 5  
 **Datenebenenvertrag:** 1  
 **Objektstandard:** 1  
 **Zähler-/Messstandard:** 1  
-**Abrechnungssnapshot:** 2, kompatibel zu 1
+**Abrechnungssnapshot:** 2, kompatibel zu 1  
+**Architekturversion:** 1
 
 ## 1. Laufzeit
 
-NK-Pro läuft ohne Framework und ohne Buildschritt als lokale HTML/CSS/JavaScript-PWA. Produktive Daten verbleiben im Browser oder in explizit heruntergeladenen JSON-Dateien.
+NK-Pro läuft ohne Framework und ohne Buildschritt als lokale HTML/CSS/JavaScript-PWA. Produktive Daten verbleiben im Browser oder in explizit heruntergeladenen Dateien.
 
-## 2. Modulgrenzen
+## 2. Schichten
 
-| Modul | Verantwortung |
-|---|---|
-| `persistence.js` | Speicherung, Recovery und Speicherintegrität |
-| `migration.js` | Registry, Pfadplanung, Vor-/Nachvalidierung, transaktionale Schemamigration |
-| `backup-recovery.js` | Sicherungshüllen, unveränderliche Metadaten, Restore und Checkpoint |
-| `meter-master.js` | kanonische Zählerstammdaten, stabile IDs, Dummy-Ausschluss |
-| `meter-readings.js` | Messwertidentität, Zeitbezug, Herkunft, Revisionen und Storno |
-| `meter-periods.js` | Zuordnungen, Periodenbildung, Wechsel und Verbrauchsermittlung |
-| `meter-validation.js` | Standardmigration, zentrale Validierung und Snapshot-Projektion |
-| `object-standard.js` | additive Objektprojektion ohne eingebettete Messwertduplikate |
-| `billing-snapshot.js` | Abrechnungsbereitschaft, Snapshot-Hülle, Prüfsumme, Unveränderlichkeit |
-| `archive.js` | Datenebenenvertrag, Snapshot-Begrenzung, Archivvorbereitung, Legacy-Status |
-| `app.js` | bestehende Fachberechnung, Zustand, UI und Ablaufkoordination |
+1. **UI und Navigation:** `app.js`, `navigation.js`, `ui-table-tools.js`.
+2. **Anwendungsstart und Kompatibilität:** `app-bootstrap.js`, `compatibility.js`.
+3. **Abrechnungsfachlogik:** `billing-calculation.js`.
+4. **Zähler- und Verbrauchsfachlogik:** AP5-Module `meter-*`.
+5. **Dokumentdaten und Ausgabe:** `document-data.js`, `document-renderer.js`, `export-service.js`.
+6. **Objekt und Snapshot:** `object-standard.js`, `billing-snapshot.js`.
+7. **Datenzugriff und Lebenszyklus:** `persistence.js`, `migration.js`, `archive.js`, `backup-recovery.js`.
+8. **Nicht fachliche UI-Persistenz:** `ui-preferences.js`.
 
-Die Fachmodule sind eingefrorene Namensräume. Abhängigkeiten werden über Optionsobjekte übergeben. Globale Wrapper in `app.js` bleiben nur als Kompatibilitätsschicht bestehen.
+## 3. Abrechnungsarchitektur
 
-## 3. Kanonisches Zählermodell
+`billing-calculation.js` enthält die zentrale Kostenverteilung, Verbrauchszuordnung, Vorauszahlung, Saldenbildung und Vorauszahlungsanpassung. Das Modul enthält keine DOM- oder Browser-Speicherzugriffe. UI, Dokumente und Exporte verwenden dasselbe Berechnungsergebnis.
 
-`zaehlerDaten` ist die primäre fachliche Struktur für Zähler:
+Die vorhandenen AP5-Zählermodule bleiben verbindliche Quelle für Zählerstammdaten, Messwerte, Messperioden, Zuordnungen, Wechsel und Verbrauch. Der Stromzähler-Dummy ist weiterhin vollständig gespeichert, aber fachlich ausgeschlossen.
 
-- `zaehler`: dauerhafte Stammdaten,
-- `messwerte`: eigenständige, revisionsfähige Zeitdatensätze,
-- `messperioden`: abgeleitete Anfangs-/Endstandspaare und Verbräuche,
-- `zuordnungen`: zeitabhängige Objekt-, Gebäude-, Einheiten-, Nutzer- und Vertragsbezüge,
-- `zaehlerwechsel`: Vorgänger-/Nachfolgerbeziehungen mit Wechselständen.
+## 4. Dokument-, Druck- und Exportarchitektur
 
-Legacy-Felder `waterMeters`, `meterReadings` und eingebettete V99.4.5-Zählerstände bleiben kompatible Eingabequellen. Sie werden idempotent in die kanonischen Strukturen synchronisiert, aber nicht als alleinige technische Identität verwendet.
+```text
+Arbeitsstand / Snapshot
+        ↓
+billing-calculation.js
+        ↓
+document-data.js
+        ↓
+document-renderer.js
+        ↓
+UI-Drucksteuerung
+```
 
-## 4. Berechnungs- und Snapshot-Pipeline
+Exporte verwenden `export-service.js`. Dieses Modul serialisiert vorhandene Fachwerte und löst Downloads aus, führt jedoch keine eigene Abrechnungsberechnung durch.
 
-1. Zählerstammdaten und Messwerte synchronisieren,
-2. zeitabhängige Zuordnungen und Zählerwechsel normalisieren,
-3. fachlich gültige Messperioden erzeugen,
-4. zentrale Zähler- und Objektvalidierung ausführen,
-5. bestehende Umlageberechnung ausführen,
-6. begrenzte Snapshot-Daten und Zählerprojektion erzeugen,
-7. eindeutige Snapshot-ID und Prüfsumme bilden,
-8. gesamte Snapshot-Hülle rekursiv einfrieren.
+## 5. Persistenz und Speicherwege
 
-Kritische Zähler-, Messwert-, Zuordnungs- oder Periodenfehler stoppen Verbrauchsberechnung beziehungsweise Snapshot-Erstellung. Nicht abrechnungsrelevante Zähler bleiben dokumentiert, sind aber aus der Verbrauchsermittlung ausgeschlossen.
+Direkte `localStorage`-Zugriffe existieren produktiv nur in:
 
-## 5. Snapshot- und Archivstrategie
+- `persistence.js` für Arbeits-, Sicherungs-, Recovery- und Restore-Daten,
+- `ui-preferences.js` für nicht fachliche Navigationseinstellungen.
 
-Snapshot 2 enthält Zählerstammdaten, relevante Messwerte, Messperioden, Zuordnungen, Wechsel und Ausschlussgründe. Die Projektion ist eine tiefe Kopie; spätere Änderungen am Arbeitsstand verändern den Snapshot nicht.
+Alle Fach-, Dokument- und Exportmodule sind speicherfrei.
 
-Bestehende vollständige V99.4.5-Snapshots der Version 1 werden unverändert validiert und archiviert. Ältere unvollständig rekonstruierbare Archive werden weiterhin als `legacy-partial` gekennzeichnet, ohne ihre Fachinhalte umzuschreiben.
+## 6. Anwendungsstart
 
-## 6. Persistenz, Migration und Recovery
+`app-bootstrap.js` führt sieben benannte Schritte in fester Reihenfolge aus. Start- und Kompatibilitätsstatus sind über `window.__NKPRO_STARTUP__` und `window.__NKPRO_COMPATIBILITY__` diagnostizierbar.
 
-Datenschema 5 und Datenebenenvertrag 1 bleiben unverändert. Die additive Standardmigration `metering-standard-v1` nutzt das bestehende Vor-Migrationssicherungs-, Restore- und Rollback-Fundament. Sie arbeitet auf einer Kopie, validiert vor Übernahme und ist idempotent.
+## 7. Globale Kompatibilität
 
-## 7. PWA
+112 globale Funktionsnamen leiten ausschließlich an AP6-Module weiter. Die eigentliche Implementierung liegt jeweils nur im Zielmodul. 534 globale Funktionen und 71 Top-Level-Bindungen verbleiben vorläufig in `app.js`; Details stehen im Inventar.
 
-`service-worker.js` verwendet `nk-pro-v99-4-6` und enthält alle Fachmodule in verbindlicher Ladefolge. Beim Aktivieren werden alte Caches entfernt.
+## 8. PWA
 
-## 8. Verbleibende Grenze
+`service-worker.js` verwendet `nk-pro-v99-4-7` und enthält alle produktiven Module in der verbindlichen Ladefolge. Beim Aktivieren werden alte Caches entfernt.
 
-Die vorhandenen Erfassungsformulare schreiben aus Kompatibilitätsgründen weiterhin in Legacy-Felder und werden anschließend zentral synchronisiert. Eine vollständig native CRUD-Oberfläche für `zaehlerDaten` ist ein eigenes Folgearbeitspaket.
+## 9. Verbleibende Grenze
+
+`app.js` bleibt mit 9.030 Zeilen der zentrale UI-Controller und enthält weitere Legacy-Arbeitsabläufe. Der globale Laufzeitkontext wird in AP6 nicht vollständig ersetzt. Weitere Ausgliederungen benötigen jeweils eigene Referenz-, Browser- und Kompatibilitätstests.

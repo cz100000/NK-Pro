@@ -9,7 +9,15 @@ const NK_PRO_MODULES = (() => {
     meterPeriods:globalThis.NKProMeterPeriods,
     meterValidation:globalThis.NKProMeterValidation,
     objectStandard:globalThis.NKProObjectStandard,
-    billingSnapshot:globalThis.NKProBillingSnapshot
+    billingSnapshot:globalThis.NKProBillingSnapshot,
+    billingCalculation:globalThis.NKProBillingCalculation,
+    documentData:globalThis.NKProDocumentData,
+    documentRenderer:globalThis.NKProDocumentRenderer,
+    exportService:globalThis.NKProExportService,
+    uiTableTools:globalThis.NKProUiTableTools,
+    appBootstrap:globalThis.NKProAppBootstrap,
+    compatibility:globalThis.NKProCompatibility,
+    uiPreferences:globalThis.NKProUiPreferences
   };
   const missing = Object.entries(required).filter(([, value]) => !value).map(([name]) => name);
   if (missing.length) throw new Error("NK-Pro-Modulladereihenfolge unvollständig: " + missing.join(", "));
@@ -19,8 +27,8 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.6";
-const APP_VERSION_NAME = "Zählerstammdaten und Messperioden";
+const APP_VERSION = "V99.4.7";
+const APP_VERSION_NAME = "Weitere fachliche Modularisierung";
 const APP_RELEASE_DATE = "2026-07-12";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
@@ -86,6 +94,9 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
+  "V99.4.7 trennt zentrale Abrechnungsberechnung, Dokumentdaten, Brief-HTML, Exporttechnik, Tabellenhilfen und Startorchestrierung über feste Modulschnittstellen.",
+  "app.js wurde von 10.248 auf rund 9.000 Zeilen reduziert; bestehende globale Aufrufe bleiben ausschließlich als dokumentierte Einzeilen-Weiterleitungen erhalten.",
+  "Direkte Browser-Speicherzugriffe liegen nur noch in Persistenz und getrennten UI-Einstellungen; Datenschema 5, Datenebenenvertrag 1 und alle Berechnungsergebnisse bleiben unverändert.",
   "V99.4.6 trennt dauerhafte Zählerstammdaten, unveränderlich nachvollziehbare Messwerte, Messperioden, zeitabhängige Zuordnungen und Zählerwechsel in vier Fachmodule.",
   "Verbrauchsberechnung und Abrechnungssnapshot verwenden Zählerstandard 1; Stromzähler-Dummys bleiben vollständig gespeichert und zentral aus allen Abrechnungswerten ausgeschlossen.",
   "Bestehende V99.4.5-Zählerdaten werden nach Vor-Migrationssicherung idempotent und verlustfrei in getrennte Strukturen überführt; Datenschema 5 und Datenebenenvertrag 1 bleiben unverändert.",
@@ -1500,18 +1511,11 @@ function ensureCostSettings(data = state) {
   data.kostenarten.forEach(k => normalizeCostSettings(k));
 }
 
-function costExclusionHandling(k) {
-  normalizeCostSettings(k);
-  return k && k.ausschlussBehandlung ? k.ausschlussBehandlung : COST_EXCLUSION_FULL;
-}
+function costExclusionHandling(...args) { return NK_PRO_MODULES.billingCalculation.costExclusionHandling(...args); }
 
-function costFullyRedistributes(k) {
-  return costExclusionHandling(k) !== COST_EXCLUSION_OWNER;
-}
+function costFullyRedistributes(...args) { return NK_PRO_MODULES.billingCalculation.costFullyRedistributes(...args); }
 
-function normalizeManualUmlageValue(value) {
-  return value === UMLAGE_MANUAL_LEGACY ? UMLAGE_MANUAL : value;
-}
+function normalizeManualUmlageValue(...args) { return NK_PRO_MODULES.billingCalculation.normalizeManualUmlageValue(...args); }
 
 function autoPriceForCost(row) {
   const total = num(row && row.gesamtbetrag);
@@ -2516,23 +2520,13 @@ function archivedTenantRows() {
     .filter(m => hasTenantData(m) && isArchivedTenant(m));
 }
 
-function isPrivateTenant(m) {
-  if (!tenantRelevantForCurrentBilling(m)) return false;
-  const role = String(m && (m.abrechnungRolle || m.rolle || "") || "").toLocaleLowerCase("de-DE");
-  return role.includes("eigent") || role.includes("privat");
-}
+function isPrivateTenant(...args) { return NK_PRO_MODULES.billingCalculation.isPrivateTenant(...args); }
 
-function isBillableTenant(m) {
-  return tenantRelevantForCurrentBilling(m) && !isPrivateTenant(m);
-}
+function isBillableTenant(...args) { return NK_PRO_MODULES.billingCalculation.isBillableTenant(...args); }
 
-function billableTenantRows() {
-  return visibleTenantRows().filter(m => isBillableTenant(m));
-}
+function billableTenantRows(...args) { return NK_PRO_MODULES.billingCalculation.billableTenantRows(...args); }
 
-function privateTenantRows() {
-  return visibleTenantRows().filter(m => isPrivateTenant(m));
-}
+function privateTenantRows(...args) { return NK_PRO_MODULES.billingCalculation.privateTenantRows(...args); }
 
 function nextMietId() {
   const maxNum = state.mieter.reduce((max,m) => {
@@ -2652,16 +2646,7 @@ function costPrepaymentRow(costId) {
   return Array.isArray(state.vorauszahlungen) ? state.vorauszahlungen.find(v => v && v.kostenId === costId) : null;
 }
 
-function prepaymentMatrixSumForCost(costId, options = {}) {
-  const row = costPrepaymentRow(costId);
-  if (!row || !Array.isArray(row.werte)) return 0;
-  if (options && options.allowedOnly) {
-    return tenantRowsWithIndex()
-      .filter(t => isCostAllowedForTenant(costId, t))
-      .reduce((sum,t) => sum + num(row.werte[t.originalIndex]), 0);
-  }
-  return row.werte.reduce((sum,value) => sum + num(value), 0);
-}
+function prepaymentMatrixSumForCost(...args) { return NK_PRO_MODULES.billingCalculation.prepaymentMatrixSumForCost(...args); }
 
 function activeTenantByUnitMap() {
   const map = {};
@@ -2843,81 +2828,17 @@ function renderSpecialCaseWatch() {
     '<div class="table-wrap dashboard-table" style="margin-top:10px"><table><thead><tr><th>Status</th><th>Typ</th><th>Betreff</th><th>Details</th></tr></thead><tbody>' + rowsHtml + '</tbody></table></div>' + infoHtml + '</div>';
 }
 
-function settlementInfoForResult(result, tenant) {
-  const correction = num(result && (result.correction !== undefined ? result.correction : (tenant && tenant.vorjahresKorrektur)));
-  const signedSaldo = num(result && result.prepayments) + correction - num(result && result.costShare);
-  const amount = Math.abs(signedSaldo);
-  const isBalanced = amount < 0.005;
-  const isNachzahlung = signedSaldo < -0.004;
-  const isGuthaben = signedSaldo > 0.004;
-  return {
-    signedSaldo,
-    amount: isBalanced ? 0 : amount,
-    type: isBalanced ? "Ausgeglichen" : (isNachzahlung ? "Nachzahlung" : "Guthaben"),
-    finalLabel: isBalanced ? "Abrechnungsergebnis ausgeglichen" : (isNachzahlung ? "Ihre Nachzahlung an die Vermieterin" : "Ihr Guthaben"),
-    isNachzahlung,
-    isGuthaben,
-    isBalanced
-  };
-}
+function settlementInfoForResult(...args) { return NK_PRO_MODULES.documentData.settlementInfoForResult(...args); }
 
-function briefSettlementSummaryHtml(result) {
-  if (!result) return "";
-  const settlement = settlementInfoForResult(result, result.tenant);
-  const cls = settlement.isNachzahlung ? "warn" : "ok";
-  return '<div class="hint"><strong>Brief-Ergebnis:</strong> <span class="status ' + cls + '">' + escapeHtml(settlement.type) + '</span> ' + fmtMoney(settlement.amount) + '<div class="small">Logik: Kostenanteil minus Vorauszahlungen minus Korrekturen. Im Brief wird der Ergebnisbetrag positiv mit eindeutigem Label ausgewiesen.</div></div>';
-}
+function briefSettlementSummaryHtml(...args) { return NK_PRO_MODULES.documentRenderer.briefSettlementSummaryHtml(...args); }
 
-function finalBillingReadiness(report) {
-  const issues = report && Array.isArray(report.issues) ? report.issues : [];
-  const errors = issues.filter(i => i.severity === "Fehler");
-  const warnings = issues.filter(i => i.severity === "Prüfen");
-  const hints = issues.filter(i => i.severity === "Hinweis");
-  let level = "ok";
-  let label = "Final prüfbar";
-  let message = "Keine blockierenden Fehler gefunden. Hinweise trotzdem vor Versand durchsehen.";
-  if (errors.length) {
-    level = "err";
-    label = "Nicht abrechnungsreif";
-    message = "Es gibt blockierende Fehler. Bitte zuerst beheben, dann erneut prüfen.";
-  } else if (warnings.length) {
-    level = "warn";
-    label = "Mit Prüfpunkten";
-    message = "Keine technischen Blocker, aber fachliche Prüfpunkte offen. Vor Versand bewusst entscheiden.";
-  }
-  return { level, label, message, errors, warnings, hints };
-}
+function finalBillingReadiness(...args) { return NK_PRO_MODULES.documentData.finalBillingReadiness(...args); }
 
-function acceptanceProtocolData() {
-  const quality = collectQualityChecks({ scope:"currentBilling" });
-  const readiness = finalBillingReadiness(quality);
-  const calc = calculateUmlage();
-  const totals = umlageTotals(calc);
-  const backup = (typeof backupStatusReport === "function") ? backupStatusReport() : null;
-  const special = (typeof specialCaseWatchReport === "function") ? specialCaseWatchReport() : null;
-  const brief = (typeof currentBriefPreflightReport === "function") ? currentBriefPreflightReport() : null;
-  const finalization = (typeof currentBillingFinalizationReport === "function") ? currentBillingFinalizationReport() : { finalized:isCurrentBillingFinalized(), meta:state.meta || {}, readiness };
-  const issues = Array.isArray(quality.issues) ? quality.issues : [];
-  const errors = issues.filter(i => i.severity === "Fehler").length;
-  const warnings = issues.filter(i => i.severity === "Prüfen").length;
-  const hints = issues.filter(i => i.severity === "Hinweis").length;
-  return { quality, readiness, calc, totals, backup, special, brief, finalization, counts:{ errors, warnings, hints } };
-}
+function acceptanceProtocolData(...args) { return NK_PRO_MODULES.documentData.acceptanceProtocolData(...args); }
 
-function acceptanceLevel(data) {
-  if (!data) return "warn";
-  if (data.counts && data.counts.errors) return "err";
-  if (data.readiness && data.readiness.level === "err") return "err";
-  if (data.brief && data.brief.level === "err") return "err";
-  if (data.backup && data.backup.level === "err") return "err";
-  if (data.special && data.special.level === "err") return "err";
-  if ((data.counts && data.counts.warnings) || (data.readiness && data.readiness.level === "warn") || (data.brief && data.brief.level === "warn") || (data.backup && data.backup.level === "warn") || (data.special && data.special.level === "warn")) return "warn";
-  return "ok";
-}
+function acceptanceLevel(...args) { return NK_PRO_MODULES.documentData.acceptanceLevel(...args); }
 
-function acceptanceLabel(level) {
-  return level === "err" ? "Nicht abnahmebereit" : (level === "warn" ? "Abnahme mit Prüfpunkten" : "Abnahmebereit");
-}
+function acceptanceLabel(...args) { return NK_PRO_MODULES.documentData.acceptanceLabel(...args); }
 
 function finalBillingReportText() {
   const data = acceptanceProtocolData();
@@ -3534,11 +3455,7 @@ function renderDashboard() {
   renderWorkflowDashboard();
 }
 
-function activePrepaymentCostIds() {
-  return state.kostenarten
-    .filter(k => k.kostenart && k.vorauszahlung === "Ja")
-    .map(k => k.id);
-}
+function activePrepaymentCostIds(...args) { return NK_PRO_MODULES.billingCalculation.activePrepaymentCostIds(...args); }
 
 function syncVorauszahlungen() {
   const tenantCount = Math.max(20, state.mieter.length);
@@ -3620,9 +3537,7 @@ function activeCostRowsForMatrix() {
   return (Array.isArray(state.kostenarten) ? state.kostenarten : []).filter(k => k && k.id && k.kostenart && k.inNK === "Ja");
 }
 
-function tenantIdForUmlage(tenant) {
-  return String((tenant && tenant.id) || "");
-}
+function tenantIdForUmlage(...args) { return NK_PRO_MODULES.billingCalculation.tenantIdForUmlage(...args); }
 
 function syncKostenartenMieterUmlage() {
   if (!state.kostenartenMieterUmlage || typeof state.kostenartenMieterUmlage !== "object" || Array.isArray(state.kostenartenMieterUmlage)) state.kostenartenMieterUmlage = {};
@@ -3652,13 +3567,7 @@ function syncKostenartenMieterUmlage() {
   });
 }
 
-function isCostAllowedForTenant(costId, tenant) {
-  const tenantId = tenantIdForUmlage(tenant);
-  if (!tenantId || !state.kostenartenMieterUmlage) return true;
-  const row = state.kostenartenMieterUmlage[String(costId || "")];
-  if (!row || !Object.prototype.hasOwnProperty.call(row, tenantId)) return true;
-  return row[tenantId] !== false && row[tenantId] !== "Nein";
-}
+function isCostAllowedForTenant(...args) { return NK_PRO_MODULES.billingCalculation.isCostAllowedForTenant(...args); }
 
 function setCostTenantAllowed(costId, tenantId, value) {
   syncKostenartenMieterUmlage();
@@ -4167,23 +4076,7 @@ function addCostRow() {
   openCostSelectionDialog();
 }
 
-function download(filename, content, type="text/plain") {
-  try {
-    const blob = new Blob([content], {type});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-    setActionMessage("Download vorbereitet: " + filename);
-    renderActionFeedback();
-    return true;
-  } catch(e) {
-    console.warn("Download konnte nicht erstellt werden", e);
-    setActionMessage("Download konnte nicht vorbereitet werden.", "err");
-    renderActionFeedback();
-    if (typeof alert === "function") alert("Die Datei konnte nicht zum Download vorbereitet werden. Bitte Browser-Speicher und Berechtigungen prüfen.");
-    return false;
-  }
-}
+function download(...args) { return NK_PRO_MODULES.exportService.download(...args); }
 
 function ensureYearData() {
   if (!state.meta) state.meta = {};
@@ -6392,114 +6285,35 @@ async function importLegacyBillingFiles(ev) {
   alert(saved ? "Abrechnung wurde dem Archiv hinzugefügt." : "Abrechnung wurde hinzugefügt, konnte aber nicht gespeichert werden. Bitte sofort eine JSON-Sicherung herunterladen.");
 }
 
-function safeFilePart(value) {
-  return String(value || "").trim().replace(/[^a-zA-Z0-9._-]+/g, "_").replace(/^_+|_+$/g, "") || "daten";
-}
+function safeFilePart(...args) { return NK_PRO_MODULES.exportService.safeFilePart(...args); }
 
-function downloadJsonFile(filename, data) {
-  try {
-    const content = JSON.stringify(data, null, 2);
-    return download(filename, content, "application/json");
-  } catch(e) {
-    console.warn("JSON-Download konnte nicht erstellt werden", e);
-    if (typeof alert === "function") alert("Die JSON-Datei konnte nicht erstellt werden. Bitte Datensatz und Browser-Speicher prüfen.");
-    return false;
-  }
-}
+function downloadJsonFile(...args) { return NK_PRO_MODULES.exportService.downloadJsonFile(...args); }
 
-function downloadFullJson() {
-  const snapshot = exportSnapshot();
-  const filename = backupFileName("nk-pro-gesamtbestand", snapshot);
-  if (downloadJsonFile(filename, snapshot)) registerBackupEvent("full-json", filename);
-}
+function downloadFullJson(...args) { return NK_PRO_MODULES.exportService.downloadFullJson(...args); }
 
-function downloadCurrentBillingJson() {
-  const snapshot = exportCurrentBillingSnapshot();
-  const filename = backupFileName("nk-pro-abrechnung", snapshot);
-  if (downloadJsonFile(filename, snapshot)) registerBackupEvent("current-json", filename);
-}
+function downloadCurrentBillingJson(...args) { return NK_PRO_MODULES.exportService.downloadCurrentBillingJson(...args); }
 
-function downloadJson() {
-  return downloadCurrentBillingJson();
-}
-function csvEscape(value) { const s = String(value ?? ""); return /[;"\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }
-function toCsv(rows) { return rows.map(r => r.map(csvEscape).join(";")).join("\n"); }
-function downloadKostenCsv() {
-  const header = ["Kosten-ID","Kostenart","Kostenbereich","In NK","Als Vorauszahlung","Berechnungsart","Umlageschlüssel","Ausschluss-Behandlung","Gesamtbetrag","Gesamtverbrauch","Preis pro Verbrauchseinheit","Preisquelle","Bemerkung","Status"];
-  const rows = state.kostenarten.map(k => [k.id,k.kostenart,k.bereich,k.inNK,k.vorauszahlung,k.berechnungsart,k.umlageschluessel,costExclusionHandling(k),k.gesamtbetrag,k.gesamtverbrauch,k.preisProEinheit,(k.preisProEinheitManuell ? "manuell" : "automatisch"),k.bemerkung,kostenStatus(k)]);
-  download("nk-pro-kostenarten.csv", toCsv([header, ...rows]), "text/csv;charset=utf-8");
-}
-function downloadMieterCsv() {
-  ensureUnitIdentityData(state);
-  ensureTenantContactData();
-  const header = ["Mieter-ID","Wohnungs-ID","Mietername","Rolle","Geschlecht","Standardanrede","Straße","PLZ","Ort","Telefon","E-Mail","Einzug","Auszug","Kaltmiete Soll","Kaltmiete erhalten","NK-Voraus","Einmalige Korrektur / Gutschrift","Einnahmen","Aktive Tage","Personen","Status"];
-  const rows = state.mieter.map(m => [m.id,m.wohnung,m.name,m.abrechnungRolle,m.geschlecht,m.standardanrede,m.strasse,m.plz,m.ort,m.telefon,m.email,m.einzug,m.auszug,m.kaltSoll,m.kaltErhalten,m.nkVoraus,m.vorjahresKorrektur,m.einnahmen,m.aktiveTage,m.personen,m.status]);
-  download("nk-pro-mieter.csv", toCsv([header, ...rows]), "text/csv;charset=utf-8");
-}
+function downloadJson(...args) { return NK_PRO_MODULES.exportService.downloadJson(...args); }
+function csvEscape(...args) { return NK_PRO_MODULES.exportService.csvEscape(...args); }
+function toCsv(...args) { return NK_PRO_MODULES.exportService.toCsv(...args); }
+function downloadKostenCsv(...args) { return NK_PRO_MODULES.exportService.downloadKostenCsv(...args); }
+function downloadMieterCsv(...args) { return NK_PRO_MODULES.exportService.downloadMieterCsv(...args); }
 
-function csvFileName(prefix) {
-  return safeFilePart(prefix || "nk-pro-export") + "-" + safeFilePart(currentAbrechnungsjahr()) + "-" + safeFilePart(APP_VERSION) + "-" + new Date().toISOString().slice(0,19).replace(/[:T]/g, "-") + ".csv";
-}
+function csvFileName(...args) { return NK_PRO_MODULES.exportService.csvFileName(...args); }
 
-function txtFileName(prefix) {
-  return safeFilePart(prefix || "nk-pro-bericht") + "-" + safeFilePart(currentAbrechnungsjahr()) + "-" + safeFilePart(APP_VERSION) + "-" + new Date().toISOString().slice(0,19).replace(/[:T]/g, "-") + ".txt";
-}
+function txtFileName(...args) { return NK_PRO_MODULES.exportService.txtFileName(...args); }
 
-function downloadUmlageCsv() {
-  const calc = calculateUmlage();
-  const header = ["Typ","Mieter-ID","Wohnungs-ID","Name","Rolle","Kostenanteil","Vorauszahlungen","Korrektur","Saldo-Typ","Saldo-Betrag"];
-  const rows = [];
-  calc.tenantResults.forEach(r => {
-    const s = settlementInfoForResult(r, r.tenant);
-    rows.push(["Mieter", r.tenant.id, r.tenant.wohnung, r.tenant.name, r.tenant.abrechnungRolle || "Mieter", r.costShare, r.prepayments, r.correction, s.type, s.amount]);
-  });
-  calc.privateResults.forEach(r => {
-    rows.push(["Eigentümer/Privat", r.tenant.id, r.tenant.wohnung, r.tenant.name, r.tenant.abrechnungRolle || "Eigentümer/Privat", r.costShare, r.prepayments, r.correction, "Privatanteil", r.costShare]);
-  });
-  download(csvFileName("nk-pro-umlage"), toCsv([header, ...rows]), "text/csv;charset=utf-8");
-}
+function downloadUmlageCsv(...args) { return NK_PRO_MODULES.exportService.downloadUmlageCsv(...args); }
 
-function downloadArchiveIndexCsv() {
-  ensureYearData();
-  const header = ["Jahr","Periode","Archiviert am","Status","Miet-/Einzelabrechnungen","Umlagefähige Kosten","Vorauszahlungen","Saldo","Perioden-ID"];
-  const rows = (state.jahresArchiv || []).map((a, i) => {
-    const saldo = archiveRecordSaldo(a);
-    const validation = archiveItemValidation(a);
-    const status = validation.errors.length ? "Fehler" : (validation.warnings.length ? "Prüfen" : "OK");
-    return [a.year, archivePeriodLabel(a), dateDe(a.archivedAt), status, a.summary ? a.summary.mietverhaeltnisse : "", a.summary ? a.summary.kostenNK : "", a.summary ? a.summary.vorauszahlungen : "", saldo, archivePeriodId(a)];
-  });
-  download(csvFileName("nk-pro-jahresarchiv-index"), toCsv([header, ...rows]), "text/csv;charset=utf-8");
-}
+function downloadArchiveIndexCsv(...args) { return NK_PRO_MODULES.exportService.downloadArchiveIndexCsv(...args); }
 
-function downloadFinalBillingReport() {
-  download(txtFileName("nk-pro-finaler-abrechnungscheck"), finalBillingReportText(), "text/plain;charset=utf-8");
-}
+function downloadFinalBillingReport(...args) { return NK_PRO_MODULES.exportService.downloadFinalBillingReport(...args); }
 
-function downloadAppHtmlCopy() {
-  const htmlText = APP_HTML_TEMPLATE || ("<!DOCTYPE html>\n" + document.documentElement.outerHTML);
-  const filename = "NK-Pro_Webbrowserseite_" + APP_VERSION + "_Qualitaets_Cockpit_Offline.html";
-  download(filename, htmlText, "text/html;charset=utf-8");
-}
+function downloadAppHtmlCopy(...args) { return NK_PRO_MODULES.exportService.downloadAppHtmlCopy(...args); }
 
-function downloadExportPackage() {
-  if (!confirm("Abrechnungs-Exportpaket herunterladen?\n\nEs werden mehrere Dateien nacheinander erzeugt: App-HTML, JSON nur für diese Abrechnung, Kostenarten-CSV, Mieter-CSV, Umlage-CSV und Prüfbericht-TXT. Das Jahresarchiv wird hier nicht exportiert.")) return;
-  downloadAppHtmlCopy();
-  downloadCurrentBillingJson();
-  downloadKostenCsv();
-  downloadMieterCsv();
-  downloadUmlageCsv();
-  downloadFinalBillingReport();
-}
+function downloadExportPackage(...args) { return NK_PRO_MODULES.exportService.downloadExportPackage(...args); }
 
-function downloadFullExportPackage() {
-  if (!confirm("Vollständiges Exportpaket herunterladen?\n\nEs werden mehrere Dateien nacheinander erzeugt: App-HTML, Gesamt-JSON inkl. aktuellem Arbeitsstand und Jahresarchiv, Archiv-Index-CSV, aktuelle Umlage-CSV und aktueller Prüfbericht. Diese Funktion ist die Hauptsicherung über alles hinweg.")) return;
-  downloadAppHtmlCopy();
-  downloadFullJson();
-  downloadArchiveIndexCsv();
-  downloadUmlageCsv();
-  downloadFinalBillingReport();
-  registerBackupEvent("full-package", "Vollständiges Exportpaket " + APP_VERSION + " / " + currentAbrechnungsjahr());
-}
+function downloadFullExportPackage(...args) { return NK_PRO_MODULES.exportService.downloadFullExportPackage(...args); }
 
 function resetData() {
   if (isArchiveViewer()) {
@@ -6631,38 +6445,13 @@ const DEFAULT_UMLAGE_INPUTS = {
   K006: [2082.65,975.92,1524.97,1761.65]
 };
 
-function tenantRowsWithIndex() {
-  return visibleTenantRows().filter(m => m.id && m.name);
-}
+function tenantRowsWithIndex(...args) { return NK_PRO_MODULES.billingCalculation.tenantRowsWithIndex(...args); }
 
-function wohnungArea(wohnungId) {
-  const w = state.wohnungen.find(x => x.id === wohnungId);
-  return w ? num(w.wohnflaeche) : 0;
-}
+function wohnungArea(...args) { return NK_PRO_MODULES.billingCalculation.wohnungArea(...args); }
 
-function tenantArea(m) {
-  return num(m.wohnflaeche) || wohnungArea(m.wohnung);
-}
+function tenantArea(...args) { return NK_PRO_MODULES.billingCalculation.tenantArea(...args); }
 
-function normalizeActiveDayValue(value) {
-  if (value === null || value === undefined || value === "") return 0;
-  if (typeof value === "number") return value;
-
-  const text = String(value).trim();
-
-  // Alte Excel-Formatreste: 365 Tage wurden teilweise als 1900-12-30 gespeichert.
-  if (/^\d{4}-\d{2}-\d{2}/.test(text)) {
-    const d = new Date(text);
-    if (!Number.isNaN(d.getTime())) {
-      const base = Date.UTC(1899, 11, 30);
-      const current = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
-      const days = Math.round((current - base) / 86400000);
-      if (days > 0 && days < 10000) return days;
-    }
-  }
-
-  return num(text);
-}
+function normalizeActiveDayValue(...args) { return NK_PRO_MODULES.billingCalculation.normalizeActiveDayValue(...args); }
 
 function normalizeTenantActiveDays() {
   state.mieter.forEach(m => {
@@ -6673,78 +6462,23 @@ function normalizeTenantActiveDays() {
   });
 }
 
-function tenantDays(m) {
-  return normalizeActiveDayValue(m.aktiveTage) || 0;
-}
+function tenantDays(...args) { return NK_PRO_MODULES.billingCalculation.tenantDays(...args); }
 
-function personDays(m) {
-  return num(m.personentage) || (num(m.personen) * tenantDays(m));
-}
+function personDays(...args) { return NK_PRO_MODULES.billingCalculation.personDays(...args); }
 
-function allWohnungen() {
-  return state.wohnungen.filter(w => w.id);
-}
+function allWohnungen(...args) { return NK_PRO_MODULES.billingCalculation.allWohnungen(...args); }
 
-function activeWohnungen() {
-  return state.wohnungen.filter(w => w.id && w.status === "aktiv");
-}
+function activeWohnungen(...args) { return NK_PRO_MODULES.billingCalculation.activeWohnungen(...args); }
 
-function periodDaysApprox(tenants) {
-  const maxDays = Math.max(0, ...tenants.map(t => tenantDays(t)));
-  return maxDays || 365;
-}
+function periodDaysApprox(...args) { return NK_PRO_MODULES.billingCalculation.periodDaysApprox(...args); }
 
-function unitHasTenantForAllocation(unit, tenants) {
-  return !!(unit && tenants.some(t => t.wohnung === unit.id && tenantDays(t) > 0));
-}
+function unitHasTenantForAllocation(...args) { return NK_PRO_MODULES.billingCalculation.unitHasTenantForAllocation(...args); }
 
-function unitsForCostAllocation(units, tenants, cost) {
-  // Die Verteilungsbasis folgt dem physischen Wohnungsbestand der Abrechnung.
-  // Leerstand oder individuelle Ausschlüsse dürfen den Divisor nicht unbemerkt verkleinern.
-  return Array.isArray(units) ? units : [];
-}
+function unitsForCostAllocation(...args) { return NK_PRO_MODULES.billingCalculation.unitsForCostAllocation(...args); }
 
-function allocateByWohneinheiten(total, tenants, units) {
-  const allocations = {};
-  const unitAllocations = {};
-  tenants.forEach(t => allocations[t.originalIndex] = 0);
+function allocateByWohneinheiten(...args) { return NK_PRO_MODULES.billingCalculation.allocateByWohneinheiten(...args); }
 
-  const unitCount = units.length;
-  const amountPerUnit = unitCount > 0 ? total / unitCount : 0;
-
-  units.forEach(unit => {
-    unitAllocations[unit.id] = amountPerUnit;
-
-    const unitTenants = tenants.filter(t => t.wohnung === unit.id && tenantDays(t) > 0);
-    if (!unitTenants.length) return;
-
-    const unitDays = unitTenants.reduce((sum,t) => sum + tenantDays(t), 0);
-    unitTenants.forEach(t => {
-      const basis = unitDays > 0 ? tenantDays(t) / unitDays : 0;
-      allocations[t.originalIndex] += amountPerUnit * basis;
-    });
-  });
-
-  const tenantSum = Object.values(allocations).reduce((a,b) => a + num(b), 0);
-  const unitTotal = Object.values(unitAllocations).reduce((a,b) => a + num(b), 0);
-  const notAssignedToTenantShare = unitTotal - tenantSum;
-  const status = unitCount > 0 ? allocationDistributionStatus(notAssignedToTenantShare) : "Wohneinheiten fehlen";
-
-  return {
-    allocations,
-    unitAllocations,
-    unitTotal,
-    notAssignedToTenantShare,
-    ownerShare:notAssignedToTenantShare,
-    basisTotal:unitCount,
-    inputSum:0,
-    status
-  };
-}
-
-function formatPlainNumber(value, digits=2) {
-  return Number(value || 0).toLocaleString("de-DE", { maximumFractionDigits:digits, minimumFractionDigits:0 });
-}
+function formatPlainNumber(...args) { return NK_PRO_MODULES.billingCalculation.formatPlainNumber(...args); }
 
 function umlageBasisInfo(k, row) {
   const inputMode = manualInputModeForCost(k);
@@ -6878,44 +6612,13 @@ function ensureWaterMeterData() {
   });
 }
 
-function waterConsumption(row, prefix) {
-  if (!row || !hasEnteredMeterValue(row[prefix + "End"])) return 0;
-  const start = num(row[prefix + "Start"]);
-  const end = num(row[prefix + "End"]);
-  if (end < start) return 0;
-  return end - start;
-}
+function waterConsumption(...args) { return NK_PRO_MODULES.billingCalculation.waterConsumption(...args); }
 
-function genericMeterConsumption(row) {
-  if (!row || !hasEnteredMeterValue(row.end)) return 0;
-  const start = num(row.start);
-  const end = num(row.end);
-  if (end < start) return 0;
-  return end - start;
-}
+function genericMeterConsumption(...args) { return NK_PRO_MODULES.billingCalculation.genericMeterConsumption(...args); }
 
-function waterTotalForTenantIndex(index) {
-  ensureWaterMeterData();
-  const row = state.waterMeters.readings[index] || {};
-  return waterConsumption(row, "kw") + waterConsumption(row, "ww");
-}
+function waterTotalForTenantIndex(...args) { return NK_PRO_MODULES.billingCalculation.waterTotalForTenantIndex(...args); }
 
-function meterTotalForCostAndTenant(costId, index) {
-  ensureWaterMeterData();
-  const tenant = state.mieter[index] || {};
-  if (state.zaehlerDaten && Array.isArray(state.zaehlerDaten.messperioden)) {
-    return NK_PRO_MODULES.meterPeriods.consumptionForCostAndTenant(
-      state,
-      costId,
-      tenant.id || "",
-      tenant.wohnung || "",
-      meteringModuleOptions()
-    );
-  }
-  if (isWaterCost(costId)) return waterTotalForTenantIndex(index);
-  const rows = state.meterReadings.readings[costId] || [];
-  return genericMeterConsumption(rows[index] || {});
-}
+function meterTotalForCostAndTenant(...args) { return NK_PRO_MODULES.billingCalculation.meterTotalForCostAndTenant(...args); }
 
 function waterMeterRowStatus(row) {
   const kwHasEnd = hasEnteredMeterValue(row.kwEnd);
@@ -6933,15 +6636,9 @@ function genericMeterRowStatus(row) {
   return "OK";
 }
 
-function isMeterAutoEnabledForCost(costId) {
-  ensureWaterMeterData();
-  const cost = state.kostenarten.find(k => k.id === costId);
-  return !!(cost && cost.umlageschluessel === "Verbrauch");
-}
+function isMeterAutoEnabledForCost(...args) { return NK_PRO_MODULES.billingCalculation.isMeterAutoEnabledForCost(...args); }
 
-function isWaterAutoEnabledForCost(costId) {
-  return isMeterAutoEnabledForCost(costId);
-}
+function isWaterAutoEnabledForCost(...args) { return NK_PRO_MODULES.billingCalculation.isWaterAutoEnabledForCost(...args); }
 
 function applyWaterMetersToUmlage() {
   ensureWaterMeterData();
@@ -7316,23 +7013,9 @@ function renderWaterMeters() {
 
 
 const MANUAL_INPUT_MODES = ["Zählerstände","Verbrauchsmenge","Direkter Eurobetrag","Externe Einzelabrechnung"];
-function inferManualInputMode(k, input, data = state) {
-  if (k && (k.umlageschluessel === UMLAGE_MANUAL || k.berechnungsart === "Manuell je Mieter")) return "Direkter Eurobetrag";
-  if (k && k.umlageschluessel === "Verbrauch") {
-    if (String(k.id || "") === "K002") return "Zählerstände";
-    const values = input && Array.isArray(input.values) ? input.values : [];
-    const hasLegacyValues = values.some(v => Math.abs(num(v)) > 0.000001);
-    const genericRows = data && data.meterReadings && data.meterReadings.readings && Array.isArray(data.meterReadings.readings[k.id]) ? data.meterReadings.readings[k.id] : [];
-    const hasMeterRows = genericRows.some(r => r && (hasEnteredMeterValue(r.start) || hasEnteredMeterValue(r.end) || r.startDate || r.endDate));
-    if (hasLegacyValues && !hasMeterRows) return "Verbrauchsmenge";
-  }
-  return "Zählerstände";
-}
-function defaultManualInputMode(k) { return inferManualInputMode(k, null, state); }
-function manualInputModeForCost(k) {
-  const input=k && state.umlageInputs && state.umlageInputs[k.id];
-  return input && MANUAL_INPUT_MODES.includes(input.mode) ? input.mode : inferManualInputMode(k, input, state);
-}
+function inferManualInputMode(...args) { return NK_PRO_MODULES.billingCalculation.inferManualInputMode(...args); }
+function defaultManualInputMode(...args) { return NK_PRO_MODULES.billingCalculation.defaultManualInputMode(...args); }
+function manualInputModeForCost(...args) { return NK_PRO_MODULES.billingCalculation.manualInputModeForCost(...args); }
 function syncUmlageInputs() {
   if (!state.umlageInputs) state.umlageInputs = {};
   const tenantCount = Math.max(20, state.mieter.length);
@@ -7378,26 +7061,11 @@ function resetUmlageInputs() {
   commitStateChange({ reason:"Benutzereingabe",tabId:"manuellewerte" });
 }
 
-function rawVorauszahlungByCostAndTenant(costId, tenantOriginalIndex) {
-  const row = state.vorauszahlungen.find(v => v.kostenId === costId);
-  if (!row || row.aktiv !== "Ja") return 0;
-  return num(row.werte[tenantOriginalIndex]);
-}
+function rawVorauszahlungByCostAndTenant(...args) { return NK_PRO_MODULES.billingCalculation.rawVorauszahlungByCostAndTenant(...args); }
 
-function vorauszahlungByCostAndTenant(costId, tenantOriginalIndex) {
-  const tenant = state.mieter[tenantOriginalIndex] || {};
-  if (!isCostAllowedForTenant(costId, tenant)) return 0;
-  return rawVorauszahlungByCostAndTenant(costId, tenantOriginalIndex);
-}
+function vorauszahlungByCostAndTenant(...args) { return NK_PRO_MODULES.billingCalculation.vorauszahlungByCostAndTenant(...args); }
 
-function totalVorauszahlungForTenant(tenantOriginalIndex) {
-  const activeIds = new Set(activePrepaymentCostIds());
-  const tenant = state.mieter[tenantOriginalIndex] || {};
-  const matrixSum = state.vorauszahlungen
-    .filter(v => activeIds.has(v.kostenId) && v.aktiv === "Ja" && isCostAllowedForTenant(v.kostenId, tenant))
-    .reduce((sum,v) => sum + num(v.werte[tenantOriginalIndex]), 0);
-  return matrixSum + num(tenant.wasserWeitereVorauszahlung);
-}
+function totalVorauszahlungForTenant(...args) { return NK_PRO_MODULES.billingCalculation.totalVorauszahlungForTenant(...args); }
 
 function updateTenantPrepaymentTotals() {
   syncVorauszahlungen();
@@ -7409,143 +7077,13 @@ function updateTenantPrepaymentTotals() {
 }
 
 
-function allocationDistributionStatus(restbetrag) {
-  const rest = num(restbetrag);
-  if (Math.abs(rest) <= 0.01) return "Vollständig";
-  if (rest > 0) return "Nicht auf Mieter umgelegt";
-  return "Überverteilung prüfen";
-}
+function allocationDistributionStatus(...args) { return NK_PRO_MODULES.billingCalculation.allocationDistributionStatus(...args); }
 
-function eligibleTenantsForCost(k, tenants) {
-  return (Array.isArray(tenants) ? tenants : []).filter(t => isCostAllowedForTenant(k.id, t));
-}
+function eligibleTenantsForCost(...args) { return NK_PRO_MODULES.billingCalculation.eligibleTenantsForCost(...args); }
 
-function finalizeCostAllocationResult(k, tenants, allocations, ownerShare, basisTotal, inputSum, status, extra = {}) {
-  const finalAllocations = allocations || {};
-  (Array.isArray(tenants) ? tenants : []).forEach(t => {
-    if (finalAllocations[t.originalIndex] === undefined) finalAllocations[t.originalIndex] = 0;
-  });
+function finalizeCostAllocationResult(...args) { return NK_PRO_MODULES.billingCalculation.finalizeCostAllocationResult(...args); }
 
-  let finalOwnerShare = num(ownerShare);
-  if (!costFullyRedistributes(k)) {
-    tenants.forEach(t => {
-      if (!isCostAllowedForTenant(k.id, t)) {
-        finalOwnerShare += num(finalAllocations[t.originalIndex]);
-        finalAllocations[t.originalIndex] = 0;
-      }
-    });
-    if (!status || status === "Vollständig" || status === "Nicht auf Mieter umgelegt" || status === "Überverteilung prüfen") {
-      status = allocationDistributionStatus(finalOwnerShare);
-    }
-  }
-
-  return Object.assign({
-    allocations: finalAllocations,
-    ownerShare: finalOwnerShare,
-    basisTotal,
-    inputSum,
-    status
-  }, extra || {});
-}
-
-function allocationForCost(k, tenants) {
-  const total = num(k.gesamtbetrag);
-  const input = (state.umlageInputs && state.umlageInputs[k.id]) ? state.umlageInputs[k.id].values : [];
-  const price = num(k.preisProEinheit);
-  const allocations = {};
-  let ownerShare = 0;
-  let basisTotal = 0;
-  let inputSum = 0;
-
-  tenants.forEach(t => allocations[t.originalIndex] = 0);
-
-  if (!k.kostenart || k.inNK !== "Ja" || total <= 0) {
-    return { allocations, ownerShare:0, basisTotal:0, inputSum:0, status: total <= 0 ? "Gesamtbetrag fehlt" : "Nicht aktiv" };
-  }
-
-  const eligibleTenants = eligibleTenantsForCost(k, tenants);
-  if (!eligibleTenants.length) {
-    return { allocations, ownerShare:total, basisTotal:0, inputSum:0, status:"Keine berechtigten Mieter" };
-  }
-  const basisTenants = costFullyRedistributes(k) ? eligibleTenants : tenants;
-
-  const inputMode = manualInputModeForCost(k);
-  if (inputMode === "Direkter Eurobetrag" || inputMode === "Externe Einzelabrechnung" || k.berechnungsart === "Manuell je Mieter" || k.umlageschluessel === UMLAGE_MANUAL) {
-    basisTenants.forEach(t => {
-      const amount = num(input[t.originalIndex]);
-      allocations[t.originalIndex] = amount;
-      inputSum += amount;
-    });
-    ownerShare = total - inputSum;
-    return finalizeCostAllocationResult(k, tenants, allocations, ownerShare, inputSum, inputSum, allocationDistributionStatus(ownerShare));
-  }
-
-  if (k.umlageschluessel === "Verbrauch") {
-    basisTenants.forEach(t => {
-      inputSum += num(input[t.originalIndex]);
-    });
-    basisTenants.forEach(t => {
-      const units = num(input[t.originalIndex]);
-      const amount = units * price;
-      allocations[t.originalIndex] = amount;
-    });
-    const tenantSum = Object.values(allocations).reduce((a,b) => a + num(b), 0);
-    ownerShare = inputSum > 0 ? total - tenantSum : total;
-    return finalizeCostAllocationResult(k, tenants, allocations, ownerShare, inputSum, inputSum, allocationDistributionStatus(ownerShare));
-  }
-
-  if (k.umlageschluessel === "Wohnfläche") {
-    const days = periodDaysApprox(basisTenants);
-    const activeAreaDays = activeWohnungen().reduce((sum,w) => sum + num(w.wohnflaeche) * days, 0);
-    const tenantAreaDays = basisTenants.reduce((sum,t) => sum + tenantArea(t) * tenantDays(t), 0);
-    basisTotal = costFullyRedistributes(k) ? tenantAreaDays : (activeAreaDays || tenantAreaDays);
-    basisTenants.forEach(t => {
-      const basis = tenantArea(t) * tenantDays(t);
-      allocations[t.originalIndex] = basisTotal > 0 ? total * basis / basisTotal : 0;
-    });
-    const tenantSum = Object.values(allocations).reduce((a,b) => a + num(b), 0);
-    ownerShare = total - tenantSum;
-    return finalizeCostAllocationResult(k, tenants, allocations, ownerShare, basisTotal, 0, basisTotal > 0 ? allocationDistributionStatus(ownerShare) : "Wohnfläche fehlt");
-  }
-
-  if (k.umlageschluessel === "Personen") {
-    basisTotal = basisTenants.reduce((sum,t) => sum + personDays(t), 0);
-    basisTenants.forEach(t => {
-      const basis = personDays(t);
-      allocations[t.originalIndex] = basisTotal > 0 ? total * basis / basisTotal : 0;
-    });
-    return finalizeCostAllocationResult(k, tenants, allocations, 0, basisTotal, 0, basisTotal > 0 ? "Vollständig" : "Personenzahl fehlt");
-  }
-
-  if (k.umlageschluessel === "Verteilung auf alle Wohneinheiten") {
-    const result = allocateByWohneinheiten(total, basisTenants, unitsForCostAllocation(allWohnungen(), basisTenants, k));
-    return finalizeCostAllocationResult(k, tenants, result.allocations, result.ownerShare, result.basisTotal, result.inputSum, result.status, {
-      unitAllocations:result.unitAllocations,
-      unitTotal:result.unitTotal,
-      notAssignedToTenantShare:result.notAssignedToTenantShare
-    });
-  }
-
-  if (k.umlageschluessel === "Verteilung nur auf aktive Wohneinheiten") {
-    const result = allocateByWohneinheiten(total, basisTenants, unitsForCostAllocation(activeWohnungen(), basisTenants, k));
-    return finalizeCostAllocationResult(k, tenants, result.allocations, result.ownerShare, result.basisTotal, result.inputSum, result.status, {
-      unitAllocations:result.unitAllocations,
-      unitTotal:result.unitTotal,
-      notAssignedToTenantShare:result.notAssignedToTenantShare
-    });
-  }
-
-  if (k.umlageschluessel === "Miettage") {
-    basisTotal = basisTenants.reduce((sum,t) => sum + tenantDays(t), 0);
-    basisTenants.forEach(t => {
-      const basis = tenantDays(t);
-      allocations[t.originalIndex] = basisTotal > 0 ? total * basis / basisTotal : 0;
-    });
-    return finalizeCostAllocationResult(k, tenants, allocations, 0, basisTotal, 0, basisTotal > 0 ? "Vollständig" : "Miettage fehlen");
-  }
-
-  return { allocations, ownerShare:total, basisTotal:0, inputSum:0, status:"Umlageschlüssel fehlt" };
-}
+function allocationForCost(...args) { return NK_PRO_MODULES.billingCalculation.allocationForCost(...args); }
 
 function renderManualExternalValues() {
   syncUmlageInputs(); applyWaterMetersToUmlage();
@@ -7567,67 +7105,9 @@ function renderManualExternalValues() {
   validation.innerHTML='<div class="water-validation-list">'+waterValidationItemHtml(conflicts.length?{key:"warn",icon:"⚠"}:{key:"ok",icon:"✓"},conflicts.length?"Zählerquellen ohne Verbrauch":"Eingabequellen eindeutig",conflicts.length?conflicts.map(k=>k.id+" · "+k.kostenart).join(", "):"Je Kostenart ist genau eine Eingabeart aktiv.")+'</div>';
 }
 
-function calculateUmlage() {
-  syncVorauszahlungen();
-  syncKostenartenMieterUmlage();
-  syncUmlageInputs();
-  applyWaterMetersToUmlage();
+function calculateUmlage(...args) { return NK_PRO_MODULES.billingCalculation.calculateUmlage(...args); }
 
-  const tenants = tenantRowsWithIndex(); // vollständige Umlagebasis inkl. Eigentümer/Privat
-  const billableTenants = tenants.filter(t => isBillableTenant(t));
-  const privateTenants = tenants.filter(t => isPrivateTenant(t));
-  const activeCosts = state.kostenarten.filter(k => k.kostenart && k.inNK === "Ja");
-  const costResults = activeCosts.map(k => {
-    const result = allocationForCost(k, tenants);
-    const tenantSum = billableTenants.reduce((sum,t) => sum + num(result.allocations[t.originalIndex]), 0);
-    const privateShare = privateTenants.reduce((sum,t) => sum + num(result.allocations[t.originalIndex]), 0);
-    const allTenantSum = tenants.reduce((sum,t) => sum + num(result.allocations[t.originalIndex]), 0);
-    const prepaySum = billableTenants.reduce((sum,t) => sum + vorauszahlungByCostAndTenant(k.id, t.originalIndex), 0);
-    return { cost:k, ...result, tenantSum, privateShare, allTenantSum, prepaySum, totalAllocated:num(result.unitTotal) || (allTenantSum + num(result.ownerShare)) };
-  });
-
-  const tenantResults = billableTenants.map(t => {
-    const costShare = costResults.reduce((sum,row) => sum + num(row.allocations[t.originalIndex]), 0);
-    const prepayments = totalVorauszahlungForTenant(t.originalIndex);
-    const correction = num(t.vorjahresKorrektur);
-    return {
-      tenant:t,
-      costShare,
-      prepayments,
-      correction,
-      balance: costShare - prepayments - correction
-    };
-  });
-
-  const privateResults = privateTenants.map(t => {
-    const costShare = costResults.reduce((sum,row) => sum + num(row.allocations[t.originalIndex]), 0);
-    return {
-      tenant:t,
-      costShare,
-      prepayments: totalVorauszahlungForTenant(t.originalIndex),
-      correction: num(t.vorjahresKorrektur),
-      balance: costShare - totalVorauszahlungForTenant(t.originalIndex) - num(t.vorjahresKorrektur)
-    };
-  });
-
-  return { tenants, billableTenants, privateTenants, activeCosts, costResults, tenantResults, privateResults };
-}
-
-function umlageTotals(calc) {
-  const totalCosts = calc.costResults.reduce((s,r) => s + num(r.cost.gesamtbetrag), 0);
-  const allTenantShare = calc.costResults.reduce((s,r) => s + num(r.allTenantSum), 0);
-  const billableShare = calc.tenantResults.reduce((s,r) => s + num(r.costShare), 0);
-  const privateShare = calc.privateResults.reduce((s,r) => s + num(r.costShare), 0);
-  const ownerShare = calc.costResults.reduce((s,r) => s + num(r.ownerShare), 0);
-  const prepayments = calc.tenantResults.reduce((s,r) => s + num(r.prepayments), 0);
-  const corrections = calc.tenantResults.reduce((s,r) => s + num(r.correction), 0);
-  const unitTotal = calc.costResults.reduce((s,r) => s + num(r.unitTotal), 0);
-  const balance = billableShare - prepayments - corrections;
-  const allocatedCheck = allTenantShare + ownerShare;
-  const allocationDelta = totalCosts - allocatedCheck;
-  const prepaymentMatrixTotal = calc.activeCosts.filter(k => k.vorauszahlung === "Ja").reduce((sum,k) => sum + prepaymentMatrixSumForCost(k.id, {allowedOnly:true}), 0);
-  return { totalCosts, allTenantShare, billableShare, privateShare, ownerShare, prepayments, corrections, unitTotal, balance, allocatedCheck, allocationDelta, prepaymentMatrixTotal };
-}
+function umlageTotals(...args) { return NK_PRO_MODULES.billingCalculation.umlageTotals(...args); }
 function renderUmlage() {
   const calc = calculateUmlage();
   const totals = umlageTotals(calc);
@@ -7779,130 +7259,17 @@ function setPrepaymentAdjustmentSetting(key, value) {
   commitStateChange({ reason:"Vorauszahlungsanpassung", tabId:"vorauszahlungsanpassung", includeCommon:false, includeNavigation:false });
 }
 
-function prepaymentRoundingStep(mode) {
-  if (String(mode).includes("10")) return 10;
-  if (String(mode).includes("1")) return 1;
-  return 5;
-}
+function prepaymentRoundingStep(...args) { return NK_PRO_MODULES.billingCalculation.prepaymentRoundingStep(...args); }
 
-function roundMonthlyPrepayment(value, settings) {
-  const n = Math.max(0, num(value));
-  const step = prepaymentRoundingStep(settings && settings.roundingMode);
-  if (!step || step <= 0) return Math.round(n * 100) / 100;
-  return Math.ceil(n / step) * step;
-}
+function roundMonthlyPrepayment(...args) { return NK_PRO_MODULES.billingCalculation.roundMonthlyPrepayment(...args); }
 
-function tenantAnnualizationFactor(tenant, settings) {
-  if (!tenant || !settings || settings.annualizePartialTenants !== "Ja") return 1;
-  const activeDays = Math.max(0, tenantDays(tenant) || tenant.aktiveTage || 0);
-  const periodDays = periodDaysExact();
-  if (!activeDays || activeDays >= periodDays - 1) return 1;
-  return Math.min(4, Math.max(1, periodDays / activeDays));
-}
+function tenantAnnualizationFactor(...args) { return NK_PRO_MODULES.billingCalculation.tenantAnnualizationFactor(...args); }
 
-function adjustmentGroupForCost(cost) {
-  const fake = { id:cost && cost.id, kostenart:cost && cost.kostenart };
-  const group = letterCostGroup(fake);
-  return {
-    label:group.prepayLabel || (cost && cost.kostenart) || "Nebenkosten monatlich",
-    changeKey:group.changeKey || "vzChangeSonstige"
-  };
-}
+function adjustmentGroupForCost(...args) { return NK_PRO_MODULES.billingCalculation.adjustmentGroupForCost(...args); }
 
-function prepaymentAdjustmentData() {
-  ensurePrepaymentAdjustmentSettings();
-  const settings = state.prepaymentAdjustmentSettings;
-  const calc = calculateUmlage();
-  const costRows = calc.costResults.filter(row => row && row.cost && row.cost.vorauszahlung === "Ja" && row.cost.id !== "K040");
-  const summaries = [];
-  const details = [];
+function prepaymentAdjustmentData(...args) { return NK_PRO_MODULES.billingCalculation.prepaymentAdjustmentData(...args); }
 
-  calc.tenantResults.forEach(result => {
-    const tenant = result.tenant;
-    const factor = tenantAnnualizationFactor(tenant, settings);
-    let oldMonthlyTotal = 0;
-    let recommendedMonthlyTotal = 0;
-    const tenantDetails = [];
-
-    costRows.forEach(row => {
-      if (!isCostAllowedForTenant(row.cost.id, tenant)) return;
-      const group = adjustmentGroupForCost(row.cost);
-      const costShare = num(row.allocations[tenant.originalIndex]);
-      const additionalWaterPrepay = row.cost.id === "K002" ? num(tenant.wasserWeitereVorauszahlung) : 0;
-      const oldAnnual = vorauszahlungByCostAndTenant(row.cost.id, tenant.originalIndex) + additionalWaterPrepay;
-      const oldMonthly = oldAnnual / 12;
-      const annualBasis = costShare * factor;
-      const bufferedAnnual = annualBasis * (1 + num(settings.safetyBufferPercent) / 100);
-      let recommendedMonthly = roundMonthlyPrepayment(bufferedAnnual / 12, settings);
-      if (settings.changePolicy === "Nur Erhöhungen") recommendedMonthly = Math.max(oldMonthly, recommendedMonthly);
-      if (settings.changePolicy === "Nur Senkungen") recommendedMonthly = Math.min(oldMonthly, recommendedMonthly);
-      let change = recommendedMonthly - oldMonthly;
-      if (Math.abs(change) < num(settings.minimumMonthlyChange)) {
-        recommendedMonthly = oldMonthly;
-        change = 0;
-      }
-      oldMonthlyTotal += oldMonthly;
-      recommendedMonthlyTotal += recommendedMonthly;
-      const d = {
-        tenant,
-        cost:row.cost,
-        label:group.label,
-        changeKey:group.changeKey,
-        costShare,
-        annualBasis,
-        oldAnnual,
-        oldMonthly,
-        recommendedMonthly,
-        change,
-        annualizationFactor:factor
-      };
-      tenantDetails.push(d);
-      details.push(d);
-    });
-
-    const currentTenantMonthly = num(result.prepayments) / 12;
-    const recommendedTenantMonthly = recommendedMonthlyTotal;
-    const changeTotal = recommendedTenantMonthly - oldMonthlyTotal;
-    const kaltMonthly = num(tenant.kaltSoll) / 12;
-    const warmMonthly = kaltMonthly + recommendedTenantMonthly;
-    const status = Math.abs(changeTotal) < 0.005 ? "Keine Änderung" : (changeTotal > 0 ? "Erhöhung" : "Senkung");
-    summaries.push({
-      tenant,
-      result,
-      currentTenantMonthly,
-      oldMonthlyTotal,
-      recommendedTenantMonthly,
-      changeTotal,
-      kaltMonthly,
-      warmMonthly,
-      status,
-      annualizationFactor:factor,
-      details:tenantDetails
-    });
-  });
-
-  const totals = {
-    oldMonthly: summaries.reduce((s,r) => s + num(r.oldMonthlyTotal), 0),
-    recommendedMonthly: summaries.reduce((s,r) => s + num(r.recommendedTenantMonthly), 0),
-    changeMonthly: summaries.reduce((s,r) => s + num(r.changeTotal), 0),
-    oldAnnual: summaries.reduce((s,r) => s + num(r.oldMonthlyTotal) * 12, 0),
-    recommendedAnnual: summaries.reduce((s,r) => s + num(r.recommendedTenantMonthly) * 12, 0)
-  };
-  return { settings, calc, costRows, summaries, details, totals };
-}
-
-function calculatedMonthlyPrepaymentRowsForTenant(tenant) {
-  const data = prepaymentAdjustmentData();
-  const summary = data.summaries.find(row => row.tenant && tenant && row.tenant.id === tenant.id);
-  if (!summary) return [];
-  return summary.details.map(d => ({
-    label:d.label,
-    turnus:"monatlich",
-    oldMonthly:d.oldMonthly,
-    change:d.change,
-    newMonthly:d.recommendedMonthly
-  }));
-}
+function calculatedMonthlyPrepaymentRowsForTenant(...args) { return NK_PRO_MODULES.billingCalculation.calculatedMonthlyPrepaymentRowsForTenant(...args); }
 
 function prepaymentAdjustmentStatusClass(value) {
   if (Math.abs(num(value)) < 0.005) return "neutral";
@@ -7965,12 +7332,8 @@ function renderPrepaymentAdjustment() {
 }
 
 
-function briefTextWithLineBreaks(value) {
-  return escapeHtml(String(value || "").replace(/\\n/g, "\n")).replace(/\r?\n/g, "<br>");
-}
-function briefProseHtml(value) {
-  return escapeHtml(String(value || "").replace(/\\n/g, " ").replace(/\r?\n/g, " ").replace(/\s+/g, " ").trim());
-}
+function briefTextWithLineBreaks(...args) { return NK_PRO_MODULES.documentRenderer.briefTextWithLineBreaks(...args); }
+function briefProseHtml(...args) { return NK_PRO_MODULES.documentRenderer.briefProseHtml(...args); }
 function normalizeBriefDefaultTexts() {
   if (!state.briefSettings) return;
   function normalizeLegacyProse(value) {
@@ -8090,41 +7453,7 @@ function textareaHtml(value, onChange) {
 }
 
 
-function briefPrintStyles() {
-  return `@page{size:A4;margin:0}
-*{box-sizing:border-box}
-body{margin:0;background:white;color:#111;font-family:Arial,sans-serif;font-size:10.8px;line-height:1.3}
-.letter-sheet{width:210mm;height:297mm;min-height:297mm;margin:0 auto;padding:13mm 13mm 10mm;color:#111;font-family:Arial,sans-serif;font-size:10.8px;line-height:1.3;page-break-after:always;break-after:page;display:flex;flex-direction:column;overflow:hidden;position:relative}.letter-topbar{position:absolute;top:12mm;left:20mm;right:16mm;min-height:17mm;font-size:9.4px;line-height:1.2;border-bottom:1px solid #69727d;padding-bottom:2mm}.letter-window-zone{position:absolute;top:45mm;left:20mm;width:90mm;height:45mm;overflow:hidden}.return-address{font-size:7.6px;line-height:1.15;text-decoration:underline;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4mm}.letter-window-zone .address{min-height:0;margin:0;font-size:11.1px;line-height:1.24}.letter-main-date{position:absolute;top:91mm;right:16mm;font-size:10.8px}.letter-main-content{padding-top:77mm}.letter-supplement-sheet .letter-body,.letter-prepayment-sheet .letter-body{padding-top:4mm}.letter-main-sheet .abrechnung-table{font-size:8.9px;line-height:1.12;margin:2px 0 4px}.letter-main-sheet .abrechnung-table th,.letter-main-sheet .abrechnung-table td{padding:2px 2.8px}.letter-main-sheet .abrechnung-table .section-title td{padding-top:2.8px;padding-bottom:2px;font-size:9px}.letter-main-sheet .abrechnung-table .subtotal td,.letter-main-sheet .abrechnung-table .summary td{font-size:9px}.letter-main-sheet .abrechnung-table .summary.final td{font-size:9.2px}.letter-main-sheet .abrechnung-table .summary-spacer td{height:3mm}.letter-main-sheet .after-table-note{margin:.8mm 0;font-size:8.35px;line-height:1.12}.letter-main-sheet .saldo-note{margin:.9mm 0;font-size:8.9px;line-height:1.14}.letter-main-sheet .closing{margin-top:1.2mm;font-size:9.5px;line-height:1.16}.letter-main-sheet .signature-block{margin-top:1.5mm}.letter-main-sheet .footer{font-size:7.8px;padding-top:1.5px}
-.letter-sheet:last-child{page-break-after:auto;break-after:auto}
-.letter-body{flex:1 1 auto;min-height:0;display:block}
-.letter-head{text-align:center;font-size:9.5px;font-weight:700;line-height:1.2;padding-bottom:5.5px;border-bottom:2px solid #222;margin-bottom:12mm}
-.address{min-height:25mm;margin-bottom:4.5mm;font-size:11.1px;line-height:1.24}
-.date{text-align:right;margin:0 0 5mm;font-size:11.1px}.salutation{margin:0 0 3.4mm;font-size:11.1px}.intro{margin:0 0 4.8mm;font-size:11.1px;line-height:1.3}
-h2{font-size:12.6px;margin:0 0 5.2mm;color:#111}
-table{border-collapse:separate;border-spacing:0;table-layout:fixed;width:100%;min-width:0;max-width:100%;font-size:9.15px;line-height:1.22;margin:4px 0 7px}
-th,td{border:none;border-bottom:1px solid #b9c0c8;padding:2.8px 3.6px;vertical-align:middle;white-space:normal;overflow-wrap:normal;word-break:normal;hyphens:auto}
-th{position:static;background:#f1f3f5;color:#111;font-weight:700;text-align:left;border-top:1px solid #aeb6bf;font-size:9px;line-height:1.16}tr:nth-child(even) td{background:#fbfbfb}.money{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}.center{text-align:center}
-.abrechnung-table col.col-desc{width:29%}.abrechnung-table col.col-period{width:13%}.abrechnung-table col.col-total{width:14%}.abrechnung-table col.col-basis{width:12%}.abrechnung-table col.col-price{width:11%}.abrechnung-table col.col-units{width:10%}.abrechnung-table col.col-share{width:11%}
-.abrechnung-table .section-title td{border-top:1.5px solid #68717a;border-bottom:1px solid #8d96a0;padding:4.2px 3.6px 3px;font-weight:800;background:#eef1f4;font-size:9.25px}.abrechnung-table .subtotal td{font-weight:800;background:#f4f5f6;font-size:9.15px}.abrechnung-table .summary td{background:#e5e7ea;font-weight:800;border-bottom:1px solid #777;font-size:9.25px}.abrechnung-table .summary-spacer td{height:5.5mm;padding:0;line-height:0;background:#fff!important;border:0}.abrechnung-table .summary-block-start td{border-top:1.5px solid #222}.abrechnung-table .summary.final td{background:#d7dbe0;font-weight:900;border-top:1.5px solid #222;border-bottom:1.5px solid #222;font-size:9.45px}
-.note{margin:2.6mm 0 2.6mm;font-size:11.1px;line-height:1.28}.after-table-note{margin:0 0 2.4mm;font-size:10.2px;line-height:1.26}.saldo-note{margin:2.6mm 0 2.6mm;font-size:11.1px;line-height:1.28}.closing{margin:4.6mm 0 0;font-size:11.1px;line-height:1.32}.closing-greeting{display:block}.signature-block{display:block;margin-top:9mm}.footer{margin-top:auto;flex:0 0 auto;font-size:8.4px;line-height:1.18;color:#111;border-top:2px solid #222;padding-top:2.4px;text-align:center}
-.prepay-intro{font-size:11.1px;line-height:1.3;margin-bottom:4.8mm}.letter-bullet-list{margin:0 0 4.8mm}.letter-bullet{display:grid;grid-template-columns:4.4mm minmax(0,1fr);column-gap:2mm;align-items:start;font-size:11.1px;line-height:1.3;margin:0 0 3.2mm}.letter-bullet:last-child{margin-bottom:0}.letter-bullet-mark{font-size:11px;line-height:1.3;text-align:center;padding-top:.1mm}
-.prepay-table{font-size:9.35px;line-height:1.22;margin-top:2.8mm}.prepay-table col.col-prepay-label{width:36%}.prepay-table col.col-prepay-turnus{width:13%}.prepay-table col.col-prepay-money{width:17%}.prepay-table th,.prepay-table td{border:none;border-bottom:1px solid #b9c0c8;padding:3.1px 4px;vertical-align:middle}.prepay-table th{background:#f1f3f5;color:#111;font-weight:700;text-align:left;border-top:1px solid #aeb6bf;font-size:9.1px;line-height:1.18}.prepay-table .summary td{background:#e5e7ea;font-weight:800;border-bottom:1px solid #777;font-size:9.35px}.prepay-table .summary.final td{background:#d7dbe0;font-weight:900;border-top:1.5px solid #222;border-bottom:1.5px solid #222;font-size:9.55px}
-/* V62: größere Brieftabellen ohne Umbruch */
-.abrechnung-table,.prepay-table{table-layout:fixed;width:100%;font-size:10.15px;line-height:1.22;margin:5px 0 8px}
-.abrechnung-table th,.abrechnung-table td,.prepay-table th,.prepay-table td{white-space:nowrap;overflow-wrap:normal;word-break:normal;hyphens:none;padding:4.1px 4.6px;vertical-align:middle}
-.abrechnung-table th,.prepay-table th{font-size:9.7px;line-height:1.18}
-.abrechnung-table col.col-desc{width:32%}.abrechnung-table col.col-period{width:11%}.abrechnung-table col.col-total{width:13%}.abrechnung-table col.col-basis{width:11%}.abrechnung-table col.col-price{width:10%}.abrechnung-table col.col-units{width:10%}.abrechnung-table col.col-share{width:13%}
-.abrechnung-table .section-title td{font-size:10.05px;padding:5px 4.6px 4px}.abrechnung-table .subtotal td,.abrechnung-table .summary td{font-size:10.15px}.abrechnung-table .summary.final td{font-size:10.35px}
-.prepay-table col.col-prepay-label{width:34%}.prepay-table col.col-prepay-turnus{width:10%}.prepay-table col.col-prepay-money{width:18.67%}.prepay-table th{font-size:9.65px}.prepay-table .summary td{font-size:10.15px}.prepay-table .summary.final td{font-size:10.35px}
-
-/* V63: Header dürfen umbrechen, Tabellenwerte bleiben einzeilig */
-.abrechnung-table thead th,.prepay-table thead th{white-space:normal;overflow-wrap:normal;word-break:normal;hyphens:none;line-height:1.14;padding-top:4.4px;padding-bottom:4.4px;vertical-align:middle}
-.abrechnung-table tbody td,.prepay-table tbody td{white-space:nowrap;overflow-wrap:normal;word-break:normal;hyphens:none}
-.letter-main-sheet{padding-bottom:5mm}.letter-main-sheet .salutation{margin:0 0 2.2mm;font-size:10.2px;line-height:1.18}.letter-main-sheet .intro{margin:0 0 2.8mm;font-size:10.2px;line-height:1.22}.letter-main-sheet .abrechnung-table{font-size:8.25px;line-height:1.08;margin:1px 0 3px}.letter-main-sheet .abrechnung-table th,.letter-main-sheet .abrechnung-table td{padding:1.35px 2.3px}.letter-main-sheet .abrechnung-table thead th{font-size:8.15px;line-height:1.08;padding-top:1.8px;padding-bottom:1.8px}.letter-main-sheet .abrechnung-table .section-title td{padding:2px 2.3px 1.5px;font-size:8.45px}.letter-main-sheet .abrechnung-table .subtotal td,.letter-main-sheet .abrechnung-table .summary td{font-size:8.35px}.letter-main-sheet .abrechnung-table .summary.final td{font-size:8.55px}.letter-main-sheet .abrechnung-table .summary-spacer td{height:1.8mm}.letter-main-sheet .after-table-note{margin:.8mm 0;font-size:8.35px;line-height:1.12}.letter-main-sheet .saldo-note{margin:.9mm 0;font-size:8.9px;line-height:1.14}.letter-main-sheet .closing{margin-top:1.2mm;font-size:9.5px;line-height:1.16}.letter-main-sheet .signature-block{margin-top:1.5mm}.letter-main-sheet .footer{font-size:7.8px;padding-top:1.5px}
-.muted{color:#333}.nowrap{white-space:nowrap}.letter-page-note{font-size:8.8px;color:#333;margin-top:3mm}
-/* V70: Druck-/PDF-Härtung */
-html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact}.print-guide{border:1px solid #b6d7ef;background:#eef5fb;border-radius:8px;padding:10px 12px;margin:0 auto 10px;width:210mm;max-width:100%;box-sizing:border-box;font-family:Arial,sans-serif;color:#173b5a}.print-guide strong{display:block;margin-bottom:4px}.screen-print-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.screen-print-actions button{border:1px solid #b6d7ef;background:#fff;color:#173b5a;border-radius:6px;padding:7px 10px;font-weight:700;cursor:pointer}table,tr,.footer,.summary.final{page-break-inside:avoid;break-inside:avoid}@media print{.print-guide{display:none!important}.letter-sheet{border:0!important;box-shadow:none!important;page-break-inside:avoid;break-inside:avoid}table,tr,.footer,.summary.final{page-break-inside:avoid;break-inside:avoid}}`;
-}
+function briefPrintStyles(...args) { return NK_PRO_MODULES.documentRenderer.briefPrintStyles(...args); }
 function effectivePrepaymentDateLabel() {
   ensureBriefSettings();
   const raw = String(state.briefSettings && state.briefSettings.vorauszahlungAb || "").trim();
@@ -8137,162 +7466,22 @@ function effectivePrepaymentYearLabel() {
   return match ? match[1] : "";
 }
 
-function validateBriefResult(calc, result) {
-  const errors = [];
-  const warnings = [];
-  ensureBriefSettings();
-  const s = state.briefSettings || {};
-  if (!result || !result.tenant) {
-    errors.push("Kein Empfänger für einen Brief ausgewählt.");
-    return { errors, warnings };
-  }
-  const tenant = result.tenant;
-  missingBriefFieldsForTenant(tenant).forEach(field => errors.push("Mieterdaten unvollständig: " + field));
-  if (!s.briefdatum) errors.push("Briefdatum fehlt.");
-  if (!s.ort) warnings.push("Ort im Briefkopf fehlt.");
-  if (!s.absenderName) errors.push("Vermietername fehlt.");
-  if (!s.absenderStrasse || !s.absenderOrt) warnings.push("Vermieteradresse ist unvollständig.");
-  if (!s.bankverbindung) warnings.push("Bankverbindung fehlt.");
-  if (!s.introText) warnings.push("Einleitungstext fehlt.");
-  if (!s.gruss || !s.signatur) warnings.push("Grußformel oder Signatur fehlt.");
-
-  const costRows = briefCostRows(calc, tenant);
-  if (!costRows.length) warnings.push("Brief enthält keine Kostenzeilen.");
-  const rowShare = costRows.reduce((sum,row) => sum + num(row.anteil), 0);
-  if (Math.abs(rowShare - num(result.costShare)) > 0.02) errors.push("Kostenanteile im Brief weichen von der Umlage ab: " + fmtMoney(rowShare) + " vs. " + fmtMoney(result.costShare));
-  const rowPrepay = costRows.reduce((sum,row) => sum + num(row.vorauszahlung) + num(row.weitereVorauszahlung), 0);
-  if (Math.abs(rowPrepay - num(result.prepayments)) > 0.02) warnings.push("Vorauszahlungen im Brief weichen von der Umlage ab: " + fmtMoney(rowPrepay) + " vs. " + fmtMoney(result.prepayments));
-  const signedSaldo = num(result.prepayments) + num(result.correction || tenant.vorjahresKorrektur) - num(result.costShare);
-  if (!Number.isFinite(signedSaldo)) errors.push("Briefsaldo ist nicht berechenbar.");
-  return { errors, warnings };
-}
+function validateBriefResult(...args) { return NK_PRO_MODULES.documentData.validateBriefResult(...args); }
 
 
 
-function longestTextLineLength(value) {
-  return String(value || "").split(/\r?\n/).reduce((max,line) => Math.max(max, line.trim().length), 0);
-}
+function longestTextLineLength(...args) { return NK_PRO_MODULES.documentData.longestTextLineLength(...args); }
 
-function compactTextLength(value) {
-  return String(value || "").replace(/\s+/g, " ").trim().length;
-}
+function compactTextLength(...args) { return NK_PRO_MODULES.documentData.compactTextLength(...args); }
 
-function briefLongTextRisks(costRows, tenant, settings, includePrepaymentText = false) {
-  const risks = [];
-  const longCostNames = (Array.isArray(costRows) ? costRows : []).filter(row => compactTextLength(row.kostenart) > 34).map(row => row.kostenart);
-  if (longCostNames.length) risks.push("Lange Kostenarten können im Tabellenkörper knapp werden: " + longCostNames.slice(0,3).join(", ") + (longCostNames.length > 3 ? " …" : ""));
-  if (compactTextLength(tenant && tenant.name) > 34) risks.push("Empfängername ist lang; Briefkopf im Druck prüfen.");
-  const addressLineLength = longestTextLineLength(tenantMailingAddress(tenant));
-  if (addressLineLength > 42) risks.push("Empfängeradresse enthält eine lange Zeile (" + addressLineLength + " Zeichen); Fensterbrief/Druckbild prüfen.");
-  if (compactTextLength(settings && settings.bankverbindung) > 110) risks.push("Bankverbindung/Fußzeile ist sehr lang; Fußzeile im PDF prüfen.");
-  if (longestTextLineLength(settings && settings.introText) > 130) risks.push("Einleitungstext enthält eine sehr lange Zeile; Umbruch im Brief prüfen.");
-  if (includePrepaymentText && longestTextLineLength(settings && settings.vorauszahlungIntro) > 130) risks.push("Text zur Vorauszahlungsanpassung enthält eine sehr lange Zeile; Umbruch im Zusatzblatt prüfen.");
-  return risks;
-}
+function briefLongTextRisks(...args) { return NK_PRO_MODULES.documentData.briefLongTextRisks(...args); }
 
-function briefPreflightReport(calc, result) {
-  ensureBriefSettings();
-  const s = state.briefSettings || {};
-  const validation = validateBriefResult(calc, result);
-  const items = [];
-  function add(level, label, detail) {
-    items.push({ level, label, detail: detail || "" });
-  }
-  validation.errors.forEach(message => add("err", "Fehler", message));
-  validation.warnings.forEach(message => add("warn", "Prüfen", message));
+function briefPreflightReport(...args) { return NK_PRO_MODULES.documentData.briefPreflightReport(...args); }
 
-  if (!result || !result.tenant) {
-    add("err", "Empfänger", "Kein Briefempfänger ausgewählt oder berechenbar.");
-  } else {
-    const tenant = result.tenant;
-    const costRows = briefCostRows(calc, tenant);
-    const html = buildBriefHtml(calc, result) || "";
-    const styles = briefPrintStyles();
-    const pageCount = (html.match(/letter-sheet/g) || []).length;
-    const prepayEnabled = s.vorauszahlungPrintMode !== "Nicht drucken" && s.showVorauszahlungPage === "Ja";
-
-    add("ok", "Empfänger", tenantDisplayId(tenant) + " · " + (tenant.name || "ohne Namen"));
-    const settlement = settlementInfoForResult(result, tenant);
-    add("ok", "Saldo", settlement.type + " · " + fmtMoney(settlement.amount));
-
-    if (costRows.length) add("ok", "Kostenzeilen", costRows.length + " mieterbezogene Zeilen vorhanden.");
-
-    if (s.zahlungsziel) add("ok", "Zahlungsziel", dateDe(s.zahlungsziel) || String(s.zahlungsziel));
-    else add("warn", "Zahlungsziel", "Kein Zahlungsziel hinterlegt. Wird aktuell nicht prominent gedruckt, sollte aber vor Versand geprüft werden.");
-
-    if (html.includes('class="footer"') && s.bankverbindung) add("ok", "Fußzeile", "Kontoverbindung/Fußzeile vorhanden.");
-    else add("warn", "Fußzeile", "Fußzeile oder Bankverbindung fehlt.");
-
-    if (html.includes("letter-sheet") && styles.includes("@page{size:A4;margin:0") && styles.includes("width:210mm") && styles.includes("height:297mm")) {
-      add("ok", "DIN-A4", "Feste A4-Seitenstruktur und Druck-CSS vorhanden.");
-    } else {
-      add("err", "DIN-A4", "A4-Seitenstruktur oder Druck-CSS unvollständig.");
-    }
-
-    if (styles.includes("tbody td{white-space:nowrap") && styles.includes("thead th") && styles.includes("white-space:normal")) {
-      add("ok", "Tabellenlayout", "Datenzeilen einzeilig, Tabellenköpfe umbruchfähig.");
-    } else {
-      add("err", "Tabellenlayout", "Tabellen-Umbruchregeln für Druck fehlen oder sind verändert.");
-    }
-
-    if (pageCount <= 0) add("err", "Seiten", "Keine Briefseite erzeugt.");
-    else if (pageCount > 2) add("warn", "Seiten", pageCount + " A4-Seiten erzeugt; Druckbild genau prüfen.");
-    else add("ok", "Seiten", pageCount + " A4-Seite" + (pageCount === 1 ? "" : "n") + " erzeugt.");
-
-    if (prepayEnabled) {
-      const prepayRows = monthlyPrepaymentRows(costRows, tenant);
-      if (!s.vorauszahlungAb) add("warn", "Vorauszahlung", "Vorauszahlungsanpassung wird gedruckt, aber das Datum fehlt.");
-      if (!prepayRows.length) add("warn", "Vorauszahlung", "Vorauszahlungsanpassung aktiv, aber keine Zeilen vorhanden.");
-      else add("ok", "Vorauszahlung", prepayRows.length + " Anpassungszeilen für Zusatzblatt vorhanden.");
-    } else {
-      add("info", "Vorauszahlung", "Zusatzblatt wird nicht gedruckt.");
-    }
-
-    briefLongTextRisks(costRows, tenant, s, prepayEnabled).forEach(message => add("warn", "Druckrisiko", message));
-    add("info", "Druckhinweis", "Im Browserdruck A4 wählen, Skalierung 100 %, Browser-Kopf-/Fußzeilen aus.");
-  }
-
-  const errors = items.filter(item => item.level === "err").length;
-  const warnings = items.filter(item => item.level === "warn").length;
-  const ok = items.filter(item => item.level === "ok").length;
-  const infos = items.filter(item => item.level === "info").length;
-  return {
-    items,
-    errors,
-    warnings,
-    ok,
-    infos,
-    level: errors ? "err" : (warnings ? "warn" : "ok"),
-    label: errors ? "Nicht druckbereit" : (warnings ? "Druck mit Prüfung" : "Druckbereit"),
-    message: errors ? "Bitte Fehler vor Druck/PDF beheben." : (warnings ? "Keine blockierenden Fehler, aber Hinweise vor Versand prüfen." : "Der ausgewählte Brief ist formal druckbereit.")
-  };
-}
-
-function briefPreflightBoxHtml(report) {
-  if (!report) return "";
-  const badgeClass = report.level === "err" ? "err" : (report.level === "warn" ? "warn" : "ok");
-  const badgeLabel = report.level === "err" ? "Fehler" : (report.level === "warn" ? "Prüfen" : "OK");
-  const visibleItems = report.items.filter(item => item.level !== "info");
-  const infoItems = report.items.filter(item => item.level === "info");
-  const rows = (visibleItems.length ? visibleItems : report.items).map(item => {
-    const statusClass = item.level === "err" ? "err" : (item.level === "warn" ? "warn" : (item.level === "info" ? "info" : "ok"));
-    const statusText = item.level === "err" ? "Fehler" : (item.level === "warn" ? "Prüfen" : (item.level === "info" ? "Hinweis" : "OK"));
-    return '<li><span class="status ' + statusClass + '">' + statusText + '</span><span><strong>' + escapeHtml(item.label) + ':</strong> ' + escapeHtml(item.detail) + '</span></li>';
-  }).join("");
-  const infoRows = infoItems.map(item => '<li><span class="status info">Hinweis</span><span><strong>' + escapeHtml(item.label) + ':</strong> ' + escapeHtml(item.detail) + '</span></li>').join("");
-  return '<div class="brief-preflight-box ' + report.level + '">' +
-    '<div class="preflight-title"><strong>Brief-Preflight: ' + escapeHtml(report.label) + '</strong><span class="status ' + badgeClass + '">' + badgeLabel + '</span></div>' +
-    '<div class="small">' + escapeHtml(report.message) + '</div>' +
-    '<div class="preflight-grid"><span class="preflight-pill">' + report.errors + ' Fehler</span><span class="preflight-pill">' + report.warnings + ' Hinweise</span><span class="preflight-pill">' + report.ok + ' OK</span><span class="preflight-pill">' + report.infos + ' Druckhinweise</span></div>' +
-    (rows ? '<ul class="brief-preflight-list">' + rows + '</ul>' : '') +
-    (infoRows ? '<details><summary>Druckhinweise anzeigen</summary><ul class="brief-preflight-list">' + infoRows + '</ul></details>' : '') +
-    '</div>';
-}
+function briefPreflightBoxHtml(...args) { return NK_PRO_MODULES.documentRenderer.briefPreflightBoxHtml(...args); }
 
 
-function printGuideHtml(scopeLabel) {
-  return '<div class="print-guide"><strong>Druck-/PDF-Hinweis ' + escapeHtml(scopeLabel || "") + '</strong><div>A4 wählen · Skalierung 100 % · Browser-Kopf-/Fußzeilen deaktivieren · Hintergrundgrafiken/Farben aktivieren, falls der Browser danach fragt.</div><div class="screen-print-actions"><button type="button" onclick="window.print()">Jetzt drucken / PDF speichern</button><button type="button" onclick="window.close()">Fenster schließen</button></div></div>';
-}
+function printGuideHtml(...args) { return NK_PRO_MODULES.documentRenderer.printGuideHtml(...args); }
 
 function printHardeningReport(calc, result) {
   const items = [];
@@ -8333,17 +7522,7 @@ function printHardeningReport(calc, result) {
   return { items, errors, warnings, ok, infos, level:errors ? "err" : (warnings ? "warn" : "ok"), label:errors ? "Druck nicht bereit" : (warnings ? "Druck mit Prüfung" : "Druckbereit"), message:errors ? "Druck/PDF erst nach Fehlerbehebung starten." : (warnings ? "Druck möglich, aber Hinweise im PDF kontrollieren." : "Druck-/PDF-Struktur ist formal bereit.") };
 }
 
-function printHardeningBoxHtml(report) {
-  if (!report) return "";
-  const badgeClass = report.level === "err" ? "err" : (report.level === "warn" ? "warn" : "ok");
-  const badgeLabel = report.level === "err" ? "Fehler" : (report.level === "warn" ? "Prüfen" : "OK");
-  const rows = report.items.filter(item => item.level !== "info").map(item => {
-    const cls = item.level === "err" ? "err" : (item.level === "warn" ? "warn" : "ok");
-    const label = item.level === "err" ? "Fehler" : (item.level === "warn" ? "Prüfen" : "OK");
-    return '<li><span class="status ' + cls + '">' + label + '</span><span><strong>' + escapeHtml(item.label) + ':</strong> ' + escapeHtml(item.detail) + '</span></li>';
-  }).join("");
-  return '<div class="print-hardening-box ' + report.level + '"><div class="preflight-title"><strong>Druck-/PDF-Härtung: ' + escapeHtml(report.label) + '</strong><span class="status ' + badgeClass + '">' + badgeLabel + '</span></div><div class="small">' + escapeHtml(report.message) + '</div><div class="print-hardening-grid"><span class="print-hardening-pill">' + report.errors + ' Fehler</span><span class="print-hardening-pill">' + report.warnings + ' Hinweise</span><span class="print-hardening-pill">' + report.ok + ' OK</span><span class="print-hardening-pill">' + report.infos + ' Druckhinweise</span></div>' + (rows ? '<ul class="print-hardening-list">' + rows + '</ul>' : '') + '</div>';
-}
+function printHardeningBoxHtml(...args) { return NK_PRO_MODULES.documentRenderer.printHardeningBoxHtml(...args); }
 
 function currentPrintHardeningReport() {
   const calc = calculateUmlage();
@@ -8351,15 +7530,7 @@ function currentPrintHardeningReport() {
   return printHardeningReport(calc, selected);
 }
 
-function printReportText(report) {
-  if (!report) return "Kein Druckbericht verfügbar.";
-  const lines = [];
-  lines.push("Druck-/PDF-Härtung: " + report.label);
-  lines.push(report.message);
-  lines.push(report.errors + " Fehler · " + report.warnings + " Hinweise · " + report.ok + " OK · " + report.infos + " Druckhinweise");
-  report.items.forEach(item => lines.push((item.level === "err" ? "Fehler" : (item.level === "warn" ? "Prüfen" : (item.level === "info" ? "Hinweis" : "OK"))) + " · " + item.label + ": " + item.detail));
-  return lines.join("\n");
-}
+function printReportText(...args) { return NK_PRO_MODULES.documentRenderer.printReportText(...args); }
 
 function showPrintModeCheck() {
   const report = currentPrintHardeningReport();
@@ -8367,9 +7538,7 @@ function showPrintModeCheck() {
   return report;
 }
 
-function printWindowHtml(title, bodyHtml, scopeLabel) {
-  return '<!doctype html><html lang="de"><head><meta charset="utf-8"><title>' + escapeHtml(title || "Nebenkostenabrechnungsbrief") + '</title><style>' + briefPrintStyles() + '</style></head><body>' + printGuideHtml(scopeLabel || "") + bodyHtml + '</body></html>';
-}
+function printWindowHtml(...args) { return NK_PRO_MODULES.documentRenderer.printWindowHtml(...args); }
 
 function openPrintWindow(title, bodyHtml, scopeLabel, autoPrint) {
   const win = window.open("", "_blank");
@@ -8385,13 +7554,7 @@ function openPrintWindow(title, bodyHtml, scopeLabel, autoPrint) {
   return win;
 }
 
-function allLettersPrintReadiness(calc) {
-  const rows = briefResultRows(calc);
-  const reports = rows.map(result => ({ result, preflight:briefPreflightReport(calc, result), print:printHardeningReport(calc, result) }));
-  const errors = reports.reduce((sum,r) => sum + r.preflight.errors + r.print.errors, 0);
-  const warnings = reports.reduce((sum,r) => sum + r.preflight.warnings + r.print.warnings, 0);
-  return { rows, reports, errors, warnings };
-}
+function allLettersPrintReadiness(...args) { return NK_PRO_MODULES.documentData.allLettersPrintReadiness(...args); }
 
 function showAllLettersPrintReady() {
   ensureYearData();
@@ -8410,11 +7573,7 @@ function showAllLettersPrintReady() {
   const html = readiness.rows.map(result => buildBriefHtml(calc, result)).join("\n");
   openPrintWindow("NK-Pro Sammel-Briefdruck", html, "Sammelansicht · " + readiness.rows.length + " Briefe", false);
 }
-function currentBriefPreflightReport() {
-  const calc = calculateUmlage();
-  const selected = selectedBriefTenant(calc);
-  return briefPreflightReport(calc, selected);
-}
+function currentBriefPreflightReport(...args) { return NK_PRO_MODULES.documentData.currentBriefPreflightReport(...args); }
 
 function confirmBriefAction(actionLabel) {
   const report = currentBriefPreflightReport();
@@ -8428,338 +7587,43 @@ function confirmBriefAction(actionLabel) {
   }
   return confirm(actionLabel + " mit Preflight-Hinweisen fortsetzen?\n\n" + lines.join("\n"));
 }
-function briefResultRows(calc) {
-  if (!calc || !Array.isArray(calc.tenantResults)) return [];
-  return calc.tenantResults.filter(r => r && r.tenant && isBillableTenant(r.tenant) && tenantRelevantForCurrentBilling(r.tenant));
-}
+function briefResultRows(...args) { return NK_PRO_MODULES.documentData.briefResultRows(...args); }
 
-function selectedBriefTenant(calc) {
-  ensureBriefSettings();
-  const rows = briefResultRows(calc);
-  let result = rows.find(r => r.tenant.id === state.briefSettings.tenantId);
-  if (!result && rows.length) {
-    result = rows[0];
-    state.briefSettings.tenantId = result.tenant.id;
-  }
-  return result;
-}
+function selectedBriefTenant(...args) { return NK_PRO_MODULES.documentData.selectedBriefTenant(...args); }
 
-function plainLetterTextFromHtml(htmlText) {
-  const div = document.createElement("div");
-  div.innerHTML = htmlText;
-  return div.innerText || div.textContent || "";
-}
+function plainLetterTextFromHtml(...args) { return NK_PRO_MODULES.documentRenderer.plainLetterTextFromHtml(...args); }
 
-function isManualExternalCostDefinition(costOrRow) {
-  const id=String(costOrRow&&costOrRow.id||""); const schluessel=String(costOrRow&&(costOrRow.umlageschluessel||costOrRow.schluessel)||""); const berechnungsart=String(costOrRow&&costOrRow.berechnungsart||"");
-  const input=state.umlageInputs&&state.umlageInputs[id]; const mode=input&&input.mode;
-  return id==="K006" || mode==="Direkter Eurobetrag" || mode==="Externe Einzelabrechnung" || schluessel===UMLAGE_MANUAL || berechnungsart==="Manuell je Mieter";
-}
+function isManualExternalCostDefinition(...args) { return NK_PRO_MODULES.documentData.isManualExternalCostDefinition(...args); }
 
-function manualExternalLetterLineLabel(group, row) {
-  return row && row.id === "K006" ? group.line : group.line + " laut Einzelabrechnung";
-}
+function manualExternalLetterLineLabel(...args) { return NK_PRO_MODULES.documentData.manualExternalLetterLineLabel(...args); }
 
-function isBriefCostRowRelevant(row) {
-  if (!row) return false;
-  const tenantCost = Math.abs(num(row.anteil));
-  const tenantPrepay = Math.abs(num(row.vorauszahlung));
-  const tenantAdditionalPrepay = Math.abs(num(row.weitereVorauszahlung));
-  const tenantSettlement = Math.abs(num(row.settlement));
-  // Die Brieftabelle ist eine mieterbezogene Abrechnung.
-  // Deshalb zählt nicht, ob eine Kostenart insgesamt einen Betrag hat,
-  // sondern ob dieser Mieter daran beteiligt ist oder dafür gezahlt hat.
-  return tenantCost > 0.004 || tenantPrepay > 0.004 || tenantAdditionalPrepay > 0.004 || tenantSettlement > 0.004;
-}
+function isBriefCostRowRelevant(...args) { return NK_PRO_MODULES.documentData.isBriefCostRowRelevant(...args); }
 
-function briefCostSortValue(row) {
-  const order={K006:1,K002:2,K009:3,K017:4}; return order[row.id]||99;
-}
+function briefCostSortValue(...args) { return NK_PRO_MODULES.documentData.briefCostSortValue(...args); }
 
-function briefCostRows(calc, tenant) {
-  const entry = billingEntryForTenant(tenant);
-  return calc.costResults.map(row => {
-    if (row.cost && row.cost.id === "K040") return null; // Rundungsdifferenz wird im Gesamtergebnis abgebildet, nicht als eigene Briefzeile.
-    const amount = num(row.allocations[tenant.originalIndex]);
-    const prepay = vorauszahlungByCostAndTenant(row.cost.id, tenant.originalIndex);
-    const additionalPrepay = row.cost.id === "K002" ? num(tenant.wasserWeitereVorauszahlung) : 0;
-    const input = (state.umlageInputs && state.umlageInputs[row.cost.id] && Array.isArray(state.umlageInputs[row.cost.id].values))
-      ? num(state.umlageInputs[row.cost.id].values[tenant.originalIndex])
-      : 0;
-    let basis = num(row.inputSum) || num(row.basisTotal);
-    let price = row.cost && row.cost.umlageschluessel === "Verbrauch" ? num(row.cost.preisProEinheit) : (basis ? num(row.cost.gesamtbetrag) / basis : num(row.cost.preisProEinheit));
-    let tenantUnits = input || (price ? amount / price : 0);
-    let gesamtbetrag = num(row.cost.gesamtbetrag);
-    let period = letterPeriod(state.briefSettings && state.briefSettings.abrechnungsjahr ? state.briefSettings.abrechnungsjahr : currentAbrechnungsjahr());
-    if (entry) {
-      const ctx = knownArchiveCostContext(entry, row.cost.id, amount);
-      if (ctx.gesamtbetrag) gesamtbetrag = ctx.gesamtbetrag;
-      if (row.cost.id === "K006") { basis = 0; price = 0; tenantUnits = 0; }
-      else {
-        if (ctx.basisTotal) basis = ctx.basisTotal;
-        if (row.cost && row.cost.umlageschluessel === "Verbrauch") price = num(row.cost.preisProEinheit);
-        else if (ctx.preis) price = ctx.preis;
-        if (ctx.einheiten) tenantUnits = ctx.einheiten;
-      }
-      period = importedEntryPeriodForCost(entry, row.cost.id) || period;
-    }
-    if (isManualExternalCostDefinition(row.cost)) {
-      basis = 0;
-      price = 0;
-      tenantUnits = 0;
-    }
-    return {
-      id: row.cost.id,
-      kostenart: String(row.cost.kostenart || "").replace(/^Legacy-/, ""),
-      schluessel: row.cost.umlageschluessel,
-      berechnungsart: row.cost.berechnungsart,
-      gesamtbetrag,
-      anteil: amount,
-      vorauszahlung: prepay,
-      weitereVorauszahlung: additionalPrepay,
-      basisTotal: basis,
-      preis: price,
-      einheiten: tenantUnits,
-      period,
-      importedEntry: !!entry,
-      settlement: prepay + additionalPrepay - amount
-    };
-  }).filter(Boolean)
-    .filter(isBriefCostRowRelevant)
-    .sort((a,b) => briefCostSortValue(a) - briefCostSortValue(b) || String(a.kostenart).localeCompare(String(b.kostenart)));
-}
+function briefCostRows(...args) { return NK_PRO_MODULES.documentData.briefCostRows(...args); }
 
-function dateDeShortYear(value) {
-  if (!value) return "";
-  const parts = String(value).split("-");
-  if (parts.length >= 3) return Number(parts[2]) + "." + Number(parts[1]) + "." + parts[0].slice(-2);
-  return dateDe(value);
-}
+function dateDeShortYear(...args) { return NK_PRO_MODULES.documentData.dateDeShortYear(...args); }
 
-function letterPeriod(year) {
-  return dateDeShortYear(periodStart()) + "-" + dateDeShortYear(periodEnd());
-}
+function letterPeriod(...args) { return NK_PRO_MODULES.documentData.letterPeriod(...args); }
 
-function fmtMoneySigned(value) {
-  const n = num(value);
-  if (Math.abs(n) < 0.005) return fmtMoney(0);
-  return (n < 0 ? "- " : "") + fmtMoney(Math.abs(n));
-}
+function fmtMoneySigned(...args) { return NK_PRO_MODULES.documentData.fmtMoneySigned(...args); }
 
-function fmtUnits(value) {
-  const n = num(value);
-  if (Math.abs(n) < 0.005) return "";
-  return n.toLocaleString("de-DE", { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits:3 });
-}
+function fmtUnits(...args) { return NK_PRO_MODULES.documentData.fmtUnits(...args); }
 
-function letterCostGroup(row) {
-  if (row.id === "K006") return { title:"Heiz- und Warmwasserkosten", line:"Ihre Heiz- und Warmwasserkosten", prepay:"Ihre Vorauszahlung", total:"Ihre Heiz- und Warmwasserkosten", changeKey:"vzChangeHeizung", prepayLabel:"Heizkostenvorauszahlung monatlich" };
-  if (row.id === "K002") return { title:"Wasserkosten", line:"Ihre Wasserkosten", prepay:"Ihre Vorauszahlung", total:"Ihre Wasserkosten", changeKey:"vzChangeWasser", prepayLabel:"Wasserkostenvorauszahlung monatlich" };
-  if (row.id === "K009") return { title:"Abfallkosten", line:"Ihre Abfallkosten", prepay:"Ihre Vorauszahlung", total:"Ihre Abfallkosten", changeKey:"vzChangeAbfall", prepayLabel:"Abfallkostenvorauszahlung monatlich" };
-  if (row.id === "K017") return { title:"Antennenkosten", line:"Ihre Antennenkosten", prepay:"Ihre Vorauszahlung", total:"Ihre Antennenkosten", changeKey:"vzChangeAntenne", prepayLabel:"Antennenkostenvorauszahlung monatlich" };
-  return { title:"Weitere Betriebskosten", line:"Ihr Kostenanteil", prepay:"Ihre Vorauszahlung", total:"Ihr Kostenanteil", changeKey:"vzChangeSonstige", prepayLabel:"Weitere Nebenkostenvorauszahlung monatlich" };
-}
+function letterCostGroup(...args) { return NK_PRO_MODULES.documentData.letterCostGroup(...args); }
 
-function settlementLabel(group, settlement) {
-  return settlement < -0.004 ? group.total + "-Nachzahlung an die Vermieterin" : group.total + "-Guthaben";
-}
+function settlementLabel(...args) { return NK_PRO_MODULES.documentData.settlementLabel(...args); }
 
-function costSectionRows(rows, year) {
-  return rows.map(r => {
-    const g = letterCostGroup(r);
-    const manualExternal = isManualExternalCostDefinition(r);
-    const showCalc = !manualExternal && (Math.abs(num(r.basisTotal)) > 0.004 || Math.abs(num(r.preis)) > 0.004 || Math.abs(num(r.einheiten)) > 0.004);
-    const lineLabel = manualExternal ? manualExternalLetterLineLabel(g, r) : g.line;
-    const rowPeriod = r.period || letterPeriod(year);
-    return `
-      <tr class="section-title"><td colspan="7">${escapeHtml(g.title)}</td></tr>
-      <tr>
-        <td>${escapeHtml(lineLabel)}</td>
-        <td class="center">${escapeHtml(rowPeriod)}</td>
-        <td class="money">${fmtMoney(r.gesamtbetrag)}</td>
-        <td class="center">${showCalc ? escapeHtml(fmtUnits(r.basisTotal)) : ""}</td>
-        <td class="money">${showCalc ? fmtMoney(r.preis) : ""}</td>
-        <td class="center">${showCalc ? "x&nbsp;&nbsp;" + escapeHtml(fmtUnits(r.einheiten)) : ""}</td>
-        <td class="money">${fmtMoney(r.anteil)}</td>
-      </tr>
-      <tr>
-        <td>${escapeHtml(g.prepay)}</td>
-        <td class="center">${escapeHtml(rowPeriod)}</td>
-        <td></td><td></td><td></td><td></td>
-        <td class="money">${fmtMoney(r.vorauszahlung)}</td>
-      </tr>
-      ${num(r.weitereVorauszahlung) ? '<tr><td>Weitere Vorauszahlung</td><td class="center">' + escapeHtml(rowPeriod) + '</td><td></td><td></td><td></td><td></td><td class="money">' + fmtMoney(r.weitereVorauszahlung) + '</td></tr>' : ''}
-      <tr class="subtotal">
-        <td colspan="6">${escapeHtml(settlementLabel(g, r.settlement))}</td>
-        <td class="money">${fmtMoneySigned(r.settlement)}</td>
-      </tr>`;
-  }).join("");
-}
+function costSectionRows(...args) { return NK_PRO_MODULES.documentRenderer.costSectionRows(...args); }
 
-function monthlyPrepaymentRows(costRows, tenant) {
-  ensureBriefSettings();
-  const s = state.briefSettings;
-  if (s.vorauszahlungPrintMode === "Berechnete Werte drucken") {
-    const calculated = calculatedMonthlyPrepaymentRowsForTenant(tenant);
-    if (calculated.length) return calculated;
-  }
-  const rows = costRows.filter(r => Math.abs(r.vorauszahlung) > 0.004 || ["K002","K006","K009"].includes(r.id)).map(r => {
-    const g = letterCostGroup(r);
-    const oldMonthly = num(r.vorauszahlung) / 12;
-    const change = tenant && tenant[g.changeKey] !== undefined ? num(tenant[g.changeKey]) : num(s[g.changeKey]);
-    const newMonthly = Math.max(0, oldMonthly + change);
-    return {
-      label:g.prepayLabel,
-      turnus:"monatlich",
-      oldMonthly,
-      change,
-      newMonthly
-    };
-  });
-  rows.push({
-    label:"Antennenkostenvorauszahlung monatlich",
-    turnus:"monatlich",
-    oldMonthly:10.25,
-    change: tenant && tenant.vzChangeAntenne !== undefined ? num(tenant.vzChangeAntenne) : num(s.vzChangeAntenne),
-    newMonthly:Math.max(0, 10.25 + (tenant && tenant.vzChangeAntenne !== undefined ? num(tenant.vzChangeAntenne) : num(s.vzChangeAntenne)))
-  });
-  return rows;
-}
+function monthlyPrepaymentRows(...args) { return NK_PRO_MODULES.documentData.monthlyPrepaymentRows(...args); }
 
-function buildPrepaymentPage(costRows, tenant, extraNote = "") {
-  ensureBriefSettings();
-  const s = state.briefSettings;
-  if (s.vorauszahlungPrintMode === "Nicht drucken" || s.showVorauszahlungPage !== "Ja") return "";
-  const rows = monthlyPrepaymentRows(costRows, tenant);
-  if (!rows.some(r => Math.abs(num(r.change)) >= 0.01)) return "";
-  const sumNew = rows.reduce((a,b) => a + num(b.newMonthly), 0);
-  const kaltMonthly = num(tenant.kaltSoll) / 12;
-  const warmMonthly = kaltMonthly + sumNew;
-  const effectiveDate = effectivePrepaymentDateLabel();
-  const effectiveYear = effectivePrepaymentYearLabel();
-  const summaryLabel = effectiveYear ? "Summe Nebenkostenvorauszahlung ab " + effectiveYear + " monatlich" : "Summe Nebenkostenvorauszahlung ab " + effectiveDate + " monatlich";
-  const warmLabel = effectiveYear ? "Gesamtbetrag (Warmmiete) ab " + effectiveYear + " monatlich" : "Gesamtbetrag (Warmmiete) ab " + effectiveDate + " monatlich";
-  const rowHtml = rows.map(r => `
-    <tr>
-      <td>${escapeHtml(r.label)}</td>
-      <td>${escapeHtml(r.turnus)}</td>
-      <td class="money">${fmtMoney(r.oldMonthly)}</td>
-      <td class="money">${fmtMoneySigned(r.change)}</td>
-      <td class="money">${r.newMonthly ? fmtMoney(r.newMonthly) : "- €"}</td>
-    </tr>`).join("");
+function buildPrepaymentPage(...args) { return NK_PRO_MODULES.documentRenderer.buildPrepaymentPage(...args); }
 
-  return `
-    <div class="letter-sheet letter-prepayment-sheet">
-      <div class="letter-body">
-        <div class="letter-head">
-          ${briefTextWithLineBreaks(s.absenderName || s.absender)}<br>
-          ${briefTextWithLineBreaks(s.absenderStrasse || "")}<br>
-          ${briefTextWithLineBreaks(s.absenderOrt || "")}<br>
-          ${briefTextWithLineBreaks(s.absenderTelefon || "")}
-        </div>
-        <h2>Anpassung der Nebenkostenvorauszahlung</h2>
-        <div class="letter-bullet-list">
-          <div class="letter-bullet"><span class="letter-bullet-mark">•</span><span>${briefProseHtml((s.vorauszahlungIntro || "").replace("{datum}", effectiveDate))}</span></div>
-        </div>
-        <table class="prepay-table">
-          <colgroup><col class="col-prepay-label"><col class="col-prepay-turnus"><col class="col-prepay-money"><col class="col-prepay-money"><col class="col-prepay-money"></colgroup>
-          <thead>
-            <tr><th>Art der Nebenkosten</th><th>Turnus</th><th class="money">Bisheriger Betrag</th><th class="money">Änderung ab ${escapeHtml(effectiveDate)}</th><th class="money">Neuer Betrag ab ${escapeHtml(effectiveDate)}</th></tr>
-          </thead>
-          <tbody>
-            ${rowHtml}
-            <tr class="summary"><td colspan="4">${escapeHtml(summaryLabel)}</td><td class="money">${fmtMoney(sumNew)}</td></tr>
-            <tr><td colspan="4">Kaltmiete monatlich</td><td class="money">${fmtMoney(kaltMonthly)}</td></tr>
-            <tr class="summary final"><td colspan="4">${escapeHtml(warmLabel)}</td><td class="money">${fmtMoney(warmMonthly)}</td></tr>
-          </tbody>
-        </table>
-        <div class="letter-bullet-list">
-          <div class="letter-bullet"><span class="letter-bullet-mark">•</span><span>Bitte passen Sie Ihren monatlichen Dauerauftrag bei Ihrer Bank ab ${escapeHtml(effectiveDate)} auf ${fmtMoney(warmMonthly)} an.</span></div>
-        </div>
-        ${extraNote ? '<p class="note">' + briefProseHtml(extraNote) + '</p>' : ''}
-        <p class="closing"><span class="closing-greeting">${briefTextWithLineBreaks(s.gruss)}</span><span class="signature-block">${briefTextWithLineBreaks(s.signatur)}</span></p>
-      </div>
-      <div class="footer">Kontoverbindung: ${escapeHtml(s.bankverbindung)}</div>
-    </div>`;
-}
+function briefMainPageOverflows(...args) { return NK_PRO_MODULES.documentRenderer.briefMainPageOverflows(...args); }
 
-function briefMainPageOverflows(pageHtml) {
-  if (typeof document === "undefined" || !document.body) return false;
-  const host = document.createElement("div");
-  host.className = "letter-page";
-  host.setAttribute("aria-hidden", "true");
-  host.style.cssText = "position:absolute;left:-12000px;top:0;width:210mm;max-width:none;padding:0;visibility:hidden;pointer-events:none;";
-  host.innerHTML = pageHtml;
-  document.body.appendChild(host);
-  const sheet = host.querySelector(".letter-main-sheet");
-  const content = host.querySelector(".letter-main-content");
-  const footer = host.querySelector(".letter-main-sheet > .footer");
-  let overflow = false;
-  if (sheet && content && footer) {
-    const children = Array.from(content.children).filter(el => el.getClientRects().length);
-    const last = children[children.length - 1];
-    const lastBottom = last ? last.getBoundingClientRect().bottom : content.getBoundingClientRect().top;
-    const footerTop = footer.getBoundingClientRect().top;
-    overflow = lastBottom > footerTop - 4 || sheet.scrollHeight > sheet.clientHeight + 1;
-  }
-  host.remove();
-  return overflow;
-}
-
-function buildBriefHtml(calc, result) {
-  ensureBriefSettings();
-  const s = state.briefSettings;
-  if (!result) return '<div class="letter-sheet"><p>Es ist kein Mieter mit berechneter Nebenkostenumlage vorhanden.</p></div>';
-
-  const t = result.tenant;
-  const year = s.abrechnungsjahr || currentAbrechnungsjahr();
-  const costRows = briefCostRows(calc, t);
-  const correction = num(result.correction || t.vorjahresKorrektur);
-  const settlement = settlementInfoForResult(result, t);
-  const finalLabel = settlement.finalLabel;
-  const noteText = settlement.isNachzahlung ? s.saldoTextNachzahlung : s.saldoTextGuthaben;
-  const address = getBriefTenantAddress(t);
-  const intro = (s.introText || "").replaceAll("{jahr}", year).replaceAll("{zeitraum}", periodLabelShort());
-  const senderLine = [s.absenderName || s.absender, s.absenderStrasse, s.absenderOrt].filter(Boolean).join(" · ");
-  const extraText = String(s.outroText || "");
-  const prepaymentPage = buildPrepaymentPage(costRows, t, extraText);
-
-  const mainPage = (outroText, includeClosing) => `
-    <div class="letter-sheet letter-main-sheet">
-      <div class="letter-topbar">${briefTextWithLineBreaks(s.absenderName || s.absender)} · ${briefTextWithLineBreaks(s.absenderStrasse || "")} · ${briefTextWithLineBreaks(s.absenderOrt || "")} · ${briefTextWithLineBreaks(s.absenderTelefon || "")}</div>
-      <div class="letter-window-zone"><div class="return-address">${escapeHtml(senderLine)}</div><div class="address">${briefTextWithLineBreaks(address)}</div></div>
-      <div class="letter-main-date">${escapeHtml(s.ort || "")}, den ${escapeHtml(dateDe(s.briefdatum))}</div>
-      <div class="letter-body letter-main-content">
-        <p class="salutation">${escapeHtml(salutationForTenant(t))}</p>
-        <p class="intro">${briefProseHtml(intro)}</p>
-        <table class="abrechnung-table">
-          <colgroup><col class="col-desc"><col class="col-period"><col class="col-total"><col class="col-basis"><col class="col-price"><col class="col-units"><col class="col-share"></colgroup>
-          <thead><tr><th></th><th class="center">Zeitraum</th><th class="money">Gesamtkosten p.a.</th><th class="center">Gesamteinheiten</th><th class="money">Preis je Einheit</th><th class="center">x&nbsp;Ihre Einheiten</th><th class="money">Ihre Kosten</th></tr></thead>
-          <tbody>
-            ${costSectionRows(costRows, year) || '<tr><td colspan="7">Keine umlagefähigen Kosten vorhanden.</td></tr>'}
-            <tr class="summary-spacer" aria-hidden="true"><td colspan="7"></td></tr>
-            <tr class="summary summary-block-start"><td colspan="6">Ihr Anteil an den Gesamtkosten</td><td class="money">${fmtMoney(result.costShare)}</td></tr>
-            <tr class="summary"><td colspan="6">Ihre Vorauszahlung</td><td class="money">${fmtMoney(result.prepayments)}</td></tr>
-            ${correction ? '<tr class="summary"><td colspan="6">Nebenkostenkorrektur ' + escapeHtml(String(yearNumber(year)-1)) + ' zu Ihren Gunsten</td><td class="money">' + fmtMoney(correction) + '</td></tr>' : ''}
-            <tr class="summary final"><td colspan="6">${escapeHtml(finalLabel)}</td><td class="money">${fmtMoney(settlement.amount)}</td></tr>
-          </tbody>
-        </table>
-        <p class="note after-table-note">${briefProseHtml(s.heizkostenFussnote || "")}</p>
-        <p class="note saldo-note">${briefProseHtml(noteText || "")}</p>
-        ${outroText ? '<p class="note saldo-note">' + briefProseHtml(outroText) + '</p>' : ''}
-        ${includeClosing ? '<p class="closing"><span class="closing-greeting">' + briefTextWithLineBreaks(s.gruss) + '</span><span class="signature-block">' + briefTextWithLineBreaks(s.signatur) + '</span></p>' : ''}
-      </div>
-      <div class="footer">Kontoverbindung: ${escapeHtml(s.bankverbindung)}</div>
-    </div>`;
-
-  let mainHtml = mainPage(prepaymentPage ? "" : extraText, !prepaymentPage);
-  let supplementPage = "";
-  if (!prepaymentPage && extraText && briefMainPageOverflows(mainHtml)) {
-    mainHtml = mainPage("", false);
-    supplementPage = `<div class="letter-sheet letter-supplement-sheet"><div class="letter-body"><h2>Ergänzender Hinweis zur Nebenkostenabrechnung</h2><p class="note">${briefProseHtml(extraText)}</p><p class="closing"><span class="closing-greeting">${briefTextWithLineBreaks(s.gruss)}</span><span class="signature-block">${briefTextWithLineBreaks(s.signatur)}</span></p></div><div class="footer">Kontoverbindung: ${escapeHtml(s.bankverbindung)}</div></div>`;
-  }
-  return mainHtml + prepaymentPage + supplementPage;
-}
+function buildBriefHtml(...args) { return NK_PRO_MODULES.documentRenderer.buildBriefHtml(...args); }
 function renderBrief() {
   ensureYearData();
   const settingsEl = document.getElementById("briefSettings");
@@ -8903,116 +7767,17 @@ const tableLabels = {
   manualExternalControlTable: "Summen- und Quellenkontrolle"
 };
 
-function cellSortValue(cell) {
-  const input = cell.querySelector("input, select");
-  const raw = input ? input.value : cell.textContent;
-  const text = String(raw ?? "").trim();
-  const numeric = Number(text.replace(/[€\s]/g, "").replace(/\./g, "").replace(",", "."));
-  if (text !== "" && !Number.isNaN(numeric)) return { type:"number", value:numeric };
-  const dateMatch = text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (dateMatch) return { type:"number", value:new Date(text).getTime() };
-  return { type:"text", value:text.toLocaleLowerCase("de-DE") };
-}
+function cellSortValue(...args) { return NK_PRO_MODULES.uiTableTools.cellSortValue(...args); }
 
-function sortTable(tableId, columnIndex) {
-  const table = document.getElementById(tableId);
-  if (!table || !table.tBodies.length) return;
+function sortTable(...args) { return NK_PRO_MODULES.uiTableTools.sortTable(...args); }
 
-  const current = tableSortState[tableId] || {};
-  const direction = current.columnIndex === columnIndex && current.direction === "asc" ? "desc" : "asc";
-  tableSortState[tableId] = { columnIndex, direction };
+function applyTableFilter(...args) { return NK_PRO_MODULES.uiTableTools.applyTableFilter(...args); }
 
-  const tbody = table.tBodies[0];
-  const allRows = Array.from(tbody.rows);
-  const totalRows = allRows.filter(row => row.classList.contains("total-row"));
-  const rows = allRows.filter(row => !row.classList.contains("total-row"));
-  rows.sort((a,b) => {
-    const av = cellSortValue(a.cells[columnIndex] || {});
-    const bv = cellSortValue(b.cells[columnIndex] || {});
-    let result = 0;
-    if (av.type === "number" && bv.type === "number") result = av.value - bv.value;
-    else result = String(av.value).localeCompare(String(bv.value), "de-DE", { numeric:true, sensitivity:"base" });
-    return direction === "asc" ? result : -result;
-  });
-  rows.forEach(row => tbody.appendChild(row));
-  totalRows.forEach(row => tbody.appendChild(row));
+function clearTableFilter(...args) { return NK_PRO_MODULES.uiTableTools.clearTableFilter(...args); }
 
-  const headers = table.querySelectorAll("thead th");
-  headers.forEach((th, idx) => {
-    th.classList.remove("sort-asc", "sort-desc");
-    if (idx === columnIndex) th.classList.add(direction === "asc" ? "sort-asc" : "sort-desc");
-  });
-  applyTableFilter(tableId);
-}
+function ensureTableTools(...args) { return NK_PRO_MODULES.uiTableTools.ensureTableTools(...args); }
 
-function applyTableFilter(tableId) {
-  const table = document.getElementById(tableId);
-  if (!table || !table.tBodies.length) return;
-  const query = (tableFilters[tableId] || "").toLocaleLowerCase("de-DE").trim();
-  Array.from(table.tBodies[0].rows).forEach(row => {
-    if (row.classList.contains("total-row")) {
-      row.classList.remove("filtered-out");
-      return;
-    }
-    const text = row.textContent.toLocaleLowerCase("de-DE");
-    row.classList.toggle("filtered-out", query !== "" && !text.includes(query));
-  });
-}
-
-function clearTableFilter(tableId) {
-  tableFilters[tableId] = "";
-  const input = document.querySelector('.table-tools[data-table="' + tableId + '"] input');
-  if (input) input.value = "";
-  applyTableFilter(tableId);
-}
-
-function ensureTableTools(table) {
-  if (!table.id) return;
-  const wrap = table.closest(".table-wrap");
-  if (!wrap) return;
-  let tools = document.querySelector('.table-tools[data-table="' + table.id + '"]');
-  if (!tools) {
-    tools = document.createElement("div");
-    tools.className = "table-tools";
-    tools.dataset.table = table.id;
-    tools.innerHTML =
-      '<input type="search" placeholder="' + (tableLabels[table.id] || "Tabelle") + ' filtern ...">' +
-      '<button type="button">Filter löschen</button>' +
-      '<span class="small">Spaltenüberschriften anklicken zum Sortieren.</span>';
-    wrap.parentNode.insertBefore(tools, wrap);
-
-    const input = tools.querySelector("input");
-    input.addEventListener("input", () => {
-      tableFilters[table.id] = input.value;
-      applyTableFilter(table.id);
-    });
-    tools.querySelector("button").addEventListener("click", () => clearTableFilter(table.id));
-  }
-  const input = tools.querySelector("input");
-  if (input) input.value = tableFilters[table.id] || "";
-}
-
-function enhanceTables() {
-  document.querySelectorAll("table").forEach(table => {
-    if (!table.id) return;
-    ensureTableTools(table);
-
-    table.querySelectorAll("thead th").forEach((th, idx) => {
-      th.classList.add("sortable");
-      th.onclick = () => sortTable(table.id, idx);
-    });
-
-    const sortState = tableSortState[table.id];
-    if (sortState && sortState.columnIndex !== undefined) {
-      const headers = table.querySelectorAll("thead th");
-      headers.forEach((th, idx) => {
-        th.classList.remove("sort-asc", "sort-desc");
-        if (idx === sortState.columnIndex) th.classList.add(sortState.direction === "asc" ? "sort-asc" : "sort-desc");
-      });
-    }
-    applyTableFilter(table.id);
-  });
-}
+function enhanceTables(...args) { return NK_PRO_MODULES.uiTableTools.enhanceTables(...args); }
 
 
 // ===== Bereich: Release-Audit V75 =====
@@ -9775,7 +8540,7 @@ function appSelfTestReport() {
     return "Finalisieren/Entsperren-Status OK";
   }));
 
-  runCheck("Navigation", "Zählerstammdaten und Messperioden V99.4.6", () => {
+  runCheck("Navigation", "Weitere fachliche Modularisierung V99.4.7", () => {
     const nav = document.querySelector(".workflow-nav");
     if (!nav) throw new Error("Workflow-Navigation fehlt");
     const groups = Array.from(nav.querySelectorAll(":scope > .nav-group")).map(group => group.dataset.navGroupSection);
@@ -10074,7 +8839,7 @@ function buildOverviewData(tabId) {
     archiv:{summary:[["Archivierte Abrechnungen",s.archives],["Aktuelle Abrechnung",hasActiveCurrentBilling()?s.year:"Keine"],["Datenbestand","Lokal"],["Schema",DATA_SCHEMA_VERSION]],validation:{status:"ok",headline:"Archiv getrennt erreichbar",items:[{text:"Historische Datensätze bleiben unverändert",status:"ok"},{text:"Öffnen erfolgt schreibgeschützt",status:"ok"}]},next:next("Archivierte Abrechnung auswählen und in der Nur-Ansicht prüfen.","archiveRecordsSection"),actions:[open("Archiv öffnen","archiveRecordsSection",true),{label:"Archiv herunterladen",run:()=>downloadFullArchive()},go("Abrechnungsübersicht","start")]},
     mieterverwaltung:{summary:[["Mietverhältnisse",s.tenants.length],["Archiviert",s.archivedTenants.length],["Wohnungen",s.units.length],["Abrechnungsjahr",s.year]],validation:commonValidation,next:next("Mieterstammdaten und archivierte Mietverhältnisse vollständig prüfen.","masterTenantSection"),actions:[open("Mietverhältnisse öffnen","masterTenantSection",true),open("Archiv öffnen","masterTenantArchiveSection"),save]},
     wohnungsverwaltung:{summary:[["Wohnungen gesamt",s.units.length],["Aktiv",s.activeUnits.length],["Inaktiv",Math.max(0,s.units.length-s.activeUnits.length)],["Wohnfläche aktiv",s.activeUnits.reduce((a,w)=>a+num(w.wohnflaeche),0).toLocaleString("de-DE")+" m²"]],validation:commonValidation,next:next("Wohnungsbestand und Flächenangaben kontrollieren.","masterUnitSection"),actions:[open("Wohnungsbestand öffnen","masterUnitSection",true),go("Mieterverwaltung","mieterverwaltung"),save]},
-    sicherung:{summary:[["Version",APP_VERSION],["Archivstände",s.archives],["Betriebsart","Offline · lokal"],["Abrechnungsjahr",s.year]],validation:{status:"ok",headline:"Sicherung verfügbar",items:[{text:"Lokale Gesamtsicherung vorhanden",status:"ok"},{text:"Neuer PWA-Cache für V99.4.6",status:"ok"}]},next:next("Vollständige JSON-Sicherung erstellen und Versionsinformationen prüfen.","backupMainSection"),actions:[open("Gesamtsicherung öffnen","backupMainSection",true),open("Version anzeigen","backupVersionSection"),save]},
+    sicherung:{summary:[["Version",APP_VERSION],["Archivstände",s.archives],["Betriebsart","Offline · lokal"],["Abrechnungsjahr",s.year]],validation:{status:"ok",headline:"Sicherung verfügbar",items:[{text:"Lokale Gesamtsicherung vorhanden",status:"ok"},{text:"Neuer PWA-Cache für V99.4.7",status:"ok"}]},next:next("Vollständige JSON-Sicherung erstellen und Versionsinformationen prüfen.","backupMainSection"),actions:[open("Gesamtsicherung öffnen","backupMainSection",true),open("Version anzeigen","backupVersionSection"),save]},
     mieter:{summary:[["Wohnungen gesamt",s.units.length],["Wohnungen aktiv",s.activeUnits.length],["Mietverhältnisse",s.tenants.length],["Archivierte Mieter",s.archivedTenants.length]],validation:commonValidation,next:next("Bestand und Abrechnung in der Prüfbox abgleichen; danach Kostenarten bearbeiten.","tenantControlSection"),actions:[open("Prüfung öffnen","tenantControlSection",true),open("Mietverhältnisse öffnen","tenantRelationsSection"),go("Kostenarten öffnen","einstellungen")]},
     einstellungen:{summary:[["Kostenarten",s.costs.length],["Aktiv in NK",s.activeCosts.length],["Vollständig",s.completeCosts.length],["Gesamtkosten",overviewMoney(s.activeCosts.reduce((a,k)=>a+num(k.gesamtbetrag),0))]],validation:{status:s.completeCosts.length===s.activeCosts.length?"ok":"warn",headline:s.completeCosts.length+" von "+s.activeCosts.length+" vollständig",items:[{text:"Umlageschlüssel und Beträge prüfen",status:s.completeCosts.length===s.activeCosts.length?"ok":"warn"},{text:"Umlage wird automatisch berechnet",status:"ok"}]},next:next("Fehlende Beträge und Umlageschlüssel vervollständigen.","costEditSection"),actions:[open("Kostenarten bearbeiten","costEditSection",true),()=>{}].filter(Boolean)},
     einnahmen:{summary:[["Kaltmiete erhalten",overviewMoney(s.income.rent)],["NK-Vorauszahlungen",overviewMoney(s.income.prepayments)],["Korrekturen",overviewMoney(s.income.corrections)],["Mietverhältnisse",s.tenants.length]],validation:commonValidation,next:next("Kaltmieten und Vorauszahlungen vollständig prüfen; danach Zählerstände erfassen.","incomeRentSection"),actions:[open("Kaltmiete öffnen","incomeRentSection",true),open("Vorauszahlungen öffnen","incomePrepaymentSection"),go("Zählerstände","wasser")]},
@@ -10224,7 +8989,7 @@ function renderAll(options = {}) {
       renderAllOverviewCards();
       auditV992Structure();
     } catch(uiError) {
-      if (typeof console !== "undefined" && console.error) console.error("V99.4.6-Darstellung konnte nicht aktualisiert werden", uiError);
+      if (typeof console !== "undefined" && console.error) console.error("V99.4.7-Darstellung konnte nicht aktualisiert werden", uiError);
     }
     if (renderQueued) {
       renderQueued = false;
@@ -10233,16 +8998,33 @@ function renderAll(options = {}) {
   }
 }
 
-try {
-  prepareStateForPersistence("startup");
-  renderAll();
-  initializeNavigationMode();
-  document.querySelectorAll('.tab details').forEach(d => d.open = false);
-  updateAllPageHeaders();
-  renderAllOverviewCards();
-  auditV992Structure();
-} catch(error) {
-  renderErrors = [{ area:"App-Start", message:errorMessage(error) }];
-  if (typeof console !== "undefined" && console.error) console.error("NK-Pro Startabbruch", error);
-  try { renderSystemMessages(); } catch(statusError) { if (typeof console !== "undefined" && console.error) console.error("NK-Pro Statusanzeige fehlgeschlagen", statusError); }
-}
+[
+  ["billingCalculation", NK_PRO_MODULES.billingCalculation],
+  ["documentData", NK_PRO_MODULES.documentData],
+  ["documentRenderer", NK_PRO_MODULES.documentRenderer],
+  ["exportService", NK_PRO_MODULES.exportService],
+  ["uiTableTools", NK_PRO_MODULES.uiTableTools]
+].forEach(([name, api]) => NK_PRO_MODULES.compatibility.registerModule(name, api));
+
+const STARTUP_RESULT = NK_PRO_MODULES.appBootstrap.start([
+  { name:"Arbeitsstand vorbereiten", run:() => prepareStateForPersistence("startup") },
+  { name:"Erste Darstellung", run:() => renderAll() },
+  { name:"Navigation initialisieren", run:() => initializeNavigationMode() },
+  { name:"Arbeitsbereiche schließen", run:() => document.querySelectorAll('.tab details').forEach(d => d.open = false) },
+  { name:"Seitenköpfe aktualisieren", run:() => updateAllPageHeaders() },
+  { name:"Übersichtskarten aktualisieren", run:() => renderAllOverviewCards() },
+  { name:"Strukturprüfung", run:() => auditV992Structure() }
+], {
+  onError(error) {
+    renderErrors = [{ area:"App-Start", message:errorMessage(error) }];
+    if (typeof console !== "undefined" && console.error) console.error("NK-Pro Startabbruch", error);
+  },
+  onFallback() {
+    renderSystemMessages();
+  },
+  onFallbackError(statusError) {
+    if (typeof console !== "undefined" && console.error) console.error("NK-Pro Statusanzeige fehlgeschlagen", statusError);
+  }
+});
+window.__NKPRO_STARTUP__ = STARTUP_RESULT;
+window.__NKPRO_COMPATIBILITY__ = NK_PRO_MODULES.compatibility.describe();

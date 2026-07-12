@@ -31,6 +31,7 @@ module.exports = defineConfig({
   ],
   projects: [
     { name:"app-smoke", testMatch:"app-smoke.spec.js" },
+    { name:"document-export", testMatch:"document-export.spec.js" },
     { name:"migration-restore", testMatch:"migration-restore-foundation.spec.js" },
     { name:"module-boundaries", testMatch:"module-boundaries.spec.js" },
     { name:"object-snapshot", testMatch:"object-standard-snapshot.spec.js" },

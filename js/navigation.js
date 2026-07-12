@@ -1,4 +1,6 @@
 (function () {
+  const preferences = globalThis.NKProUiPreferences;
+  if (!preferences) throw new Error("NK-Pro UI-Einstellungsspeicher fehlt.");
   const NAV_GROUP_STORAGE_KEY = "nkpro.workflowNavigation.v3";
   const GROUP_KEYS = ["group-object", "group-billing", "group-archive", "group-extras"];
   const TAB_PATHS = {
@@ -23,14 +25,14 @@
 
   function loadOpenGroup() {
     try {
-      const stored = localStorage.getItem(NAV_GROUP_STORAGE_KEY);
+      const stored = preferences.get(NAV_GROUP_STORAGE_KEY);
       return GROUP_KEYS.includes(stored) ? stored : "group-object";
     } catch(error) {
       return "group-object";
     }
   }
   function saveOpenGroup() {
-    try { localStorage.setItem(NAV_GROUP_STORAGE_KEY, openGroup); } catch(error) {}
+    preferences.set(NAV_GROUP_STORAGE_KEY, openGroup);
   }
   function applyGroupState() {
     GROUP_KEYS.forEach(function (key) {
@@ -105,11 +107,11 @@
       return;
     }
     document.body.classList.toggle("sidebar-collapsed", !!collapsed);
-    try { localStorage.setItem("nkpro.sidebarCollapsed.v1", collapsed ? "1" : "0"); } catch(error) {}
+    preferences.setBoolean("nkpro.sidebarCollapsed.v1", !!collapsed);
   }
   function initializeSidebarCollapse() {
     try {
-      if (localStorage.getItem("nkpro.sidebarCollapsed.v1") === "1" && !(window.matchMedia && window.matchMedia("(max-width: 980px)").matches)) {
+      if (preferences.getBoolean("nkpro.sidebarCollapsed.v1") && !(window.matchMedia && window.matchMedia("(max-width: 980px)").matches)) {
         document.body.classList.add("sidebar-collapsed");
       }
     } catch(error) {}
@@ -149,7 +151,7 @@
     if (toggle) toggle.addEventListener("click", function () {
       if (document.body.classList.contains("sidebar-collapsed")) {
         document.body.classList.remove("sidebar-collapsed");
-        try { localStorage.setItem("nkpro.sidebarCollapsed.v1", "0"); } catch(error) {}
+        preferences.setBoolean("nkpro.sidebarCollapsed.v1", false);
       } else {
         document.body.classList.toggle("sidebar-open");
       }

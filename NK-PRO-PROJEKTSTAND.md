@@ -1,71 +1,66 @@
 # NK-Pro – verbindlicher Projektstand
 
 **Stand:** 12. Juli 2026  
-**Anwendung:** V99.4.6  
-**Versionsname:** Zählerstammdaten und Messperioden  
+**Anwendung:** V99.4.7  
+**Versionsname:** Weitere fachliche Modularisierung  
 **Datenschema:** 5, unverändert  
 **Datenebenenvertrag:** 1, unverändert  
 **Objektstandard:** 1, unverändert  
-**Zähler-/Messstandard:** 1  
+**Zähler-/Messstandard:** 1, unverändert  
 **Abrechnungssnapshot:** 2; Version 1 kompatibel  
-**Ausgangsversion:** V99.4.5
+**Architekturversion:** 1  
+**Kompatibilitätsschicht:** 1  
+**Ausgangsversion:** V99.4.6
 
 ## 1. Technische Grundlage
 
-NK-Pro ist eine statische lokale Browseranwendung und PWA aus HTML, CSS und JavaScript. Es gibt kein React, kein TypeScript und kein Buildsystem. Node.js und Playwright dienen nur der Prüfung.
+NK-Pro ist eine statische lokale Browseranwendung und PWA aus HTML, CSS und JavaScript. Es gibt kein React, kein TypeScript und kein Buildsystem. Node.js und Playwright dienen ausschließlich der Prüfung.
 
 ## 2. Produktive Ladefolge
 
-1. `js/navigation.js`
-2. `js/modal-events.js`
-3. `js/persistence.js`
-4. `js/migration.js`
-5. `js/backup-recovery.js`
-6. `js/meter-master.js`
-7. `js/meter-readings.js`
-8. `js/meter-periods.js`
-9. `js/meter-validation.js`
-10. `js/object-standard.js`
-11. `js/billing-snapshot.js`
-12. `js/archive.js`
-13. `js/default-seed.js`
-14. `js/app.js`
-15. `js/service-worker-register.js`
+1. `js/ui-preferences.js`
+2. `js/navigation.js`
+3. `js/modal-events.js`
+4. `js/persistence.js`
+5. `js/migration.js`
+6. `js/backup-recovery.js`
+7. `js/meter-master.js`
+8. `js/meter-readings.js`
+9. `js/meter-periods.js`
+10. `js/meter-validation.js`
+11. `js/object-standard.js`
+12. `js/billing-snapshot.js`
+13. `js/archive.js`
+14. `js/billing-calculation.js`
+15. `js/document-data.js`
+16. `js/document-renderer.js`
+17. `js/export-service.js`
+18. `js/ui-table-tools.js`
+19. `js/app-bootstrap.js`
+20. `js/compatibility.js`
+21. `js/default-seed.js`
+22. `js/app.js`
+23. `js/service-worker-register.js`
 
-Nur `js/persistence.js` greift direkt auf `localStorage` zu.
+Direkte `localStorage`-Zugriffe sind ausschließlich in `persistence.js` und `ui-preferences.js` zulässig.
 
-## 3. Verbindliche Datenebenen
+## 3. Fachliche Grundlagen
 
-- schreibbarer aktueller Arbeitsstand,
-- Objektstammdaten in `stammdaten`,
-- additive Objektprojektion in `objektStandard`,
-- getrennte operative Zählerdaten in `zaehlerDaten`,
-- globale historische Wasserzählerdaten in `waterMeterHistory`,
-- begrenzter, unveränderlicher Abrechnungssnapshot,
-- Jahresarchiv,
-- vollständige Gesamtsicherung,
-- Recovery-Stand,
-- Vor-Migrationssicherung,
-- Restore-Checkpoint.
+- `billing-calculation.js` ist die zentrale Abrechnungs- und Vorauszahlungsberechnung.
+- AP5-Zählermodule bleiben verbindliche Quelle für Zähler, Messwerte, Perioden, Wechsel und Verbrauch.
+- `document-data.js` erzeugt fachliche Brief- und Dokumentdaten.
+- `document-renderer.js` erzeugt Brief- und Druck-HTML.
+- `export-service.js` serialisiert und lädt vorhandene Werte herunter, ohne neu zu berechnen.
+- `billing-snapshot.js` bleibt alleinige Snapshot-Hülle und Integritätsprüfung.
 
-## 4. Zählerstandard 1
+## 4. Monolith und Kompatibilität
 
-Jeder Zähler besitzt eine stabile Zähler-ID. Stammdaten werden nicht je Abrechnungsjahr oder Ableseperiode dupliziert. Messwerte besitzen eigene IDs, Ablesedatum, Messzeitraum, Wert, Einheit, Herkunft, Erfassungszeitpunkt, Status, Plausibilitätsstatus und gegebenenfalls Ersetzungsreferenz.
+`app.js` wurde von 10.248 auf 9.030 Zeilen reduziert. 112 bisherige Funktionsnamen bleiben als reine Kompatibilitätswrapper erhalten. 534 implementierte Top-Level-Funktionen und 71 globale lexikalische Bindungen verbleiben und sind vollständig inventarisiert.
 
-Messperioden verbinden zwei aktive Messwerte desselben Zählers. Sie speichern Anfangs-/Endstand, Verbrauch, Einheit, Schätz-/Korrekturkennzeichen, Überlaufstatus und zeitanteilige Zuordnungen. Zählerwechsel erhalten eine eigene ID und verknüpfen alten und neuen Zähler ohne Identitätsänderung.
+## 5. Unveränderte Kompatibilität
 
-## 5. Snapshot 2
+V99.4.6-Daten können unverändert geladen werden. Datenschema, Datenebenenvertrag, Storage-Keys, Migrationen, Archive, Backups, Restore-Checkpoints, Snapshots und historische Daten bleiben kompatibel.
 
-Snapshot 2 enthält die für den Abrechnungszeitraum verwendeten Zählerstammdaten, Messwerte, Messperioden, Zuordnungen, Wechsel und ausgeschlossenen Zähler mit Grund. Er bleibt prüfsummengeschützt und rekursiv unveränderlich. Snapshot 1 bleibt lesbar und unverändert.
+## 6. Prüfpflicht
 
-## 6. Migration und Kompatibilität
-
-Die Migration `metering-standard-v1` ist additiv, idempotent und transaktional. Vor einer notwendigen Änderung wird das bestehende Sicherungsfundament verwendet. Legacy-Felder bleiben erhalten; unbekannte Felder werden mitgeführt. Datenschema 5 und Datenebenenvertrag 1 ändern sich nicht.
-
-## 7. Stromzähler-Dummy
-
-`electricity-dummy` erhält eine stabile ID, kann Messwerte und Historie speichern und bleibt in Export, Sicherung, Restore und Snapshot enthalten. Er ist zwingend nicht abrechnungsrelevant und wird von zentraler Validierung und Verbrauchsermittlung ausgeschlossen.
-
-## 8. Nächster sinnvoller Schritt
-
-Die UI-Erfassung kann in einem Folgearbeitspaket direkt auf die getrennten Fachmodule umgestellt werden. Bis dahin bleiben die Legacy-Formulare kompatible Eingabeadapter.
+Die Freigabe erfordert Syntax-, Fixture-, Zählerdomänen-, AP6-Architektur-, Release- und Playwright-Prüfungen sowie eine Wiederholung aus einer frisch entpackten finalen ZIP.

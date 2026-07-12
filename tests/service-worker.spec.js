@@ -5,7 +5,7 @@ const path = require("node:path");
 const { test, expect } = require("@playwright/test");
 const { root } = require("./test-helpers.cjs");
 
-test("Service Worker installiert den V99.4.6-App-Shell und entfernt Alt-Caches", async ({ page }) => {
+test("Service Worker installiert den V99.4.7-App-Shell und entfernt Alt-Caches", async ({ page }) => {
   const source = fs.readFileSync(path.join(root, "service-worker.js"), "utf8");
   const result = await page.evaluate(async workerSource => {
     const listeners = {};
@@ -47,11 +47,18 @@ test("Service Worker installiert den V99.4.6-App-Shell und entfernt Alt-Caches",
     "./js/meter-readings.js",
     "./js/meter-periods.js",
     "./js/meter-validation.js",
+    "./js/billing-calculation.js",
+    "./js/document-data.js",
+    "./js/document-renderer.js",
+    "./js/export-service.js",
+    "./js/ui-table-tools.js",
+    "./js/app-bootstrap.js",
+    "./js/compatibility.js",
     "./icons/icon-192.png",
     "./icons/icon-512.png"
   ]));
   expect(result.log.skipWaiting).toBe(1);
   expect(result.log.claimed).toBe(1);
-  expect(result.remaining).toEqual(["nk-pro-v99-4-6"]);
+  expect(result.remaining).toEqual(["nk-pro-v99-4-7"]);
   expect(result.log.deleted).toEqual(expect.arrayContaining(["nk-pro-v99-2-7", "nk-pro-v99-4-0", "fremder-cache"]));
 });

@@ -1,7 +1,7 @@
 {
-  "name": "NK-Pro V99.4.6 – Nebenkostenabrechnung",
-  "short_name": "NK-Pro V99.4.6",
-  "description": "Lokale Nebenkostenabrechnung mit getrennten Zählerstammdaten, Messwerten, Messperioden und prüfsummengeschützten Abrechnungssnapshots.",
+  "name": "NK-Pro V99.4.7 – Nebenkostenabrechnung",
+  "short_name": "NK-Pro V99.4.7",
+  "description": "Lokale Nebenkostenabrechnung mit modularisierter Berechnung, Dokumentdaten, Exporttechnik, Startorchestrierung und getrennten Zählerstandards.",
   "lang": "de-DE",
   "id": "./",
   "start_url": "./",
@@ -9,7 +9,7 @@
   "display": "standalone",
   "background_color": "#f6f8fa",
   "theme_color": "#183b56",
-  "version": "99.4.6",
+  "version": "99.4.7",
   "icons": [
     {
       "src": "./icons/icon-192.png",

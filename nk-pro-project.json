@@ -1,11 +1,11 @@
 {
-  "appVersion": "99.4.6",
-  "displayVersion": "V99.4.6",
-  "versionName": "Zählerstammdaten und Messperioden",
+  "appVersion": "99.4.7",
+  "displayVersion": "V99.4.7",
+  "versionName": "Weitere fachliche Modularisierung",
   "schemaVersion": 5,
   "dataLayerContractVersion": 1,
   "snapshotScope": "billingSnapshot",
-  "basedOn": "99.4.5",
+  "basedOn": "99.4.6",
   "releaseDate": "2026-07-12",
   "runtime": [
     "HTML",
@@ -14,12 +14,14 @@
   ],
   "framework": null,
   "buildSystem": null,
-  "nextWorkPackage": "Bedienoberfläche der Zähler- und Messwertverwaltung auf die getrennten Fachmodule umstellen",
+  "nextWorkPackage": "Native UI-Anbindung an die modularisierten Fach- und Dokumentdienste sowie weiterer Abbau des globalen Laufzeitkontexts",
   "objectStandardVersion": 1,
   "billingSnapshotVersion": 2,
   "meterMasterStandardVersion": 1,
   "meterReadingStandardVersion": 1,
   "meterPeriodStandardVersion": 1,
   "meterAssignmentStandardVersion": 1,
-  "meterReplacementStandardVersion": 1
+  "meterReplacementStandardVersion": 1,
+  "architectureVersion": 1,
+  "compatibilityLayerVersion": 1
 }

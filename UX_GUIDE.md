@@ -2,7 +2,7 @@
 
 **Ziel:** einfacher, stabiler und nachvollziehbarer Arbeitsablauf  
 **Ausgangsversion:** V99.3.0  
-**Aktueller Stand:** V99.4.6  
+**Aktueller Stand:** V99.4.7  
 **Status:** Phase-1-Ziel umgesetzt; Datenmodellziele offen
 
 ## 1. Leitprinzip
@@ -238,3 +238,8 @@ Der Datenebenenvertrag und die Begrenzung von Abrechnungs- und Archivsnapshots s
 ## Ergänzung V99.4.6
 
 Die Bedienoberfläche bleibt visuell unverändert. Fachliche Zählerfehler werden zentral erzeugt und können in einem Folgearbeitspaket in die bestehende Prüf- und Hinweissystematik eingebunden werden.
+
+
+## Ergänzung V99.4.7
+
+Die sichtbare UI-Struktur und das Design bleiben unverändert. Tabellenfilter und Sortierung liegen technisch in `ui-table-tools.js`; Navigationspräferenzen werden über `ui-preferences.js` gespeichert. Fachliche Berechnung, Dokumentdaten, Brief-HTML und Exporttechnik sind aus dem UI-Controller ausgelagert.
