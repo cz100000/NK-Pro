@@ -1,14 +1,16 @@
-# Globale Schnittstellen und Zustände – Inventar V99.4.7
+# Globale Schnittstellen und Zustände – Inventar V99.4.8
 
 Erzeugt aus dem tatsächlichen Top-Level von `js/app.js`. Klassische Skripte machen Funktionsdeklarationen global erreichbar; `const`/`let` bilden globale lexikalische Bindungen.
 
 ## Zusammenfassung
 
-- Top-Level-Funktionen: **646**
+- Top-Level-Funktionen: **654**
 - reine Kompatibilitätswrapper auf AP6-Module: **112**
-- weiterhin in `app.js` implementierte Funktionen: **534**
-- Top-Level-Variablen/Konstanten: **71**
+- weiterhin in `app.js` implementierte Funktionen: **542**
+- Top-Level-Variablen/Konstanten: **68**
 - direkter Browser-Speicherzugriff in `app.js`: **0**
+- globale HTML-/Inline-Aufrufe: **0**
+- entfernte globale Navigationswrapper: **5**
 
 ## Verbleibende Funktionen nach Verantwortungsbereich
 

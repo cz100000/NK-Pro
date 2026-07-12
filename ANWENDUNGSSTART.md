@@ -1,33 +1,32 @@
-# Anwendungsstart und Orchestrierung V99.4.7
+# Anwendungsstart und Orchestrierung V99.4.8
 
 ## Startdienst
 
-`js/app-bootstrap.js` stellt `NKProAppBootstrap.start(steps, options)` bereit. Der Dienst kennt keine Fachmodule und keinen DOM. Er führt ausschließlich übergebene Schritte der Reihe nach aus.
+`js/app-bootstrap.js` stellt `NKProAppBootstrap.start(steps, options)` bereit. Der Dienst kennt keine Fachmodule und keinen DOM. Er führt ausschließlich benannte Schritte in fester Reihenfolge aus und bricht bei einem Fehler kontrolliert ab.
 
 ## Startschritte
 
 | Reihenfolge | Schritt | Verantwortung |
 |---:|---|---|
-| 1 | Arbeitsstand vorbereiten | Normalisierung und persistenzfähiger Zustand |
-| 2 | Erste Darstellung | aktiven Arbeitsbereich rendern |
-| 3 | Navigation initialisieren | Modus und sichtbare Navigation setzen |
-| 4 | Arbeitsbereiche schließen | konsistenter initialer Klappzustand |
-| 5 | Seitenköpfe aktualisieren | Periode und Schreibstatus anzeigen |
-| 6 | Übersichtskarten aktualisieren | Status- und Aktionskarten erzeugen |
-| 7 | Strukturprüfung | verbindliche Seitenstruktur prüfen |
+| 1 | Zustandszugriff konfigurieren | bestehenden Einzelzustand an `NKProStateAccess` anbinden |
+| 2 | Navigation konfigurieren | Datenprovider und UI-Callbacks für `NKProNavigation` setzen |
+| 3 | UI-Controller registrieren | 13 Controller und 99 Aktionen einmalig registrieren |
+| 4 | UI-Ereignisse registrieren | fünf delegierte Ereignisarten einmalig aktivieren |
+| 5 | Arbeitsstand vorbereiten | Normalisierung und persistenzfähiger Zustand |
+| 6 | Erste Darstellung | aktiven Arbeitsbereich rendern |
+| 7 | Navigation initialisieren | bestehende Navigationsstruktur aktivieren |
+| 8 | Arbeitsbereiche schließen | vorhandene Details-Elemente initial vereinheitlichen |
+| 9 | Seitenköpfe aktualisieren | Status und Periodeninformation darstellen |
+| 10 | Übersichtskarten aktualisieren | deklarative Schnellaktionen rendern |
+| 11 | Strukturprüfung | DOM- und Navigationsstruktur auditieren |
+| 12 | UI-Architekturprüfung | Controller-, Ereignis-, Zustands- und Kompatibilitätsstatus veröffentlichen |
 
-## Fehlerpfad
+`window.__NKPRO_STARTUP__` enthält den vollständigen Startstatus. `window.__NKPRO_UI_ARCHITECTURE__` enthält die schreibgeschützte Laufzeitbeschreibung der UI-Architektur.
 
-Bei einem Fehler:
+## Reihenfolgeregeln
 
-1. werden bereits abgeschlossene Schritte festgehalten,
-2. wird der Startfehler in `renderErrors` eingetragen,
-3. wird der Fehler protokolliert,
-4. wird als Rückfall die Systemmeldung gerendert,
-5. wird ein strukturierter Ergebnisdatensatz zurückgegeben.
-
-Das Ergebnis ist unter `window.__NKPRO_STARTUP__` verfügbar.
-
-## Service Worker
-
-Die Service-Worker-Registrierung bleibt nach `app.js` in `service-worker-register.js`. Der App-Shell enthält alle neuen Produktivmodule und verwendet den Cache `nk-pro-v99-4-7`.
+- State-Adapter, Navigation, Controller und Ereignisse werden vor dem ersten Rendern konfiguriert.
+- Ereignisregistrierung ist idempotent und erzeugt keine doppelten Listener.
+- Fachmodule werden vor `app.js` geladen.
+- Bei einem Startfehler wird kein nachfolgender Schritt ausgeführt.
+- Die Fehleranzeige verwendet den bestehenden Fallbackpfad.

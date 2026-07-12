@@ -1,11 +1,11 @@
 {
-  "appVersion": "99.4.7",
-  "displayVersion": "V99.4.7",
-  "versionName": "Weitere fachliche Modularisierung",
+  "appVersion": "99.4.8",
+  "displayVersion": "V99.4.8",
+  "versionName": "Native UI-Anbindung an modularisierte Fachdienste",
   "schemaVersion": 5,
   "dataLayerContractVersion": 1,
   "snapshotScope": "billingSnapshot",
-  "basedOn": "99.4.6",
+  "basedOn": "99.4.7",
   "releaseDate": "2026-07-12",
   "runtime": [
     "HTML",
@@ -14,7 +14,7 @@
   ],
   "framework": null,
   "buildSystem": null,
-  "nextWorkPackage": "Native UI-Anbindung an die modularisierten Fach- und Dokumentdienste sowie weiterer Abbau des globalen Laufzeitkontexts",
+  "nextWorkPackage": "Weitere Modularisierung der Stammdaten-, Kosten- und Workflow-Orchestrierung bei fortgesetztem Abbau des globalen Laufzeitkontexts",
   "objectStandardVersion": 1,
   "billingSnapshotVersion": 2,
   "meterMasterStandardVersion": 1,
@@ -22,6 +22,8 @@
   "meterPeriodStandardVersion": 1,
   "meterAssignmentStandardVersion": 1,
   "meterReplacementStandardVersion": 1,
-  "architectureVersion": 1,
-  "compatibilityLayerVersion": 1
+  "architectureVersion": 2,
+  "compatibilityLayerVersion": 2,
+  "uiControllerVersion": 1,
+  "uiEventContractVersion": 1
 }

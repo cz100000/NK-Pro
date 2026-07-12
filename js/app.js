@@ -17,7 +17,13 @@ const NK_PRO_MODULES = (() => {
     uiTableTools:globalThis.NKProUiTableTools,
     appBootstrap:globalThis.NKProAppBootstrap,
     compatibility:globalThis.NKProCompatibility,
-    uiPreferences:globalThis.NKProUiPreferences
+    uiPreferences:globalThis.NKProUiPreferences,
+    stateAccess:globalThis.NKProStateAccess,
+    uiController:globalThis.NKProUiController,
+    uiBindings:globalThis.NKProUiBindings,
+    uiEvents:globalThis.NKProUiEvents,
+    navigation:globalThis.NKProNavigation,
+    modalEvents:globalThis.NKProModalEvents
   };
   const missing = Object.entries(required).filter(([, value]) => !value).map(([name]) => name);
   if (missing.length) throw new Error("NK-Pro-Modulladereihenfolge unvollständig: " + missing.join(", "));
@@ -27,8 +33,8 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.7";
-const APP_VERSION_NAME = "Weitere fachliche Modularisierung";
+const APP_VERSION = "V99.4.8";
+const APP_VERSION_NAME = "Native UI-Anbindung an modularisierte Fachdienste";
 const APP_RELEASE_DATE = "2026-07-12";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
@@ -94,6 +100,9 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
+  "V99.4.8 bindet die bestehende Oberfläche über zentrale Ereignisdelegation und fachlich benannte UI-Controller an die modularisierten Dienste an.",
+  "Alle statischen und dynamisch erzeugten Inline-Handler wurden entfernt; Zähler-, Abrechnungs-, Dokument-, Export-, Persistenz- und Recovery-Aktionen laufen über definierte Controllerpfade.",
+  "Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Zählerstandard 1 und Abrechnungssnapshot 2 bleiben unverändert.",
   "V99.4.7 trennt zentrale Abrechnungsberechnung, Dokumentdaten, Brief-HTML, Exporttechnik, Tabellenhilfen und Startorchestrierung über feste Modulschnittstellen.",
   "app.js wurde von 10.248 auf rund 9.000 Zeilen reduziert; bestehende globale Aufrufe bleiben ausschließlich als dokumentierte Einzeilen-Weiterleitungen erhalten.",
   "Direkte Browser-Speicherzugriffe liegen nur noch in Persistenz und getrennten UI-Einstellungen; Datenschema 5, Datenebenenvertrag 1 und alle Berechnungsergebnisse bleiben unverändert.",
@@ -887,15 +896,15 @@ function renderBackupStatus() {
   const lastLabel = report.last ? (new Date(report.last).toLocaleString("de-DE") + (report.days !== null ? " · vor " + report.days + " Tag(en)" : "")) : "Noch kein Gesamtbackup dokumentiert";
   const eventHtml = report.events.slice(0, 3).map(e => '<div class="backup-pill"><strong>' + escapeHtml(e.label || backupEventLabel(e.type)) + '</strong><br>' + escapeHtml(e.at ? new Date(e.at).toLocaleString("de-DE") : "") + '<br><span class="small">' + escapeHtml(e.filename || "") + '</span></div>').join("");
   el.innerHTML = '<div class="backup-status-box ' + report.level + '"><div class="inline-titlebar"><div><strong>Backup-Status</strong><div class="small">' + escapeHtml(report.message) + '</div></div>' +
-    '<div class="start-action-stack"><button type="button" data-app-action="download-full-json">Gesamt-JSON</button><button type="button" data-app-action="download-full-export-package">Exportpaket</button>' +
-      (report.preMigrationBackup && report.preMigrationBackup.valid ? '<button type="button" data-app-action="download-pre-migration-backup">Vor-Migrationssicherung</button>' : '') +
+    '<div class="start-action-stack"><button type="button" data-ui-action="export.downloadFullJson">Gesamt-JSON</button><button type="button" data-ui-action="export.downloadFullPackage">Exportpaket</button>' +
+      (report.preMigrationBackup && report.preMigrationBackup.valid ? '<button type="button" data-ui-action="recovery.downloadPreMigration">Vor-Migrationssicherung</button>' : '') +
       '</div></div>' +
     '<div class="backup-grid">' +
       '<div class="backup-pill"><strong>Letztes Gesamtbackup</strong><br>' + escapeHtml(lastLabel) + '<br><span class="small">' + escapeHtml(meta.lastFullBackupType || "") + '</span></div>' +
       '<div class="backup-pill"><strong>Aktueller Speicher</strong><br>' + escapeHtml(report.storage.label) + '<br><span class="small">Browser-Speicher lokal</span></div>' +
       '<div class="backup-pill"><strong>Aktuelle Version</strong><br>' + escapeHtml(APP_VERSION) + '<br><span class="small">' + escapeHtml(APP_VERSION_NAME) + '</span></div>' +
-      (report.preMigrationBackup && report.preMigrationBackup.valid ? '<div class="backup-pill"><strong>Vor-Migrationssicherung</strong><br>' + escapeHtml(report.preMigrationBackup.envelope.metadata.backupId) + '<br><span class="small"><button type="button" data-app-action="restore-pre-migration-backup">Wiederherstellen</button></span></div>' : '') +
-      (report.restoreCheckpoint && report.restoreCheckpoint.valid ? '<div class="backup-pill"><strong>Restore-Checkpoint</strong><br>' + escapeHtml(report.restoreCheckpoint.envelope.metadata.backupId) + '<br><span class="small"><button type="button" data-app-action="rollback-last-restore">Restore zurücknehmen</button></span></div>' : '') +
+      (report.preMigrationBackup && report.preMigrationBackup.valid ? '<div class="backup-pill"><strong>Vor-Migrationssicherung</strong><br>' + escapeHtml(report.preMigrationBackup.envelope.metadata.backupId) + '<br><span class="small"><button type="button" data-ui-action="recovery.restorePreMigration">Wiederherstellen</button></span></div>' : '') +
+      (report.restoreCheckpoint && report.restoreCheckpoint.valid ? '<div class="backup-pill"><strong>Restore-Checkpoint</strong><br>' + escapeHtml(report.restoreCheckpoint.envelope.metadata.backupId) + '<br><span class="small"><button type="button" data-ui-action="recovery.rollbackLastRestore">Restore zurücknehmen</button></span></div>' : '') +
       (eventHtml || '<div class="backup-pill"><strong>Historie</strong><br>Noch keine Backup-Ereignisse</div>') +
     '</div></div>';
 }
@@ -940,8 +949,8 @@ function renderFinalizationStatus() {
   const cls = info.finalized ? "locked" : (info.readiness.level === "err" ? "err" : (info.readiness.level === "warn" ? "warn" : "ok"));
   const status = info.finalized ? "Finalisiert / Eingaben geschützt" : "Noch bearbeitbar";
   const actionHtml = info.finalized
-    ? '<button type="button" class="warn" data-app-action="unlock-billing">Wiederbearbeitung öffnen</button>'
-    : '<button type="button" class="primary" data-app-action="finalize-billing">Diese Abrechnung finalisieren</button>';
+    ? '<button type="button" class="warn" data-ui-action="billing.unlock">Wiederbearbeitung öffnen</button>'
+    : '<button type="button" class="primary" data-ui-action="billing.finalize">Diese Abrechnung finalisieren</button>';
   el.innerHTML = '<div class="finalization-status-box ' + cls + '"><div class="inline-titlebar"><div><strong>Finalisierung dieser Abrechnung</strong><div class="small">' + escapeHtml(status) + ' · ' + escapeHtml(info.readiness.message) + '</div></div><div class="start-action-stack">' + actionHtml + '</div></div>' +
     '<div class="finalization-grid">' +
       '<div class="finalization-pill"><strong>Abrechnungsjahr</strong><br>' + escapeHtml(currentAbrechnungsjahr()) + '<br><span class="small">' + escapeHtml(periodLabelShort()) + '</span></div>' +
@@ -1591,9 +1600,9 @@ function renderCostSelectionPanel() {
     const items = groups[group].map(({k,i}) => {
       if (isFreeCostSlot(k)) {
         const opts=COST_GROUP_OPTIONS.map(g=>'<option value="'+escapeHtml(g)+'" '+(costGroupLabel(k)===g?'selected':'')+'>'+escapeHtml(g)+'</option>').join('');
-        return '<div class="cost-picker-item free-cost-editor"><input id="freeCostName_'+i+'" value="'+escapeHtml(/^Weitere Kosten/i.test(k.kostenart||'')?'':(k.kostenart||''))+'" placeholder="Eigene Kostenart"><select id="freeCostGroup_'+i+'">'+opts+'</select><button type="button" onclick="configureFreeCost('+i+',document.getElementById(\'freeCostName_'+i+'\').value,document.getElementById(\'freeCostGroup_'+i+'\').value)">Anlegen</button></div>';
+        return '<div class="cost-picker-item free-cost-editor"><input id="freeCostName_'+i+'" value="'+escapeHtml(/^Weitere Kosten/i.test(k.kostenart||'')?'':(k.kostenart||''))+'" placeholder="Eigene Kostenart"><select id="freeCostGroup_'+i+'">'+opts+'</select><button type="button"' + uiActionAttributes("cost.configureFree", [i,{fromElementId:"freeCostName_"+i},{fromElementId:"freeCostGroup_"+i}]) + '>Anlegen</button></div>';
       }
-      return '<label class="cost-picker-item"><input type="checkbox" ' + (k.inNK === "Ja" ? 'checked ' : '') + 'onchange="setCostSetting(' + i + ',\'inNK\',this.checked?\'Ja\':\'Nein\')"' + editDisabledAttr() + '><span><span class="cost-picker-id">' + escapeHtml(k.id) + '</span> · ' + escapeHtml(k.kostenart) + '</span></label>';
+      return '<label class="cost-picker-item"><input type="checkbox" ' + (k.inNK === "Ja" ? 'checked ' : '') + uiActionAttributes("cost.setSetting", [i,"inNK",{checkedValues:["Ja","Nein"]}], "change") + editDisabledAttr() + '><span><span class="cost-picker-id">' + escapeHtml(k.id) + '</span> · ' + escapeHtml(k.kostenart) + '</span></label>';
     }).join("");
     return '<div class="cost-picker-group"><h4>' + escapeHtml(group) + '</h4>' + items + '</div>';
   }).join("");
@@ -1611,7 +1620,7 @@ function priceCellHtml(k, index) {
   const title = autoPrice !== ""
     ? "Automatischer Preis: " + fmtMoney(autoPrice) + " · aktuell " + mode
     : "Automatischer Preis nicht möglich: Gesamtverbrauch fehlt";
-  return '<button type="button" class="compact-price-button" onclick="openCostPriceEditor(' + index + ')" title="' + escapeHtml(title) + '"' + editDisabledAttr() + '>' +
+  return '<button type="button" class="compact-price-button"' + uiActionAttributes("cost.openPriceEditor", [index]) + ' title="' + escapeHtml(title) + '"' + editDisabledAttr() + '>' +
     '<span class="compact-price-value">' + value + '</span><span class="compact-price-edit" aria-hidden="true">✎</span></button>';
 }
 
@@ -1692,11 +1701,15 @@ function setNested(collection, index, key, value, type="text") {
 }
 
 function editDisabledAttr() { return (typeof isCurrentBillingFinalized === "function" && isCurrentBillingFinalized()) ? ' disabled title="Finalisierte Abrechnung: zuerst Finalisierung aufheben"' : ''; }
+
+function uiActionAttributes(action, args = [], eventType = "click", options = {}) { return NK_PRO_MODULES.uiEvents.attributes(action, args, eventType, options); }
+function legacyUiActionAttributes(expression, eventType = "change") { return NK_PRO_MODULES.uiEvents.legacyAttributes(expression, eventType); }
+
 function selectHtml(value, options, onChange) {
-  return '<select onchange="' + onChange + '"' + editDisabledAttr() + '>' + options.map(o => '<option value="' + escapeHtml(o) + '" ' + (o===value ? 'selected' : '') + '>' + escapeHtml(o) + '</option>').join("") + '</select>';
+  return '<select' + legacyUiActionAttributes(onChange, "change") + editDisabledAttr() + '>' + options.map(o => '<option value="' + escapeHtml(o) + '" ' + (o===value ? 'selected' : '') + '>' + escapeHtml(o) + '</option>').join("") + '</select>';
 }
-function inputHtml(value, onChange, cls="") { return '<input class="' + cls + '" value="' + escapeHtml(value ?? "") + '" onchange="' + onChange + '"' + editDisabledAttr() + '>'; }
-function dateInputHtml(value, onChange, cls="") { return '<input type="date" class="' + cls + '" value="' + escapeHtml(value ?? "") + '" onchange="' + onChange + '"' + editDisabledAttr() + '>'; }
+function inputHtml(value, onChange, cls="") { return '<input class="' + cls + '" value="' + escapeHtml(value ?? "") + '"' + legacyUiActionAttributes(onChange, "change") + editDisabledAttr() + '>'; }
+function dateInputHtml(value, onChange, cls="") { return '<input type="date" class="' + cls + '" value="' + escapeHtml(value ?? "") + '"' + legacyUiActionAttributes(onChange, "change") + editDisabledAttr() + '>'; }
 
 function hasTenantData(m) {
   return !!(m && (m.name || m.wohnung || m.einzug || m.auszug || num(m.kaltSoll) || num(m.kaltErhalten) || num(m.nkVoraus) || num(m.aktiveTage) || num(m.personen)));
@@ -1861,7 +1874,7 @@ function unitSelectHtmlFromRows(value, rows, onChange) {
     const label = id + " - " + (w.bezeichnung || w.lage || id);
     return '<option value="' + escapeHtml(id) + '" ' + (id === current ? 'selected' : '') + '>' + escapeHtml(label) + '</option>';
   }).join("");
-  return '<select onchange="' + onChange + '"><option value="">Bitte waehlen</option>' + options + '</select>';
+  return '<select' + legacyUiActionAttributes(onChange, "change") + '><option value="">Bitte waehlen</option>' + options + '</select>';
 }
 
 function unitSelectHtml(value, onChange) {
@@ -2971,7 +2984,7 @@ function renderAcceptanceProtocolSummary() {
   if (!el) return;
   const data = acceptanceProtocolData();
   const level = acceptanceLevel(data);
-  el.innerHTML = '<div class="acceptance-protocol-box ' + level + '"><div class="inline-titlebar"><div><strong>Abnahmeprotokoll: ' + escapeHtml(acceptanceLabel(level)) + '</strong><div class="small">Fasst finalen Check, Summen, Sonderfälle, Backup-Status, Brief-Preflight und Finalisierung zusammen.</div></div><div class="start-action-stack"><button type="button" data-app-action="acceptance-report">Anzeigen</button><button type="button" data-app-action="download-acceptance-report-html">HTML herunterladen</button></div></div>' +
+  el.innerHTML = '<div class="acceptance-protocol-box ' + level + '"><div class="inline-titlebar"><div><strong>Abnahmeprotokoll: ' + escapeHtml(acceptanceLabel(level)) + '</strong><div class="small">Fasst finalen Check, Summen, Sonderfälle, Backup-Status, Brief-Preflight und Finalisierung zusammen.</div></div><div class="start-action-stack"><button type="button" data-ui-action="billing.showAcceptanceProtocol">Anzeigen</button><button type="button" data-ui-action="export.downloadAcceptanceHtml">HTML herunterladen</button></div></div>' +
     '<div class="acceptance-protocol-grid"><div class="acceptance-protocol-pill"><strong>Prüfpunkte</strong><br>' + data.counts.errors + ' Fehler · ' + data.counts.warnings + ' prüfen · ' + data.counts.hints + ' Hinweise</div><div class="acceptance-protocol-pill"><strong>Brief</strong><br>' + escapeHtml(data.brief ? data.brief.label : "nicht verfügbar") + '</div><div class="acceptance-protocol-pill"><strong>Sonderfälle</strong><br>' + escapeHtml(data.special ? (data.special.errors + ' Fehler · ' + data.special.checks + ' prüfen') : "nicht verfügbar") + '</div><div class="acceptance-protocol-pill"><strong>Backup</strong><br>' + escapeHtml(data.backup ? data.backup.message : "nicht verfügbar") + '</div></div></div>';
 }
 
@@ -3323,10 +3336,10 @@ function qualityIssueActionHtml(item, acknowledged) {
   const tab = qualityAreaTab(item.area);
   const text = encodeURIComponent(qualityIssueSearchText(item));
   const key = encodeURIComponent(qualityItemKey(item));
-  const actions = ['<button class="secondary compact-action" onclick="jumpToQualityIssue(\'' + tab + '\',\'' + text + '\')">Zur Stelle springen</button>'];
+  const actions = ['<button class="secondary compact-action"' + uiActionAttributes("quality.jumpToIssue", [tab,text]) + '>Zur Stelle springen</button>'];
   if (item.severity !== "Fehler") {
-    if (acknowledged) actions.push('<button class="compact-action" onclick="reopenQualityIssue(\'' + key + '\')">Wieder öffnen</button>');
-    else actions.push('<button class="compact-action" onclick="acknowledgeQualityIssue(\'' + key + '\',\'' + (item.severity === "Hinweis" ? "gelesen" : "geprüft") + '\')">' + escapeHtml(qualityAckLabel(item)) + '</button>');
+    if (acknowledged) actions.push('<button class="compact-action"' + uiActionAttributes("quality.reopenIssue", [key]) + '>Wieder öffnen</button>');
+    else actions.push('<button class="compact-action"' + uiActionAttributes("quality.acknowledgeIssue", [key,item.severity === "Hinweis" ? "gelesen" : "geprüft"]) + '>' + escapeHtml(qualityAckLabel(item)) + '</button>');
   }
   return actions.join(" ");
 }
@@ -3362,7 +3375,7 @@ function renderQuality(filterMode) {
   const cls = openErrors.length ? "err" : (openChecks.length ? "warn" : "ok");
   const title = openErrors.length ? "Abrechnung noch nicht freigabebereit" : (openChecks.length ? "Abrechnung mit Prüfpunkten" : (openHints.length ? "Abrechnung mit Hinweisen" : "Keine offenen Qualitätsaufgaben"));
   const msg = openErrors.length ? "Bitte zuerst die Fehler beheben. Fehler können nicht weggeklickt werden." : (openChecks.length ? "Bitte Prüfpunkte fachlich kontrollieren und danach als geprüft markieren." : (openHints.length ? "Hinweise lesen und bei Bedarf als gelesen markieren." : "Du kannst jetzt Abnahmeprotokoll, Briefdruck oder Finalisierung vorbereiten."));
-  summaryEl.innerHTML = '<div class="quality-cockpit-hero ' + cls + '"><div><h3>' + escapeHtml(title) + '</h3><div class="small">' + escapeHtml(msg) + '</div><div style="margin-top:8px"><span class="period-badge">' + openErrors.length + ' Fehler · ' + openChecks.length + ' Prüfpunkte · ' + openHints.length + ' Hinweise offen</span></div></div><div class="quality-cockpit-actions"><button class="primary" onclick="jumpToFirstOpenQualityIssue()">Zum ersten offenen Punkt</button><button class="secondary" onclick="renderQuality()">Prüfung erneut ausführen</button><button data-app-action="acceptance-report">Abnahmeprotokoll</button>' + (openErrors.length ? '<button class="warn" onclick="showOnlyQualityErrors()">Nur Fehler anzeigen</button>' : '<button class="primary" data-app-action="finalize-billing">Finalisieren</button>') + '</div></div>';
+  summaryEl.innerHTML = '<div class="quality-cockpit-hero ' + cls + '"><div><h3>' + escapeHtml(title) + '</h3><div class="small">' + escapeHtml(msg) + '</div><div style="margin-top:8px"><span class="period-badge">' + openErrors.length + ' Fehler · ' + openChecks.length + ' Prüfpunkte · ' + openHints.length + ' Hinweise offen</span></div></div><div class="quality-cockpit-actions"><button class="primary" data-ui-action="quality.jumpFirstOpen">Zum ersten offenen Punkt</button><button class="secondary" data-ui-action="quality.render">Prüfung erneut ausführen</button><button data-ui-action="billing.showAcceptanceProtocol">Abnahmeprotokoll</button>' + (openErrors.length ? '<button class="warn" data-ui-action="quality.showOnlyErrors">Nur Fehler anzeigen</button>' : '<button class="primary" data-ui-action="billing.finalize">Finalisieren</button>') + '</div></div>';
 
   if (nextEl) {
     const coverageAreas = new Set(report.issues.map(item => item.area).filter(Boolean));
@@ -3373,7 +3386,7 @@ function renderQuality(filterMode) {
   if (typeof renderOverviewForTab === "function") renderOverviewForTab("qualitaet");
 
   if (filterEl) {
-    filterEl.innerHTML = '<button class="secondary" onclick="renderQuality()">Alle offenen</button><button onclick="renderQuality(\'errors\')">Nur Fehler</button><button onclick="renderQuality(\'checks\')">Nur Prüfpunkte</button><button onclick="renderQuality(\'hints\')">Nur Hinweise</button>';
+    filterEl.innerHTML = '<button class="secondary" data-ui-action="quality.render">Alle offenen</button><button data-ui-action="quality.render" data-ui-args="[&quot;errors&quot;]">Nur Fehler</button><button data-ui-action="quality.render" data-ui-args="[&quot;checks&quot;]">Nur Prüfpunkte</button><button data-ui-action="quality.render" data-ui-args="[&quot;hints&quot;]">Nur Hinweise</button>';
   }
   let visibleOpen = open;
   if (filterMode === "errors") visibleOpen = openErrors;
@@ -3582,7 +3595,7 @@ function setCostTenantAllowed(costId, tenantId, value) {
 
 function costTenantToggleHtml(costId, tenantId, allowed) {
   return '<label class="tenant-toggle"><input type="checkbox" ' + (allowed ? "checked" : "") +
-    ' onchange="setCostTenantAllowed(\'' + escapeJsString(costId) + '\',\'' + escapeJsString(tenantId) + '\',this.checked)"><span>' +
+    uiActionAttributes("cost.setTenantAllowed", [costId,tenantId,"$checked"], "change") + '><span>' +
     (allowed ? "ja" : "nein") + '</span></label>';
 }
 
@@ -3772,7 +3785,7 @@ function renderCostSelectionDialog() {
     const buttons = items.map(({cost,index}) => {
       const active = cost.inNK === "Ja";
       return '<button type="button" class="cost-choice-item ' + (active ? 'is-active' : '') + '" ' +
-        (active ? 'disabled' : 'onclick="activateCostFromDialog(' + index + ')"') + '>' +
+        (active ? 'disabled' : uiActionAttributes("cost.activateFromDialog", [index])) + '>' +
         '<span class="cost-choice-main"><strong>' + escapeHtml(cost.kostenart) + '</strong>' +
         '<small>' + escapeHtml(cost.id) + ' · ' + escapeHtml(cost.umlageschluessel || "noch festlegen") + '</small></span>' +
         '<span class="cost-choice-state">' + (active ? 'Bereits hinzugefügt' : 'Hinzufügen') + '</span>' +
@@ -3851,7 +3864,7 @@ function renderCostMockupOverview(activeCosts) {
       '<div class="cost-control-metric"><span>Nicht umlagefähig</span><strong>' + fmtMoney(nonUmlage) + '</strong></div>' +
       '<div class="cost-control-metric"><span>Umlagebare Kosten je m²</span><strong>' + fmtMoney(perSqm) + '</strong></div>' +
       '<div class="cost-control-metric"><span>Umlagebare Kosten je Person</span><strong>' + fmtMoney(perPerson) + '</strong></div>' +
-      '<div class="cost-control-action"><button type="button" onclick="document.getElementById(\'costTenantSection\').open=true;document.getElementById(\'costTenantSection\').scrollIntoView({behavior:\'smooth\'})">Detail-Kontrollansicht öffnen<br><span class="small">(Sonderfälle &amp; Details)&nbsp; ›</span></button></div>';
+      '<div class="cost-control-action"><button type="button"' + uiActionAttributes("cost.openTenantDetails") + '>Detail-Kontrollansicht öffnen<br><span class="small">(Sonderfälle &amp; Details)&nbsp; ›</span></button></div>';
   }
 
 }
@@ -3872,7 +3885,7 @@ function renderEinstellungen() {
     const statusClassName = costIsComplete(k) ? "ok" : "warn";
     const price = k.umlageschluessel === "Verbrauch" ? priceCellHtml(k, i) : '<span class="cost-disabled-value">–</span>';
     return '<tr class="' + (selectedCostRows.has(i) ? 'is-selected' : '') + '">' +
-      '<td class="cost-select-col"><input type="checkbox" class="cost-row-checkbox" data-cost-index="' + i + '" ' + (selectedCostRows.has(i) ? 'checked' : '') + ' onchange="toggleCostRowSelection(' + i + ',this.checked)"></td>' +
+      '<td class="cost-select-col"><input type="checkbox" class="cost-row-checkbox" data-cost-index="' + i + '" ' + (selectedCostRows.has(i) ? 'checked' : '') + uiActionAttributes("cost.toggleRowSelection", [i,"$checked"], "change") + '></td>' +
       '<td>' + (rowIndex + 1) + '</td>' +
       '<td><span class="cost-readonly-identity">' + escapeHtml(k.kostenart) + '</span></td>' +
       '<td><span class="cost-readonly-group">' + escapeHtml(costGroupLabel(k)) + '</span></td>' +
@@ -3894,7 +3907,7 @@ function renderEinstellungen() {
   if (table) {
     table.innerHTML =
       '<thead><tr>' +
-        '<th class="cost-select-col"><input id="costSelectAll" class="cost-select-all-checkbox" type="checkbox" onchange="toggleAllVisibleCostRows(this.checked)" title="Alle sichtbaren Kostenarten auswählen"></th>' +
+        '<th class="cost-select-col"><input id="costSelectAll" class="cost-select-all-checkbox" type="checkbox"' + uiActionAttributes("cost.toggleAllVisibleRows", ["$checked"], "change") + ' title="Alle sichtbaren Kostenarten auswählen"></th>' +
         '<th>Nr.</th>' +
         '<th>Kostenart</th>' +
         '<th>Gruppe</th>' +
@@ -3994,6 +4007,15 @@ function renderWohnungen() {
     '<div class="tenant-control-item"><span>Datenstatus</span><strong>' + (units.length && visibleRows.length ? "Vorhanden" : "Prüfen") + '</strong></div>';
 }
 
+function setPrepaymentValue(rowIndex, tenantIndex, value) {
+  const row = state.vorauszahlungen && state.vorauszahlungen[Number(rowIndex)];
+  if (!row || !Array.isArray(row.werte)) return;
+  row.werte[Number(tenantIndex)] = num(value);
+  row.summe = row.werte.reduce((sum, entry) => sum + num(entry), 0);
+  updateTenantPrepaymentTotals();
+  commitStateChange({ reason:"Benutzereingabe" });
+}
+
 function renderEinnahmen() {
   const einnahmenEl = document.getElementById("einnahmenTable");
   const vorausEl = document.getElementById("vorauszahlungenTable");
@@ -4044,7 +4066,7 @@ function renderEinnahmen() {
       if (!isCostAllowedForTenant(v.kostenId, m)) {
         return '<td class="readonly-cell">' + (Math.abs(current) > 0.01 ? fmtMoney(current) : "–") + '<div class="small">nicht umlagefähig</div></td>';
       }
-      return '<td class="editable">' + inputHtml(v.werte[m.originalIndex], "state.vorauszahlungen[" + v.originalIndex + "].werte[" + m.originalIndex + "]=num(this.value); state.vorauszahlungen[" + v.originalIndex + "].summe=state.vorauszahlungen[" + v.originalIndex + "].werte.reduce((a,b)=>a+num(b),0); updateTenantPrepaymentTotals(); commitStateChange({reason:'Benutzereingabe'});", "money") + '</td>';
+      return '<td class="editable">' + inputHtml(v.werte[m.originalIndex], "setPrepaymentValue(" + v.originalIndex + "," + m.originalIndex + ",this.value)", "money") + '</td>';
     }).join("");
     return '<tr><td>' + escapeHtml(v.kostenId) + '</td><td>' + escapeHtml(v.kostenart) + '</td><td>' + escapeHtml(v.aktiv) + '</td><td>' + fmtMoney(allowedSum) + '</td>' + cells + '</tr>';
   }).join("") +
@@ -4149,8 +4171,8 @@ function renderPeriodInfo() {
   if (document.body) document.body.classList.toggle("archive-view", archive);
   const label = archive ? "Archivierte Nebenkostenabrechnung" : "Aktuelle Abrechnungsperiode";
   const detail = archive && state.meta && state.meta.archivedAt ? "archiviert am " + dateDe(state.meta.archivedAt) : "lokaler Arbeitsstand";
-  const startAction = !archive && currentAppMode() === "billing" ? '<button type="button" data-app-action="return-start">Zur Startseite</button>' : '';
-  const archiveAction = archive ? '<button class="primary archive-close-top" type="button" data-app-action="close-archive">Archivansicht schließen</button>' : '';
+  const startAction = !archive && currentAppMode() === "billing" ? '<button type="button" data-ui-action="navigation.returnStart">Zur Startseite</button>' : '';
+  const archiveAction = archive ? '<button class="primary archive-close-top" type="button" data-ui-action="archive.closeViewer">Archivansicht schließen</button>' : '';
   const workflow = "";
   const html = '<div class="period-banner"><div class="period-main"><span class="period-kicker">' + escapeHtml(label) + '</span><span class="period-title">' + escapeHtml(periodLabelShort()) + '</span><span class="small">' + escapeHtml(detail) + '</span></div><div class="period-actions"><span class="period-badge">Jahr ' + escapeHtml(currentAbrechnungsjahr()) + '</span>' + (archive ? '<span class="readonly-badge">Schreibgeschützt</span>' : '') + startAction + archiveAction + '</div></div>' + workflow;
   document.querySelectorAll(".period-info").forEach(el => { el.innerHTML = html; });
@@ -4282,7 +4304,7 @@ function switchToTab(tabId) {
   document.querySelectorAll("section.tab").forEach(s => s.classList.remove("active"));
   if (btn) btn.classList.add("active");
   section.classList.add("active");
-  if (typeof window.ensureNavigationPath === "function") window.ensureNavigationPath(tabId);
+  NK_PRO_MODULES.navigation.ensureNavigationPath(tabId);
   updateTopNavigationVisibility();
   if (previousMode !== currentAppMode()) renderPeriodInfo();
   if (typeof renderCurrentView === "function" && !renderInProgress) {
@@ -4291,7 +4313,7 @@ function switchToTab(tabId) {
   }
   if (typeof updateAllPageHeaders === "function") updateAllPageHeaders();
   if (typeof renderOverviewForTab === "function") renderOverviewForTab(tabId);
-  if (typeof window.refreshWorkspaceChrome === "function") window.refreshWorkspaceChrome();
+  NK_PRO_MODULES.navigation.refreshWorkspaceChrome();
   document.body.classList.remove("sidebar-open");
 }
 
@@ -4305,9 +4327,9 @@ function updateTopNavigationVisibility() {
     btn.hidden = false;
     btn.style.display = "";
   });
-  if (typeof window.updateWorkflowNavigationContext === "function") window.updateWorkflowNavigationContext();
+  NK_PRO_MODULES.navigation.updateWorkflowNavigationContext();
   const active = document.querySelector("section.tab.active");
-  if (active && typeof window.ensureNavigationPath === "function") window.ensureNavigationPath(active.id, {persist:false});
+  if (active) NK_PRO_MODULES.navigation.ensureNavigationPath(active.id, {persist:false});
 }
 
 function openCurrentBilling() {
@@ -4517,18 +4539,18 @@ function archiveActionButtonsHtml(index, options) {
   const validation = options.validate === false ? {errors:[], warnings:[]} : archiveItemValidation(item);
   const buttons = [];
   if (options.open) {
-    if (validation.errors.length) buttons.push('<button class="warn compact-action" onclick="showArchiveValidation(' + index + ')">Fehler anzeigen</button>');
+    if (validation.errors.length) buttons.push('<button class="warn compact-action"' + uiActionAttributes("archive.showValidation", [index]) + '>Fehler anzeigen</button>');
     else {
       const cls = options.primaryOpen ? ' class="primary compact-action"' : ' class="secondary compact-action"';
-      buttons.push('<button' + cls + ' onclick="openArchiveYear(' + index + ')">' + escapeHtml(options.openLabel || "Ansehen") + '</button>');
-      if (validation.warnings.length) buttons.push('<button class="warn compact-action" onclick="showArchiveValidation(' + index + ')">Prüfen</button>');
+      buttons.push('<button' + cls + uiActionAttributes("archive.openYear", [index]) + '>' + escapeHtml(options.openLabel || "Ansehen") + '</button>');
+      if (validation.warnings.length) buttons.push('<button class="warn compact-action"' + uiActionAttributes("archive.showValidation", [index]) + '>Prüfen</button>');
     }
   } else if (validation.errors.length || validation.warnings.length) {
-    buttons.push('<button class="warn compact-action" onclick="showArchiveValidation(' + index + ')">Prüfen</button>');
+    buttons.push('<button class="warn compact-action"' + uiActionAttributes("archive.showValidation", [index]) + '>Prüfen</button>');
   }
-  if (options.download) buttons.push('<button class="secondary compact-action" onclick="downloadArchiveYear(' + index + ')">JSON herunterladen</button>');
-  if (options.reopenForRework) buttons.push('<button class="warn compact-action" onclick="reopenArchiveYearForRework(' + index + ')">Wiederbearbeiten</button>');
-  if (options.deleteButton) buttons.push('<button class="danger compact-action" onclick="openDeleteBillingModal(' + index + ')">Löschen</button>');
+  if (options.download) buttons.push('<button class="secondary compact-action"' + uiActionAttributes("archive.downloadYear", [index]) + '>JSON herunterladen</button>');
+  if (options.reopenForRework) buttons.push('<button class="warn compact-action"' + uiActionAttributes("archive.reopenForRework", [index]) + '>Wiederbearbeiten</button>');
+  if (options.deleteButton) buttons.push('<button class="danger compact-action"' + uiActionAttributes("billing.openDeleteModal", [index]) + '>Löschen</button>');
   return buttons.join(" ");
 }
 function archiveValidationMessage(validation) {
@@ -4665,18 +4687,18 @@ function isBillingContextOpen() {
 
 function setBillingContextOpen(open) {
   billingContextOpen = !!open && (isArchiveViewer() || hasActiveCurrentBilling());
-  if (typeof window.updateWorkflowNavigationContext === "function") window.updateWorkflowNavigationContext();
+  NK_PRO_MODULES.navigation.updateWorkflowNavigationContext();
 }
 
 function currentBillingActionsHtml() {
   if (isCurrentBillingFinalized()) {
-    return '<button class="secondary compact-action" onclick="openCurrentBilling()">Ansehen</button> ' +
-      '<button class="warn compact-action" onclick="unlockCurrentBilling()">Wiederbearbeitung öffnen</button> ' +
-      '<button class="secondary compact-action" onclick="archiveCurrentYearOnly()">Archiv aktualisieren</button>';
+    return '<button class="secondary compact-action" data-ui-action="billing.openCurrent">Ansehen</button> ' +
+      '<button class="warn compact-action" data-ui-action="billing.unlock">Wiederbearbeitung öffnen</button> ' +
+      '<button class="secondary compact-action" data-ui-action="archive.currentYear">Archiv aktualisieren</button>';
   }
-  return '<button class="primary compact-action" onclick="openCurrentBilling()">Bearbeiten</button> ' +
-    '<button class="secondary compact-action" onclick="finalizeCurrentBilling()">Finalisieren</button> ' +
-    '<button class="secondary compact-action" onclick="archiveCurrentYearOnly()">Archivieren</button>';
+  return '<button class="primary compact-action" data-ui-action="billing.openCurrent">Bearbeiten</button> ' +
+    '<button class="secondary compact-action" data-ui-action="billing.finalize">Finalisieren</button> ' +
+    '<button class="secondary compact-action" data-ui-action="archive.currentYear">Archivieren</button>';
 }
 
 function currentBillingRecordRowHtml() {
@@ -4965,7 +4987,7 @@ function renderWorkflowDashboard() {
     const detail = group.hints && !group.errors && !group.checks ? group.hints + " Hinweise zusätzlich" : (group.hints ? group.hints + " Hinweise" : "");
     return '<div class="workflow-status-card"><strong>' + escapeHtml(group.label) + '</strong><span class="status ' + badgeClass + '">' + escapeHtml(group.status) + '</span>' + (detail ? '<div class="small">' + escapeHtml(detail) + '</div>' : '') + '</div>';
   }).join("");
-  el.innerHTML = '<div class="workflow-dashboard ' + cls + '"><div class="workflow-dashboard-head"><div><h3>Arbeitsstand dieser Abrechnung</h3><div class="small">Vorhandene Qualitätsprüfungen kompakt zusammengefasst · keine zusätzliche Berechnungslogik.</div></div><div><span class="status ' + cls + '">' + escapeHtml(readiness.label) + '</span><div class="small" style="margin-top:4px;text-align:right">' + openCount + ' offene Hinweise/Prüfpunkte</div></div></div><div class="workflow-status-grid">' + cards + '</div><div class="toolbar" style="margin-bottom:0"><button type="button" class="primary" onclick="switchToTab(\'qualitaet\')">Qualitätsprüfung öffnen</button></div></div>';
+  el.innerHTML = '<div class="workflow-dashboard ' + cls + '"><div class="workflow-dashboard-head"><div><h3>Arbeitsstand dieser Abrechnung</h3><div class="small">Vorhandene Qualitätsprüfungen kompakt zusammengefasst · keine zusätzliche Berechnungslogik.</div></div><div><span class="status ' + cls + '">' + escapeHtml(readiness.label) + '</span><div class="small" style="margin-top:4px;text-align:right">' + openCount + ' offene Hinweise/Prüfpunkte</div></div></div><div class="workflow-status-grid">' + cards + '</div><div class="toolbar" style="margin-bottom:0"><button type="button" class="primary" data-ui-action="navigation.switchTab" data-ui-args="[&quot;qualitaet&quot;]">Qualitätsprüfung öffnen</button></div></div>';
 }
 
 function renderStart() {
@@ -4976,8 +4998,8 @@ function renderStart() {
 
   ensureYearData();
   tableEl.className = "records-table";
-  actionsEl.innerHTML = '<button class="primary" type="button" data-app-action="new-billing">+ Neue Abrechnung</button>';
-  utilityActionsEl.innerHTML = "<button type='button' data-app-action='self-test'>App-Selbsttest</button><button type='button' onclick=\"switchToTab('archiv')\">Archiv öffnen</button>";
+  actionsEl.innerHTML = '<button class="primary" type="button" data-ui-action="billing.openCreateModal">+ Neue Abrechnung</button>';
+  utilityActionsEl.innerHTML = "<button type='button' data-ui-action='system.runSelfTest'>App-Selbsttest</button><button type='button' data-ui-action='navigation.switchTab' data-ui-args='[&quot;archiv&quot;]'>Archiv öffnen</button>";
   tableEl.innerHTML = buildCurrentBillingTableHtml();
   renderFinalizationStatus();
 }
@@ -4989,8 +5011,8 @@ function renderArchive() {
   if (!actionsEl || !utilityActionsEl || !tableEl) return;
   ensureYearData();
   tableEl.className = "records-table";
-  actionsEl.innerHTML = '<button class="primary" type="button" data-app-action="download-archive">Archiv als JSON herunterladen</button>';
-  utilityActionsEl.innerHTML = "<button type='button' data-app-action='self-test'>App-Selbsttest</button><button type='button' onclick=\"switchToTab('start')\">Abrechnungsübersicht öffnen</button>";
+  actionsEl.innerHTML = '<button class="primary" type="button" data-ui-action="archive.downloadFull">Archiv als JSON herunterladen</button>';
+  utilityActionsEl.innerHTML = "<button type='button' data-ui-action='system.runSelfTest'>App-Selbsttest</button><button type='button' data-ui-action='navigation.switchTab' data-ui-args='[&quot;start&quot;]'>Abrechnungsübersicht öffnen</button>";
   tableEl.innerHTML = buildArchiveRecordsTableHtml();
 }
 
@@ -5018,12 +5040,12 @@ function renderStartTenantManagement() {
     '<td class="editable">' + inputHtml(m.telefon, "setMasterNested('mieter'," + m.originalIndex + ",'telefon',this.value)") + '</td>' +
     '<td class="editable">' + inputHtml(m.email, "setMasterNested('mieter'," + m.originalIndex + ",'email',this.value)") + '</td>' +
     '<td><span class="status ' + (tenantOpenStatus(m) === "Aktiv" ? "ok" : "warn") + '">' + escapeHtml(tenantOpenStatus(m)) + '</span></td>' +
-    '<td><button class="warn" onclick="archiveMasterMietverhaeltnis(' + m.originalIndex + ')">Archivieren</button></td></tr>'
+    '<td><button class="warn"' + uiActionAttributes("object.archiveMasterTenancy", [m.originalIndex]) + '>Archivieren</button></td></tr>'
   ).join("") : '<tr><td colspan="15">Keine aktuellen Mietverhältnisse vorhanden. Über „+ Neues Mietverhältnis“ kannst du einen Datensatz anlegen.</td></tr>';
   tableEl.innerHTML = '<thead><tr><th>Mieter-ID</th><th>Wohnungs-ID</th><th>Mietername</th><th>Einzug</th><th>Auszug</th><th>Rolle</th><th>Geschlecht</th><th>Standardanrede Brief</th><th>Straße</th><th>PLZ</th><th>Ort</th><th>Telefon</th><th>E-Mail</th><th>Status</th><th>Aktion</th></tr></thead><tbody>' + rows + '</tbody>';
   const archivedRows = masterArchivedTenantRows();
   const arows = archivedRows.length ? archivedRows.map(m =>
-    '<tr><td>' + tenantIdCellHtml(m) + '</td><td>' + unitRefCellHtml(m.wohnung) + '</td><td>' + escapeHtml(m.name || "") + '</td><td>' + escapeHtml(m.einzug || "") + '</td><td>' + escapeHtml(m.auszug || "") + '</td><td>' + escapeHtml(m.geschlecht || "") + '</td><td>' + escapeHtml(m.strasse || "") + '</td><td>' + escapeHtml((m.plz || "") + " " + (m.ort || "")) + '</td><td>' + escapeHtml(m.archivedAt || "") + '</td><td><button onclick="restoreMasterMietverhaeltnis(' + m.originalIndex + ')">Reaktivieren</button></td></tr>'
+    '<tr><td>' + tenantIdCellHtml(m) + '</td><td>' + unitRefCellHtml(m.wohnung) + '</td><td>' + escapeHtml(m.name || "") + '</td><td>' + escapeHtml(m.einzug || "") + '</td><td>' + escapeHtml(m.auszug || "") + '</td><td>' + escapeHtml(m.geschlecht || "") + '</td><td>' + escapeHtml(m.strasse || "") + '</td><td>' + escapeHtml((m.plz || "") + " " + (m.ort || "")) + '</td><td>' + escapeHtml(m.archivedAt || "") + '</td><td><button' + uiActionAttributes("object.restoreMasterTenancy", [m.originalIndex]) + '>Reaktivieren</button></td></tr>'
   ).join("") : '<tr><td colspan="10">Noch keine archivierten Mietverhältnisse.</td></tr>';
   archiveEl.innerHTML = '<thead><tr><th>Mieter-ID</th><th>Wohnungs-ID</th><th>Mietername</th><th>Einzug</th><th>Auszug</th><th>Geschlecht</th><th>Straße</th><th>PLZ/Ort</th><th>Archiviert am</th><th>Aktion</th></tr></thead><tbody>' + arows + '</tbody>';
 }
@@ -5129,11 +5151,11 @@ function renderDeveloperDiagnostics() {
       '<div class="developer-pill"><strong>Verbindung</strong><br>' + (d.browser.online ? "online" : "offline") + '<br><span class="small">' + escapeHtml(d.browser.viewport) + '</span></div>' +
     '</div>' +
     '<div class="developer-actions">' +
-      '<button type="button" onclick="renderDeveloperDiagnostics()">Diagnose aktualisieren</button>' +
-      '<button type="button" onclick="runAppSelfTest()">App-Selbsttest</button>' +
-      '<button type="button" onclick="downloadDeveloperDiagnostics()">Diagnose-JSON herunterladen</button>' +
-      '<button type="button" onclick="checkForAppUpdate()">Nach Update suchen</button>' +
-      '<button type="button" class="secondary" onclick="location.reload()">App neu laden</button>' +
+      '<button type="button" data-ui-action="system.renderDiagnostics">Diagnose aktualisieren</button>' +
+      '<button type="button" data-ui-action="system.runSelfTest">App-Selbsttest</button>' +
+      '<button type="button" data-ui-action="system.downloadDiagnostics">Diagnose-JSON herunterladen</button>' +
+      '<button type="button" data-ui-action="system.checkUpdate">Nach Update suchen</button>' +
+      '<button type="button" class="secondary" data-ui-action="system.reload">App neu laden</button>' +
     '</div>' +
     '<h4>Letzte Renderfehler</h4><div class="developer-log">' + escapeHtml(renderErrorText) + '</div>' +
     '</details>';
@@ -5974,12 +5996,12 @@ function renderYearArchive() {
   if (typeof renderOverviewForTab === "function") renderOverviewForTab("wasser");
 
   settingsEl.innerHTML =
-    '<label class="small"><strong>Aktuelles Abrechnungsjahr</strong><br><input value="' + escapeHtml(year) + '" onchange="setAbrechnungsjahr(this.value)"></label>' +
-    '<label class="small"><strong>Beginn</strong><br><input type="date" value="' + escapeHtml(periodStart()) + '" onchange="setAbrechnungsperiode(\'abrechnungsbeginn\',this.value)"></label>' +
-    '<label class="small"><strong>Ende</strong><br><input type="date" value="' + escapeHtml(periodEnd()) + '" onchange="setAbrechnungsperiode(\'abrechnungsende\',this.value)"></label>' +
-    '<button class="primary" onclick="openLatestKnownYear()">Aktuelles/letztes Arbeitsjahr öffnen</button>' +
-    '<button onclick="archiveCurrentYearOnly()">Aktuelles Jahr archivieren</button>' +
-    '<button onclick="downloadFullArchive()">Jahresarchiv herunterladen</button>';
+    '<label class="small"><strong>Aktuelles Abrechnungsjahr</strong><br><input value="' + escapeHtml(year) + '"' + uiActionAttributes("billing.setYear", ["$value"], "change") + '></label>' +
+    '<label class="small"><strong>Beginn</strong><br><input type="date" value="' + escapeHtml(periodStart()) + '"' + uiActionAttributes("billing.setPeriod", ["abrechnungsbeginn","$value"], "change") + '></label>' +
+    '<label class="small"><strong>Ende</strong><br><input type="date" value="' + escapeHtml(periodEnd()) + '"' + uiActionAttributes("billing.setPeriod", ["abrechnungsende","$value"], "change") + '></label>' +
+    '<button class="primary" data-ui-action="billing.openLatestYear">Aktuelles/letztes Arbeitsjahr öffnen</button>' +
+    '<button data-ui-action="archive.currentYear">Aktuelles Jahr archivieren</button>' +
+    '<button data-ui-action="archive.downloadFull">Jahresarchiv herunterladen</button>';
 
   tableEl.innerHTML = buildArchiveTableHtml(true);
 }
@@ -6330,11 +6352,7 @@ function resetData() {
   commitStateChange({ reason:"Benutzereingabe" });
 }
 
-const legacyImportEl = document.getElementById("legacyDocImport");
-if (legacyImportEl) legacyImportEl.addEventListener("change", importLegacyBillingFiles);
-
-const jsonImportEl = document.getElementById("jsonImport");
-if (jsonImportEl) jsonImportEl.addEventListener("change", async (ev) => {
+async function importJsonFile(ev) {
   const input = ev.target;
   if (isArchiveViewer()) {
     alert("Dieses Fenster zeigt eine archivierte Abrechnung. JSON-Import ist nur im ursprünglichen Arbeitsfenster möglich.");
@@ -6383,61 +6401,12 @@ if (jsonImportEl) jsonImportEl.addEventListener("change", async (ev) => {
   } finally {
     input.value = "";
   }
-});
-const deleteCodeInputEl = document.getElementById("deleteBillingCodeInput");
-if (deleteCodeInputEl) {
-  deleteCodeInputEl.addEventListener("keydown", ev => {
-    if (ev.key === "Enter") confirmDeleteBilling();
-    if (ev.key === "Escape") closeDeleteBillingModal();
-  });
 }
 
-document.querySelectorAll(".tab-btn").forEach(btn => {
-  btn.addEventListener("click", ev => {
-    ev.preventDefault();
-    switchToTab(btn.dataset.tab);
-  });
-});
-
-function handleAppAction(action) {
-  if (action === "show-landing") { billingContextOpen = false; return switchToTab("landing"); }
-  if (action === "enter-object-prep") return switchToTab("objekt");
-  if (action === "enter-billing-overview") return switchToTab("start");
-  if (action === "open-current-billing") return openCurrentBilling();
-  if (action === "new-billing") return openCreateBillingModal();
-  if (action === "download-archive") return downloadFullArchive();
-  if (action === "download-full-json") return downloadFullJson();
-  if (action === "download-full-export-package") return downloadFullExportPackage();
-  if (action === "download-pre-migration-backup") return downloadPreMigrationBackup();
-  if (action === "restore-pre-migration-backup") return restorePreMigrationBackup();
-  if (action === "rollback-last-restore") return rollbackLastRestore();
-  if (action === "self-test") return runAppSelfTest();
-  if (action === "final-check") return showFinalBillingReport();
-  if (action === "acceptance-report") return showAcceptanceProtocol();
-  if (action === "download-final-report") return downloadFinalBillingReport();
-  if (action === "download-acceptance-report-html") return downloadAcceptanceProtocolHtml();
-  if (action === "print-mode-check") return showPrintModeCheck();
-  if (action === "print-all-letters") return showAllLettersPrintReady();
-  if (action === "release-audit") return showReleaseAuditReport();
-  if (action === "download-release-audit") return downloadReleaseAuditReport();
-  if (action === "download-export-package") return downloadExportPackage();
-  if (action === "finalize-billing") return finalizeCurrentBilling();
-  if (action === "unlock-billing") return unlockCurrentBilling();
-  if (action === "close-archive") return closeArchiveViewer();
-  if (action === "return-start") return returnToStartPage();
+function handleDeleteBillingKey(key) {
+  if (key === "Enter") confirmDeleteBilling();
+  if (key === "Escape") closeDeleteBillingModal();
 }
-
-if (document.addEventListener) {
-  document.addEventListener("click", ev => {
-    const target = ev.target && ev.target.closest ? ev.target.closest("[data-app-action]") : null;
-    if (!target) return;
-    const action = target.getAttribute("data-app-action");
-    if (!action) return;
-    ev.preventDefault();
-    handleAppAction(action);
-  });
-}
-
 
 // ===== Bereich: Berechnung, Tabellen und Fachlogik =====
 const DEFAULT_UMLAGE_INPUTS = {
@@ -6701,13 +6670,13 @@ function setGenericMeterValue(costId, index, key, value, type="text") {
 function meterInput(value, index, key, type="number") {
   const cls = type === "number" ? "number" : "";
   const htmlType = type === "date" ? "date" : "text";
-  return '<input type="' + htmlType + '" class="' + cls + '" value="' + escapeHtml(value ?? "") + '" onchange="setWaterMeterValue(' + index + ',&quot;' + key + '&quot;,this.value,&quot;' + type + '&quot;)">';
+  return '<input type="' + htmlType + '" class="' + cls + '" value="' + escapeHtml(value ?? "") + '"' + uiActionAttributes("meter.setWaterValue", [index,key,"$value",type], "change") + '>';
 }
 
 function genericMeterInput(costId, value, index, key, type="number") {
   const cls = type === "number" ? "number" : "";
   const htmlType = type === "date" ? "date" : "text";
-  return '<input type="' + htmlType + '" class="' + cls + '" value="' + escapeHtml(value ?? "") + '" onchange="setGenericMeterValue(&quot;' + escapeHtml(costId) + '&quot;,' + index + ',&quot;' + key + '&quot;,this.value,&quot;' + type + '&quot;)">';
+  return '<input type="' + htmlType + '" class="' + cls + '" value="' + escapeHtml(value ?? "") + '"' + uiActionAttributes("meter.setGenericValue", [costId,index,key,"$value",type], "change") + '>';
 }
 
 function renderWaterCostSection(cost, visibleRows) {
@@ -6944,14 +6913,14 @@ function renderWaterMeters() {
   if (typeof renderOverviewForTab === "function") renderOverviewForTab("wasser");
 
   settingsEl.innerHTML =
-    '<label class="house-meter-field"><span>Hauszählerstand Beginn</span><input class="number" value="' + escapeHtml(settings.houseMeterStart ?? "") + '" onchange="setWaterMeterSetting(\'houseMeterStart\',this.value)"></label>' +
-    '<label class="house-meter-field"><span>Ablesedatum Beginn</span><input type="date" value="' + escapeHtml(settings.houseMeterStartDate || "") + '" onchange="setWaterMeterSetting(\'houseMeterStartDate\',this.value)"></label>' +
-    '<label class="house-meter-field"><span>Hauszählerstand Ende</span><input class="number" value="' + escapeHtml(settings.houseMeterEnd ?? "") + '" onchange="setWaterMeterSetting(\'houseMeterEnd\',this.value)"></label>' +
-    '<label class="house-meter-field"><span>Ablesedatum Ende</span><input type="date" value="' + escapeHtml(settings.houseMeterEndDate || "") + '" onchange="setWaterMeterSetting(\'houseMeterEndDate\',this.value)"></label>' +
+    '<label class="house-meter-field"><span>Hauszählerstand Beginn</span><input class="number" value="' + escapeHtml(settings.houseMeterStart ?? "") + '" ' + uiActionAttributes("meter.setWaterSetting", ["houseMeterStart","$value"], "change") + '></label>' +
+    '<label class="house-meter-field"><span>Ablesedatum Beginn</span><input type="date" value="' + escapeHtml(settings.houseMeterStartDate || "") + '" ' + uiActionAttributes("meter.setWaterSetting", ["houseMeterStartDate","$value"], "change") + '></label>' +
+    '<label class="house-meter-field"><span>Hauszählerstand Ende</span><input class="number" value="' + escapeHtml(settings.houseMeterEnd ?? "") + '" ' + uiActionAttributes("meter.setWaterSetting", ["houseMeterEnd","$value"], "change") + '></label>' +
+    '<label class="house-meter-field"><span>Ablesedatum Ende</span><input type="date" value="' + escapeHtml(settings.houseMeterEndDate || "") + '" ' + uiActionAttributes("meter.setWaterSetting", ["houseMeterEndDate","$value"], "change") + '></label>' +
     '<label class="house-meter-field"><span>Verbrauch laut Hauszähler</span><div class="house-meter-readonly">' +
       (houseResult.complete ? (houseResult.invalid ? 'Endstand kleiner als Anfangsstand' : houseResult.value.toLocaleString("de-DE", { maximumFractionDigits:3 }) + ' m³') : 'Wird automatisch berechnet') + '</div></label>' +
-    '<label class="house-meter-field"><span>Verbrauch laut Wasserwerksrechnung (m³)</span><input class="number" value="' + escapeHtml(settings.houseWaterTotal ?? "") + '" onchange="setWaterMeterSetting(\'houseWaterTotal\',this.value)"></label>' +
-    '<label class="house-meter-field house-meter-field--wide"><span>Rechnungsnummer / Bemerkung (optional)</span><input value="' + escapeHtml(settings.houseInvoiceNote || "") + '" onchange="setWaterMeterSetting(\'houseInvoiceNote\',this.value)"></label>';
+    '<label class="house-meter-field"><span>Verbrauch laut Wasserwerksrechnung (m³)</span><input class="number" value="' + escapeHtml(settings.houseWaterTotal ?? "") + '" ' + uiActionAttributes("meter.setWaterSetting", ["houseWaterTotal","$value"], "change") + '></label>' +
+    '<label class="house-meter-field house-meter-field--wide"><span>Rechnungsnummer / Bemerkung (optional)</span><input value="' + escapeHtml(settings.houseInvoiceNote || "") + '" ' + uiActionAttributes("meter.setWaterSetting", ["houseInvoiceNote","$value"], "change") + '></label>';
 
   const houseMetricState = houseResult.invalid ? {key:"error",icon:"✕"} : (houseResult.complete ? {key:"ok",icon:"✓"} : {key:"neutral",icon:"•"});
   const invoiceMetricState = invoiceWaterTotal > 0 ? {key:"ok",icon:"✓"} : {key:"neutral",icon:"•"};
@@ -7286,10 +7255,10 @@ function renderPrepaymentAdjustment() {
   const s = data.settings;
   const printModeOptions = ["Nicht drucken","Berechnete Werte drucken","Manuelle Werte drucken"];
   settingsEl.innerHTML =
-    '<label class="prepayment-setting"><span>Anpassung gilt ab</span><input value="' + escapeHtml(s.effectiveFrom) + '" onchange="setPrepaymentAdjustmentSetting(&quot;effectiveFrom&quot;,this.value)"></label>' +
-    '<label class="prepayment-setting"><span>Sicherheitszuschlag in %</span><input class="number" value="' + escapeHtml(s.safetyBufferPercent) + '" onchange="setPrepaymentAdjustmentSetting(&quot;safetyBufferPercent&quot;,this.value)"></label>' +
+    '<label class="prepayment-setting"><span>Anpassung gilt ab</span><input value="' + escapeHtml(s.effectiveFrom) + '" ' + uiActionAttributes("billing.setPrepaymentAdjustmentSetting", ["effectiveFrom","$value"], "change") + '></label>' +
+    '<label class="prepayment-setting"><span>Sicherheitszuschlag in %</span><input class="number" value="' + escapeHtml(s.safetyBufferPercent) + '" ' + uiActionAttributes("billing.setPrepaymentAdjustmentSetting", ["safetyBufferPercent","$value"], "change") + '></label>' +
     '<label class="prepayment-setting"><span>Rundung der monatlichen Vorauszahlung</span>' + selectHtml(s.roundingMode, ["Auf 1 € runden","Auf 5 € runden","Auf 10 € runden"], "setPrepaymentAdjustmentSetting('roundingMode',this.value)") + '</label>' +
-    '<label class="prepayment-setting"><span>Mindeständerung monatlich</span><input class="money" value="' + escapeHtml(s.minimumMonthlyChange) + '" onchange="setPrepaymentAdjustmentSetting(&quot;minimumMonthlyChange&quot;,this.value)"></label>' +
+    '<label class="prepayment-setting"><span>Mindeständerung monatlich</span><input class="money" value="' + escapeHtml(s.minimumMonthlyChange) + '" ' + uiActionAttributes("billing.setPrepaymentAdjustmentSetting", ["minimumMonthlyChange","$value"], "change") + '></label>' +
     '<label class="prepayment-setting"><span>Unterjährige Mietzeiten hochrechnen?</span>' + selectHtml(s.annualizePartialTenants, ["Ja","Nein"], "setPrepaymentAdjustmentSetting('annualizePartialTenants',this.value)") + '</label>' +
     '<label class="prepayment-setting"><span>Änderungslogik</span>' + selectHtml(s.changePolicy, ["Erhöhungen und Senkungen","Nur Erhöhungen","Nur Senkungen"], "setPrepaymentAdjustmentSetting('changePolicy',this.value)") + '</label>' +
     '<label class="prepayment-setting prepayment-setting--wide"><span>Vorauszahlungsanpassung im Brief ausgeben?</span>' + selectHtml(s.letterPrintMode, printModeOptions, "setPrepaymentAdjustmentSetting('letterPrintMode',this.value)") + '</label>' +
@@ -7449,7 +7418,7 @@ function salutationForTenant(tenant) {
 }
 
 function textareaHtml(value, onChange) {
-  return '<textarea onchange="' + onChange + '">' + escapeHtml(value ?? "") + '</textarea>';
+  return '<textarea' + legacyUiActionAttributes(onChange, "change") + '>' + escapeHtml(value ?? "") + '</textarea>';
 }
 
 
@@ -7644,31 +7613,31 @@ function renderBrief() {
   ).join("");
 
   settingsEl.innerHTML =
-    '<label>Mieter auswählen</label><select onchange="setBriefSetting(\'tenantId\',this.value)">' + tenantOptions + '</select>' +
+    '<label>Mieter auswählen</label><select ' + uiActionAttributes("document.setBriefSetting", ["tenantId","$value"], "change") + '>' + tenantOptions + '</select>' +
     '<div class="hint"><strong>Empfängeradresse und Anrede</strong> werden im Tab „Mieter & Wohnungen“ beim jeweiligen Mietverhältnis gepflegt.</div>' +
     briefPreflightBoxHtml(briefPreflight) +
     printHardeningBoxHtml(printHardeningReport(calc, selected)) +
     briefSettlementSummaryHtml(selected) +
     (billingEntryForTenant(selected && selected.tenant) ? '<div class="hint"><strong>Briefmodus:</strong> Originalnahe Archivansicht aus importierten Abrechnungsdaten. Die Beträge werden aus denselben strukturierten Datenfeldern erzeugt wie die neue Standardabrechnung.</div>' : '<div class="hint"><strong>Briefmodus:</strong> Standardbrief aus den aktuellen Abrechnungsdaten.</div>') +
-    '<label>Abrechnungsjahr</label><input value="' + escapeHtml(s.abrechnungsjahr) + '" onchange="setBriefSetting(\'abrechnungsjahr\',this.value)">' +
-    '<label>Briefdatum</label><input type="date" value="' + escapeHtml(s.briefdatum) + '" onchange="setBriefSetting(\'briefdatum\',this.value)">' +
-    '<label>Zahlungsziel</label><input type="date" value="' + escapeHtml(s.zahlungsziel) + '" onchange="setBriefSetting(\'zahlungsziel\',this.value)">' +
-    '<label>Ort</label><input value="' + escapeHtml(s.ort) + '" onchange="setBriefSetting(\'ort\',this.value)">' +
-    '<label>Vermieter Name</label><input value="' + escapeHtml(s.absenderName) + '" onchange="setBriefSetting(\'absenderName\',this.value)">' +
-    '<label>Vermieter Straße</label><input value="' + escapeHtml(s.absenderStrasse) + '" onchange="setBriefSetting(\'absenderStrasse\',this.value)">' +
-    '<label>Vermieter PLZ/Ort</label><input value="' + escapeHtml(s.absenderOrt) + '" onchange="setBriefSetting(\'absenderOrt\',this.value)">' +
-    '<label>Telefon</label><input value="' + escapeHtml(s.absenderTelefon) + '" onchange="setBriefSetting(\'absenderTelefon\',this.value)">' +
+    '<label>Abrechnungsjahr</label><input value="' + escapeHtml(s.abrechnungsjahr) + '" ' + uiActionAttributes("document.setBriefSetting", ["abrechnungsjahr","$value"], "change") + '>' +
+    '<label>Briefdatum</label><input type="date" value="' + escapeHtml(s.briefdatum) + '" ' + uiActionAttributes("document.setBriefSetting", ["briefdatum","$value"], "change") + '>' +
+    '<label>Zahlungsziel</label><input type="date" value="' + escapeHtml(s.zahlungsziel) + '" ' + uiActionAttributes("document.setBriefSetting", ["zahlungsziel","$value"], "change") + '>' +
+    '<label>Ort</label><input value="' + escapeHtml(s.ort) + '" ' + uiActionAttributes("document.setBriefSetting", ["ort","$value"], "change") + '>' +
+    '<label>Vermieter Name</label><input value="' + escapeHtml(s.absenderName) + '" ' + uiActionAttributes("document.setBriefSetting", ["absenderName","$value"], "change") + '>' +
+    '<label>Vermieter Straße</label><input value="' + escapeHtml(s.absenderStrasse) + '" ' + uiActionAttributes("document.setBriefSetting", ["absenderStrasse","$value"], "change") + '>' +
+    '<label>Vermieter PLZ/Ort</label><input value="' + escapeHtml(s.absenderOrt) + '" ' + uiActionAttributes("document.setBriefSetting", ["absenderOrt","$value"], "change") + '>' +
+    '<label>Telefon</label><input value="' + escapeHtml(s.absenderTelefon) + '" ' + uiActionAttributes("document.setBriefSetting", ["absenderTelefon","$value"], "change") + '>' +
 
-    '<label>Bankverbindung</label><input value="' + escapeHtml(s.bankverbindung) + '" onchange="setBriefSetting(\'bankverbindung\',this.value)">' +
+    '<label>Bankverbindung</label><input value="' + escapeHtml(s.bankverbindung) + '" ' + uiActionAttributes("document.setBriefSetting", ["bankverbindung","$value"], "change") + '>' +
     '<h3>Vorauszahlungsanpassung</h3>' +
     '<label>Im Brief andrucken?</label>' + selectHtml(s.vorauszahlungPrintMode, ["Nicht drucken","Berechnete Werte drucken","Manuelle Werte drucken"], "setBriefSetting('vorauszahlungPrintMode',this.value)") +
-    '<label>Neue Vorauszahlung ab</label><input value="' + escapeHtml(s.vorauszahlungAb) + '" onchange="setBriefSetting(\'vorauszahlungAb\',this.value)">' +
+    '<label>Neue Vorauszahlung ab</label><input value="' + escapeHtml(s.vorauszahlungAb) + '" ' + uiActionAttributes("document.setBriefSetting", ["vorauszahlungAb","$value"], "change") + '>' +
     '<div class="hint"><strong>Berechnete Werte</strong> kommen aus dem neuen Tab „Vorauszahlungsanpassung“. Manuelle Werte darunter werden nur genutzt, wenn „Manuelle Werte drucken“ gewählt ist.</div>' +
-    '<label>Manuell: Änderung Heizung monatlich</label><input class="money" value="' + escapeHtml(s.vzChangeHeizung) + '" onchange="setBriefSetting(\'vzChangeHeizung\',this.value)">' +
-    '<label>Manuell: Änderung Wasser monatlich</label><input class="money" value="' + escapeHtml(s.vzChangeWasser) + '" onchange="setBriefSetting(\'vzChangeWasser\',this.value)">' +
-    '<label>Manuell: Änderung Abfall monatlich</label><input class="money" value="' + escapeHtml(s.vzChangeAbfall) + '" onchange="setBriefSetting(\'vzChangeAbfall\',this.value)">' +
-    '<label>Manuell: Änderung Antenne monatlich</label><input class="money" value="' + escapeHtml(s.vzChangeAntenne) + '" onchange="setBriefSetting(\'vzChangeAntenne\',this.value)">' +
-    '<label>Manuell: Änderung sonstige Verbrauchskosten monatlich</label><input class="money" value="' + escapeHtml(s.vzChangeSonstige) + '" onchange="setBriefSetting(\'vzChangeSonstige\',this.value)">';
+    '<label>Manuell: Änderung Heizung monatlich</label><input class="money" value="' + escapeHtml(s.vzChangeHeizung) + '" ' + uiActionAttributes("document.setBriefSetting", ["vzChangeHeizung","$value"], "change") + '>' +
+    '<label>Manuell: Änderung Wasser monatlich</label><input class="money" value="' + escapeHtml(s.vzChangeWasser) + '" ' + uiActionAttributes("document.setBriefSetting", ["vzChangeWasser","$value"], "change") + '>' +
+    '<label>Manuell: Änderung Abfall monatlich</label><input class="money" value="' + escapeHtml(s.vzChangeAbfall) + '" ' + uiActionAttributes("document.setBriefSetting", ["vzChangeAbfall","$value"], "change") + '>' +
+    '<label>Manuell: Änderung Antenne monatlich</label><input class="money" value="' + escapeHtml(s.vzChangeAntenne) + '" ' + uiActionAttributes("document.setBriefSetting", ["vzChangeAntenne","$value"], "change") + '>' +
+    '<label>Manuell: Änderung sonstige Verbrauchskosten monatlich</label><input class="money" value="' + escapeHtml(s.vzChangeSonstige) + '" ' + uiActionAttributes("document.setBriefSetting", ["vzChangeSonstige","$value"], "change") + '>';
 
   textsEl.innerHTML =
     '<label>Einleitungstext ({jahr} und {zeitraum} werden ersetzt)</label>' + textareaHtml(s.introText, "setBriefSetting('introText',this.value)") +
@@ -8540,7 +8509,7 @@ function appSelfTestReport() {
     return "Finalisieren/Entsperren-Status OK";
   }));
 
-  runCheck("Navigation", "Weitere fachliche Modularisierung V99.4.7", () => {
+  runCheck("Navigation", "Native UI-Anbindung V99.4.8", () => {
     const nav = document.querySelector(".workflow-nav");
     if (!nav) throw new Error("Workflow-Navigation fehlt");
     const groups = Array.from(nav.querySelectorAll(":scope > .nav-group")).map(group => group.dataset.navGroupSection);
@@ -8552,7 +8521,7 @@ function appSelfTestReport() {
     if (tabIds.length !== expected.length || new Set(tabIds).size !== expected.length || expected.some(id => !tabIds.includes(id))) throw new Error("Tabs fehlen oder sind mehrfach in der Navigation enthalten");
     const landingChoices = document.querySelectorAll("#landing .landing-choice");
     if (landingChoices.length !== 2) throw new Error("Landingpage besitzt nicht genau zwei Einstiege");
-    if (typeof window.ensureNavigationPath !== "function" || typeof window.updateWorkflowNavigationContext !== "function") throw new Error("Zentrale Navigationsfunktionen fehlen");
+    if (!NK_PRO_MODULES.navigation || typeof NK_PRO_MODULES.navigation.ensureNavigationPath !== "function" || typeof NK_PRO_MODULES.navigation.updateWorkflowNavigationContext !== "function") throw new Error("Zentrales Navigationsmodul fehlt");
     return "4 Accordion-Gruppen, 16 eindeutige Navigationsziele und genau 2 Landingpage-Einstiege";
   });
 
@@ -8566,7 +8535,7 @@ function appSelfTestReport() {
     if (start && start.querySelector("#versionBox")) throw new Error("Versionsübersicht steht noch auf der Startseite");
     if (!sicherung.querySelector("#backupStatusBox") || !sicherung.querySelector("#globalBackupBox") || !sicherung.querySelector("#versionBox")) throw new Error("Sicherungstab enthält nicht alle Sicherungs-/Versionsblöcke");
     const html = document.getElementById("startArchiveUtilityActions") ? document.getElementById("startArchiveUtilityActions").innerHTML : "";
-    if (!html.includes("self-test")) throw new Error("App-Selbsttest fehlt auf der Startseite");
+    if (!html.includes("system.runSelfTest")) throw new Error("App-Selbsttest fehlt auf der Startseite");
     if (html.includes("download-full-json") || html.includes("download-full-export-package") || html.includes("download-archive")) throw new Error("Backup-Aktionen stehen noch in der Startseiten-Nutzleiste");
     return "Startseite reduziert; Datensicherung & System bündelt Backup, Import/Reset und Versionsübersicht";
   });
@@ -8829,17 +8798,17 @@ function overviewStructuredValidation(result, successText) {
 function buildOverviewData(tabId) {
   const s=overviewCoreStats();
   const commonValidation=overviewStatus(s);
-  const next=(text,target,label="Bereich öffnen")=>({text,action:{label,run:()=>overviewOpenSection(target),primary:true}});
-  const go=(label,target,primary=false)=>({label,run:()=>switchToTab(target),primary});
-  const open=(label,target,primary=false)=>({label,run:()=>overviewOpenSection(target),primary});
-  const save={label:"Speichern",run:()=>saveData(),primary:true};
+  const next=(text,target,label="Bereich öffnen")=>({text,action:{label,action:"navigation.openSection",args:[target],primary:true}});
+  const go=(label,target,primary=false)=>({label,action:"navigation.switchTab",args:[target],primary});
+  const open=(label,target,primary=false)=>({label,action:"navigation.openSection",args:[target],primary});
+  const save={label:"Speichern",action:"application.save",args:[],primary:true};
   const data={
     objekt:{summary:[["Objekt-ID",s.objectStandard&&s.objectStandard.objekt?(s.objectStandard.objekt.id||"–"):"–"],["Gebäude",s.objectStandard&&Array.isArray(s.objectStandard.gebaeude)?s.objectStandard.gebaeude.length:0],["Einheiten / Verträge",(s.objectStandard&&Array.isArray(s.objectStandard.einheiten)?s.objectStandard.einheiten.length:0)+" / "+(s.objectStandard&&Array.isArray(s.objectStandard.vertraege)?s.objectStandard.vertraege.length:0)],["Zähler / Strom-Dummys",s.meters.length+" / "+s.electricityDummyMeters.length]],validation:overviewStructuredValidation(s.objectValidation,"Objektstandard 1 gültig"),next:next("Objektstandard und abrechnungsrelevante Zuordnungen prüfen.","objectValidationSection"),actions:[go("Wohnungen öffnen","wohnungsverwaltung",true),go("Mieter öffnen","mieterverwaltung"),go("Datensicherung","sicherung")]},
     start:{summary:[["Arbeitsjahr",s.year],["Abrechnungen im Archiv",s.archives],["Mietverhältnisse",s.tenants.length],["Wohnungen",s.units.length]],validation:commonValidation,next:next("Aktuellen Arbeitsstand öffnen oder eine neue Abrechnung anlegen.","startRecordsSection"),actions:[open("Abrechnungen öffnen","startRecordsSection",true),go("Datensicherung & System","sicherung"),save]},
-    archiv:{summary:[["Archivierte Abrechnungen",s.archives],["Aktuelle Abrechnung",hasActiveCurrentBilling()?s.year:"Keine"],["Datenbestand","Lokal"],["Schema",DATA_SCHEMA_VERSION]],validation:{status:"ok",headline:"Archiv getrennt erreichbar",items:[{text:"Historische Datensätze bleiben unverändert",status:"ok"},{text:"Öffnen erfolgt schreibgeschützt",status:"ok"}]},next:next("Archivierte Abrechnung auswählen und in der Nur-Ansicht prüfen.","archiveRecordsSection"),actions:[open("Archiv öffnen","archiveRecordsSection",true),{label:"Archiv herunterladen",run:()=>downloadFullArchive()},go("Abrechnungsübersicht","start")]},
+    archiv:{summary:[["Archivierte Abrechnungen",s.archives],["Aktuelle Abrechnung",hasActiveCurrentBilling()?s.year:"Keine"],["Datenbestand","Lokal"],["Schema",DATA_SCHEMA_VERSION]],validation:{status:"ok",headline:"Archiv getrennt erreichbar",items:[{text:"Historische Datensätze bleiben unverändert",status:"ok"},{text:"Öffnen erfolgt schreibgeschützt",status:"ok"}]},next:next("Archivierte Abrechnung auswählen und in der Nur-Ansicht prüfen.","archiveRecordsSection"),actions:[open("Archiv öffnen","archiveRecordsSection",true),{label:"Archiv herunterladen",action:"archive.downloadFull",args:[]},go("Abrechnungsübersicht","start")]},
     mieterverwaltung:{summary:[["Mietverhältnisse",s.tenants.length],["Archiviert",s.archivedTenants.length],["Wohnungen",s.units.length],["Abrechnungsjahr",s.year]],validation:commonValidation,next:next("Mieterstammdaten und archivierte Mietverhältnisse vollständig prüfen.","masterTenantSection"),actions:[open("Mietverhältnisse öffnen","masterTenantSection",true),open("Archiv öffnen","masterTenantArchiveSection"),save]},
     wohnungsverwaltung:{summary:[["Wohnungen gesamt",s.units.length],["Aktiv",s.activeUnits.length],["Inaktiv",Math.max(0,s.units.length-s.activeUnits.length)],["Wohnfläche aktiv",s.activeUnits.reduce((a,w)=>a+num(w.wohnflaeche),0).toLocaleString("de-DE")+" m²"]],validation:commonValidation,next:next("Wohnungsbestand und Flächenangaben kontrollieren.","masterUnitSection"),actions:[open("Wohnungsbestand öffnen","masterUnitSection",true),go("Mieterverwaltung","mieterverwaltung"),save]},
-    sicherung:{summary:[["Version",APP_VERSION],["Archivstände",s.archives],["Betriebsart","Offline · lokal"],["Abrechnungsjahr",s.year]],validation:{status:"ok",headline:"Sicherung verfügbar",items:[{text:"Lokale Gesamtsicherung vorhanden",status:"ok"},{text:"Neuer PWA-Cache für V99.4.7",status:"ok"}]},next:next("Vollständige JSON-Sicherung erstellen und Versionsinformationen prüfen.","backupMainSection"),actions:[open("Gesamtsicherung öffnen","backupMainSection",true),open("Version anzeigen","backupVersionSection"),save]},
+    sicherung:{summary:[["Version",APP_VERSION],["Archivstände",s.archives],["Betriebsart","Offline · lokal"],["Abrechnungsjahr",s.year]],validation:{status:"ok",headline:"Sicherung verfügbar",items:[{text:"Lokale Gesamtsicherung vorhanden",status:"ok"},{text:"Neuer PWA-Cache für V99.4.8",status:"ok"}]},next:next("Vollständige JSON-Sicherung erstellen und Versionsinformationen prüfen.","backupMainSection"),actions:[open("Gesamtsicherung öffnen","backupMainSection",true),open("Version anzeigen","backupVersionSection"),save]},
     mieter:{summary:[["Wohnungen gesamt",s.units.length],["Wohnungen aktiv",s.activeUnits.length],["Mietverhältnisse",s.tenants.length],["Archivierte Mieter",s.archivedTenants.length]],validation:commonValidation,next:next("Bestand und Abrechnung in der Prüfbox abgleichen; danach Kostenarten bearbeiten.","tenantControlSection"),actions:[open("Prüfung öffnen","tenantControlSection",true),open("Mietverhältnisse öffnen","tenantRelationsSection"),go("Kostenarten öffnen","einstellungen")]},
     einstellungen:{summary:[["Kostenarten",s.costs.length],["Aktiv in NK",s.activeCosts.length],["Vollständig",s.completeCosts.length],["Gesamtkosten",overviewMoney(s.activeCosts.reduce((a,k)=>a+num(k.gesamtbetrag),0))]],validation:{status:s.completeCosts.length===s.activeCosts.length?"ok":"warn",headline:s.completeCosts.length+" von "+s.activeCosts.length+" vollständig",items:[{text:"Umlageschlüssel und Beträge prüfen",status:s.completeCosts.length===s.activeCosts.length?"ok":"warn"},{text:"Umlage wird automatisch berechnet",status:"ok"}]},next:next("Fehlende Beträge und Umlageschlüssel vervollständigen.","costEditSection"),actions:[open("Kostenarten bearbeiten","costEditSection",true),()=>{}].filter(Boolean)},
     einnahmen:{summary:[["Kaltmiete erhalten",overviewMoney(s.income.rent)],["NK-Vorauszahlungen",overviewMoney(s.income.prepayments)],["Korrekturen",overviewMoney(s.income.corrections)],["Mietverhältnisse",s.tenants.length]],validation:commonValidation,next:next("Kaltmieten und Vorauszahlungen vollständig prüfen; danach Zählerstände erfassen.","incomeRentSection"),actions:[open("Kaltmiete öffnen","incomeRentSection",true),open("Vorauszahlungen öffnen","incomePrepaymentSection"),go("Zählerstände","wasser")]},
@@ -8852,7 +8821,7 @@ function buildOverviewData(tabId) {
     export:{summary:[["Abrechnungsjahr",s.year],["Kostenarten",s.costs.length],["Mietverhältnisse",s.tenants.length],["Archivstände",s.archives]],validation:commonValidation,next:next("Aktuelle Abrechnung als JSON sichern; Gesamtsicherung zusätzlich im Verwaltungsbereich erstellen.","exportActionsSection"),actions:[open("Exportaktionen öffnen","exportActionsSection",true),go("Gesamtsicherung","sicherung"),save]}
   };
   // Kostenarten-Schnellaktionen bewusst ohne „Neu berechnen“.
-  data.einstellungen.actions=[open("Kostenarten bearbeiten","costEditSection",true),{label:"Kostenart hinzufügen",run:()=>openCostSelectionDialog()},{label:"Qualitätsprüfung",run:()=>switchToTab("qualitaet")}];
+  data.einstellungen.actions=[open("Kostenarten bearbeiten","costEditSection",true),{label:"Kostenart hinzufügen",action:"cost.openSelectionDialog",args:[]},{label:"Qualitätsprüfung",action:"navigation.switchTab",args:["qualitaet"]}];
   return data[tabId] || data.start;
 }
 Object.entries(TAB_DEFINITIONS).forEach(([tabId, definition]) => {
@@ -8903,7 +8872,7 @@ function renderOverviewCards(tabId, config) {
 function overviewActionButton(action) {
   const button=document.createElement("button"); button.type="button"; button.textContent=action.label||"Aktion";
   if (action.primary) button.classList.add("primary");
-  button.addEventListener("click",()=>{ if (typeof action.run === "function") action.run(); });
+  if (action.action) { button.setAttribute("data-ui-action", action.action); button.setAttribute("data-ui-args", JSON.stringify(action.args || [])); }
   return button;
 }
 function renderOverviewForTab(tabId) { const definition=TAB_DEFINITIONS[tabId]; if (definition) renderOverviewCards(tabId,definition.getOverview()); }
@@ -8989,13 +8958,30 @@ function renderAll(options = {}) {
       renderAllOverviewCards();
       auditV992Structure();
     } catch(uiError) {
-      if (typeof console !== "undefined" && console.error) console.error("V99.4.7-Darstellung konnte nicht aktualisiert werden", uiError);
+      if (typeof console !== "undefined" && console.error) console.error("V99.4.8-Darstellung konnte nicht aktualisiert werden", uiError);
     }
     if (renderQueued) {
       renderQueued = false;
       setTimeout(() => renderAll(options), 0);
     }
   }
+}
+
+function showLandingPage() { billingContextOpen = false; return switchToTab("landing"); }
+function openCostTenantDetails() { const section = document.getElementById("costTenantSection"); if (!section) return; section.open = true; try { section.scrollIntoView({ behavior:"smooth" }); } catch(error) { section.scrollIntoView(); } }
+function configureStateAccess() {
+  return NK_PRO_MODULES.stateAccess.configure({ getState:() => state, replaceState:nextState => { state = nextState; return state; }, commit:options => commitStateChange({ reason:options.reason || "UI-Controller", tabId:options.tabId }) });
+}
+function configureNavigationModule() {
+  return NK_PRO_MODULES.navigation.configure({ currentYear:() => currentAbrechnungsjahr(), objectLabel:() => currentObjectLabel(), isArchiveViewer:() => isArchiveViewer(), hasActiveBilling:() => hasActiveCurrentBilling(), isFinalized:() => isCurrentBillingFinalized(), isContextOpen:() => isBillingContextOpen(), tabTitle:tabId => TAB_DEFINITIONS[tabId] ? TAB_DEFINITIONS[tabId].title : "NK-Pro", updatePageHeaders:() => updateAllPageHeaders(), renderOverview:tabId => renderOverviewForTab(tabId) });
+}
+function registerUiControllers() { return NK_PRO_MODULES.uiBindings.register({ modules:{ exportService:NK_PRO_MODULES.exportService } }); }
+function startUiEvents() {
+  return NK_PRO_MODULES.uiEvents.start({ root:document, onError(error, context) { setActionMessage("UI-Aktion fehlgeschlagen: " + errorMessage(error), "err"); renderActionFeedback(); if (typeof console !== "undefined" && console.error) console.error("NK-Pro UI-Controllerfehler", context, error); } });
+}
+function updateUiArchitectureAudit() {
+  const report = Object.freeze({ controllers:NK_PRO_MODULES.uiController.describe(), events:NK_PRO_MODULES.uiEvents.describe(), stateAccess:NK_PRO_MODULES.stateAccess.describe(), navigation:NK_PRO_MODULES.navigation.describe(), compatibility:NK_PRO_MODULES.compatibility.describe() });
+  window.__NKPRO_UI_ARCHITECTURE__ = report; return report;
 }
 
 [
@@ -9007,24 +8993,22 @@ function renderAll(options = {}) {
 ].forEach(([name, api]) => NK_PRO_MODULES.compatibility.registerModule(name, api));
 
 const STARTUP_RESULT = NK_PRO_MODULES.appBootstrap.start([
+  { name:"Zustandszugriff konfigurieren", run:() => configureStateAccess() },
+  { name:"Navigation konfigurieren", run:() => configureNavigationModule() },
+  { name:"UI-Controller registrieren", run:() => registerUiControllers() },
+  { name:"UI-Ereignisse registrieren", run:() => startUiEvents() },
   { name:"Arbeitsstand vorbereiten", run:() => prepareStateForPersistence("startup") },
   { name:"Erste Darstellung", run:() => renderAll() },
   { name:"Navigation initialisieren", run:() => initializeNavigationMode() },
   { name:"Arbeitsbereiche schließen", run:() => document.querySelectorAll('.tab details').forEach(d => d.open = false) },
   { name:"Seitenköpfe aktualisieren", run:() => updateAllPageHeaders() },
   { name:"Übersichtskarten aktualisieren", run:() => renderAllOverviewCards() },
-  { name:"Strukturprüfung", run:() => auditV992Structure() }
+  { name:"Strukturprüfung", run:() => auditV992Structure() },
+  { name:"UI-Architekturprüfung", run:() => updateUiArchitectureAudit() }
 ], {
-  onError(error) {
-    renderErrors = [{ area:"App-Start", message:errorMessage(error) }];
-    if (typeof console !== "undefined" && console.error) console.error("NK-Pro Startabbruch", error);
-  },
-  onFallback() {
-    renderSystemMessages();
-  },
-  onFallbackError(statusError) {
-    if (typeof console !== "undefined" && console.error) console.error("NK-Pro Statusanzeige fehlgeschlagen", statusError);
-  }
+  onError(error) { renderErrors = [{ area:"App-Start", message:errorMessage(error) }]; if (typeof console !== "undefined" && console.error) console.error("NK-Pro Startabbruch", error); },
+  onFallback() { renderSystemMessages(); },
+  onFallbackError(statusError) { if (typeof console !== "undefined" && console.error) console.error("NK-Pro Statusanzeige fehlgeschlagen", statusError); }
 });
 window.__NKPRO_STARTUP__ = STARTUP_RESULT;
 window.__NKPRO_COMPATIBILITY__ = NK_PRO_MODULES.compatibility.describe();

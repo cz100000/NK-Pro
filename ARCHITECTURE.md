@@ -1,12 +1,21 @@
 # NK-Pro – Architektur
 
-**Ist-Stand:** V99.4.7  
+**Ist-Stand:** V99.4.8  
 **Datenschema:** 5  
 **Datenebenenvertrag:** 1  
 **Objektstandard:** 1  
 **Zähler-/Messstandard:** 1  
 **Abrechnungssnapshot:** 2, kompatibel zu 1  
-**Architekturversion:** 1
+**Architekturversion:** 2
+
+## AP7-UI-Architektur
+
+```text
+DOM-Ereignis → NKProUiEvents → NKProUiController → NKProUiBindings
+             → Anwendungs-/Fachdienst → Ergebnis/State → Renderer → Persistenzadapter
+```
+
+`app.js` registriert keine DOM-Ereignisse. Controller und State-Access sind DOM- und speicherfrei. Fachmodule bleiben DOM-frei; Renderer führen keine Persistenz aus. `state` bleibt der einzige Anwendungszustand.
 
 ## 1. Laufzeit
 

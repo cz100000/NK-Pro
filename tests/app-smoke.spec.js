@@ -19,7 +19,7 @@ test("Start, Version, Seitenstruktur und interne Audits sind fehlerfrei", async 
   const runtime = attachRuntimeGuards(page);
   await openFreshApp(page);
 
-  await expect(page).toHaveTitle("NK-Pro V99.4.7 – Weitere fachliche Modularisierung");
+  await expect(page).toHaveTitle("NK-Pro V99.4.8 – Native UI-Anbindung an modularisierte Fachdienste");
   const result = await page.evaluate(() => {
     const release = releaseAuditReport();
     const selfRows = appSelfTestReport();
@@ -42,8 +42,8 @@ test("Start, Version, Seitenstruktur und interne Audits sind fehlerfrei", async 
     };
   });
 
-  expect(result.version).toBe("V99.4.7");
-  expect(result.versionName).toBe("Weitere fachliche Modularisierung");
+  expect(result.version).toBe("V99.4.8");
+  expect(result.versionName).toBe("Native UI-Anbindung an modularisierte Fachdienste");
   expect(result.schema).toBe(5);
   expect(result.activeTab).toBe("landing");
   expect(result.structure.allPassed).toBe(true);
@@ -70,7 +70,7 @@ test("Landingpage besitzt genau zwei Arbeitswege", async ({ page }) => {
 
   await choices.nth(0).click();
   await expect(page.locator("#objekt")).toHaveClass(/active/);
-  await page.locator('[data-app-action="show-landing"]').click();
+  await page.locator('[data-ui-action="navigation.showLanding"]').click();
   await expect(page.locator("#landing")).toHaveClass(/active/);
   await choices.nth(1).click();
   await expect(page.locator("#start")).toHaveClass(/active/);
@@ -143,14 +143,14 @@ test("Aktive Abrechnung erscheint nur im geöffneten Arbeitskontext", async ({ p
   await page.evaluate(() => {
     state.meta.currentBillingFinalized = true;
     state.meta.currentBillingFinalizationKey = currentBillingFinalizationKey();
-    updateWorkflowNavigationContext();
+    NKProNavigation.updateWorkflowNavigationContext();
   });
   await expect(page.locator("[data-nav-billing-context]")).toHaveText("Finalisiert");
 
   await page.evaluate(() => {
     state.meta.archiveViewer = true;
     setBillingContextOpen(true);
-    updateWorkflowNavigationContext();
+    NKProNavigation.updateWorkflowNavigationContext();
   });
   await expect(page.locator("[data-nav-billing-context]")).toHaveText("Nur Ansicht");
 
@@ -184,14 +184,14 @@ test("Archiv ist eigenständig erreichbar und öffnet die Nur-Ansicht", async ({
 test("Manifest und PWA-Version stimmen mit der Anwendung überein", async () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(root, "manifest.webmanifest"), "utf8"));
   const worker = fs.readFileSync(path.join(root, "service-worker.js"), "utf8");
-  expect(manifest.version).toBe("99.4.7");
-  expect(manifest.name).toContain("V99.4.7");
-  expect(worker).toContain('const CACHE_NAME = "nk-pro-v99-4-7";');
+  expect(manifest.version).toBe("99.4.8");
+  expect(manifest.name).toContain("V99.4.8");
+  expect(worker).toContain('const CACHE_NAME = "nk-pro-v99-4-8";');
   expect(worker).toContain('"./index.html"');
   expect(worker).toContain('"./manifest.webmanifest"');
 });
 
-test("V99.4.7 lädt produktive Styles und Skripte ausschließlich aus separaten Dateien", async ({ page, request }) => {
+test("V99.4.8 lädt produktive Styles und Skripte ausschließlich aus separaten Dateien", async ({ page, request }) => {
   const response = await request.get("/index.html");
   expect(response.ok()).toBeTruthy();
   const html = await response.text();

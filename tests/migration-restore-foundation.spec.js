@@ -152,7 +152,7 @@ test("Anwendungsstart sichert Altdaten vor der Migration extern exportierbar", a
       targetSchema:envelope && envelope.metadata.targetSchemaVersion,
       backupType:envelope && envelope.metadata.backupType,
       rawSourceSchema:envelope && currentDataSchemaVersion(envelope.data),
-      downloadActionVisible:document.querySelectorAll('[data-app-action="download-pre-migration-backup"]').length > 0
+      downloadActionVisible:document.querySelectorAll('[data-ui-action="recovery.downloadPreMigration"]').length > 0
     };
   }, { preMigrationKey:PRE_MIGRATION_KEY });
 

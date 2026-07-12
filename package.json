@@ -1,8 +1,8 @@
 {
-  "name": "nk-pro-v99-4-7",
-  "version": "99.4.7",
+  "name": "nk-pro-v99-4-8",
+  "version": "99.4.8",
   "private": true,
-  "description": "Syntax-, Architektur-, Berechnungs-, Dokument-, Export-, Snapshot-, Migrations-, Restore-, PWA- und Playwright-Prüfungen für NK-Pro V99.4.7",
+  "description": "Syntax-, UI-Controller-, Ereignis-, Architektur-, Berechnungs-, Dokument-, Export-, Snapshot-, Migrations-, Restore-, PWA- und Playwright-Prüfungen für NK-Pro V99.4.8",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
     "test:fixtures": "node tools/check-fixtures.cjs",
@@ -12,7 +12,7 @@
     "test:report": "playwright show-report",
     "test:release": "node tools/check-release-consistency.cjs",
     "test:metering": "node tests/metering-domain.test.cjs",
-    "test:architecture": "node tests/ap6-modularization.test.cjs"
+    "test:architecture": "node tests/ap6-modularization.test.cjs && node tests/ap7-ui-integration.test.cjs"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1"

@@ -1,16 +1,19 @@
 # NK-Pro – verbindlicher Projektstand
 
 **Stand:** 12. Juli 2026  
-**Anwendung:** V99.4.7  
-**Versionsname:** Weitere fachliche Modularisierung  
+**Anwendung:** V99.4.8  
+**Versionsname:** Native UI-Anbindung an modularisierte Fachdienste  
 **Datenschema:** 5, unverändert  
 **Datenebenenvertrag:** 1, unverändert  
 **Objektstandard:** 1, unverändert  
 **Zähler-/Messstandard:** 1, unverändert  
 **Abrechnungssnapshot:** 2; Version 1 kompatibel  
-**Architekturversion:** 1  
-**Kompatibilitätsschicht:** 1  
+**Architekturversion:** 2  
+**Kompatibilitätsschicht:** 2  
 **Ausgangsversion:** V99.4.6
+
+**UI-Controllervertrag:** 1  
+**UI-Ereignisvertrag:** 1  
 
 ## 1. Technische Grundlage
 

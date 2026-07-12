@@ -1,5 +1,19 @@
 # Changelog
 
+## V99.4.8 – Native UI-Anbindung an modularisierte Fachdienste (12. Juli 2026)
+
+- 130 statische und dynamisch erzeugte Inline-Handler vollständig entfernt,
+- zentrale Ereignisdelegation für Klick, Änderung, Eingabe, Formular und Tastatur eingeführt,
+- 13 UI-Controller mit 99 eindeutigen Aktionen über `ui-controller.js` und `ui-bindings.js` registriert,
+- kontrollierten Einzelzustandsadapter `state-access.js` ergänzt, ohne zweiten Anwendungszustand,
+- Navigation auf eingefrorene Modul-API umgestellt und fünf globale Navigationswrapper entfernt,
+- Dialog-, Übersichts-, Zähler-, Abrechnungs-, Dokument-, Export-, Archiv- und Recovery-Aktionen an Controller angebunden,
+- `app.js` von 9.030 auf 9.014 Zeilen reduziert und sämtliche eigenen DOM-Listener entfernt,
+- direkte Browser-Speicherzugriffe weiterhin ausschließlich in Persistenz und UI-Präferenzen,
+- AP7-Architektur- und Browsertests für Controllerregister, doppelte Listener, Aktionspfade und AP5-Zähleranbindung ergänzt,
+- Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Zählerstandard 1, Snapshot 2 und Referenzabrechnungen unverändert,
+- PWA-App-Shell, Release-Metadaten, Architektur, Roadmap und Dokumentation auf V99.4.8 aktualisiert.
+
 ## V99.4.7 – Weitere fachliche Modularisierung (12. Juli 2026)
 
 - zentrale Abrechnungs- und Vorauszahlungsberechnung in `billing-calculation.js` ausgelagert,

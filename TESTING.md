@@ -1,6 +1,6 @@
 # NK-Pro – Testkonzept
 
-**Aktueller Stand:** V99.4.7, Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Zählerstandard 1, Snapshot 2, Architektur 1
+**Aktueller Stand:** V99.4.8, Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Zählerstandard 1, Snapshot 2, Architektur 2
 
 ## Prüfstufen
 
@@ -8,8 +8,9 @@
 2. **Referenzfälle:** sechs kanonische Datensätze mit unveränderten Ergebnissen.
 3. **Zählerdomäne:** Migration, stabile IDs, Messwerte, Perioden, Korrektur, Wechsel, Zuordnung, Dummy-Ausschluss und Snapshotprojektion.
 4. **AP6-Architektur:** Modulschnittstellen, DOM-freie Berechnung, DOM-freie Dokumentdaten, reine Wrapper, Speichergrenzen, Ladefolge, Bootstrap und Registry.
-5. **Release-Konsistenz:** Versionen, Standards, Module, PWA-App-Shell, Dokumente und Datenvertrag.
-6. **Browserregression:** 39 Fälle für Start, Navigation, Berechnung, Persistenz, Migration, Restore, Snapshot, Archiv, Dokumente, Exporte und Service Worker.
+5. **AP7-UI-Architektur:** 130 entfernte Inline-Handler, 13 Controller, 99 eindeutige Aktionen, zentrale Ereignisdelegation, Zustandsgrenze und entfernte Navigationsglobals.
+6. **Release-Konsistenz:** Versionen, Standards, Module, PWA-App-Shell, Dokumente und Datenvertrag.
+7. **Browserregression:** 41 Fälle für Start, Navigation, Berechnung, Persistenz, Migration, Restore, Snapshot, Archiv, Dokumente, Exporte und Service Worker.
 7. **Frische Entpackung:** Wiederholung aller Prüfungen aus der finalen ZIP.
 
 ## Befehle

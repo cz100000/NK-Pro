@@ -1,4 +1,15 @@
-# Abhängigkeitsübersicht V99.4.7
+# Abhängigkeitsübersicht V99.4.8
+
+## AP7-Hauptrichtung
+
+```text
+DOM → ui-events → ui-controller → ui-bindings → app/Fachdienste
+                                              ├→ AP5-Zählermodule
+                                              ├→ AP6-Berechnung/Dokument/Export
+                                              └→ Persistenz/Recovery
+```
+
+Rückabhängigkeiten von Fachmodulen auf DOM, Controller oder Renderer sind unzulässig.
 
 ## Zulässige Hauptrichtung
 

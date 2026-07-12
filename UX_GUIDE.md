@@ -2,7 +2,7 @@
 
 **Ziel:** einfacher, stabiler und nachvollziehbarer Arbeitsablauf  
 **Ausgangsversion:** V99.3.0  
-**Aktueller Stand:** V99.4.7  
+**Aktueller Stand:** V99.4.8  
 **Status:** Phase-1-Ziel umgesetzt; Datenmodellziele offen
 
 ## 1. Leitprinzip

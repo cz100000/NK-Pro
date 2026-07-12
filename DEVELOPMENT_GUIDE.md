@@ -1,6 +1,6 @@
 # NK-Pro – Entwicklungsleitfaden
 
-**Aktueller Umsetzungsstand:** V99.4.7, Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Zählerstandard 1, Snapshot 2, Architektur 1
+**Aktueller Umsetzungsstand:** V99.4.8, Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Zählerstandard 1, Snapshot 2, Architektur 2
 
 ## 1. Quellenhierarchie
 
@@ -9,6 +9,8 @@ Maßgeblich sind ausschließlich die freigegebene Versions-ZIP, der darin enthal
 ## 2. Leitplanken
 
 - HTML, CSS und JavaScript ohne Framework oder Buildsystem,
+- DOM-Ereignisse ausschließlich über deklarative `data-ui-*`-Aktionen und `ui-events.js`,
+- Controlleraktionen ausschließlich über `ui-controller.js`/`ui-bindings.js`,
 - Fachdatenspeicherung ausschließlich über `persistence.js`,
 - UI-Präferenzen ausschließlich über `ui-preferences.js`,
 - keine stillschweigende Schema-, Vertrags- oder Standardänderung,

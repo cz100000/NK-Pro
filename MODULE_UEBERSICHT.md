@@ -1,9 +1,14 @@
-# Modulübersicht NK-Pro V99.4.7
+# Modulübersicht NK-Pro V99.4.8
 
 | Modul | Verantwortung | DOM | Fachspeicher | Öffentliche Schnittstelle |
 |---|---|---:|---:|---|
 | `ui-preferences.js` | nicht fachliche Navigations-/Darstellungspräferenzen | nein | nein | `get`, `set`, `remove`, Boolean-Hilfen |
-| `navigation.js` | Navigationsbaum, Sidebar, Arbeitskontext | ja | nein | kleine globale Navigationsfunktionen |
+| `state-access.js` | kontrollierter Zugriff auf den bestehenden Einzelzustand | nein | nein | `NKProStateAccess` |
+| `ui-controller.js` | DOM-freie Controller- und Aktionsregistry | nein | nein | `NKProUiController` |
+| `ui-bindings.js` | 99 Aktionsbindungen in 13 Verantwortungsbereichen | nein | nein | `NKProUiBindings` |
+| `ui-events.js` | zentrale Ereignisdelegation und Argumentauflösung | ja | nein | `NKProUiEvents` |
+| `navigation.js` | Navigationsbaum, Sidebar, Arbeitskontext | ja | nein | `NKProNavigation` |
+| `modal-events.js` | Backdrop-/Escape-Ereignisse mit Controllerdispatch | ja | nein | `NKProModalEvents` |
 | `persistence.js` | geschütztes Laden/Speichern, Integrität, Storage-Adapter | nein | ja | `NKProPersistence` |
 | `migration.js` | Migrationsregistry und atomare Migration | nein | über Adapter | `NKProMigration` |
 | `backup-recovery.js` | Sicherungshüllen, Restore, Checkpoint | nein | über Adapter | `NKProBackupRecovery` |

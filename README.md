@@ -1,13 +1,15 @@
-# NK-Pro V99.4.7
+# NK-Pro V99.4.8
 
 Lokale, frameworkfreie Browseranwendung zur Erstellung, Prüfung, Archivierung und Ausgabe von Nebenkostenabrechnungen.
+
+V99.4.8 führt eine zentrale Ereignisdelegation, 13 UI-Controller mit 99 Aktionen und einen kontrollierten Zustandsadapter ein. Sämtliche 130 Inline-Handler wurden entfernt. Die Fachmodule aus AP1 bis AP6, Datenschema 5, Datenebenenvertrag 1 und alle Abrechnungsergebnisse bleiben unverändert.
 
 ## Verbindlicher Stand
 
 | Merkmal | Stand |
 |---|---|
-| App-Version | V99.4.7 |
-| Versionsname | Weitere fachliche Modularisierung |
+| App-Version | V99.4.8 |
+| Versionsname | Native UI-Anbindung an modularisierte Fachdienste |
 | Datenschema | 5 – unverändert |
 | Datenebenenvertrag | 1 – unverändert |
 | Objektstandard | 1 – unverändert |

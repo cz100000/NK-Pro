@@ -1,10 +1,13 @@
-# Verantwortlichkeitsmatrix V99.4.7
+# Verantwortlichkeitsmatrix V99.4.8
 
 | Verantwortung | Primärmodul | Zulässige Aufrufer | Nicht zulässig |
 |---|---|---|---|
 | Anwendungsstart | `app-bootstrap.js` + Konfiguration in `app.js` | Anwendung | Fachberechnung im Startcode |
-| UI-Ereignisse/Navigation | `app.js`, `navigation.js` | DOM-Ereignisse | direkter Fachspeicherzugriff |
-| Rendering/UI-Hilfen | `app.js`, `ui-table-tools.js` | UI-Controller | eigene Kostenverteilung |
+| UI-Ereignisse | `ui-events.js` | DOM | Fachberechnung, Persistenz, Zustandsmutation |
+| UI-Controller/Bindings | `ui-controller.js`, `ui-bindings.js` | Ereignisdelegation | DOM in Controllerregistry, parallele Fachlogik |
+| Navigation | `navigation.js` | Navigationscontroller | Fachspeicherzugriff |
+| Zustandseinstieg | `state-access.js` + Anwendungsaktionen | UI-Controller | zweiter Store, DOM, direkter Browser-Speicher |
+| Rendering/UI-Hilfen | `app.js`, `ui-table-tools.js` | Controller und definierte Ergebnisse | eigene Kostenverteilung oder Persistenz |
 | Abrechnungsberechnung | `billing-calculation.js` | UI, Dokumentdaten, Tests | DOM, Druck, Download, Storage |
 | Zähler/Verbrauch | AP5-Zählermodule | Berechnung, Snapshot, Validierung | konkurrierendes Zählermodell |
 | Objektstandard | `object-standard.js` | Migration, Snapshot, UI-Validierung | DOM-abhängige Fachlogik |

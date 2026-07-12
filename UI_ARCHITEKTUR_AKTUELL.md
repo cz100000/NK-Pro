@@ -1,8 +1,12 @@
 # UI-Architektur – aktueller Stand
 
-**Version:** V99.4.7  
+**Version:** V99.4.8  
 **Datenschema:** 5, unverändert  
 **Zweck:** verbindliche Alt-zu-Neu-Zuordnung der Phase-1-Navigation
+
+## AP7-Grundsystem
+
+Die bestehende Oberfläche verwendet nun deklarative Aktionsattribute und eine zentrale Ereignisdelegation. 13 Controller mit 99 Aktionen vermitteln zwischen DOM und vorhandenen Diensten. Die visuelle Navigation bleibt unverändert; das verbindliche AP11-Design ist ausdrücklich nicht Bestandteil dieser Version.
 
 ## Grundentscheidung
 

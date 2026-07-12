@@ -10,7 +10,7 @@ test("Fach-, Technik-, Start- und Kompatibilitätsmodule sind vor app.js geladen
   const result = await page.evaluate(() => {
     const scripts = [...document.scripts].map(script => new URL(script.src).pathname.split("/").pop());
     const names = [
-      "ui-preferences.js", "navigation.js", "persistence.js", "migration.js", "backup-recovery.js",
+      "ui-preferences.js", "state-access.js", "ui-controller.js", "ui-bindings.js", "ui-events.js", "navigation.js", "modal-events.js", "persistence.js", "migration.js", "backup-recovery.js",
       "meter-master.js", "meter-readings.js", "meter-periods.js", "meter-validation.js", "object-standard.js",
       "billing-snapshot.js", "archive.js", "billing-calculation.js", "document-data.js", "document-renderer.js",
       "export-service.js", "ui-table-tools.js", "app-bootstrap.js", "compatibility.js", "default-seed.js", "app.js"
@@ -36,7 +36,13 @@ test("Fach-, Technik-, Start- und Kompatibilitätsmodule sind vor app.js geladen
       uiTableTools:window.NKProUiTableTools,
       appBootstrap:window.NKProAppBootstrap,
       compatibilityRegistry:window.NKProCompatibility,
-      uiPreferences:window.NKProUiPreferences
+      uiPreferences:window.NKProUiPreferences,
+      stateAccess:window.NKProStateAccess,
+      uiController:window.NKProUiController,
+      uiBindings:window.NKProUiBindings,
+      uiEvents:window.NKProUiEvents,
+      navigation:window.NKProNavigation,
+      modalEvents:window.NKProModalEvents
     };
     return {
       order,
@@ -63,7 +69,7 @@ test("Fach-, Technik-, Start- und Kompatibilitätsmodule sind vor app.js geladen
   expect(Object.values(result.frozen).every(Boolean)).toBe(true);
   expect(result.order.every(index => index >= 0)).toBe(true);
   expect(result.order).toEqual([...result.order].sort((a, b) => a - b));
-  expect(result.startup).toEqual({ ok:true, completed:7 });
+  expect(result.startup).toEqual({ ok:true, completed:12 });
   expect(result.registered).toEqual([
     ["billingCalculation", 48],
     ["documentData", 26],

@@ -34,6 +34,7 @@ module.exports = defineConfig({
     { name:"document-export", testMatch:"document-export.spec.js" },
     { name:"migration-restore", testMatch:"migration-restore-foundation.spec.js" },
     { name:"module-boundaries", testMatch:"module-boundaries.spec.js" },
+    { name:"ui-controller-events", testMatch:"ui-controller-events.spec.js" },
     { name:"object-snapshot", testMatch:"object-standard-snapshot.spec.js" },
     { name:"persistence-backup", testMatch:"persistence-backup.spec.js" },
     { name:"reference-cases", testMatch:"reference-cases.spec.js" },

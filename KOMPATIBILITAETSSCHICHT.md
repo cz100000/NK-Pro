@@ -1,8 +1,8 @@
-# Globale Kompatibilitätsschicht V99.4.7
+# Globale Kompatibilitätsschicht V99.4.8
 
 ## Zweck
 
-Bestehende Inline-Handler, UI-Aktionen, Playwright-Tests und Legacy-Aufrufe verwenden weiterhin bekannte globale Funktionsnamen. AP6 entfernt diese Namen nicht, sondern reduziert sie auf reine Weiterleitungen.
+Inline-Handler und HTML-Aufrufe auf globale Funktionen wurden in AP7 vollständig entfernt. Die 112 AP6-Wrapper bleiben ausschließlich für interne Legacy-Aufrufe und Regressionstests als reine Weiterleitungen bestehen. Fünf globale Navigationswrapper wurden entfernt und durch `NKProNavigation` ersetzt.
 
 ## Regel
 

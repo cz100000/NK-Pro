@@ -1,6 +1,6 @@
 # NK-Pro – Roadmap
 
-**Basis:** V99.4.7 vom 12. Juli 2026
+**Basis:** V99.4.8 vom 12. Juli 2026
 
 ## Abgeschlossen
 
@@ -9,24 +9,22 @@
 - V99.4.3: Modularisierung von Persistenz, Migration und Archiv.
 - V99.4.4: Migrations-, Sicherungs-, Restore- und Rollback-Fundament.
 - V99.4.5: Objektstandard 1 und unveränderlicher Abrechnungssnapshot.
-- V99.4.6: getrennte Zählerstammdaten, Messwerte, Messperioden, Zuordnungen, Wechsel und Snapshot 2.
-- V99.4.7: weitere fachliche Modularisierung von Berechnung, Dokumentdaten, Brief-HTML, Export, Tabellenhilfen, UI-Präferenzen, Start und Kompatibilität.
+- V99.4.6: getrennte Zählerstammdaten, Messwerte, Perioden, Zuordnungen, Wechsel und Snapshot 2.
+- V99.4.7: Abrechnungsberechnung, Dokumentdaten, Rendering, Export, Tabellenhilfen, Start und Kompatibilität modularisiert.
+- V99.4.8: native UI-Anbindung mit zentraler Ereignisdelegation, 13 Controllern, 99 Aktionen und kontrolliertem Zustandszugriff.
 
-## Nächstes Arbeitspaket
+## Nächstes Arbeitspaket – AP8
 
-### Native UI-Anbindung an die modularisierten Dienste
+- Stammdaten-, Kosten- und Workflow-Orchestrierung aus `app.js` weiter trennen,
+- interne direkte `state`-Schreibzugriffe schrittweise durch Anwendungsaktionen ersetzen,
+- verbleibende klassische Top-Level-Funktionen in explizite Module überführen,
+- AP6-Kompatibilitätswrapper nur dort abbauen, wo keine internen oder Testabhängigkeiten mehr bestehen,
+- jede Extraktion mit Referenz-, UI-, Restore-, Snapshot- und Exportregression absichern.
 
-- Zähler- und Messwertformulare direkt an die AP5-Fachmodule anbinden,
-- UI-Controller schrittweise aus `app.js` ausgliedern,
-- globalen Laufzeitkontext durch explizite Kontext- oder Controller-Schnittstellen reduzieren,
-- Inline-Handler und verbleibende globale Aufrufe abbauen,
-- Dokument- und Exportaktionen direkt gegen definierte View-Modelle ausführen,
-- jede weitere Extraktion mit Referenz-, UI- und Kompatibilitätstests absichern.
+## Spätere Arbeitspakete
 
-## Danach
-
-- Stammdaten- und Mietverhältnisverwaltung modularisieren,
-- Archiv-/Jahreswechsel-Orchestrierung trennen,
+- Archiv-/Jahreswechsel-Orchestrierung weiter trennen,
 - Qualitäts- und Diagnosefunktionen ausgliedern,
 - globale Kompatibilitätsschicht schrittweise verkleinern,
-- Bedienbarkeit und Optik auf der stabilisierten Architektur verbessern.
+- AP11: verbindliches Navigationsdesign, Icons, Farben, Typografie, Abstände und Responsivität umsetzen,
+- allgemeine Bedienbarkeit und Optik erst auf der stabilisierten Architektur verbessern.

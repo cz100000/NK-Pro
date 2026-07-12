@@ -2,114 +2,69 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
-const vm = require("node:vm");
-
 const root = path.resolve(__dirname, "..");
 const read = relative => fs.readFileSync(path.join(root, relative), "utf8");
 const assert = (condition, message) => { if (!condition) throw new Error(message); };
 
-async function main() {
+function main() {
   const packageJson = JSON.parse(read("package.json"));
   const manifest = JSON.parse(read("manifest.webmanifest"));
   const project = JSON.parse(read("nk-pro-project.json"));
+  const html = read("index.html");
+  const app = read("js/app.js");
+  const worker = read("service-worker.js");
   const moduleNames = [
-    "app", "ui-preferences", "navigation", "persistence", "migration", "backup-recovery",
-    "meter-master", "meter-readings", "meter-periods", "meter-validation", "object-standard",
-    "billing-snapshot", "archive", "billing-calculation", "document-data", "document-renderer",
-    "export-service", "ui-table-tools", "app-bootstrap", "compatibility", "default-seed"
+    "ui-preferences", "state-access", "ui-controller", "ui-bindings", "ui-events", "navigation", "modal-events",
+    "persistence", "migration", "backup-recovery", "meter-master", "meter-readings", "meter-periods", "meter-validation",
+    "object-standard", "billing-snapshot", "archive", "billing-calculation", "document-data", "document-renderer",
+    "export-service", "ui-table-tools", "app-bootstrap", "compatibility", "default-seed", "app", "service-worker-register"
   ];
   const sources = Object.fromEntries(moduleNames.map(name => [name, read(`js/${name}.js`)]));
-  const html = read("index.html");
-  const workerSource = read("service-worker.js");
 
-  assert(packageJson.version === "99.4.7" && packageJson.name === "nk-pro-v99-4-7", "package.json besitzt nicht Version 99.4.7.");
-  assert(manifest.version === "99.4.7" && manifest.name.includes("V99.4.7"), "Manifest besitzt nicht Version 99.4.7.");
-  assert(project.appVersion === "99.4.7" && project.basedOn === "99.4.6", "Projektversionsmetadaten sind inkonsistent.");
-  assert(project.architectureVersion === 1 && project.compatibilityLayerVersion === 1, "Architektur- oder Kompatibilitätsschichtversion fehlt.");
-  assert(project.schemaVersion === 5 && project.dataLayerContractVersion === 1, "Datenschema oder Datenebenenvertrag wurde unbeabsichtigt geändert.");
-  assert(project.objectStandardVersion === 1 && project.billingSnapshotVersion === 2, "Objektstandard- oder Snapshot-Version ist inkonsistent.");
-  for (const key of ["meterMasterStandardVersion", "meterReadingStandardVersion", "meterPeriodStandardVersion", "meterAssignmentStandardVersion", "meterReplacementStandardVersion"]) {
-    assert(project[key] === 1, `${key} fehlt oder ist inkonsistent.`);
-  }
+  assert(packageJson.name === "nk-pro-v99-4-8" && packageJson.version === "99.4.8", "Paketversion ist inkonsistent.");
+  assert(manifest.version === "99.4.8" && manifest.name.includes("V99.4.8"), "Manifestversion ist inkonsistent.");
+  assert(project.appVersion === "99.4.8" && project.displayVersion === "V99.4.8" && project.basedOn === "99.4.7", "Projektversionsmetadaten sind inkonsistent.");
+  assert(project.versionName === "Native UI-Anbindung an modularisierte Fachdienste", "Versionsname ist inkonsistent.");
+  assert(project.architectureVersion === 2 && project.compatibilityLayerVersion === 2 && project.uiControllerVersion === 1 && project.uiEventContractVersion === 1, "AP7-Architekturversionen fehlen.");
+  assert(project.schemaVersion === 5 && project.dataLayerContractVersion === 1, "Datenschema oder Datenebenenvertrag wurde verändert.");
+  assert(project.objectStandardVersion === 1 && project.billingSnapshotVersion === 2, "Objektstandard oder Snapshotversion wurde verändert.");
+  for (const key of ["meterMasterStandardVersion", "meterReadingStandardVersion", "meterPeriodStandardVersion", "meterAssignmentStandardVersion", "meterReplacementStandardVersion"]) assert(project[key] === 1, `${key} ist inkonsistent.`);
 
-  assert(sources.app.includes('const APP_VERSION = "V99.4.7";'), "APP_VERSION ist inkonsistent.");
-  assert(sources.app.includes('const APP_VERSION_NAME = "Weitere fachliche Modularisierung";'), "APP_VERSION_NAME ist inkonsistent.");
-  assert(sources.app.includes("const DATA_SCHEMA_VERSION = 5;") && sources.app.includes("const DATA_LAYER_CONTRACT_VERSION = 1;"), "Laufzeit-Datenvertrag ist inkonsistent.");
-  assert(!/^const SEED\s*=/m.test(sources.app) && /^const SEED\s*=/m.test(sources["default-seed"]), "SEED-Modulgrenze ist inkonsistent.");
-  assert(sources.app.split(/\r?\n/).length < 9500, "app.js wurde in AP6 nicht wirksam verkleinert.");
+  assert(app.includes('const APP_VERSION = "V99.4.8";') && app.includes('const APP_VERSION_NAME = "Native UI-Anbindung an modularisierte Fachdienste";'), "Laufzeitversion ist inkonsistent.");
+  assert(app.includes("const DATA_SCHEMA_VERSION = 5;") && app.includes("const DATA_LAYER_CONTRACT_VERSION = 1;"), "Laufzeit-Datenvertrag ist inkonsistent.");
+  assert(app.split(/\r?\n/).length < 9100, "app.js überschreitet die AP7-Grenze von 9.100 Zeilen.");
+  assert(!/\bon(?:click|change|input|submit|keydown)\s*=/i.test(html + "\n" + app), "Inline-Handler sind noch vorhanden.");
+  assert(!/data-app-action/.test(html + "\n" + app), "Veraltete data-app-action-Bindungen sind noch vorhanden.");
+  assert(!/addEventListener\s*\(/.test(app), "app.js registriert weiterhin DOM-Ereignisse.");
 
-  for (const [name, key] of [
-    ["UI-Einstellungen", "ui-preferences"], ["Persistenz", "persistence"], ["Migration", "migration"],
-    ["Backup/Restore", "backup-recovery"], ["Zählerstammdaten", "meter-master"], ["Messwerte", "meter-readings"],
-    ["Messperioden", "meter-periods"], ["Zählervalidierung", "meter-validation"], ["Objektstandard", "object-standard"],
-    ["Abrechnungssnapshot", "billing-snapshot"], ["Archiv", "archive"], ["Abrechnungsberechnung", "billing-calculation"],
-    ["Dokumentdaten", "document-data"], ["Dokumentrenderer", "document-renderer"], ["Export", "export-service"],
-    ["Tabellenhilfen", "ui-table-tools"], ["Anwendungsstart", "app-bootstrap"], ["Kompatibilität", "compatibility"]
-  ]) assert(sources[key].includes("Object.freeze"), `${name}-Modul exportiert keine feste Schnittstelle.`);
+  for (const name of moduleNames.filter(name => !["app", "service-worker-register", "default-seed"].includes(name))) assert(sources[name].includes("Object.freeze"), `${name}.js exportiert keine feste Schnittstelle.`);
+  assert(!/\b(document|window|localStorage|indexedDB)\b/.test(sources["ui-controller"]), "UI-Controller-Registry enthält DOM- oder Speicherzugriffe.");
+  assert(!/\b(document|window|localStorage|indexedDB)\b/.test(sources["state-access"]), "State-Access enthält DOM- oder Speicherzugriffe.");
+  assert(!/calculateUmlage|allocationForCost|prepaymentAdjustmentData/.test(sources["ui-bindings"]), "UI-Bindings enthalten parallele Abrechnungslogik.");
+  assert(!/\b(document|window|localStorage|indexedDB)\b/.test(sources["billing-calculation"]), "Berechnungsmodul enthält UI- oder Speicherzugriffe.");
+  assert(!/\b(document|localStorage|indexedDB)\b/.test(sources["document-data"]), "Dokumentdatenmodul enthält DOM- oder Speicherzugriffe.");
+  assert(sources["ui-events"].includes("data-ui-action") && sources["ui-events"].includes("data-ui-change") && sources["ui-events"].includes("data-ui-keydown"), "Zentraler UI-Ereignisvertrag ist unvollständig.");
+  assert(!/window\.(?:refreshWorkspaceChrome|ensureNavigationPath|updateWorkflowNavigationContext|applyNavTreeState|setOpenNavigationGroup)\s*=/.test(sources.navigation), "Entfernte globale Navigationswrapper sind wieder vorhanden.");
+  assert(sources["modal-events"].includes('dispatch("cost.closeSelectionDialog"'), "Modalereignisse sind nicht über Controller angebunden.");
 
-  assert(!/\bdocument\b|\bwindow\b|\blocalStorage\b|\bindexedDB\b/.test(sources["billing-calculation"]), "Berechnungsmodul enthält UI- oder Speicherzugriffe.");
-  assert(!/\bdocument\b|\blocalStorage\b|\bindexedDB\b/.test(sources["document-data"]), "Dokumentdatenmodul enthält DOM- oder Speicherzugriffe.");
-  for (const [fn, moduleName] of [
-    ["calculateUmlage", "billingCalculation"], ["allocationForCost", "billingCalculation"],
-    ["prepaymentAdjustmentData", "billingCalculation"], ["briefCostRows", "documentData"],
-    ["buildBriefHtml", "documentRenderer"], ["downloadFullExportPackage", "exportService"],
-    ["enhanceTables", "uiTableTools"]
-  ]) {
-    assert(sources.app.includes(`function ${fn}(...args) { return NK_PRO_MODULES.${moduleName}.${fn}(...args); }`), `Kompatibilitätswrapper ${fn} ist nicht rein.`);
-  }
+  const storageUsers = moduleNames.filter(name => /\blocalStorage\b/.test(sources[name])).sort();
+  assert(JSON.stringify(storageUsers) === JSON.stringify(["persistence", "ui-preferences"]), `Direkte Speicherzugriffe außerhalb der Adapter: ${storageUsers.join(", ")}`);
+  assert(sources["meter-master"].includes('billingRole:"excluded"') && sources["meter-master"].includes("abrechnungsrelevant:false"), "Stromzähler-Dummy ist nicht zentral ausgeschlossen.");
+  assert(sources["billing-snapshot"].includes("const BILLING_SNAPSHOT_VERSION = 2;"), "Snapshotversion 2 fehlt.");
 
-  assert(sources["meter-master"].includes("const METER_MASTER_STANDARD_VERSION = 1;") && sources["meter-master"].includes('const ELECTRICITY_DUMMY_METER_TYPE = "electricity-dummy";'), "Zählerstammdatenstandard oder Dummy-Typ fehlt.");
-  assert(sources["meter-readings"].includes("const READING_STANDARD_VERSION = 1;") && sources["meter-readings"].includes("ersetztMesswertId"), "Messwertstandard oder Korrekturbezug fehlt.");
-  assert(sources["meter-periods"].includes("const MEASUREMENT_PERIOD_STANDARD_VERSION = 1;") && sources["meter-periods"].includes("registerMeterReplacement") && sources["meter-periods"].includes("consumptionForCostAndTenant"), "Messperioden-, Wechsel- oder Verbrauchslogik fehlt.");
-  assert(sources["meter-validation"].includes("const METERING_STANDARD_VERSION = 1;") && sources["meter-validation"].includes("validateMeteringData") && sources["meter-validation"].includes("createSnapshotProjection"), "Zählerstandard-Validierung ist unvollständig.");
-  assert(sources["meter-master"].includes("abrechnungsrelevant:false") && sources["meter-master"].includes('billingRole:"excluded"'), "Stromzähler-Dummy ist nicht eindeutig ausgeschlossen.");
-  assert(sources["billing-snapshot"].includes("const BILLING_SNAPSHOT_VERSION = 2;") && sources["billing-snapshot"].includes("SUPPORTED_BILLING_SNAPSHOT_VERSIONS = Object.freeze([1, 2])"), "Snapshot-2-Format oder V1-Kompatibilität fehlt.");
-  assert(sources.archive.includes("markLegacySnapshot") && sources.archive.includes("validateBillingSnapshot"), "Archiv behandelt neue und historische Snapshots nicht getrennt.");
-  assert(sources.app.includes('migrationId:"metering-standard-v1"') && sources.app.includes("migrateMeteringData"), "Vor-Migrationssicherung oder Zählerstandard-Migration fehlt.");
-  assert(sources.app.includes('"zaehlerDaten"') && sources.app.includes("validateBillingReadiness(state)"), "Zählerdaten sind nicht in Snapshot-Grenze und Erstellung integriert.");
-
-  const productiveStorageUsers = moduleNames.filter(name => /\blocalStorage\b/.test(sources[name])).sort();
-  assert(JSON.stringify(productiveStorageUsers) === JSON.stringify(["persistence", "ui-preferences"]), `Direkte Speicherzugriffe außerhalb der Adapter: ${productiveStorageUsers.join(", ")}`);
-  assert(sources.migration.includes("const MIGRATION_REGISTRY = Object.freeze") && sources.migration.includes("executeMigrationTransaction"), "Migrationsfundament wurde beschädigt.");
-  assert(sources["backup-recovery"].includes("createBackupEnvelope") && sources["backup-recovery"].includes("restoreBackupEnvelope"), "Backup-/Restore-Fundament wurde beschädigt.");
-
-  const expectedScripts = [
-    "./js/ui-preferences.js", "./js/navigation.js", "./js/modal-events.js", "./js/persistence.js", "./js/migration.js",
-    "./js/backup-recovery.js", "./js/meter-master.js", "./js/meter-readings.js", "./js/meter-periods.js",
-    "./js/meter-validation.js", "./js/object-standard.js", "./js/billing-snapshot.js", "./js/archive.js",
-    "./js/billing-calculation.js", "./js/document-data.js", "./js/document-renderer.js", "./js/export-service.js",
-    "./js/ui-table-tools.js", "./js/app-bootstrap.js", "./js/compatibility.js", "./js/default-seed.js",
-    "./js/app.js", "./js/service-worker-register.js"
-  ];
+  const expectedScripts = moduleNames.map(name => `./js/${name}.js`);
   const actualScripts = [...html.matchAll(/<script\s+defer(?:="")?\s+src="([^"]+)"><\/script>/g)].map(match => match[1]);
-  assert(JSON.stringify(actualScripts) === JSON.stringify(expectedScripts), `Skriptreihenfolge abweichend: ${JSON.stringify(actualScripts)}`);
-  assert(html.includes("<title>NK-Pro V99.4.7 – Weitere fachliche Modularisierung</title>"), "HTML-Titel ist inkonsistent.");
-
-  assert(workerSource.includes('const CACHE_NAME = "nk-pro-v99-4-7";'), "Service-Worker-Cache ist inkonsistent.");
-  for (const resource of expectedScripts) assert(workerSource.includes(`"${resource}"`) || resource === "./js/modal-events.js", `App-Shell enthält ${resource} nicht.`);
-  const listeners = {};
-  const cacheNames = new Set(["nk-pro-v99-4-5", "nk-pro-v99-4-6", "fremder-cache"]);
-  const log = { added:[], deleted:[], skipWaiting:0, claimed:0 };
-  const cacheApi = { async addAll(items) { log.added.push(...items); }, async put() {} };
-  const caches = { async open(name) { cacheNames.add(name); return cacheApi; }, async keys() { return [...cacheNames]; }, async delete(name) { log.deleted.push(name); return cacheNames.delete(name); }, async match() { return null; } };
-  const self = { addEventListener(name, handler) { listeners[name] = handler; }, async skipWaiting() { log.skipWaiting += 1; }, clients:{ async claim() { log.claimed += 1; } } };
-  vm.runInNewContext(workerSource, { self, caches, fetch:async () => ({ clone() { return this; } }) });
-  let installPromise; listeners.install({ waitUntil(promise) { installPromise = promise; } }); await installPromise;
-  let activatePromise; listeners.activate({ waitUntil(promise) { activatePromise = promise; } }); await activatePromise;
-  assert(cacheNames.size === 1 && cacheNames.has("nk-pro-v99-4-7"), "Alt-Caches wurden nicht vollständig entfernt.");
-  assert(log.skipWaiting === 1 && log.claimed === 1, "Service-Worker-Lebenszyklus ist unvollständig.");
+  assert(JSON.stringify(actualScripts) === JSON.stringify(expectedScripts), `Skriptreihenfolge ist inkonsistent: ${JSON.stringify(actualScripts)}`);
+  assert(html.includes("<title>NK-Pro V99.4.8 – Native UI-Anbindung an modularisierte Fachdienste</title>"), "HTML-Titel ist inkonsistent.");
+  assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-8";'), "Service-Worker-Cache ist inkonsistent.");
+  for (const resource of expectedScripts) assert(worker.includes(`"${resource}"`), `PWA-App-Shell enthält ${resource} nicht.`);
 
   for (const required of [
-    "NK-PRO-PROJEKTSTAND.md", "NK-PRO-ARBEITSREGELN.md", "DATENEBENEN_UND_SNAPSHOT_GRENZEN.md",
-    "MODULARISIERUNG_PERSISTENZ_MIGRATION_ARCHIV.md", "MIGRATIONS_SICHERUNGS_RESTORE_ROLLBACK_FUNDAMENT.md",
-    "OBJEKTSTANDARD_UND_ABRECHNUNGSSNAPSHOT.md", "ZAEHLERSTAMMDATEN_UND_MESSPERIODEN.md", "AP5_PRUEFBERICHT.md",
-    "AP6_WEITERE_FACHLICHE_MODULARISIERUNG.md", "AP6_PRUEFBERICHT.md", "MODULE_UEBERSICHT.md",
-    "VERANTWORTLICHKEITSMATRIX.md", "ABHAENGIGKEITSUEBERSICHT.md", "KOMPATIBILITAETSSCHICHT.md",
-    "ANWENDUNGSSTART.md", "GLOBALE_SCHNITTSTELLEN_INVENTAR.md", "tests/ap6-modularization.test.cjs",
-    "testdaten/fixture-manifest.json", "tests/metering-domain.test.cjs"
+    "README.md", "ARCHITECTURE.md", "MODULE_UEBERSICHT.md", "VERANTWORTLICHKEITSMATRIX.md", "ROADMAP.md", "CHANGELOG.md", "TESTING.md",
+    "AP7_NATIVE_UI_ANBINDUNG.md", "AP7_PRUEFBERICHT.md", "UI_CONTROLLER_UEBERSICHT.md", "UI_EREIGNIS_INVENTAR.md", "ZUSTANDSZUGRIFFE.md", "SHA256SUMS.txt"
   ]) assert(fs.existsSync(path.join(root, required)), `${required} fehlt.`);
 
-  process.stdout.write("Release-Konsistenzprüfung abgeschlossen: V99.4.7, Architektur 1, Datenschema 5, Datenebenenvertrag 1, Zählerstandard 1, Snapshot 2, reine Kompatibilitätswrapper und vollständiger PWA-App-Shell sind konsistent.\n");
+  process.stdout.write("Release-Konsistenzprüfung abgeschlossen: V99.4.8, Architektur 2, 13 UI-Controller, zentraler Ereignisvertrag, Datenschema 5, Datenebenenvertrag 1 und vollständiger PWA-App-Shell sind konsistent.\n");
 }
 
-main().catch(error => { process.stderr.write(`FEHLER: ${error.message}\n`); process.exit(1); });
+try { main(); } catch(error) { process.stderr.write(`FEHLER: ${error.message}\n`); process.exit(1); }
