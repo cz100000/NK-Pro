@@ -1,5 +1,54 @@
 # Changelog
 
+## V99.2.7 – Periodenstatus, Eingabestruktur und Briefoptimierung
+
+### Wohnungen und Umlagebasis
+
+- Status aus den zentralen Wohnungsstammdaten entfernt und je Abrechnungsperiode editierbar gemacht.
+- Statusübernahme beim Jahreswechsel und Erhalt beim Stammdatenabgleich ergänzt.
+- Neue physische Wohnungen starten aktiv.
+- Umlage auf alle Wohneinheiten an den vollständigen physischen Bestand gebunden; aktive Umlage an den Periodenstatus.
+- Rückwärtskompatible Migration bestehender Daten und unveränderte Archive ergänzt.
+
+### Kostenarten und Eigentümeranteil
+
+- Kostenart und Gruppe in der Haupttabelle schreibgeschützt dargestellt.
+- Eigene Kostenart im Auswahlfenster mit kontrollierter Gruppe konfigurierbar gemacht; bestehende freie IDs werden wiederverwendet.
+- Fachlogik auf stabile Kosten-IDs/interne Typen umgestellt.
+- M000 in Verbrauchs-, Umlage-, Kontroll- und Ergebnisansichten als Eigentümer/Privat ergänzt; aus Miete, Vorauszahlungsanpassung und Briefen ausgeschlossen.
+
+### Manuelle und externe Werte
+
+- Neuen Tab `manuellewerte` unter „2 Einnahmen & Verbräuche“ ergänzt.
+- Quellenmodi Zählerstände, Verbrauchsmenge, direkter Eurobetrag und externe Einzelabrechnung ergänzt.
+- Doppelberechnung durch eindeutige Quelle je Kostenart verhindert.
+- Summenabgleich und Warnung bei Quellenwechsel ergänzt.
+- Bestehende `umlageInputs` verlustfrei migriert.
+- Quelldatenerfassung aus der Nebenkostenumlage entfernt und durch einen Berechnungsnachweis je Wohnung ersetzt.
+
+### Zählerstände und Historie
+
+- Technischen Einleitungssatz entfernt.
+- Zählerdaten bei Sortierung, Stammdatenabgleich und Mieterwechsel über stabile Mieter-/Wohnungs-IDs gesichert.
+- Vorjahresendstände als neue Anfangsstände übernommen und neue Endstände geleert.
+- Historie dynamisch um archivierte NK-Pro-Jahre erweitert und Quellen ausgewiesen.
+- Übernahmestatus sowie fehlende oder auffällige Vorjahreswerte sichtbar gemacht.
+
+### Abrechnungsbrief
+
+- Festes Fensterbrief-Anschriftfeld nach üblichem DIN-5008-Raster ergänzt.
+- Einseitige Ausgabe ohne tatsächliche NK-Anpassung optimiert.
+- Zweite Seite nur bei aktivierter tatsächlicher Vorauszahlungsänderung ab 0,01 Euro oder echtem Platzmangel ergänzt.
+- Grußformel und Unterschrift auf die letzte verwendete Seite gelegt.
+- Vorschau- und Drucklayout vereinheitlicht und auf Überlappungen geprüft.
+
+### Technik und Prüfung
+
+- Datenbankschema auf 5 erhöht.
+- PWA-Cache auf `nk-pro-v99-2-7` erhöht.
+- Navigation um den freigegebenen dritten Unterpunkt in Phase 2 ergänzt; bestehendes V99.2.5-Design beibehalten.
+- JavaScript-Syntax, Browser-Rendering, Migration, Berechnung und Drucklogik automatisiert geprüft.
+
 ## V99.2.6 – Zähler-, Status- und Umlageoptimierung
 
 ### Seitenstatus und Prüfung

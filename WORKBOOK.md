@@ -1,4 +1,4 @@
-# WORKBOOK – NK-Pro V99.2.6
+# WORKBOOK – NK-Pro V99.2.7
 
 Dieses Dokument enthält die verbindlichen technischen Regeln für die weitere Entwicklung von NK-Pro.
 
@@ -29,7 +29,7 @@ Verbindliche sichtbare Struktur:
    - Wohnungen mit Haus-Icon
 5. **ABRECHNUNG**
    - 1 Grundlagen: Mieter & Wohnungen; Kostenarten
-   - 2 Einnahmen & Verbräuche: Miete & Vorauszahlungen; Zählerstände
+   - 2 Einnahmen & Verbräuche: Miete & Vorauszahlungen; Zählerstände; Manuelle & externe Werte
    - 3 Berechnung: Nebenkostenumlage; Neue Vorauszahlungen
    - 4 Prüfung & Ausgabe: Qualitätsprüfung; Abrechnungsbriefe; Export
 6. **SYSTEM**
@@ -220,3 +220,50 @@ Vor Freigabe ist mindestens zu prüfen:
 - keine Überlagerung oder abgeschnittene Inhalte,
 - stabil bei Navigation, programmgesteuertem Wechsel, Teilrendering, Speichern und Laden,
 - responsive Darstellung auf großen, mittleren und schmalen Ansichten.
+
+
+## Verbindliche Ergänzungen V99.2.7
+
+### Physischer Bestand und Periodenstatus
+
+- `state.stammdaten.wohnungen` enthält ausschließlich physische Stammdaten und keinen Abrechnungsstatus.
+- `state.wohnungen[].status` ist ein periodenbezogener Wert der geöffneten Abrechnung.
+- Stammdatenabgleich und Migration ordnen Wohnungen über die stabile Wohnungs-ID zu und dürfen einen vorhandenen Periodenstatus nicht überschreiben.
+- Beim Jahreswechsel wird der Status des Vorjahres übernommen. Eine neu auftauchende physische Wohnung erhält `aktiv`.
+- „Verteilung auf alle Wohneinheiten“ verwendet sämtliche physischen Wohnungen der Abrechnung, auch unbewohnte oder inaktive. „Verteilung nur auf aktive Wohneinheiten“ filtert ausschließlich nach Periodenstatus.
+
+### Kostenidentität und freie Kostenarten
+
+- Kosten-ID, Standardbezeichnung und Fachgruppe einer Standardkostenart sind unveränderliche Identitätsdaten.
+- Eigene Kostenarten verwenden ausschließlich bereits vorgesehene freie Kosten-IDs. Eine UI-Aktion darf keine neue fortlaufende ID erzeugen.
+- Anzeigenamen freier Kostenarten steuern keine Fachlogik. Berechnung, Briefgruppierung und Zählerverhalten richten sich nach ID, Fachgruppe und Eingabequelle.
+
+### Eigentümer-/Privatrolle
+
+- Eigentümer-/Privatzeilen gehören zur vollständigen Umlagebasis und müssen in Summen- und Kontrollansichten erscheinen.
+- Sie werden nicht als Mieterforderung behandelt und erhalten keine Mieterbriefe, Mietwerte oder Vorauszahlungsanpassungen.
+- Die Summenidentität lautet: Mieteranteile + Eigentümer-/Privatanteile + offene/nicht zugeordnete Anteile = verteilte Gesamtkosten.
+
+### Eingabequellen
+
+Je Kostenart ist genau eine Quelle aktiv:
+
+1. `Zählerstände` – aus Anfang/Ende berechnete Einheiten,
+2. `Verbrauchsmenge` – manuell erfasste Einheiten,
+3. `Direkter Eurobetrag` – fertiger Kostenanteil ohne weitere Verteilung,
+4. `Externe Einzelabrechnung` – fertige Einzelanteile mit Abgleich zur Gesamtrechnung.
+
+Ein Quellenwechsel mit vorhandenen Werten verlangt eine bewusste Bestätigung. Werte werden nicht stillschweigend gelöscht. Die Berechnung darf dieselben Daten niemals aus zwei Quellen addieren.
+
+### Zählerfortschreibung
+
+- Zählerwerte sind primär über Mieter-ID und ersatzweise über Wohnungs-ID zuzuordnen; die Arrayposition ist keine Identität.
+- Bei einem Mieterwechsel bleibt der Vorjahresendstand an der Wohnung und wird zum Anfangsstand des neuen Nutzers.
+- Archivierte Zählerstände sind unveränderliche Historienquellen. Excel-Altdaten und NK-Pro-Archivdaten bleiben als unterschiedliche Quellen kenntlich.
+
+### Brieflayout
+
+- Die Anschriftzone besitzt feste A4-Koordinaten für Fensterumschläge und darf nicht durch die Länge des Absenderkopfs verschoben werden.
+- Eine Vorauszahlungsseite wird nur erzeugt, wenn die Ausgabe aktiviert ist und sich die monatliche Summe des konkreten Empfängers um mindestens 0,01 Euro ändert.
+- Platzmangel wird am gerenderten A4-Blatt gemessen. Eine feste Zeichenzahl ist nicht die alleinige Seitenumbruchregel.
+- Grußformel, Signatur und Fußzeile dürfen weder überlappen noch auf eine unbeabsichtigte Leerseite geraten.
