@@ -1,117 +1,119 @@
-# NK-Pro V99.3.0 – Navigation und vollständige Qualitätsprüfung
+# NK-Pro V99.4.0
 
-V99.3.0 baut auf V99.2.9 auf. Der Tab „Abrechnungsstatus“ wurde vollständig entfernt, Stammdaten stehen nun oberhalb der Abrechnungsübersicht, und die Qualitätsprüfung übernimmt Status-, Finalisierungs- und Gesamtprüffunktionen. K002 Wasserversorgung erscheint nicht mehr unter „Manuelle & externe Werte“, sondern wird ausschließlich aus Zählerständen gespeist.
+Lokale, frameworkfreie Browseranwendung zur Erstellung, Prüfung, Archivierung und Ausgabe von Nebenkostenabrechnungen.
 
-## Freigabe
+## Aktueller Stand
 
-- Datenschema: 5
-- JavaScript-Syntax: 5/5 bestanden
-- Chromium-/Playwright-Tests: 15/15 bestanden
-- Browserkonsole und Seitenfehler: fehlerfrei
-- Berechnungs- und Referenzfälle: bestanden
-- Export-/Import-, Persistenz- und PWA-Tests: bestanden
+| Merkmal | Stand |
+|---|---|
+| App-Version | V99.4.0 |
+| Versionsname | UX-Grundgerüst und Arbeitskontext |
+| Datenschema | 5 – unverändert |
+| PWA-Manifest | 99.4.0 |
+| Service-Worker-Cache | `nk-pro-v99-4-0` |
+| Produktive Technik | HTML, CSS, JavaScript |
+| Framework / Buildsystem | keines / keines |
+| Browser-Tests | Playwright 1.61.1 + Chromium |
 
+V99.4.0 setzt Phase 1 der Roadmap um. Fachlogik, Berechnung, Datenmodell, Migrationen, Referenzdaten sowie Import- und Exportformate bleiben unverändert.
 
-NK-Pro ist eine lokal nutzbare HTML-/JavaScript-Anwendung zur Erstellung von Nebenkostenabrechnungen. Sie kann direkt im Browser oder als GitHub-Pages-PWA betrieben werden. Arbeitsdaten bleiben im Browser und sollten regelmäßig als JSON gesichert werden.
+## Neue Bedienstruktur
 
-## Wichtigste Änderungen
+Die Anwendung startet auf einer reinen Arbeitsweiche mit genau zwei Einstiegen:
 
-### Wohnungsbestand und Periodenstatus
+- **Objekt vorbereiten**
+- **Nebenkosten abrechnen**
 
-Der zentrale Wohnungsbestand beschreibt nur noch die tatsächlich vorhandenen Wohnungen. Der Status **aktiv/inaktiv** wird je Abrechnungsperiode im Tab **Mieter & Wohnungen** festgelegt. Beim Jahreswechsel wird der Status aus dem Vorjahr übernommen; neu hinzugefügte Wohnungen starten aktiv. Stammdatenabgleiche überschreiben den Periodenstatus nicht.
+Die Sidebar ist in vier Accordion-Gruppen gegliedert:
 
-Die Umlageschlüssel sind eindeutig getrennt:
+1. Objekt vorbereiten
+2. Nebenkosten abrechnen
+3. Archiv
+4. Extras
 
-- **alle Wohneinheiten** verwendet den vollständigen physischen Bestand,
-- **nur aktive Wohneinheiten** verwendet ausschließlich die in der aktuellen Abrechnung aktiven Wohnungen.
+Es gibt 16 funktionale Navigationsziele plus die Landingpage. Alle bisherigen Funktionen bleiben erreichbar. Der Bereich „Aktive Abrechnung“ wird nur angezeigt, wenn eine konkrete Abrechnung geöffnet ist. Er zeigt Objekt, Jahr und einen der Statuswerte **Bearbeitung**, **Nur Ansicht** oder **Finalisiert**.
 
-### Kostenarten
+Die derzeitige Architektur besitzt noch keine getrennte Objektstandard-Domäne und keine eigenständige Zählerverwaltung. V99.4.0 bildet diese noch nicht vorgetäuscht nach; die datenmodellrelevante Trennung bleibt Phase 2 beziehungsweise Phase 3.
 
-Kostenart, Kosten-ID und Gruppe sind in der Haupttabelle nicht mehr frei veränderbar. Eigene Kostenarten werden im Auswahlfenster benannt und einer kontrollierten Gruppe zugeordnet. Bestehende freie IDs werden wiederverwendet. Fachlogik stützt sich auf stabile IDs und interne Typen statt auf zufällige Wörter im Anzeigenamen.
+## Anwendung starten
 
-### Eigentümer-/Privatanteil M000
+### Direkt lokal
 
-M000 bleibt Bestandteil der vollständigen Kosten- und Verbrauchsverteilung und wird in Kontroll- und Ergebnisansichten als **Eigentümer/Privat** ausgewiesen. M000 wird weiterhin nicht als normaler Mieter bei Kaltmiete, Mietervorauszahlungen, Vorauszahlungsanpassung oder Briefausgabe behandelt.
+`index.html` in einem modernen Browser öffnen. Die Fachanwendung funktioniert auch über `file:`. Service Worker, Offline-Cache und installierbare PWA benötigen HTTPS oder einen lokalen Webserver.
 
-### Neuer Bereich „Manuelle & externe Werte“
-
-Unter **2 Einnahmen & Verbräuche** gibt es einen dritten Tab. Je Kostenart wird genau eine Quelle gewählt:
-
-- Zählerstände,
-- manuelle Verbrauchsmenge,
-- direkter Eurobetrag,
-- externe Einzelabrechnung.
-
-Das Tool blendet nur passende Eingabefelder ein, warnt vor einem Quellenwechsel mit vorhandenen Werten und kontrolliert Summen externer Einzelabrechnungen. Bestehende Werte aus älteren Versionen werden übernommen.
-
-### Berechnung
-
-Der Bereich **3 Berechnung** enthält keine Quelldatenerfassung mehr. Er zeigt Ergebnis je Mieter beziehungsweise Eigentümer, Umlagekontrolle nach Kostenart, Berechnungsnachweis je Wohnung sowie Plausibilitätsprüfungen.
-
-### Zählerstände und Historie
-
-Zählerwerte werden bei Stammdatenabgleich, Mieterreihenfolge und Jahreswechsel über stabile Mieter- und Wohnungs-IDs zugeordnet. Ein Vorjahresendstand wird zum neuen Anfangsstand; der neue Endstand bleibt leer. Die Historie kombiniert die Excel-Altdaten mit abgeschlossenen NK-Pro-Abrechnungen und zeigt die jeweilige Quelle. Fehlende oder auffällige Übernahmen werden gemeldet.
-
-### Abrechnungsbriefe
-
-Das Anschriftfeld ist fest für einen üblichen DIN-5008-Fensterbrief positioniert. Ohne tatsächliche Änderung der NK-Vorauszahlung und ohne überlangen Zusatztext bleibt der Brief möglichst einseitig. Eine Änderung ab 0,01 Euro erzeugt bei aktivierter Ausgabe eine zweite Seite mit der Vorauszahlungsanpassung. Längere Zusatztexte werden anhand des tatsächlichen Platzbedarfs auf ein Zusatzblatt verschoben. Grußformel und Unterschrift stehen immer auf der letzten verwendeten Seite.
-
-## Start und Veröffentlichung
-
-### Lokal
-
-`index.html` in einem modernen Browser öffnen. Service Worker und installierbare PWA funktionieren verlässlich über HTTPS oder einen lokalen Webserver.
-
-### GitHub Pages
-
-Den Inhalt der ZIP-Datei unverändert in das Veröffentlichungsverzeichnis kopieren und GitHub Pages aktivieren. `.nojekyll` verhindert eine Jekyll-Verarbeitung. Der Service Worker verwendet den Cache `nk-pro-v99-2-9` und entfernt ältere NK-Pro-Caches beim Aktivieren.
-
-## Dateien
-
-- `index.html` – vollständige Anwendung
-- `service-worker.js` – Offline-Cache
-- `manifest.webmanifest` – PWA-Metadaten
-- `README.md` – Nutzung und Veröffentlichung
-- `CHANGELOG.md` – Versionsverlauf
-- `WORKBOOK.md` – verbindliche Fach- und Entwicklungsregeln
-- `UI_ARCHITEKTUR_V99_2_8.md` – technische Architektur
-- `V99_2_8_Pruefbericht.json` – strukturierter Prüfbericht
-- `SHA256SUMS.txt` – Prüfsummen des ZIP-Inhalts
-- `package.json` / `package-lock.json` – reproduzierbare Testabhängigkeiten und Befehle
-- `playwright.config.cjs` – Chromium-/Playwright-Konfiguration
-- `tests/` – automatisierte Browser- und Regressionstests
-- `testdaten/` – unveränderliche Referenzfälle
-- `tools/` – Syntaxprüfung und lokaler Testserver
-
-## Prüfung
-
-V99.2.9 wird weiterhin mit einer dauerhaft mitgelieferten Playwright-Testumgebung geprüft. Die Freigabe umfasst JavaScript-Syntaxprüfung, Browserkonsole, Seitenfehler, Navigation, lokale Persistenz, Sicherungs-Rundlauf, Migration, interne Audits und Service-Worker-Cache. Die fachliche Berechnungslogik und das Datenschema bleiben gegenüber V99.2.7 unverändert.
-
-## Datenschutz und Sicherung
-
-NK-Pro arbeitet lokal im Browser. Browserdaten können durch Bereinigung, Profilwechsel oder Geräteverlust verloren gehen. Vor Migrationen, Jahreswechseln und größeren Bearbeitungsschritten sollte eine vollständige JSON-Sicherung extern gespeichert werden.
-
-
-## Strukturierung V99.2.9
-
-Die bisher in `index.html` eingebetteten produktiven Styles und Skripte wurden ohne fachliche Änderung in klar benannte Dateien ausgelagert:
-
-- `assets/app.css` – vollständige Anwendungs- und Druckdarstellung,
-- `js/navigation.js` – Navigations- und Arbeitsbereichssteuerung,
-- `js/modal-events.js` – globale Modalereignisse,
-- `js/app.js` – bestehende Fach-, Daten- und Darstellungslogik,
-- `js/service-worker-register.js` – Registrierung und Aktualisierung der PWA.
-
-Die Anwendung bleibt frameworkfrei und benötigt keinen Buildprozess. `index.html` enthält nur noch Struktur und Verweise auf die ausgelagerten Dateien.
-
-## Automatisierte Freigabeprüfung V99.2.9
-
-Die Testumgebung ist nur für Entwicklung und Freigabe erforderlich; die eigentliche Anwendung bleibt weiterhin ohne Installation direkt im Browser nutzbar.
+### Lokaler Testserver
 
 ```bash
-npm install
-npx playwright install chromium
-npm test
+npm ci
+node tools/static-server.cjs
 ```
 
-Alternativ kann über die Umgebungsvariable `CHROMIUM_EXECUTABLE_PATH` ein vorhandenes Chromium, Google Chrome oder Microsoft Edge verwendet werden. Eine Version ist nur freigabefähig, wenn Syntaxprüfung und alle Playwright-Tests ohne Fehler abgeschlossen werden. Der HTML-Bericht liegt anschließend unter `test-results/html/`.
+Danach: `http://127.0.0.1:4173`
+
+## Datenhaltung und Sicherung
+
+NK-Pro speichert den Arbeitsstand im Browser-`localStorage`.
+
+- Hauptdatenstand mit Prüfsumme,
+- vorheriger gültiger Hauptstand als Recovery,
+- lesbare Legacy-Speicherkeys,
+- Gesamt- und Abrechnungs-JSON als externe Sicherung.
+
+Vor Jahreswechseln, Importen, Migrationen und größeren Änderungen ist eine externe Gesamt-JSON-Sicherung erforderlich. Eine neue Schemaversion darf gemäß `WORKBOOK.md` erst nach Einführung einer automatischen Vor-Migrationssicherung und eines getesteten Wiederherstellungswegs entstehen.
+
+## Projektstruktur
+
+| Pfad | Inhalt |
+|---|---|
+| `index.html` | Landingpage, Sidebar und statische Anwendungsstruktur |
+| `assets/app.css` | Bildschirm-, Responsive- und Druckdarstellung |
+| `js/app.js` | Fach-, Daten-, Archiv-, Render-, Brief- und Exportlogik |
+| `js/navigation.js` | Accordion-Navigation, Sidebar und Arbeitskontext |
+| `js/modal-events.js` | globale Modalereignisse |
+| `js/service-worker-register.js` | PWA-Registrierung und Updatehinweis |
+| `service-worker.js` | App-Shell und Offline-Cache |
+| `manifest.webmanifest` | PWA-Metadaten |
+| `tests/` | Playwright- und Regressionstests |
+| `testdaten/` | sechs unveränderte Referenzdatensätze |
+| `tools/` | Syntaxprüfung und statischer Testserver |
+
+## Tests
+
+```bash
+npm ci
+npm run test:syntax
+CHROMIUM_EXECUTABLE_PATH=/pfad/zu/chromium npm run test:browser
+```
+
+Freigabeergebnis V99.4.0:
+
+- JavaScript-Syntax: **5/5 bestanden**,
+- Playwright/Chromium: **19/19 bestanden**,
+- Browserkonsole und Seitenfehler: **fehlerfrei**,
+- Landingpage, Navigation, Accordion, Tastatur und ARIA: **bestanden**,
+- Status Bearbeitung / Nur Ansicht / Finalisiert: **bestanden**,
+- Persistenz, Recovery und JSON-Rundlauf: **bestanden**,
+- Referenzfälle und Schema-5-Migration: **bestanden**,
+- Manifest, Service Worker und Cachewechsel: **bestanden**,
+- Desktop- und Mobil-Sichtprüfung: **bestanden**.
+
+Ein echter installierter PWA-/Offline-Neustart über HTTPS oder localhost konnte in der Ausführungsumgebung wegen einer Browser-Netzwerkrichtlinie nicht durchgeführt werden. Die dafür relevanten statischen und simulierten Service-Worker-Prüfungen sind grün.
+
+## Verbindliche Projektdokumente
+
+- `DEVELOPMENT_BASELINE.md` – unveränderte Analyse der Ausgangsversion V99.3.0
+- `CHANGELOG.md`
+- `WORKBOOK.md`
+- `DEVELOPMENT_GUIDE.md`
+- `UX_GUIDE.md`
+- `ARCHITECTURE.md`
+- `TESTING.md`
+- `ROADMAP.md`
+- `TECH_DEBT.md`
+- `GITHUB_RELEASE_TEMPLATE.md`
+- `UI_ARCHITEKTUR_V99_4_0.md`
+- `V99_4_0_GITHUB_RELEASE.md`
+- `V99_4_0_Pruefbericht.json`
+- `SHA256SUMS.txt`
+
+Historische Abrechnungen besitzen weiterhin Vorrang vor Komfort, Vereinfachung und Neuentwicklung.

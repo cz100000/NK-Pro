@@ -1,98 +1,181 @@
-# NK-Pro Architektur-Roadmap
+# NK-Pro – Roadmap
 
-## Ziel
+**Basis:** Development Baseline vom 12. Juli 2026  
+**Prinzip:** konservative Erweiterung, historische Daten zuerst
 
-NK-Pro soll langfristig fachlich vollständig und technisch schlicht bleiben. Die Weiterentwicklung erfolgt schrittweise und ohne Verlust bestehender Fachfälle.
+## Statuslegende
 
-## Phase A – Datenmodell dokumentieren
+- **Abgeschlossen** – umgesetzt und geprüft
+- **Geplant** – fachliches Ziel, noch nicht umgesetzt
+- **Entscheidung erforderlich** – Stop-Regel vor Umsetzung
+- **Später** – sinnvoll, aber nicht Voraussetzung des nächsten Schritts
 
-Ziele:
+## Phase 0 – Development Baseline
 
-- zentrale Datenobjekte und Felder dokumentieren
-- Pflichtfelder, optionale Felder und Standardwerte kennzeichnen
-- Archivdaten und aktuelle Abrechnung klar unterscheiden
-- Beziehungen zwischen Mieter, Wohnung, Kostenart und Abrechnungsjahr beschreiben
-- verbindliche Quellen für berechnungsrelevante Werte festhalten
+**Status: Abgeschlossen**
 
-Ergebnis:
+- vollständige Bestandsanalyse,
+- verbindliche Dokumentationsstruktur,
+- Entwicklungs- und Stop-Regeln,
+- UX-Zielbild,
+- Architektur- und Datenmodellbeschreibung,
+- Test- und Releaseprozess,
+- Risiko- und Tech-Debt-Register,
+- keine funktionalen Änderungen,
+- vollständige Regression.
 
-- `DATA_MODEL.md`
-- Datenmodellprüfung im Selbsttest
-- keine Änderung der Berechnungslogik
+## Phase 1 – UX-Grundgerüst ohne Datenmodelländerung
 
-## Phase B – Berechnungslandkarte erstellen
+**Status: Abgeschlossen in V99.4.0**
 
-Ziele:
+Ziel: Das neue Bedienmodell mit möglichst geringer technischer Wirkung umsetzen.
 
-- alle fachlichen Berechnungsfunktionen inventarisieren
-- Ein- und Ausgaben dokumentieren
-- Zustandsänderungen innerhalb von Berechnungsfunktionen identifizieren
-- doppelte oder parallele Formeln erkennen
+### Umfang
 
-Ergebnis:
+- Landingpage mit genau zwei Einstiegen,
+- Navigation in die Gruppen „Objekt vorbereiten“, „Nebenkosten abrechnen“, „Archiv“, „Extras“ überführen,
+- vorhandene Tabs und Funktionen wiederverwenden,
+- Bereich „Aktive Abrechnung“ nur bei tatsächlich geöffneter Abrechnung anzeigen,
+- Statuswerte auf Bearbeitung, Nur Ansicht und Finalisiert vereinheitlichen,
+- alle Funktionen erreichbar halten.
 
-- `CALCULATION_MAP.md`
-- Klassifizierung: rein / zustandsverändernd / UI-gekoppelt
-- priorisierte Extraktionsliste
+### Nicht Bestandteil
 
-## Phase C – Reine Berechnungsfunktionen
+- kein neues Datenschema,
+- keine Zähler-ID-Migration,
+- keine Änderung der Berechnung,
+- keine Änderung von Import-/Exportformaten,
+- keine Änderung historischer Archive.
 
-Ziele:
+### Freigabekriterien
 
-- ausgewählte Berechnungen schrittweise in reine Funktionen überführen
-- Ergebnisse gegen feste Referenzdatensätze vergleichen
-- keine Fachformel in der Oberfläche duplizieren
+- neue Navigationstests,
+- Tastatur- und ARIA-Prüfung,
+- alle bisherigen Tests weiterhin grün und UX-Suite erweitert,
+- identische Referenzergebnisse,
+- Runtime-Daten unverändert.
 
-Vorgehen:
+## Phase 2 – Objektstandard und Abrechnungssnapshot
 
-1. kleine Berechnung auswählen
-2. Referenzwerte festhalten
-3. reine Funktion einführen
-4. bisherigen Aufruf ersetzen
-5. Ergebnisgleichheit prüfen
-6. nächste Berechnung erst danach bearbeiten
+**Status: Entscheidung erforderlich**
 
-## Phase D – Oberfläche entkoppeln
+Ziel: Standards für neue Abrechnungen formal und technisch von bestehenden Abrechnungen trennen.
 
-Ziele:
+### Vor Umsetzung zu entscheiden
 
-- direkte Fachlogik aus Event-Handlern entfernen
-- verbleibende Inline-Handler schrittweise zentralisieren
-- Renderfunktionen read-only halten
-- Abhängigkeiten zwischen Tabs dokumentieren
+- bestehendes `stammdaten`-Modell erweitern oder neue explizite `objektStandard`-Struktur einführen,
+- vollständiger Snapshot oder referenzierte Definitionen mit Versionierung,
+- Behandlung bestehender Abrechnungen,
+- Behandlung archivierter Datensätze,
+- Import-/Exportkompatibilität.
 
-## Phase E – Doppelungen konsolidieren
+### Mindestanforderungen
 
-Ziele:
+- zwei Lösungswege mit Vor- und Nachteilen,
+- automatische Vor-Migrationssicherung,
+- Rollback,
+- Test „Standardänderung verändert keine bestehende Abrechnung“,
+- dokumentierte Nutzerentscheidung im WORKBOOK.
 
-- Dashboard, Qualitätsprüfung, Briefe und Export nutzen dieselben Ergebnisobjekte
-- doppelte Status- und Plausibilitätsregeln entfernen
-- CSS nur nach visuellen Vergleichstests konsolidieren
+## Phase 3 – Zählerverwaltung und Zählerstände trennen
 
-## Phase F – Langzeit-Regression
+**Status: Entscheidung erforderlich**
 
-Ziele:
+Ziel: dauerhafte Zähleridentität und klare Trennung von Stammdaten und Messwerten.
 
-- feste Referenzdatensätze für Standardszenarien
-- Mieterwechsel
-- Leerstand
-- Eigentümeranteil
-- Wasserfortschreibung
-- manuelle Umlage
-- Finalisierung und Wiederbearbeitung
-- Import, Export und Rückfallwiederherstellung
-- Brief- und Druckausgabe
+### Zielmodell
 
-## Prioritätsregel
+**Zählerverwaltung**
 
-Neue Fachfunktionen dürfen die Architektur-Roadmap nicht dauerhaft verdrängen.
+- Zähler-ID,
+- Zählernummer,
+- Typ,
+- Einheit,
+- Zuordnung,
+- Einbau,
+- Ausbau,
+- Status.
 
-Für jeweils höchstens zwei Funktionsversionen soll mindestens eine Architektur- oder Testmaßnahme folgen, sofern relevante technische Schulden bestehen.
+**Zählerstände**
 
-## Nächste geplante Schritte
+- Zähler-ID,
+- Abrechnungs-/Periodenbezug,
+- Anfang,
+- Ende,
+- Verbrauch,
+- Ablesedatum,
+- Quelle.
 
-1. V95 – Workflow und Benutzerführung ohne neue Rechenlogik
-2. danach Datenmodell-Dokumentation
-3. Berechnungslandkarte
-4. erste kleine Extraktion einer reinen Berechnungsfunktion
-5. vollständiger Referenz- und Browservergleich
+### Kritische Fragen
+
+- Ableitung stabiler IDs für vorhandene Wasser- und generische Zähler,
+- Zählerwechsel innerhalb eines Jahres,
+- Zuordnung bei Mieterwechsel,
+- Erhalt historischer Excel-Werte,
+- Umgang mit Hauszählern,
+- Migration bestehender `waterMeters`, `meterReadings` und `waterMeterHistory`.
+
+## Phase 4 – Migrations- und Sicherungsfundament
+
+**Status: Entscheidung erforderlich**
+
+Ziel: jede Migration reproduzierbar, rückgängig machbar und automatisch gesichert.
+
+### Geplant
+
+- Vor-Migrationssnapshot mit eigener ID,
+- unveränderliche Sicherungsmetadaten,
+- Migrationsplan-Registry,
+- Validierung vor und nach jedem Schritt,
+- definierter Restore-Pfad,
+- Archiv-Migrationsstrategie,
+- automatische Testmatrix über alle unterstützten Schemastände.
+
+Diese Phase kann vor Phase 2 oder 3 vorgezogen werden, wenn dort eine Schemamigration erforderlich wird.
+
+## Phase 5 – Schrittweise technische Modularisierung
+
+**Status: Später**
+
+Ziel: Risiken des monolithischen `js/app.js` reduzieren, ohne Framework oder Buildsystem.
+
+### Reihenfolge
+
+1. reine Hilfsfunktionen,
+2. Speicher und Integrität,
+3. Migrationen,
+4. Archiv,
+5. Zähler,
+6. Briefe und Druck,
+7. Rendering.
+
+Jeder Schritt muss die bestehenden globalen Schnittstellen erhalten oder kontrolliert migrieren. Keine gleichzeitige Fachänderung.
+
+## Phase 6 – CSS- und Druckkonsolidierung
+
+**Status: Später**
+
+- gemeinsame Komponenten dokumentieren,
+- Spezifität schrittweise reduzieren,
+- `!important`-Regeln gezielt abbauen,
+- visuelle Regressionen ergänzen,
+- Druck- und Fensterbriefregeln separat schützen.
+
+## Phase 7 – Datenschutzgerechte Verteilung
+
+**Status: Entscheidung erforderlich**
+
+Ziel: klare Trennung zwischen produktivem persönlichem Datenstand und veröffentlichbarer Anwendung.
+
+Mögliche Wege:
+
+- neutrale leere Auslieferung plus separater Import,
+- anonymisierte Demo-Daten,
+- privates Repository,
+- getrennte Testfixtures ohne reale Personen- oder Bankdaten.
+
+## Nächster empfohlener Schritt
+
+Vor Phase 2 ist die Stop-Regel auszuführen. Zu entscheiden ist, ob der Objektstandard innerhalb der vorhandenen `stammdaten`-Struktur erweitert oder als neue explizite Struktur eingeführt wird. Die Entscheidung muss Snapshot-Grenzen, Archive, Import/Export, Vor-Migrationsbackup und Wiederherstellung gemeinsam behandeln.
+
+Bis zu dieser Entscheidung erfolgen keine funktionalen Änderungen an Objektstandards, Kostenarten, Umlageschlüsseln oder Zählern.

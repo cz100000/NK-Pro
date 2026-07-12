@@ -11,7 +11,7 @@ test("Speichern und erneutes Laden erhalten den Datenstand samt Prüfsumme", asy
 
   const saved = await page1.evaluate(() => {
     const tenant = state.mieter.find(item => item.id === "M001");
-    tenant.bemerkung = "Playwright-Persistenztest V99.3.0";
+    tenant.bemerkung = "Playwright-Persistenztest V99.4.0";
     const ok = saveData();
     const stored = readStoredDataResult(STORAGE_KEY);
     return {
@@ -33,7 +33,7 @@ test("Speichern und erneutes Laden erhalten den Datenstand samt Prüfsumme", asy
   const runtime2 = attachRuntimeGuards(page2);
   await openFreshApp(page2, saved.entries);
   const note = await page2.evaluate(() => state.mieter.find(item => item.id === "M001")?.bemerkung);
-  expect(note).toBe("Playwright-Persistenztest V99.3.0");
+  expect(note).toBe("Playwright-Persistenztest V99.4.0");
   runtime2.assertClean();
   await context2.close();
 });

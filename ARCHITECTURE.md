@@ -1,127 +1,266 @@
-# NK-Pro Architekturgrundsätze
+# NK-Pro – Architecture
 
-## Leitgedanke
+**Ist-Stand:** V99.4.0  
+**Datenschema:** 5  
+**Architekturprinzip:** statische, lokale, frameworkfreie Browseranwendung
 
-> **Fachlich vollständig, technisch schlicht.**
+## 1. Systemkontext
 
-NK-Pro soll alle für eine korrekte Nebenkostenabrechnung notwendigen Fachfälle abbilden, ohne dieselben Regeln mehrfach oder unnötig verteilt zu implementieren.
+NK-Pro läuft vollständig im Browser. Die Anwendung benötigt für den produktiven Betrieb weder Server noch Datenbank. Ein Webserver oder GitHub Pages ist nur für PWA- und Service-Worker-Funktionen erforderlich.
 
-## Zielarchitektur
+```mermaid
+flowchart LR
+  U[Nutzer] --> UI[index.html + app.css]
+  UI --> NAV[navigation.js]
+  UI --> APP[app.js]
+  APP --> LS[Browser localStorage]
+  APP --> FILES[JSON / CSV / TXT / HTML Downloads]
+  FILES --> APP
+  UI --> SW[Service Worker]
+  SW --> CACHE[Browser Cache Storage]
+```
 
-### 1. Datenmodell
+## 2. Laufzeitkomponenten
 
-Verantwortlich für:
+### `index.html`
 
-- Abrechnungsjahre und Abrechnungszeiträume
-- Wohnungen und Wohneinheiten
-- Mieter und Mietverhältnisse
-- Kostenarten
-- Zählerstände
-- Vorauszahlungen
-- Archiv- und Versionsmetadaten
+- enthält die vollständige semantische Grundstruktur,
+- enthält Landingpage, Sidebar und 16 funktionale Tabs,
+- enthält Dialogcontainer und statische Abschnittshüllen,
+- bindet CSS und JavaScript ausschließlich extern ein,
+- verwendet weiterhin zahlreiche Inline-Ereignisattribute als Bindung an globale Funktionen.
 
-Regeln:
+### `assets/app.css`
 
-- Das Datenmodell enthält Datenstrukturen, Standardwerte, Validierung und notwendige Migrationen.
-- Migrationen laufen nur beim Laden oder Import, nicht während eines normalen Renderprozesses.
-- Historische Archivdaten werden nicht still verändert.
-- Eine Datenstruktur erhält nur eine verbindliche Quelle je fachlichem Wert.
+- enthält Basisdesign, Navigation, Tabellen, Formulare und Dialoge,
+- enthält Responsive-Regeln,
+- enthält vollständige Brief- und Druckdarstellung,
+- enthält historisch gewachsene, versionsbezogene Regelblöcke.
 
-### 2. Berechnungslogik
+### `js/navigation.js`
 
-Verantwortlich für:
+- verwaltet die vier Accordion-Gruppen Objekt, Abrechnung, Archiv und Extras,
+- speichert genau einen offenen Navigationszweig,
+- verwaltet Sidebar-Zustand,
+- aktiviert Abrechnungsdetails nur bei vorhandenem Abrechnungsstand,
+- zeigt den Abrechnungskontext nur bei geöffneter Abrechnung,
+- leitet Objekt, Jahr und Status aus vorhandenen App-Funktionen ab,
+- ruft globale App-Funktionen auf.
 
-- Umlageberechnungen
-- Verbrauchsberechnungen
-- Vorauszahlungssummen
-- Mieter- und Eigentümeranteile
-- Salden
-- Plausibilitäts- und Qualitätsprüfungen
-- Daten für Briefe und Berichte
+### `js/modal-events.js`
 
-Regeln:
+- schließt den Kostenartendialog bei Klick auf den Hintergrund,
+- schließt ihn mit Escape.
 
-- Berechnungsfunktionen sollen möglichst reine Funktionen sein.
-- Sie lesen Eingabedaten und liefern Ergebnisse zurück.
-- Sie verändern nicht nebenbei den globalen Zustand.
-- Eine Fachregel wird nur einmal implementiert.
-- Dashboard, Qualitätsprüfung, Briefe und Exporte verwenden dieselben Berechnungsergebnisse.
-- Keine parallelen Ersatzformeln in der Oberfläche.
+### `js/app.js`
 
-### 3. Oberfläche
+Enthält derzeit fast alle Kernverantwortlichkeiten:
 
-Verantwortlich für:
+- eingebettete Ausgangsdaten,
+- Version und Schemaversion,
+- Speicherung und Prüfsumme,
+- Importprüfung,
+- Migration und Normalisierung,
+- Stammdaten und Abrechnungssynchronisation,
+- Archivierung und Archivansicht,
+- Kostenarten und Vorauszahlungen,
+- Zähler und Verbräuche,
+- Umlage und Ergebnisse,
+- Qualitätsprüfung,
+- Briefe und Druck,
+- Export,
+- Release Audit,
+- App Self Test,
+- Rendering sämtlicher Tabs.
 
-- Eingaben
-- Navigation
-- Tabellen und Statusanzeigen
-- Briefe und Druckansichten
-- Nutzerhinweise
-- Diagnoseanzeigen
+### `js/service-worker-register.js`
 
-Regeln:
+- registriert den Service Worker außerhalb des `file:`-Protokolls,
+- zeigt einen Updatehinweis bei installierter neuer Version.
 
-- Die Oberfläche nimmt Eingaben entgegen und zeigt Ergebnisse an.
-- Sie enthält keine eigenen fachlichen Berechnungsregeln.
-- Renderfunktionen verändern keine fachlichen Daten.
-- Ein Tabwechsel darf keine stillen Datenänderungen auslösen.
-- Änderungen laufen über einen kontrollierten Änderungs- und Speicherweg.
-- Bei Unsicherheit wird vollständig gerendert; lokale Renderoptimierung erfolgt nur bei klarer Abhängigkeit.
+### `service-worker.js`
 
-## Verbindliche Entwicklungsregeln
+- cached die App-Shell unter `nk-pro-v99-4-0`,
+- löscht beim Aktivieren alle anderen Cache-Namen,
+- verwendet Network-first,
+- fällt offline auf Cache beziehungsweise `index.html` zurück.
 
-Jede neue Änderung muss einer Hauptschicht zugeordnet werden:
+## 3. Zustands- und Datenfluss
 
-- Datenmodell
-- Berechnungslogik
-- Oberfläche
-- technische Infrastruktur
-- Test und Diagnose
+```mermaid
+flowchart TD
+  A[SEED oder localStorage] --> B[Integritätsprüfung]
+  B -->|gültig| C[Normalisierung]
+  B -->|Hauptstand ungültig| R[Rückfallstand]
+  R --> C
+  B -->|kein gültiger Stand| L[Legacy-Speicherkeys]
+  L --> C
+  C --> M[Schema-Migration bis v5]
+  M --> S[globaler state]
+  S --> P[prepareStateForPersistence]
+  P --> W[saveData]
+  W --> H[Prüfsumme + localStorage]
+  S --> V[Renderfunktionen]
+  S --> E[Export / Archiv / Briefe]
+```
 
-Vor der Umsetzung ist zu prüfen:
+### Zentraler Zustand
 
-1. Wird eine bestehende Fachregel wiederverwendet?
-2. Entsteht eine doppelte Berechnung?
-3. Verändert eine Berechnungsfunktion den Zustand?
-4. Verändert eine Renderfunktion Daten?
-5. Welche Ansichten hängen von der Änderung ab?
-6. Welche Referenz- und Regressionstests schützen die Änderung?
+`state` ist die einzige zentrale Laufzeitinstanz. Archivansichten ersetzen diesen Zustand temporär und halten den vorherigen Arbeitszustand in `archiveReturnState`.
 
-## Nicht zulässige Muster
+### Änderungspfad
 
-- dieselbe Formel in mehreren Tabs
-- direkte Fachberechnung in HTML- oder Event-Handlern
-- Datenmigration während des Renderns
-- stilles Ersetzen ungültiger Eingaben durch fachlich gültige Werte
-- direkte Zustandsänderung ohne Validierung und kontrolliertes Speichern
-- Entfernen von Legacy- oder Archivpfaden ohne nachgewiesene Unbenutztheit
-- große Komplettumbauten ohne kleine, vergleichbare Zwischenversionen
+`commitStateChange()` ist der bevorzugte zentrale Pfad für fachliche Änderungen. Er bereitet den Zustand vor, speichert ihn und stößt ein vollständiges oder gezieltes Rendering an.
 
-## Refactoring-Grundsätze
+### Schreibschutz
 
-- keine komplette Neuentwicklung ohne zwingenden Grund
-- kleine, einzeln prüfbare Schritte
-- vor und nach jedem Schritt Referenzvergleich
-- Berechnungslogik nur mit ausdrücklichem fachlichem Auftrag ändern
-- alte Versionen nie überschreiben
-- jede Version erhält Syntax-, Struktur- und Smoke-Test
-- bei nicht durchführbaren Tests wird dies ausdrücklich dokumentiert
+Speichern wird blockiert, wenn:
 
-## Architekturstatus
+- eine Archivansicht geöffnet ist,
+- die aktuelle Abrechnung finalisiert ist,
+- kein ausdrücklich kontrollierter Finalisierungs-Bypass aktiv ist.
 
-Bereits umgesetzt:
+## 4. Persistenz
 
-- Rendern und Datenaufbereitung besser getrennt
-- zentraler Änderungs- und Speicherweg
-- kontrollierte Codebereinigung
-- Speicherintegrität und Rückfallstand
-- konservatives gezieltes Rendering
-- Entwicklerdiagnose
+### Speicherbereiche
 
-Noch offen:
+| Schlüssel | Funktion |
+|---|---|
+| `nkpro_browser_v85_qualitaets_cockpit_data` | aktueller Hauptdatenstand |
+| gleicher Schlüssel + `_last_valid` | vorheriger gültiger Rückfallstand |
+| zahlreiche Legacy-Schlüssel | Übernahme älterer Versionen |
+| `nkpro.workflowNavigation.v2` | offener Navigationszweig |
+| `nkpro.sidebarCollapsed.v1` | Sidebar-Zustand |
 
-- vollständige Dokumentation des Datenmodells
-- systematische Extraktion reiner Berechnungsfunktionen
-- Reduzierung direkter globaler Zustandszugriffe
-- schrittweiser Ersatz verbleibender Inline-Event-Handler
-- Trennung von Produktivdiagnose und Entwicklungsdiagnose
+### Integrität
+
+Vor dem Speichern werden Integritätsmetadaten entfernt, der Rest serialisiert und mit FNV-1a-32 gehasht. Beim Lesen wird die Prüfsumme validiert. Das Verfahren schützt vor typischer Datenbeschädigung, nicht vor Manipulation.
+
+### Speichergrenzen
+
+Die Anwendung warnt intern bei etwa 4 MB und bewertet etwa 4,7 MB als kritisch. Da Jahresarchive vollständige Snapshots enthalten, wächst der Datenstand mit jeder archivierten Abrechnung.
+
+## 5. Datenebenen
+
+### Objekt-/Stammdaten
+
+`stammdaten` enthält zentrale Wohnungen und Mietverhältnisse. Funktionen können diese Daten in die aktuelle Abrechnung übernehmen oder mit ihr abgleichen.
+
+### Aktuelle Abrechnung
+
+Die Root-Bereiche `wohnungen`, `mieter`, `kostenarten`, `vorauszahlungen`, Zähler-, Umlage- und Brieffelder bilden den bearbeiteten Abrechnungsstand.
+
+### Archiv
+
+`jahresArchiv` enthält Datensätze mit:
+
+- Jahr und Periode,
+- Archivdatum,
+- Metadaten,
+- Zusammenfassung,
+- vollständigem Snapshot unter `data`.
+
+### Historische Einzelwerte
+
+Legacy-Importe werden in ein vereinheitlichtes Format unter `abrechnungsEinzelwerte` überführt.
+
+## 6. Berechnungsarchitektur
+
+Die Umlage wird aus folgenden Quellen gebildet:
+
+- Wohnfläche,
+- Personen oder Personentage,
+- Wohneinheiten,
+- Verbrauch/Zähler,
+- direkte Eurobeträge,
+- externe Einzelabrechnungen,
+- manuelle Werte.
+
+Kostenarten werden über stabile Kosten-IDs angesprochen. Die Berechnung trennt Mieterergebnisse, Eigentümer-/Privatanteile und offene beziehungsweise nicht zugeordnete Anteile. Kontrolltabellen und Briefe verwenden denselben berechneten Ergebnisstand.
+
+## 7. Rendering
+
+- Jeder Tab besitzt eigene Renderfunktionen.
+- `renderAll()` schützt gegen parallele Renderläufe und sammelt Fehler.
+- `renderCurrentView()` entscheidet zwischen Gesamt- und Teilrendering.
+- `TAB_DEFINITIONS` liefert Titel und Übersichtsdaten.
+- `auditV992Structure()` prüft den statischen Seitenrahmen.
+
+Die Architektur ist DOM-basiert und setzt viel HTML als Strings zusammen. Das reduziert Abhängigkeiten, erhöht aber Kopplung und Testbedarf.
+
+## 8. Import und Export
+
+### Import
+
+- Gesamt-JSON kann geprüft und normalisiert werden.
+- Archiv-JSON und historische Einzelabrechnungen können importiert werden.
+- Legacy-Dokumente werden textuell erkannt und in Archivwerte überführt.
+
+### Export
+
+- Gesamt-JSON,
+- JSON nur der aktuellen Abrechnung,
+- Kostenarten-CSV,
+- Mieter-CSV,
+- Umlage-CSV,
+- Archivindex-CSV,
+- Prüfbericht-TXT,
+- App-HTML-Kopie,
+- mehrere Exportpakete.
+
+Formatänderungen sind rückwärtskompatibilitätsrelevant und lösen die Stop-Regel aus.
+
+## 9. Testarchitektur
+
+Die Produktivdateien besitzen keine Testabhängigkeit. Für Entwicklung werden verwendet:
+
+- Node.js,
+- `node --check`,
+- lokaler statischer Testserver,
+- Playwright 1.61.1,
+- Chromium,
+- isolierte Browserkontexte und gemockter `localStorage`,
+- sechs JSON-Referenzfälle.
+
+Details stehen in `TESTING.md`.
+
+## 10. Zielarchitektur ohne Neuentwicklung
+
+Die bestehende Architektur bleibt Grundlage. Geplante Entwicklung erfolgt in dieser Reihenfolge:
+
+1. vorhandene Tabs und Modussteuerung für das neue UX-Ziel wiederverwenden – umgesetzt in V99.4.0,
+2. Navigation und Landingpage ohne Datenmodelländerung umbauen – umgesetzt in V99.4.0,
+3. Objektstandard und Abrechnungssnapshot formal absichern,
+4. Zählerverwaltung als eigene Domäne entwerfen,
+5. Migrationen mit Vorabbackup und Rollback standardisieren,
+6. `js/app.js` erst danach schrittweise nach vorhandenen Verantwortlichkeiten aufteilen.
+
+### Mögliche spätere Dateigrenzen
+
+Nur nach separater Freigabe und ohne Buildsystem:
+
+```text
+js/
+  app.js                  # Start und Orchestrierung
+  data-storage.js         # Speicherung, Integrität, Backup
+  data-migrations.js      # Migrationen
+  domain-billing.js       # Abrechnung und Berechnung
+  domain-meters.js        # Zählerverwaltung und Stände
+  domain-archive.js       # Archiv
+  ui-render.js            # gemeinsame Renderhilfen
+  ui-letters.js           # Briefe und Druck
+```
+
+Dies ist kein beschlossener Umbau, sondern eine risikoarme mögliche Modularisierungsrichtung. Vor jeder Aufteilung ist die tatsächliche Kopplung erneut zu analysieren.
+
+## 11. UI-Orchestrierung V99.4.0
+
+Die Landingpage ist kein Fachzustand und verändert `state` nicht. Sie wird über `switchToTab("landing")` geöffnet.
+
+Der Abrechnungskontext verwendet `billingContextOpen` ausschließlich als flüchtigen UI-Zustand. Persistierte Werte werden dafür weder ergänzt noch verändert. Die Statusableitung lautet:
+
+- Archivansicht → Nur Ansicht,
+- gültig finalisierte aktuelle Abrechnung → Finalisiert,
+- sonstige geöffnete aktuelle Abrechnung → Bearbeitung.
+
+`objekt` und `archiv` sind neue UI-Hubs. Sie verwenden vorhandene Daten und Funktionen; sie führen keine neue Objektstandard- oder Archivdomäne ein. Die genaue Alt-zu-Neu-Zuordnung steht in `UI_ARCHITEKTUR_V99_4_0.md`.

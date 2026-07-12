@@ -1,4 +1,4 @@
-const CACHE_NAME = "nk-pro-v99-3-0";
+const CACHE_NAME = "nk-pro-v99-4-0";
 const APP_SHELL = [
   "./",
   "./index.html",

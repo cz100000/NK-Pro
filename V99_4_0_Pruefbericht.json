@@ -1,0 +1,56 @@
+{
+  "version": "V99.4.0",
+  "versionName": "UX-Grundgerüst und Arbeitskontext",
+  "date": "2026-07-12",
+  "baseVersion": "V99.3.0 Development Baseline",
+  "dataSchema": 5,
+  "functionalScope": "Phase 1 UX-Grundgerüst ohne Datenmodelländerung",
+  "results": {
+    "javascriptSyntax": {
+      "passed": 5,
+      "failed": 0
+    },
+    "playwright": {
+      "passed": 19,
+      "failed": 0,
+      "skipped": 0,
+      "flaky": 0,
+      "durationMs": 31682
+    },
+    "consoleErrors": 0,
+    "pageErrors": 0,
+    "referenceCases": {
+      "passed": 6,
+      "changedFixtures": 0
+    },
+    "importExportRoundtrip": "passed",
+    "schema5Migration": "passed",
+    "serviceWorkerSimulation": "passed",
+    "visualChecks": [
+      "desktop 1440x1000",
+      "mobile 390x844"
+    ],
+    "releaseAudit": {
+      "ok": 28,
+      "warnings": 0,
+      "errors": 0
+    },
+    "appSelfTest": {
+      "ok": 30,
+      "hints": 2,
+      "errors": 0
+    }
+  },
+  "protectedAreas": {
+    "dataSchemaChanged": false,
+    "calculationChanged": false,
+    "migrationChanged": false,
+    "referenceDataChanged": false,
+    "importExportFormatChanged": false,
+    "archiveDataChanged": false
+  },
+  "environmentLimitations": [
+    "Real localhost/HTTPS PWA installation and offline restart blocked by browser policy ERR_BLOCKED_BY_ADMINISTRATOR; manifest, app shell and cache lifecycle were tested statically and through service-worker simulation."
+  ],
+  "releaseDecision": "freigabefaehig mit dokumentierter PWA-E2E-Umgebungsgrenze"
+}

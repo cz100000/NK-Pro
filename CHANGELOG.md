@@ -1,5 +1,33 @@
 # CHANGELOG
 
+## V99.4.0 – UX-Grundgerüst und Arbeitskontext – 2026-07-12
+
+- Landingpage als reine Arbeitsweiche mit genau zwei Einstiegen eingeführt.
+- Navigation in die Accordion-Gruppen „Objekt vorbereiten“, „Nebenkosten abrechnen“, „Archiv“ und „Extras“ überführt.
+- Bestehende Funktionen und Tabs vollständig weiterverwendet; kein Framework und kein Buildsystem ergänzt.
+- Eigenen Objekt-Übersichtsbereich und eigenständige Archivübersicht auf Basis vorhandener Logik ergänzt.
+- Bereich „Aktive Abrechnung“ so geändert, dass er nur bei tatsächlich geöffneter Abrechnung sichtbar ist.
+- Statusanzeige auf Bearbeitung, Nur Ansicht und Finalisiert vereinheitlicht.
+- Rückkehr zur Landingpage über die Markenfläche ergänzt.
+- Veralteten Aufruf des entfernten Dashboard-Tabs auf den bestehenden Abrechnungs-Einstieg korrigiert.
+- Datenschema 5, Fachlogik, Berechnung, Migrationen, Referenzdaten und Import-/Exportformate unverändert.
+- PWA-Version und Cache auf V99.4.0 / `nk-pro-v99-4-0` erhöht.
+- Navigations-, Landingpage-, Kontext-, Tastatur- und ARIA-Tests ergänzt.
+- JavaScript-Syntax 5/5 und Playwright/Chromium 19/19 erfolgreich.
+- Desktop- und Mobilansicht visuell kontrolliert; keine Konsolen- oder Seitenfehler.
+
+## Development Baseline – 2026-07-12 (Dokumentation, App bleibt V99.3.0)
+
+- Vollständige Analyse der tatsächlich bereitgestellten ZIP als alleinige technische Grundlage dokumentiert.
+- Verbindliche Development Baseline mit Versions-, Struktur-, Architektur-, Datenmodell-, Navigations-, Migrations-, Test- und Risikoanalyse ergänzt.
+- `DEVELOPMENT_GUIDE.md`, `UX_GUIDE.md`, `ARCHITECTURE.md`, `TESTING.md`, `ROADMAP.md`, `TECH_DEBT.md` und `GITHUB_RELEASE_TEMPLATE.md` neu erstellt.
+- `README.md`, `WORKBOOK.md` und `CHANGELOG.md` auf die neue Dokumentationshierarchie ausgerichtet.
+- Verbindliche Stop-Regel und Entscheidungsprotokoll eingeführt.
+- Keine produktive Laufzeitdatei, Fachlogik, Berechnung, Navigation, Migration, PWA oder Testdatei verändert.
+- JavaScript-Syntaxprüfung 5/5 und Playwright 15/15 erfolgreich ausgeführt.
+- Runtime-Prüfsummen vor und nach der Dokumentationsarbeit verglichen; identisch.
+- `SHA256SUMS.txt` für das neue Gesamtpaket aktualisiert.
+
 ## V99.3.0 – Navigation und vollständige Qualitätsprüfung
 
 - Tab „Abrechnungsstatus“ dauerhaft entfernt; direkte und indirekte Navigationsverweise bereinigt.

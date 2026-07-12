@@ -83,7 +83,7 @@ async function openFreshApp(page, initialEntries = {}) {
   const html = appHtml.replace(/<head>/i, `<head><base href="${testOrigin}/">`);
   await page.setContent(html, { waitUntil: "load" });
   await page.waitForFunction(() => document.documentElement.dataset.v992Audit === "passed");
-  await expect(page.locator("#start")).toHaveClass(/active/);
+  await expect(page.locator("#landing")).toHaveClass(/active/);
 }
 
 async function loadFixture(page, fixtureName) {

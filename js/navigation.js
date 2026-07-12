@@ -1,88 +1,99 @@
 (function () {
-  const NAV_PHASE_STORAGE_KEY = "nkpro.workflowNavigation.v2";
-  const PHASE_KEYS = ["phase-grundlagen","phase-einnahmen","phase-berechnung","phase-ausgabe"];
+  const NAV_GROUP_STORAGE_KEY = "nkpro.workflowNavigation.v3";
+  const GROUP_KEYS = ["group-object", "group-billing", "group-archive", "group-extras"];
   const TAB_PATHS = {
-    mieter:"phase-grundlagen",
-    einstellungen:"phase-grundlagen",
-    einnahmen:"phase-einnahmen",
-    wasser:"phase-einnahmen",
-    manuellewerte:"phase-einnahmen",
-    umlage:"phase-berechnung",
-    vorauszahlungsanpassung:"phase-berechnung",
-    qualitaet:"phase-ausgabe",
-    briefe:"phase-ausgabe",
-    export:"phase-ausgabe"
+    objekt:"group-object",
+    mieterverwaltung:"group-object",
+    wohnungsverwaltung:"group-object",
+    start:"group-billing",
+    mieter:"group-billing",
+    einstellungen:"group-billing",
+    einnahmen:"group-billing",
+    wasser:"group-billing",
+    manuellewerte:"group-billing",
+    umlage:"group-billing",
+    vorauszahlungsanpassung:"group-billing",
+    qualitaet:"group-billing",
+    briefe:"group-billing",
+    export:"group-billing",
+    archiv:"group-archive",
+    sicherung:"group-extras"
   };
-  let openPhase = loadOpenPhase();
+  let openGroup = loadOpenGroup();
 
-  function loadOpenPhase() {
+  function loadOpenGroup() {
     try {
-      const stored = localStorage.getItem(NAV_PHASE_STORAGE_KEY);
-      return PHASE_KEYS.includes(stored) ? stored : "phase-grundlagen";
+      const stored = localStorage.getItem(NAV_GROUP_STORAGE_KEY);
+      return GROUP_KEYS.includes(stored) ? stored : "group-object";
     } catch(error) {
-      return "phase-grundlagen";
+      return "group-object";
     }
   }
-  function saveOpenPhase() {
-    try { localStorage.setItem(NAV_PHASE_STORAGE_KEY, openPhase); } catch(error) {}
+  function saveOpenGroup() {
+    try { localStorage.setItem(NAV_GROUP_STORAGE_KEY, openGroup); } catch(error) {}
   }
-  function applyPhaseState() {
-    PHASE_KEYS.forEach(function (key) {
+  function applyGroupState() {
+    GROUP_KEYS.forEach(function (key) {
       const toggle = document.querySelector('[data-nav-toggle="' + key + '"]');
       const panel = toggle ? document.getElementById(toggle.getAttribute("aria-controls")) : null;
-      const expanded = key === openPhase;
+      const expanded = key === openGroup;
       if (toggle) toggle.setAttribute("aria-expanded", expanded ? "true" : "false");
       if (panel) panel.hidden = !expanded;
     });
   }
-  function setOpenPhase(key, persist) {
-    if (!PHASE_KEYS.includes(key)) return;
-    openPhase = key;
-    applyPhaseState();
-    if (persist !== false) saveOpenPhase();
+  function setOpenGroup(key, persist) {
+    if (!GROUP_KEYS.includes(key)) return;
+    openGroup = key;
+    applyGroupState();
+    if (persist !== false) saveOpenGroup();
   }
   function markActiveNavigationBranch(tabId) {
-    document.querySelectorAll(".nav-phase").forEach(function (node) { node.classList.remove("has-active"); });
+    document.querySelectorAll(".nav-group").forEach(function (node) { node.classList.remove("has-active"); });
     const active = document.querySelector('.tab-btn[data-tab="' + tabId + '"]');
-    const phase = active ? active.closest(".nav-phase") : null;
-    if (phase) phase.classList.add("has-active");
+    const group = active ? active.closest(".nav-group") : null;
+    if (group) group.classList.add("has-active");
   }
   function ensureNavigationPath(tabId, options) {
-    const phase = TAB_PATHS[tabId];
-    if (phase) setOpenPhase(phase, false);
+    const group = TAB_PATHS[tabId];
+    if (group) setOpenGroup(group, false);
     markActiveNavigationBranch(tabId);
-    if (!options || options.persist !== false) saveOpenPhase();
+    if (!options || options.persist !== false) saveOpenGroup();
   }
   function updateWorkflowNavigationContext() {
+    const panel = document.querySelector("[data-nav-billing-context-panel]");
+    const object = document.querySelector("[data-nav-billing-object]");
     const year = document.querySelector("[data-nav-billing-year]");
     const status = document.querySelector("[data-nav-billing-context]");
-    let currentYear = "–";
+    let currentYear = "";
+    let objectLabel = "Objekt";
     let available = true;
+    let contextOpen = false;
     let archive = false;
     let finalized = false;
     try {
-      if (typeof currentAbrechnungsjahr === "function") currentYear = currentAbrechnungsjahr() || "–";
+      if (typeof currentAbrechnungsjahr === "function") currentYear = String(currentAbrechnungsjahr() || "");
+      if (typeof currentObjectLabel === "function") objectLabel = currentObjectLabel() || "Objekt";
       if (typeof isArchiveViewer === "function") archive = !!isArchiveViewer();
       if (typeof hasActiveCurrentBilling === "function") available = archive || !!hasActiveCurrentBilling();
       if (typeof isCurrentBillingFinalized === "function") finalized = !!isCurrentBillingFinalized();
+      if (typeof isBillingContextOpen === "function") contextOpen = !!isBillingContextOpen();
     } catch(error) {}
+    if (panel) panel.hidden = !contextOpen;
+    if (object) object.textContent = objectLabel;
     if (year) year.textContent = currentYear;
     if (status) {
-      status.classList.remove("is-archive","is-finalized","is-unavailable");
+      status.classList.remove("is-archive", "is-finalized");
       if (archive) {
-        status.textContent = "Archiv";
+        status.textContent = "Nur Ansicht";
         status.classList.add("is-archive");
       } else if (finalized) {
-        status.textContent = "finalisiert";
+        status.textContent = "Finalisiert";
         status.classList.add("is-finalized");
-      } else if (available) {
-        status.textContent = "in Bearbeitung";
       } else {
-        status.textContent = "keine Abrechnung";
-        status.classList.add("is-unavailable");
+        status.textContent = "Bearbeitung";
       }
     }
-    document.querySelectorAll('[data-nav-group="billing"]').forEach(function (button) {
+    document.querySelectorAll('[data-requires-billing="true"]').forEach(function (button) {
       button.disabled = !available;
       button.setAttribute("aria-disabled", available ? "false" : "true");
     });
@@ -102,49 +113,54 @@
         document.body.classList.add("sidebar-collapsed");
       }
     } catch(error) {}
-    ["sidebarCollapseTop","sidebarCollapseBottom"].forEach(function (id) {
+    ["sidebarCollapseTop", "sidebarCollapseBottom"].forEach(function (id) {
       const control = document.getElementById(id);
       if (control) control.addEventListener("click", function () { setSidebarCollapsed(true); });
     });
   }
   function initializeWorkflowNavigation() {
-    applyPhaseState();
-    document.querySelectorAll(".nav-phase-toggle[data-nav-toggle]").forEach(function (toggle) {
-      toggle.addEventListener("click", function () { setOpenPhase(toggle.dataset.navToggle, true); });
+    applyGroupState();
+    document.querySelectorAll(".nav-group-toggle[data-nav-toggle]").forEach(function (toggle) {
+      toggle.addEventListener("click", function () { setOpenGroup(toggle.dataset.navToggle, true); });
     });
-    const active = document.querySelector(".tab-btn.active");
-    if (active) ensureNavigationPath(active.dataset.tab, {persist:false});
+    const active = document.querySelector("section.tab.active");
+    if (active) ensureNavigationPath(active.id, {persist:false});
     updateWorkflowNavigationContext();
     initializeSidebarCollapse();
   }
   function refreshWorkspaceChrome() {
-    const activeButton = document.querySelector('.tab-btn.active');
-    const title = document.getElementById('workspaceTitle');
-    if (title) title.textContent = activeButton ? activeButton.textContent.trim() : 'NK-Pro';
-    if (typeof updateAllPageHeaders === 'function') updateAllPageHeaders();
-    if (typeof renderOverviewForTab === 'function' && activeButton) renderOverviewForTab(activeButton.dataset.tab);
+    const activeSection = document.querySelector("section.tab.active");
+    const activeButton = activeSection ? document.querySelector('.tab-btn[data-tab="' + activeSection.id + '"]') : null;
+    const title = document.getElementById("workspaceTitle");
+    if (title) {
+      if (activeSection && activeSection.id === "landing") title.textContent = "Arbeitsweiche";
+      else if (typeof TAB_DEFINITIONS !== "undefined" && activeSection && TAB_DEFINITIONS[activeSection.id]) title.textContent = TAB_DEFINITIONS[activeSection.id].title;
+      else title.textContent = activeButton ? activeButton.textContent.trim() : "NK-Pro";
+    }
+    if (typeof updateAllPageHeaders === "function") updateAllPageHeaders();
+    if (typeof renderOverviewForTab === "function" && activeSection) renderOverviewForTab(activeSection.id);
     updateWorkflowNavigationContext();
   }
-  document.addEventListener('DOMContentLoaded', function () {
+  document.addEventListener("DOMContentLoaded", function () {
     initializeWorkflowNavigation();
     refreshWorkspaceChrome();
-    document.querySelectorAll('.tab details').forEach(function (d) { d.open = false; });
-    const toggle = document.getElementById('sidebarToggle');
-    if (toggle) toggle.addEventListener('click', function () {
-      if (document.body.classList.contains('sidebar-collapsed')) {
-        document.body.classList.remove('sidebar-collapsed');
+    document.querySelectorAll(".tab details").forEach(function (d) { d.open = false; });
+    const toggle = document.getElementById("sidebarToggle");
+    if (toggle) toggle.addEventListener("click", function () {
+      if (document.body.classList.contains("sidebar-collapsed")) {
+        document.body.classList.remove("sidebar-collapsed");
         try { localStorage.setItem("nkpro.sidebarCollapsed.v1", "0"); } catch(error) {}
       } else {
-        document.body.classList.toggle('sidebar-open');
+        document.body.classList.toggle("sidebar-open");
       }
     });
-    document.addEventListener('click', function (event) {
-      if (document.body.classList.contains('sidebar-open') && !event.target.closest('#appSidebar') && !event.target.closest('#sidebarToggle')) document.body.classList.remove('sidebar-open');
+    document.addEventListener("click", function (event) {
+      if (document.body.classList.contains("sidebar-open") && !event.target.closest("#appSidebar") && !event.target.closest("#sidebarToggle")) document.body.classList.remove("sidebar-open");
     });
   });
   window.refreshWorkspaceChrome = refreshWorkspaceChrome;
   window.ensureNavigationPath = ensureNavigationPath;
   window.updateWorkflowNavigationContext = updateWorkflowNavigationContext;
-  window.applyNavTreeState = applyPhaseState;
-  window.setOpenNavigationPhase = setOpenPhase;
+  window.applyNavTreeState = applyGroupState;
+  window.setOpenNavigationGroup = setOpenGroup;
 })();

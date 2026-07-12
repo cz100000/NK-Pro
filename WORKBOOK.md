@@ -1,3 +1,151 @@
+# WORKBOOK – NK-Pro Development Baseline
+
+**Gültig ab:** 12. Juli 2026  
+**Technische Ausgangsversion:** V99.3.0  
+**Aktuelle Version:** V99.4.0  
+**Datenschema:** 5
+
+## Dokumentenhierarchie
+
+Dieses WORKBOOK ist das verbindliche Entscheidungsprotokoll. Bei Widersprüchen gilt folgende Reihenfolge:
+
+1. Schutz historischer und archivierter Daten,
+2. Stop-Regel dieses WORKBOOKS,
+3. neuere Entscheidungen mit `ADR-NK-####`,
+4. `DEVELOPMENT_GUIDE.md`,
+5. `ARCHITECTURE.md`, `UX_GUIDE.md`, `TESTING.md`,
+6. ältere versionsbezogene Abschnitte dieses Dokuments.
+
+Ältere Abschnitte bleiben als nachvollziehbare Projekthistorie erhalten. Sie begründen keine stillschweigende Abweichung von der Development Baseline.
+
+## Verbindliche Grundsätze
+
+- Eine Anwendung.
+- Ein Datenbestand.
+- Eine Navigation.
+- Historische Abrechnungen besitzen höchste Priorität.
+- Objektstandards sind Vorlagen für neue Abrechnungen, keine rückwirkenden Live-Referenzen.
+- Bestehende Architektur wird vor Neuentwicklung genutzt, erweitert, vereinfacht oder modularisiert.
+- Kein React, kein TypeScript, kein Buildsystem.
+- Fachliche Ergebnisse dürfen nicht durch reine UI- oder Strukturarbeiten verändert werden.
+
+## Verbindliche Stop-Regel
+
+Bei möglicher Auswirkung auf Datenmodell, historische Abrechnungen, Migrationen, Rückwärtskompatibilität, Berechnungsergebnisse, Zähler, Kostenarten, Umlageschlüssel, Archivdaten, Sicherungen oder Import-/Exportformate wird die Umsetzung sofort unterbrochen.
+
+Vor Fortsetzung sind zwingend:
+
+1. Ist-Zustand analysieren,
+2. Auswirkungen beschreiben,
+3. mindestens zwei Lösungswege entwickeln,
+4. Vor- und Nachteile bewerten,
+5. Empfehlung begründen,
+6. Nutzerzustimmung abwarten,
+7. Entscheidung als ADR in diesem WORKBOOK festhalten.
+
+## Entscheidungsprotokoll
+
+### ADR-NK-0001 – ZIP als alleinige technische Grundlage
+
+- **Datum:** 2026-07-12
+- **Status:** beschlossen
+- **Entscheidung:** Ausschließlich der tatsächlich bereitgestellte Quellcode und die enthaltenen Projektdokumente sind technische Grundlage. Frühere Chats und nicht enthaltene Dateien werden nicht vorausgesetzt.
+- **Begründung:** Reproduzierbarkeit und Schutz vor falschen Annahmen.
+- **Auswirkung:** Jede neue Arbeitsrunde beginnt mit einer vollständigen Bestandsanalyse des aktuellen Pakets.
+
+### ADR-NK-0002 – Development Baseline ohne Funktionsänderung
+
+- **Datum:** 2026-07-12
+- **Status:** beschlossen
+- **Entscheidung:** Die erste Aufgabe ergänzt ausschließlich Projektdokumentation, Entwicklungsregeln und Prüfnachweise.
+- **Begründung:** Vor funktionalen Änderungen wird ein belastbarer, dokumentierter Ausgangspunkt geschaffen.
+- **Auswirkung:** App-Version, Datenschema, Runtime-Dateien, Referenzdaten und Tests bleiben unverändert.
+
+### ADR-NK-0003 – App-Version bleibt V99.3.0
+
+- **Datum:** 2026-07-12
+- **Status:** beschlossen
+- **Entscheidung:** Die Dokumentationsbaseline erzeugt keine neue Funktionsversion und ändert weder Manifest noch Service-Worker-Cache.
+- **Begründung:** Keine Laufzeitänderung und kein technischer Grund für einen Cachewechsel.
+
+### ADR-NK-0004 – Verbindliches UX-Zielbild
+
+- **Datum:** 2026-07-12
+- **Status:** Phase 1 umgesetzt; datenmodellrelevante Zielteile offen
+- **Entscheidung:** Landingpage mit genau zwei Einstiegen; gruppierte Zielnavigation; Bereich „Aktive Abrechnung“ nur bei geöffneter Abrechnung; Statuswerte Bearbeitung, Nur Ansicht und Finalisiert.
+- **Begründung:** Orientierung am tatsächlichen Arbeitsablauf.
+- **Auswirkung:** Umsetzung erfolgt zuerst als UI-/Navigationsänderung auf Basis vorhandener Tabs und Modussteuerung.
+
+### ADR-NK-0005 – Objektstandard als einmaliger Snapshot
+
+- **Datum:** 2026-07-12
+- **Status:** fachlich beschlossen, technische Umsetzung offen
+- **Entscheidung:** Neue Abrechnungen übernehmen Objektstandards einmalig. Danach sind sie unabhängig. Änderungen an Standards dürfen bestehende oder archivierte Abrechnungen nicht verändern.
+- **Begründung:** Revisionssicherheit historischer Abrechnungen.
+- **Auswirkung:** Vor technischer Umsetzung Stop-Regel, Lösungsvergleich und Migrationskonzept erforderlich.
+
+### ADR-NK-0006 – Trennung von Zählerverwaltung und Zählerständen
+
+- **Datum:** 2026-07-12
+- **Status:** fachlich beschlossen, technische Umsetzung offen
+- **Entscheidung:** Physische Zähler und periodische Messwerte werden getrennt. Jeder Zähler erhält eine dauerhafte Zähler-ID.
+- **Begründung:** eindeutige Historie bei Mieter-, Wohnungs- und Zählerwechseln.
+- **Auswirkung:** Datenmodell- und Migrationsentscheidung erforderlich; keine stille Einführung.
+
+### ADR-NK-0007 – Migration nur mit Vorabbackup und Wiederherstellung
+
+- **Datum:** 2026-07-12
+- **Status:** beschlossen
+- **Entscheidung:** Jede zukünftige Migration benötigt eine automatische Sicherung vor der ersten Mutation, eine reproduzierbare Ausführung, vollständige Tests und einen dokumentierten Rückweg.
+- **Begründung:** Der aktuelle Rückfallstand allein erfüllt diese Anforderung nicht vollständig.
+- **Auswirkung:** Keine neue Schemaversion ohne vorherige Sicherungsarchitektur.
+
+### ADR-NK-0008 – Dokumentation als Release-Bestandteil
+
+- **Datum:** 2026-07-12
+- **Status:** beschlossen
+- **Entscheidung:** README, CHANGELOG, WORKBOOK, Development Guide, UX Guide, Architecture, Testing, Roadmap, Tech Debt und GitHub Release Template sind verbindlicher Bestandteil jeder künftigen Auslieferung.
+- **Begründung:** Entscheidungen, Risiken und Freigaben müssen dauerhaft nachvollziehbar sein.
+
+### ADR-NK-0009 – Phase 1 mit bestehender Architektur umsetzen
+
+- **Datum:** 2026-07-12
+- **Status:** beschlossen und umgesetzt in V99.4.0
+- **Entscheidung:** Landingpage, neue Navigationsgruppen, Archivübersicht und Abrechnungskontext werden mit den vorhandenen Tabs, Renderfunktionen und Zuständen umgesetzt. Es wird kein neues Datenmodell eingeführt.
+- **Begründung:** Das UX-Ziel ist ohne Austausch der funktionierenden Facharchitektur erreichbar.
+- **Auswirkung:** Datenschema 5, Berechnung, Migration, Archive und Austauschformate bleiben unverändert.
+
+### ADR-NK-0010 – Noch nicht vorhandene Domänen nicht vortäuschen
+
+- **Datum:** 2026-07-12
+- **Status:** beschlossen
+- **Entscheidung:** V99.4.0 zeigt einen Objekt-Hub und verweist auf vorhandene Wohnungs- und Mieterfunktionen. Getrennte Objektstandards, Standard-Kostenarten, Standard-Umlageschlüssel und Zählerverwaltung werden erst nach der jeweiligen Datenmodellentscheidung eingeführt.
+- **Begründung:** Eine reine UI-Hülle ohne belastbare Snapshot- und Zähleridentität würde falsche fachliche Sicherheit erzeugen.
+- **Auswirkung:** Phase 2 und Phase 3 bleiben Stop-Regel-pflichtig.
+
+### ADR-NK-0011 – Abrechnungskontext ohne neues Persistenzfeld
+
+- **Datum:** 2026-07-12
+- **Status:** beschlossen und umgesetzt in V99.4.0
+- **Entscheidung:** Die Sichtbarkeit des Bereichs „Aktive Abrechnung“ ist ein flüchtiger UI-Zustand. Objekt, Jahr und Status werden ausschließlich aus vorhandenen Daten und vorhandenen Archiv-/Finalisierungszuständen abgeleitet.
+- **Begründung:** Der Arbeitskontext darf das Datenschema und historische Abrechnungen nicht verändern.
+- **Auswirkung:** Übersicht und Landingpage zeigen keinen Abrechnungskontext. Beim Öffnen einer konkreten Abrechnung werden Bearbeitung, Nur Ansicht oder Finalisiert angezeigt.
+
+### ADR-NK-0012 – Phase-1-Freigabe
+
+- **Datum:** 2026-07-12
+- **Status:** beschlossen
+- **Entscheidung:** V99.4.0 ist nach 5/5 Syntaxprüfungen, 19/19 Playwright-Tests, sauberer Browserkonsole, unveränderten Referenzfällen sowie erfolgreicher Manifest-/Cacheprüfung freigabefähig.
+- **Einschränkung:** Ein echter installierter PWA-/Offline-Neustart über HTTPS oder localhost war durch die Browser-Netzwerkrichtlinie der Ausführungsumgebung blockiert; der Service Worker wurde vollständig simuliert geprüft.
+
+## Freigaberegel
+
+Eine Version ist nur freigegeben, wenn Syntaxprüfung, Browserkonsole, Chromium, Playwright, Referenzfälle, Export, Import, Migration, PWA, Cache, Release Audit und App Self Test erfolgreich sind. Datenmodellrelevante Versionen benötigen zusätzlich Backup- und Rollbacknachweis.
+
+---
+
+# Historische versionsbezogene Regeln und Entscheidungen
+
 # Verbindliche Änderungen V99.3.0
 
 - Abrechnungsstatus dauerhaft entfernt.
