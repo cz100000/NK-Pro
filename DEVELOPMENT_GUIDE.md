@@ -1,76 +1,48 @@
 # NK-Pro – Entwicklungsleitfaden
 
-**Aktueller Umsetzungsstand:** V99.4.4, Datenschema 5, Datenebenenvertrag 1
+**Aktueller Umsetzungsstand:** V99.4.5, Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Snapshot 1
 
 ## 1. Quellenhierarchie
 
-1. ausdrücklich verbindliche Ausgangs-ZIP,
-2. `NK-PRO-PROJEKTSTAND.md`,
-3. `NK-PRO-ARBEITSREGELN.md`,
-4. tatsächlicher Quellcode, Tests und Referenzdaten dieser ZIP,
-5. aktuelle Architektur-, Test-, Roadmap- und Tech-Debt-Dokumente.
+Maßgeblich sind ausschließlich die ausdrücklich freigegebene Versions-ZIP, der darin enthaltene Quellcode, die Projektdokumente und automatisierten Tests.
 
-Frühere Chats, Erinnerungen und ältere ZIPs sind keine technische Quelle.
+## 2. Leitplanken
 
-## 2. Technische Leitplanken
+- HTML, CSS und JavaScript ohne Framework oder Buildsystem,
+- keine direkte Speicherung außerhalb `js/persistence.js`,
+- keine stillschweigende Schema-, Vertrags-, Objektstandard- oder Snapshotänderung,
+- keine historische Umschreibung ohne fachlichen Nachweis,
+- unbekannte Felder bei Normalisierung und Migration bewahren.
 
-NK-Pro bleibt eine statische lokale Browseranwendung und PWA aus HTML, CSS und JavaScript. Es gibt kein React, kein TypeScript und kein Buildsystem. Node.js und Playwright dienen ausschließlich der Prüfung.
+## 3. Modulgrenzen V99.4.5
 
-## 3. Änderungsklassen und Stop-Regel
+Objektmodell, Abrechnungsbereitschaft, Snapshot, Archiv, Migration, Sicherung und Persistenz bleiben getrennt. `app.js` darf diese Module orchestrieren, ihre Fachverantwortung aber nicht duplizieren.
 
-- **A – Dokumentation:** keine Produktivlogik.
-- **B – UI ohne Datenwirkung:** Datenverträge und Fachlogik unverändert.
-- **C – Fachlogik ohne Schemaänderung:** Fachregressionen und Referenzwerte erforderlich.
-- **D – Datenmodell, Migration, Archiv, Sicherung oder Austauschformat:** Ist-Zustand, Auswirkungen, Alternativen, Empfehlung, Migration, Rückweg und Teststrategie vor Umsetzung dokumentieren.
+## 4. Datenänderungen
 
-Ohne ausdrückliche Freigabe keine Schema- oder Austauschformatänderung.
+Vor jeder datenverändernden Migration ist über das bestehende Fundament eine Vor-Migrationssicherung zu erzeugen. Änderungen laufen auf Kopien, werden vor und nach Ausführung validiert und nur vollständig übernommen.
 
-## 4. Technischer Ablauf
+Eine Änderung von Objektstandard 1 oder Snapshot 1 benötigt eine eigene Versionsnummer, Kompatibilitätsanalyse und Tests. Datenschema 5 und Datenebenenvertrag 1 dürfen nur bei technischer Notwendigkeit geändert werden.
 
-1. Ausgangs-ZIP unverändert sichern und inventarisieren.
-2. Version, Schema und Datenebenenvertrag verifizieren.
-3. Baseline-Prüfungen ausführen.
-4. kleinsten tragfähigen Patch umsetzen.
-5. betroffene Modul- und Browsertests ergänzen.
-6. vollständige Pflichtprüfungen ausführen.
-7. Projektstand, Changelog, Roadmap und Restrisiken aktualisieren.
-8. Abhängigkeiten, Testartefakte und temporäre Dateien entfernen.
-9. `SHA256SUMS.txt` und vollständige Versions-ZIP erzeugen.
+## 5. Snapshotregeln
 
-## 5. Modulgrenzen V99.4.4
+- Snapshot nur nach gültiger zentraler Abrechnungsbereitschaft,
+- keine globalen Archive, Stammdatenkopien, Historien oder Recovery-Daten im begrenzten Snapshot,
+- Berechnungsergebnis und verwendete Grundlagen gemeinsam speichern,
+- Prüfsumme vor Import/Archivierung validieren,
+- `electricity-dummy` niemals in `meterSelection.included` aufnehmen,
+- historische Altarchive nur als `legacy-partial` kennzeichnen.
 
-- `js/persistence.js` ist die einzige produktive Datei mit direktem `localStorage`-Zugriff.
-- `js/migration.js` enthält ausschließlich Registry, Pfadplanung, Validierung und transaktionale Migration.
-- `js/backup-recovery.js` enthält Sicherungshüllen, Prüfsummen, Persistenzadapter-Aufrufe und Restore-Validierung; kein direkter DOM- oder Speicherzugriff.
-- `js/archive.js` enthält Snapshot- und Archivgrenzen.
-- `js/app.js` orchestriert UI, Fachnormalisierung, Backup-Auslösung, Restore und Kompatibilitätsfassaden.
-- `index.html`, `service-worker.js` und Releaseprüfung müssen dieselbe Modulreihenfolge enthalten.
-- Historische Archivstände werden im normalen Startpfad nicht still auf ein neues Schema umgeschrieben; explizite Archivmigrationen müssen die transaktionale Modulroutine verwenden.
-
-## 6. Migrations- und Restore-Regeln
-
-- Jeder unterstützte Schritt benötigt eine eindeutige Registry-ID.
-- Produktivdaten werden nur nach vollständiger Transaktion übernommen.
-- Vor einer datenverändernden Migration ist die unveränderte Quelle als Vor-Migrationssicherung zu erzeugen.
-- Sicherungshüllen müssen vor Restore vollständig validiert werden.
-- Vor jedem Restore ist ein separater Checkpoint zu erzeugen.
-- Ein fehlender Pfad, eine ungültige Quelle oder eine fehlgeschlagene Nachprüfung muss den Vorgang ohne Teilübernahme abbrechen.
-
-## 7. Pflichtbefehle
+## 6. Pflichtprüfung
 
 ```bash
 npm ci
 npm run test:syntax
 npm run test:fixtures
 npm run test:release
-CHROMIUM_EXECUTABLE_PATH=/pfad/zu/chromium npm run test:browser
+CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:browser
 ```
 
-## 8. Definition of Done
+## 7. Definition of Done
 
-- Arbeitspaket vollständig und ohne fachfremde Änderungen umgesetzt,
-- bestehende Daten und Formate kompatibel,
-- relevante Tests vollständig grün,
-- Version und PWA-Cache konsistent,
-- Dokumentation und Restrisiken aktuell,
-- ZIP ohne `node_modules`, Playwright-Berichte, Testartefakte oder temporäre Dateien.
+Quellcode, Tests, Dokumentation, Versionsangaben, App-Shell und Prüfsummenliste sind konsistent; alle Prüfungen bestehen; die finale ZIP wird frisch entpackt und erneut validiert.

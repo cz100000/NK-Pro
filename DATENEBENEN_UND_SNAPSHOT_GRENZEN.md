@@ -159,3 +159,8 @@ Das Datenschema bleibt 5. Alte Gesamt-JSON-Dateien und alte Archivhüllen bleibe
 - Der zentrale Zustand und `js/app.js` bleiben monolithisch.
 - Für zukünftige Schemaversionen existiert noch kein allgemeines automatisches externes Vor-Migrationsbackup.
 - Ein formalisierter Rollback über mehrere Migrationsschritte ist noch nicht implementiert.
+
+
+## 8. Ergänzung V99.4.5 – fachlich unveränderlicher Snapshot
+
+Der Datenebenenvertrag bleibt Version 1. `objektStandard` ist als abrechnungsbezogene Projektion in der zulässigen Snapshot-Feldmenge enthalten. Neue Abrechnungssnapshots verwenden die Hülle `nk-pro-billing-snapshot` Version 1 mit eindeutiger ID, Objekt-/Zeitraumbezug, Berechnung, Validierung, Zählerauswahl, Prüfsumme und rekursiver Unveränderlichkeit. Historische Archive werden innerhalb derselben Grenzen fachlich unverändert als `legacy-partial` gekennzeichnet.

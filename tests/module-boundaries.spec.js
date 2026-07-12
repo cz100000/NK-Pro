@@ -9,7 +9,7 @@ test("Persistenz-, Migrations-, Backup-/Restore- und Archivmodule sind vor app.j
 
   const result = await page.evaluate(() => {
     const scripts = [...document.scripts].map(script => new URL(script.src).pathname.split("/").pop());
-    const names = ["persistence.js", "migration.js", "backup-recovery.js", "archive.js", "default-seed.js", "app.js"];
+    const names = ["persistence.js", "migration.js", "backup-recovery.js", "object-standard.js", "billing-snapshot.js", "archive.js", "default-seed.js", "app.js"];
     const order = names.map(name => scripts.indexOf(name));
     const snapshot = createYearSnapshot();
     const protectedState = protectDataForStorage(clone(state));
@@ -19,13 +19,17 @@ test("Persistenz-, Migrations-, Backup-/Restore- und Archivmodule sind vor app.j
         persistence:!!window.NKProPersistence,
         migration:!!window.NKProMigration,
         archive:!!window.NKProArchive,
-        backupRecovery:!!window.NKProBackupRecovery
+        backupRecovery:!!window.NKProBackupRecovery,
+        objectStandard:!!window.NKProObjectStandard,
+        billingSnapshot:!!window.NKProBillingSnapshot
       },
       frozen:{
         persistence:Object.isFrozen(window.NKProPersistence),
         migration:Object.isFrozen(window.NKProMigration),
         archive:Object.isFrozen(window.NKProArchive),
-        backupRecovery:Object.isFrozen(window.NKProBackupRecovery)
+        backupRecovery:Object.isFrozen(window.NKProBackupRecovery),
+        objectStandard:Object.isFrozen(window.NKProObjectStandard),
+        billingSnapshot:Object.isFrozen(window.NKProBillingSnapshot)
       },
       compatibility:{
         integrity:validateStoredDataIntegrity(protectedState).valid,
@@ -37,8 +41,8 @@ test("Persistenz-, Migrations-, Backup-/Restore- und Archivmodule sind vor app.j
     };
   });
 
-  expect(result.modules).toEqual({ persistence:true, migration:true, archive:true, backupRecovery:true });
-  expect(result.frozen).toEqual({ persistence:true, migration:true, archive:true, backupRecovery:true });
+  expect(result.modules).toEqual({ persistence:true, migration:true, archive:true, backupRecovery:true, objectStandard:true, billingSnapshot:true });
+  expect(result.frozen).toEqual({ persistence:true, migration:true, archive:true, backupRecovery:true, objectStandard:true, billingSnapshot:true });
   expect(result.order.every(index => index >= 0)).toBe(true);
   expect(result.order).toEqual([...result.order].sort((a, b) => a - b));
   expect(result.compatibility).toEqual({ integrity:true, schema:5, bounded:true });

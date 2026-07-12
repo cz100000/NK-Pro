@@ -2,7 +2,7 @@
 
 **Ziel:** einfacher, stabiler und nachvollziehbarer Arbeitsablauf  
 **Ausgangsversion:** V99.3.0  
-**Aktueller Stand:** V99.4.4  
+**Aktueller Stand:** V99.4.5  
 **Status:** Phase-1-Ziel umgesetzt; Datenmodellziele offen
 
 ## 1. Leitprinzip
@@ -213,7 +213,7 @@ Die Oberfläche muss dieses Prinzip sichtbar machen, zum Beispiel durch Hinweise
 - keine horizontal versteckten Pflichtfelder,
 - druckbare Briefe ohne UI-Elemente.
 
-## 10. Umsetzungsstand V99.4.4
+## 10. Umsetzungsstand V99.4.5
 
 Umgesetzt sind:
 

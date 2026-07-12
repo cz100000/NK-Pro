@@ -1,11 +1,11 @@
 {
-  "appVersion": "99.4.4",
-  "displayVersion": "V99.4.4",
-  "versionName": "Migrations-, Sicherungs-, Restore- und Rollback-Fundament",
+  "appVersion": "99.4.5",
+  "displayVersion": "V99.4.5",
+  "versionName": "Objektstandard und Abrechnungssnapshot",
   "schemaVersion": 5,
   "dataLayerContractVersion": 1,
   "snapshotScope": "billingSnapshot",
-  "basedOn": "99.4.3",
+  "basedOn": "99.4.4",
   "releaseDate": "2026-07-12",
   "runtime": [
     "HTML",
@@ -14,5 +14,7 @@
   ],
   "framework": null,
   "buildSystem": null,
-  "nextWorkPackage": "Zählerverwaltung und Zählerstände mit dauerhafter Zähler-ID trennen"
+  "nextWorkPackage": "Zählerverwaltung und Zählerstände mit dauerhafter Zähler-ID trennen",
+  "objectStandardVersion": 1,
+  "billingSnapshotVersion": 1
 }

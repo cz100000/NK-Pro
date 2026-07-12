@@ -1,89 +1,76 @@
 # NK-Pro – verbindlicher Projektstand
 
 **Stand:** 12. Juli 2026  
-**Anwendung:** V99.4.4  
-**Versionsname:** Migrations-, Sicherungs-, Restore- und Rollback-Fundament  
+**Anwendung:** V99.4.5  
+**Versionsname:** Objektstandard und Abrechnungssnapshot  
 **Datenschema:** 5, unverändert  
 **Datenebenenvertrag:** 1, unverändert  
-**Ausgangsversion:** V99.4.3
+**Objektstandard:** 1  
+**Abrechnungssnapshot:** 1  
+**Ausgangsversion:** V99.4.4
 
 ## 1. Technische Grundlage
 
 NK-Pro ist eine statische lokale Browseranwendung und PWA aus HTML, CSS und JavaScript. Es gibt kein React, kein TypeScript und kein Buildsystem. Node.js und Playwright dienen nur der Prüfung.
 
-Die jeweils neueste ausdrücklich als verbindlich bezeichnete ZIP ist die alleinige technische Grundlage. Frühere Chats, Erinnerungen und ältere ZIPs dürfen keine technischen Annahmen liefern.
+## 2. Produktive Ladefolge
 
-## 2. Produktive Module und Ladefolge
+1. `js/navigation.js`
+2. `js/modal-events.js`
+3. `js/persistence.js`
+4. `js/migration.js`
+5. `js/backup-recovery.js`
+6. `js/object-standard.js`
+7. `js/billing-snapshot.js`
+8. `js/archive.js`
+9. `js/default-seed.js`
+10. `js/app.js`
+11. `js/service-worker-register.js`
 
-1. `js/persistence.js`: Browser-Speicheradapter, Prüfsumme und Integritätsmetadaten,
-2. `js/migration.js`: Registry, Migrationspfade, Validierung und transaktionale Ausführung,
-3. `js/backup-recovery.js`: Sicherungshüllen, Prüfsummen, Restore und Checkpoint-Grundlage,
-4. `js/archive.js`: Snapshot-Projektion, Archivnormalisierung und Datenebenenvertrag,
-5. `js/default-seed.js`: Ausgangsdaten,
-6. `js/app.js`: zentraler Zustand, Fachlogik, UI- und Ablaufsteuerung.
-
-`index.html` lädt alle vier Kernmodule zwingend vor `default-seed.js` und `app.js`. `app.js` prüft die vollständige Modulladung beim Start. Bestehende globale Funktionen bleiben als kleine Kompatibilitätsschicht erhalten.
-
-Nur `js/persistence.js` greift direkt auf `localStorage` zu. Migration, Backup/Restore und Archiv erhalten Speicher- und Fachabhängigkeiten ausschließlich über klar definierte Optionen.
+Die sechs Fach-/Infrastrukturmodule werden als eingefrorene Namensräume geladen. Nur `js/persistence.js` greift direkt auf `localStorage` zu.
 
 ## 3. Verbindliche Datenebenen
 
-1. **Aktueller Arbeitsstand:** einzige schreibbare Laufzeitinstanz im Hauptspeicherschlüssel.
-2. **Objektstammdaten:** `stammdaten` ausschließlich im aktuellen Arbeitsstand und im Gesamtbackup.
-3. **Globale Historie:** `waterMeterHistory` ausschließlich im aktuellen Arbeitsstand und im Gesamtbackup.
-4. **Abrechnungssnapshot:** begrenzte fachliche Projektion einer Abrechnungsperiode.
-5. **Jahresarchiv:** Sammlung aus Archivhülle, Zusammenfassung und genau einem begrenzten Abrechnungssnapshot.
-6. **Gesamtsicherung:** vollständiger Arbeitsstand einschließlich Stammdaten, globaler Historie und begrenztem Jahresarchiv.
-7. **Recovery:** genau ein getrennt gespeicherter vorheriger gültiger Arbeitsstand.
-8. **Vor-Migrationssicherung:** vollständige unveränderte Quelle vor einer erforderlichen Migration, getrennt vom Arbeits- und Recovery-Stand.
-9. **Restore-Checkpoint:** letzter gültiger Arbeitsstand unmittelbar vor einem Restore.
+- schreibbarer aktueller Arbeitsstand,
+- Objektstammdaten in `stammdaten`,
+- additive Objektprojektion in `objektStandard`,
+- globale Zählerhistorie in `waterMeterHistory`,
+- begrenzter, unveränderlicher Abrechnungssnapshot,
+- Jahresarchiv aus vollständigen oder ausdrücklich gekennzeichneten Legacy-Snapshots,
+- vollständige Gesamtsicherung,
+- Recovery-Stand,
+- Vor-Migrationssicherung,
+- Restore-Checkpoint.
 
-## 4. Verbindliche Snapshot-Grenzen
+## 4. Objektstandard und Snapshot
 
-Abrechnungs- und Archivsnapshots enthalten ausschließlich abrechnungsbezogene Fachfelder. Ausgeschlossen sind insbesondere `jahresArchiv`, `stammdaten`, `waterMeterHistory` sowie Speicherintegritäts-, Backup-, Migrations-, Restore-, Recovery- und Viewer-Metadaten.
+Objektstandard 1 bildet Objekt, Gebäude, Einheiten, Eigentümer, Partner, Verträge, Kostenarten, Verteilerschlüssel, Vorauszahlungen, Zähler, Verbrauchsstellen, Abrechnungszeiträume und Einstellungen ab. Bestehende Quellfelder bleiben erhalten.
 
-Archivansichten erhalten erforderliche Objektstammdaten und globale Zählerhistorie nur zur Laufzeit. Beim Wiederöffnen zur Bearbeitung bleiben aktuelle Stammdaten, globale Historie und vollständiges Jahresarchiv erhalten.
+Abrechnungssnapshot 1 besitzt eindeutige ID, Objekt-/Zeitraumbezug, Versionen, Berechnungsgrundlagen, Berechnungsergebnis, strukturierte Validierung, Zählerauswahl, begrenzte Daten, rekursive Unveränderlichkeit und Prüfsumme.
 
-## 5. Migration, Sicherung und Kompatibilität
+Der Typ `electricity-dummy` ist speicher- und exportfähig, aber mit `abrechnungsrelevant: false` und `billingRole: excluded` vollständig aus der Abrechnung ausgeschlossen.
 
-- Datenschema 5 bleibt unverändert.
-- Datenebenenvertrag 1 und Snapshot-Rolle `billingSnapshot` bleiben unverändert.
-- Registry-Pfade: `1→2`, `2→4`, `3→4`, `4→5`.
-- Vor jeder im Ladepfad erforderlichen Datenmigration wird der vollständige Quelldatensatz als Sicherungshülle erzeugt.
-- Migrationen laufen ausschließlich auf einer Kopie und werden nur vollständig übernommen.
-- Vor-, Schritt- und Nachvalidierung verhindern unvollständige Übernahmen.
-- Fehlgeschlagene Migrationen verändern weder die Quelle noch den gespeicherten Hauptstand.
-- Vor-Migrationssicherung und Restore-Checkpoint besitzen getrennte Speicherbereiche.
-- Sicherungshüllen enthalten eindeutige IDs und Prüfsummen für Nutzdaten, Metadaten und Gesamthülle.
-- Bestehende Gesamt-JSON-Dateien, Abrechnungsdateien, Archivhüllen und Produktivdaten bleiben importierbar.
+## 5. Migration und Kompatibilität
 
-## 6. Unveränderte Bereiche
+- Schemaregistry weiterhin `1→2`, `2→4`, `3→4`, `4→5`.
+- Additive Migration `object-standard-v1` bei fehlender oder falscher Objektstandardversion.
+- Vor dieser Migration entsteht auch bei Schema 5 eine externe, validierte Vor-Migrationssicherung.
+- Historische Archive werden nicht fachlich neu interpretiert.
+- Vollständige neue Snapshots werden vor Archivierung und Import per Prüfsumme validiert.
+- Bestehende V99.4.4-Daten, Backups, Recovery-Daten und Archive bleiben nutzbar.
 
-- keine Änderung der Berechnungslogik,
-- keine Änderung der sechs fachlichen Referenzfälle,
-- keine neue Schemaversion,
-- keine Änderung des Datenebenenvertrags,
-- keine optischen oder allgemeinen UI-Änderungen,
-- keine Framework-, TypeScript- oder Buildsystem-Einführung.
+## 6. Freigabenachweis
 
-Funktional ergänzt wurden ausschließlich Sicherungs-, Migrations-, Restore- und Rollback-Aktionen im bereits vorhandenen Sicherungsbereich.
+- 12/12 JavaScript-Einheiten syntaktisch fehlerfrei,
+- 6/6 Referenzfälle semantisch unverändert,
+- 35/36 Playwright-/Chromium-Tests,
+- Objektstandardmigration mit Vor-Migrationssicherung,
+- strukturierte Blockade ungültiger Snapshots,
+- Snapshot-Unveränderlichkeit und Manipulationserkennung,
+- Erhalt historischer Facharrays als `legacy-partial`,
+- vollständiger Dummy-Ausschluss,
+- Restore-, Rollback-, Archiv-, Import-, Export-, PWA- und UI-Regression.
 
-## 7. Aktive Freigabenachweise
+## 7. Verbleibende Grenze
 
-- JavaScript-Syntax einschließlich neuem Backup-/Restore-Modul,
-- sechs kanonische Referenzfälle,
-- Release-, Modul-, Registry-, Datenvertrag-, Manifest- und PWA-Konsistenz,
-- Browserregression für Start, Navigation, Fachlogik, Persistenz, Archive und Exporte,
-- Registry-Pfad und transaktionale Migration,
-- Fehlersimulation ohne Teiländerung,
-- Sicherungshüllenvalidierung und Manipulationserkennung,
-- Vor-Migrationssicherung beim Start mit Schema-4-Daten,
-- atomare optionale Archivmigration bei bereits aktuellem Arbeitsstand,
-- externer Restore über den JSON-Import mit Rollback-Checkpoint,
-- 10/10 JavaScript-Einheiten, 6/6 Referenzfälle und 28/28 Playwright-/Chromium-Tests.
-
-## 8. Nächstes Arbeitspaket
-
-**Zählerverwaltung und periodische Zählerstände mit dauerhafter Zähler-ID trennen.**
-
-Weiterhin offen bleiben insbesondere Datenschutztrennung für veröffentlichbare Pakete, weitere schrittweise Modularisierung und CSS-/Druckkonsolidierung.
+Die additive Objektprojektion ersetzt noch nicht sämtliche historischen UI-Quellarrays. Die physische Trennung dauerhafter Zählerstammdaten von periodischen Messwerten bleibt ein eigenes Folgearbeitspaket.

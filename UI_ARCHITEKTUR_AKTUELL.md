@@ -1,6 +1,6 @@
 # UI-Architektur – aktueller Stand
 
-**Version:** V99.4.4  
+**Version:** V99.4.5  
 **Datenschema:** 5, unverändert  
 **Zweck:** verbindliche Alt-zu-Neu-Zuordnung der Phase-1-Navigation
 

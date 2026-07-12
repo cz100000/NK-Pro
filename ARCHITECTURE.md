@@ -1,160 +1,62 @@
 # NK-Pro – Architektur
 
-**Ist-Stand:** V99.4.4  
+**Ist-Stand:** V99.4.5  
 **Datenschema:** 5  
 **Datenebenenvertrag:** 1  
-**Prinzip:** statische, lokale, frameworkfreie Browseranwendung
+**Objektstandard:** 1  
+**Abrechnungssnapshot:** 1
 
-## 1. Laufzeit und Komponenten
+## 1. Laufzeit
 
-NK-Pro läuft vollständig im Browser. Ein Webserver ist nur für PWA- und Service-Worker-Funktionen erforderlich.
+NK-Pro läuft ohne Framework und ohne Buildschritt als lokale HTML/CSS/JavaScript-PWA. Produktive Daten verbleiben im Browser oder in explizit heruntergeladenen JSON-Dateien.
 
-```mermaid
-flowchart LR
-  UI[index.html + app.css] --> P[persistence.js]
-  UI --> M[migration.js]
-  UI --> B[backup-recovery.js]
-  UI --> A[archive.js]
-  UI --> S[default-seed.js]
-  UI --> APP[app.js]
-  APP --> P
-  APP --> M
-  APP --> B
-  APP --> A
-  P --> LS[localStorage]
-  APP --> FILES[JSON / CSV / TXT / HTML]
-  UI --> SW[Service Worker]
-  SW --> CACHE[Cache Storage]
-```
+## 2. Modulgrenzen
 
-### Produktive Verantwortlichkeiten
+| Modul | Verantwortung |
+|---|---|
+| `persistence.js` | Speicherung, Recovery und Speicherintegrität |
+| `migration.js` | Registry, Pfadplanung, Vor-/Nachvalidierung, transaktionale Migration |
+| `backup-recovery.js` | Sicherungshüllen, unveränderliche Metadaten, Restore und Checkpoint |
+| `object-standard.js` | additive Objektprojektion, Typisierung, Zählerstandard, Objektvalidierung |
+| `billing-snapshot.js` | Abrechnungsbereitschaft, Snapshot-Hülle, Prüfsumme, Unveränderlichkeit |
+| `archive.js` | Datenebenenvertrag, Snapshot-Begrenzung, Archivvorbereitung, Legacy-Status |
+| `app.js` | bestehende Fachberechnung, Zustand, UI und Ablaufkoordination |
 
-- `js/persistence.js`: einziger direkter Browser-Speicheradapter, Integritätsmetadaten und FNV-1a-Prüfsumme.
-- `js/migration.js`: Schemaermittlung, eingefrorene Registry, Pfadplanung, Vor-/Nachvalidierung und transaktionale Migration.
-- `js/backup-recovery.js`: Sicherungshüllen, eindeutige IDs, Prüfsummen, Serialisierung, Persistenzadapter und Restore-Validierung.
-- `js/archive.js`: Snapshot-Projektion, Archivnormalisierung und Durchsetzung des Datenebenenvertrags.
-- `js/default-seed.js`: Ausgangsdaten.
-- `js/app.js`: Laufzeitzustand, Fachnormalisierung, Berechnung, UI-, Import-/Export-, Sicherungs- und Restore-Orchestrierung.
-- `service-worker.js`: Network-first-App-Shell unter `nk-pro-v99-4-4`.
+Abhängigkeiten werden den Modulen über Optionsobjekte übergeben. Globale Wrapper bestehen nur als Kompatibilitätsschicht für bestehende HTML- und Testaufrufe.
 
-## 2. Verbindliche Ladefolge
+## 3. Objektmodell
 
-```text
-navigation.js
-modal-events.js
-persistence.js
-migration.js
-backup-recovery.js
-archive.js
-default-seed.js
-app.js
-service-worker-register.js
-```
+Die bisherigen Arrays bleiben kompatible Produktivquellen. `objektStandard` ist die versionierte fachliche Projektion. Sie referenziert Entitäten über stabile IDs und trennt Objekt, Gebäude, Einheiten, Partner, Verträge, Kostenarten, Verteilerschlüssel, Vorauszahlungen, Zähler, Verbrauchsstellen und Perioden.
 
-Die vier Kernmodule exportieren eingefrorene Namespaces:
+Die Projektion ist additiv, idempotent und bewahrt unbekannte Felder. Ein Objektstandard-Upgrade wird wie eine Datenmigration behandelt und vorab gesichert.
 
-- `NKProPersistence`
-- `NKProMigration`
-- `NKProBackupRecovery`
-- `NKProArchive`
+## 4. Snapshot-Pipeline
 
-`app.js` prüft diese Namespaces vor der Initialisierung des Zustands. Globale Funktionsnamen bleiben nur als Kompatibilitätsfassaden erhalten. Migration, Backup/Restore und Archiv kennen weder DOM noch `localStorage`; Abhängigkeiten werden injiziert.
+1. bestehende Periodendaten synchronisieren,
+2. Objektstandard normalisieren,
+3. bestehende Umlageberechnung ausführen,
+4. zentrale Abrechnungsbereitschaft prüfen,
+5. begrenzte Abrechnungsdaten erzeugen,
+6. Objektstandard, Berechnung und Zusammenfassung aufnehmen,
+7. eindeutige Snapshot-ID erzeugen,
+8. Prüfsumme bilden,
+9. gesamte Hülle rekursiv einfrieren,
+10. vor Import oder Archivierung erneut validieren.
 
-## 3. Arbeitszustand, Persistenz und Recovery
+Kritische Validierungsfehler stoppen Schritt 5. Stromzähler-Dummys erscheinen nur in der Ausschlussliste.
 
-`state` bleibt die einzige schreibbare Laufzeitinstanz. Der Startpfad liest zuerst unveränderte Rohdaten. Ist der Arbeitsstand älter als Schema 5, wird vor jeder Normalisierung eine getrennte Vor-Migrationssicherung erzeugt. Erst danach läuft die Migration auf einer Kopie.
+## 5. Archivstrategie
 
-```mermaid
-flowchart TD
-  R[Hauptspeicher / Recovery / Legacy / SEED] --> I[Integritätsprüfung]
-  I --> C{Migration erforderlich?}
-  C -->|ja| B[Vor-Migrationssicherung]
-  C -->|nein| N[Fachnormalisierung]
-  B --> M[Registry + Transaktion auf Kopie]
-  M -->|vollständig gültig| N
-  M -->|Fehler| X[Quelle und Hauptspeicher unverändert]
-  N --> D[Datenebenenvertrag]
-  D --> S[state]
-  S --> W[geschütztes Speichern + ein Recovery-Stand]
-```
+Neue Snapshots sind vollständig und prüfsummengeschützt. Bestehende Altarchive werden ausschließlich auf die bestehenden Snapshot-Grenzen reduziert; ihre Fachinhalte werden nicht auf Objektstandard 1 umgeschrieben. Sie erhalten den Status `legacy-partial`.
 
-Der Recovery-Stand bleibt vom Vor-Migrationsbackup und vom Restore-Checkpoint getrennt.
+## 6. Persistenz und Recovery
 
-## 4. Migrationsarchitektur
+Der Arbeitsstand enthält `objektStandard` und wird wie bisher integritätsgeschützt gespeichert. Gesamtbackup, Vor-Migrationssicherung und Restore-Checkpoint enthalten den vollständigen Stand. Abrechnungssnapshots schließen dagegen globale Stammdatenkopien, globale Historie, Recovery und verschachtelte Archive aus.
 
-Die Registry unterstützt aktuell:
+## 7. PWA
 
-- `schema-1-to-2`
-- `schema-2-to-4`
-- `schema-3-to-4`
-- `schema-4-to-5`
+`service-worker.js` verwendet `nk-pro-v99-4-5` und führt beide neuen Module im App-Shell. Beim Aktivieren werden alte NK-Pro-Caches entfernt.
 
-Ein Transaktionslauf:
+## 8. Nächste Architekturgrenze
 
-1. klont die Quelle,
-2. ermittelt den vollständigen Pfad,
-3. validiert den Eingang,
-4. führt jeden Schritt auf der Kopie aus,
-5. validiert nach jedem Schritt und abschließend,
-6. übernimmt das Ergebnis nur vollständig,
-7. gibt bei Fehlern eine unveränderte Quellkopie zurück.
-
-Der normale Anwendungsstart migriert nur den aktuellen Arbeitsstand. Historische Archivsnapshots werden nicht still verändert. Für ausdrücklich angeforderte Archivmigrationen unterstützt das Modul eine atomare rekursive Ausführung; scheitert ein Archivschritt, wird auch der bereits aktuelle Arbeitsstand nicht teilweise übernommen.
-
-## 5. Sicherungshüllen
-
-Das Format `nk-pro-backup-envelope` Version 1 enthält:
-
-- Sicherungs-ID und Sicherungstyp,
-- Erstellungszeit,
-- Quell-Appversion,
-- Quell- und Zielschema,
-- Datenebenenvertrag,
-- Quell-Speicherschlüssel und Anlass,
-- Migrationspfad,
-- Nutzdaten-, Metadaten- und Gesamthüllenprüfsumme,
-- unveränderte Nutzdatenkopie.
-
-Metadaten und Nutzdaten werden im laufenden Prozess tief eingefroren. Persistierte Änderungen werden durch die drei Prüfsummen erkannt. Die FNV-1a-Prüfsumme dient der Integritätsprüfung, nicht dem kryptografischen Echtheitsnachweis.
-
-## 6. Restore und Rollback
-
-```mermaid
-flowchart TD
-  E[interne oder externe Sicherungshülle] --> V[Format + drei Prüfsummen validieren]
-  V -->|ungültig| A[Abbruch ohne Zustandsänderung]
-  V -->|gültig| C[aktuellen state als Restore-Checkpoint sichern]
-  C --> R[Nutzdaten klonen]
-  R --> M[bei Bedarf über Registry auf Schema 5 migrieren]
-  M --> D[Datenvertrag anwenden]
-  D --> P[geschützt speichern]
-  P --> RB[Rollback kann Checkpoint wiederherstellen]
-```
-
-Interne Vor-Migrationssicherungen werden im bestehenden Sicherungsbereich angeboten. Extern heruntergeladene Sicherungshüllen werden über den vorhandenen JSON-Import erkannt, validiert und mit Checkpoint wiederhergestellt.
-
-## 7. Datenebenen und Snapshot-Grenzen
-
-Abrechnungssnapshots enthalten ausschließlich abrechnungsbezogene Fachfelder. Sie enthalten nie `jahresArchiv`, `stammdaten`, `waterMeterHistory` oder technische Speicher-, Backup-, Recovery-, Migrations-, Restore- und Viewer-Metadaten.
-
-- **Arbeitsstand:** aktuelle schreibbare Gesamtdaten.
-- **Jahresarchiv:** Archivhülle plus genau ein begrenzter Abrechnungssnapshot.
-- **Gesamtbackup:** vollständiger Arbeitsstand mit Stammdaten, globaler Historie und begrenztem Archiv.
-- **Recovery:** ein vorheriger gültiger Arbeitsstand.
-- **Vor-Migrationssicherung:** unveränderte Quelle vor Migration.
-- **Restore-Checkpoint:** Arbeitsstand unmittelbar vor Restore.
-
-Datenschema 5, Datenebenenvertrag 1 und Snapshot-Rolle `billingSnapshot` bleiben unverändert.
-
-## 8. Testarchitektur
-
-Die Freigabe umfasst:
-
-- 10 JavaScript-Syntaxprüfungen,
-- 6 kanonische Referenzdatenfälle,
-- statische Release- und Modulgrenzenprüfung,
-- 28 Playwright-/Chromium-Tests für Start, Navigation, Fachlogik, Persistenz, Archive, Registry, Fehlerabbruch, Sicherungshüllen, externen Restore, Rollback-Checkpoint und PWA.
-
-## 9. Nächste Architekturgrenze
-
-Das nächste empfohlene Datenmodellthema ist die Trennung dauerhafter Zählerstammdaten von periodischen Messwerten über eine stabile Zähler-ID. Dafür ist das V99.4.4-Migrations- und Sicherungsfundament verbindlich zu verwenden.
+Dauerhafte Zählerstammdaten und periodische Zählerstände sollten in einem getrennten Arbeitspaket physisch voneinander getrennt werden. Objektstandard 1 stellt dafür bereits stabile Zähler- und Zuordnungs-IDs bereit.

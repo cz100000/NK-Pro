@@ -11,7 +11,7 @@ test("Speichern und erneutes Laden erhalten den Datenstand samt Prüfsumme", asy
 
   const saved = await page1.evaluate(() => {
     const tenant = state.mieter.find(item => item.id === "M001");
-    tenant.bemerkung = "Playwright-Persistenztest V99.4.4";
+    tenant.bemerkung = "Playwright-Persistenztest V99.4.5";
     const ok = saveData();
     const stored = readStoredDataResult(STORAGE_KEY);
     return {
@@ -33,7 +33,7 @@ test("Speichern und erneutes Laden erhalten den Datenstand samt Prüfsumme", asy
   const runtime2 = attachRuntimeGuards(page2);
   await openFreshApp(page2, saved.entries);
   const note = await page2.evaluate(() => state.mieter.find(item => item.id === "M001")?.bemerkung);
-  expect(note).toBe("Playwright-Persistenztest V99.4.4");
+  expect(note).toBe("Playwright-Persistenztest V99.4.5");
   runtime2.assertClean();
   await context2.close();
 });
@@ -78,6 +78,11 @@ test("Archiv-Snapshots besitzen feste Grenzen und bleiben idempotent", async ({ 
     legacy.data.waterMeterHistory = clone(state.waterMeterHistory || {});
     legacy.data.meta.backupEvents = [{ type:"full-json", filename:"alt.json" }];
     legacy.data.meta.storageIntegrityChecksum = "ungueltig";
+    delete legacy.snapshotFormat;
+    delete legacy.snapshotVersion;
+    delete legacy.snapshotStatus;
+    delete legacy.snapshotCompleteness;
+    delete legacy.integrity;
 
     const once = prepareArchiveItemForUse(legacy);
     const twice = prepareArchiveItemForUse(once);

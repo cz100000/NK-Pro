@@ -3,7 +3,9 @@ const NK_PRO_MODULES = (() => {
     persistence:globalThis.NKProPersistence,
     migration:globalThis.NKProMigration,
     archive:globalThis.NKProArchive,
-    backupRecovery:globalThis.NKProBackupRecovery
+    backupRecovery:globalThis.NKProBackupRecovery,
+    objectStandard:globalThis.NKProObjectStandard,
+    billingSnapshot:globalThis.NKProBillingSnapshot
   };
   const missing = Object.entries(required).filter(([, value]) => !value).map(([name]) => name);
   if (missing.length) throw new Error("NK-Pro-Modulladereihenfolge unvollständig: " + missing.join(", "));
@@ -13,8 +15,8 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.4";
-const APP_VERSION_NAME = "Migrations-, Sicherungs-, Restore- und Rollback-Fundament";
+const APP_VERSION = "V99.4.5";
+const APP_VERSION_NAME = "Objektstandard und Abrechnungssnapshot";
 const APP_RELEASE_DATE = "2026-07-12";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
@@ -32,7 +34,8 @@ const ARCHIVE_SNAPSHOT_DATA_KEYS = [
   "briefSettings",
   "abrechnungsEinzelwerte",
   "legacyEinzelabrechnungen",
-  "prepaymentAdjustmentSettings"
+  "prepaymentAdjustmentSettings",
+  "objektStandard"
 ];
 const SNAPSHOT_TECHNICAL_META_KEYS = new Set([
   "archiveViewer",
@@ -78,6 +81,10 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
+  "V99.4.5 führt Objektstandard 1 als additive, verlustfreie Projektion über den bestehenden Wohnungen-, Mieter-, Kostenarten-, Vorauszahlungs- und Zählerbestand ein.",
+  "Neue Abrechnungssnapshots besitzen eine eindeutige Snapshot-ID, unveränderliche Metadaten, Objekt- und Periodenbezug, vollständige Berechnungsgrundlagen sowie eine prüfbare Integritätschecksumme.",
+  "Eine zentrale Abrechnungsbereitschaftsprüfung verhindert Snapshots bei kritischen Objekt-, Vertrags-, Verteilerschlüssel-, Vorauszahlungs- oder Zählerfehlern.",
+  "Stromzähler-Dummys werden im Objekt- und Zählerbestand gespeichert, aber durch Typ, Abrechnungsrelevanz und Snapshot-Zählerauswahl vollständig aus der Abrechnung ausgeschlossen.",
   "V99.4.4 führt eine zentrale Registry für die unterstützten Migrationspfade 1→2, 2→4, 3→4 und 4→5 ein.",
   "Schemaänderungen laufen transaktional auf einer Datenkopie mit Vor- und Nachvalidierung; bei Fehlern bleibt der Ausgangsdatensatz unverändert.",
   "Vor notwendigen Migrationen wird eine eindeutig identifizierte, prüfsummengeschützte Sicherungshülle im getrennten Speicherbereich erzeugt und für externen Download bereitgestellt.",
@@ -300,6 +307,49 @@ function migrationModuleOptions(overrides = {}) {
   };
 }
 
+function objectStandardModuleOptions(overrides = {}) {
+  return {
+    clone,
+    appVersion:APP_VERSION,
+    now:() => new Date().toISOString(),
+    ...overrides
+  };
+}
+
+function billingSnapshotModuleOptions(overrides = {}) {
+  return {
+    clone,
+    hash:integrityHash,
+    appVersion:APP_VERSION,
+    dataSchemaVersion:DATA_SCHEMA_VERSION,
+    dataLayerContractVersion:DATA_LAYER_CONTRACT_VERSION,
+    objectStandardVersion:NK_PRO_MODULES.objectStandard.OBJECT_STANDARD_VERSION,
+    objectStandardModule:NK_PRO_MODULES.objectStandard,
+    createBoundedData:createBoundedBillingSnapshotData,
+    ...overrides
+  };
+}
+
+function normalizeObjectStandard(data, options = {}) {
+  return NK_PRO_MODULES.objectStandard.normalizeObjectStandard(data, objectStandardModuleOptions(options));
+}
+
+function validateObjectStandard(data, options = {}) {
+  return NK_PRO_MODULES.objectStandard.validateObjectStandard(data, objectStandardModuleOptions(options));
+}
+
+function validateBillingReadiness(data = state, options = {}) {
+  return NK_PRO_MODULES.billingSnapshot.validateBillingReadiness(data, billingSnapshotModuleOptions(options));
+}
+
+function validateBillingSnapshot(snapshot, options = {}) {
+  return NK_PRO_MODULES.billingSnapshot.validateBillingSnapshot(snapshot, billingSnapshotModuleOptions(options));
+}
+
+function addElectricityDummyMeter(input = {}, data = state) {
+  return NK_PRO_MODULES.objectStandard.addElectricityDummyMeter(data, input, objectStandardModuleOptions());
+}
+
 function archiveModuleOptions(overrides = {}) {
   return {
     clone,
@@ -310,6 +360,8 @@ function archiveModuleOptions(overrides = {}) {
     snapshotDataKeys:ARCHIVE_SNAPSHOT_DATA_KEYS,
     technicalMetaKeys:SNAPSHOT_TECHNICAL_META_KEYS,
     normalizeLegacyData,
+    billingSnapshot:NK_PRO_MODULES.billingSnapshot,
+    billingSnapshotOptions:billingSnapshotModuleOptions(),
     archivePeriodId,
     todayIso,
     ...overrides
@@ -418,11 +470,22 @@ function writeProtectedStorage(key, data) {
 }
 
 function migrationCandidatesForData(data) {
-  return NK_PRO_MODULES.migration.collectMigrationCandidates(data, DATA_SCHEMA_VERSION).filter(candidate => candidate.path === "workingState");
+  const candidates = NK_PRO_MODULES.migration.collectMigrationCandidates(data, DATA_SCHEMA_VERSION).filter(candidate => candidate.path === "workingState");
+  if (NK_PRO_MODULES.objectStandard.requiresObjectStandardMigration(data)) {
+    candidates.push({
+      path:"workingState.objektStandard",
+      version:currentDataSchemaVersion(data),
+      targetSchemaVersion:DATA_SCHEMA_VERSION,
+      migrationId:"object-standard-v1",
+      description:"Objektstandard 1 additiv erzeugen"
+    });
+  }
+  return candidates;
 }
 
 function migrationPathLabelsForCandidates(candidates) {
   return (candidates || []).map(candidate => {
+    if (candidate.migrationId) return candidate.path + ":" + candidate.migrationId;
     try {
       const path = NK_PRO_MODULES.migration.findMigrationPath(candidate.version, DATA_SCHEMA_VERSION);
       return candidate.path + ":" + path.map(step => step.id).join(">");
@@ -598,6 +661,14 @@ function parseJsonFileText(text) {
 function importValidationReport(data) {
   const errors = [];
   const warnings = [];
+  if (data && data.snapshotFormat === NK_PRO_MODULES.billingSnapshot.BILLING_SNAPSHOT_FORMAT) {
+    const snapshotValidation = validateBillingSnapshot(data);
+    if (!snapshotValidation.valid) {
+      snapshotValidation.errors.forEach(item => errors.push(item.message));
+      return { errors, warnings };
+    }
+    data = data.data;
+  }
   if (!isAppDataShape(data)) {
     errors.push("Die Datei enthält keine vollständige NK-Pro-Datenstruktur mit Wohnungen, Mietern und Kostenarten.");
     return { errors, warnings };
@@ -900,22 +971,7 @@ function exportSnapshot() {
 }
 
 function exportCurrentBillingSnapshot() {
-  const archiveLike = createYearSnapshot();
-  const snapshot = clone(archiveLike.data || {});
-  if (!snapshot.meta) snapshot.meta = {};
-  snapshot.meta.exportedAt = new Date().toISOString();
-  snapshot.meta.exportedWithAppVersion = APP_VERSION;
-  snapshot.meta.exportStorageKey = STORAGE_KEY;
-  snapshot.meta.exportScope = "currentBillingOnly";
-  snapshot.meta.exportScopeLabel = "Nur aktuell geöffnete Abrechnung, ohne Jahresarchiv";
-  snapshot.meta.exportedBillingYear = archiveLike.year || currentAbrechnungsjahr();
-  snapshot.meta.exportedBillingPeriod = periodLabelShort();
-  snapshot.meta.dataSchemaVersion = DATA_SCHEMA_VERSION;
-  snapshot.meta.dataLayerContractVersion = DATA_LAYER_CONTRACT_VERSION;
-  snapshot.meta.dataLayerRole = ARCHIVE_SNAPSHOT_SCOPE;
-  snapshot.meta.snapshotScope = ARCHIVE_SNAPSHOT_SCOPE;
-  snapshot.exportSummary = clone(archiveLike.summary || {});
-  return snapshot;
+  return createYearSnapshot();
 }
 
 function backupFileName(prefix, data) {
@@ -1029,6 +1085,20 @@ function runRenderStep(area, fn) {
   }
 }
 function normalizeLoadedData(data) {
+  if (data && data.snapshotFormat === NK_PRO_MODULES.billingSnapshot.BILLING_SNAPSHOT_FORMAT) {
+    const validation = validateBillingSnapshot(data);
+    if (!validation.valid) {
+      notifyStorageProblem("Der geladene Abrechnungssnapshot ist ungültig. Es wurden Ausgangsdaten geladen.", new Error(validation.errors.map(item => item.message).join(" ")));
+      return normalizeLegacyData(clone(SEED));
+    }
+    const envelope = data;
+    data = clone(envelope.data);
+    if (!data.meta) data.meta = {};
+    data.meta.importedFromBillingSnapshotId = envelope.snapshotId;
+    data.meta.exportScope = envelope.meta && envelope.meta.exportScope || "currentBillingOnly";
+    data.meta.exportScopeLabel = envelope.meta && envelope.meta.exportScopeLabel || "Unveränderlicher Abrechnungssnapshot";
+    data.meta.snapshotScope = envelope.snapshotScope || ARCHIVE_SNAPSHOT_SCOPE;
+  }
   if (!isAppDataShape(data)) {
     notifyStorageProblem("Der geladene Datensatz hat nicht die erwartete NK-Pro-Struktur. Es wurden Ausgangsdaten geladen.", null);
     return normalizeLegacyData(clone(SEED));
@@ -1105,10 +1175,9 @@ function normalizeLegacyData(data, options = {}) {
   }
   ensureUnifiedBillingFields(data, { includeArchives:false });
   migrateDataSchema(data, { includeArchives:false });
-  if (!snapshotMode) {
-    ensureStammdatenData(data);
-    enforceWorkingStateDataContract(data);
-  }
+  if (!snapshotMode) ensureStammdatenData(data);
+  normalizeObjectStandard(data, { legacySnapshot:snapshotMode });
+  if (!snapshotMode) enforceWorkingStateDataContract(data);
   return data;
 }
 
@@ -4406,6 +4475,13 @@ function archiveItemValidation(item) {
 
   const sourceMeta = archiveMeta(item);
   const sourceData = item.data && typeof item.data === "object" && !Array.isArray(item.data) ? item.data : null;
+  if (item.snapshotStatus === NK_PRO_MODULES.billingSnapshot.BILLING_SNAPSHOT_STATUS_COMPLETE) {
+    const snapshotValidation = validateBillingSnapshot(item);
+    snapshotValidation.errors.forEach(entry => errors.push(entry.message));
+    snapshotValidation.warnings.forEach(entry => warnings.push(entry.message));
+  } else if (item.snapshotStatus === NK_PRO_MODULES.billingSnapshot.BILLING_SNAPSHOT_STATUS_LEGACY_PARTIAL) {
+    warnings.push(item.legacySnapshotNotice || "Historischer Abrechnungsstand ist nur teilweise als neuer Snapshot rekonstruierbar.");
+  }
   const sourceSchema = item.schemaVersion || (sourceData && sourceData.meta && sourceData.meta.dataSchemaVersion) || (sourceMeta && sourceMeta.dataSchemaVersion) || "";
   collectArchiveIdMigrationWarnings(sourceData).forEach(message => warnings.push(message));
 
@@ -5361,36 +5437,48 @@ function createYearSnapshot() {
   syncUmlageInputs();
   applyWaterMetersToUmlage();
   updateTenantPrepaymentTotals();
+  normalizeObjectStandard(state);
 
   const calc = calculateUmlage();
   const year = currentAbrechnungsjahr();
   const visibleRows = visibleTenantRows();
   const billableRows = visibleRows.filter(m => isBillableTenant(m));
   const privateRows = visibleRows.filter(m => isPrivateTenant(m));
-  const prepayments = calc.tenantResults.reduce((s,r) => s + num(r.prepayments), 0);
-  const tenantShares = calc.tenantResults.reduce((s,r) => s + num(r.costShare), 0);
-  const corrections = calc.tenantResults.reduce((s,r) => s + num(r.correction), 0);
-  const kostenNK = state.kostenarten.filter(k => k.kostenart && k.inNK === "Ja").reduce((s,k) => s + num(k.gesamtbetrag), 0);
-
-  return {
-    year,
-    periodId: String(year) + "|" + periodStart() + "|" + periodEnd() + "|Tool-Abrechnung",
-    archivedAt: todayIso(),
-    meta: snapshotMetaFrom(state.meta || {}),
-    summary: {
-      mietverhaeltnisse: billableRows.length,
-      datensaetzeUmlagebasis: visibleRows.length,
-      eigentuemerPrivatDatensaetze: privateRows.length,
-      kostenNK,
-      vorauszahlungen: prepayments,
-      mieterKostenanteile: tenantShares,
-      korrekturen: corrections,
-      saldo: tenantShares - prepayments - corrections
-    },
-    snapshotScope: ARCHIVE_SNAPSHOT_SCOPE,
-    snapshotBoundaryVersion: DATA_LAYER_CONTRACT_VERSION,
-    data: createBoundedBillingSnapshotData(state)
+  const prepayments = calc.tenantResults.reduce((sum, row) => sum + num(row.prepayments), 0);
+  const tenantShares = calc.tenantResults.reduce((sum, row) => sum + num(row.costShare), 0);
+  const corrections = calc.tenantResults.reduce((sum, row) => sum + num(row.correction), 0);
+  const kostenNK = state.kostenarten.filter(k => k.kostenart && k.inNK === "Ja").reduce((sum, row) => sum + num(row.gesamtbetrag), 0);
+  const summary = {
+    mietverhaeltnisse:billableRows.length,
+    datensaetzeUmlagebasis:visibleRows.length,
+    eigentuemerPrivatDatensaetze:privateRows.length,
+    kostenNK,
+    vorauszahlungen:prepayments,
+    mieterKostenanteile:tenantShares,
+    korrekturen:corrections,
+    saldo:tenantShares - prepayments - corrections
   };
+  const readiness = validateBillingReadiness(state);
+  const periodId = String(year) + "|" + periodStart() + "|" + periodEnd() + "|Tool-Abrechnung";
+  return NK_PRO_MODULES.billingSnapshot.createBillingSnapshot(state, billingSnapshotModuleOptions({
+    validation:readiness,
+    calculation:calc,
+    summary,
+    envelopeFields:{
+      year,
+      periodId,
+      archivedAt:new Date().toISOString(),
+      meta:Object.assign(snapshotMetaFrom(state.meta || {}), {
+        exportScope:"currentBillingOnly",
+        exportScopeLabel:"Unveränderlicher Abrechnungssnapshot der aktuellen Abrechnung",
+        exportedAt:new Date().toISOString(),
+        exportedWithAppVersion:APP_VERSION
+      }),
+      snapshotScope:ARCHIVE_SNAPSHOT_SCOPE,
+      snapshotBoundaryVersion:DATA_LAYER_CONTRACT_VERSION,
+      schemaVersion:DATA_SCHEMA_VERSION
+    }
+  }));
 }
 
 function upsertYearArchive(snapshot) {
@@ -6392,7 +6480,13 @@ if (jsonImportEl) jsonImportEl.addEventListener("change", async (ev) => {
     const parsedFile = parseJsonFileText(text);
     let parsed = parsedFile;
     let importedBackupEnvelope = null;
-    if (parsedFile && parsedFile.format === NK_PRO_MODULES.backupRecovery.BACKUP_FORMAT) {
+    if (parsedFile && parsedFile.snapshotFormat === NK_PRO_MODULES.billingSnapshot.BILLING_SNAPSHOT_FORMAT) {
+      const snapshotValidation = validateBillingSnapshot(parsedFile);
+      if (!snapshotValidation.valid) throw new Error("Abrechnungssnapshot ist ungültig: " + snapshotValidation.errors.map(item => item.message).join(" "));
+      parsed = clone(parsedFile.data);
+      if (!parsed.meta) parsed.meta = {};
+      parsed.meta.importedFromBillingSnapshotId = parsedFile.snapshotId;
+    } else if (parsedFile && parsedFile.format === NK_PRO_MODULES.backupRecovery.BACKUP_FORMAT) {
       const envelopeValidation = NK_PRO_MODULES.backupRecovery.validateBackupEnvelope(parsedFile, backupRecoveryModuleOptions());
       if (!envelopeValidation.valid) throw new Error("Sicherungshülle ist ungültig: " + envelopeValidation.errors.join(" "));
       importedBackupEnvelope = parsedFile;
@@ -9616,7 +9710,7 @@ function appSelfTestReport() {
     return "Finalisieren/Entsperren-Status OK";
   }));
 
-  runCheck("Navigation", "Migrations-, Sicherungs-, Restore- und Rollback-Fundament V99.4.4", () => {
+  runCheck("Navigation", "Objektstandard und Abrechnungssnapshot V99.4.5", () => {
     const nav = document.querySelector(".workflow-nav");
     if (!nav) throw new Error("Workflow-Navigation fehlt");
     const groups = Array.from(nav.querySelectorAll(":scope > .nav-group")).map(group => group.dataset.navGroupSection);
@@ -9867,12 +9961,17 @@ function overviewCoreStats() {
   const issues=quality && Array.isArray(quality.issues) ? quality.issues.filter(i=>i.severity !== "OK") : [];
   const errors=issues.filter(i=>i.severity === "Fehler");
   const checks=issues.filter(i=>i.severity === "Prüfen");
+  const objectStandard=safeOverviewCall(()=>state && state.objektStandard ? state.objektStandard : null,null);
+  const objectValidation=safeOverviewCall(()=>validateObjectStandard(state),{valid:false,errors:[],warnings:[],infos:[]});
+  const billingReadiness=safeOverviewCall(()=>validateBillingReadiness(state),{valid:false,errors:[],warnings:[],infos:[],meterSelection:{included:[],excluded:[]}});
   const meters=safeOverviewCall(()=>{
+    if (objectStandard && Array.isArray(objectStandard.zaehler)) return objectStandard.zaehler;
     if (state && state.waterMeters && Array.isArray(state.waterMeters.rows)) return state.waterMeters.rows;
     if (state && Array.isArray(state.wasserzaehler)) return state.wasserzaehler;
     if (state && Array.isArray(state.zaehler)) return state.zaehler;
     return [];
   },[]);
+  const electricityDummyMeters=meters.filter(meter=>safeOverviewCall(()=>NK_PRO_MODULES.objectStandard.isElectricityDummyMeter(meter),false));
   const archives=safeOverviewCall(()=>{
     const values=[];
     if (state && Array.isArray(state.jahresArchiv)) values.push(...state.jahresArchiv);
@@ -9880,13 +9979,20 @@ function overviewCoreStats() {
     if (state && state.meta && Array.isArray(state.meta.yearArchive)) values.push(...state.meta.yearArchive);
     return values.length;
   },0);
-  return {units,activeUnits,tenants,archivedTenants,costs,activeCosts,completeCosts,income,calc,totals,quality,issues,errors,checks,meters,archives,
+  return {units,activeUnits,tenants,archivedTenants,costs,activeCosts,completeCosts,income,calc,totals,quality,issues,errors,checks,meters,electricityDummyMeters,objectStandard,objectValidation,billingReadiness,archives,
     year:safeOverviewCall(()=>currentAbrechnungsjahr(),"–"), finalized:safeOverviewCall(()=>isCurrentBillingFinalized(),false)};
 }
 function overviewStatus(stats) {
   if (stats.errors.length) return {status:"error",headline:stats.errors.length+" Fehler",items:[{text:"Fehler vor der Ausgabe beheben",status:"error"},{text:stats.checks.length+" zusätzliche Prüfpunkte",status:stats.checks.length?"warn":"ok"}]};
   if (stats.checks.length) return {status:"warn",headline:stats.checks.length+" Prüfpunkte",items:[{text:"Fachliche Kontrolle erforderlich",status:"warn"},{text:"Keine blockierenden technischen Fehler erkannt",status:"ok"}]};
   return {status:"ok",headline:"Plausibel",items:[{text:"Keine offenen Fehler",status:"ok"},{text:"Datenstand weiter fachlich kontrollieren",status:"ok"}]};
+}
+function overviewStructuredValidation(result, successText) {
+  const errors=Array.isArray(result && result.errors)?result.errors:[];
+  const warnings=Array.isArray(result && result.warnings)?result.warnings:[];
+  if (errors.length) return {status:"error",headline:errors.length+" blockierende Fehler",items:[{text:errors[0].message||String(errors[0]),status:"error"},{text:warnings.length+" zusätzliche Hinweise",status:warnings.length?"warn":"ok"}]};
+  if (warnings.length) return {status:"warn",headline:warnings.length+" Hinweise",items:[{text:warnings[0].message||String(warnings[0]),status:"warn"},{text:"Snapshot wird nur bei kritischen Fehlern blockiert",status:"ok"}]};
+  return {status:"ok",headline:successText||"Plausibel",items:[{text:"Objektstandard 1 gültig",status:"ok"},{text:"Keine blockierenden Objektfehler",status:"ok"}]};
 }
 
 function buildOverviewData(tabId) {
@@ -9897,12 +10003,12 @@ function buildOverviewData(tabId) {
   const open=(label,target,primary=false)=>({label,run:()=>overviewOpenSection(target),primary});
   const save={label:"Speichern",run:()=>saveData(),primary:true};
   const data={
-    objekt:{summary:[["Wohnungen",s.units.length],["Mietverhältnisse",s.tenants.length],["Abrechnungsjahr",s.year],["Datenbestand","Lokal"]],validation:commonValidation,next:next("Wohnungsbestand als ersten Objektbaustein prüfen.","objectPreparationSection"),actions:[go("Wohnungen öffnen","wohnungsverwaltung",true),go("Mieter öffnen","mieterverwaltung"),go("Datensicherung","sicherung")]},
+    objekt:{summary:[["Objekt-ID",s.objectStandard&&s.objectStandard.objekt?(s.objectStandard.objekt.id||"–"):"–"],["Gebäude",s.objectStandard&&Array.isArray(s.objectStandard.gebaeude)?s.objectStandard.gebaeude.length:0],["Einheiten / Verträge",(s.objectStandard&&Array.isArray(s.objectStandard.einheiten)?s.objectStandard.einheiten.length:0)+" / "+(s.objectStandard&&Array.isArray(s.objectStandard.vertraege)?s.objectStandard.vertraege.length:0)],["Zähler / Strom-Dummys",s.meters.length+" / "+s.electricityDummyMeters.length]],validation:overviewStructuredValidation(s.objectValidation,"Objektstandard 1 gültig"),next:next("Objektstandard und abrechnungsrelevante Zuordnungen prüfen.","objectValidationSection"),actions:[go("Wohnungen öffnen","wohnungsverwaltung",true),go("Mieter öffnen","mieterverwaltung"),go("Datensicherung","sicherung")]},
     start:{summary:[["Arbeitsjahr",s.year],["Abrechnungen im Archiv",s.archives],["Mietverhältnisse",s.tenants.length],["Wohnungen",s.units.length]],validation:commonValidation,next:next("Aktuellen Arbeitsstand öffnen oder eine neue Abrechnung anlegen.","startRecordsSection"),actions:[open("Abrechnungen öffnen","startRecordsSection",true),go("Datensicherung & System","sicherung"),save]},
     archiv:{summary:[["Archivierte Abrechnungen",s.archives],["Aktuelle Abrechnung",hasActiveCurrentBilling()?s.year:"Keine"],["Datenbestand","Lokal"],["Schema",DATA_SCHEMA_VERSION]],validation:{status:"ok",headline:"Archiv getrennt erreichbar",items:[{text:"Historische Datensätze bleiben unverändert",status:"ok"},{text:"Öffnen erfolgt schreibgeschützt",status:"ok"}]},next:next("Archivierte Abrechnung auswählen und in der Nur-Ansicht prüfen.","archiveRecordsSection"),actions:[open("Archiv öffnen","archiveRecordsSection",true),{label:"Archiv herunterladen",run:()=>downloadFullArchive()},go("Abrechnungsübersicht","start")]},
     mieterverwaltung:{summary:[["Mietverhältnisse",s.tenants.length],["Archiviert",s.archivedTenants.length],["Wohnungen",s.units.length],["Abrechnungsjahr",s.year]],validation:commonValidation,next:next("Mieterstammdaten und archivierte Mietverhältnisse vollständig prüfen.","masterTenantSection"),actions:[open("Mietverhältnisse öffnen","masterTenantSection",true),open("Archiv öffnen","masterTenantArchiveSection"),save]},
     wohnungsverwaltung:{summary:[["Wohnungen gesamt",s.units.length],["Aktiv",s.activeUnits.length],["Inaktiv",Math.max(0,s.units.length-s.activeUnits.length)],["Wohnfläche aktiv",s.activeUnits.reduce((a,w)=>a+num(w.wohnflaeche),0).toLocaleString("de-DE")+" m²"]],validation:commonValidation,next:next("Wohnungsbestand und Flächenangaben kontrollieren.","masterUnitSection"),actions:[open("Wohnungsbestand öffnen","masterUnitSection",true),go("Mieterverwaltung","mieterverwaltung"),save]},
-    sicherung:{summary:[["Version",APP_VERSION],["Archivstände",s.archives],["Betriebsart","Offline · lokal"],["Abrechnungsjahr",s.year]],validation:{status:"ok",headline:"Sicherung verfügbar",items:[{text:"Lokale Gesamtsicherung vorhanden",status:"ok"},{text:"Neuer PWA-Cache für V99.4.4",status:"ok"}]},next:next("Vollständige JSON-Sicherung erstellen und Versionsinformationen prüfen.","backupMainSection"),actions:[open("Gesamtsicherung öffnen","backupMainSection",true),open("Version anzeigen","backupVersionSection"),save]},
+    sicherung:{summary:[["Version",APP_VERSION],["Archivstände",s.archives],["Betriebsart","Offline · lokal"],["Abrechnungsjahr",s.year]],validation:{status:"ok",headline:"Sicherung verfügbar",items:[{text:"Lokale Gesamtsicherung vorhanden",status:"ok"},{text:"Neuer PWA-Cache für V99.4.5",status:"ok"}]},next:next("Vollständige JSON-Sicherung erstellen und Versionsinformationen prüfen.","backupMainSection"),actions:[open("Gesamtsicherung öffnen","backupMainSection",true),open("Version anzeigen","backupVersionSection"),save]},
     mieter:{summary:[["Wohnungen gesamt",s.units.length],["Wohnungen aktiv",s.activeUnits.length],["Mietverhältnisse",s.tenants.length],["Archivierte Mieter",s.archivedTenants.length]],validation:commonValidation,next:next("Bestand und Abrechnung in der Prüfbox abgleichen; danach Kostenarten bearbeiten.","tenantControlSection"),actions:[open("Prüfung öffnen","tenantControlSection",true),open("Mietverhältnisse öffnen","tenantRelationsSection"),go("Kostenarten öffnen","einstellungen")]},
     einstellungen:{summary:[["Kostenarten",s.costs.length],["Aktiv in NK",s.activeCosts.length],["Vollständig",s.completeCosts.length],["Gesamtkosten",overviewMoney(s.activeCosts.reduce((a,k)=>a+num(k.gesamtbetrag),0))]],validation:{status:s.completeCosts.length===s.activeCosts.length?"ok":"warn",headline:s.completeCosts.length+" von "+s.activeCosts.length+" vollständig",items:[{text:"Umlageschlüssel und Beträge prüfen",status:s.completeCosts.length===s.activeCosts.length?"ok":"warn"},{text:"Umlage wird automatisch berechnet",status:"ok"}]},next:next("Fehlende Beträge und Umlageschlüssel vervollständigen.","costEditSection"),actions:[open("Kostenarten bearbeiten","costEditSection",true),()=>{}].filter(Boolean)},
     einnahmen:{summary:[["Kaltmiete erhalten",overviewMoney(s.income.rent)],["NK-Vorauszahlungen",overviewMoney(s.income.prepayments)],["Korrekturen",overviewMoney(s.income.corrections)],["Mietverhältnisse",s.tenants.length]],validation:commonValidation,next:next("Kaltmieten und Vorauszahlungen vollständig prüfen; danach Zählerstände erfassen.","incomeRentSection"),actions:[open("Kaltmiete öffnen","incomeRentSection",true),open("Vorauszahlungen öffnen","incomePrepaymentSection"),go("Zählerstände","wasser")]},
@@ -10052,7 +10158,7 @@ function renderAll(options = {}) {
       renderAllOverviewCards();
       auditV992Structure();
     } catch(uiError) {
-      if (typeof console !== "undefined" && console.error) console.error("V99.4.4-Darstellung konnte nicht aktualisiert werden", uiError);
+      if (typeof console !== "undefined" && console.error) console.error("V99.4.5-Darstellung konnte nicht aktualisiert werden", uiError);
     }
     if (renderQueued) {
       renderQueued = false;

@@ -1,5 +1,16 @@
 # Changelog
 
+## V99.4.5 – Objektstandard und Abrechnungssnapshot (12. Juli 2026)
+
+- additiver Objektstandard 1 für Objekt, Gebäude, Einheiten, Partner, Verträge, Kosten, Schlüssel, Vorauszahlungen, Zähler, Verbrauchsstellen und Perioden,
+- zentrale strukturierte Validierung der Abrechnungsbereitschaft,
+- unveränderlicher Abrechnungssnapshot 1 mit eindeutiger ID, Versionen, Berechnung, Prüfsumme und Importprüfung,
+- Stromzähler-Dummy `electricity-dummy` mit vollständigem Ausschluss aus Berechnung und Snapshot-Zählerauswahl,
+- additive Objektstandardmigration mit Vor-Migrationssicherung bei unverändertem Datenschema 5,
+- historische Archive bleiben fachlich unverändert und werden als `legacy-partial` markiert,
+- neue Modul-, Snapshot-, Migrations-, Kompatibilitäts- und Regressionstests,
+- PWA, Projektmetadaten und Dokumentation auf V99.4.5 aktualisiert.
+
 ## V99.4.4 – Migrations-, Sicherungs-, Restore- und Rollback-Fundament – 2026-07-12
 
 - Eingefrorene zentrale Migrationsregistry für `1→2`, `2→4`, `3→4` und `4→5` eingeführt.

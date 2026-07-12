@@ -77,18 +77,33 @@
   }
 
   function prepareArchiveItemForUse(item, options = {}) {
-    const archiveItem = normalizeArchiveItem(cloneWith(options, item), options);
+    const original = cloneWith(options, item);
+    const snapshotModule = options.billingSnapshot;
+    if (original && snapshotModule && original.snapshotFormat === snapshotModule.BILLING_SNAPSHOT_FORMAT && original.snapshotStatus === snapshotModule.BILLING_SNAPSHOT_STATUS_COMPLETE) {
+      const validation = snapshotModule.validateBillingSnapshot(original, options.billingSnapshotOptions || {});
+      if (!validation.valid) throw new Error("Abrechnungssnapshot ist ungültig: " + validation.errors.map(entry => entry.message).join(" "));
+      return original;
+    }
+
+    let archiveItem = normalizeArchiveItem(original, options);
     if (archiveItem && archiveItem.data && typeof archiveItem.data === "object" && !Array.isArray(archiveItem.data)) {
-      const normalizedData = options.normalizeLegacyData(archiveItem.data, { scope:options.snapshotScope });
-      archiveItem.data = createBoundedBillingSnapshotData(normalizedData, options);
+      // Historische Fachinhalte werden nicht auf den aktuellen Objektstandard umgeschrieben.
+      // Es werden ausschließlich die verbindlichen Snapshot-Grenzen angewendet und der
+      // ursprüngliche Schema-/Vertragsstand soweit vorhanden beibehalten.
+      const sourceMeta = archiveItem.data.meta && typeof archiveItem.data.meta === "object" && !Array.isArray(archiveItem.data.meta)
+        ? cloneWith(options, archiveItem.data.meta) : {};
+      archiveItem.data = createBoundedBillingSnapshotData(archiveItem.data, options);
+      if (sourceMeta.dataSchemaVersion !== undefined) archiveItem.data.meta.dataSchemaVersion = sourceMeta.dataSchemaVersion;
+      if (sourceMeta.dataLayerContractVersion !== undefined) archiveItem.data.meta.dataLayerContractVersion = sourceMeta.dataLayerContractVersion;
       archiveItem.meta = cloneWith(options, archiveItem.data.meta || archiveItem.meta || {});
       if (!archiveItem.year) archiveItem.year = archiveItem.meta.abrechnungsjahr || "";
       archiveItem.periodId = options.archivePeriodId(archiveItem);
-      archiveItem.schemaVersion = archiveItem.data.meta && archiveItem.data.meta.dataSchemaVersion
-        ? archiveItem.data.meta.dataSchemaVersion
-        : options.dataSchemaVersion;
+      archiveItem.schemaVersion = sourceMeta.dataSchemaVersion || archiveItem.schemaVersion || options.dataSchemaVersion;
       archiveItem.snapshotScope = options.snapshotScope;
-      archiveItem.snapshotBoundaryVersion = options.dataLayerContractVersion;
+      archiveItem.snapshotBoundaryVersion = sourceMeta.dataLayerContractVersion || archiveItem.snapshotBoundaryVersion || options.dataLayerContractVersion;
+      if (snapshotModule && typeof snapshotModule.markLegacySnapshot === "function") {
+        archiveItem = snapshotModule.markLegacySnapshot(archiveItem, options.billingSnapshotOptions || {});
+      }
     }
     return archiveItem;
   }
