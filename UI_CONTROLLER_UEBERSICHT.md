@@ -1,4 +1,4 @@
-# UI-Controller-Übersicht – V99.4.8
+# UI-Controller-Übersicht – V99.4.9
 
 `NKProUiController` registriert 13 Controller mit insgesamt 99 eindeutigen Aktionen. Die Registry kennt weder DOM noch Persistenz und führt ausschließlich die in `NKProUiBindings` hinterlegten Adapter aus.
 

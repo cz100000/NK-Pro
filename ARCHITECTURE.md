@@ -1,6 +1,6 @@
 # NK-Pro – Architektur
 
-**Ist-Stand:** V99.4.8  
+**Ist-Stand:** V99.4.9  
 **Datenschema:** 5  
 **Datenebenenvertrag:** 1  
 **Objektstandard:** 1  

@@ -1,6 +1,6 @@
 # NK-Pro – Technische Schulden
 
-**Basis:** V99.4.8
+**Basis:** V99.4.9
 
 | ID | Thema | Priorität | Stand |
 |---|---|---:|---|
@@ -24,3 +24,9 @@
 - registrierte reine Kompatibilitätswrapper,
 - vollständiges globales Inventar,
 - zusätzliche Architektur- und Regressionstests.
+
+## Stand nach AP8
+
+- `app.js` enthält weiterhin 640 direkte `state`-Referenzen und 234 heuristisch erkannte Schreibzugriffe.
+- 655 Top-Level-Funktionsdeklarationen verbleiben; die physische Extraktion folgt schrittweise hinter der nun vorhandenen Anwendungsschicht.
+- Archiv-, Jahreswechsel-, Qualitäts- und Diagnoseorchestrierung bleibt überwiegend monolithisch und ist nicht Gegenstand von AP8.

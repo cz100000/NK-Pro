@@ -1,6 +1,6 @@
 # NK-Pro – Roadmap
 
-**Basis:** V99.4.8 vom 12. Juli 2026
+**Basis:** V99.4.9 vom 12. Juli 2026
 
 ## Abgeschlossen
 
@@ -11,7 +11,7 @@
 - V99.4.5: Objektstandard 1 und unveränderlicher Abrechnungssnapshot.
 - V99.4.6: getrennte Zählerstammdaten, Messwerte, Perioden, Zuordnungen, Wechsel und Snapshot 2.
 - V99.4.7: Abrechnungsberechnung, Dokumentdaten, Rendering, Export, Tabellenhilfen, Start und Kompatibilität modularisiert.
-- V99.4.8: native UI-Anbindung mit zentraler Ereignisdelegation, 13 Controllern, 99 Aktionen und kontrolliertem Zustandszugriff.
+- V99.4.9: native UI-Anbindung mit zentraler Ereignisdelegation, 13 Controllern, 99 Aktionen und kontrolliertem Zustandszugriff.
 
 ## Nächstes Arbeitspaket – AP8
 
@@ -28,3 +28,9 @@
 - globale Kompatibilitätsschicht schrittweise verkleinern,
 - AP11: verbindliches Navigationsdesign, Icons, Farben, Typografie, Abstände und Responsivität umsetzen,
 - allgemeine Bedienbarkeit und Optik erst auf der stabilisierten Architektur verbessern.
+
+## Nach V99.4.9
+
+- Die Anwendungsschicht ist als kontrollierte Eintrittsgrenze vorhanden.
+- AP9 kann verbleibende Orchestrierungsgruppen schrittweise physisch aus `app.js` extrahieren.
+- AP11 bleibt unverändert für Navigationsstruktur und visuelles Grundsystem reserviert.

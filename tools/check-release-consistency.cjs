@@ -14,25 +14,25 @@ function main() {
   const app = read("js/app.js");
   const worker = read("service-worker.js");
   const moduleNames = [
-    "ui-preferences", "state-access", "ui-controller", "ui-bindings", "ui-events", "navigation", "modal-events",
+    "ui-preferences", "state-access", "application-actions", "ui-controller", "ui-bindings", "ui-events", "navigation", "modal-events",
     "persistence", "migration", "backup-recovery", "meter-master", "meter-readings", "meter-periods", "meter-validation",
     "object-standard", "billing-snapshot", "archive", "billing-calculation", "document-data", "document-renderer",
     "export-service", "ui-table-tools", "app-bootstrap", "compatibility", "default-seed", "app", "service-worker-register"
   ];
   const sources = Object.fromEntries(moduleNames.map(name => [name, read(`js/${name}.js`)]));
 
-  assert(packageJson.name === "nk-pro-v99-4-8" && packageJson.version === "99.4.8", "Paketversion ist inkonsistent.");
-  assert(manifest.version === "99.4.8" && manifest.name.includes("V99.4.8"), "Manifestversion ist inkonsistent.");
-  assert(project.appVersion === "99.4.8" && project.displayVersion === "V99.4.8" && project.basedOn === "99.4.7", "Projektversionsmetadaten sind inkonsistent.");
-  assert(project.versionName === "Native UI-Anbindung an modularisierte Fachdienste", "Versionsname ist inkonsistent.");
+  assert(packageJson.name === "nk-pro-v99-4-9" && packageJson.version === "99.4.9", "Paketversion ist inkonsistent.");
+  assert(manifest.version === "99.4.9" && manifest.name.includes("V99.4.9"), "Manifestversion ist inkonsistent.");
+  assert(project.appVersion === "99.4.9" && project.displayVersion === "V99.4.9" && project.basedOn === "99.4.8", "Projektversionsmetadaten sind inkonsistent.");
+  assert(project.versionName === "Modularisierte Anwendungsaktionen und fachliche Orchestrierung", "Versionsname ist inkonsistent.");
   assert(project.architectureVersion === 2 && project.compatibilityLayerVersion === 2 && project.uiControllerVersion === 1 && project.uiEventContractVersion === 1, "AP7-Architekturversionen fehlen.");
   assert(project.schemaVersion === 5 && project.dataLayerContractVersion === 1, "Datenschema oder Datenebenenvertrag wurde verändert.");
   assert(project.objectStandardVersion === 1 && project.billingSnapshotVersion === 2, "Objektstandard oder Snapshotversion wurde verändert.");
   for (const key of ["meterMasterStandardVersion", "meterReadingStandardVersion", "meterPeriodStandardVersion", "meterAssignmentStandardVersion", "meterReplacementStandardVersion"]) assert(project[key] === 1, `${key} ist inkonsistent.`);
 
-  assert(app.includes('const APP_VERSION = "V99.4.8";') && app.includes('const APP_VERSION_NAME = "Native UI-Anbindung an modularisierte Fachdienste";'), "Laufzeitversion ist inkonsistent.");
+  assert(app.includes('const APP_VERSION = "V99.4.9";') && app.includes('const APP_VERSION_NAME = "Modularisierte Anwendungsaktionen und fachliche Orchestrierung";'), "Laufzeitversion ist inkonsistent.");
   assert(app.includes("const DATA_SCHEMA_VERSION = 5;") && app.includes("const DATA_LAYER_CONTRACT_VERSION = 1;"), "Laufzeit-Datenvertrag ist inkonsistent.");
-  assert(app.split(/\r?\n/).length < 9100, "app.js überschreitet die AP7-Grenze von 9.100 Zeilen.");
+  assert(app.split(/\r?\n/).length < 9100, "app.js überschreitet die AP8-Grenze von 9.100 Zeilen.");
   assert(!/\bon(?:click|change|input|submit|keydown)\s*=/i.test(html + "\n" + app), "Inline-Handler sind noch vorhanden.");
   assert(!/data-app-action/.test(html + "\n" + app), "Veraltete data-app-action-Bindungen sind noch vorhanden.");
   assert(!/addEventListener\s*\(/.test(app), "app.js registriert weiterhin DOM-Ereignisse.");
@@ -55,8 +55,8 @@ function main() {
   const expectedScripts = moduleNames.map(name => `./js/${name}.js`);
   const actualScripts = [...html.matchAll(/<script\s+defer(?:="")?\s+src="([^"]+)"><\/script>/g)].map(match => match[1]);
   assert(JSON.stringify(actualScripts) === JSON.stringify(expectedScripts), `Skriptreihenfolge ist inkonsistent: ${JSON.stringify(actualScripts)}`);
-  assert(html.includes("<title>NK-Pro V99.4.8 – Native UI-Anbindung an modularisierte Fachdienste</title>"), "HTML-Titel ist inkonsistent.");
-  assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-8";'), "Service-Worker-Cache ist inkonsistent.");
+  assert(html.includes("<title>NK-Pro V99.4.9 – Modularisierte Anwendungsaktionen und fachliche Orchestrierung</title>"), "HTML-Titel ist inkonsistent.");
+  assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-9";'), "Service-Worker-Cache ist inkonsistent.");
   for (const resource of expectedScripts) assert(worker.includes(`"${resource}"`), `PWA-App-Shell enthält ${resource} nicht.`);
 
   for (const required of [
@@ -64,7 +64,7 @@ function main() {
     "AP7_NATIVE_UI_ANBINDUNG.md", "AP7_PRUEFBERICHT.md", "UI_CONTROLLER_UEBERSICHT.md", "UI_EREIGNIS_INVENTAR.md", "ZUSTANDSZUGRIFFE.md", "SHA256SUMS.txt"
   ]) assert(fs.existsSync(path.join(root, required)), `${required} fehlt.`);
 
-  process.stdout.write("Release-Konsistenzprüfung abgeschlossen: V99.4.8, Architektur 2, 13 UI-Controller, zentraler Ereignisvertrag, Datenschema 5, Datenebenenvertrag 1 und vollständiger PWA-App-Shell sind konsistent.\n");
+  process.stdout.write("Release-Konsistenzprüfung abgeschlossen: V99.4.9, Architektur 2, 13 UI-Controller, zentraler Ereignisvertrag, Datenschema 5, Datenebenenvertrag 1 und vollständiger PWA-App-Shell sind konsistent.\n");
 }
 
 try { main(); } catch(error) { process.stderr.write(`FEHLER: ${error.message}\n`); process.exit(1); }

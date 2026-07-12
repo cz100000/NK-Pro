@@ -1,4 +1,4 @@
-# Zustandszugriffe – V99.4.8
+# Zustandszugriffe – V99.4.9
 
 ## Verbindlicher Zustand
 

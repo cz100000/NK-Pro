@@ -15,7 +15,7 @@ const master = context.NKProMeterMaster;
 const readings = context.NKProMeterReadings;
 const periods = context.NKProMeterPeriods;
 const validation = context.NKProMeterValidation;
-const fixed = { clone:value => JSON.parse(JSON.stringify(value)), now:() => "2026-07-12T20:00:00.000Z", appVersion:"V99.4.7" };
+const fixed = { clone:value => JSON.parse(JSON.stringify(value)), now:() => "2026-07-13T20:00:00.000Z", appVersion:"V99.4.7" };
 
 function plain(value) { return JSON.parse(JSON.stringify(value)); }
 function options(extra = {}) { return { ...fixed, master, readings, periods, ...extra }; }

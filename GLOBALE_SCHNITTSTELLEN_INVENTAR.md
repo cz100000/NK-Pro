@@ -1,4 +1,4 @@
-# Globale Schnittstellen und Zustände – Inventar V99.4.8
+# Globale Schnittstellen und Zustände – Inventar V99.4.9
 
 Erzeugt aus dem tatsächlichen Top-Level von `js/app.js`. Klassische Skripte machen Funktionsdeklarationen global erreichbar; `const`/`let` bilden globale lexikalische Bindungen.
 

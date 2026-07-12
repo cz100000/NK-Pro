@@ -1,4 +1,4 @@
-# UI-Ereignis- und Inline-Handler-Inventar – V99.4.8
+# UI-Ereignis- und Inline-Handler-Inventar – V99.4.9
 
 ## Ausgang V99.4.7
 
@@ -12,7 +12,7 @@ Aufteilung: 89 `onclick`, 40 `onchange`, 1 `oninput`, 0 `onsubmit`, 0 `onkeydown
 
 Im produktiven JavaScript bestanden 18 programmatische `addEventListener`-Quellstellen: 6 in `app.js`, 5 in `navigation.js`, 2 in `modal-events.js`, 3 in `service-worker-register.js` und 2 in `ui-table-tools.js`.
 
-## Endstand V99.4.8
+## Endstand V99.4.9
 
 - Inline-Handler in `index.html`: 0
 - Inline-Handler in `app.js`: 0

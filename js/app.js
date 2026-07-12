@@ -19,6 +19,7 @@ const NK_PRO_MODULES = (() => {
     compatibility:globalThis.NKProCompatibility,
     uiPreferences:globalThis.NKProUiPreferences,
     stateAccess:globalThis.NKProStateAccess,
+    applicationActions:globalThis.NKProApplicationActions,
     uiController:globalThis.NKProUiController,
     uiBindings:globalThis.NKProUiBindings,
     uiEvents:globalThis.NKProUiEvents,
@@ -33,9 +34,9 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.8";
-const APP_VERSION_NAME = "Native UI-Anbindung an modularisierte Fachdienste";
-const APP_RELEASE_DATE = "2026-07-12";
+const APP_VERSION = "V99.4.9";
+const APP_VERSION_NAME = "Modularisierte Anwendungsaktionen und fachliche Orchestrierung";
+const APP_RELEASE_DATE = "2026-07-13";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
 const ARCHIVE_SNAPSHOT_SCOPE = "billingSnapshot";
@@ -100,7 +101,7 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
-  "V99.4.8 bindet die bestehende Oberfläche über zentrale Ereignisdelegation und fachlich benannte UI-Controller an die modularisierten Dienste an.",
+  "V99.4.9 bindet die bestehende Oberfläche über zentrale Ereignisdelegation und fachlich benannte UI-Controller an die modularisierten Dienste an.",
   "Alle statischen und dynamisch erzeugten Inline-Handler wurden entfernt; Zähler-, Abrechnungs-, Dokument-, Export-, Persistenz- und Recovery-Aktionen laufen über definierte Controllerpfade.",
   "Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Zählerstandard 1 und Abrechnungssnapshot 2 bleiben unverändert.",
   "V99.4.7 trennt zentrale Abrechnungsberechnung, Dokumentdaten, Brief-HTML, Exporttechnik, Tabellenhilfen und Startorchestrierung über feste Modulschnittstellen.",
@@ -8509,7 +8510,7 @@ function appSelfTestReport() {
     return "Finalisieren/Entsperren-Status OK";
   }));
 
-  runCheck("Navigation", "Native UI-Anbindung V99.4.8", () => {
+  runCheck("Navigation", "Native UI-Anbindung V99.4.9", () => {
     const nav = document.querySelector(".workflow-nav");
     if (!nav) throw new Error("Workflow-Navigation fehlt");
     const groups = Array.from(nav.querySelectorAll(":scope > .nav-group")).map(group => group.dataset.navGroupSection);
@@ -8808,7 +8809,7 @@ function buildOverviewData(tabId) {
     archiv:{summary:[["Archivierte Abrechnungen",s.archives],["Aktuelle Abrechnung",hasActiveCurrentBilling()?s.year:"Keine"],["Datenbestand","Lokal"],["Schema",DATA_SCHEMA_VERSION]],validation:{status:"ok",headline:"Archiv getrennt erreichbar",items:[{text:"Historische Datensätze bleiben unverändert",status:"ok"},{text:"Öffnen erfolgt schreibgeschützt",status:"ok"}]},next:next("Archivierte Abrechnung auswählen und in der Nur-Ansicht prüfen.","archiveRecordsSection"),actions:[open("Archiv öffnen","archiveRecordsSection",true),{label:"Archiv herunterladen",action:"archive.downloadFull",args:[]},go("Abrechnungsübersicht","start")]},
     mieterverwaltung:{summary:[["Mietverhältnisse",s.tenants.length],["Archiviert",s.archivedTenants.length],["Wohnungen",s.units.length],["Abrechnungsjahr",s.year]],validation:commonValidation,next:next("Mieterstammdaten und archivierte Mietverhältnisse vollständig prüfen.","masterTenantSection"),actions:[open("Mietverhältnisse öffnen","masterTenantSection",true),open("Archiv öffnen","masterTenantArchiveSection"),save]},
     wohnungsverwaltung:{summary:[["Wohnungen gesamt",s.units.length],["Aktiv",s.activeUnits.length],["Inaktiv",Math.max(0,s.units.length-s.activeUnits.length)],["Wohnfläche aktiv",s.activeUnits.reduce((a,w)=>a+num(w.wohnflaeche),0).toLocaleString("de-DE")+" m²"]],validation:commonValidation,next:next("Wohnungsbestand und Flächenangaben kontrollieren.","masterUnitSection"),actions:[open("Wohnungsbestand öffnen","masterUnitSection",true),go("Mieterverwaltung","mieterverwaltung"),save]},
-    sicherung:{summary:[["Version",APP_VERSION],["Archivstände",s.archives],["Betriebsart","Offline · lokal"],["Abrechnungsjahr",s.year]],validation:{status:"ok",headline:"Sicherung verfügbar",items:[{text:"Lokale Gesamtsicherung vorhanden",status:"ok"},{text:"Neuer PWA-Cache für V99.4.8",status:"ok"}]},next:next("Vollständige JSON-Sicherung erstellen und Versionsinformationen prüfen.","backupMainSection"),actions:[open("Gesamtsicherung öffnen","backupMainSection",true),open("Version anzeigen","backupVersionSection"),save]},
+    sicherung:{summary:[["Version",APP_VERSION],["Archivstände",s.archives],["Betriebsart","Offline · lokal"],["Abrechnungsjahr",s.year]],validation:{status:"ok",headline:"Sicherung verfügbar",items:[{text:"Lokale Gesamtsicherung vorhanden",status:"ok"},{text:"Neuer PWA-Cache für V99.4.9",status:"ok"}]},next:next("Vollständige JSON-Sicherung erstellen und Versionsinformationen prüfen.","backupMainSection"),actions:[open("Gesamtsicherung öffnen","backupMainSection",true),open("Version anzeigen","backupVersionSection"),save]},
     mieter:{summary:[["Wohnungen gesamt",s.units.length],["Wohnungen aktiv",s.activeUnits.length],["Mietverhältnisse",s.tenants.length],["Archivierte Mieter",s.archivedTenants.length]],validation:commonValidation,next:next("Bestand und Abrechnung in der Prüfbox abgleichen; danach Kostenarten bearbeiten.","tenantControlSection"),actions:[open("Prüfung öffnen","tenantControlSection",true),open("Mietverhältnisse öffnen","tenantRelationsSection"),go("Kostenarten öffnen","einstellungen")]},
     einstellungen:{summary:[["Kostenarten",s.costs.length],["Aktiv in NK",s.activeCosts.length],["Vollständig",s.completeCosts.length],["Gesamtkosten",overviewMoney(s.activeCosts.reduce((a,k)=>a+num(k.gesamtbetrag),0))]],validation:{status:s.completeCosts.length===s.activeCosts.length?"ok":"warn",headline:s.completeCosts.length+" von "+s.activeCosts.length+" vollständig",items:[{text:"Umlageschlüssel und Beträge prüfen",status:s.completeCosts.length===s.activeCosts.length?"ok":"warn"},{text:"Umlage wird automatisch berechnet",status:"ok"}]},next:next("Fehlende Beträge und Umlageschlüssel vervollständigen.","costEditSection"),actions:[open("Kostenarten bearbeiten","costEditSection",true),()=>{}].filter(Boolean)},
     einnahmen:{summary:[["Kaltmiete erhalten",overviewMoney(s.income.rent)],["NK-Vorauszahlungen",overviewMoney(s.income.prepayments)],["Korrekturen",overviewMoney(s.income.corrections)],["Mietverhältnisse",s.tenants.length]],validation:commonValidation,next:next("Kaltmieten und Vorauszahlungen vollständig prüfen; danach Zählerstände erfassen.","incomeRentSection"),actions:[open("Kaltmiete öffnen","incomeRentSection",true),open("Vorauszahlungen öffnen","incomePrepaymentSection"),go("Zählerstände","wasser")]},
@@ -8958,7 +8959,7 @@ function renderAll(options = {}) {
       renderAllOverviewCards();
       auditV992Structure();
     } catch(uiError) {
-      if (typeof console !== "undefined" && console.error) console.error("V99.4.8-Darstellung konnte nicht aktualisiert werden", uiError);
+      if (typeof console !== "undefined" && console.error) console.error("V99.4.9-Darstellung konnte nicht aktualisiert werden", uiError);
     }
     if (renderQueued) {
       renderQueued = false;
@@ -8972,15 +8973,25 @@ function openCostTenantDetails() { const section = document.getElementById("cost
 function configureStateAccess() {
   return NK_PRO_MODULES.stateAccess.configure({ getState:() => state, replaceState:nextState => { state = nextState; return state; }, commit:options => commitStateChange({ reason:options.reason || "UI-Controller", tabId:options.tabId }) });
 }
+function configureApplicationActions() {
+  return NK_PRO_MODULES.applicationActions.configure({
+    application:{ save:saveData, reset:resetData },
+    state:{ setNested },
+    object:{ addMasterTenancy:addMasterMietverhaeltnis, applyMasterDataToBilling:applyStammdatenToCurrentBillingFromButton, archiveMasterTenancy:archiveMasterMietverhaeltnis, restoreMasterTenancy:restoreMasterMietverhaeltnis, setBillingUnitStatus, setMasterNested },
+    cost:{ setSetting:setCostSetting, configureFree:configureFreeCost, setTenantAllowed:setCostTenantAllowed, activateDefaultPrepayments, deactivateAllPrepayments },
+    billing:{ finalize:finalizeCurrentBilling, unlock:unlockCurrentBilling, setYear:setAbrechnungsjahr, setPeriod:setAbrechnungsperiode, resetAllocationInputs:resetUmlageInputs, setManualInputMode, setManualExternalValue, setPrepaymentValue, setPrepaymentAdjustmentSetting },
+    meter:{ setWaterValue:setWaterMeterValue, setGenericValue:setGenericMeterValue, setWaterSetting:setWaterMeterSetting }
+  });
+}
 function configureNavigationModule() {
   return NK_PRO_MODULES.navigation.configure({ currentYear:() => currentAbrechnungsjahr(), objectLabel:() => currentObjectLabel(), isArchiveViewer:() => isArchiveViewer(), hasActiveBilling:() => hasActiveCurrentBilling(), isFinalized:() => isCurrentBillingFinalized(), isContextOpen:() => isBillingContextOpen(), tabTitle:tabId => TAB_DEFINITIONS[tabId] ? TAB_DEFINITIONS[tabId].title : "NK-Pro", updatePageHeaders:() => updateAllPageHeaders(), renderOverview:tabId => renderOverviewForTab(tabId) });
 }
-function registerUiControllers() { return NK_PRO_MODULES.uiBindings.register({ modules:{ exportService:NK_PRO_MODULES.exportService } }); }
+function registerUiControllers() { return NK_PRO_MODULES.uiBindings.register({ modules:{ exportService:NK_PRO_MODULES.exportService, applicationActions:NK_PRO_MODULES.applicationActions } }); }
 function startUiEvents() {
   return NK_PRO_MODULES.uiEvents.start({ root:document, onError(error, context) { setActionMessage("UI-Aktion fehlgeschlagen: " + errorMessage(error), "err"); renderActionFeedback(); if (typeof console !== "undefined" && console.error) console.error("NK-Pro UI-Controllerfehler", context, error); } });
 }
 function updateUiArchitectureAudit() {
-  const report = Object.freeze({ controllers:NK_PRO_MODULES.uiController.describe(), events:NK_PRO_MODULES.uiEvents.describe(), stateAccess:NK_PRO_MODULES.stateAccess.describe(), navigation:NK_PRO_MODULES.navigation.describe(), compatibility:NK_PRO_MODULES.compatibility.describe() });
+  const report = Object.freeze({ controllers:NK_PRO_MODULES.uiController.describe(), events:NK_PRO_MODULES.uiEvents.describe(), stateAccess:NK_PRO_MODULES.stateAccess.describe(), applicationActions:NK_PRO_MODULES.applicationActions.describe(), navigation:NK_PRO_MODULES.navigation.describe(), compatibility:NK_PRO_MODULES.compatibility.describe() });
   window.__NKPRO_UI_ARCHITECTURE__ = report; return report;
 }
 
@@ -8994,6 +9005,7 @@ function updateUiArchitectureAudit() {
 
 const STARTUP_RESULT = NK_PRO_MODULES.appBootstrap.start([
   { name:"Zustandszugriff konfigurieren", run:() => configureStateAccess() },
+  { name:"Anwendungsaktionen konfigurieren", run:() => configureApplicationActions() },
   { name:"Navigation konfigurieren", run:() => configureNavigationModule() },
   { name:"UI-Controller registrieren", run:() => registerUiControllers() },
   { name:"UI-Ereignisse registrieren", run:() => startUiEvents() },

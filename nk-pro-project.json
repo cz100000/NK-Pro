@@ -1,12 +1,12 @@
 {
-  "appVersion": "99.4.8",
-  "displayVersion": "V99.4.8",
-  "versionName": "Native UI-Anbindung an modularisierte Fachdienste",
+  "appVersion": "99.4.9",
+  "displayVersion": "V99.4.9",
+  "versionName": "Modularisierte Anwendungsaktionen und fachliche Orchestrierung",
   "schemaVersion": 5,
   "dataLayerContractVersion": 1,
   "snapshotScope": "billingSnapshot",
-  "basedOn": "99.4.7",
-  "releaseDate": "2026-07-12",
+  "basedOn": "99.4.8",
+  "releaseDate": "2026-07-13",
   "runtime": [
     "HTML",
     "CSS",

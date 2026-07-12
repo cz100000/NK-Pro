@@ -25,7 +25,7 @@ test("Migrationsregistry liefert den vollständigen Pfad und migriert atomar", a
           targetSchemaVersion:5,
           migrationPath:plan.path,
           backupId:"test-registry-backup",
-          now:() => "2026-07-12T12:00:00.000Z"
+          now:() => "2026-07-13T12:00:00.000Z"
         }));
       }
     }));
@@ -107,7 +107,7 @@ test("Vor-Migrationssicherung besitzt unveränderliche Metadaten und erkennt Man
       sourceStorageKey:STORAGE_KEY,
       migrationPath:["schema-4-to-5"],
       backupId:"immutable-test-backup",
-      now:() => "2026-07-12T13:00:00.000Z"
+      now:() => "2026-07-13T13:00:00.000Z"
     }));
     const valid = NKProBackupRecovery.validateBackupEnvelope(envelope, backupRecoveryModuleOptions());
     const restored = NKProBackupRecovery.restoreBackupEnvelope(envelope, backupRecoveryModuleOptions());
@@ -219,7 +219,7 @@ test("Extern heruntergeladene Sicherung ist über den JSON-Import restorable und
       sourceStorageKey:"external-file",
       migrationPath:["schema-4-to-5"],
       backupId:"external-restore-test",
-      now:() => "2026-07-12T14:00:00.000Z"
+      now:() => "2026-07-13T14:00:00.000Z"
     }));
     return JSON.stringify(envelope);
   });

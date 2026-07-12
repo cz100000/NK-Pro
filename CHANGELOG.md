@@ -1,6 +1,6 @@
 # Changelog
 
-## V99.4.8 – Native UI-Anbindung an modularisierte Fachdienste (12. Juli 2026)
+## V99.4.9 – Modularisierte Anwendungsaktionen und fachliche Orchestrierung (12. Juli 2026)
 
 - 130 statische und dynamisch erzeugte Inline-Handler vollständig entfernt,
 - zentrale Ereignisdelegation für Klick, Änderung, Eingabe, Formular und Tastatur eingeführt,
@@ -12,7 +12,7 @@
 - direkte Browser-Speicherzugriffe weiterhin ausschließlich in Persistenz und UI-Präferenzen,
 - AP7-Architektur- und Browsertests für Controllerregister, doppelte Listener, Aktionspfade und AP5-Zähleranbindung ergänzt,
 - Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Zählerstandard 1, Snapshot 2 und Referenzabrechnungen unverändert,
-- PWA-App-Shell, Release-Metadaten, Architektur, Roadmap und Dokumentation auf V99.4.8 aktualisiert.
+- PWA-App-Shell, Release-Metadaten, Architektur, Roadmap und Dokumentation auf V99.4.9 aktualisiert.
 
 ## V99.4.7 – Weitere fachliche Modularisierung (12. Juli 2026)
 
@@ -55,7 +55,7 @@
 - neue Modul-, Snapshot-, Migrations-, Kompatibilitäts- und Regressionstests,
 - PWA, Projektmetadaten und Dokumentation auf V99.4.5 aktualisiert.
 
-## V99.4.4 – Migrations-, Sicherungs-, Restore- und Rollback-Fundament – 2026-07-12
+## V99.4.4 – Migrations-, Sicherungs-, Restore- und Rollback-Fundament – 2026-07-13
 
 - Eingefrorene zentrale Migrationsregistry für `1→2`, `2→4`, `3→4` und `4→5` eingeführt.
 - Migrationen auf isolierten Kopien mit Vor-, Schritt- und Nachvalidierung transaktional ausgeführt; fehlgeschlagene Schritte hinterlassen keine Teiländerung.
@@ -69,7 +69,7 @@
 - JavaScript-Syntax 10/10, Referenzfälle 6/6, Releaseprüfung und Playwright/Chromium 28/28 bestanden.
 - Datenschema 5, Datenebenenvertrag 1, Snapshot-Grenzen, bestehende Datenformate, Fachberechnung und allgemeine Oberfläche unverändert.
 
-## V99.4.3 – Modularisierung von Persistenz, Migration und Archiv – 2026-07-12
+## V99.4.3 – Modularisierung von Persistenz, Migration und Archiv – 2026-07-13
 
 - `js/persistence.js` für Prüfsumme, Integritätsmetadaten, Speicheradapter, Speicherdiagnostik und sämtliche direkten `localStorage`-Zugriffe eingeführt.
 - `js/migration.js` für Datenschemaermittlung, idempotente Migrationshistorie, Migration bis Schema 5 und Übernahme vorbelegter Altarchive eingeführt.
@@ -83,7 +83,7 @@
 - Datenschema 5, Datenebenenvertrag 1, Snapshot-Grenzen, Fachberechnung, Oberfläche, Archive, Backups, Recovery und Austauschformate unverändert.
 - App-, Paket-, Manifest-, Test- und PWA-Cacheversion auf V99.4.3 aktualisiert.
 
-## V99.4.2 – Verbindliche Datenebenen und Snapshot-Grenzen – 2026-07-12
+## V99.4.2 – Verbindliche Datenebenen und Snapshot-Grenzen – 2026-07-13
 
 - Datenebenenvertrag 1 für aktuellen Arbeitsstand, Objektstammdaten, globale Historie, Abrechnungssnapshot, Jahresarchiv, Gesamtbackup und Recovery eingeführt.
 - Abrechnungs- und Archivsnapshots auf eine explizite erlaubte Feldmenge begrenzt.
@@ -99,7 +99,7 @@
 - App-, Paket-, Manifest-, Test- und PWA-Cacheversion auf V99.4.2 aktualisiert.
 - Datenschema 5, Fachberechnung, sechs Referenzfälle und allgemeine Oberfläche unverändert.
 
-## V99.4.1 – ChatGPT-Arbeitsbasis und Testdatenstruktur – 2026-07-12
+## V99.4.1 – ChatGPT-Arbeitsbasis und Testdatenstruktur – 2026-07-13
 
 ### Geändert
 
@@ -120,7 +120,7 @@
 
 # CHANGELOG
 
-## V99.4.0 – UX-Grundgerüst und Arbeitskontext – 2026-07-12
+## V99.4.0 – UX-Grundgerüst und Arbeitskontext – 2026-07-13
 
 - Landingpage als reine Arbeitsweiche mit genau zwei Einstiegen eingeführt.
 - Navigation in die Accordion-Gruppen „Objekt vorbereiten“, „Nebenkosten abrechnen“, „Archiv“ und „Extras“ überführt.
@@ -136,7 +136,7 @@
 - JavaScript-Syntax 5/5 und Playwright/Chromium 19/19 erfolgreich.
 - Desktop- und Mobilansicht visuell kontrolliert; keine Konsolen- oder Seitenfehler.
 
-## Development Baseline – 2026-07-12 (Dokumentation, App bleibt V99.3.0)
+## Development Baseline – 2026-07-13 (Dokumentation, App bleibt V99.3.0)
 
 - Vollständige Analyse der tatsächlich bereitgestellten ZIP als alleinige technische Grundlage dokumentiert.
 - Verbindliche Development Baseline mit Versions-, Struktur-, Architektur-, Datenmodell-, Navigations-, Migrations-, Test- und Risikoanalyse ergänzt.
@@ -402,3 +402,11 @@
 ## Frühere Versionen
 
 Die detaillierte frühere Historie bleibt in der Anwendung und im Versionsverlauf des Repositories erhalten. Dieses Changelog beschreibt die ausgelieferte Konsolidierung V99.2.
+
+## V99.4.9 – Modularisierte Anwendungsaktionen und fachliche Orchestrierung (13. Juli 2026)
+
+- Explizite Anwendungsschicht `application-actions.js` eingeführt.
+- Schreibende UI-Kernaktionen für Objekt, Abrechnung, Zähler und Zustand über benannte Anwendungsaktionen geführt.
+- Atomaren Zustandsaktionspfad mit Rollback in `NKProStateAccess` ergänzt.
+- PWA-App-Shell, Tests, Dokumentation und Release-Metadaten aktualisiert.
+- Datenschema, Datenebenenvertrag, Objektstandard, Snapshot- und Berechnungsergebnisse unverändert beibehalten.

@@ -1,8 +1,8 @@
-# AP7 – Native UI-Anbindung an modularisierte Fachdienste
+# AP7 – Modularisierte Anwendungsaktionen und fachliche Orchestrierung
 
 ## Ergebnis
 
-NK-Pro V99.4.8 bindet die bestehende Oberfläche über einen einheitlichen Ereignisvertrag an klar benannte UI-Controller. Die fachlichen Dienste aus AP1 bis AP6 bleiben die alleinige Grundlage für Persistenz, Migration, Recovery, Zähler, Abrechnung, Dokumente und Export. Das Erscheinungsbild, die Informationsarchitektur und das für AP11 vorgesehene Navigationsdesign wurden nicht verändert.
+NK-Pro V99.4.9 bindet die bestehende Oberfläche über einen einheitlichen Ereignisvertrag an klar benannte UI-Controller. Die fachlichen Dienste aus AP1 bis AP6 bleiben die alleinige Grundlage für Persistenz, Migration, Recovery, Zähler, Abrechnung, Dokumente und Export. Das Erscheinungsbild, die Informationsarchitektur und das für AP11 vorgesehene Navigationsdesign wurden nicht verändert.
 
 ## Zielarchitektur
 

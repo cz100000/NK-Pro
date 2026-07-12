@@ -37,13 +37,15 @@ function main() {
   assert(!/addEventListener\s*\(/.test(app), "app.js registriert weiterhin eigene DOM-Ereignisse.");
 
   const uiContext = load("js/ui-controller.js");
+  vm.runInContext(read("js/application-actions.js"), uiContext, { filename:"js/application-actions.js" });
   vm.runInContext(read("js/ui-bindings.js"), uiContext, { filename:"js/ui-bindings.js" });
   const noop = () => undefined;
   const handlerNames = [...bindings.matchAll(/call\(handlers,\s*"([^"]+)"\)|requireHandler\(handlers,\s*"([^"]+)"\)/g)].map(match => match[1] || match[2]);
   const handlers = Object.fromEntries([...new Set(handlerNames)].map(name => [name, noop]));
   uiContext.location = { reload:noop };
   uiContext.print = noop;
-  uiContext.NKProUiBindings.register({ handlers, modules:{ exportService:new Proxy({}, { get:() => noop }) } });
+  uiContext.NKProApplicationActions.configure({ application:{save:noop,reset:noop}, state:{setNested:noop}, object:{addMasterTenancy:noop,applyMasterDataToBilling:noop,archiveMasterTenancy:noop,restoreMasterTenancy:noop,setBillingUnitStatus:noop,setMasterNested:noop}, billing:{finalize:noop,unlock:noop,setYear:noop,setPeriod:noop,resetAllocationInputs:noop,setManualInputMode:noop,setManualExternalValue:noop,setPrepaymentValue:noop,setPrepaymentAdjustmentSetting:noop}, meter:{setWaterValue:noop,setGenericValue:noop,setWaterSetting:noop} });
+  uiContext.NKProUiBindings.register({ handlers, modules:{ exportService:new Proxy({}, { get:() => noop }), applicationActions:uiContext.NKProApplicationActions } });
   const definitions = uiContext.NKProUiController.describe();
   const actionNames = definitions.flatMap(definition => definition.actionNames);
   assert(definitions.length === 13, `Erwartet wurden 13 Controller, gefunden ${definitions.length}.`);

@@ -14,6 +14,11 @@
     return context => handler(...context.args);
   }
 
+  function appCall(applicationActions, domain, action) {
+    if (!applicationActions || typeof applicationActions.execute !== "function") throw new Error("Anwendungsschicht fehlt.");
+    return context => applicationActions.execute(domain, action, context.args);
+  }
+
   function registerController(controller, responsibility, actions) {
     return global.NKProUiController.registerController(controller, { responsibility, actions });
   }
@@ -23,9 +28,10 @@
     if (!global.NKProUiController) throw new Error("UI-Controller-Modul fehlt.");
     const handlers = options.handlers || global;
     const modules = options.modules || {};
+    const applicationActions = modules.applicationActions;
 
     registerController("application", "Anwendungsweite Speicher- und Reset-Aktionen", {
-      "application.save":call(handlers, "saveData"), "application.reset":call(handlers, "resetData")
+      "application.save":appCall(applicationActions, "application", "save"), "application.reset":appCall(applicationActions, "application", "reset")
     });
     registerController("navigation", "Arbeitskontext und Tabwechsel ohne Fachlogik", {
       "navigation.switchTab":call(handlers, "switchToTab"), "navigation.openSection":call(handlers, "overviewOpenSection"), "navigation.showLanding":call(handlers, "showLandingPage"),
@@ -34,12 +40,12 @@
       "navigation.returnStart":call(handlers, "returnToStartPage")
     });
     registerController("state", "Kontrollierte generische Schreibaktionen auf dem bestehenden Einzelzustand", {
-      "state.setNested":call(handlers, "setNested")
+      "state.setNested":appCall(applicationActions, "state", "setNested")
     });
     registerController("object", "Objekt-, Wohnungs- und Mieterstammdaten", {
-      "object.addMasterTenancy":call(handlers, "addMasterMietverhaeltnis"), "object.applyMasterDataToBilling":call(handlers, "applyStammdatenToCurrentBillingFromButton"),
-      "object.archiveMasterTenancy":call(handlers, "archiveMasterMietverhaeltnis"), "object.restoreMasterTenancy":call(handlers, "restoreMasterMietverhaeltnis"),
-      "object.setBillingUnitStatus":call(handlers, "setBillingUnitStatus"), "object.setMasterNested":call(handlers, "setMasterNested")
+      "object.addMasterTenancy":appCall(applicationActions, "object", "addMasterTenancy"), "object.applyMasterDataToBilling":appCall(applicationActions, "object", "applyMasterDataToBilling"),
+      "object.archiveMasterTenancy":appCall(applicationActions, "object", "archiveMasterTenancy"), "object.restoreMasterTenancy":appCall(applicationActions, "object", "restoreMasterTenancy"),
+      "object.setBillingUnitStatus":appCall(applicationActions, "object", "setBillingUnitStatus"), "object.setMasterNested":appCall(applicationActions, "object", "setMasterNested")
     });
     registerController("cost", "Kostenerfassung, Auswahl, Detailzuordnung und Preisdialog", {
       "cost.configureFree":call(handlers, "configureFreeCost"), "cost.setSetting":call(handlers, "setCostSetting"),
@@ -59,11 +65,11 @@
       "billing.closeCreateModal":call(handlers, "closeCreateBillingModal"), "billing.createFromModal":call(handlers, "createNewBillingFromModal"),
       "billing.openDeleteModal":call(handlers, "openDeleteBillingModal"), "billing.closeDeleteModal":call(handlers, "closeDeleteBillingModal"),
       "billing.confirmDelete":call(handlers, "confirmDeleteBilling"), "billing.handleDeleteKey":context => requireHandler(handlers, "handleDeleteBillingKey")(context.key),
-      "billing.finalize":call(handlers, "finalizeCurrentBilling"), "billing.unlock":call(handlers, "unlockCurrentBilling"),
-      "billing.openLatestYear":call(handlers, "openLatestKnownYear"), "billing.setYear":call(handlers, "setAbrechnungsjahr"),
-      "billing.setPeriod":call(handlers, "setAbrechnungsperiode"), "billing.resetAllocationInputs":call(handlers, "resetUmlageInputs"),
-      "billing.setManualInputMode":call(handlers, "setManualInputMode"), "billing.setManualExternalValue":call(handlers, "setManualExternalValue"),
-      "billing.setPrepaymentValue":call(handlers, "setPrepaymentValue"), "billing.setPrepaymentAdjustmentSetting":call(handlers, "setPrepaymentAdjustmentSetting"),
+      "billing.finalize":appCall(applicationActions, "billing", "finalize"), "billing.unlock":appCall(applicationActions, "billing", "unlock"),
+      "billing.openLatestYear":call(handlers, "openLatestKnownYear"), "billing.setYear":appCall(applicationActions, "billing", "setYear"),
+      "billing.setPeriod":appCall(applicationActions, "billing", "setPeriod"), "billing.resetAllocationInputs":appCall(applicationActions, "billing", "resetAllocationInputs"),
+      "billing.setManualInputMode":appCall(applicationActions, "billing", "setManualInputMode"), "billing.setManualExternalValue":appCall(applicationActions, "billing", "setManualExternalValue"),
+      "billing.setPrepaymentValue":appCall(applicationActions, "billing", "setPrepaymentValue"), "billing.setPrepaymentAdjustmentSetting":appCall(applicationActions, "billing", "setPrepaymentAdjustmentSetting"),
       "billing.showFinalReport":call(handlers, "showFinalBillingReport"), "billing.showAcceptanceProtocol":call(handlers, "showAcceptanceProtocol")
     });
     registerController("quality", "Prüfinteraktion ohne eigene Abrechnungsberechnung", {
@@ -72,8 +78,8 @@
       "quality.showOnlyErrors":call(handlers, "showOnlyQualityErrors"), "quality.render":call(handlers, "renderQuality")
     });
     registerController("meter", "UI-Adapter auf Zählerstammdaten, Messwerte und Messperioden aus AP5", {
-      "meter.setWaterValue":call(handlers, "setWaterMeterValue"), "meter.setGenericValue":call(handlers, "setGenericMeterValue"),
-      "meter.setWaterSetting":call(handlers, "setWaterMeterSetting")
+      "meter.setWaterValue":appCall(applicationActions, "meter", "setWaterValue"), "meter.setGenericValue":appCall(applicationActions, "meter", "setGenericValue"),
+      "meter.setWaterSetting":appCall(applicationActions, "meter", "setWaterSetting")
     });
     registerController("document", "Briefdaten, Dokumentrendering und Druckaktionen aus AP6", {
       "document.setBriefSetting":call(handlers, "setBriefSetting"), "document.printCurrentBrief":call(handlers, "printCurrentBrief"),

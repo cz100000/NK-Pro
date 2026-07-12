@@ -1,6 +1,6 @@
 # NK-Pro – Testkonzept
 
-**Aktueller Stand:** V99.4.8, Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Zählerstandard 1, Snapshot 2, Architektur 2
+**Aktueller Stand:** V99.4.9, Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Zählerstandard 1, Snapshot 2, Architektur 2
 
 ## Prüfstufen
 
