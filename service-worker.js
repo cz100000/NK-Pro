@@ -1,8 +1,13 @@
-const CACHE_NAME = "nk-pro-v99-2-9";
+const CACHE_NAME = "nk-pro-v99-3-0";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
+  "./assets/app.css",
+  "./js/navigation.js",
+  "./js/modal-events.js",
+  "./js/app.js",
+  "./js/service-worker-register.js",
   "./icons/icon-180.png",
   "./icons/icon-192.png",
   "./icons/icon-512.png"

@@ -1,0 +1,39 @@
+{
+  "version": "V99.3.0",
+  "versionName": "Navigation und vollständige Qualitätsprüfung",
+  "generatedAt": "2026-07-12T12:00:48.837037+00:00",
+  "dataSchemaVersion": 5,
+  "syntax": {
+    "passed": 5,
+    "failed": 0
+  },
+  "playwright": {
+    "passed": 15,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 23647.611
+  },
+  "releaseStatus": "freigabefähig",
+  "changes": [
+    "Tab Abrechnungsstatus vollständig entfernt",
+    "Stammdaten oberhalb der Abrechnungsübersicht angeordnet",
+    "Status- und Finalisierungsinformationen in Qualitätsprüfung übernommen",
+    "Qualitätsprüfung um sichtbaren Gesamtprüfumfang erweitert",
+    "K002 aus Manuelle & externe Werte entfernt und an Zählerstände gebunden"
+  ],
+  "regressionCoverage": [
+    "Navigation",
+    "Browserkonsole",
+    "Seitenfehler",
+    "Persistenz",
+    "Rückfallstand",
+    "JSON-Export/Import",
+    "Standardfall",
+    "Mieterwechsel",
+    "Leerstand",
+    "M000",
+    "Eingabequellen",
+    "Altdatenmigration",
+    "Service Worker"
+  ]
+}

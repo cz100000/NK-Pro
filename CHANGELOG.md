@@ -1,37 +1,45 @@
+# CHANGELOG
+
+## V99.3.0 – Navigation und vollständige Qualitätsprüfung
+
+- Tab „Abrechnungsstatus“ dauerhaft entfernt; direkte und indirekte Navigationsverweise bereinigt.
+- Navigationsblock „Stammdaten“ oberhalb der Abrechnungsübersicht angeordnet.
+- Qualitätsprüfung um eine sichtbare Gesamt-Abdeckung der Abrechnung erweitert.
+- K002 Wasserversorgung aus „Manuelle & externe Werte“ entfernt; Quelle bleibt ausschließlich „Zählerstände“.
+- Berechnungslogik und Datenschema 5 unverändert.
+- Vollständige Syntax-, Konsolen- und Playwright-Regression durchgeführt.
+
+# Änderungsprotokoll
+
+## V99.2.9 – Strukturierung und modulare Dateibasis
+
+- Produktives CSS aus `index.html` nach `assets/app.css` ausgelagert.
+- Vier produktive JavaScript-Blöcke in klar benannte Dateien unter `js/` ausgelagert.
+- `index.html` von rund 974 KB auf rund 79 KB reduziert, ohne Fachlogik zu entfernen.
+- Service-Worker-App-Shell um alle neuen CSS- und JavaScript-Dateien ergänzt.
+- Syntaxprüfung auf externe JavaScript-Dateien erweitert.
+- Strukturtest ergänzt: keine produktiven Inline-Skripte oder Inline-Styles mehr.
+- Fachliche Berechnungslogik, Datenschema 5 und Referenzdaten unverändert.
+- Vollständige Chromium-/Playwright-Regression bleibt Freigabebedingung.
+
 # Changelog
 
-## V99.2.9 – Hotfix Bereinigungsstufe 1
+## V99.2.8 – Stabilitätsfundament und automatisierte Chromium-Tests
 
-- Bei der Bereinigung versehentlich entfernte, indirekt benötigte Hilfsfunktionen wiederhergestellt.
-- Initialisierung, Zählerlogik und Vorjahresübernahme der NK-Vorauszahlungen repariert.
-- Abhängigkeiten der Vorjahresübernahme konservativ wiederhergestellt.
-- Keine neue Fachlogik und keine Änderung des Datenschemas.
-- Automatischer Chromium-/Playwright-Test: 18 von 18 Prüfungen bestanden, 0 Fehler.
+### Reproduzierbare Freigabeprüfung
 
-## V99.2.9 – Bereinigungsstufe 1
+- Dauerhafte Playwright-/Chromium-Testumgebung mit lokalem Testserver ergänzt.
+- JavaScript-Syntaxprüfung für alle Inline-Skripte und den Service Worker ergänzt.
+- Browserkonsole, Seitenfehler und fehlgeschlagene Netzwerkanfragen als blockierende Prüfkriterien aufgenommen.
+- Navigation, statische Seitenarchitektur, interne Audits, lokale Persistenz, Datenintegrität, Sicherungs-Rundlauf, Migration und PWA-Cache automatisiert abgesichert.
+- Referenzdatensätze für Standardfall, Mieterwechsel, Leerstand, Eigentümer M000, alle Eingabequellen und Altdatenmigration ergänzt.
+- Reimport eines Exports „nur aktuelle Abrechnung“ gegen unbeabsichtigtes Wiederhinzufügen fest eingebetteter Altarchive abgesichert.
+- Testbefehle, Chromium-Auswahl und Freigabekriterien in README und WORKBOOK dokumentiert.
 
-### Navigation und Oberfläche
+### Unveränderte Fachbasis
 
-- Tab „Abrechnungsstatus“ einschließlich Dashboard-Inhalt entfernt.
-- Stammdatenblock vor der Abrechnungsübersicht angeordnet.
-- Standard-Einstieg in eine Abrechnung auf „Mieter & Wohnungen“ umgestellt.
-- Finalisieren und Wiederbearbeiten in der Qualitätsprüfung erhalten.
-- Schreibschutzanzeige finalisierter Abrechnungen vom entfernten Dashboard entkoppelt.
-
-### Technische Bereinigung
-
-- 25 nachweislich unreferenzierte JavaScript-Funktionen entfernt.
-- Alte Workflow-Dashboard-Funktionen und zugehörige CSS-Regeln entfernt.
-- Versteckten Altcontainer `meterSections` samt Leerlogik entfernt.
-- Permanenten HTML-Snapshot im Arbeitsspeicher durch bedarfsgesteuerte Erzeugung ersetzt.
-- Selbsttests und Navigationsfallbacks an die bereinigte Struktur angepasst.
-- PWA-Cache und Versionsangaben auf V99.2.9 aktualisiert.
-
-### Unverändert
-
-- Keine Änderung an Berechnung, Datenschema, Kosten-IDs, Archiven oder Migrationslogik.
-- Die tiefere Bereinigung der festen 20-Datensatz-Struktur und historischer Standardwerte bleibt einer gesonderten Datenmodellstufe vorbehalten.
-
+- Fachliche Berechnungslogik, Datenschema 5, Navigation und Benutzeroberfläche gegenüber V99.2.7 unverändert übernommen.
+- PWA-Cache auf `nk-pro-v99-2-8` erhöht.
 
 ## V99.2.7 – Periodenstatus, Eingabestruktur und Briefoptimierung
 

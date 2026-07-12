@@ -1,6 +1,27 @@
-# WORKBOOK – NK-Pro V99.2.9
+# Verbindliche Änderungen V99.3.0
+
+- Abrechnungsstatus dauerhaft entfernt.
+- Stammdaten vor Abrechnungsübersicht.
+- Qualitätsprüfung als zentrale Gesamtprüfung.
+- K002 ausschließlich aus Zählerständen.
+- Freigabe nur bei fehlerfreier Syntax, Browserkonsole und Playwright-Regression.
+
+# WORKBOOK – NK-Pro V99.3.0
 
 Dieses Dokument enthält die verbindlichen technischen Regeln für die weitere Entwicklung von NK-Pro.
+
+
+## Verbindliche Stabilitäts- und Freigaberegeln V99.2.9
+
+- Die fachliche Berechnungslogik und das Datenschema 5 bleiben in V99.2.9 unverändert.
+- Die mitgelieferte Testumgebung unter `tests/`, `testdaten/` und `tools/` ist Bestandteil jeder zukünftigen Entwicklungsversion.
+- Vor Freigabe jeder neuen Version sind `npm run test:syntax` und `npm run test:browser` auszuführen.
+- Jede Browserprüfung erfasst `console.error`, nicht behandelte Seitenfehler und fehlgeschlagene Netzwerkanfragen als blockierende Fehler.
+- Referenzfälle dürfen nur bewusst und mit dokumentierter fachlicher Begründung geändert werden.
+- Fachliche Umbauten sind gegen den vorherigen Referenzstand zu vergleichen. Unbeabsichtigte Ergebnisänderungen blockieren die Freigabe.
+- Der Exportumfang ist beim Reimport zu erhalten: Ein Export `currentBillingOnly` darf keine Jahresarchive aus der Programmbasis ergänzen.
+- Fehlgeschlagene Tests dürfen nicht durch Abschwächung oder Entfernung der Prüfung umgangen werden; zuerst ist die Ursache im Programm zu beheben oder die geänderte Fachregel zu dokumentieren.
+- `node_modules`, temporäre Testartefakte und lokale Browserprofile gehören nicht in die veröffentlichte ZIP-Datei.
 
 
 ## UI-Feinschliff V99.2.1
@@ -222,7 +243,7 @@ Vor Freigabe ist mindestens zu prüfen:
 - responsive Darstellung auf großen, mittleren und schmalen Ansichten.
 
 
-## Verbindliche Ergänzungen V99.2.9
+## Verbindliche Ergänzungen V99.2.7
 
 ### Physischer Bestand und Periodenstatus
 
@@ -269,10 +290,10 @@ Ein Quellenwechsel mit vorhandenen Werten verlangt eine bewusste Bestätigung. W
 - Grußformel, Signatur und Fußzeile dürfen weder überlappen noch auf eine unbeabsichtigte Leerseite geraten.
 
 
-## Umgesetzt in V99.2.9 – Bereinigungsstufe 1
+## Verbindliche Dateistruktur ab V99.2.9
 
-- Tab Abrechnungsstatus entfernt.
-- Stammdatenblock vor Übersicht verschoben.
-- Sicherer Einstieg in Abrechnungen über Mieter & Wohnungen.
-- Unreferenzierter Altcode und verwaiste Dashboard-/Zählerreste entfernt.
-- Keine Änderung an Berechnung, Datenschema oder Archiven.
+- `index.html` enthält die semantische Oberfläche, aber keinen produktiven Inline-CSS- oder Inline-JavaScript-Block.
+- Produktives CSS liegt unter `assets/`; produktives JavaScript unter `js/`.
+- Die Reihenfolge der JavaScript-Dateien ist Bestandteil der technischen Architektur und darf nur mit vollständigem Regressionstest geändert werden.
+- Die Anwendung bleibt ohne Framework und ohne Buildschritt direkt ausführbar.
+- Fachliche Aufteilung von `js/app.js` erfolgt erst in späteren, einzeln geprüften Schritten.

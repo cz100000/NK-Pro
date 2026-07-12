@@ -1,22 +1,18 @@
-# NK-Pro V99.2.9 – Hotfix Bereinigungsstufe 1
+# NK-Pro V99.3.0 – Navigation und vollständige Qualitätsprüfung
+
+V99.3.0 baut auf V99.2.9 auf. Der Tab „Abrechnungsstatus“ wurde vollständig entfernt, Stammdaten stehen nun oberhalb der Abrechnungsübersicht, und die Qualitätsprüfung übernimmt Status-, Finalisierungs- und Gesamtprüffunktionen. K002 Wasserversorgung erscheint nicht mehr unter „Manuelle & externe Werte“, sondern wird ausschließlich aus Zählerständen gespeist.
+
+## Freigabe
+
+- Datenschema: 5
+- JavaScript-Syntax: 5/5 bestanden
+- Chromium-/Playwright-Tests: 15/15 bestanden
+- Browserkonsole und Seitenfehler: fehlerfrei
+- Berechnungs- und Referenzfälle: bestanden
+- Export-/Import-, Persistenz- und PWA-Tests: bestanden
+
 
 NK-Pro ist eine lokal nutzbare HTML-/JavaScript-Anwendung zur Erstellung von Nebenkostenabrechnungen. Sie kann direkt im Browser oder als GitHub-Pages-PWA betrieben werden. Arbeitsdaten bleiben im Browser und sollten regelmäßig als JSON gesichert werden.
-
-
-V99.2.9 korrigiert die im Browsertest erkannten indirekten Funktionsabhängigkeiten aus V99.2.8.
-
-## Basisänderungen der Bereinigungsstufe
-
-- Eigenständiges Tab **Abrechnungsstatus** vollständig entfernt.
-- Navigationsblock **Stammdaten** vor **Übersicht** angeordnet.
-- Abrechnungen öffnen nun direkt den Arbeitsbereich **Mieter & Wohnungen**.
-- Finalisieren und Wiederbearbeiten bleiben in der **Qualitätsprüfung** verfügbar.
-- Optischer Schreibschutz finalisierter Abrechnungen vom entfernten Dashboard entkoppelt.
-- 25 eindeutig ungenutzte JavaScript-Funktionen entfernt.
-- Verwaiste Workflow-Dashboard-Stile und der alte versteckte Zählercontainer entfernt.
-- HTML-Snapshot für Exportzwecke wird erst bei tatsächlicher Verwendung erzeugt.
-
-Die Berechnungslogik, Datenstruktur, Archive und bestehenden Migrationen wurden nicht verändert.
 
 ## Wichtigste Änderungen
 
@@ -68,7 +64,7 @@ Das Anschriftfeld ist fest für einen üblichen DIN-5008-Fensterbrief positionie
 
 ### GitHub Pages
 
-Den Inhalt der ZIP-Datei unverändert in das Veröffentlichungsverzeichnis kopieren und GitHub Pages aktivieren. `.nojekyll` verhindert eine Jekyll-Verarbeitung. Der Service Worker verwendet den Cache `nk-pro-v99-2-7` und entfernt ältere NK-Pro-Caches beim Aktivieren.
+Den Inhalt der ZIP-Datei unverändert in das Veröffentlichungsverzeichnis kopieren und GitHub Pages aktivieren. `.nojekyll` verhindert eine Jekyll-Verarbeitung. Der Service Worker verwendet den Cache `nk-pro-v99-2-9` und entfernt ältere NK-Pro-Caches beim Aktivieren.
 
 ## Dateien
 
@@ -78,14 +74,44 @@ Den Inhalt der ZIP-Datei unverändert in das Veröffentlichungsverzeichnis kopie
 - `README.md` – Nutzung und Veröffentlichung
 - `CHANGELOG.md` – Versionsverlauf
 - `WORKBOOK.md` – verbindliche Fach- und Entwicklungsregeln
-- `UI_ARCHITEKTUR_V99_2_7.md` – technische Architektur
-- `V99_2_7_Pruefbericht.json` – strukturierter Prüfbericht
+- `UI_ARCHITEKTUR_V99_2_8.md` – technische Architektur
+- `V99_2_8_Pruefbericht.json` – strukturierter Prüfbericht
 - `SHA256SUMS.txt` – Prüfsummen des ZIP-Inhalts
+- `package.json` / `package-lock.json` – reproduzierbare Testabhängigkeiten und Befehle
+- `playwright.config.cjs` – Chromium-/Playwright-Konfiguration
+- `tests/` – automatisierte Browser- und Regressionstests
+- `testdaten/` – unveränderliche Referenzfälle
+- `tools/` – Syntaxprüfung und lokaler Testserver
 
 ## Prüfung
 
-V99.2.7 wurde mit JavaScript-Syntaxprüfung, Browser-Rendering, Datenmigrationen und 39 gezielten Funktionsprüfungen getestet. Geprüft wurden insbesondere Periodenstatus, 7-gegen-5-Wohnungsbasis, M000, alle vier Eingabequellen, Zählerzuordnung über stabile IDs, Jahreswechsel, Historie, freie Kostenarten, Summenabgleich und ein-/zweiseitige Briefe. Der Release-Audit meldet 28 OK, 0 Fehler und 0 Hinweise. Der App-Selbsttest meldet 30 OK, 0 Fehler und zwei Hinweise zu vorhandenen Arbeits-/Archivdaten.
+V99.2.9 wird weiterhin mit einer dauerhaft mitgelieferten Playwright-Testumgebung geprüft. Die Freigabe umfasst JavaScript-Syntaxprüfung, Browserkonsole, Seitenfehler, Navigation, lokale Persistenz, Sicherungs-Rundlauf, Migration, interne Audits und Service-Worker-Cache. Die fachliche Berechnungslogik und das Datenschema bleiben gegenüber V99.2.7 unverändert.
 
 ## Datenschutz und Sicherung
 
 NK-Pro arbeitet lokal im Browser. Browserdaten können durch Bereinigung, Profilwechsel oder Geräteverlust verloren gehen. Vor Migrationen, Jahreswechseln und größeren Bearbeitungsschritten sollte eine vollständige JSON-Sicherung extern gespeichert werden.
+
+
+## Strukturierung V99.2.9
+
+Die bisher in `index.html` eingebetteten produktiven Styles und Skripte wurden ohne fachliche Änderung in klar benannte Dateien ausgelagert:
+
+- `assets/app.css` – vollständige Anwendungs- und Druckdarstellung,
+- `js/navigation.js` – Navigations- und Arbeitsbereichssteuerung,
+- `js/modal-events.js` – globale Modalereignisse,
+- `js/app.js` – bestehende Fach-, Daten- und Darstellungslogik,
+- `js/service-worker-register.js` – Registrierung und Aktualisierung der PWA.
+
+Die Anwendung bleibt frameworkfrei und benötigt keinen Buildprozess. `index.html` enthält nur noch Struktur und Verweise auf die ausgelagerten Dateien.
+
+## Automatisierte Freigabeprüfung V99.2.9
+
+Die Testumgebung ist nur für Entwicklung und Freigabe erforderlich; die eigentliche Anwendung bleibt weiterhin ohne Installation direkt im Browser nutzbar.
+
+```bash
+npm install
+npx playwright install chromium
+npm test
+```
+
+Alternativ kann über die Umgebungsvariable `CHROMIUM_EXECUTABLE_PATH` ein vorhandenes Chromium, Google Chrome oder Microsoft Edge verwendet werden. Eine Version ist nur freigabefähig, wenn Syntaxprüfung und alle Playwright-Tests ohne Fehler abgeschlossen werden. Der HTML-Bericht liegt anschließend unter `test-results/html/`.
