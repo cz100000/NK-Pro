@@ -1,12 +1,12 @@
 # UI-Architektur – aktueller Stand
 
-**Version:** V99.4.1  
+**Version:** V99.4.3  
 **Datenschema:** 5, unverändert  
 **Zweck:** verbindliche Alt-zu-Neu-Zuordnung der Phase-1-Navigation
 
 ## Grundentscheidung
 
-Die vorhandenen Funktionen werden nicht neu entwickelt. V99.4.1 übernimmt unverändert die in V99.4.0 eingeführte Ordnung im tatsächlichen Arbeitsablauf. Neue UI-Hubs verwenden bestehende Daten und Renderer. Es entstehen keine getrennten Programme, Datenbestände oder Fachmodelle.
+Die vorhandenen Funktionen werden nicht neu entwickelt. V99.4.3 übernimmt unverändert die in V99.4.0 eingeführte Ordnung im tatsächlichen Arbeitsablauf. Neue UI-Hubs verwenden bestehende Daten und Renderer. Es entstehen keine getrennten Programme, Datenbestände oder Fachmodelle.
 
 ## Landingpage
 
@@ -57,8 +57,8 @@ Objekt und Jahr werden aus vorhandenen Daten abgeleitet. Es wird kein neues pers
 - keine dauerhafte Zähler-ID,
 - keine Standard-Kostenarten oder Standard-Umlageschlüssel,
 - kein neues Objektstandardmodell,
-- keine Snapshot-Migration,
-- keine Änderung historischer Archive.
+- keine UI-Änderung am in V99.4.2 eingeführten Datenebenenvertrag,
+- keine Änderung historischer Fach- oder Archivdaten.
 
 Diese Punkte gehören zu Phase 2 und Phase 3 und unterliegen der Stop-Regel.
 
@@ -68,4 +68,5 @@ Diese Punkte gehören zu Phase 2 und Phase 3 und unterliegen der Stop-Regel.
 - `assets/app.css`: Darstellung und responsive Regeln,
 - `js/navigation.js`: Accordion, aktive Pfade und Kontextanzeige,
 - `js/app.js`: Tabregistrierung, Landing-Aktionen, Objekt-/Archiv-Renderer und Kontextableitung,
+- `js/archive.js`: unveränderte Snapshot- und Archivgrenzen ohne UI-Verantwortung,
 - `tests/app-smoke.spec.js`: UX-, ARIA-, Navigation- und Statustests.

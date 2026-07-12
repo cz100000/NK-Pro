@@ -1,6 +1,6 @@
 # NK-Pro – Entwicklungsleitfaden
 
-**Aktueller Umsetzungsstand:** V99.4.1, Datenschema 5
+**Aktueller Umsetzungsstand:** V99.4.3, Datenschema 5, Datenebenenvertrag 1
 
 ## 1. Quellenhierarchie
 
@@ -66,9 +66,18 @@ Ohne ausdrückliche Freigabe keine Schema- oder Austauschformatänderung.
 
 ## 7. Datenlastige Dateien
 
-`js/default-seed.js` und `testdaten/basis/standardfall.json` sind große Datenbasen. Sie werden nur bei einem tatsächlich datenbezogenen Auftrag vollständig untersucht. Fachcode liegt in `js/app.js`; Referenzfälle werden ausschließlich über `tests/fixture-loader.cjs` geladen.
+`js/default-seed.js` und `testdaten/basis/standardfall.json` sind große Datenbasen. Sie werden nur bei einem tatsächlich datenbezogenen Auftrag vollständig untersucht. Fachcode und UI-Orchestrierung liegen weiterhin überwiegend in `js/app.js`; Persistenz, Migration und Archivgrenzen liegen in `js/persistence.js`, `js/migration.js` und `js/archive.js`. Referenzfälle werden ausschließlich über `tests/fixture-loader.cjs` geladen.
 
-## 8. Pflichtbefehle
+
+## 8. Modulgrenzen V99.4.3
+
+- `js/persistence.js` ist die einzige produktive Datei mit direktem `localStorage`-Zugriff.
+- `js/migration.js` und `js/archive.js` dürfen weder DOM noch Browser-Speicher direkt verwenden.
+- `index.html`, `service-worker.js` und die Releaseprüfung müssen dieselbe Modulreihenfolge enthalten.
+- Bestehende globale Funktionen in `js/app.js` bleiben als Kompatibilitätsfassaden erhalten, solange HTML oder Tests sie benötigen.
+- Neue Auslagerungen erfolgen schrittweise; keine gleichzeitige Fach-, Schema- und UI-Änderung.
+
+## 9. Pflichtbefehle
 
 ```bash
 npm ci
@@ -78,7 +87,7 @@ npm run test:release
 CHROMIUM_EXECUTABLE_PATH=/pfad/zu/chromium npm run test:browser
 ```
 
-## 9. Definition of Done
+## 10. Definition of Done
 
 - Änderungen entsprechen dem freigegebenen Arbeitspaket,
 - keine unbeabsichtigte Daten- oder Formatänderung,

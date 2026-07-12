@@ -1,5 +1,35 @@
 # Changelog
 
+## V99.4.3 – Modularisierung von Persistenz, Migration und Archiv – 2026-07-12
+
+- `js/persistence.js` für Prüfsumme, Integritätsmetadaten, Speicheradapter, Speicherdiagnostik und sämtliche direkten `localStorage`-Zugriffe eingeführt.
+- `js/migration.js` für Datenschemaermittlung, idempotente Migrationshistorie, Migration bis Schema 5 und Übernahme vorbelegter Altarchive eingeführt.
+- `js/archive.js` für Snapshot-Metafilterung, begrenzte Abrechnungsprojektion, Archivhüllen-Normalisierung und Durchsetzung des Datenebenenvertrags eingeführt.
+- Kleine Kompatibilitätsschicht in `js/app.js` erhält die bestehenden globalen Funktionsnamen und delegiert an die neuen Module.
+- Direkte Browser-Speicherzugriffe aus `js/app.js` entfernt; UI- und Fachorchestrierung bleibt dort erhalten.
+- Verbindliche Skriptreihenfolge in `index.html` und vollständigen Modul-App-Shell im Service Worker abgesichert.
+- Releaseprüfung um Modulschnittstellen, Speicherzugriffsgrenzen, Skriptreihenfolge und App-Shell erweitert.
+- Browsertest für Modulreihenfolge, eingefrorene Namespaces und globale Kompatibilität ergänzt.
+- JavaScript-Syntax 9/9, Referenzfälle 6/6 und Playwright/Chromium 22/22 bestanden.
+- Datenschema 5, Datenebenenvertrag 1, Snapshot-Grenzen, Fachberechnung, Oberfläche, Archive, Backups, Recovery und Austauschformate unverändert.
+- App-, Paket-, Manifest-, Test- und PWA-Cacheversion auf V99.4.3 aktualisiert.
+
+## V99.4.2 – Verbindliche Datenebenen und Snapshot-Grenzen – 2026-07-12
+
+- Datenebenenvertrag 1 für aktuellen Arbeitsstand, Objektstammdaten, globale Historie, Abrechnungssnapshot, Jahresarchiv, Gesamtbackup und Recovery eingeführt.
+- Abrechnungs- und Archivsnapshots auf eine explizite erlaubte Feldmenge begrenzt.
+- Verschachtelte `jahresArchiv`-Kopien, `stammdaten`, `waterMeterHistory` und technische Speicher-, Backup-, Recovery- und Viewer-Metadaten aus Snapshots ausgeschlossen.
+- Bestehende Archivstände werden beim Laden und vor dem Speichern idempotent normalisiert und begrenzt.
+- Fehlende globale Zählerhistorie kann vor der Begrenzung einmalig aus einem vorhandenen Altarchiv in den Arbeitsstand übernommen werden.
+- Archivansichten ergänzen Objektstammdaten und globale Historie nur zur Laufzeit.
+- Wiederbearbeitung eines Archivstands erhält aktuelle Stammdaten, globale Historie, operative Backup-Metadaten und das vollständige Jahresarchiv.
+- Gesamtbackup enthält alle fachlichen Datenebenen, aber keinen Recovery-Stand; Abrechnungs-JSON enthält nur den begrenzten Abrechnungsstand.
+- Recovery bleibt als ein separater, integritätsgeschützter vorheriger Arbeitsstand ohne Recovery-Kette erhalten.
+- Neue Browserregressionen für Snapshot-Grenzen, idempotente Altarchivmigration, Recovery, Gesamtbackup, Abrechnungs-JSON und Wiederbearbeitung ergänzt.
+- Bestehende Startabhängigkeit in `js/default-seed.js` beseitigt: der vor `app.js` geladene SEED verwendet den fachlich identischen Literalwert statt der erst später definierten Konstante.
+- App-, Paket-, Manifest-, Test- und PWA-Cacheversion auf V99.4.2 aktualisiert.
+- Datenschema 5, Fachberechnung, sechs Referenzfälle und allgemeine Oberfläche unverändert.
+
 ## V99.4.1 – ChatGPT-Arbeitsbasis und Testdatenstruktur – 2026-07-12
 
 ### Geändert

@@ -1,10 +1,11 @@
 # NK-Pro – verbindlicher Projektstand
 
 **Stand:** 12. Juli 2026  
-**Anwendung:** V99.4.1  
-**Versionsname:** ChatGPT-Arbeitsbasis und Testdatenstruktur  
-**Datenschema:** 5  
-**Ausgangsversion:** V99.4.0
+**Anwendung:** V99.4.3  
+**Versionsname:** Modularisierung von Persistenz, Migration und Archiv  
+**Datenschema:** 5, unverändert  
+**Datenebenenvertrag:** 1, unverändert  
+**Ausgangsversion:** V99.4.2
 
 ## 1. Technische Grundlage
 
@@ -12,48 +13,72 @@ NK-Pro ist eine statische lokale Browseranwendung und PWA aus HTML, CSS und Java
 
 Die jeweils neueste ausdrücklich als verbindlich bezeichnete ZIP ist die alleinige technische Grundlage. Frühere Chats, Erinnerungen und ältere ZIPs dürfen keine technischen Annahmen liefern.
 
-## 2. Verbindlicher Ist-Zustand
+## 2. Produktive Module und Ladefolge
 
-- eine Anwendung und ein lokaler Datenbestand,
-- Datenschema 5,
-- Arbeitsstand im `localStorage` mit Prüfsumme und Recovery-Stand,
-- historische Jahresarchive innerhalb des Anwendungszustands,
-- Landingpage mit Objektvorbereitung und Nebenkostenabrechnung,
-- gruppierte Navigation und sichtbarer Abrechnungskontext,
-- sechs logisch unveränderte Referenzfälle.
+Die technische Kernlogik ist in folgende Dateien getrennt:
 
-## 3. Technische Bereinigung V99.4.1
+1. `js/persistence.js`: Browser-Speicheradapter, Prüfsumme und Integritätsmetadaten,
+2. `js/migration.js`: Datenschemaermittlung, Migration bis Schema 5 und Altarchivübernahme,
+3. `js/archive.js`: Snapshot-Projektion, Archivnormalisierung und Datenebenenvertrag,
+4. `js/default-seed.js`: Ausgangsdaten,
+5. `js/app.js`: zentraler Zustand, Fachlogik, UI-Orchestrierung, Briefe und Export.
 
-- `js/app.js` enthält nicht mehr den großen SEED; dieser liegt in `js/default-seed.js`.
-- Referenzfälle werden aus `testdaten/basis/standardfall.json` und kleinen Patches rekonstruiert.
-- `npm run test:fixtures` beweist die semantische Identität aller Referenzfälle über feste SHA-256-Prüfsummen.
-- historische Prüfberichte und überholte Entwicklungsdokumente sind aus der aktiven Arbeits-ZIP ausgelagert.
-- Fachlogik, Berechnung, Schema, Archive und Austauschformate wurden nicht verändert.
+`index.html` lädt die drei Kernmodule zwingend vor `default-seed.js` und `app.js`. `app.js` prüft die vollständige Modulladung beim Start. Die bestehenden globalen Funktionen bleiben als kleine Kompatibilitätsschicht erhalten.
 
-## 4. Offene kritische Themen vor größerer UI-Weiterentwicklung
+Nur `js/persistence.js` greift direkt auf `localStorage` zu. Migration und Archiv sind von DOM und Browser-Speicher getrennt und erhalten benötigte Fachhelfer explizit.
 
-1. verbindliche Datenebenen und Snapshot-Grenzen definieren,
-2. aktuelle Abrechnung, Objektstandard, Historie, Archiv, Sicherung und Recovery eindeutig trennen,
-3. rekursive oder unnötig vollständige Archivkopien begrenzen,
-4. danach `app.js` schrittweise nach stabilen Datenverträgen modularisieren.
+## 3. Verbindliche Datenebenen
 
-## 5. Nächstes Arbeitspaket
+1. **Aktueller Arbeitsstand:** einzige schreibbare Laufzeitinstanz im Hauptspeicherschlüssel.
+2. **Objektstammdaten:** `stammdaten` ausschließlich im aktuellen Arbeitsstand und im Gesamtbackup.
+3. **Globale Historie:** `waterMeterHistory` ausschließlich im aktuellen Arbeitsstand und im Gesamtbackup.
+4. **Abrechnungssnapshot:** begrenzte fachliche Projektion einer Abrechnungsperiode.
+5. **Jahresarchiv:** Sammlung aus Archivhülle, Zusammenfassung und genau einem begrenzten Abrechnungssnapshot.
+6. **Gesamtsicherung:** vollständiger Arbeitsstand einschließlich Stammdaten, globaler Historie und begrenztem Jahresarchiv.
+7. **Recovery:** genau ein getrennt gespeicherter vorheriger gültiger Arbeitsstand; keine Recovery-Kette im Nutzdatenbestand.
 
-**Verbindliche Datenebenen und Snapshot-Grenzen.**
+## 4. Verbindliche Snapshot-Grenzen
 
-Das Arbeitspaket beginnt mit einer Bereichsanalyse der Daten-, Persistenz-, Archiv- und Migrationspfade. Vor einer Schema- oder Formatänderung sind Auswirkungen, Alternativen, Migration, Rückweg und Teststrategie zu dokumentieren.
+Abrechnungs- und Archivsnapshots enthalten ausschließlich abrechnungsbezogene Fachfelder. Ausgeschlossen sind insbesondere:
 
-## 6. Aktive Freigabenachweise
+- `jahresArchiv`,
+- `stammdaten`,
+- `waterMeterHistory`,
+- Speicherintegritäts-, Backup-, Recovery- und Viewer-Metadaten.
 
-- JavaScript-Syntaxprüfung,
-- Referenzdaten-Prüfsummen,
-- Playwright-Regressionssuite,
-- Manifest- und Service-Worker-Prüfung,
-- Versions- und SHA-256-Konsistenz.
+Archivansichten erhalten erforderliche Objektstammdaten und globale Zählerhistorie nur zur Laufzeit. Beim Wiederöffnen zur Bearbeitung bleiben die aktuellen Stammdaten, die globale Historie und das vollständige Jahresarchiv erhalten.
 
-## 7. Prüfstatus V99.4.1
+## 5. Migration und Kompatibilität
 
-- Syntax: 6/6 bestanden.
-- Referenzdaten: 6/6 semantisch identisch.
-- Release- und PWA-Konsistenz: bestanden.
-- Playwright-Browserregression: in der Erstellungsumgebung wegen nicht startfähigem Chromium nicht ausführbar; externer vollständiger Lauf vor Produktivfreigabe erforderlich.
+- Datenschema 5 bleibt unverändert.
+- Datenebenenvertrag 1 und Snapshot-Rolle `billingSnapshot` bleiben unverändert.
+- Bestehende Gesamt-JSON-Dateien, Abrechnungsdateien und Archivhüllen bleiben importierbar.
+- Vorhandene Archive werden weiterhin idempotent auf die feste Snapshot-Grenze projiziert.
+- Hauptstand und genau ein Recovery-Stand bleiben getrennt und integritätsgeschützt.
+- Die Modularisierung erfordert keine Datenmigration und keine Rückmigration.
+
+## 6. Unveränderte Bereiche
+
+- keine Änderung der Berechnungslogik,
+- keine Änderung der sechs fachlichen Referenzfälle,
+- keine neue Schemaversion,
+- keine Änderung des Datenebenenvertrags,
+- keine optischen oder allgemeinen UI-Änderungen,
+- keine Änderung von Backup-, Recovery- oder Austauschformaten,
+- keine Framework-, TypeScript- oder Buildsystem-Einführung,
+- kein externes Vor-Migrationsbackup und kein allgemeiner mehrstufiger Rollback.
+
+## 7. Aktive Freigabenachweise
+
+- JavaScript-Syntax: 9/9 produktive Einheiten bestanden,
+- Referenzdaten: 6/6 logische Fälle semantisch unverändert,
+- Release-, Modul-, Datenvertrag-, Manifest- und PWA-Konsistenz: bestanden,
+- Playwright-Browserregression: 22/22 Tests bestanden,
+- darin Modulreihenfolge, Kompatibilitätsschicht, Persistenz, Snapshot-Grenzen, Altarchivbegrenzung, Recovery, Wiederbearbeitung und Import-/Export-Rundlauf,
+- vollständige Paketprüfsummen in `SHA256SUMS.txt`.
+
+## 8. Nächstes Arbeitspaket
+
+**Externes Vor-Migrationsbackup und allgemeiner Rollback vor Datenschema 6.**
+
+Weiterhin offen bleiben insbesondere eine dauerhafte Zähler-ID, Datenschutztrennung für veröffentlichbare Pakete und die schrittweise weitere Reduktion des verbleibenden `app.js`-Monolithen.

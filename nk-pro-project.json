@@ -1,9 +1,11 @@
 {
-  "appVersion": "99.4.1",
-  "displayVersion": "V99.4.1",
-  "versionName": "ChatGPT-Arbeitsbasis und Testdatenstruktur",
+  "appVersion": "99.4.3",
+  "displayVersion": "V99.4.3",
+  "versionName": "Modularisierung von Persistenz, Migration und Archiv",
   "schemaVersion": 5,
-  "basedOn": "99.4.0",
+  "dataLayerContractVersion": 1,
+  "snapshotScope": "billingSnapshot",
+  "basedOn": "99.4.2",
   "releaseDate": "2026-07-12",
   "runtime": [
     "HTML",
@@ -12,5 +14,5 @@
   ],
   "framework": null,
   "buildSystem": null,
-  "nextWorkPackage": "Verbindliche Datenebenen und Snapshot-Grenzen"
+  "nextWorkPackage": "Externes Vor-Migrationsbackup und allgemeiner Rollback vor Datenschema 6"
 }

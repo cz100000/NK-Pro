@@ -11,7 +11,7 @@ test("Speichern und erneutes Laden erhalten den Datenstand samt Prüfsumme", asy
 
   const saved = await page1.evaluate(() => {
     const tenant = state.mieter.find(item => item.id === "M001");
-    tenant.bemerkung = "Playwright-Persistenztest V99.4.1";
+    tenant.bemerkung = "Playwright-Persistenztest V99.4.3";
     const ok = saveData();
     const stored = readStoredDataResult(STORAGE_KEY);
     return {
@@ -33,7 +33,7 @@ test("Speichern und erneutes Laden erhalten den Datenstand samt Prüfsumme", asy
   const runtime2 = attachRuntimeGuards(page2);
   await openFreshApp(page2, saved.entries);
   const note = await page2.evaluate(() => state.mieter.find(item => item.id === "M001")?.bemerkung);
-  expect(note).toBe("Playwright-Persistenztest V99.4.1");
+  expect(note).toBe("Playwright-Persistenztest V99.4.3");
   runtime2.assertClean();
   await context2.close();
 });
@@ -52,13 +52,101 @@ test("Beschädigte Hauptdaten werden aus dem letzten gültigen Rückfallstand ge
     return {
       note: loaded.mieter.find(item => item.id === "M001")?.bemerkung,
       recovered: !!(loaded.meta && loaded.meta.loadedFromIntegrityRecovery),
-      hasRecovery: !!localStorage.getItem(STORAGE_RECOVERY_KEY)
+      hasRecovery: !!localStorage.getItem(STORAGE_RECOVERY_KEY),
+      recoveryRole: loaded.meta && loaded.meta.storageRole,
+      recoveryProtected: readStoredDataResult(STORAGE_RECOVERY_KEY).valid
     };
   });
 
   expect(recovery.note).toBe("gültiger Rückfallstand");
   expect(recovery.recovered).toBe(true);
   expect(recovery.hasRecovery).toBe(true);
+  expect(recovery.recoveryRole).toBe("recovery");
+  expect(recovery.recoveryProtected).toBe(true);
+  runtime.assertClean();
+});
+
+test("Archiv-Snapshots besitzen feste Grenzen und bleiben idempotent", async ({ page }) => {
+  const runtime = attachRuntimeGuards(page);
+  await openFreshApp(page);
+
+  const result = await page.evaluate(() => {
+    const fresh = createYearSnapshot();
+    const legacy = clone(fresh);
+    legacy.data.jahresArchiv = [clone(fresh)];
+    legacy.data.stammdaten = clone(state.stammdaten || {});
+    legacy.data.waterMeterHistory = clone(state.waterMeterHistory || {});
+    legacy.data.meta.backupEvents = [{ type:"full-json", filename:"alt.json" }];
+    legacy.data.meta.storageIntegrityChecksum = "ungueltig";
+
+    const once = prepareArchiveItemForUse(legacy);
+    const twice = prepareArchiveItemForUse(once);
+    const fullBackup = exportSnapshot();
+    const bounded = item => !!item && !!item.data &&
+      !Object.prototype.hasOwnProperty.call(item.data, "jahresArchiv") &&
+      !Object.prototype.hasOwnProperty.call(item.data, "stammdaten") &&
+      !Object.prototype.hasOwnProperty.call(item.data, "waterMeterHistory");
+
+    return {
+      freshBounded: bounded(fresh),
+      migratedBounded: bounded(once),
+      noBackupMeta: !Object.prototype.hasOwnProperty.call(once.data.meta, "backupEvents"),
+      noStorageMeta: !Object.keys(once.data.meta).some(key => key.startsWith("storageIntegrity")),
+      scope: once.snapshotScope,
+      boundaryVersion: once.snapshotBoundaryVersion,
+      idempotent: JSON.stringify(once) === JSON.stringify(twice),
+      fullBackupHasMaster: !!fullBackup.stammdaten,
+      fullBackupHasHistory: !!fullBackup.waterMeterHistory,
+      fullBackupHasArchive: Array.isArray(fullBackup.jahresArchiv) && fullBackup.jahresArchiv.length > 0,
+      fullBackupArchivesBounded: (fullBackup.jahresArchiv || []).every(bounded),
+      fullBackupExcludesRecovery: Array.isArray(fullBackup.meta.exportExcludes) && fullBackup.meta.exportExcludes.includes("recovery")
+    };
+  });
+
+  expect(result).toMatchObject({
+    freshBounded: true,
+    migratedBounded: true,
+    noBackupMeta: true,
+    noStorageMeta: true,
+    scope: "billingSnapshot",
+    boundaryVersion: 1,
+    idempotent: true,
+    fullBackupHasMaster: true,
+    fullBackupHasHistory: true,
+    fullBackupHasArchive: true,
+    fullBackupArchivesBounded: true,
+    fullBackupExcludesRecovery: true
+  });
+  runtime.assertClean();
+});
+
+test("Wiederbearbeitung übernimmt die Abrechnung und behält aktuelle Stammdaten", async ({ page }) => {
+  const runtime = attachRuntimeGuards(page);
+  await openFreshApp(page);
+
+  const result = await page.evaluate(() => {
+    state.stammdaten.snapshotBoundaryTest = "aktueller Objektstandard";
+    state.waterMeterHistory.snapshotBoundaryTest = "aktuelle Historie";
+    const archiveCount = state.jahresArchiv.length;
+    const expectedYear = String(state.jahresArchiv[0].year);
+    window.prompt = () => "WIEDERBEARBEITEN";
+    reopenArchiveYearForRework(0);
+    return {
+      masterMarker: state.stammdaten && state.stammdaten.snapshotBoundaryTest,
+      historyMarker: state.waterMeterHistory && state.waterMeterHistory.snapshotBoundaryTest,
+      archiveCount: state.jahresArchiv.length,
+      year: String(state.meta.abrechnungsjahr),
+      reopened: !!state.meta.reopenedFromArchiveAt,
+      role: state.meta.dataLayerRole
+    };
+  });
+
+  expect(result.masterMarker).toBe("aktueller Objektstandard");
+  expect(result.historyMarker).toBe("aktuelle Historie");
+  expect(result.archiveCount).toBeGreaterThan(0);
+  expect(result.year).toBeTruthy();
+  expect(result.reopened).toBe(true);
+  expect(result.role).toBe("workingState");
   runtime.assertClean();
 });
 
@@ -84,6 +172,10 @@ test("Aktuelle Abrechnung übersteht JSON-Export-, Validierungs- und Import-Rund
         archive: normalized.jahresArchiv.length
       },
       exportScope: normalized.meta.exportScope,
+      rawHasArchive: Object.prototype.hasOwnProperty.call(exported, "jahresArchiv"),
+      rawHasMaster: Object.prototype.hasOwnProperty.call(exported, "stammdaten"),
+      rawHasHistory: Object.prototype.hasOwnProperty.call(exported, "waterMeterHistory"),
+      snapshotScope: exported.meta.snapshotScope,
       integrity: validateStoredDataIntegrity(protectDataForStorage(normalized)).valid
     };
   });
@@ -98,6 +190,10 @@ test("Aktuelle Abrechnung übersteht JSON-Export-, Validierungs- und Import-Rund
     archive: 0
   });
   expect(roundtrip.exportScope).toBe("currentBillingOnly");
+  expect(roundtrip.rawHasArchive).toBe(false);
+  expect(roundtrip.rawHasMaster).toBe(false);
+  expect(roundtrip.rawHasHistory).toBe(false);
+  expect(roundtrip.snapshotScope).toBe("billingSnapshot");
   expect(roundtrip.integrity).toBe(true);
   runtime.assertClean();
 });

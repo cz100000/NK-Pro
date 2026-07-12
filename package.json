@@ -1,8 +1,8 @@
 {
-  "name": "nk-pro-v99-4-1",
-  "version": "99.4.1",
+  "name": "nk-pro-v99-4-3",
+  "version": "99.4.3",
   "private": true,
-  "description": "Syntax-, Chromium- und Playwright-Pruefungen fuer NK-Pro V99.4.1 ChatGPT-Arbeitsbasis",
+  "description": "Syntax-, Modul-, Chromium- und Playwright-Pruefungen fuer NK-Pro V99.4.3 Modularisierung von Persistenz, Migration und Archiv",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
     "test:fixtures": "node tools/check-fixtures.cjs",

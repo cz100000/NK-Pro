@@ -2,7 +2,7 @@
 
 **Ziel:** einfacher, stabiler und nachvollziehbarer Arbeitsablauf  
 **Ausgangsversion:** V99.3.0  
-**Aktueller Stand:** V99.4.1  
+**Aktueller Stand:** V99.4.3  
 **Status:** Phase-1-Ziel umgesetzt; Datenmodellziele offen
 
 ## 1. Leitprinzip
@@ -213,7 +213,7 @@ Die Oberfläche muss dieses Prinzip sichtbar machen, zum Beispiel durch Hinweise
 - keine horizontal versteckten Pflichtfelder,
 - druckbare Briefe ohne UI-Elemente.
 
-## 10. Umsetzungsstand V99.4.1
+## 10. Umsetzungsstand V99.4.3
 
 Umgesetzt sind:
 
@@ -230,6 +230,6 @@ Noch offen und ausdrücklich nicht vorgetäuscht sind:
 
 - eigenständige Zählerverwaltung mit dauerhafter Zähler-ID,
 - Objektstandard für Kostenarten, Umlageschlüssel, Zähler, Briefvorlagen und Einstellungen,
-- formale Snapshot-Trennung von Standards und Abrechnung.
+- vollständige fachliche Trennung aller zukünftigen Objektstandards von periodischen Abrechnungswerten über die bereits gesicherten Snapshot-Grenzen hinaus.
 
-Diese Punkte benötigen die Stop-Regel, Variantenvergleich, Nutzerentscheidung, Vor-Migrationsbackup und Wiederherstellungsnachweis.
+Der Datenebenenvertrag und die Begrenzung von Abrechnungs- und Archivsnapshots sind seit V99.4.2 umgesetzt. Die verbleibenden Modelländerungen benötigen weiterhin Stop-Regel, Variantenvergleich, Nutzerentscheidung, Vor-Migrationsbackup und Wiederherstellungsnachweis.

@@ -1,10 +1,66 @@
+const NK_PRO_MODULES = (() => {
+  const required = {
+    persistence:globalThis.NKProPersistence,
+    migration:globalThis.NKProMigration,
+    archive:globalThis.NKProArchive
+  };
+  const missing = Object.entries(required).filter(([, value]) => !value).map(([name]) => name);
+  if (missing.length) throw new Error("NK-Pro-Modulladereihenfolge unvollständig: " + missing.join(", "));
+  return Object.freeze(required);
+})();
+
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.1";
-const APP_VERSION_NAME = "ChatGPT-Arbeitsbasis und Testdatenstruktur";
+const APP_VERSION = "V99.4.3";
+const APP_VERSION_NAME = "Modularisierung von Persistenz, Migration und Archiv";
 const APP_RELEASE_DATE = "2026-07-12";
 const DATA_SCHEMA_VERSION = 5;
+const DATA_LAYER_CONTRACT_VERSION = 1;
+const ARCHIVE_SNAPSHOT_SCOPE = "billingSnapshot";
+const ARCHIVE_SNAPSHOT_DATA_KEYS = [
+  "meta",
+  "wohnungen",
+  "mieter",
+  "kostenarten",
+  "kostenartenMieterUmlage",
+  "vorauszahlungen",
+  "umlageInputs",
+  "waterMeters",
+  "meterReadings",
+  "briefSettings",
+  "abrechnungsEinzelwerte",
+  "legacyEinzelabrechnungen",
+  "prepaymentAdjustmentSettings"
+];
+const SNAPSHOT_TECHNICAL_META_KEYS = new Set([
+  "archiveViewer",
+  "archiveReturnUrl",
+  "backupEvents",
+  "lastArchiveBackupAt",
+  "lastArchiveBackupFile",
+  "lastCurrentBillingBackupAt",
+  "lastCurrentBillingBackupFile",
+  "lastFullBackupAppVersion",
+  "lastFullBackupAt",
+  "lastFullBackupFile",
+  "lastFullBackupType",
+  "lastSaveError",
+  "lastSaveReason",
+  "lastSavedAt",
+  "lastSavedWithAppVersion",
+  "loadedFromIntegrityRecovery",
+  "loadedFromIntegrityRecoveryAt",
+  "recoveryCreatedAt",
+  "recoveryCreatedWithAppVersion",
+  "recoverySourceStorageKey",
+  "snapshotBoundaryMigration",
+  "startupFallback",
+  "startupMeterEndValueRepairAt",
+  "startupMeterEndValueRepairCleared",
+  "startupMeterEndValueRepairWithAppVersion",
+  "storageRole"
+]);
 const COST_EXCLUSION_FULL = "Vollständig umlegen";
 const COST_EXCLUSION_OWNER = "Nicht umlagefähig / Eigentümeranteil";
 const COST_EXCLUSION_OPTIONS = [COST_EXCLUSION_FULL, COST_EXCLUSION_OWNER];
@@ -18,6 +74,14 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
+  "V99.4.3 gliedert Persistenz und Integrität, Schemamigration sowie Archiv- und Snapshot-Projektion in drei eigenständige JavaScript-Module aus.",
+  "Eine kleine Kompatibilitätsschicht in app.js erhält die bestehenden globalen Aufrufe; Datenschema 5, Datenebenenvertrag 1 und alle Austauschformate bleiben unverändert.",
+  "Die produktive Skriptreihenfolge und der PWA-App-Shell sichern die Module vor default-seed.js und app.js eindeutig ab; direkte Browser-Speicherzugriffe liegen nur noch im Persistenzmodul.",
+  "Fachberechnung, Referenzfälle, Snapshot-Grenzen, Archive, Backups, Recovery und Oberfläche bleiben funktional unverändert.",
+  "V99.4.2 führt einen verbindlichen Datenebenenvertrag für Arbeitsstand, Abrechnungssnapshot, Jahresarchiv, Gesamtbackup und Recovery ein.",
+  "Archiv- und Abrechnungssnapshots werden auf abrechnungsbezogene Fachfelder begrenzt; verschachtelte Archive, Stammdaten, globale Zählerhistorie und technische Speicher-/Recovery-Metadaten werden nicht mitkopiert.",
+  "Bestehende Archive werden beim Laden und Speichern idempotent begrenzt; Wiederbearbeitung erhält aktuelle Stammdaten, globale Historie und das vollständige Jahresarchiv.",
+  "Datenschema, Fachberechnung, Referenzfälle und Oberfläche bleiben unverändert; eine bestehende Ladeabhängigkeit des ausgelagerten SEED wurde mit einem identischen Literalwert beseitigt.",
   "V99.2.6 korrigiert die dynamische Statusanzeige im Seitenkopf und stellt die Prüf-Kacheln wieder mit eindeutigen Statussymbolen dar.",
   "Der Tab Zählerstände erhält eine neue Klappbox für Hauszähler und Wasserwerksrechnung, Summen für K002, bündige Tabellenfilter und eine bereinigte Historien-/Hinweisstruktur.",
   "Die Nebenkostenumlage wird um den überflüssigen Aktionsblock bereinigt; Reset und Vorauszahlungsregeln sind kompakter und fachlich klarer angeordnet.",
@@ -174,6 +238,86 @@ let navigationInitialized = false;
 
 function clone(obj) { return JSON.parse(JSON.stringify(obj)); }
 
+function persistenceModuleOptions(overrides = {}) {
+  return {
+    clone,
+    appVersion:APP_VERSION,
+    integrityAlgorithm:STORAGE_INTEGRITY_ALGORITHM,
+    isAppDataShape,
+    ...overrides
+  };
+}
+
+function migrationModuleOptions(overrides = {}) {
+  return {
+    clone,
+    appVersion:APP_VERSION,
+    targetSchemaVersion:DATA_SCHEMA_VERSION,
+    manualAllocationKey:UMLAGE_MANUAL,
+    dependencies:{
+      ensureUnitIdentityData,
+      ensureTenantIdentityFields,
+      canonicalUnitIdFor,
+      ensureStammdatenData,
+      normalizeMasterUnitRows,
+      num
+    },
+    ...overrides
+  };
+}
+
+function archiveModuleOptions(overrides = {}) {
+  return {
+    clone,
+    appVersion:APP_VERSION,
+    dataSchemaVersion:DATA_SCHEMA_VERSION,
+    dataLayerContractVersion:DATA_LAYER_CONTRACT_VERSION,
+    snapshotScope:ARCHIVE_SNAPSHOT_SCOPE,
+    snapshotDataKeys:ARCHIVE_SNAPSHOT_DATA_KEYS,
+    technicalMetaKeys:SNAPSHOT_TECHNICAL_META_KEYS,
+    normalizeLegacyData,
+    archivePeriodId,
+    todayIso,
+    ...overrides
+  };
+}
+
+function isSnapshotTechnicalMetaKey(key) {
+  return NK_PRO_MODULES.archive.isSnapshotTechnicalMetaKey(key, archiveModuleOptions());
+}
+
+function snapshotMetaFrom(meta) {
+  return NK_PRO_MODULES.archive.snapshotMetaFrom(meta, archiveModuleOptions());
+}
+
+function createBoundedBillingSnapshotData(source) {
+  return NK_PRO_MODULES.archive.createBoundedBillingSnapshotData(source, archiveModuleOptions());
+}
+
+function hasHistoricalWaterMeterData(value) {
+  return NK_PRO_MODULES.archive.hasHistoricalWaterMeterData(value);
+}
+
+function adoptHistoricalWaterMeterDataFromArchive(data) {
+  return NK_PRO_MODULES.archive.adoptHistoricalWaterMeterDataFromArchive(data, archiveModuleOptions());
+}
+
+function archiveBoundaryFacts(item) {
+  return NK_PRO_MODULES.archive.archiveBoundaryFacts(item, archiveModuleOptions());
+}
+
+function normalizeArchiveCollectionBoundaries(data) {
+  return NK_PRO_MODULES.archive.normalizeArchiveCollectionBoundaries(data, archiveModuleOptions());
+}
+
+function enforceWorkingStateDataContract(data, options = {}) {
+  return NK_PRO_MODULES.archive.enforceWorkingStateDataContract(data, archiveModuleOptions(options));
+}
+
+function copyWorkingOperationalMeta(targetMeta, sourceMeta) {
+  return NK_PRO_MODULES.archive.copyWorkingOperationalMeta(targetMeta, sourceMeta, archiveModuleOptions());
+}
+
 const DEFAULT_WATER_METER_HISTORY = {"source":"Nebenkostenberechnung 2024(2).xlsx / Tab Wasserverbrauch","sourceSheet":"Wasserverbrauch","importedAt":"2026-07-06","scope":"Endstände 2017–2024 und Jahresverbräuche 2018–2024; für Archiv-/Abrechnungsprüfung relevant ab Ende 2021.","houseConnection":{"wechselHinweis":"Wasseruhrenwechsel Hausanschluss am 13.04.2022","wechselDatum":"2022-04-13","wertBeiWechsel":1893.0,"wertEnde2022":301.0,"wertEnde2023":615.0,"wertEnde2024":911.0,"wertEnde2025":"TBD"},"units":[{"wohnung":"W005.DG-L","bezeichnung":"DG-Links","excelKennung":"DGL","zaehlerKennung":"w05","readings":[{"jahr":2017,"kw":20.39,"ww":22.21,"gesamt":42.6},{"jahr":2018,"kw":39.45,"ww":41.15,"gesamt":80.6},{"jahr":2019,"kw":63.25,"ww":60.76,"gesamt":124.01},{"jahr":2020,"kw":90.18,"ww":85.38,"gesamt":175.56},{"jahr":2021,"kw":105.26,"ww":119.66,"gesamt":224.92},{"jahr":2022,"kw":123.08,"ww":141.56,"gesamt":264.64},{"jahr":2023,"kw":123.08,"ww":143.0,"gesamt":266.08},{"jahr":2024,"kw":124.0,"ww":144.0,"gesamt":268.0}],"deltas":[{"jahr":2018,"kw":19.06,"ww":18.94,"gesamt":38.0},{"jahr":2019,"kw":23.8,"ww":19.61,"gesamt":43.41},{"jahr":2020,"kw":26.93,"ww":24.62,"gesamt":51.55},{"jahr":2021,"kw":15.08,"ww":34.28,"gesamt":49.36},{"jahr":2022,"kw":17.82,"ww":21.9,"gesamt":39.72},{"jahr":2023,"kw":0.0,"ww":1.44,"gesamt":1.44},{"jahr":2024,"kw":0.92,"ww":1.0,"gesamt":1.92}]},{"wohnung":"W006.DG-R","bezeichnung":"DG-Rechts","excelKennung":"DGR","zaehlerKennung":"w06","readings":[{"jahr":2017,"kw":26.13,"ww":11.17,"gesamt":37.3},{"jahr":2018,"kw":60.03,"ww":26.14,"gesamt":86.17},{"jahr":2019,"kw":73.63,"ww":33.6,"gesamt":107.23},{"jahr":2020,"kw":79.05,"ww":39.47,"gesamt":118.52},{"jahr":2021,"kw":112.45,"ww":77.21,"gesamt":189.66},{"jahr":2022,"kw":136.98,"ww":110.99,"gesamt":247.97},{"jahr":2023,"kw":136.98,"ww":110.99,"gesamt":247.97},{"jahr":2024,"kw":137.0,"ww":111.0,"gesamt":248.0}],"deltas":[{"jahr":2018,"kw":33.9,"ww":14.97,"gesamt":48.87},{"jahr":2019,"kw":13.6,"ww":7.46,"gesamt":21.06},{"jahr":2020,"kw":5.42,"ww":5.87,"gesamt":11.29},{"jahr":2021,"kw":33.4,"ww":37.74,"gesamt":71.14},{"jahr":2022,"kw":24.53,"ww":33.78,"gesamt":58.31},{"jahr":2023,"kw":0.0,"ww":0.0,"gesamt":0.0},{"jahr":2024,"kw":0.02,"ww":0.01,"gesamt":0.03}]},{"wohnung":"W003.1OG-L","bezeichnung":"1OG-Links","excelKennung":"1OGL","zaehlerKennung":"w03","readings":[{"jahr":2017,"kw":47.83,"ww":0.04,"gesamt":47.87},{"jahr":2018,"kw":73.5,"ww":4.21,"gesamt":77.71},{"jahr":2019,"kw":85.52,"ww":12.48,"gesamt":98.0},{"jahr":2020,"kw":100.14,"ww":21.86,"gesamt":122.0},{"jahr":2021,"kw":119.45,"ww":35.2,"gesamt":154.65},{"jahr":2022,"kw":138.11,"ww":44.44,"gesamt":182.55},{"jahr":2023,"kw":153.0,"ww":52.0,"gesamt":205.0},{"jahr":2024,"kw":168.0,"ww":59.0,"gesamt":227.0}],"deltas":[{"jahr":2018,"kw":25.67,"ww":4.17,"gesamt":29.84},{"jahr":2019,"kw":12.02,"ww":8.27,"gesamt":20.29},{"jahr":2020,"kw":14.62,"ww":9.38,"gesamt":24.0},{"jahr":2021,"kw":19.31,"ww":13.34,"gesamt":32.65},{"jahr":2022,"kw":18.66,"ww":9.24,"gesamt":27.9},{"jahr":2023,"kw":14.89,"ww":7.56,"gesamt":22.45},{"jahr":2024,"kw":15.0,"ww":7.0,"gesamt":22.0}]},{"wohnung":"W004.1OG-R","bezeichnung":"1OG-Rechts","excelKennung":"1OGR","zaehlerKennung":"w04","readings":[{"jahr":2017,"kw":5.2,"ww":0.58,"gesamt":5.78},{"jahr":2018,"kw":25.03,"ww":3.04,"gesamt":28.07},{"jahr":2019,"kw":27.53,"ww":5.93,"gesamt":33.46},{"jahr":2020,"kw":43.54,"ww":25.9,"gesamt":69.44},{"jahr":2021,"kw":55.22,"ww":42.81,"gesamt":98.03},{"jahr":2022,"kw":104.97,"ww":121.21,"gesamt":226.18},{"jahr":2023,"kw":152.0,"ww":186.0,"gesamt":338.0},{"jahr":2024,"kw":195.0,"ww":241.0,"gesamt":436.0}],"deltas":[{"jahr":2018,"kw":19.83,"ww":2.46,"gesamt":22.29},{"jahr":2019,"kw":2.5,"ww":2.89,"gesamt":5.39},{"jahr":2020,"kw":16.01,"ww":19.97,"gesamt":35.98},{"jahr":2021,"kw":11.68,"ww":16.91,"gesamt":28.59},{"jahr":2022,"kw":49.75,"ww":78.4,"gesamt":128.15},{"jahr":2023,"kw":47.03,"ww":64.79,"gesamt":111.82},{"jahr":2024,"kw":43.0,"ww":55.0,"gesamt":98.0}]},{"wohnung":"W001.EG-L","bezeichnung":"EG-Links","excelKennung":"EGL","zaehlerKennung":"w01","readings":[{"jahr":2017,"kw":null,"ww":null,"gesamt":null},{"jahr":2018,"kw":null,"ww":null,"gesamt":null},{"jahr":2019,"kw":null,"ww":null,"gesamt":null},{"jahr":2020,"kw":null,"ww":null,"gesamt":null},{"jahr":2021,"kw":184.11,"ww":88.67,"gesamt":272.78},{"jahr":2022,"kw":186.24,"ww":89.37,"gesamt":275.61},{"jahr":2023,"kw":228.0,"ww":98.0,"gesamt":326.0},{"jahr":2024,"kw":266.0,"ww":108.0,"gesamt":374.0}],"deltas":[{"jahr":2018,"kw":0.0,"ww":0.0,"gesamt":0.0},{"jahr":2019,"kw":0.0,"ww":0.0,"gesamt":0.0},{"jahr":2020,"kw":0.0,"ww":0.0,"gesamt":0.0},{"jahr":2021,"kw":184.11,"ww":88.67,"gesamt":272.78},{"jahr":2022,"kw":2.13,"ww":0.7,"gesamt":2.83},{"jahr":2023,"kw":41.76,"ww":8.63,"gesamt":50.39},{"jahr":2024,"kw":38.0,"ww":10.0,"gesamt":48.0}]},{"wohnung":"W002.EG-R","bezeichnung":"EG-Rechts","excelKennung":"EGR","zaehlerKennung":"w02","readings":[{"jahr":2017,"kw":16.3,"ww":4.05,"gesamt":20.35},{"jahr":2018,"kw":34.52,"ww":8.55,"gesamt":43.07},{"jahr":2019,"kw":52.58,"ww":12.57,"gesamt":65.15},{"jahr":2020,"kw":68.5,"ww":15.72,"gesamt":84.22},{"jahr":2021,"kw":83.3,"ww":19.02,"gesamt":102.32},{"jahr":2022,"kw":95.88,"ww":21.75,"gesamt":117.63},{"jahr":2023,"kw":105.0,"ww":24.0,"gesamt":129.0},{"jahr":2024,"kw":117.0,"ww":28.0,"gesamt":145.0}],"deltas":[{"jahr":2018,"kw":18.22,"ww":4.5,"gesamt":22.72},{"jahr":2019,"kw":18.06,"ww":4.02,"gesamt":22.08},{"jahr":2020,"kw":15.92,"ww":3.15,"gesamt":19.07},{"jahr":2021,"kw":14.8,"ww":3.3,"gesamt":18.1},{"jahr":2022,"kw":12.58,"ww":2.73,"gesamt":15.31},{"jahr":2023,"kw":9.12,"ww":2.25,"gesamt":11.37},{"jahr":2024,"kw":12.0,"ww":4.0,"gesamt":16.0}]},{"wohnung":"W000.UG","bezeichnung":"UG","excelKennung":"KG","zaehlerKennung":"w00","readings":[{"jahr":2017,"kw":43.0,"ww":35.0,"gesamt":78.0},{"jahr":2018,"kw":94.15,"ww":74.5,"gesamt":168.65},{"jahr":2019,"kw":135.96,"ww":106.13,"gesamt":242.09},{"jahr":2020,"kw":197.91,"ww":145.77,"gesamt":343.68},{"jahr":2021,"kw":271.0,"ww":188.0,"gesamt":459.0},{"jahr":2022,"kw":346.65,"ww":216.54,"gesamt":563.19},{"jahr":2023,"kw":420.0,"ww":246.0,"gesamt":666.0},{"jahr":2024,"kw":490.0,"ww":280.0,"gesamt":770.0}],"deltas":[{"jahr":2018,"kw":51.15,"ww":39.5,"gesamt":90.65},{"jahr":2019,"kw":41.81,"ww":31.63,"gesamt":73.44},{"jahr":2020,"kw":61.95,"ww":39.64,"gesamt":101.59},{"jahr":2021,"kw":73.09,"ww":42.23,"gesamt":115.32},{"jahr":2022,"kw":75.65,"ww":28.54,"gesamt":104.19},{"jahr":2023,"kw":73.35,"ww":29.46,"gesamt":102.81},{"jahr":2024,"kw":70.0,"ww":34.0,"gesamt":104.0}]}],"summaryDeltas":[{"jahr":2018,"gesamt":252.37},{"jahr":2019,"gesamt":185.67},{"jahr":2020,"gesamt":243.48},{"jahr":2021,"gesamt":587.94},{"jahr":2022,"gesamt":376.41},{"jahr":2023,"gesamt":300.28},{"jahr":2024,"gesamt":289.95}],"notes":["Die Einheiten W05/DG-Links und W06/DG-Rechts sind in der aktuellen Bearbeitung inaktiv, bleiben aber für die historische Wasseruhren-Historie erhalten.","Für W01/EG-Links ist Ende 2021 im Excel als Start-/Erstwert ab 12NOV erfasst; der Jahresverbrauch 2021 wird im Excel als Differenz zu 0 geführt.","Die importierten Alt-Abrechnungen 2021/2022 und 2022 bleiben rechnerisch über ihre Original-Briefwerte fixiert; die Wasseruhren-Historie dient dort als Prüf-/Belegdatenbasis."]};
 
 function ensureWaterMeterHistory(data) {
@@ -183,18 +327,6 @@ function ensureWaterMeterHistory(data) {
   if (!data.meta) data.meta = {};
   if (!data.meta.waterMeterHistorySource) data.meta.waterMeterHistorySource = data.waterMeterHistory.source || DEFAULT_WATER_METER_HISTORY.source;
   if (!data.meta.waterMeterHistoryStatus) data.meta.waterMeterHistoryStatus = "vollständig aus Excel übernommen";
-
-  if (Array.isArray(data.jahresArchiv)) {
-    data.jahresArchiv.forEach(item => {
-      if (!item || !item.data) return;
-      const d = item.data;
-      const needsArchiveHistory = !d.waterMeterHistory || !Array.isArray(d.waterMeterHistory.units) || !d.waterMeterHistory.units.length;
-      if (needsArchiveHistory) d.waterMeterHistory = clone(DEFAULT_WATER_METER_HISTORY);
-      if (!d.meta) d.meta = {};
-      if (!d.meta.waterMeterHistorySource) d.meta.waterMeterHistorySource = d.waterMeterHistory.source || DEFAULT_WATER_METER_HISTORY.source;
-      if (!d.meta.waterMeterHistoryStatus) d.meta.waterMeterHistoryStatus = "vollständig aus Excel übernommen";
-    });
-  }
   return data;
 }
 
@@ -209,61 +341,27 @@ function notifyStorageProblem(message, error) {
 }
 
 function integrityHash(text) {
-  const value = String(text ?? "");
-  let hash = 0x811c9dc5;
-  for (let i = 0; i < value.length; i += 1) {
-    hash ^= value.charCodeAt(i);
-    hash = Math.imul(hash, 0x01000193);
-  }
-  return (hash >>> 0).toString(16).padStart(8, "0");
+  return NK_PRO_MODULES.persistence.integrityHash(text);
 }
 
 function dataWithoutIntegrity(data) {
-  const copy = clone(data);
-  if (!copy.meta) copy.meta = {};
-  delete copy.meta.storageIntegrityAlgorithm;
-  delete copy.meta.storageIntegrityChecksum;
-  delete copy.meta.storageIntegrityProtectedAt;
-  delete copy.meta.storageIntegrityProtectedWithAppVersion;
-  return copy;
+  return NK_PRO_MODULES.persistence.dataWithoutIntegrity(data, persistenceModuleOptions());
 }
 
 function calculateDataIntegrity(data) {
-  return integrityHash(JSON.stringify(dataWithoutIntegrity(data)));
+  return NK_PRO_MODULES.persistence.calculateDataIntegrity(data, persistenceModuleOptions());
 }
 
 function protectDataForStorage(data) {
-  const copy = dataWithoutIntegrity(data);
-  if (!copy.meta) copy.meta = {};
-  copy.meta.storageIntegrityAlgorithm = STORAGE_INTEGRITY_ALGORITHM;
-  copy.meta.storageIntegrityProtectedAt = new Date().toISOString();
-  copy.meta.storageIntegrityProtectedWithAppVersion = APP_VERSION;
-  copy.meta.storageIntegrityChecksum = calculateDataIntegrity(copy);
-  return copy;
+  return NK_PRO_MODULES.persistence.protectDataForStorage(data, persistenceModuleOptions());
 }
 
 function validateStoredDataIntegrity(data) {
-  if (!isAppDataShape(data)) return { valid:false, protected:false, reason:"Datenstruktur unvollständig" };
-  const meta = data.meta || {};
-  const checksum = String(meta.storageIntegrityChecksum || "").trim();
-  if (!checksum) return { valid:true, protected:false, reason:"Kompatibler ungeschützter Datenstand" };
-  if (meta.storageIntegrityAlgorithm && meta.storageIntegrityAlgorithm !== STORAGE_INTEGRITY_ALGORITHM) {
-    return { valid:false, protected:true, reason:"Unbekanntes Prüfsummenverfahren" };
-  }
-  const actual = calculateDataIntegrity(data);
-  return { valid:actual === checksum, protected:true, expected:checksum, actual, reason:actual === checksum ? "Prüfsumme gültig" : "Prüfsumme stimmt nicht überein" };
+  return NK_PRO_MODULES.persistence.validateStoredDataIntegrity(data, persistenceModuleOptions());
 }
 
 function readStoredDataResult(key) {
-  try {
-    const raw = localStorage.getItem(key);
-    if (!raw) return { data:null, raw:"", valid:false, missing:true, key };
-    const data = JSON.parse(raw);
-    const integrity = validateStoredDataIntegrity(data);
-    return { data, raw, valid:integrity.valid, missing:false, key, integrity };
-  } catch(e) {
-    return { data:null, raw:"", valid:false, missing:false, key, error:e, integrity:{valid:false, protected:false, reason:"JSON nicht lesbar"} };
-  }
+  return NK_PRO_MODULES.persistence.readStoredDataResult(key, persistenceModuleOptions());
 }
 
 function readStoredData(key) {
@@ -282,9 +380,7 @@ function readStoredData(key) {
 }
 
 function writeProtectedStorage(key, data) {
-  const protectedData = protectDataForStorage(data);
-  localStorage.setItem(key, JSON.stringify(protectedData));
-  return protectedData;
+  return NK_PRO_MODULES.persistence.writeProtectedStorage(key, data, persistenceModuleOptions());
 }
 
 // ===== Bereich: Speicher, Importprüfung und Migration =====
@@ -627,12 +723,26 @@ function clearCurrentBillingFinalization() {
 function exportSnapshot() {
   const snapshot = clone(state);
   if (!snapshot.meta) snapshot.meta = {};
+  enforceWorkingStateDataContract(snapshot, { recordMigration:false, storageRole:"working" });
+  Object.keys(snapshot.meta).forEach(key => {
+    if (String(key).startsWith("storageIntegrity")) delete snapshot.meta[key];
+  });
   snapshot.meta.exportedAt = new Date().toISOString();
   snapshot.meta.exportedWithAppVersion = APP_VERSION;
   snapshot.meta.exportStorageKey = STORAGE_KEY;
   snapshot.meta.exportScope = "fullArchiveAndCurrentBilling";
   snapshot.meta.exportScopeLabel = "Vollständiger Datenbestand inkl. aktuellem Arbeitsstand und Jahresarchiv";
   snapshot.meta.dataSchemaVersion = DATA_SCHEMA_VERSION;
+  snapshot.meta.dataLayerContractVersion = DATA_LAYER_CONTRACT_VERSION;
+  snapshot.meta.dataLayerRole = "fullBackup";
+  snapshot.meta.exportLayers = ["stammdaten", "currentBilling", "history", "archive"];
+  snapshot.meta.exportExcludes = ["recovery"];
+  delete snapshot.meta.storageRole;
+  delete snapshot.meta.loadedFromIntegrityRecovery;
+  delete snapshot.meta.loadedFromIntegrityRecoveryAt;
+  delete snapshot.meta.recoveryCreatedAt;
+  delete snapshot.meta.recoveryCreatedWithAppVersion;
+  delete snapshot.meta.recoverySourceStorageKey;
   return snapshot;
 }
 
@@ -648,7 +758,9 @@ function exportCurrentBillingSnapshot() {
   snapshot.meta.exportedBillingYear = archiveLike.year || currentAbrechnungsjahr();
   snapshot.meta.exportedBillingPeriod = periodLabelShort();
   snapshot.meta.dataSchemaVersion = DATA_SCHEMA_VERSION;
-  snapshot.jahresArchiv = [];
+  snapshot.meta.dataLayerContractVersion = DATA_LAYER_CONTRACT_VERSION;
+  snapshot.meta.dataLayerRole = ARCHIVE_SNAPSHOT_SCOPE;
+  snapshot.meta.snapshotScope = ARCHIVE_SNAPSHOT_SCOPE;
   snapshot.exportSummary = clone(archiveLike.summary || {});
   return snapshot;
 }
@@ -678,7 +790,8 @@ function persistStartupMeterRepair(data, cleared) {
     data.meta.startupMeterEndValueRepairCleared = cleared;
     data.meta.startupMeterEndValueRepairAt = new Date().toISOString();
     data.meta.startupMeterEndValueRepairWithAppVersion = APP_VERSION;
-    if (typeof localStorage !== "undefined") writeProtectedStorage(STORAGE_KEY, data);
+    enforceWorkingStateDataContract(data);
+    writeProtectedStorage(STORAGE_KEY, data);
   } catch(e) {
     notifyStorageProblem("Wasser-Endwert-Korrektur wurde im aktuellen Fenster angewendet, konnte aber nicht dauerhaft gespeichert werden. Bitte Gesamt-JSON sichern.", e);
   }
@@ -709,55 +822,15 @@ function loadInitialState() {
 }
 
 function currentDataSchemaVersion(data) {
-  const raw = data && data.meta ? Number(data.meta.dataSchemaVersion || data.meta.schemaVersion || 1) : 1;
-  return Number.isFinite(raw) && raw > 0 ? raw : 1;
+  return NK_PRO_MODULES.migration.currentDataSchemaVersion(data);
 }
 
 function recordDataMigration(data, fromVersion, toVersion, note) {
-  if (!data || !data.meta) return;
-  if (!Array.isArray(data.meta.migrationHistory)) data.meta.migrationHistory = [];
-  const exists = data.meta.migrationHistory.some(item => item && item.from === fromVersion && item.to === toVersion && item.note === note);
-  if (!exists) data.meta.migrationHistory.push({ from:fromVersion, to:toVersion, at:new Date().toISOString(), appVersion:APP_VERSION, note });
+  return NK_PRO_MODULES.migration.recordDataMigration(data, fromVersion, toVersion, note, migrationModuleOptions());
 }
 
-function migrateDataSchema(data) {
-  if (!data || typeof data !== "object") return data;
-  if (!data.meta) data.meta = {};
-  let version = currentDataSchemaVersion(data);
-
-  if (version < 2) {
-    ensureUnitIdentityData(data);
-    if (Array.isArray(data.mieter)) data.mieter.forEach(m => { ensureTenantIdentityFields(m); if (m.wohnung) m.wohnung = canonicalUnitIdFor(m.wohnung) || m.wohnung; });
-    recordDataMigration(data, version, 2, "Mieter- und Wohnungs-IDs auf einfache stabile Kennungen migriert.");
-    version = 2;
-  }
-
-  if (version < 4) {
-    if (!data.kostenartenMieterUmlage || typeof data.kostenartenMieterUmlage !== "object" || Array.isArray(data.kostenartenMieterUmlage)) data.kostenartenMieterUmlage = {};
-    recordDataMigration(data, version, 4, "Umlagefähigkeit je Kostenart und Mietverhältnis ergänzt.");
-    version = 4;
-  }
-  if (version < 5) {
-    ensureStammdatenData(data);
-    data.stammdaten.wohnungen = normalizeMasterUnitRows(data.stammdaten.wohnungen);
-    if (!data.umlageInputs || typeof data.umlageInputs !== "object") data.umlageInputs = {};
-    Object.keys(data.umlageInputs).forEach(costId=>{ const input=data.umlageInputs[costId]; if (!input) return; const cost=(data.kostenarten||[]).find(k=>k.id===costId); if (!["Zählerstände","Verbrauchsmenge","Direkter Eurobetrag","Externe Einzelabrechnung"].includes(input.mode)) { const direct=cost&&(cost.umlageschluessel===UMLAGE_MANUAL||cost.berechnungsart==="Manuell je Mieter"); const legacyValues=Array.isArray(input.values)&&input.values.some(v=>Math.abs(num(v))>0.000001); input.mode=direct?"Direkter Eurobetrag":((cost&&cost.umlageschluessel==="Verbrauch"&&cost.id!=="K002"&&legacyValues)?"Verbrauchsmenge":"Zählerstände"); } });
-    recordDataMigration(data, version, 5, "Wohnungsstatus je Abrechnung und eindeutige Quellen für manuelle/externe Werte ergänzt.");
-    version = 5;
-  }
-
-  data.meta.dataSchemaVersion = Math.max(version, DATA_SCHEMA_VERSION);
-  data.meta.normalizedWithAppVersion = APP_VERSION;
-
-  if (Array.isArray(data.jahresArchiv)) {
-    data.jahresArchiv.forEach(item => {
-      if (item && item.data && item.data !== data) {
-        migrateDataSchema(item.data);
-        item.schemaVersion = item.data.meta && item.data.meta.dataSchemaVersion ? item.data.meta.dataSchemaVersion : DATA_SCHEMA_VERSION;
-      }
-    });
-  }
-  return data;
+function migrateDataSchema(data, options = {}) {
+  return NK_PRO_MODULES.migration.migrateDataSchema(data, migrationModuleOptions(options));
 }
 
 function renderSystemMessages() {
@@ -815,35 +888,16 @@ function importAppData(data, fileName) {
 }
 
 function simpleArchiveIdentityForMerge(item) {
-  if (!item) return "";
-  const meta = item.meta || (item.data && item.data.meta) || {};
-  if (item.periodId) return String(item.periodId);
-  if (meta.periodId) return String(meta.periodId);
-  if (meta.abrechnungsbeginn && meta.abrechnungsende) return String(item.year || meta.abrechnungsjahr || "") + "|" + meta.abrechnungsbeginn + "|" + meta.abrechnungsende + "|" + (meta.legacySammelArchiv ? "Archivierte Abrechnung" : "Archiv");
-  return "year|" + String(item.year || "");
+  return NK_PRO_MODULES.migration.simpleArchiveIdentityForMerge(item);
 }
 
 function mergePreloadedV41Archives(data) {
-  if (!data || (data.meta && data.meta.archiveViewer)) return data;
-  if (data.meta && data.meta.exportScope === "currentBillingOnly") {
-    if (!Array.isArray(data.jahresArchiv)) data.jahresArchiv = [];
-    return data;
-  }
-  if (!Array.isArray(data.jahresArchiv)) data.jahresArchiv = [];
-
-  const seedArchives = (typeof SEED !== "undefined" && Array.isArray(SEED.jahresArchiv)) ? SEED.jahresArchiv : [];
-  seedArchives.forEach(item => {
-    const meta = item.meta || (item.data && item.data.meta) || {};
-    if (!meta.preloadedV41LegacyArchive) return;
-    const id = simpleArchiveIdentityForMerge(item);
-    const exists = data.jahresArchiv.some(a => simpleArchiveIdentityForMerge(a) === id);
-    if (!exists) data.jahresArchiv.push(clone(item));
-  });
-  return data;
+  return NK_PRO_MODULES.migration.mergePreloadedArchives(data, { clone, seed:SEED });
 }
 
-function normalizeLegacyData(data) {
+function normalizeLegacyData(data, options = {}) {
   if (!data) return data;
+  const snapshotMode = options.scope === ARCHIVE_SNAPSHOT_SCOPE;
   if (!data.meta) data.meta = {};
   if (!data.meta.abrechnungsjahr) {
     const briefYear = data.briefSettings && data.briefSettings.abrechnungsjahr ? data.briefSettings.abrechnungsjahr : "";
@@ -889,11 +943,17 @@ function normalizeLegacyData(data) {
   }
   ensureZimmermannTenantForLegacyData(data);
   applyExcelWaterReadings2024ToData(data);
-  mergePreloadedV41Archives(data);
-  ensureWaterMeterHistory(data);
-  ensureUnifiedBillingFields(data);
-  migrateDataSchema(data);
-  ensureStammdatenData(data);
+  if (!snapshotMode) {
+    mergePreloadedV41Archives(data);
+    adoptHistoricalWaterMeterDataFromArchive(data);
+    ensureWaterMeterHistory(data);
+  }
+  ensureUnifiedBillingFields(data, { includeArchives:false });
+  migrateDataSchema(data, { includeArchives:false });
+  if (!snapshotMode) {
+    ensureStammdatenData(data);
+    enforceWorkingStateDataContract(data);
+  }
   return data;
 }
 
@@ -917,7 +977,7 @@ function dataSourceForMeta(meta) {
   return "Tool";
 }
 
-function ensureUnifiedBillingFields(data) {
+function ensureUnifiedBillingFields(data, options = {}) {
   if (!data) return data;
   if (!data.meta) data.meta = {};
   data.meta.datensatzTyp = "Abrechnung";
@@ -942,12 +1002,12 @@ function ensureUnifiedBillingFields(data) {
       quelle:e.quelle || data.meta.legacyQuelle || "Import"
     }));
   }
-  if (Array.isArray(data.jahresArchiv)) {
+  if (options.includeArchives !== false && Array.isArray(data.jahresArchiv)) {
     data.jahresArchiv.forEach(a => {
       if (!a.meta) a.meta = (a.data && a.data.meta) ? clone(a.data.meta) : {};
       a.meta.datensatzTyp = "Abrechnung";
       if (!a.meta.datenquelle) a.meta.datenquelle = dataSourceForMeta(a.meta);
-      if (a.data) ensureUnifiedBillingFields(a.data);
+      if (a.data) ensureUnifiedBillingFields(a.data, options);
     });
   }
   ensureUnitIdentityData(data);
@@ -1084,11 +1144,20 @@ function saveData(options = {}) {
   }
   try {
     if (!state.meta) state.meta = {};
+    enforceWorkingStateDataContract(state);
     state.meta.lastSavedAt = new Date().toISOString();
     state.meta.lastSavedWithAppVersion = APP_VERSION;
     delete state.meta.lastSaveError;
     const previous = readStoredDataResult(STORAGE_KEY);
-    if (previous.valid) localStorage.setItem(STORAGE_RECOVERY_KEY, previous.raw);
+    if (previous.valid) {
+      const recoveryState = normalizeLegacyData(clone(previous.data));
+      enforceWorkingStateDataContract(recoveryState, { storageRole:"recovery" });
+      recoveryState.meta.recoveryCreatedAt = new Date().toISOString();
+      recoveryState.meta.recoveryCreatedWithAppVersion = APP_VERSION;
+      recoveryState.meta.recoverySourceStorageKey = STORAGE_KEY;
+      writeProtectedStorage(STORAGE_RECOVERY_KEY, recoveryState);
+    }
+    state.meta.storageRole = "working";
     const protectedState = writeProtectedStorage(STORAGE_KEY, state);
     state.meta.storageIntegrityAlgorithm = protectedState.meta.storageIntegrityAlgorithm;
     state.meta.storageIntegrityChecksum = protectedState.meta.storageIntegrityChecksum;
@@ -2291,14 +2360,7 @@ function duplicateValues(values) {
 }
 
 function storageWritable() {
-  try {
-    const key = STORAGE_KEY + "_write_test";
-    localStorage.setItem(key, "1");
-    localStorage.removeItem(key);
-    return true;
-  } catch(e) {
-    return false;
-  }
+  return NK_PRO_MODULES.persistence.storageWritable(STORAGE_KEY + "_write_test", persistenceModuleOptions());
 }
 
 function tenantQualityLabel(m) {
@@ -4148,27 +4210,11 @@ function archiveItemLabel(item, index) {
 }
 
 function normalizeArchiveItem(item) {
-  if (!item || typeof item !== "object" || Array.isArray(item)) return item;
-  if (!item.meta) item.meta = (item.data && item.data.meta) ? clone(item.data.meta) : {};
-  if (!item.year) item.year = item.meta.abrechnungsjahr || (item.data && item.data.meta && item.data.meta.abrechnungsjahr) || "";
-  if (!item.archivedAt) item.archivedAt = todayIso();
-  if (!item.periodId) item.periodId = archivePeriodId(item);
-  if (item.data && !item.data.meta) item.data.meta = clone(item.meta || {});
-  if (item.data && item.data.meta && !item.data.meta.periodId && item.periodId) item.data.meta.periodId = item.periodId;
-  if (item.data && item.data.meta && !item.data.meta.dataSchemaVersion && item.schemaVersion) item.data.meta.dataSchemaVersion = item.schemaVersion;
-  return item;
+  return NK_PRO_MODULES.archive.normalizeArchiveItem(item, archiveModuleOptions());
 }
 
 function prepareArchiveItemForUse(item) {
-  const archiveItem = normalizeArchiveItem(clone(item));
-  if (archiveItem && archiveItem.data && typeof archiveItem.data === "object" && !Array.isArray(archiveItem.data)) {
-    archiveItem.data = normalizeLegacyData(archiveItem.data);
-    archiveItem.meta = clone(archiveItem.data.meta || archiveItem.meta || {});
-    if (!archiveItem.year) archiveItem.year = archiveItem.meta.abrechnungsjahr || "";
-    archiveItem.periodId = archivePeriodId(archiveItem);
-    archiveItem.schemaVersion = archiveItem.data.meta && archiveItem.data.meta.dataSchemaVersion ? archiveItem.data.meta.dataSchemaVersion : DATA_SCHEMA_VERSION;
-  }
-  return archiveItem;
+  return NK_PRO_MODULES.archive.prepareArchiveItemForUse(item, archiveModuleOptions());
 }
 
 function collectArchiveIdMigrationWarnings(data) {
@@ -4822,22 +4868,12 @@ function renderStartUnitManagement() {
 
 
 function localStorageUsageBytes() {
-  let total = 0;
-  try {
-    for (let i = 0; i < localStorage.length; i += 1) {
-      const key = localStorage.key(i) || "";
-      const value = localStorage.getItem(key) || "";
-      total += jsonByteLength(key) + jsonByteLength(value);
-    }
-  } catch(error) {
-    return -1;
-  }
-  return total;
+  return NK_PRO_MODULES.persistence.totalStorageUsageBytes(persistenceModuleOptions());
 }
 
 function developerDiagnosticsData() {
   const integrity = validateStoredDataIntegrity(state);
-  const recoveryRaw = (() => { try { return localStorage.getItem(STORAGE_RECOVERY_KEY) || ""; } catch(error) { return ""; } })();
+  const recoveryRaw = NK_PRO_MODULES.persistence.rawStorageValue(STORAGE_RECOVERY_KEY, persistenceModuleOptions());
   const errors = Array.isArray(renderErrors) ? renderErrors.slice(-10) : [];
   return {
     generatedAt: new Date().toISOString(),
@@ -4972,14 +5008,18 @@ function createArchiveViewerHtml(item) {
   const validation = archiveItemValidation(archiveItem);
   if (validation.errors.length) throw new Error("Archivdatensatz ist unvollständig: " + validation.errors.join(" "));
 
-  const viewerState = normalizeLegacyData(clone(archiveItem.data || {}));
+  const viewerState = normalizeLegacyData(clone(archiveItem.data || {}), { scope:ARCHIVE_SNAPSHOT_SCOPE });
   if (!viewerState.meta) viewerState.meta = {};
   viewerState.meta.archiveViewer = true;
   viewerState.meta.archivedAt = archiveItem.archivedAt || "";
   viewerState.meta.archivedYear = archiveItem.year || "";
   viewerState.meta.archiveReturnUrl = window.location && window.location.href ? window.location.href : "";
   viewerState.meta.dataSchemaVersion = DATA_SCHEMA_VERSION;
+  viewerState.meta.dataLayerRole = "archiveViewerRuntime";
   viewerState.jahresArchiv = [];
+  viewerState.waterMeterHistory = clone(state.waterMeterHistory || DEFAULT_WATER_METER_HISTORY);
+  ensureWaterMeterHistory(viewerState);
+  ensureStammdatenData(viewerState);
 
   let viewerHtml = APP_HTML_TEMPLATE || ("<!DOCTYPE html>\n" + document.documentElement.outerHTML);
   const seedJson = JSON.stringify(viewerState).replace(/</g, "\\u003c");
@@ -4996,13 +5036,17 @@ function archiveStateFromItem(item) {
   const archiveItem = prepareArchiveItemForUse(item);
   const validation = archiveItemValidation(archiveItem);
   if (validation.errors.length) throw new Error("Archivdatensatz ist unvollständig: " + validation.errors.join(" "));
-  const viewerState = normalizeLegacyData(clone(archiveItem.data || {}));
+  const viewerState = normalizeLegacyData(clone(archiveItem.data || {}), { scope:ARCHIVE_SNAPSHOT_SCOPE });
   if (!viewerState.meta) viewerState.meta = {};
   viewerState.meta.archiveViewer = true;
   viewerState.meta.archivedAt = archiveItem.archivedAt || "";
   viewerState.meta.archivedYear = archiveItem.year || "";
   viewerState.meta.dataSchemaVersion = DATA_SCHEMA_VERSION;
+  viewerState.meta.dataLayerRole = "archiveViewerRuntime";
   viewerState.jahresArchiv = [];
+  viewerState.waterMeterHistory = clone(state.waterMeterHistory || DEFAULT_WATER_METER_HISTORY);
+  ensureWaterMeterHistory(viewerState);
+  ensureStammdatenData(viewerState);
   return viewerState;
 }
 
@@ -5098,13 +5142,17 @@ function reopenArchiveYearForRework(index) {
 
   let restored;
   try {
-    restored = normalizeLegacyData(clone(prepareArchiveItemForUse(item).data || {}));
+    restored = normalizeLegacyData(clone(prepareArchiveItemForUse(item).data || {}), { scope:ARCHIVE_SNAPSHOT_SCOPE });
   } catch(e) {
     alert("Archivdatensatz konnte nicht zur Wiederbearbeitung vorbereitet werden.\n" + errorMessage(e));
     return;
   }
   const preservedArchive = clone(state.jahresArchiv || []);
+  const preservedMasterData = clone(state.stammdaten || {});
+  const preservedHistory = clone(state.waterMeterHistory || restored.waterMeterHistory || {});
+  const preservedOperationalMeta = clone(state.meta || {});
   if (!restored.meta) restored.meta = {};
+  copyWorkingOperationalMeta(restored.meta, preservedOperationalMeta);
   restored.meta.archiveViewer = false;
   delete restored.meta.archiveReturnUrl;
   delete restored.meta.archivedAt;
@@ -5115,8 +5163,15 @@ function reopenArchiveYearForRework(index) {
   restored.meta.currentBillingCreatedByUser = true;
   restored.meta.currentBillingCreatedAt = restored.meta.currentBillingCreatedAt || new Date().toISOString();
   restored.meta.currentBillingCreatedWithAppVersion = APP_VERSION;
+  restored.meta.dataLayerContractVersion = DATA_LAYER_CONTRACT_VERSION;
+  restored.meta.dataLayerRole = "workingState";
+  restored.meta.storageRole = "working";
   clearCurrentBillingArchiveClosure(restored);
+  restored.stammdaten = preservedMasterData;
+  restored.waterMeterHistory = preservedHistory;
   restored.jahresArchiv = preservedArchive;
+  ensureStammdatenData(restored);
+  ensureWaterMeterHistory(restored);
   if (typeof clearCurrentBillingFinalization === "function") {
     const oldState = state;
     state = restored;
@@ -5161,7 +5216,7 @@ function createYearSnapshot() {
     year,
     periodId: String(year) + "|" + periodStart() + "|" + periodEnd() + "|Tool-Abrechnung",
     archivedAt: todayIso(),
-    meta: clone(state.meta || {}),
+    meta: snapshotMetaFrom(state.meta || {}),
     summary: {
       mietverhaeltnisse: billableRows.length,
       datensaetzeUmlagebasis: visibleRows.length,
@@ -5172,18 +5227,9 @@ function createYearSnapshot() {
       korrekturen: corrections,
       saldo: tenantShares - prepayments - corrections
     },
-    data: {
-      meta: clone(state.meta),
-      wohnungen: clone(state.wohnungen),
-      mieter: clone(state.mieter),
-      kostenarten: clone(state.kostenarten),
-      kostenartenMieterUmlage: clone(state.kostenartenMieterUmlage || {}),
-      vorauszahlungen: clone(state.vorauszahlungen),
-      umlageInputs: clone(state.umlageInputs || {}),
-      waterMeters: clone(state.waterMeters || {}),
-      meterReadings: clone(state.meterReadings || {}),
-      briefSettings: clone(state.briefSettings || {})
-    }
+    snapshotScope: ARCHIVE_SNAPSHOT_SCOPE,
+    snapshotBoundaryVersion: DATA_LAYER_CONTRACT_VERSION,
+    data: createBoundedBillingSnapshotData(state)
   };
 }
 
@@ -6148,8 +6194,7 @@ function resetData() {
   }
   if (!confirmRiskyDataAction("Gesamtdaten zurücksetzen", "Wirklich auf die Ausgangsdaten zurücksetzen? Lokale Änderungen gehen verloren.")) return;
   try {
-    localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem(STORAGE_RECOVERY_KEY);
+    NK_PRO_MODULES.persistence.removeStoredData([STORAGE_KEY, STORAGE_RECOVERY_KEY], persistenceModuleOptions());
   } catch(e) {
     notifyStorageProblem("Der lokale Speicher konnte beim Zurücksetzen nicht geleert werden.", e);
   }
@@ -9024,9 +9069,13 @@ function releaseAuditReport() {
     const full = exportSnapshot();
     const current = exportCurrentBillingSnapshot();
     if (!Array.isArray(full.jahresArchiv)) throw new Error("Gesamtexport enthält kein Jahresarchiv");
-    if (!Array.isArray(current.jahresArchiv) || current.jahresArchiv.length !== 0) throw new Error("Einzelabrechnungsexport enthält Jahresarchivdaten");
+    if (Object.prototype.hasOwnProperty.call(state, "stammdaten") && !Object.prototype.hasOwnProperty.call(full, "stammdaten")) throw new Error("Gesamtexport verliert Objekt-Stammdaten");
+    if (Object.prototype.hasOwnProperty.call(state, "waterMeterHistory") && !Object.prototype.hasOwnProperty.call(full, "waterMeterHistory")) throw new Error("Gesamtexport verliert globale Zählerhistorie");
+    if (Object.prototype.hasOwnProperty.call(current, "jahresArchiv")) throw new Error("Einzelabrechnungsexport enthält Jahresarchivdaten");
+    if (Object.prototype.hasOwnProperty.call(current, "stammdaten")) throw new Error("Einzelabrechnungsexport enthält Objekt-Stammdaten");
+    if (Object.prototype.hasOwnProperty.call(current, "waterMeterHistory")) throw new Error("Einzelabrechnungsexport enthält globale Zählerhistorie");
     if (current.meta.exportScope !== "currentBillingOnly") throw new Error("Einzelabrechnungsexport hat falschen Scope");
-    return "Gesamtexport mit Archiv · Einzelabrechnung ohne Archiv";
+    return "Gesamtexport mit globalen Ebenen und Archiv · Einzelabrechnung als begrenzter Snapshot";
   }));
 
   runCheck("Brief", "Tabellen-Lesbarkeit ohne Umbruch", () => {
@@ -9375,7 +9424,7 @@ function appSelfTestReport() {
     return "Finalisieren/Entsperren-Status OK";
   }));
 
-  runCheck("Navigation", "UX-Grundgerüst V99.4.1", () => {
+  runCheck("Navigation", "Datenebenen und Snapshot-Grenzen V99.4.3", () => {
     const nav = document.querySelector(".workflow-nav");
     if (!nav) throw new Error("Workflow-Navigation fehlt");
     const groups = Array.from(nav.querySelectorAll(":scope > .nav-group")).map(group => group.dataset.navGroupSection);
@@ -9519,7 +9568,8 @@ function prepareStateForPersistence(reason = "manual") {
       ["Mieter-Vorauszahlungen", () => updateTenantPrepaymentTotals()],
       ["Umlage-Eingaben", () => syncUmlageInputs()],
       ["Wasserzähler", () => applyWaterMetersToUmlage()],
-      ["Kostenstatus", () => state.kostenarten.forEach(k => k.status = kostenStatus(k))]
+      ["Kostenstatus", () => state.kostenarten.forEach(k => k.status = kostenStatus(k))],
+      ["Datenebenen und Snapshot-Grenzen", () => enforceWorkingStateDataContract(state)]
     ];
     steps.forEach(step => runRenderStep("Datenaufbereitung: " + step[0], step[1]));
     return true;
@@ -9660,7 +9710,7 @@ function buildOverviewData(tabId) {
     archiv:{summary:[["Archivierte Abrechnungen",s.archives],["Aktuelle Abrechnung",hasActiveCurrentBilling()?s.year:"Keine"],["Datenbestand","Lokal"],["Schema",DATA_SCHEMA_VERSION]],validation:{status:"ok",headline:"Archiv getrennt erreichbar",items:[{text:"Historische Datensätze bleiben unverändert",status:"ok"},{text:"Öffnen erfolgt schreibgeschützt",status:"ok"}]},next:next("Archivierte Abrechnung auswählen und in der Nur-Ansicht prüfen.","archiveRecordsSection"),actions:[open("Archiv öffnen","archiveRecordsSection",true),{label:"Archiv herunterladen",run:()=>downloadFullArchive()},go("Abrechnungsübersicht","start")]},
     mieterverwaltung:{summary:[["Mietverhältnisse",s.tenants.length],["Archiviert",s.archivedTenants.length],["Wohnungen",s.units.length],["Abrechnungsjahr",s.year]],validation:commonValidation,next:next("Mieterstammdaten und archivierte Mietverhältnisse vollständig prüfen.","masterTenantSection"),actions:[open("Mietverhältnisse öffnen","masterTenantSection",true),open("Archiv öffnen","masterTenantArchiveSection"),save]},
     wohnungsverwaltung:{summary:[["Wohnungen gesamt",s.units.length],["Aktiv",s.activeUnits.length],["Inaktiv",Math.max(0,s.units.length-s.activeUnits.length)],["Wohnfläche aktiv",s.activeUnits.reduce((a,w)=>a+num(w.wohnflaeche),0).toLocaleString("de-DE")+" m²"]],validation:commonValidation,next:next("Wohnungsbestand und Flächenangaben kontrollieren.","masterUnitSection"),actions:[open("Wohnungsbestand öffnen","masterUnitSection",true),go("Mieterverwaltung","mieterverwaltung"),save]},
-    sicherung:{summary:[["Version",APP_VERSION],["Archivstände",s.archives],["Betriebsart","Offline · lokal"],["Abrechnungsjahr",s.year]],validation:{status:"ok",headline:"Sicherung verfügbar",items:[{text:"Lokale Gesamtsicherung vorhanden",status:"ok"},{text:"Neuer PWA-Cache für V99.4.1",status:"ok"}]},next:next("Vollständige JSON-Sicherung erstellen und Versionsinformationen prüfen.","backupMainSection"),actions:[open("Gesamtsicherung öffnen","backupMainSection",true),open("Version anzeigen","backupVersionSection"),save]},
+    sicherung:{summary:[["Version",APP_VERSION],["Archivstände",s.archives],["Betriebsart","Offline · lokal"],["Abrechnungsjahr",s.year]],validation:{status:"ok",headline:"Sicherung verfügbar",items:[{text:"Lokale Gesamtsicherung vorhanden",status:"ok"},{text:"Neuer PWA-Cache für V99.4.3",status:"ok"}]},next:next("Vollständige JSON-Sicherung erstellen und Versionsinformationen prüfen.","backupMainSection"),actions:[open("Gesamtsicherung öffnen","backupMainSection",true),open("Version anzeigen","backupVersionSection"),save]},
     mieter:{summary:[["Wohnungen gesamt",s.units.length],["Wohnungen aktiv",s.activeUnits.length],["Mietverhältnisse",s.tenants.length],["Archivierte Mieter",s.archivedTenants.length]],validation:commonValidation,next:next("Bestand und Abrechnung in der Prüfbox abgleichen; danach Kostenarten bearbeiten.","tenantControlSection"),actions:[open("Prüfung öffnen","tenantControlSection",true),open("Mietverhältnisse öffnen","tenantRelationsSection"),go("Kostenarten öffnen","einstellungen")]},
     einstellungen:{summary:[["Kostenarten",s.costs.length],["Aktiv in NK",s.activeCosts.length],["Vollständig",s.completeCosts.length],["Gesamtkosten",overviewMoney(s.activeCosts.reduce((a,k)=>a+num(k.gesamtbetrag),0))]],validation:{status:s.completeCosts.length===s.activeCosts.length?"ok":"warn",headline:s.completeCosts.length+" von "+s.activeCosts.length+" vollständig",items:[{text:"Umlageschlüssel und Beträge prüfen",status:s.completeCosts.length===s.activeCosts.length?"ok":"warn"},{text:"Umlage wird automatisch berechnet",status:"ok"}]},next:next("Fehlende Beträge und Umlageschlüssel vervollständigen.","costEditSection"),actions:[open("Kostenarten bearbeiten","costEditSection",true),()=>{}].filter(Boolean)},
     einnahmen:{summary:[["Kaltmiete erhalten",overviewMoney(s.income.rent)],["NK-Vorauszahlungen",overviewMoney(s.income.prepayments)],["Korrekturen",overviewMoney(s.income.corrections)],["Mietverhältnisse",s.tenants.length]],validation:commonValidation,next:next("Kaltmieten und Vorauszahlungen vollständig prüfen; danach Zählerstände erfassen.","incomeRentSection"),actions:[open("Kaltmiete öffnen","incomeRentSection",true),open("Vorauszahlungen öffnen","incomePrepaymentSection"),go("Zählerstände","wasser")]},
@@ -9810,7 +9860,7 @@ function renderAll(options = {}) {
       renderAllOverviewCards();
       auditV992Structure();
     } catch(uiError) {
-      if (typeof console !== "undefined" && console.error) console.error("V99.4.1-Darstellung konnte nicht aktualisiert werden", uiError);
+      if (typeof console !== "undefined" && console.error) console.error("V99.4.3-Darstellung konnte nicht aktualisiert werden", uiError);
     }
     if (renderQueued) {
       renderQueued = false;
