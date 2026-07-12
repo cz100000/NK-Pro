@@ -134,7 +134,11 @@ test("gültiger Snapshot ist eindeutig, unveränderlich, reproduzierbar und gege
       capturedName,
       currentName:state.mieter[0].name,
       checksum:first.integrity.checksum,
+      snapshotVersion:first.snapshotVersion,
       objectVersion:first.objectStandardVersion,
+      meteringVersion:first.meteringStandardVersion,
+      meteringFrozen:Object.isFrozen(first.metering) && Object.isFrozen(first.metering.meters),
+      meteringComplete:Array.isArray(first.metering.meters) && Array.isArray(first.metering.readings) && Array.isArray(first.metering.measurementPeriods) && Array.isArray(first.metering.assignments),
       schema:first.dataSchemaVersion,
       contract:first.dataLayerContractVersion
     };
@@ -145,7 +149,7 @@ test("gültiger Snapshot ist eindeutig, unveränderlich, reproduzierbar und gege
   expect(result.oldName).toBe(result.capturedName);
   expect(result.currentName).toBe("Nachträglich geändert");
   expect(result.checksum).toMatch(/^[0-9a-f]{8}$/);
-  expect(result).toMatchObject({ objectVersion:1, schema:5, contract:1 });
+  expect(result).toMatchObject({ snapshotVersion:2, objectVersion:1, meteringVersion:1, meteringFrozen:true, meteringComplete:true, schema:5, contract:1 });
   runtime.assertClean();
 });
 
@@ -198,6 +202,33 @@ test("Snapshot-Integrität erkennt Manipulation und Dummy taucht nie in der Zäh
   expect(result.dummyIncluded).toBe(false);
   expect(result.tamperedValid).toBe(false);
   expect(result.tamperedCodes).toContain("SNAPSHOT_CHECKSUM_INVALID");
+  runtime.assertClean();
+});
+
+test("vollständiger Snapshot 1 bleibt unverändert lesbar und wird nicht auf Version 2 umgeschrieben", async ({ page }) => {
+  const runtime = attachRuntimeGuards(page);
+  await openFreshApp(page);
+  const result = await page.evaluate(() => {
+    state.kostenarten.forEach(cost => { if (cost.umlageschluessel === "Verbrauch") { cost.gesamtbetrag = 0; cost.inNK = "Nein"; } });
+    const current = createYearSnapshot();
+    const legacy = clone(current);
+    legacy.snapshotVersion = 1;
+    delete legacy.metering;
+    delete legacy.meteringStandardVersion;
+    delete legacy.meterMasterStandardVersion;
+    delete legacy.readingStandardVersion;
+    delete legacy.measurementPeriodStandardVersion;
+    legacy.integrity.checksum = integrityHash(JSON.stringify((() => {
+      const copy = clone(legacy); delete copy.integrity; return copy;
+    })()));
+    const prepared = prepareArchiveItemForUse(legacy);
+    const validation = validateBillingSnapshot(prepared);
+    return { version:prepared.snapshotVersion, sameId:prepared.snapshotId === legacy.snapshotId, warningCodes:validation.warnings.map(row => row.code), valid:validation.valid };
+  });
+  expect(result.version).toBe(1);
+  expect(result.sameId).toBe(true);
+  expect(result.warningCodes).toContain("SNAPSHOT_VERSION_LEGACY");
+  expect(result.valid).toBe(true);
   runtime.assertClean();
 });
 

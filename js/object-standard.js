@@ -98,7 +98,9 @@
     row.einheitId = text(row.einheitId || row.unitId);
     row.nutzerId = text(row.nutzerId || row.partnerId || row.tenantId);
     row.verbrauchsstelleId = text(row.verbrauchsstelleId || row.consumptionPointId);
-    if (!Array.isArray(row.zaehlerstaende)) row.zaehlerstaende = [];
+    if (Array.isArray(row.zaehlerstaende)) delete row.zaehlerstaende;
+    if (Array.isArray(row.measurements)) delete row.measurements;
+    row.meterMasterStandardVersion = Number(row.meterMasterStandardVersion || (global.NKProMeterMaster && global.NKProMeterMaster.METER_MASTER_STANDARD_VERSION) || 1);
     if (isElectricityDummyMeter(row)) {
       row.meterType = ELECTRICITY_DUMMY_METER_TYPE;
       row.zaehlerTyp = ELECTRICITY_DUMMY_METER_TYPE;
@@ -159,25 +161,19 @@
       };
       result.push(normalizeMeter({
         ...common,
-        meterId:"Z-WASSER-KW-" + stableId("ROW", tenantId || unitId, index),
+        meterId:"Z-WASSER-KW-" + stableId("ROW", unitId || index, index),
         meterType:"cold-water",
         bezeichnung:"Kaltwasser " + (unitId || tenantId || String(index + 1)),
-        zaehlerstaende:[
-          { rolle:"start", datum:text(reading && reading.kwStartDate), wert:reading && reading.kwStart },
-          { rolle:"end", datum:text(reading && reading.kwEndDate), wert:reading && reading.kwEnd }
-        ],
-        bemerkung:text(reading && reading.bemerkung)
+        bemerkung:text(reading && reading.bemerkung),
+        legacySourceKey:"water-cold:" + unitId
       }, result.length, objectId, buildingId));
       result.push(normalizeMeter({
         ...common,
-        meterId:"Z-WASSER-WW-" + stableId("ROW", tenantId || unitId, index),
+        meterId:"Z-WASSER-WW-" + stableId("ROW", unitId || index, index),
         meterType:"hot-water",
         bezeichnung:"Warmwasser " + (unitId || tenantId || String(index + 1)),
-        zaehlerstaende:[
-          { rolle:"start", datum:text(reading && reading.wwStartDate), wert:reading && reading.wwStart },
-          { rolle:"end", datum:text(reading && reading.wwEndDate), wert:reading && reading.wwEnd }
-        ],
-        bemerkung:text(reading && reading.bemerkung)
+        bemerkung:text(reading && reading.bemerkung),
+        legacySourceKey:"water-hot:" + unitId
       }, result.length, objectId, buildingId));
     });
     return result;
@@ -200,7 +196,7 @@
         const startValue = reading.start !== undefined ? reading.start : reading.startValue;
         const endValue = reading.end !== undefined ? reading.end : reading.endValue;
         result.push(normalizeMeter({
-          meterId:"Z-" + stableId("VERBRAUCH", costId + "-" + (tenantId || unitId || index), index),
+          meterId:"Z-" + stableId("VERBRAUCH", costId + "-" + (unitId || index), index),
           meterType:"consumption-" + costId.toLowerCase(),
           bezeichnung:text(cost.kostenart) || ("Verbrauch " + costId),
           objektId:objectId,
@@ -214,11 +210,8 @@
           einheit:text(reading.einheit || reading.unit),
           sourcePath:"meterReadings.readings." + costId + "[" + index + "]",
           legacyIndex:index,
-          zaehlerstaende:[
-            { rolle:"start", datum:text(reading.startDate || reading.von), wert:startValue },
-            { rolle:"end", datum:text(reading.endDate || reading.bis), wert:endValue }
-          ],
-          legacyReading:cloneWith({}, reading)
+          legacyReading:cloneWith({}, reading),
+          legacySourceKey:"generic:" + costId + ":" + unitId
         }, result.length, objectId, buildingId));
       });
     });
@@ -385,8 +378,9 @@
     owner.ort = text(owner.ort || brief.absenderOrt);
     owner.telefon = text(owner.telefon || brief.absenderTelefon);
 
-    const existingMeters = Array.isArray(previous.zaehler) ? previous.zaehler : (Array.isArray(data.zaehler) ? data.zaehler : []);
-    const derivedMeters = legacyWaterMeters(data, objectId, buildingId).concat(legacyGenericMeters(data, objectId, buildingId));
+    const separatedMeters = data.zaehlerDaten && Array.isArray(data.zaehlerDaten.zaehler) ? data.zaehlerDaten.zaehler : [];
+    const existingMeters = separatedMeters.length ? separatedMeters : (Array.isArray(previous.zaehler) ? previous.zaehler : (Array.isArray(data.zaehler) ? data.zaehler : []));
+    const derivedMeters = separatedMeters.length ? [] : legacyWaterMeters(data, objectId, buildingId).concat(legacyGenericMeters(data, objectId, buildingId));
     const meters = mergeMeters(existingMeters, derivedMeters, objectId, buildingId);
     const consumptionPoints = [];
     meters.forEach(meter => {
@@ -426,6 +420,7 @@
       zaehler:meters,
       verbrauchsstellen:consumptionPoints,
       abrechnungszeitraeume:periods,
+      meteringStandardVersion:Number(data.zaehlerDaten && data.zaehlerDaten.meteringStandardVersion || data.meta.meteringStandardVersion || 0),
       abrechnungsrelevanteEinstellungen:{
         umlageInputs:cloneWith(options, data.umlageInputs || {}),
         kostenartenMieterUmlage:cloneWith(options, data.kostenartenMieterUmlage || {}),
@@ -521,11 +516,16 @@
     const standard = data.objektStandard;
     const objectId = text(standard.objekt && (standard.objekt.id || standard.objekt.objektId)) || "OBJ-001";
     const buildingId = text(standard.gebaeude && standard.gebaeude[0] && (standard.gebaeude[0].id || standard.gebaeude[0].gebaeudeId)) || "GEB-001";
-    const meter = createElectricityDummyMeter(input, { ...options, objectId, buildingId });
+    let meter;
+    if (global.NKProMeterMaster && typeof global.NKProMeterMaster.addElectricityDummyMeter === "function") {
+      meter = global.NKProMeterMaster.addElectricityDummyMeter(data, { ...input, objektId:objectId, gebaeudeId:buildingId }, options);
+    } else {
+      meter = createElectricityDummyMeter(input, { ...options, objectId, buildingId });
+    }
     if (!Array.isArray(standard.zaehler)) standard.zaehler = [];
     const existingIndex = standard.zaehler.findIndex(row => text(row && (row.meterId || row.zaehlerId || row.id)) === meter.meterId);
-    if (existingIndex >= 0) standard.zaehler[existingIndex] = meter;
-    else standard.zaehler.push(meter);
+    if (existingIndex >= 0) standard.zaehler[existingIndex] = normalizeMeter(meter, existingIndex, objectId, buildingId);
+    else standard.zaehler.push(normalizeMeter(meter, standard.zaehler.length, objectId, buildingId));
     return meter;
   }
 

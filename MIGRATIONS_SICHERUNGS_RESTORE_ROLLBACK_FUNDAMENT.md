@@ -140,3 +140,9 @@ Automatisiert geprüft werden zusätzlich:
 - Die Prüfsummen schützen gegen unbeabsichtigte Veränderung und Inkonsistenz, sind aber kein kryptografischer Echtheitsnachweis.
 - Es wird jeweils der aktuelle Vor-Migrationsstand und der aktuelle Restore-Checkpoint getrennt gehalten, keine unbegrenzte Sicherungskette.
 - Datenschema 6 ist nicht Bestandteil dieses Arbeitspakets.
+
+## 10. Ergänzung V99.4.6 – Standardmigration `metering-standard-v1`
+
+Die Trennung von Zählerstamm, Messwert, Messperiode, Zuordnung und Wechsel ist keine Änderung von Datenschema 5, wird aber wegen der datenverändernden Normalisierung wie eine Migration behandelt. Der Start erkennt fehlende oder eingebettete V99.4.5-Strukturen, erzeugt über das vorhandene Fundament eine Vor-Migrationssicherung und führt die Standardmigration auf einer Kopie aus.
+
+Die Nachvalidierung prüft die vollständige Struktur, stabile IDs, Referenzen und Ausschlussregeln. Bei Fehlern wird die Kopie verworfen. Eine erneute Ausführung ist idempotent; die Migrationshistorie enthält `metering-standard-v1` höchstens einmal. Restore und Rollback erhalten sowohl Legacy-Felder als auch `zaehlerDaten`.

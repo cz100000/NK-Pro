@@ -2,7 +2,7 @@
 
 **Ziel:** einfacher, stabiler und nachvollziehbarer Arbeitsablauf  
 **Ausgangsversion:** V99.3.0  
-**Aktueller Stand:** V99.4.5  
+**Aktueller Stand:** V99.4.6  
 **Status:** Phase-1-Ziel umgesetzt; Datenmodellziele offen
 
 ## 1. Leitprinzip
@@ -233,3 +233,8 @@ Noch offen und ausdrücklich nicht vorgetäuscht sind:
 - vollständige fachliche Trennung aller zukünftigen Objektstandards von periodischen Abrechnungswerten über die bereits gesicherten Snapshot-Grenzen hinaus.
 
 Der Datenebenenvertrag und die Begrenzung von Abrechnungs- und Archivsnapshots sind seit V99.4.2 umgesetzt. Die verbleibenden Modelländerungen benötigen weiterhin Stop-Regel, Variantenvergleich, Nutzerentscheidung, das in V99.4.4 umgesetzte Vor-Migrationsbackup und den Wiederherstellungsnachweis.
+
+
+## Ergänzung V99.4.6
+
+Die Bedienoberfläche bleibt visuell unverändert. Fachliche Zählerfehler werden zentral erzeugt und können in einem Folgearbeitspaket in die bestehende Prüf- und Hinweissystematik eingebunden werden.

@@ -148,3 +148,9 @@ Die Projektion bewahrt unbekannte Felder und die bisherigen Fachstrukturen. Rest
 - Historische Altarchive können fehlende frühere Vertrags-, Zähler- oder Einstellungsdetails nicht nachträglich rekonstruieren.
 - Die FNV1A32-Prüfsumme dient der Integritätskontrolle, nicht einer kryptografischen Signatur oder rechtssicheren Langzeitarchivierung.
 - Die physische Trennung dauerhafter Zählerstammdaten von periodischen Zählerständen bleibt ein späteres, eigenes Arbeitspaket.
+
+## 10. Ergänzung V99.4.6 – Objektstandard und Zählerstandard
+
+Objektstandard 1 bleibt unverändert. Seine Zählerliste ist ab V99.4.6 eine kompatible Stammdatenprojektion aus `zaehlerDaten.zaehler`; eingebettete `zaehlerstaende` werden nicht mehr als kanonischer Speicher fortgeschrieben. Periodische Werte liegen eigenständig in `zaehlerDaten.messwerte` und `zaehlerDaten.messperioden`.
+
+Neue Abrechnungssnapshots verwenden Snapshot-Version 2 und nehmen eine vollständige Zählerprojektion auf. Snapshot-Version 1 bleibt unterstützt und wird nicht umgeschrieben. Der Stromzähler-Dummy bleibt in Stammdaten und Ausschlussliste erhalten, ist aber weder in der Zählerauswahl noch in einem abrechenbaren Verbrauch enthalten.

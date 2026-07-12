@@ -1,11 +1,11 @@
 {
-  "appVersion": "99.4.5",
-  "displayVersion": "V99.4.5",
-  "versionName": "Objektstandard und Abrechnungssnapshot",
+  "appVersion": "99.4.6",
+  "displayVersion": "V99.4.6",
+  "versionName": "Zählerstammdaten und Messperioden",
   "schemaVersion": 5,
   "dataLayerContractVersion": 1,
   "snapshotScope": "billingSnapshot",
-  "basedOn": "99.4.4",
+  "basedOn": "99.4.5",
   "releaseDate": "2026-07-12",
   "runtime": [
     "HTML",
@@ -14,7 +14,12 @@
   ],
   "framework": null,
   "buildSystem": null,
-  "nextWorkPackage": "Zählerverwaltung und Zählerstände mit dauerhafter Zähler-ID trennen",
+  "nextWorkPackage": "Bedienoberfläche der Zähler- und Messwertverwaltung auf die getrennten Fachmodule umstellen",
   "objectStandardVersion": 1,
-  "billingSnapshotVersion": 1
+  "billingSnapshotVersion": 2,
+  "meterMasterStandardVersion": 1,
+  "meterReadingStandardVersion": 1,
+  "meterPeriodStandardVersion": 1,
+  "meterAssignmentStandardVersion": 1,
+  "meterReplacementStandardVersion": 1
 }

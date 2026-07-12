@@ -1,13 +1,14 @@
 # NK-Pro – verbindlicher Projektstand
 
 **Stand:** 12. Juli 2026  
-**Anwendung:** V99.4.5  
-**Versionsname:** Objektstandard und Abrechnungssnapshot  
+**Anwendung:** V99.4.6  
+**Versionsname:** Zählerstammdaten und Messperioden  
 **Datenschema:** 5, unverändert  
 **Datenebenenvertrag:** 1, unverändert  
-**Objektstandard:** 1  
-**Abrechnungssnapshot:** 1  
-**Ausgangsversion:** V99.4.4
+**Objektstandard:** 1, unverändert  
+**Zähler-/Messstandard:** 1  
+**Abrechnungssnapshot:** 2; Version 1 kompatibel  
+**Ausgangsversion:** V99.4.5
 
 ## 1. Technische Grundlage
 
@@ -20,57 +21,51 @@ NK-Pro ist eine statische lokale Browseranwendung und PWA aus HTML, CSS und Java
 3. `js/persistence.js`
 4. `js/migration.js`
 5. `js/backup-recovery.js`
-6. `js/object-standard.js`
-7. `js/billing-snapshot.js`
-8. `js/archive.js`
-9. `js/default-seed.js`
-10. `js/app.js`
-11. `js/service-worker-register.js`
+6. `js/meter-master.js`
+7. `js/meter-readings.js`
+8. `js/meter-periods.js`
+9. `js/meter-validation.js`
+10. `js/object-standard.js`
+11. `js/billing-snapshot.js`
+12. `js/archive.js`
+13. `js/default-seed.js`
+14. `js/app.js`
+15. `js/service-worker-register.js`
 
-Die sechs Fach-/Infrastrukturmodule werden als eingefrorene Namensräume geladen. Nur `js/persistence.js` greift direkt auf `localStorage` zu.
+Nur `js/persistence.js` greift direkt auf `localStorage` zu.
 
 ## 3. Verbindliche Datenebenen
 
 - schreibbarer aktueller Arbeitsstand,
 - Objektstammdaten in `stammdaten`,
 - additive Objektprojektion in `objektStandard`,
-- globale Zählerhistorie in `waterMeterHistory`,
+- getrennte operative Zählerdaten in `zaehlerDaten`,
+- globale historische Wasserzählerdaten in `waterMeterHistory`,
 - begrenzter, unveränderlicher Abrechnungssnapshot,
-- Jahresarchiv aus vollständigen oder ausdrücklich gekennzeichneten Legacy-Snapshots,
+- Jahresarchiv,
 - vollständige Gesamtsicherung,
 - Recovery-Stand,
 - Vor-Migrationssicherung,
 - Restore-Checkpoint.
 
-## 4. Objektstandard und Snapshot
+## 4. Zählerstandard 1
 
-Objektstandard 1 bildet Objekt, Gebäude, Einheiten, Eigentümer, Partner, Verträge, Kostenarten, Verteilerschlüssel, Vorauszahlungen, Zähler, Verbrauchsstellen, Abrechnungszeiträume und Einstellungen ab. Bestehende Quellfelder bleiben erhalten.
+Jeder Zähler besitzt eine stabile Zähler-ID. Stammdaten werden nicht je Abrechnungsjahr oder Ableseperiode dupliziert. Messwerte besitzen eigene IDs, Ablesedatum, Messzeitraum, Wert, Einheit, Herkunft, Erfassungszeitpunkt, Status, Plausibilitätsstatus und gegebenenfalls Ersetzungsreferenz.
 
-Abrechnungssnapshot 1 besitzt eindeutige ID, Objekt-/Zeitraumbezug, Versionen, Berechnungsgrundlagen, Berechnungsergebnis, strukturierte Validierung, Zählerauswahl, begrenzte Daten, rekursive Unveränderlichkeit und Prüfsumme.
+Messperioden verbinden zwei aktive Messwerte desselben Zählers. Sie speichern Anfangs-/Endstand, Verbrauch, Einheit, Schätz-/Korrekturkennzeichen, Überlaufstatus und zeitanteilige Zuordnungen. Zählerwechsel erhalten eine eigene ID und verknüpfen alten und neuen Zähler ohne Identitätsänderung.
 
-Der Typ `electricity-dummy` ist speicher- und exportfähig, aber mit `abrechnungsrelevant: false` und `billingRole: excluded` vollständig aus der Abrechnung ausgeschlossen.
+## 5. Snapshot 2
 
-## 5. Migration und Kompatibilität
+Snapshot 2 enthält die für den Abrechnungszeitraum verwendeten Zählerstammdaten, Messwerte, Messperioden, Zuordnungen, Wechsel und ausgeschlossenen Zähler mit Grund. Er bleibt prüfsummengeschützt und rekursiv unveränderlich. Snapshot 1 bleibt lesbar und unverändert.
 
-- Schemaregistry weiterhin `1→2`, `2→4`, `3→4`, `4→5`.
-- Additive Migration `object-standard-v1` bei fehlender oder falscher Objektstandardversion.
-- Vor dieser Migration entsteht auch bei Schema 5 eine externe, validierte Vor-Migrationssicherung.
-- Historische Archive werden nicht fachlich neu interpretiert.
-- Vollständige neue Snapshots werden vor Archivierung und Import per Prüfsumme validiert.
-- Bestehende V99.4.4-Daten, Backups, Recovery-Daten und Archive bleiben nutzbar.
+## 6. Migration und Kompatibilität
 
-## 6. Freigabenachweis
+Die Migration `metering-standard-v1` ist additiv, idempotent und transaktional. Vor einer notwendigen Änderung wird das bestehende Sicherungsfundament verwendet. Legacy-Felder bleiben erhalten; unbekannte Felder werden mitgeführt. Datenschema 5 und Datenebenenvertrag 1 ändern sich nicht.
 
-- 12/12 JavaScript-Einheiten syntaktisch fehlerfrei,
-- 6/6 Referenzfälle semantisch unverändert,
-- 35/36 Playwright-/Chromium-Tests,
-- Objektstandardmigration mit Vor-Migrationssicherung,
-- strukturierte Blockade ungültiger Snapshots,
-- Snapshot-Unveränderlichkeit und Manipulationserkennung,
-- Erhalt historischer Facharrays als `legacy-partial`,
-- vollständiger Dummy-Ausschluss,
-- Restore-, Rollback-, Archiv-, Import-, Export-, PWA- und UI-Regression.
+## 7. Stromzähler-Dummy
 
-## 7. Verbleibende Grenze
+`electricity-dummy` erhält eine stabile ID, kann Messwerte und Historie speichern und bleibt in Export, Sicherung, Restore und Snapshot enthalten. Er ist zwingend nicht abrechnungsrelevant und wird von zentraler Validierung und Verbrauchsermittlung ausgeschlossen.
 
-Die additive Objektprojektion ersetzt noch nicht sämtliche historischen UI-Quellarrays. Die physische Trennung dauerhafter Zählerstammdaten von periodischen Messwerten bleibt ein eigenes Folgearbeitspaket.
+## 8. Nächster sinnvoller Schritt
+
+Die UI-Erfassung kann in einem Folgearbeitspaket direkt auf die getrennten Fachmodule umgestellt werden. Bis dahin bleiben die Legacy-Formulare kompatible Eingabeadapter.

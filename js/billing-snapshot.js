@@ -2,7 +2,8 @@
   "use strict";
 
   const BILLING_SNAPSHOT_FORMAT = "nk-pro-billing-snapshot";
-  const BILLING_SNAPSHOT_VERSION = 1;
+  const BILLING_SNAPSHOT_VERSION = 2;
+  const SUPPORTED_BILLING_SNAPSHOT_VERSIONS = Object.freeze([1, 2]);
   const BILLING_SNAPSHOT_STATUS_COMPLETE = "complete";
   const BILLING_SNAPSHOT_STATUS_LEGACY_PARTIAL = "legacy-partial";
 
@@ -161,39 +162,60 @@
       }
     });
 
-    const meters = standard && Array.isArray(standard.zaehler) ? standard.zaehler : [];
     const objectStandardModule = options.objectStandardModule;
-    const relevantMeters = objectStandardModule && typeof objectStandardModule.billingRelevantMeters === "function"
-      ? objectStandardModule.billingRelevantMeters(standard) : meters.filter(row => row && row.abrechnungsrelevant !== false);
+    const meteringContainer = data.zaehlerDaten && typeof data.zaehlerDaten === "object" ? data.zaehlerDaten : null;
+    const meters = meteringContainer && Array.isArray(meteringContainer.zaehler)
+      ? meteringContainer.zaehler
+      : (standard && Array.isArray(standard.zaehler) ? standard.zaehler : []);
+    const meterMasterModule = options.meterMasterModule;
+    const relevantMeters = meterMasterModule && typeof meterMasterModule.billingRelevantMeters === "function"
+      ? meterMasterModule.billingRelevantMeters(meteringContainer || { zaehler:meters })
+      : (objectStandardModule && typeof objectStandardModule.billingRelevantMeters === "function"
+        ? objectStandardModule.billingRelevantMeters({ zaehler:meters })
+        : meters.filter(row => row && row.abrechnungsrelevant !== false));
     const excludedMeterIds = [];
     meters.forEach((meter, index) => {
       const meterId = text(meter && (meter.meterId || meter.zaehlerId || meter.id));
-      const dummy = objectStandardModule && typeof objectStandardModule.isElectricityDummyMeter === "function"
-        ? objectStandardModule.isElectricityDummyMeter(meter) : text(meter && meter.meterType).toLowerCase() === "electricity-dummy";
+      const dummy = meterMasterModule && typeof meterMasterModule.isElectricityDummyMeter === "function"
+        ? meterMasterModule.isElectricityDummyMeter(meter)
+        : (objectStandardModule && typeof objectStandardModule.isElectricityDummyMeter === "function"
+          ? objectStandardModule.isElectricityDummyMeter(meter)
+          : text(meter && meter.meterType).toLowerCase() === "electricity-dummy");
+      if (meter && (meter.abrechnungsrelevant === false || text(meter.billingRole) === "excluded")) excludedMeterIds.push(meterId);
       if (dummy) {
-        excludedMeterIds.push(meterId);
-        if (meter.abrechnungsrelevant !== false || text(meter.billingRole) !== "excluded") issues.push(issue("ELECTRICITY_DUMMY_NOT_EXCLUDED", "error", "objektStandard.zaehler[" + index + "]", "Stromzähler-Dummy muss eindeutig nicht abrechnungsrelevant sein.", meterId));
-        else issues.push(issue("ELECTRICITY_DUMMY_EXCLUDED", "info", "objektStandard.zaehler[" + index + "]", "Stromzähler-Dummy ist aus der Abrechnung ausgeschlossen.", meterId));
+        if (meter.abrechnungsrelevant !== false || text(meter.billingRole) !== "excluded") issues.push(issue("ELECTRICITY_DUMMY_NOT_EXCLUDED", "error", "zaehlerDaten.zaehler[" + index + "]", "Stromzähler-Dummy muss eindeutig nicht abrechnungsrelevant sein.", meterId));
+        else issues.push(issue("ELECTRICITY_DUMMY_EXCLUDED", "info", "zaehlerDaten.zaehler[" + index + "]", "Stromzähler-Dummy ist aus der Abrechnung ausgeschlossen.", meterId));
       }
     });
 
-    const consumptionCosts = activeCosts.filter(cost => text(cost.umlageschluessel) === "Verbrauch");
-    consumptionCosts.forEach(cost => {
-      const costId = text(cost.id);
-      const candidateMeters = relevantMeters.filter(meter => {
-        if (text(meter.kostenId)) return text(meter.kostenId) === costId;
-        return costId === "K002" && ["cold-water", "hot-water"].includes(text(meter.meterType));
+    if (options.meterValidationModule && typeof options.meterValidationModule.validateMeteringData === "function" && meteringContainer) {
+      const meterValidation = options.meterValidationModule.validateMeteringData(data, {
+        ...options,
+        master:meterMasterModule,
+        readings:options.meterReadingsModule,
+        periods:options.meterPeriodsModule,
+        billingReadiness:true
       });
-      if (!candidateMeters.length) issues.push(issue("CONSUMPTION_METER_MISSING", "error", "objektStandard.zaehler", "Für die Verbrauchskostenart fehlt ein abrechnungsrelevanter Zähler.", costId));
-      candidateMeters.forEach(meter => {
-        const values = meterReadingValues(meter);
-        const start = Number(values.start && values.start.wert);
-        const end = Number(values.end && values.end.wert);
-        if (!Number.isFinite(start) || !Number.isFinite(end)) issues.push(issue("METER_READING_MISSING", "error", "objektStandard.zaehler", "Erforderlicher Anfangs- oder Endstand fehlt.", meter.meterId || meter.zaehlerId));
-        else if (end < start) issues.push(issue("METER_READING_IMPLAUSIBLE", "error", "objektStandard.zaehler", "Zählerendstand liegt unter dem Anfangsstand.", meter.meterId || meter.zaehlerId));
-        if (!validDate(values.start && values.start.datum) || !validDate(values.end && values.end.datum)) issues.push(issue("METER_READING_DATE_MISSING", "error", "objektStandard.zaehler", "Datum für Anfangs- oder Endstand fehlt.", meter.meterId || meter.zaehlerId));
+      (meterValidation.issues || []).forEach(item => issues.push(cloneWith(options, item)));
+    } else {
+      const consumptionCosts = activeCosts.filter(cost => text(cost.umlageschluessel) === "Verbrauch");
+      consumptionCosts.forEach(cost => {
+        const costId = text(cost.id);
+        const candidateMeters = relevantMeters.filter(meter => {
+          if (text(meter.kostenId)) return text(meter.kostenId) === costId;
+          return costId === "K002" && ["cold-water", "hot-water"].includes(text(meter.meterType));
+        });
+        if (!candidateMeters.length) issues.push(issue("CONSUMPTION_METER_MISSING", "error", "objektStandard.zaehler", "Für die Verbrauchskostenart fehlt ein abrechnungsrelevanter Zähler.", costId));
+        candidateMeters.forEach(meter => {
+          const values = meterReadingValues(meter);
+          const start = Number(values.start && values.start.wert);
+          const end = Number(values.end && values.end.wert);
+          if (!Number.isFinite(start) || !Number.isFinite(end)) issues.push(issue("METER_READING_MISSING", "error", "objektStandard.zaehler", "Erforderlicher Anfangs- oder Endstand fehlt.", meter.meterId || meter.zaehlerId));
+          else if (end < start) issues.push(issue("METER_READING_IMPLAUSIBLE", "error", "objektStandard.zaehler", "Zählerendstand liegt unter dem Anfangsstand.", meter.meterId || meter.zaehlerId));
+          if (!validDate(values.start && values.start.datum) || !validDate(values.end && values.end.datum)) issues.push(issue("METER_READING_DATE_MISSING", "error", "objektStandard.zaehler", "Datum für Anfangs- oder Endstand fehlt.", meter.meterId || meter.zaehlerId));
+        });
       });
-    });
+    }
 
     const prepayments = Array.isArray(data.vorauszahlungen) ? data.vorauszahlungen : [];
     activeCosts.filter(cost => cost.vorauszahlung === "Ja").forEach(cost => {
@@ -255,6 +277,10 @@
       dataSchemaVersion:Number(options.dataSchemaVersion || data && data.meta && data.meta.dataSchemaVersion || 1),
       dataLayerContractVersion:Number(options.dataLayerContractVersion || data && data.meta && data.meta.dataLayerContractVersion || 1),
       objectStandardVersion:Number(standard.version || standard.objectStandardVersion || options.objectStandardVersion || 1),
+      meteringStandardVersion:Number(data.zaehlerDaten && data.zaehlerDaten.meteringStandardVersion || options.meteringStandardVersion || 0),
+      meterMasterStandardVersion:Number(data.zaehlerDaten && data.zaehlerDaten.meterMasterStandardVersion || 0),
+      readingStandardVersion:Number(data.zaehlerDaten && data.zaehlerDaten.readingStandardVersion || 0),
+      measurementPeriodStandardVersion:Number(data.zaehlerDaten && data.zaehlerDaten.measurementPeriodStandardVersion || 0),
       validation:{
         valid:true,
         checkedAt:createdAt,
@@ -263,6 +289,14 @@
         infos:cloneWith(options, readiness.infos || [])
       },
       meterSelection:cloneWith(options, readiness.meterSelection || { included:[], excluded:[] }),
+      metering:options.meterValidationModule && typeof options.meterValidationModule.createSnapshotProjection === "function"
+        ? options.meterValidationModule.createSnapshotProjection(data, period, {
+          ...options,
+          master:options.meterMasterModule,
+          readings:options.meterReadingsModule,
+          periods:options.meterPeriodsModule
+        })
+        : null,
       calculation:cloneWith(options, options.calculation || {}),
       summary:cloneWith(options, options.summary || {}),
       data:boundedData
@@ -286,7 +320,9 @@
       return resultFromIssues(issues);
     }
     if (snapshot.snapshotFormat !== BILLING_SNAPSHOT_FORMAT) issues.push(issue("SNAPSHOT_FORMAT_INVALID", "error", "snapshotFormat", "Snapshot-Format ist ungültig."));
-    if (Number(snapshot.snapshotVersion) !== BILLING_SNAPSHOT_VERSION) issues.push(issue("SNAPSHOT_VERSION_INVALID", "error", "snapshotVersion", "Snapshot-Version ist nicht unterstützt."));
+    const snapshotVersion = Number(snapshot.snapshotVersion);
+    if (!SUPPORTED_BILLING_SNAPSHOT_VERSIONS.includes(snapshotVersion)) issues.push(issue("SNAPSHOT_VERSION_INVALID", "error", "snapshotVersion", "Snapshot-Version ist nicht unterstützt."));
+    else if (snapshotVersion < BILLING_SNAPSHOT_VERSION) issues.push(issue("SNAPSHOT_VERSION_LEGACY", "warning", "snapshotVersion", "Historischer V99.4.5-Snapshot bleibt unverändert und besitzt noch keinen vollständigen Zählerstandard 1."));
     if (snapshot.snapshotStatus !== BILLING_SNAPSHOT_STATUS_COMPLETE) issues.push(issue("SNAPSHOT_NOT_COMPLETE", "error", "snapshotStatus", "Snapshot ist nicht als vollständig gekennzeichnet."));
     if (snapshot.immutable !== true) issues.push(issue("SNAPSHOT_NOT_IMMUTABLE", "error", "immutable", "Snapshot ist nicht als unveränderlich gekennzeichnet."));
     if (!text(snapshot.snapshotId)) issues.push(issue("SNAPSHOT_ID_MISSING", "error", "snapshotId", "Snapshot-ID fehlt."));
@@ -297,6 +333,15 @@
     }
     if (!snapshot.data || typeof snapshot.data !== "object") issues.push(issue("SNAPSHOT_DATA_MISSING", "error", "data", "Snapshot-Daten fehlen."));
     if (!snapshot.data || !snapshot.data.objektStandard) issues.push(issue("SNAPSHOT_OBJECT_STANDARD_MISSING", "error", "data.objektStandard", "Objektstandard fehlt im Snapshot."));
+    if (snapshotVersion >= 2) {
+      for (const key of ["meteringStandardVersion", "meterMasterStandardVersion", "readingStandardVersion", "measurementPeriodStandardVersion"]) {
+        if (!Number.isFinite(Number(snapshot[key])) || Number(snapshot[key]) < 1) issues.push(issue("SNAPSHOT_METERING_METADATA_INVALID", "error", key, "Zählerstandard-Metadatum ist ungültig: " + key));
+      }
+      if (!snapshot.metering || typeof snapshot.metering !== "object") issues.push(issue("SNAPSHOT_METERING_MISSING", "error", "metering", "Getrennte Zähler-, Messwert- und Messperiodendaten fehlen im Snapshot."));
+      else {
+        if (!Array.isArray(snapshot.metering.meters) || !Array.isArray(snapshot.metering.readings) || !Array.isArray(snapshot.metering.measurementPeriods) || !Array.isArray(snapshot.metering.assignments)) issues.push(issue("SNAPSHOT_METERING_INCOMPLETE", "error", "metering", "Zählerprojektion im Snapshot ist unvollständig."));
+      }
+    }
     const included = new Set(snapshot.meterSelection && Array.isArray(snapshot.meterSelection.included) ? snapshot.meterSelection.included.map(text) : []);
     const excluded = snapshot.meterSelection && Array.isArray(snapshot.meterSelection.excluded) ? snapshot.meterSelection.excluded.map(text) : [];
     excluded.forEach(id => { if (included.has(id)) issues.push(issue("SNAPSHOT_EXCLUDED_METER_INCLUDED", "error", "meterSelection", "Nicht abrechnungsrelevanter Zähler ist in der Berechnung enthalten.", id)); });
@@ -334,6 +379,7 @@
   global.NKProBillingSnapshot = Object.freeze({
     BILLING_SNAPSHOT_FORMAT,
     BILLING_SNAPSHOT_VERSION,
+    SUPPORTED_BILLING_SNAPSHOT_VERSIONS,
     BILLING_SNAPSHOT_STATUS_COMPLETE,
     BILLING_SNAPSHOT_STATUS_LEGACY_PARTIAL,
     validateBillingReadiness,

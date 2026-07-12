@@ -9,7 +9,7 @@ test("Persistenz-, Migrations-, Backup-/Restore- und Archivmodule sind vor app.j
 
   const result = await page.evaluate(() => {
     const scripts = [...document.scripts].map(script => new URL(script.src).pathname.split("/").pop());
-    const names = ["persistence.js", "migration.js", "backup-recovery.js", "object-standard.js", "billing-snapshot.js", "archive.js", "default-seed.js", "app.js"];
+    const names = ["persistence.js", "migration.js", "backup-recovery.js", "meter-master.js", "meter-readings.js", "meter-periods.js", "meter-validation.js", "object-standard.js", "billing-snapshot.js", "archive.js", "default-seed.js", "app.js"];
     const order = names.map(name => scripts.indexOf(name));
     const snapshot = createYearSnapshot();
     const protectedState = protectDataForStorage(clone(state));
@@ -20,6 +20,10 @@ test("Persistenz-, Migrations-, Backup-/Restore- und Archivmodule sind vor app.j
         migration:!!window.NKProMigration,
         archive:!!window.NKProArchive,
         backupRecovery:!!window.NKProBackupRecovery,
+        meterMaster:!!window.NKProMeterMaster,
+        meterReadings:!!window.NKProMeterReadings,
+        meterPeriods:!!window.NKProMeterPeriods,
+        meterValidation:!!window.NKProMeterValidation,
         objectStandard:!!window.NKProObjectStandard,
         billingSnapshot:!!window.NKProBillingSnapshot
       },
@@ -28,6 +32,10 @@ test("Persistenz-, Migrations-, Backup-/Restore- und Archivmodule sind vor app.j
         migration:Object.isFrozen(window.NKProMigration),
         archive:Object.isFrozen(window.NKProArchive),
         backupRecovery:Object.isFrozen(window.NKProBackupRecovery),
+        meterMaster:Object.isFrozen(window.NKProMeterMaster),
+        meterReadings:Object.isFrozen(window.NKProMeterReadings),
+        meterPeriods:Object.isFrozen(window.NKProMeterPeriods),
+        meterValidation:Object.isFrozen(window.NKProMeterValidation),
         objectStandard:Object.isFrozen(window.NKProObjectStandard),
         billingSnapshot:Object.isFrozen(window.NKProBillingSnapshot)
       },
@@ -41,8 +49,8 @@ test("Persistenz-, Migrations-, Backup-/Restore- und Archivmodule sind vor app.j
     };
   });
 
-  expect(result.modules).toEqual({ persistence:true, migration:true, archive:true, backupRecovery:true, objectStandard:true, billingSnapshot:true });
-  expect(result.frozen).toEqual({ persistence:true, migration:true, archive:true, backupRecovery:true, objectStandard:true, billingSnapshot:true });
+  expect(result.modules).toEqual({ persistence:true, migration:true, archive:true, backupRecovery:true, meterMaster:true, meterReadings:true, meterPeriods:true, meterValidation:true, objectStandard:true, billingSnapshot:true });
+  expect(result.frozen).toEqual({ persistence:true, migration:true, archive:true, backupRecovery:true, meterMaster:true, meterReadings:true, meterPeriods:true, meterValidation:true, objectStandard:true, billingSnapshot:true });
   expect(result.order.every(index => index >= 0)).toBe(true);
   expect(result.order).toEqual([...result.order].sort((a, b) => a - b));
   expect(result.compatibility).toEqual({ integrity:true, schema:5, bounded:true });

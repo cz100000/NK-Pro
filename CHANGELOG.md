@@ -1,5 +1,19 @@
 # Changelog
 
+## V99.4.6 – Zählerstammdaten und Messperioden (12. Juli 2026)
+
+- Zählerstammdaten, Messwerte, Messperioden, zeitabhängige Zuordnungen und Zählerwechsel in vier Fachmodule und einen zentralen Validierungs-/Migrationsdienst getrennt,
+- stabile Zähler-IDs unabhängig von Nutzer, Arrayposition, Bezeichnung und Abrechnungsjahr eingeführt,
+- Messwerte mit eigener ID, Zeitbezug, Herkunft, Plausibilität, Korrektur- und Stornoreferenzen standardisiert,
+- Messperioden mit Anfangs-/Endstand, Verbrauch, Schätzung, Korrektur, Überlauf und zeitabhängigen Zuordnungsanteilen ergänzt,
+- Zählerwechsel mit dauerhaften Vorgänger-/Nachfolgerbeziehungen und Wechselständen abgebildet,
+- additive, idempotente und transaktionale Migration `metering-standard-v1` über das bestehende Sicherungs- und Rollback-Fundament integriert,
+- Abrechnungssnapshot auf Version 2 mit vollständiger Zählerprojektion erweitert; Snapshot 1 bleibt unverändert lesbar,
+- Stromzähler-Dummy einschließlich optionaler Messwerte vollständig erhalten und zentral aus Verbrauch und Abrechnung ausgeschlossen,
+- Datenschema 5, Datenebenenvertrag 1 und Objektstandard 1 unverändert beibehalten,
+- Zählerdomänen-, Modul-, Migrations-, Snapshot-, Restore- und Regressionstests ergänzt,
+- JavaScript-Syntax 16/16, Referenz-Fixtures 6/6, Zählerdomänen- und Releaseprüfung sowie Playwright/Chromium 37/37 bestanden.
+
 ## V99.4.5 – Objektstandard und Abrechnungssnapshot (12. Juli 2026)
 
 - additiver Objektstandard 1 für Objekt, Gebäude, Einheiten, Partner, Verträge, Kosten, Schlüssel, Vorauszahlungen, Zähler, Verbrauchsstellen und Perioden,

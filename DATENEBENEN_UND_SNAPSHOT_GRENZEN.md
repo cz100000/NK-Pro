@@ -164,3 +164,11 @@ Das Datenschema bleibt 5. Alte Gesamt-JSON-Dateien und alte Archivhüllen bleibe
 ## 8. Ergänzung V99.4.5 – fachlich unveränderlicher Snapshot
 
 Der Datenebenenvertrag bleibt Version 1. `objektStandard` ist als abrechnungsbezogene Projektion in der zulässigen Snapshot-Feldmenge enthalten. Neue Abrechnungssnapshots verwenden die Hülle `nk-pro-billing-snapshot` Version 1 mit eindeutiger ID, Objekt-/Zeitraumbezug, Berechnung, Validierung, Zählerauswahl, Prüfsumme und rekursiver Unveränderlichkeit. Historische Archive werden innerhalb derselben Grenzen fachlich unverändert als `legacy-partial` gekennzeichnet.
+
+## 9. Ergänzung V99.4.6 – getrennte Zählerdaten und Snapshot 2
+
+Der aktuelle Arbeitsstand darf zusätzlich `zaehlerDaten` enthalten. Die Struktur gehört zur operativen Datenebene und wird in Gesamtbackup, Recovery, Vor-Migrationssicherung und Restore-Checkpoint vollständig erhalten.
+
+Ein Abrechnungssnapshot übernimmt nicht den gesamten operativen Container, sondern eine begrenzte, für den Abrechnungszeitraum erzeugte `metering`-Projektion. Sie enthält Zählerstamm, relevante Messwerte, Messperioden, Zuordnungen, Wechsel und Ausschlussgründe. Globale Historien, Recovery-Daten und verschachtelte Archive bleiben ausgeschlossen.
+
+Bestehende Snapshot-1-Hüllen werden unverändert erhalten. Nur neu erzeugte Snapshots verwenden Version 2. Datenschema 5 und Datenebenenvertrag 1 bleiben unverändert.

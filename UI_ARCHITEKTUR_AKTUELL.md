@@ -1,6 +1,6 @@
 # UI-Architektur – aktueller Stand
 
-**Version:** V99.4.5  
+**Version:** V99.4.6  
 **Datenschema:** 5, unverändert  
 **Zweck:** verbindliche Alt-zu-Neu-Zuordnung der Phase-1-Navigation
 
@@ -70,3 +70,8 @@ Diese Punkte gehören zu Phase 2 und Phase 3 und unterliegen der Stop-Regel.
 - `js/app.js`: Tabregistrierung, Landing-Aktionen, Objekt-/Archiv-Renderer und Kontextableitung,
 - `js/archive.js`: unveränderte Snapshot- und Archivgrenzen ohne UI-Verantwortung,
 - `tests/app-smoke.spec.js`: UX-, ARIA-, Navigation- und Statustests.
+
+
+## Ergänzung V99.4.6
+
+AP5 enthält keine allgemeinen optischen Änderungen. Die bestehende Zähleroberfläche bleibt ein kompatibler Eingabeadapter; Validierung, Messperiodenbildung und Verbrauchsermittlung liegen außerhalb der UI in den neuen Fachmodulen.

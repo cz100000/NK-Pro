@@ -21,13 +21,22 @@ module.exports = defineConfig({
   outputDir: "./test-results/artifacts",
   timeout: 45_000,
   expect: { timeout: 8_000 },
-  fullyParallel: false,
-  workers: 1,
+  fullyParallel: true,
+  workers: 4,
   retries: 0,
   reporter: [
     ["list"],
     ["json", { outputFile: "test-results/playwright-results.json" }],
     ["html", { outputFolder: "test-results/html", open: "never" }]
+  ],
+  projects: [
+    { name:"app-smoke", testMatch:"app-smoke.spec.js" },
+    { name:"migration-restore", testMatch:"migration-restore-foundation.spec.js" },
+    { name:"module-boundaries", testMatch:"module-boundaries.spec.js" },
+    { name:"object-snapshot", testMatch:"object-standard-snapshot.spec.js" },
+    { name:"persistence-backup", testMatch:"persistence-backup.spec.js" },
+    { name:"reference-cases", testMatch:"reference-cases.spec.js" },
+    { name:"service-worker", testMatch:"service-worker.spec.js" }
   ],
   use: {
     baseURL: "http://127.0.0.1:4173",

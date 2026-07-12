@@ -1,10 +1,11 @@
 # NK-Pro – Architektur
 
-**Ist-Stand:** V99.4.5  
+**Ist-Stand:** V99.4.6  
 **Datenschema:** 5  
 **Datenebenenvertrag:** 1  
 **Objektstandard:** 1  
-**Abrechnungssnapshot:** 1
+**Zähler-/Messstandard:** 1  
+**Abrechnungssnapshot:** 2, kompatibel zu 1
 
 ## 1. Laufzeit
 
@@ -15,48 +16,58 @@ NK-Pro läuft ohne Framework und ohne Buildschritt als lokale HTML/CSS/JavaScrip
 | Modul | Verantwortung |
 |---|---|
 | `persistence.js` | Speicherung, Recovery und Speicherintegrität |
-| `migration.js` | Registry, Pfadplanung, Vor-/Nachvalidierung, transaktionale Migration |
+| `migration.js` | Registry, Pfadplanung, Vor-/Nachvalidierung, transaktionale Schemamigration |
 | `backup-recovery.js` | Sicherungshüllen, unveränderliche Metadaten, Restore und Checkpoint |
-| `object-standard.js` | additive Objektprojektion, Typisierung, Zählerstandard, Objektvalidierung |
+| `meter-master.js` | kanonische Zählerstammdaten, stabile IDs, Dummy-Ausschluss |
+| `meter-readings.js` | Messwertidentität, Zeitbezug, Herkunft, Revisionen und Storno |
+| `meter-periods.js` | Zuordnungen, Periodenbildung, Wechsel und Verbrauchsermittlung |
+| `meter-validation.js` | Standardmigration, zentrale Validierung und Snapshot-Projektion |
+| `object-standard.js` | additive Objektprojektion ohne eingebettete Messwertduplikate |
 | `billing-snapshot.js` | Abrechnungsbereitschaft, Snapshot-Hülle, Prüfsumme, Unveränderlichkeit |
 | `archive.js` | Datenebenenvertrag, Snapshot-Begrenzung, Archivvorbereitung, Legacy-Status |
 | `app.js` | bestehende Fachberechnung, Zustand, UI und Ablaufkoordination |
 
-Abhängigkeiten werden den Modulen über Optionsobjekte übergeben. Globale Wrapper bestehen nur als Kompatibilitätsschicht für bestehende HTML- und Testaufrufe.
+Die Fachmodule sind eingefrorene Namensräume. Abhängigkeiten werden über Optionsobjekte übergeben. Globale Wrapper in `app.js` bleiben nur als Kompatibilitätsschicht bestehen.
 
-## 3. Objektmodell
+## 3. Kanonisches Zählermodell
 
-Die bisherigen Arrays bleiben kompatible Produktivquellen. `objektStandard` ist die versionierte fachliche Projektion. Sie referenziert Entitäten über stabile IDs und trennt Objekt, Gebäude, Einheiten, Partner, Verträge, Kostenarten, Verteilerschlüssel, Vorauszahlungen, Zähler, Verbrauchsstellen und Perioden.
+`zaehlerDaten` ist die primäre fachliche Struktur für Zähler:
 
-Die Projektion ist additiv, idempotent und bewahrt unbekannte Felder. Ein Objektstandard-Upgrade wird wie eine Datenmigration behandelt und vorab gesichert.
+- `zaehler`: dauerhafte Stammdaten,
+- `messwerte`: eigenständige, revisionsfähige Zeitdatensätze,
+- `messperioden`: abgeleitete Anfangs-/Endstandspaare und Verbräuche,
+- `zuordnungen`: zeitabhängige Objekt-, Gebäude-, Einheiten-, Nutzer- und Vertragsbezüge,
+- `zaehlerwechsel`: Vorgänger-/Nachfolgerbeziehungen mit Wechselständen.
 
-## 4. Snapshot-Pipeline
+Legacy-Felder `waterMeters`, `meterReadings` und eingebettete V99.4.5-Zählerstände bleiben kompatible Eingabequellen. Sie werden idempotent in die kanonischen Strukturen synchronisiert, aber nicht als alleinige technische Identität verwendet.
 
-1. bestehende Periodendaten synchronisieren,
-2. Objektstandard normalisieren,
-3. bestehende Umlageberechnung ausführen,
-4. zentrale Abrechnungsbereitschaft prüfen,
-5. begrenzte Abrechnungsdaten erzeugen,
-6. Objektstandard, Berechnung und Zusammenfassung aufnehmen,
-7. eindeutige Snapshot-ID erzeugen,
-8. Prüfsumme bilden,
-9. gesamte Hülle rekursiv einfrieren,
-10. vor Import oder Archivierung erneut validieren.
+## 4. Berechnungs- und Snapshot-Pipeline
 
-Kritische Validierungsfehler stoppen Schritt 5. Stromzähler-Dummys erscheinen nur in der Ausschlussliste.
+1. Zählerstammdaten und Messwerte synchronisieren,
+2. zeitabhängige Zuordnungen und Zählerwechsel normalisieren,
+3. fachlich gültige Messperioden erzeugen,
+4. zentrale Zähler- und Objektvalidierung ausführen,
+5. bestehende Umlageberechnung ausführen,
+6. begrenzte Snapshot-Daten und Zählerprojektion erzeugen,
+7. eindeutige Snapshot-ID und Prüfsumme bilden,
+8. gesamte Snapshot-Hülle rekursiv einfrieren.
 
-## 5. Archivstrategie
+Kritische Zähler-, Messwert-, Zuordnungs- oder Periodenfehler stoppen Verbrauchsberechnung beziehungsweise Snapshot-Erstellung. Nicht abrechnungsrelevante Zähler bleiben dokumentiert, sind aber aus der Verbrauchsermittlung ausgeschlossen.
 
-Neue Snapshots sind vollständig und prüfsummengeschützt. Bestehende Altarchive werden ausschließlich auf die bestehenden Snapshot-Grenzen reduziert; ihre Fachinhalte werden nicht auf Objektstandard 1 umgeschrieben. Sie erhalten den Status `legacy-partial`.
+## 5. Snapshot- und Archivstrategie
 
-## 6. Persistenz und Recovery
+Snapshot 2 enthält Zählerstammdaten, relevante Messwerte, Messperioden, Zuordnungen, Wechsel und Ausschlussgründe. Die Projektion ist eine tiefe Kopie; spätere Änderungen am Arbeitsstand verändern den Snapshot nicht.
 
-Der Arbeitsstand enthält `objektStandard` und wird wie bisher integritätsgeschützt gespeichert. Gesamtbackup, Vor-Migrationssicherung und Restore-Checkpoint enthalten den vollständigen Stand. Abrechnungssnapshots schließen dagegen globale Stammdatenkopien, globale Historie, Recovery und verschachtelte Archive aus.
+Bestehende vollständige V99.4.5-Snapshots der Version 1 werden unverändert validiert und archiviert. Ältere unvollständig rekonstruierbare Archive werden weiterhin als `legacy-partial` gekennzeichnet, ohne ihre Fachinhalte umzuschreiben.
+
+## 6. Persistenz, Migration und Recovery
+
+Datenschema 5 und Datenebenenvertrag 1 bleiben unverändert. Die additive Standardmigration `metering-standard-v1` nutzt das bestehende Vor-Migrationssicherungs-, Restore- und Rollback-Fundament. Sie arbeitet auf einer Kopie, validiert vor Übernahme und ist idempotent.
 
 ## 7. PWA
 
-`service-worker.js` verwendet `nk-pro-v99-4-5` und führt beide neuen Module im App-Shell. Beim Aktivieren werden alte NK-Pro-Caches entfernt.
+`service-worker.js` verwendet `nk-pro-v99-4-6` und enthält alle Fachmodule in verbindlicher Ladefolge. Beim Aktivieren werden alte Caches entfernt.
 
-## 8. Nächste Architekturgrenze
+## 8. Verbleibende Grenze
 
-Dauerhafte Zählerstammdaten und periodische Zählerstände sollten in einem getrennten Arbeitspaket physisch voneinander getrennt werden. Objektstandard 1 stellt dafür bereits stabile Zähler- und Zuordnungs-IDs bereit.
+Die vorhandenen Erfassungsformulare schreiben aus Kompatibilitätsgründen weiterhin in Legacy-Felder und werden anschließend zentral synchronisiert. Eine vollständig native CRUD-Oberfläche für `zaehlerDaten` ist ein eigenes Folgearbeitspaket.

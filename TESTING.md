@@ -1,52 +1,51 @@
-# Test- und Freigabekonzept
+# NK-Pro – Testkonzept
 
-**Aktueller Stand:** V99.4.5, Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Snapshot 1
+**Aktueller Stand:** V99.4.6, Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Zählerstandard 1, Snapshot 2
 
-## 1. Pflichtbefehle
+## Prüfstufen
+
+1. **Syntax:** alle produktiven JavaScript-Dateien und Testwerkzeuge.
+2. **Referenzfälle:** sechs kanonische Datensätze mit SHA-256-Prüfung.
+3. **Zählerdomäne:** Node-basierte Modulprüfung für Migration, stabile IDs, Messwerte, Perioden, Korrekturen, Wechsel, Zuordnungen, Dummy-Ausschluss und Snapshot-Projektion.
+4. **Release-Konsistenz:** Versionen, Standards, Modulgrenzen, Ladefolge, PWA-App-Shell, Dokumente und Datenvertrag.
+5. **Browserregression:** Start, Navigation, Berechnung, Persistenz, Migration, Restore, Objektstandard, Snapshot, Archiv, Referenzfälle und Service Worker.
+6. **Frische Entpackung:** Wiederholung der Prüfungen aus der finalen ZIP.
+
+## Befehle
 
 ```bash
 npm ci
 npm run test:syntax
 npm run test:fixtures
+npm run test:metering
 npm run test:release
 CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:browser
+npm test
 ```
 
-## 2. Statische Prüfungen
+Ist kein Playwright-Browserpaket vorhanden, kann ein installiertes Chromium über `CHROMIUM_EXECUTABLE_PATH` verwendet werden. Ein Browser-Download ist für die Anwendung selbst nicht erforderlich. Für eine vollständig getrennte Ausführung können die sieben Projekte einzeln mit `npx playwright test --project=<Projektname>` gestartet werden.
 
-`test:syntax` prüft 12 JavaScript-Einheiten. `test:fixtures` materialisiert und vergleicht sechs kanonische Fälle. `test:release` prüft Versionen, Modulgrenzen, Objekt-/Snapshotkonstanten, Dummy-Ausschluss, Migrationssicherung, Skriptreihenfolge, PWA-App-Shell und Pflichtdokumente.
+## Freigabeergebnis V99.4.6
 
-## 3. Browserregression
+- 16/16 produktive JavaScript-Einheiten syntaktisch fehlerfrei,
+- 6/6 kanonische Referenz-Fixtures semantisch unverändert,
+- Zählerdomänenprüfung bestanden,
+- Release-Konsistenzprüfung bestanden,
+- 37/37 Browserregressionen in 7/7 Testprojekten bestanden.
 
-36 Playwright-Tests decken ab:
+## Zählerbezogene Pflichtfälle
 
-- Start, Navigation, UI-Struktur und interne Audits,
-- Manifest, Service Worker und Modulreihenfolge,
-- bestehende Fachberechnung in sechs Referenzfällen,
-- Persistenz, Recovery, begrenzte Archive und Export/Import,
-- Migrationsregistry, atomaren Abbruch, Vor-Migrationssicherung, Restore und Rollback,
-- additive Migration eines V99.4.4-Bestands auf Objektstandard 1,
-- verlustfreien Erhalt bestehender und unbekannter Felder,
-- Stromzähler-Dummy, Speicherung und vollständigen Abrechnungsausschluss,
-- gültige, eindeutige und eingefrorene Snapshots,
-- Isolation gegenüber späteren Stammdatenänderungen,
-- Blockade kritischer Fehler mit strukturierten Fehlercodes,
-- Prüfsummen-Manipulationserkennung,
-- unveränderte historische Facharrays mit `legacy-partial`.
+- V99.4.5-Migration und Idempotenz,
+- stabile Zähler-IDs nach erneutem Laden und Speichern,
+- Erhalt unbekannter Felder,
+- mehrere eigenständige Messwerte je Zähler,
+- Perioden- und Verbrauchsbildung,
+- Rückwärtsstand und fehlende Referenzen,
+- Korrektur ohne Überschreiben des Altwerts,
+- Nutzer-/Vertragswechsel mit zeitanteiliger Zuordnung,
+- Zählerwechsel mit Vorgänger/Nachfolger,
+- Dummy-Speicherung ohne Kostenwirkung,
+- Snapshot-Isolation und Snapshot-1-Kompatibilität,
+- Sicherung, Restore und Rollback.
 
-## 4. Freigabematrix
-
-| Prüfung | Ergebnis V99.4.5 |
-|---|---|
-| JavaScript-Syntax | 12/12 bestanden |
-| Referenzfälle | 6/6 bestanden |
-| Release-Konsistenz | bestanden |
-| Playwright/Chromium | 36/36 bestanden |
-| Datenschema | 5 unverändert |
-| Datenebenenvertrag | 1 unverändert |
-| Objektstandard | 1 |
-| Snapshotformat | 1 |
-
-## 5. Freigaberegel
-
-Eine neue Version darf nur verpackt werden, wenn alle statischen Prüfungen und sämtliche Browserdateien einzeln fehlerfrei laufen. Nach dem Verpacken wird die ZIP frisch entpackt und aus dieser Kopie erneut geprüft. Änderungen an Schema, Datenebenenvertrag, Objektstandard oder Snapshotformat benötigen dokumentierte Migration, Vor-Migrationssicherung, Rückweg und neue Regressionstests.
+Die konkreten Ergebnisse der Freigabe stehen in `AP5_PRUEFBERICHT.md`.

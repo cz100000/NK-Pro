@@ -4,6 +4,10 @@ const NK_PRO_MODULES = (() => {
     migration:globalThis.NKProMigration,
     archive:globalThis.NKProArchive,
     backupRecovery:globalThis.NKProBackupRecovery,
+    meterMaster:globalThis.NKProMeterMaster,
+    meterReadings:globalThis.NKProMeterReadings,
+    meterPeriods:globalThis.NKProMeterPeriods,
+    meterValidation:globalThis.NKProMeterValidation,
     objectStandard:globalThis.NKProObjectStandard,
     billingSnapshot:globalThis.NKProBillingSnapshot
   };
@@ -15,8 +19,8 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.5";
-const APP_VERSION_NAME = "Objektstandard und Abrechnungssnapshot";
+const APP_VERSION = "V99.4.6";
+const APP_VERSION_NAME = "Zählerstammdaten und Messperioden";
 const APP_RELEASE_DATE = "2026-07-12";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
@@ -35,7 +39,8 @@ const ARCHIVE_SNAPSHOT_DATA_KEYS = [
   "abrechnungsEinzelwerte",
   "legacyEinzelabrechnungen",
   "prepaymentAdjustmentSettings",
-  "objektStandard"
+  "objektStandard",
+  "zaehlerDaten"
 ];
 const SNAPSHOT_TECHNICAL_META_KEYS = new Set([
   "archiveViewer",
@@ -81,6 +86,9 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
+  "V99.4.6 trennt dauerhafte Zählerstammdaten, unveränderlich nachvollziehbare Messwerte, Messperioden, zeitabhängige Zuordnungen und Zählerwechsel in vier Fachmodule.",
+  "Verbrauchsberechnung und Abrechnungssnapshot verwenden Zählerstandard 1; Stromzähler-Dummys bleiben vollständig gespeichert und zentral aus allen Abrechnungswerten ausgeschlossen.",
+  "Bestehende V99.4.5-Zählerdaten werden nach Vor-Migrationssicherung idempotent und verlustfrei in getrennte Strukturen überführt; Datenschema 5 und Datenebenenvertrag 1 bleiben unverändert.",
   "V99.4.5 führt Objektstandard 1 als additive, verlustfreie Projektion über den bestehenden Wohnungen-, Mieter-, Kostenarten-, Vorauszahlungs- und Zählerbestand ein.",
   "Neue Abrechnungssnapshots besitzen eine eindeutige Snapshot-ID, unveränderliche Metadaten, Objekt- und Periodenbezug, vollständige Berechnungsgrundlagen sowie eine prüfbare Integritätschecksumme.",
   "Eine zentrale Abrechnungsbereitschaftsprüfung verhindert Snapshots bei kritischen Objekt-, Vertrags-, Verteilerschlüssel-, Vorauszahlungs- oder Zählerfehlern.",
@@ -307,6 +315,30 @@ function migrationModuleOptions(overrides = {}) {
   };
 }
 
+function meteringModuleOptions(overrides = {}) {
+  return {
+    clone,
+    appVersion:APP_VERSION,
+    now:() => new Date().toISOString(),
+    master:NK_PRO_MODULES.meterMaster,
+    readings:NK_PRO_MODULES.meterReadings,
+    periods:NK_PRO_MODULES.meterPeriods,
+    ...overrides
+  };
+}
+
+function synchronizeMeteringData(data = state, options = {}) {
+  return NK_PRO_MODULES.meterValidation.synchronizeMeteringData(data, meteringModuleOptions(options));
+}
+
+function validateMeteringData(data = state, options = {}) {
+  return NK_PRO_MODULES.meterValidation.validateMeteringData(data, meteringModuleOptions(options));
+}
+
+function migrateMeteringData(data, options = {}) {
+  return NK_PRO_MODULES.meterValidation.migrateMeteringData(data, meteringModuleOptions(options));
+}
+
 function objectStandardModuleOptions(overrides = {}) {
   return {
     clone,
@@ -324,7 +356,12 @@ function billingSnapshotModuleOptions(overrides = {}) {
     dataSchemaVersion:DATA_SCHEMA_VERSION,
     dataLayerContractVersion:DATA_LAYER_CONTRACT_VERSION,
     objectStandardVersion:NK_PRO_MODULES.objectStandard.OBJECT_STANDARD_VERSION,
+    meteringStandardVersion:NK_PRO_MODULES.meterValidation.METERING_STANDARD_VERSION,
     objectStandardModule:NK_PRO_MODULES.objectStandard,
+    meterMasterModule:NK_PRO_MODULES.meterMaster,
+    meterReadingsModule:NK_PRO_MODULES.meterReadings,
+    meterPeriodsModule:NK_PRO_MODULES.meterPeriods,
+    meterValidationModule:NK_PRO_MODULES.meterValidation,
     createBoundedData:createBoundedBillingSnapshotData,
     ...overrides
   };
@@ -347,7 +384,10 @@ function validateBillingSnapshot(snapshot, options = {}) {
 }
 
 function addElectricityDummyMeter(input = {}, data = state) {
-  return NK_PRO_MODULES.objectStandard.addElectricityDummyMeter(data, input, objectStandardModuleOptions());
+  const meter = NK_PRO_MODULES.meterMaster.addElectricityDummyMeter(data, input, meteringModuleOptions());
+  synchronizeMeteringData(data);
+  normalizeObjectStandard(data);
+  return meter;
 }
 
 function archiveModuleOptions(overrides = {}) {
@@ -471,6 +511,15 @@ function writeProtectedStorage(key, data) {
 
 function migrationCandidatesForData(data) {
   const candidates = NK_PRO_MODULES.migration.collectMigrationCandidates(data, DATA_SCHEMA_VERSION).filter(candidate => candidate.path === "workingState");
+  if (NK_PRO_MODULES.meterValidation.requiresMeteringMigration(data)) {
+    candidates.push({
+      path:"workingState.zaehlerDaten",
+      version:currentDataSchemaVersion(data),
+      targetSchemaVersion:DATA_SCHEMA_VERSION,
+      migrationId:"metering-standard-v1",
+      description:"Zählerstammdaten, Messwerte, Messperioden und Zuordnungen trennen"
+    });
+  }
   if (NK_PRO_MODULES.objectStandard.requiresObjectStandardMigration(data)) {
     candidates.push({
       path:"workingState.objektStandard",
@@ -1176,6 +1225,10 @@ function normalizeLegacyData(data, options = {}) {
   ensureUnifiedBillingFields(data, { includeArchives:false });
   migrateDataSchema(data, { includeArchives:false });
   if (!snapshotMode) ensureStammdatenData(data);
+  if (!data.objektStandard || typeof data.objektStandard !== "object") normalizeObjectStandard(data, { legacySnapshot:snapshotMode });
+  const meteringMigration = migrateMeteringData(data, { legacySnapshot:snapshotMode });
+  if (meteringMigration.status === "failed") throw meteringMigration.error;
+  NK_PRO_MODULES.meterValidation.replaceData(data, meteringMigration.data, meteringModuleOptions());
   normalizeObjectStandard(data, { legacySnapshot:snapshotMode });
   if (!snapshotMode) enforceWorkingStateDataContract(data);
   return data;
@@ -5437,6 +5490,7 @@ function createYearSnapshot() {
   syncUmlageInputs();
   applyWaterMetersToUmlage();
   updateTenantPrepaymentTotals();
+  synchronizeMeteringData(state);
   normalizeObjectStandard(state);
 
   const calc = calculateUmlage();
@@ -6848,6 +6902,16 @@ function waterTotalForTenantIndex(index) {
 
 function meterTotalForCostAndTenant(costId, index) {
   ensureWaterMeterData();
+  const tenant = state.mieter[index] || {};
+  if (state.zaehlerDaten && Array.isArray(state.zaehlerDaten.messperioden)) {
+    return NK_PRO_MODULES.meterPeriods.consumptionForCostAndTenant(
+      state,
+      costId,
+      tenant.id || "",
+      tenant.wohnung || "",
+      meteringModuleOptions()
+    );
+  }
   if (isWaterCost(costId)) return waterTotalForTenantIndex(index);
   const rows = state.meterReadings.readings[costId] || [];
   return genericMeterConsumption(rows[index] || {});
@@ -6881,6 +6945,7 @@ function isWaterAutoEnabledForCost(costId) {
 
 function applyWaterMetersToUmlage() {
   ensureWaterMeterData();
+  synchronizeMeteringData(state);
   state.waterMeters.settings.enabled = "Ja";
   const tenantCount = Math.max(20, state.mieter.length);
 
@@ -9710,7 +9775,7 @@ function appSelfTestReport() {
     return "Finalisieren/Entsperren-Status OK";
   }));
 
-  runCheck("Navigation", "Objektstandard und Abrechnungssnapshot V99.4.5", () => {
+  runCheck("Navigation", "Zählerstammdaten und Messperioden V99.4.6", () => {
     const nav = document.querySelector(".workflow-nav");
     if (!nav) throw new Error("Workflow-Navigation fehlt");
     const groups = Array.from(nav.querySelectorAll(":scope > .nav-group")).map(group => group.dataset.navGroupSection);
@@ -9853,6 +9918,7 @@ function prepareStateForPersistence(reason = "manual") {
       ["Kosten-Mieter-Umlage", () => syncKostenartenMieterUmlage()],
       ["Mieter-Vorauszahlungen", () => updateTenantPrepaymentTotals()],
       ["Umlage-Eingaben", () => syncUmlageInputs()],
+      ["Zählerstammdaten und Messperioden", () => synchronizeMeteringData(state)],
       ["Wasserzähler", () => applyWaterMetersToUmlage()],
       ["Kostenstatus", () => state.kostenarten.forEach(k => k.status = kostenStatus(k))],
       ["Datenebenen und Snapshot-Grenzen", () => enforceWorkingStateDataContract(state)]
@@ -10008,7 +10074,7 @@ function buildOverviewData(tabId) {
     archiv:{summary:[["Archivierte Abrechnungen",s.archives],["Aktuelle Abrechnung",hasActiveCurrentBilling()?s.year:"Keine"],["Datenbestand","Lokal"],["Schema",DATA_SCHEMA_VERSION]],validation:{status:"ok",headline:"Archiv getrennt erreichbar",items:[{text:"Historische Datensätze bleiben unverändert",status:"ok"},{text:"Öffnen erfolgt schreibgeschützt",status:"ok"}]},next:next("Archivierte Abrechnung auswählen und in der Nur-Ansicht prüfen.","archiveRecordsSection"),actions:[open("Archiv öffnen","archiveRecordsSection",true),{label:"Archiv herunterladen",run:()=>downloadFullArchive()},go("Abrechnungsübersicht","start")]},
     mieterverwaltung:{summary:[["Mietverhältnisse",s.tenants.length],["Archiviert",s.archivedTenants.length],["Wohnungen",s.units.length],["Abrechnungsjahr",s.year]],validation:commonValidation,next:next("Mieterstammdaten und archivierte Mietverhältnisse vollständig prüfen.","masterTenantSection"),actions:[open("Mietverhältnisse öffnen","masterTenantSection",true),open("Archiv öffnen","masterTenantArchiveSection"),save]},
     wohnungsverwaltung:{summary:[["Wohnungen gesamt",s.units.length],["Aktiv",s.activeUnits.length],["Inaktiv",Math.max(0,s.units.length-s.activeUnits.length)],["Wohnfläche aktiv",s.activeUnits.reduce((a,w)=>a+num(w.wohnflaeche),0).toLocaleString("de-DE")+" m²"]],validation:commonValidation,next:next("Wohnungsbestand und Flächenangaben kontrollieren.","masterUnitSection"),actions:[open("Wohnungsbestand öffnen","masterUnitSection",true),go("Mieterverwaltung","mieterverwaltung"),save]},
-    sicherung:{summary:[["Version",APP_VERSION],["Archivstände",s.archives],["Betriebsart","Offline · lokal"],["Abrechnungsjahr",s.year]],validation:{status:"ok",headline:"Sicherung verfügbar",items:[{text:"Lokale Gesamtsicherung vorhanden",status:"ok"},{text:"Neuer PWA-Cache für V99.4.5",status:"ok"}]},next:next("Vollständige JSON-Sicherung erstellen und Versionsinformationen prüfen.","backupMainSection"),actions:[open("Gesamtsicherung öffnen","backupMainSection",true),open("Version anzeigen","backupVersionSection"),save]},
+    sicherung:{summary:[["Version",APP_VERSION],["Archivstände",s.archives],["Betriebsart","Offline · lokal"],["Abrechnungsjahr",s.year]],validation:{status:"ok",headline:"Sicherung verfügbar",items:[{text:"Lokale Gesamtsicherung vorhanden",status:"ok"},{text:"Neuer PWA-Cache für V99.4.6",status:"ok"}]},next:next("Vollständige JSON-Sicherung erstellen und Versionsinformationen prüfen.","backupMainSection"),actions:[open("Gesamtsicherung öffnen","backupMainSection",true),open("Version anzeigen","backupVersionSection"),save]},
     mieter:{summary:[["Wohnungen gesamt",s.units.length],["Wohnungen aktiv",s.activeUnits.length],["Mietverhältnisse",s.tenants.length],["Archivierte Mieter",s.archivedTenants.length]],validation:commonValidation,next:next("Bestand und Abrechnung in der Prüfbox abgleichen; danach Kostenarten bearbeiten.","tenantControlSection"),actions:[open("Prüfung öffnen","tenantControlSection",true),open("Mietverhältnisse öffnen","tenantRelationsSection"),go("Kostenarten öffnen","einstellungen")]},
     einstellungen:{summary:[["Kostenarten",s.costs.length],["Aktiv in NK",s.activeCosts.length],["Vollständig",s.completeCosts.length],["Gesamtkosten",overviewMoney(s.activeCosts.reduce((a,k)=>a+num(k.gesamtbetrag),0))]],validation:{status:s.completeCosts.length===s.activeCosts.length?"ok":"warn",headline:s.completeCosts.length+" von "+s.activeCosts.length+" vollständig",items:[{text:"Umlageschlüssel und Beträge prüfen",status:s.completeCosts.length===s.activeCosts.length?"ok":"warn"},{text:"Umlage wird automatisch berechnet",status:"ok"}]},next:next("Fehlende Beträge und Umlageschlüssel vervollständigen.","costEditSection"),actions:[open("Kostenarten bearbeiten","costEditSection",true),()=>{}].filter(Boolean)},
     einnahmen:{summary:[["Kaltmiete erhalten",overviewMoney(s.income.rent)],["NK-Vorauszahlungen",overviewMoney(s.income.prepayments)],["Korrekturen",overviewMoney(s.income.corrections)],["Mietverhältnisse",s.tenants.length]],validation:commonValidation,next:next("Kaltmieten und Vorauszahlungen vollständig prüfen; danach Zählerstände erfassen.","incomeRentSection"),actions:[open("Kaltmiete öffnen","incomeRentSection",true),open("Vorauszahlungen öffnen","incomePrepaymentSection"),go("Zählerstände","wasser")]},
@@ -10158,7 +10224,7 @@ function renderAll(options = {}) {
       renderAllOverviewCards();
       auditV992Structure();
     } catch(uiError) {
-      if (typeof console !== "undefined" && console.error) console.error("V99.4.5-Darstellung konnte nicht aktualisiert werden", uiError);
+      if (typeof console !== "undefined" && console.error) console.error("V99.4.6-Darstellung konnte nicht aktualisiert werden", uiError);
     }
     if (renderQueued) {
       renderQueued = false;

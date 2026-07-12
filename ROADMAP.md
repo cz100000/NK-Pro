@@ -1,44 +1,33 @@
 # NK-Pro – Roadmap
 
-**Basis:** V99.4.5 vom 12. Juli 2026  
-**Datenschema:** 5  
-**Datenebenenvertrag:** 1
+**Basis:** V99.4.6 vom 12. Juli 2026
 
 ## Abgeschlossen
 
-### V99.4.0 – UX-Grundgerüst
+- V99.4.1: kompakte ChatGPT-Arbeitsbasis und Referenzdatenstruktur.
+- V99.4.2: verbindliche Datenebenen und Snapshot-Grenzen.
+- V99.4.3: Modularisierung von Persistenz, Migration und Archiv.
+- V99.4.4: Migrations-, Sicherungs-, Restore- und Rollback-Fundament.
+- V99.4.5: Objektstandard 1 und unveränderlicher Abrechnungssnapshot 1.
+- V99.4.6: getrennte Zählerstammdaten, Messwerte, Messperioden, zeitabhängige Zuordnungen, Zählerwechsel und Snapshot 2.
 
-Landingpage, gruppierte Navigation und sichtbarer Abrechnungskontext ohne Fachmodelländerung.
+## Nächste Arbeitspakete
 
-### V99.4.2 – Datenebenen und Snapshot-Grenzen
+### AP6 – Native Zähler- und Messwertverwaltung
 
-Arbeitsstand, Stammdaten, Historie, Snapshot, Archiv, Backup und Recovery klar abgegrenzt; rekursive Archive verhindert.
+- Formulare direkt an `zaehlerDaten` anbinden,
+- Stammdaten- und Messwerterfassung sichtbar trennen,
+- Zählerwechsel, Korrektur, Storno und Schätzung bedienbar machen,
+- zentrale Validierungsfehler im bestehenden UI-Konzept darstellen,
+- Legacy-Adapter schrittweise auf reine Importkompatibilität reduzieren.
 
-### V99.4.3 – Modularisierung
+### Danach
 
-Persistenz, Migration und Archiv in eigenständige Module ausgelagert.
+- fachliche Kosten- und Verteilungsregeln weiter modularisieren,
+- nachvollziehbare Abrechnungsfreigabe und Abschlussworkflow ergänzen,
+- Export-/Druckpipeline gegen Snapshot 2 vereinheitlichen,
+- technische Schulden im verbleibenden monolithischen `app.js` abbauen.
 
-### V99.4.4 – Migration, Sicherung, Restore und Rollback
+## Unveränderte Leitplanken
 
-Zentrale Migrationsregistry, Vor-Migrationssicherung, transaktionale Migration, Sicherungshüllen, Restore-Checkpoint und Rollback.
-
-### V99.4.5 – Objektstandard und Abrechnungssnapshot
-
-- Objektstandard 1 als additive, verlustfreie Projektion,
-- zentrale Abrechnungsbereitschaft,
-- eindeutiger, unveränderlicher und prüfsummengeschützter Snapshot 1,
-- historische Archive als unveränderte `legacy-partial`-Bestände,
-- Stromzähler-Dummy mit vollständigem Abrechnungsausschluss,
-- Datenschema 5 und Datenebenenvertrag 1 unverändert.
-
-## Nächster technischer Schritt
-
-**Zählerstammdaten und periodische Zählerstände physisch trennen.**
-
-Ziele: dauerhafte Zähler-ID aus Objektstandard 1 nutzen, Messperioden separat führen, Zählerwechsel und Nutzerwechsel eindeutig abbilden, historische Referenzen migrieren und Archive/Restore vollständig testen. Das Sicherungs- und Migrationsfundament V99.4.4 bleibt verbindlich.
-
-## Spätere Schritte
-
-- weitere Zerlegung von Import/Export, Berechnung, Brief/Druck und Rendering,
-- CSS- und Druckkonsolidierung,
-- datenschutzgerechte Trennung produktiver und veröffentlichbarer Pakete.
+Kein Frameworkwechsel, kein Buildsystem und keine allgemeinen UI-Redesigns ohne eigenes Arbeitspaket. Datenmigrationen bleiben sicherungs-, validierungs- und rollbackpflichtig.

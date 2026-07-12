@@ -1,4 +1,4 @@
-const CACHE_NAME = "nk-pro-v99-4-5";
+const CACHE_NAME = "nk-pro-v99-4-6";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -9,6 +9,10 @@ const APP_SHELL = [
   "./js/persistence.js",
   "./js/migration.js",
   "./js/backup-recovery.js",
+  "./js/meter-master.js",
+  "./js/meter-readings.js",
+  "./js/meter-periods.js",
+  "./js/meter-validation.js",
   "./js/object-standard.js",
   "./js/billing-snapshot.js",
   "./js/archive.js",
