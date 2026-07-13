@@ -3646,3 +3646,35 @@ body:not(.document-print-window) :where([role="tab"][aria-selected="true"],.tab-
   .meter-inventory-table-heading { align-items:flex-start; flex-direction:column; }
   .dummy-status-note { text-align:left; }
 }
+
+
+/* AP16 – Look & Feel, Kachelsystem und visuelle Interaktionsqualität */
+body:not(.document-print-window) #workspaceTitle { display:none !important; }
+body:not(.document-print-window) .workspace-header { min-height:64px; }
+body:not(.document-print-window) .app-page { max-width:1500px; margin-inline:auto; }
+body:not(.document-print-window) .page-header { padding:22px 24px; border-radius:14px; background:#fff; box-shadow:0 8px 24px rgba(23,59,90,.06); }
+body:not(.document-print-window) .page-header__title { font-size:26px; letter-spacing:-.02em; }
+body:not(.document-print-window) .page-header__kicker { color:#667085; }
+body:not(.document-print-window) .overview-grid { gap:16px; align-items:stretch; }
+body:not(.document-print-window) .overview-card { border:1px solid #dce5ef; border-top-width:1px; border-radius:14px; padding:18px; min-height:176px; box-shadow:0 7px 20px rgba(23,59,90,.055); transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease; }
+body:not(.document-print-window) .overview-card:hover { transform:translateY(-2px); box-shadow:0 12px 28px rgba(23,59,90,.1); }
+body:not(.document-print-window) .overview-card:focus-within { outline:3px solid rgba(24,119,242,.22); outline-offset:2px; }
+body:not(.document-print-window) .overview-card__heading { display:flex; align-items:center; gap:11px; margin-bottom:14px; }
+body:not(.document-print-window) .overview-card__icon { width:32px; height:32px; display:grid; place-items:center; flex:0 0 32px; color:#1769c2; }
+body:not(.document-print-window) .overview-card__icon-svg { width:30px; height:30px; }
+body:not(.document-print-window) .overview-card__title { margin:0; font-size:14px; }
+body:not(.document-print-window) .overview-grid[data-tone="orange"] .overview-card__icon { color:#e56b16; }
+body:not(.document-print-window) .overview-grid[data-tone="green"] .overview-card__icon { color:#2f8a45; }
+body:not(.document-print-window) .overview-grid[data-tone="violet"] .overview-card__icon { color:#7b3fc6; }
+body:not(.document-print-window) .overview-grid[data-tone="petrol"] .overview-card__icon { color:#16889b; }
+body:not(.document-print-window) .overview-card[data-status="ok"] { border-color:#b9d9bf; }
+body:not(.document-print-window) .overview-card[data-status="warn"] { border-color:#f2ce83; }
+body:not(.document-print-window) .overview-card[data-status="error"] { border-color:#efb2ad; }
+body:not(.document-print-window) .page-section { border-radius:14px; overflow:hidden; border-color:#dce5ef; }
+body:not(.document-print-window) .page-section__summary { min-height:58px; padding:14px 18px; }
+body:not(.document-print-window) .page-section[open] { box-shadow:0 8px 22px rgba(23,59,90,.055); }
+body:not(.document-print-window) .table-wrap { border-radius:12px; border:1px solid #e0e7ef; overflow:auto; }
+body:not(.document-print-window) table thead th { background:#f5f8fb; color:#344054; }
+body:not(.document-print-window) button:focus-visible,body:not(.document-print-window) a:focus-visible,body:not(.document-print-window) summary:focus-visible { outline:3px solid rgba(24,119,242,.3); outline-offset:2px; }
+@media (max-width:1100px){ body:not(.document-print-window) .overview-grid{grid-template-columns:repeat(2,minmax(0,1fr));} }
+@media (max-width:680px){ body:not(.document-print-window) .overview-grid{grid-template-columns:1fr;} body:not(.document-print-window) .page-header{padding:18px;} body:not(.document-print-window) .overview-card{min-height:0;} }

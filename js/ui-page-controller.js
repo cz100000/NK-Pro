@@ -83,7 +83,30 @@ function renderStatusAndFeedbackSafely() {
 
 
 
-const OVERVIEW_TITLES = ["Sammelinfo", "Prüfung", "Empfohlener nächster Schritt", "Schnellaktionen"];
+const OVERVIEW_TITLES = ["Überblick", "Datenstatus", "Nächster Schritt", "Direktaktionen"];
+const AP16_VISUALS = Object.freeze({
+  objekt:{titles:["Objektbestand","Objektprüfung","Objekt vorbereiten","Pflegezugänge"],icon:"building",tone:"blue"},
+  start:{titles:["Abrechnungsstand","Qualitätsstatus","Weiterarbeiten","Abrechnungsaktionen"],icon:"chart",tone:"violet"},
+  archiv:{titles:["Archivbestand","Archivstatus","Abrechnung ansehen","Archivaktionen"],icon:"archive",tone:"petrol"},
+  mieterverwaltung:{titles:["Mietverhältnisse","Datenstatus","Mieter prüfen","Mieterverwaltung"],icon:"users",tone:"blue"},
+  wohnungsverwaltung:{titles:["Wohnungsbestand","Flächenstatus","Wohnungen prüfen","Wohnungspflege"],icon:"home",tone:"blue"},
+  sicherung:{titles:["Sicherungsstatus","Systemstatus","Sicherung prüfen","Systemaktionen"],icon:"database",tone:"petrol"},
+  mieter:{titles:["Abrechnungsbestand","Stammdatenabgleich","Daten prüfen","Bearbeitungszugänge"],icon:"users",tone:"blue"},
+  einstellungen:{titles:["Kostenstatus","Vollständigkeit","Kosten ergänzen","Kostenaktionen"],icon:"receipt",tone:"orange"},
+  einnahmen:{titles:["Zahlungsübersicht","Eingabestatus","Werte prüfen","Zahlungsaktionen"],icon:"euro",tone:"green"},
+  wasser:{titles:["Zählerübersicht","DUMMY-Status","Verbrauchserfassung","Pflegezugänge"],icon:"meter",tone:"blue"},
+  manuellewerte:{titles:["Eingabequellen","Summenabgleich","Werte vervollständigen","Eingabeaktionen"],icon:"input",tone:"blue"},
+  verbraeuche:{titles:["Messdatenbestand","Verbrauchskontrolle","Zählerstände erfassen","Verbrauchsaktionen"],icon:"droplet",tone:"blue"},
+  umlage:{titles:["Verteilungsergebnis","Verteilungsprüfung","Ergebnis prüfen","Verteilungsaktionen"],icon:"share",tone:"orange"},
+  vorauszahlungsanpassung:{titles:["Empfehlungsstatus","Plausibilität","Vorauszahlungen prüfen","Planungsaktionen"],icon:"calculator",tone:"green"},
+  qualitaet:{titles:["Prüfstatus","Offene Befunde","Fehler bearbeiten","Prüfaktionen"],icon:"shield",tone:"green"},
+  briefe:{titles:["Briefstatus","Ausgabeprüfung","Briefe erstellen","Briefaktionen"],icon:"mail",tone:"violet"},
+  export:{titles:["Exportumfang","Exportprüfung","Daten bereitstellen","Exportaktionen"],icon:"download",tone:"violet"}
+});
+function ap16Icon(name){
+ const paths={building:'<path d="M4 21V6l8-3v18M12 8h8v13M7 9h2M7 13h2M7 17h2M15 11h2M15 15h2M3 21h18"/>',home:'<path d="M3 11.5 12 4l9 7.5M5 10v11h14V10M9 21v-7h6v7"/>',users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',chart:'<path d="M4 19V9M10 19V5M16 19v-8M22 19H2"/>',archive:'<path d="M3 6h18M5 6v15h14V6M8 3h8l2 3H6l2-3M9 11h6"/>',database:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>',receipt:'<path d="M6 2h12v20l-3-2-3 2-3-2-3 2V2M9 7h6M9 11h6M9 15h4"/>',euro:'<path d="M18 7.5A7 7 0 1 0 18 16.5M4 10h10M4 14h9"/>',meter:'<path d="M5 20a8 8 0 1 1 14 0M12 12l4-4M8 20h8"/>',input:'<path d="M4 4h10v16H4zM8 8h2M8 12h2M8 16h2M14 12h7M18 9l3 3-3 3"/>',droplet:'<path d="M12 2s7 7.2 7 12a7 7 0 0 1-14 0c0-4.8 7-12 7-12z"/>',share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.5 6.8-4M8.6 13.5l6.8 4"/>',calculator:'<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 11h2M14 11h2M8 15h2M14 15h2M8 19h2M14 19h2"/>',shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10M9 12l2 2 4-5"/>',mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',download:'<path d="M12 3v12M7 10l5 5 5-5M4 21h16"/>'};
+ return '<svg class="overview-card__icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(paths[name]||paths.chart)+'</svg>';
+}
 
 const TAB_DEFINITIONS = {
   objekt:{title:"Objekt",kicker:"Objekt vorbereiten",firstSection:"objectPreparationSection",nextTab:"wohnungsverwaltung",renderContent:null},
@@ -183,7 +206,7 @@ function buildOverviewData(tabId) {
     archiv:{summary:[["Archivierte Abrechnungen",s.archives],["Aktuelle Abrechnung",NK_PRO_MODULES.archiveActions.hasActiveCurrentBilling()?s.year:"Keine"],["Datenbestand","Lokal"],["Schema",DATA_SCHEMA_VERSION]],validation:{status:"ok",headline:"Archiv getrennt erreichbar",items:[{text:"Historische Datensätze bleiben unverändert",status:"ok"},{text:"Öffnen erfolgt schreibgeschützt",status:"ok"}]},next:next("Archivierte Abrechnung auswählen und in der Nur-Ansicht prüfen.","archiveRecordsSection"),actions:[open("Archiv öffnen","archiveRecordsSection",true),{label:"Archiv herunterladen",action:"archive.downloadFull",args:[]},go("Abrechnungsübersicht","start")]},
     mieterverwaltung:{summary:[["Mietverhältnisse",s.tenants.length],["Archiviert",s.archivedTenants.length],["Wohnungen",s.units.length],["Abrechnungsjahr",s.year]],validation:commonValidation,next:next("Mieterstammdaten und archivierte Mietverhältnisse vollständig prüfen.","masterTenantSection"),actions:[open("Mietverhältnisse öffnen","masterTenantSection",true),open("Archiv öffnen","masterTenantArchiveSection"),save]},
     wohnungsverwaltung:{summary:[["Wohnungen gesamt",s.units.length],["Aktiv",s.activeUnits.length],["Inaktiv",Math.max(0,s.units.length-s.activeUnits.length)],["Wohnfläche aktiv",s.activeUnits.reduce((a,w)=>a+num(w.wohnflaeche),0).toLocaleString("de-DE")+" m²"]],validation:commonValidation,next:next("Wohnungsbestand und Flächenangaben kontrollieren.","masterUnitSection"),actions:[open("Wohnungsbestand öffnen","masterUnitSection",true),go("Mieterverwaltung","mieterverwaltung"),save]},
-    sicherung:{summary:[["Version",APP_VERSION],["Archivstände",s.archives],["Betriebsart","Offline · lokal"],["Abrechnungsjahr",s.year]],validation:{status:"ok",headline:"Sicherung verfügbar",items:[{text:"Lokale Gesamtsicherung vorhanden",status:"ok"},{text:"Neuer PWA-Cache für V99.4.18",status:"ok"}]},next:next("Vollständige JSON-Sicherung erstellen und Versionsinformationen prüfen.","backupMainSection"),actions:[open("Gesamtsicherung öffnen","backupMainSection",true),open("Version anzeigen","backupVersionSection"),save]},
+    sicherung:{summary:[["Version",APP_VERSION],["Archivstände",s.archives],["Betriebsart","Offline · lokal"],["Abrechnungsjahr",s.year]],validation:{status:"ok",headline:"Sicherung verfügbar",items:[{text:"Lokale Gesamtsicherung vorhanden",status:"ok"},{text:"Neuer PWA-Cache für V99.4.19",status:"ok"}]},next:next("Vollständige JSON-Sicherung erstellen und Versionsinformationen prüfen.","backupMainSection"),actions:[open("Gesamtsicherung öffnen","backupMainSection",true),open("Version anzeigen","backupVersionSection"),save]},
     mieter:{summary:[["Wohnungen gesamt",s.units.length],["Wohnungen aktiv",s.activeUnits.length],["Mietverhältnisse",s.tenants.length],["Archivierte Mieter",s.archivedTenants.length]],validation:commonValidation,next:next("Bestand und Abrechnung in der Prüfbox abgleichen; danach Kostenarten bearbeiten.","tenantControlSection"),actions:[open("Prüfung öffnen","tenantControlSection",true),open("Mietverhältnisse öffnen","tenantRelationsSection"),go("Kostenarten öffnen","einstellungen")]},
     einstellungen:{summary:[["Kostenarten",s.costs.length],["Aktiv in NK",s.activeCosts.length],["Vollständig",s.completeCosts.length],["Gesamtkosten",overviewMoney(s.activeCosts.reduce((a,k)=>a+num(k.gesamtbetrag),0))]],validation:{status:s.completeCosts.length===s.activeCosts.length?"ok":"warn",headline:s.completeCosts.length+" von "+s.activeCosts.length+" vollständig",items:[{text:"Umlageschlüssel und Beträge prüfen",status:s.completeCosts.length===s.activeCosts.length?"ok":"warn"},{text:"Umlage wird automatisch berechnet",status:"ok"}]},next:next("Fehlende Beträge und Umlageschlüssel vervollständigen.","costEditSection"),actions:[open("Kostenarten bearbeiten","costEditSection",true),()=>{}].filter(Boolean)},
     einnahmen:{summary:[["Kaltmiete erhalten",overviewMoney(s.income.rent)],["NK-Vorauszahlungen",overviewMoney(s.income.prepayments)],["Korrekturen",overviewMoney(s.income.corrections)],["Mietverhältnisse",s.tenants.length]],validation:commonValidation,next:next("Kaltmieten und Vorauszahlungen vollständig prüfen; danach manuelle und externe Werte bearbeiten.","incomeRentSection"),actions:[open("Kaltmiete öffnen","incomeRentSection",true),open("Vorauszahlungen öffnen","incomePrepaymentSection"),go("Manuelle Werte","manuellewerte")]},
@@ -208,18 +231,20 @@ function renderOverviewCards(tabId, config) {
   const grid=document.getElementById("overview-"+tabId);
   if (!grid || !config) return;
   grid.replaceChildren();
+  const visual=AP16_VISUALS[tabId]||{titles:OVERVIEW_TITLES,icon:"chart",tone:"blue"};
+  grid.dataset.tone=visual.tone;
   const specs=[
-    {role:"summary",title:OVERVIEW_TITLES[0],status:"info"},
-    {role:"validation",title:OVERVIEW_TITLES[1],status:(config.validation&&config.validation.status)||"info"},
-    {role:"next-step",title:OVERVIEW_TITLES[2],status:"info"},
-    {role:"quick-actions",title:OVERVIEW_TITLES[3],status:"info"}
+    {role:"summary",title:visual.titles[0],status:"info"},
+    {role:"validation",title:visual.titles[1],status:(config.validation&&config.validation.status)||"info"},
+    {role:"next-step",title:visual.titles[2],status:"info"},
+    {role:"quick-actions",title:visual.titles[3],status:"info"}
   ];
   specs.forEach((spec,index)=>{
     const card=document.createElement("article");
     card.className="overview-card";
     card.dataset.overviewRole=spec.role;
     card.dataset.status=spec.status;
-    const title=document.createElement("h3"); title.className="overview-card__title"; title.textContent=spec.title; card.appendChild(title);
+    const heading=document.createElement("div"); heading.className="overview-card__heading"; const icon=document.createElement("span"); icon.className="overview-card__icon"; icon.innerHTML=ap16Icon(index===1?"shield":visual.icon); const title=document.createElement("h3"); title.className="overview-card__title"; title.textContent=spec.title; heading.append(icon,title); card.appendChild(heading);
     const content=document.createElement("div"); content.className="overview-card__content";
     const actions=document.createElement("div"); actions.className="overview-card__actions"+(index===3?" quick-actions":"");
     if (index===0) {
@@ -286,7 +311,7 @@ function updateAllPageHeaders() {
   });
   const activeSection=document.querySelector('section.tab.active');
   const globalTitle=document.getElementById('workspaceTitle');
-  if (globalTitle&&activeSection) globalTitle.textContent=activeSection.id === 'landing' ? 'Arbeitsweiche' : ((TAB_DEFINITIONS[activeSection.id]||{}).title||'NK-Pro');
+  if (globalTitle) { globalTitle.textContent=''; globalTitle.hidden=true; }
 }
 
 function auditV992Structure() {
@@ -301,7 +326,7 @@ function auditV992Structure() {
     const sections=page?Array.from(page.querySelectorAll(':scope > .page-sections > .page-section')):[];
     const validation=sections.length?sections[sections.length-1]:null;
     const footnote=page&&page.querySelector(':scope > .page-footnote');
-    const checks={page:!!page,headerCount:page?page.querySelectorAll(':scope > .page-header').length===1:false,overviewGridCount:grids.length===1,directCardCount:cards.length===4,cardTitles:expected.every((t,i)=>titles[i]===t),noNestedCardGrid:!(grids[0]&&grids[0].querySelector('.overview-grid')),quickActionsAreButtons:cards[3]?Array.from(cards[3].querySelectorAll('.overview-card__actions > *')).every(x=>x.tagName==='BUTTON'):false,validationSectionIsLast:!!(validation&&validation.dataset.sectionRole==='validation'),allInitiallyClosed:sections.every(d=>!d.open),footnoteAfterValidation:!footnote||footnote.previousElementSibling===page.querySelector(':scope > .page-sections')};
+    const checks={page:!!page,headerCount:page?page.querySelectorAll(':scope > .page-header').length===1:false,overviewGridCount:grids.length===1,directCardCount:cards.length===4,cardTitles:expected.every((t,i)=>titles[i]===t),noNestedCardGrid:!(grids[0]&&grids[0].querySelector('.overview-grid')),quickActionsAreButtons:cards[3]?Array.from(cards[3].querySelectorAll('.overview-card__actions > *')).every(x=>x.tagName==='BUTTON'):false,validationSectionIsLast:!!(validation&&validation.dataset.sectionRole==='validation'),primarySectionOpen:sections.length?sections[0].open:true,footnoteAfterValidation:!footnote||footnote.previousElementSibling===page.querySelector(':scope > .page-sections')};
     return {tab:tabId,title:def.title,headerCount:page?page.querySelectorAll(':scope > .page-header').length:0,overviewGridCount:grids.length,directCardCount:cards.length,cardTitles:titles,legacyCardsFound:!!(page&&page.querySelector('.cards,.workspace-overview-grid,.cost-overview-grid,.tenant-overview-grid,.meter-overview-grid')),nestedCardGridFound:!checks.noNestedCardGrid,quickActionsAreButtons:checks.quickActionsAreButtons,validationSectionIsLast:checks.validationSectionIsLast,footnoteAfterValidation:checks.footnoteAfterValidation,result:Object.values(checks).every(Boolean)?'ok':'fehler',checks};
   });
   const report={version:APP_VERSION,generatedAt:new Date().toISOString(),tabCount:results.length,allPassed:results.every(r=>r.result==='ok'),results};

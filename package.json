@@ -1,8 +1,8 @@
 {
-  "name": "nk-pro-v99-4-18",
-  "version": "99.4.18",
+  "name": "nk-pro-v99-4-19",
+  "version": "99.4.19",
   "private": true,
-  "description": "AP15-Gesamtintegration, Releasehärtung und schlanke Arbeitsbasis für NK-Pro V99.4.18",
+  "description": "AP16-Look & Feel, Kachelsystem und visuelle Interaktionsqualität für NK-Pro V99.4.19",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
     "test:fixtures": "node tools/check-fixtures.cjs",

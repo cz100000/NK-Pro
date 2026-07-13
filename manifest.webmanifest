@@ -1,6 +1,6 @@
 {
-  "name": "NK-Pro V99.4.18",
-  "short_name": "NK-Pro V99.4.18",
+  "name": "NK-Pro V99.4.19",
+  "short_name": "NK-Pro V99.4.19",
   "description": "Lokale Nebenkostenabrechnung mit gehärtetem Bedienfluss, konsistenter Persistenz und schlanker Offline-Releasebasis.",
   "lang": "de-DE",
   "id": "./",
@@ -9,7 +9,7 @@
   "display": "standalone",
   "background_color": "#f4f6f9",
   "theme_color": "#031d41",
-  "version": "99.4.18",
+  "version": "99.4.19",
   "icons": [
     {
       "src": "./icons/icon-192.png",

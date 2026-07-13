@@ -60,22 +60,22 @@ function main() {
   const architecture = JSON.parse(childProcess.execFileSync(process.execPath, [path.join(root, "tools/analyze-ap12-architecture.cjs")], { encoding:"utf8" }));
   const appMetrics = JSON.parse(childProcess.execFileSync(process.execPath, [path.join(root, "tools/analyze-app-js.cjs")], { encoding:"utf8" }));
 
-  assert(packageJson.name === "nk-pro-v99-4-18" && packageJson.version === "99.4.18", "Paketversion ist inkonsistent.");
+  assert(packageJson.name === "nk-pro-v99-4-19" && packageJson.version === "99.4.19", "Paketversion ist inkonsistent.");
   assert(lockJson.name === packageJson.name && lockJson.version === packageJson.version, "Package-Lock-Version ist inkonsistent.");
   assert(lockJson.packages?.[""]?.name === packageJson.name && lockJson.packages?.[""]?.version === packageJson.version, "Package-Lock-Root ist inkonsistent.");
-  assert(manifest.version === "99.4.18" && manifest.name.includes("V99.4.18"), "Manifestversion ist inkonsistent.");
-  assert(project.appVersion === "99.4.18" && project.displayVersion === "V99.4.18" && project.basedOn === "99.4.17-AP14", "Projektversionsmetadaten sind inkonsistent.");
+  assert(manifest.version === "99.4.19" && manifest.name.includes("V99.4.19"), "Manifestversion ist inkonsistent.");
+  assert(project.appVersion === "99.4.19" && project.displayVersion === "V99.4.19" && project.basedOn === "99.4.18-AP15", "Projektversionsmetadaten sind inkonsistent.");
   assert(project.schemaVersion === 5 && project.dataLayerContractVersion === 1, "Datenverträge wurden unerwartet verändert.");
   assert(project.objectStandardVersion === 1 && project.billingSnapshotVersion === 2, "Objekt-/Snapshotstandard wurde unerwartet verändert.");
-  assert(project.documentLayoutVersion === 4 && project.uiVisualSystemVersion === 1, "AP13-/AP14-Regressionsstand ist inkonsistent.");
+  assert(project.documentLayoutVersion === 4 && project.uiVisualSystemVersion === 2, "AP13-/AP14-Regressionsstand ist inkonsistent.");
   assert(project.releaseHardeningVersion === 1 && project.releaseContentPolicyVersion === 1 && project.transientUiResetVersion === 1, "AP15-Metadaten fehlen.");
-  assert(project.pwaCacheName === "nk-pro-v99-4-18-ap15", "PWA-Cachemetadaten sind inkonsistent.");
+  assert(project.pwaCacheName === "nk-pro-v99-4-19-ap16", "PWA-Cachemetadaten sind inkonsistent.");
 
-  assert(runtime.includes('const APP_VERSION = "V99.4.18";'), "Laufzeitversion ist inkonsistent.");
-  assert(runtime.includes('const APP_VERSION_NAME = "AP15-Gesamtintegration, Releasehärtung und schlanke Arbeitsbasis";'), "Laufzeitname ist inkonsistent.");
-  assert(html.includes("<title>NK-Pro V99.4.18 – AP15-Gesamtintegration, Releasehärtung und schlanke Arbeitsbasis</title>"), "HTML-Titel ist inkonsistent.");
-  assert(html.includes("<strong>V99.4.18</strong>"), "Sichtbare Anwendungsversion ist inkonsistent.");
-  assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-18-ap15";'), "Service-Worker-Cache ist inkonsistent.");
+  assert(runtime.includes('const APP_VERSION = "V99.4.19";'), "Laufzeitversion ist inkonsistent.");
+  assert(runtime.includes('const APP_VERSION_NAME = "AP16-Look & Feel, Kachelsystem und visuelle Interaktionsqualität";'), "Laufzeitname ist inkonsistent.");
+  assert(html.includes("<title>NK-Pro V99.4.19 – AP16-Look & Feel, Kachelsystem und visuelle Interaktionsqualität</title>"), "HTML-Titel ist inkonsistent.");
+  assert(html.includes("<strong>V99.4.19</strong>"), "Sichtbare Anwendungsversion ist inkonsistent.");
+  assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-19-ap16";'), "Service-Worker-Cache ist inkonsistent.");
 
   const scripts = [...html.matchAll(/<script\s+defer(?:="")?\s+src="([^"]+)"><\/script>/g)].map(match => match[1]);
   assert(scripts.length === 50 && scripts.at(-2) === "./js/app.js" && scripts.at(-1) === "./js/service-worker-register.js", "Produktive Skriptreihenfolge ist inkonsistent.");
@@ -94,7 +94,7 @@ function main() {
   assert(!/\bon(?:click|change|input|submit|keydown)\s*=/i.test(html), "Inline-Handler sind vorhanden.");
   assert(html.includes('data-tab="wasser"') && html.includes('data-tab="verbraeuche"'), "Zähler-DUMMY oder Verbrauchserfassung fehlt.");
   assert(css.includes('--font-ui:"Segoe UI",Arial,sans-serif;'), "Segoe-UI-Appschrift fehlt.");
-  assert(renderer.includes('font-family:Arial,sans-serif') && renderer.includes("AP13_DOCUMENT_MODEL"), "Arial-/AP13-Dokumentmodell fehlt.");
+  assert(renderer.includes('font-family:Arial,sans-serif') && renderer.includes('.nk-letter-document'), "Arial-/AP13-Dokumentmodell fehlt.");
   assert(documentUi.includes('attachShadow({ mode:"open" })'), "Isolierte Briefvorschau fehlt.");
 
   assert(navigationPages.includes("function resetTransientUiState(options = {})"), "Transiente UI-Zustände werden nicht zentral bereinigt.");
@@ -120,7 +120,7 @@ function main() {
   assert(ap15Results.transientUiStateReset === true && ap15Results.safeCacheCleanup === true && ap15Results.offlineFallbackHardened === true, "AP15-Härtungsbestätigung fehlt.");
 
   verifyChecksums();
-  process.stdout.write("Release-Konsistenzprüfung abgeschlossen: V99.4.18 mit unveränderten Datenverträgen, AP13-/AP14-Regression, gehärtetem Bedienfluss, sicherer PWA-Cachepflege und schlanker Arbeitsbasis ist konsistent.\n");
+  process.stdout.write("Release-Konsistenzprüfung abgeschlossen: V99.4.19 mit unveränderten Datenverträgen, AP13-/AP14-Regression, gehärtetem Bedienfluss, sicherer PWA-Cachepflege und schlanker Arbeitsbasis ist konsistent.\n");
 }
 
 try { main(); }

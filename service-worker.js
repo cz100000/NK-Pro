@@ -1,4 +1,4 @@
-const CACHE_NAME = "nk-pro-v99-4-18-ap15";
+const CACHE_NAME = "nk-pro-v99-4-19-ap16";
 const CACHE_PREFIX = "nk-pro-";
 const APP_SHELL = [
   "./",

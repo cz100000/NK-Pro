@@ -75,9 +75,9 @@ splitModules.forEach(name => {
   assert(scripts.indexOf(name) < appIndex, `Neues Modul wird nicht vor app.js geladen: ${name}`);
   assert(worker.includes(`"./js/${name}"`), `Neues Modul fehlt in der Offline-App-Shell: ${name}`);
 });
-assert(runtimeConfig.includes('const APP_VERSION = "V99.4.18";'));
-assert(runtimeConfig.includes('const APP_VERSION_NAME = "AP15-Gesamtintegration, Releasehärtung und schlanke Arbeitsbasis";'));
-assert(html.includes("NK-Pro V99.4.18 – AP15-Gesamtintegration, Releasehärtung und schlanke Arbeitsbasis"));
-assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-18-ap15";'));
+assert(runtimeConfig.includes('const APP_VERSION = "V99.4.19";'));
+assert(runtimeConfig.includes('const APP_VERSION_NAME = "AP16-Look & Feel, Kachelsystem und visuelle Interaktionsqualität";'));
+assert(html.includes("NK-Pro V99.4.19 – AP16-Look & Feel, Kachelsystem und visuelle Interaktionsqualität"));
+assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-19-ap16";'));
 
 process.stdout.write(`AP12-Architekturprüfung abgeschlossen: app.js ${appMetrics.lines} Zeilen/${appMetrics.bytes} Byte, 1 Zustandsersetzung, ${architecture.renderers.length} seiteneffektfreie Renderer, 37 entfernte Wrapper und keine alten window-Bindungen.\n`);

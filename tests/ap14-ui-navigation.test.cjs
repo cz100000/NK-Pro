@@ -18,11 +18,11 @@ const renderer = read("js/document-renderer.js");
 const worker = read("service-worker.js");
 const project = JSON.parse(read("nk-pro-project.json"));
 
-assert(html.includes("<title>NK-Pro V99.4.18 – AP15-Gesamtintegration, Releasehärtung und schlanke Arbeitsbasis</title>"), "AP14-HTML-Titel fehlt.");
-assert(runtime.includes('const APP_VERSION_NAME = "AP15-Gesamtintegration, Releasehärtung und schlanke Arbeitsbasis";'), "AP14-Laufzeitname fehlt.");
-assert(project.versionName === "AP15-Gesamtintegration, Releasehärtung und schlanke Arbeitsbasis", "AP14-Projektname fehlt.");
+assert(html.includes("<title>NK-Pro V99.4.19 – AP16-Look & Feel, Kachelsystem und visuelle Interaktionsqualität</title>"), "AP14-HTML-Titel fehlt.");
+assert(runtime.includes('const APP_VERSION_NAME = "AP16-Look & Feel, Kachelsystem und visuelle Interaktionsqualität";'), "AP14-Laufzeitname fehlt.");
+assert(project.versionName === "AP16-Look & Feel, Kachelsystem und visuelle Interaktionsqualität", "AP14-Projektname fehlt.");
 assert(project.schemaVersion === 5 && project.dataLayerContractVersion === 1, "Datenschema oder Datenebenenvertrag wurde verändert.");
-assert(project.navigationDesignSystemVersion === 3 && project.uiVisualSystemVersion === 1 && project.meterInventoryDummyVersion === 1, "AP14-UI-Metadaten fehlen.");
+assert(project.navigationDesignSystemVersion === 3 && project.uiVisualSystemVersion === 2 && project.meterInventoryDummyVersion === 1, "AP14-UI-Metadaten fehlen.");
 
 assert(css.includes('--font-ui:"Segoe UI",Arial,sans-serif;'), "Verbindliche Segoe-UI-Schriftfamilie fehlt.");
 assert(css.includes("V99.4.17 – AP14: Navigationsbereinigung und visuelles UI-System"), "Zentraler AP14-CSS-Block fehlt.");
@@ -84,7 +84,7 @@ const landingBilling = html.match(/<button class="landing-choice"[^>]*data-ui-ac
 assert(svgForButton(objectGroup) && svgForButton(objectGroup) === svgForButton(landingObject), "Objekt-Startkachel verwendet nicht exakt das Navigationsicon.");
 assert(svgForButton(billingGroup) && svgForButton(billingGroup) === svgForButton(landingBilling), "Abrechnungs-Startkachel verwendet nicht exakt das Navigationsicon.");
 
-assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-18-ap15";'), "PWA-Cache ist nicht V99.4.18.");
+assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-19-ap16";'), "PWA-Cache ist nicht V99.4.19.");
 assert(!/<link[^>]+(?:fontawesome|material-icons|bootstrap-icons)|https?:\/\/[^"']+\.(?:svg|woff2?)/i.test(html), "AP14 führt eine externe Icon- oder Schriftabhängigkeit ein.");
 for (const file of ["tests/ap14-ui-navigation.test.cjs", "tests/ap14-ui-navigation.spec.js"]) {
   assert(fs.existsSync(path.join(root, file)), `${file} fehlt.`);
