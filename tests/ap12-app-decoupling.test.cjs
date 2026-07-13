@@ -34,7 +34,7 @@ assert(stateOwner.includes("function replaceApplicationState(nextState)"), "Zent
 assert.equal(architecture.totals.stateRootAssignments, 1, "Es existieren mehrere direkte Ersetzungen des Anwendungszustands.");
 assert.deepEqual(architecture.stateRootAssignments.map(item => `${item.file}:${item.function}`), ["js/app-state-persistence.js:replaceApplicationState"]);
 
-assert.equal(architecture.renderers.length, 46, "Rendererinventar ist unvollständig.");
+assert.equal(architecture.renderers.length, 47, "Rendererinventar ist unvollständig.");
 assert.equal(architecture.renderers.filter(item => item.mutatesState || item.persists || item.navigates || item.opensDialog).length, 0, "Renderer besitzen fachliche Seiteneffekte.");
 
 const oldGlobals = ["__V992_AUDIT__", "__NKPRO_UI_ARCHITECTURE__", "__NKPRO_STARTUP__", "__NKPRO_COMPATIBILITY__"];
@@ -75,9 +75,9 @@ splitModules.forEach(name => {
   assert(scripts.indexOf(name) < appIndex, `Neues Modul wird nicht vor app.js geladen: ${name}`);
   assert(worker.includes(`"./js/${name}"`), `Neues Modul fehlt in der Offline-App-Shell: ${name}`);
 });
-assert(runtimeConfig.includes('const APP_VERSION = "V99.4.19";'));
-assert(runtimeConfig.includes('const APP_VERSION_NAME = "AP16-Look & Feel, Kachelsystem und visuelle Interaktionsqualität";'));
-assert(html.includes("NK-Pro V99.4.19 – AP16-Look & Feel, Kachelsystem und visuelle Interaktionsqualität"));
-assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-19-ap16";'));
+assert(runtimeConfig.includes('const APP_VERSION = "V99.4.20";'));
+assert(runtimeConfig.includes('const APP_VERSION_NAME = "AP17-Bereichs-Dashboards, Navigationslogik und UI-Bereinigung";'));
+assert(html.includes("NK-Pro V99.4.20 – AP17-Bereichs-Dashboards, Navigationslogik und UI-Bereinigung"));
+assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-20-ap17";'));
 
 process.stdout.write(`AP12-Architekturprüfung abgeschlossen: app.js ${appMetrics.lines} Zeilen/${appMetrics.bytes} Byte, 1 Zustandsersetzung, ${architecture.renderers.length} seiteneffektfreie Renderer, 37 entfernte Wrapper und keine alten window-Bindungen.\n`);

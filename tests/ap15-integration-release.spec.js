@@ -22,7 +22,7 @@ test("Startseite, Objektvorbereitung und Abrechnungsübersicht bilden einen gesc
   await openFreshApp(page);
   await expect(page.locator("#landing")).toHaveClass(/active/);
   await page.locator('[data-ui-action="navigation.enterObjectPreparation"]').click();
-  await expect(page.locator("#objekt")).toHaveClass(/active/);
+  await expect(page.locator("#objektuebersicht")).toHaveClass(/active/);
   await page.locator('.nav-start-link[data-tab="landing"]').click();
   await expect(page.locator("#landing")).toHaveClass(/active/);
   await page.locator('[data-ui-action="navigation.enterBillingOverview"]').click();
@@ -125,8 +125,7 @@ test("Zähler-DUMMY bleibt bei Gesamtintegration zustandsneutral und Verbrauchse
   await activateCurrentBilling(page);
   const before = await stableStateSnapshot(page);
   const beforeStorage = await page.evaluate(() => JSON.stringify(localStorage.__entries()));
-  await page.locator('[data-nav-toggle="group-object"]').click();
-  await page.locator('.tab-btn[data-tab="wasser"]').click();
+  await page.evaluate(() => switchToTab("wasser"));
   await expect(page.locator("#wasser")).toContainText("DUMMY");
   const afterDummy = await stableStateSnapshot(page);
   const afterStorage = await page.evaluate(() => JSON.stringify(localStorage.__entries()));
@@ -135,11 +134,11 @@ test("Zähler-DUMMY bleibt bei Gesamtintegration zustandsneutral und Verbrauchse
   const withoutNavigationPreference = value => {
     const entries = JSON.parse(value);
     delete entries["nkpro.workflowNavigation.v3"];
+    delete entries["nkpro.workflowNavigation.v4"];
     return entries;
   };
   expect(withoutNavigationPreference(afterStorage)).toEqual(withoutNavigationPreference(beforeStorage));
-  await page.locator('[data-nav-toggle="group-billing"]').click();
-  await page.locator('.tab-btn[data-tab="verbraeuche"]').click();
+  await page.evaluate(() => switchToTab("verbraeuche"));
   await expect(page.locator("#verbraeuche #waterMeterSettings")).toHaveCount(1);
   await expect(page.locator("#verbraeuche #meterCurrentSections")).toHaveCount(1);
   await expect(page.locator("#verbraeuche #meterConsumptionControl")).toHaveCount(1);
@@ -160,7 +159,7 @@ test("App-Shell wird durch den realen Service Worker kontrolliert und startet of
   await page.waitForFunction(() => Boolean(navigator.serviceWorker.controller));
   await context.setOffline(true);
   await page.reload({ waitUntil:"domcontentloaded" });
-  await expect(page).toHaveTitle(/NK-Pro V99\.4\.18/);
+  await expect(page).toHaveTitle(/NK-Pro V99\.4\.20/);
   await expect(page.locator("#landing")).toHaveClass(/active/);
   await context.setOffline(false);
   runtime.assertClean();

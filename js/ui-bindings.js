@@ -81,7 +81,7 @@
     });
     registerController("navigation", "Arbeitskontext und Tabwechsel ohne Fachlogik", {
       "navigation.switchTab":call(handlers, "switchToTab"), "navigation.openSection":call(handlers, "overviewOpenSection"), "navigation.showLanding":call(handlers, "showLandingPage"),
-      "navigation.enterObjectPreparation":context => requireHandler(handlers, "switchToTab")("objekt"),
+      "navigation.enterObjectPreparation":context => requireHandler(handlers, "switchToTab")("objektuebersicht"),
       "navigation.enterBillingOverview":context => requireHandler(handlers, "switchToTab")("start"),
       "navigation.returnStart":call(handlers, "returnToStartPage")
     });

@@ -16,19 +16,19 @@ const persistence = read("js/app-state-persistence.js");
 const worker = read("service-worker.js");
 const config = read("playwright.config.cjs");
 
-assert.equal(project.appVersion, "99.4.19");
-assert.equal(project.basedOn, "99.4.18-AP15");
+assert.equal(project.appVersion, "99.4.20");
+assert.equal(project.basedOn, "99.4.19-AP16");
 assert.equal(project.schemaVersion, 5);
 assert.equal(project.dataLayerContractVersion, 1);
 assert.equal(project.billingSnapshotVersion, 2);
 assert.equal(project.documentLayoutVersion, 4);
-assert.equal(project.pwaCacheName, "nk-pro-v99-4-19-ap16");
+assert.equal(project.pwaCacheName, "nk-pro-v99-4-20-ap17");
 assert.equal(project.releaseHardeningVersion, 1);
 assert.equal(project.releaseContentPolicyVersion, 1);
 assert.equal(project.transientUiResetVersion, 1);
 
-assert.equal(packageJson.name, "nk-pro-v99-4-19");
-assert.equal(packageJson.version, "99.4.19");
+assert.equal(packageJson.name, "nk-pro-v99-4-20");
+assert.equal(packageJson.version, "99.4.20");
 assert(packageJson.scripts["test:contents"], "ZIP-Inhaltsprüfung fehlt im Paket.");
 assert(packageJson.scripts["test:ap15"], "AP15-Testskript fehlt.");
 assert(packageJson.scripts["release:check"], "Release-Prüfskript fehlt.");

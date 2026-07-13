@@ -1,3 +1,9 @@
+# NK-Pro V99.4.20 – AP17 Bereichs-Dashboards, Navigationslogik und UI-Bereinigung
+
+AP17 ergänzt zwei schlanke Bereichs-Dashboards, verlagert den aktiven Abrechnungskontext in eine globale Kontextleiste, macht Navigationsgruppen unabhängig klappbar und entfernt generische Kacheln von Bearbeitungsseiten. Datenschema 5, Datenebenenvertrag 1 sowie das AP13-Brief-, Druck-, PDF- und Schwarzweißlayout bleiben unverändert.
+
+## Vorheriger Stand
+
 # AP16 – Umsetzungsbericht
 
 ## Version

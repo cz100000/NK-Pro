@@ -1,28 +1,28 @@
-# NK-Pro – Projektstand V99.4.18
+# NK-Pro – Projektstand V99.4.20
 
-**Versionsname:** AP15-Gesamtintegration, Releasehärtung und schlanke Arbeitsbasis  
-**Basis:** vollständiger Abschlussstand AP14 V99.4.17  
-**Abschlussbezeichnung:** Änderungen umgesetzt – NK-Pro V99.4.18
+**Versionsname:** AP17-Bereichs-Dashboards, Navigationslogik und UI-Bereinigung  
+**Basis:** AP16-Korrekturstand V99.4.19 „Mockupnahe UI“  
+**Abschlussbezeichnung:** Änderungen umgesetzt – NK-Pro V99.4.20
 
 ## Verbindlicher technischer Stand
 
-- Statische lokale Browseranwendung und PWA aus HTML, CSS und JavaScript
-- kein React, kein TypeScript, kein Buildsystem
-- Datenschema 5 und Datenebenenvertrag 1 unverändert
-- Objektstandard 1, Abrechnungssnapshot 2 und Dokumentlayout 4 unverändert
-- normales UI mit `"Segoe UI", Arial, sans-serif`
-- Briefvorschau, Druck und Dokumentausgabe weiterhin in Arial
-- PWA-Cache `nk-pro-v99-4-18-ap15`
+- statische lokale Browseranwendung und PWA aus HTML, CSS und JavaScript,
+- kein React, kein TypeScript, kein Buildsystem,
+- Datenschema 5 und Datenebenenvertrag 1 unverändert,
+- Objektstandard 1, Abrechnungssnapshot 2 und Dokumentlayout 4 unverändert,
+- normales UI mit `"Segoe UI", Arial, sans-serif`,
+- Briefvorschau, Druck, PDF und Schwarzweißausgabe weiterhin AP13-isoliert,
+- PWA-Cache `nk-pro-v99-4-20-ap17`.
 
-## AP15-Abschluss
+## AP17-Abschluss
 
-Der reale Bedien- und Abrechnungsablauf wurde zusammenhängend geprüft. Verbliebene transiente Dialog-, Kopfmenü- und Kosten-Auswahlzustände werden an Kontextgrenzen zentral bereinigt. Import, Restore und Rollback führen in einen klaren Startzustand zurück. Der Service Worker löscht nur alte NK-Pro-Caches, beschränkt Laufzeitcaching auf erfolgreiche Same-Origin-Antworten und liefert Navigation offline aus dem App-Shell-Cache.
+Die Arbeitsweiche bleibt unverändert. Hinter „Objekt vorbereiten“ und „Nebenkosten abrechnen“ stehen zwei neue schlanke Substartseiten. Reale Datenpunkte und fiktive Vorschauwerte sind technisch und visuell getrennt. Der frühere Sidebar-Block „Aktive Abrechnung“ wurde durch eine flache globale Kontextleiste ersetzt. Navigationsgruppen lassen sich unabhängig öffnen und schließen; direkte Seitenaufrufe öffnen die zugehörige Gruppe automatisch.
 
-Die Arbeitsbasis wurde nach Referenz- und Nutzungsprüfung entschlackt. Produktiver Code, Ressourcen, Datenverträge, Migrationen, Import/Export, Restore, aktuelle Tests und verbindliche Dokumentation bleiben enthalten. Historische Nachweise und generierte Kontrollartefakte gehören nicht mehr in die technische Arbeits-ZIP.
+Generische Karten wurden auf Bearbeitungsseiten entfernt. Fachliche Status-, Fortschritts- und Workflowinformationen liegen primär auf den beiden Bereichsübersichten. Klappboxen und Abrechnungsnavigation verwenden einheitliche lokale Inline-SVGs.
 
 ## Fachliche Abgrenzung
 
-- `Projekt vorbereiten → Zähler` bleibt ausschließlich ein statischer DUMMY.
-- `Nebenkosten abrechnen → Verbräuche erfassen` bleibt die produktive Erfassung.
-- AP15 führt keine neue Zählerverwaltung, Berechnungsart oder Hauptnavigation ein.
-- Das AP13-Briefsystem und das AP14-UI-System wurden nur regressionsgeprüft.
+- `Objekt vorbereiten → Zähler` bleibt ausschließlich ein statischer DUMMY.
+- Die 15 als Vorschau markierten Dashboardwerte besitzen noch keine produktive Fachlogik.
+- Gebäudekurzcode ARB5 bleibt der verbindliche Einzelobjekt-Kontext.
+- Berechnungs-, Abrechnungs-, Verbrauchs-, Daten-, Brief-, Druck-, PDF- und Schwarzweißlogik wurden nicht verändert.

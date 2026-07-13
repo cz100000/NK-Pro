@@ -3,16 +3,18 @@
 
   const preferences = global.NKProUiPreferences;
   if (!preferences) throw new Error("NK-Pro UI-Einstellungsspeicher fehlt.");
-  const NAV_GROUP_STORAGE_KEY = "nkpro.workflowNavigation.v3";
+  const NAV_GROUP_STORAGE_KEY = "nkpro.workflowNavigation.v4";
+  const LEGACY_NAV_GROUP_STORAGE_KEY = "nkpro.workflowNavigation.v3";
   const GROUP_KEYS = ["group-object", "group-billing", "group-archive", "group-extras"];
+  const BILLING_CONTEXT_TABS = ["mieter","einstellungen","einnahmen","manuellewerte","verbraeuche","umlage","vorauszahlungsanpassung","qualitaet","briefe","export"];
   const TAB_PATHS = {
-    objekt:"group-object", mieterverwaltung:"group-object", wohnungsverwaltung:"group-object", wasser:"group-object",
+    objektuebersicht:"group-object", objekt:"group-object", mieterverwaltung:"group-object", wohnungsverwaltung:"group-object", wasser:"group-object",
     start:"group-billing", mieter:"group-billing", einstellungen:"group-billing", einnahmen:"group-billing",
     manuellewerte:"group-billing", verbraeuche:"group-billing", umlage:"group-billing",
     vorauszahlungsanpassung:"group-billing", qualitaet:"group-billing", briefe:"group-billing", export:"group-billing",
     archiv:"group-archive", sicherung:"group-extras"
   };
-  let openGroup = loadOpenGroup();
+  let openGroups = loadOpenGroups();
   let initialized = false;
   let contextProvider = Object.freeze({});
 
@@ -31,28 +33,38 @@
     return describe();
   }
 
-  function loadOpenGroup() {
+  function loadOpenGroups() {
     try {
       const stored = preferences.get(NAV_GROUP_STORAGE_KEY);
-      return GROUP_KEYS.includes(stored) ? stored : "group-object";
-    } catch(error) { return "group-object"; }
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        const values = Array.isArray(parsed) ? parsed : Object.keys(parsed || {}).filter(key => parsed[key]);
+        return new Set(values.filter(key => GROUP_KEYS.includes(key)));
+      }
+      const legacy = preferences.get(LEGACY_NAV_GROUP_STORAGE_KEY);
+      if (GROUP_KEYS.includes(legacy)) return new Set([legacy]);
+    } catch(error) {}
+    return new Set(["group-object"]);
   }
-  function saveOpenGroup() { preferences.set(NAV_GROUP_STORAGE_KEY, openGroup); }
+  function saveOpenGroups() { preferences.set(NAV_GROUP_STORAGE_KEY, JSON.stringify(GROUP_KEYS.filter(key => openGroups.has(key)))); }
   function applyGroupState() {
     GROUP_KEYS.forEach(function (key) {
       const toggle = document.querySelector('[data-nav-toggle="' + key + '"]');
       const panel = toggle ? document.getElementById(toggle.getAttribute("aria-controls")) : null;
-      const expanded = key === openGroup;
+      const expanded = openGroups.has(key);
       if (toggle) toggle.setAttribute("aria-expanded", expanded ? "true" : "false");
       if (panel) panel.hidden = !expanded;
     });
   }
-  function setOpenGroup(key, persist) {
+  function setGroupExpanded(key, expanded, persist) {
     if (!GROUP_KEYS.includes(key)) return;
-    openGroup = key;
+    if (expanded) openGroups.add(key);
+    else openGroups.delete(key);
     applyGroupState();
-    if (persist !== false) saveOpenGroup();
+    if (persist !== false) saveOpenGroups();
   }
+  function toggleGroup(key, persist) { setGroupExpanded(key, !openGroups.has(key), persist); }
+  function setOpenGroup(key, persist) { setGroupExpanded(key, true, persist); }
   function markActiveNavigationBranch(tabId) {
     document.querySelectorAll(".nav-group").forEach(function (node) { node.classList.remove("has-active"); });
     document.querySelectorAll(".tab-btn[data-tab]").forEach(function (node) {
@@ -74,32 +86,34 @@
   }
   function ensureNavigationPath(tabId, options) {
     const group = TAB_PATHS[tabId];
-    if (group) setOpenGroup(group, false);
+    if (group) setGroupExpanded(group, true, false);
     markActiveNavigationBranch(tabId);
-    if (!options || options.persist !== false) saveOpenGroup();
+    if (!options || options.persist !== false) saveOpenGroups();
   }
   function valueFromProvider(name, fallback) {
     try { return contextProvider[name] ? contextProvider[name]() : fallback; } catch(error) { return fallback; }
   }
   function updateWorkflowNavigationContext() {
-    const panel = document.querySelector("[data-nav-billing-context-panel]");
-    const object = document.querySelector("[data-nav-billing-object]");
-    const year = document.querySelector("[data-nav-billing-year]");
-    const status = document.querySelector("[data-nav-billing-context]");
+    const bar = document.querySelector("[data-global-billing-context]");
+    const object = document.querySelector("[data-global-billing-object]");
+    const year = document.querySelector("[data-global-billing-year]");
+    const status = document.querySelector("[data-global-billing-status]");
     const currentYear = String(valueFromProvider("currentYear", "") || "");
     const objectLabel = valueFromProvider("objectLabel", "Objekt") || "Objekt";
     const archive = !!valueFromProvider("isArchiveViewer", false);
     const available = archive || !!valueFromProvider("hasActiveBilling", true);
     const finalized = !!valueFromProvider("isFinalized", false);
     const contextOpen = !!valueFromProvider("isContextOpen", false);
-    if (panel) panel.hidden = !contextOpen;
+    const active = document.querySelector("section.tab.active");
+    const relevantPage = !!(active && BILLING_CONTEXT_TABS.includes(active.id));
+    if (bar) bar.hidden = !(contextOpen && relevantPage);
     if (object) object.textContent = objectLabel;
-    if (year) year.textContent = currentYear;
+    if (year) year.textContent = currentYear || "–";
     if (status) {
-      status.classList.remove("is-archive", "is-finalized");
+      status.classList.remove("is-archive", "is-finalized", "is-working");
       if (archive) { status.textContent = "Nur Ansicht"; status.classList.add("is-archive"); }
       else if (finalized) { status.textContent = "Finalisiert"; status.classList.add("is-finalized"); }
-      else status.textContent = "Bearbeitung";
+      else { status.textContent = "In Bearbeitung"; status.classList.add("is-working"); }
     }
     document.querySelectorAll('[data-requires-billing="true"]').forEach(function (button) {
       button.disabled = !available;
@@ -158,7 +172,7 @@
     initialized = true;
     applyGroupState();
     document.querySelectorAll(".nav-group-toggle[data-nav-toggle]").forEach(function (toggle) {
-      toggle.addEventListener("click", function () { setOpenGroup(toggle.dataset.navToggle, true); });
+      toggle.addEventListener("click", function () { toggleGroup(toggle.dataset.navToggle, true); });
     });
     const active = document.querySelector("section.tab.active");
     if (active) ensureNavigationPath(active.id, {persist:false});
@@ -190,7 +204,8 @@
     updateWorkflowNavigationContext();
   }
   function describe() {
-    return Object.freeze({ initialized, openGroup, groupCount:GROUP_KEYS.length, configured:Object.values(contextProvider).some(Boolean) });
+    const values = GROUP_KEYS.filter(key => openGroups.has(key));
+    return Object.freeze({ initialized, openGroups:values, openGroup:values[0] || null, groupCount:GROUP_KEYS.length, configured:Object.values(contextProvider).some(Boolean) });
   }
 
   document.addEventListener("DOMContentLoaded", function () {
@@ -207,6 +222,8 @@
     updateWorkflowNavigationContext,
     applyGroupState,
     setOpenGroup,
+    setGroupExpanded,
+    toggleGroup,
     setSidebarCollapsed,
     describe
   });

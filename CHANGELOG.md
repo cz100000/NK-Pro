@@ -1,5 +1,16 @@
 # Änderungsprotokoll
 
+## V99.4.20 – AP17-Bereichs-Dashboards, Navigationslogik und UI-Bereinigung (14.07.2026)
+
+- zwei neue Bereichsübersichten für Objektvorbereitung und Nebenkostenabrechnung ergänzt,
+- 15 reale Datenpunkte und 15 eindeutig markierte Vorschauwerte eingebunden,
+- alten Sidebar-Kontext durch eine flache globale Abrechnungskontextleiste ersetzt,
+- alle Navigationsgruppen unabhängig klappbar, speicherbar und tastaturbedienbar gemacht,
+- 119 generische Karten entfernt oder in fachliche Dashboardelemente umgewandelt,
+- Inhaltskopfzeilen komprimiert, Klappbox-Chevrons vereinheitlicht und elf Abrechnungsicons fachlich zugeordnet,
+- AP17-Struktur-, Browser-, Responsive-, PWA- und Releaseprüfungen ergänzt,
+- Version, Manifest, Cache, Paketmetadaten und Dokumentation auf V99.4.20 vereinheitlicht.
+
 ## V99.4.18 – AP15-Gesamtintegration, Releasehärtung und schlanke Arbeitsbasis (13.07.2026)
 
 - Gesamtbedienfluss, Navigation, Persistenz, Migration, Archiv, Sicherung, Restore und Ausgabe regressionsgeprüft.

@@ -83,34 +83,29 @@ function renderStatusAndFeedbackSafely() {
 
 
 
-const OVERVIEW_TITLES = ["Überblick", "Datenstatus", "Nächster Schritt", "Direktaktionen"];
-const AP16_VISUALS = Object.freeze({
-  objekt:{titles:["Objektbestand","Objektprüfung","Objekt vorbereiten","Pflegezugänge"],icon:"building",tone:"blue"},
-  start:{titles:["Abrechnungsstand","Qualitätsstatus","Weiterarbeiten","Abrechnungsaktionen"],icon:"chart",tone:"violet"},
-  archiv:{titles:["Archivbestand","Archivstatus","Abrechnung ansehen","Archivaktionen"],icon:"archive",tone:"petrol"},
-  mieterverwaltung:{titles:["Mietverhältnisse","Datenstatus","Mieter prüfen","Mieterverwaltung"],icon:"users",tone:"blue"},
-  wohnungsverwaltung:{titles:["Wohnungsbestand","Flächenstatus","Wohnungen prüfen","Wohnungspflege"],icon:"home",tone:"blue"},
-  sicherung:{titles:["Sicherungsstatus","Systemstatus","Sicherung prüfen","Systemaktionen"],icon:"database",tone:"petrol"},
-  mieter:{titles:["Abrechnungsbestand","Stammdatenabgleich","Daten prüfen","Bearbeitungszugänge"],icon:"users",tone:"blue"},
-  einstellungen:{titles:["Kostenstatus","Vollständigkeit","Kosten ergänzen","Kostenaktionen"],icon:"receipt",tone:"orange"},
-  einnahmen:{titles:["Zahlungsübersicht","Eingabestatus","Werte prüfen","Zahlungsaktionen"],icon:"euro",tone:"green"},
-  wasser:{titles:["Zählerübersicht","DUMMY-Status","Verbrauchserfassung","Pflegezugänge"],icon:"meter",tone:"blue"},
-  manuellewerte:{titles:["Eingabequellen","Summenabgleich","Werte vervollständigen","Eingabeaktionen"],icon:"input",tone:"blue"},
-  verbraeuche:{titles:["Messdatenbestand","Verbrauchskontrolle","Zählerstände erfassen","Verbrauchsaktionen"],icon:"droplet",tone:"blue"},
-  umlage:{titles:["Verteilungsergebnis","Verteilungsprüfung","Ergebnis prüfen","Verteilungsaktionen"],icon:"share",tone:"orange"},
-  vorauszahlungsanpassung:{titles:["Empfehlungsstatus","Plausibilität","Vorauszahlungen prüfen","Planungsaktionen"],icon:"calculator",tone:"green"},
-  qualitaet:{titles:["Prüfstatus","Offene Befunde","Fehler bearbeiten","Prüfaktionen"],icon:"shield",tone:"green"},
-  briefe:{titles:["Briefstatus","Ausgabeprüfung","Briefe erstellen","Briefaktionen"],icon:"mail",tone:"violet"},
-  export:{titles:["Exportumfang","Exportprüfung","Daten bereitstellen","Exportaktionen"],icon:"download",tone:"violet"}
+const AP17_DASHBOARD_TABS = Object.freeze(["objektuebersicht", "start"]);
+const AP17_ICON_PATHS = Object.freeze({
+  dashboard:'<path d="M4 4h7v7H4zM13 4h7v4h-7zM13 10h7v10h-7zM4 13h7v7H4z"/>',
+  building:'<path d="M5 21V5l7-2v18M12 8h7v13M8 8h1M8 12h1M8 16h1M15 11h1M15 15h1M3 21h18"/>',
+  home:'<path d="M3 11.5 12 4l9 7.5M5 10v11h14V10M9 21v-7h6v7"/>',
+  users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+  meter:'<path d="M5 20a8 8 0 1 1 14 0M12 12l4-4M8 20h8"/>',
+  wallet:'<path d="M4 6.5h14a2 2 0 0 1 2 2V19H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12v3.5M15 11h5v4h-5a2 2 0 0 1 0-4z"/>',
+  receipt:'<path d="M6 2h12v20l-3-2-3 2-3-2-3 2V2M9 7h6M9 11h6M9 15h4"/>',
+  input:'<path d="M4 4h10v16H4zM8 8h2M8 12h2M8 16h2M14 12h7M18 9l3 3-3 3"/>',
+  droplet:'<path d="M12 2s7 7.2 7 12a7 7 0 0 1-14 0c0-4.8 7-12 7-12zM9 15a3 3 0 0 0 3 3"/>',
+  distribution:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.5 6.8-4M8.6 13.5l6.8 4"/>',
+  shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10M8.5 12l2.2 2.2 4.8-5.4"/>',
+  calculator:'<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 11h2M14 11h2M8 15h2M14 15h2M8 19h2M14 19h2"/>',
+  mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+  download:'<path d="M12 3v12M7 10l5 5 5-5M4 21h16"/>',
+  archive:'<path d="M3 6h18M5 6v15h14V6M8 3h8l2 3H6l2-3M9 11h6"/>'
 });
-function ap16Icon(name){
- const paths={building:'<path d="M4 21V6l8-3v18M12 8h8v13M7 9h2M7 13h2M7 17h2M15 11h2M15 15h2M3 21h18"/>',home:'<path d="M3 11.5 12 4l9 7.5M5 10v11h14V10M9 21v-7h6v7"/>',users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',chart:'<path d="M4 19V9M10 19V5M16 19v-8M22 19H2"/>',archive:'<path d="M3 6h18M5 6v15h14V6M8 3h8l2 3H6l2-3M9 11h6"/>',database:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>',receipt:'<path d="M6 2h12v20l-3-2-3 2-3-2-3 2V2M9 7h6M9 11h6M9 15h4"/>',euro:'<path d="M18 7.5A7 7 0 1 0 18 16.5M4 10h10M4 14h9"/>',meter:'<path d="M5 20a8 8 0 1 1 14 0M12 12l4-4M8 20h8"/>',input:'<path d="M4 4h10v16H4zM8 8h2M8 12h2M8 16h2M14 12h7M18 9l3 3-3 3"/>',droplet:'<path d="M12 2s7 7.2 7 12a7 7 0 0 1-14 0c0-4.8 7-12 7-12z"/>',share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.5 6.8-4M8.6 13.5l6.8 4"/>',calculator:'<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 11h2M14 11h2M8 15h2M14 15h2M8 19h2M14 19h2"/>',shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10M9 12l2 2 4-5"/>',mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',download:'<path d="M12 3v12M7 10l5 5 5-5M4 21h16"/>'};
- return '<svg class="overview-card__icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(paths[name]||paths.chart)+'</svg>';
-}
 
 const TAB_DEFINITIONS = {
-  objekt:{title:"Objekt",kicker:"Objekt vorbereiten",firstSection:"objectPreparationSection",nextTab:"wohnungsverwaltung",renderContent:null},
-  start:{title:"Abrechnungsübersicht",kicker:"Nebenkosten abrechnen",firstSection:"startRecordsSection",nextTab:"mieter",renderContent:()=>renderStart()},
+  objektuebersicht:{title:"Objekt vorbereiten – Übersicht",kicker:"Objekt vorbereiten",firstSection:null,nextTab:"objekt",renderContent:null},
+  objekt:{title:"Objektdaten",kicker:"Objekt vorbereiten",firstSection:"objectPreparationSection",nextTab:"wohnungsverwaltung",renderContent:null},
+  start:{title:"Nebenkosten abrechnen – Übersicht",kicker:"Nebenkosten abrechnen",firstSection:"startRecordsSection",nextTab:"mieter",renderContent:()=>renderStart()},
   archiv:{title:"Abrechnungsarchiv",kicker:"Archiv",firstSection:"archiveRecordsSection",nextTab:"start",renderContent:()=>renderArchive()},
   mieterverwaltung:{title:"Mieterverwaltung",kicker:"Objekt vorbereiten",firstSection:"masterTenantSection",nextTab:"wohnungsverwaltung",renderContent:()=>renderStartTenantManagement()},
   wohnungsverwaltung:{title:"Wohnungsverwaltung",kicker:"Objekt vorbereiten",firstSection:"masterUnitSection",nextTab:"mieterverwaltung",renderContent:()=>renderStartUnitManagement()},
@@ -118,7 +113,7 @@ const TAB_DEFINITIONS = {
   mieter:{title:"Mieter & Wohnungen",kicker:"Abrechnungsstammdaten",firstSection:"tenantUnitsSection",nextTab:"einstellungen",renderContent:()=>renderWohnungen()},
   einstellungen:{title:"Kostenarten & Einstellungen",kicker:"Abrechnungseinstellungen",firstSection:"costEditSection",nextTab:"einnahmen",renderContent:()=>renderEinstellungen()},
   einnahmen:{title:"Kaltmiete & NK-Vorauszahlungen",kicker:"Einnahmen",firstSection:"incomeRentSection",nextTab:"manuellewerte",renderContent:()=>renderEinnahmen()},
-  wasser:{title:"Zähler",kicker:"Projekt vorbereiten",firstSection:"meterInventoryDummyValidationSection",nextTab:"mieterverwaltung",renderContent:null},
+  wasser:{title:"Zähler",kicker:"Objekt vorbereiten",firstSection:"meterInventoryDummyValidationSection",nextTab:"mieterverwaltung",renderContent:null},
   manuellewerte:{title:"Manuelle & externe Werte",kicker:"Eingaben",firstSection:"manualValuesSection",nextTab:"verbraeuche",renderContent:()=>renderManualExternalValues()},
   verbraeuche:{title:"Verbräuche erfassen",kicker:"Verbrauchserfassung",firstSection:"meterHouseSection",nextTab:"umlage",renderContent:()=>renderWaterMeters()},
   umlage:{title:"Nebenkostenumlage",kicker:"Berechnung",firstSection:"allocationTenantResultSection",nextTab:"vorauszahlungsanpassung",renderContent:()=>renderUmlage()},
@@ -132,7 +127,6 @@ function closeAllTabAccordions(tab) {
   if (!tab) return;
   tab.querySelectorAll('details').forEach(details => { details.open = false; });
 }
-
 function safeOverviewCall(fn, fallback) {
   try { const value=fn(); return value === undefined || value === null ? fallback : value; }
   catch (_) { return fallback; }
@@ -144,166 +138,104 @@ function overviewOpenSection(id) {
   section.open=true;
   section.scrollIntoView({behavior:"smooth",block:"start"});
 }
-function overviewCoreStats() {
+function ap17Icon(name, className="area-dashboard__icon-svg") {
+  return '<svg class="'+className+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(AP17_ICON_PATHS[name]||AP17_ICON_PATHS.dashboard)+'</svg>';
+}
+function dashboardStats() {
   const units=Array.isArray(state && state.wohnungen) ? state.wohnungen.filter(w=>w && w.id) : [];
-  const activeUnits=units.filter(w=>w.status === "aktiv");
   const tenants=safeOverviewCall(()=>billableTenantRows(), Array.isArray(state && state.mieter) ? state.mieter.filter(m=>m && (m.name || m.wohnung)) : []);
-  const archivedTenants=safeOverviewCall(()=>archivedTenantRows(), []);
-  const costs=Array.isArray(state && state.kostenarten) ? state.kostenarten.filter(k=>k && k.kostenart) : [];
-  const activeCosts=costs.filter(k=>k.inNK === "Ja");
-  const completeCosts=activeCosts.filter(k=>safeOverviewCall(()=>NK_PRO_MODULES.costActions.kostenStatus(k),"") === "Vollständig");
-  const income=tenants.reduce((a,m)=>{a.rent+=num(m.kaltErhalten);a.prepayments+=num(m.nkVoraus);a.corrections+=num(m.vorjahresKorrektur);return a;},{rent:0,prepayments:0,corrections:0});
-  const calc=safeOverviewCall(()=>calculateUmlage(),null);
-  const totals=calc ? safeOverviewCall(()=>umlageTotals(calc),null) : null;
-  const quality=safeOverviewCall(()=>NK_PRO_MODULES.qualityAssurance.inspect({scope:"currentBilling"}),null);
-  const issues=quality && Array.isArray(quality.issues) ? quality.issues.filter(i=>i.severity !== "OK") : [];
-  const errors=issues.filter(i=>i.severity === "Fehler");
-  const checks=issues.filter(i=>i.severity === "Prüfen");
-  const objectStandard=safeOverviewCall(()=>state && state.objektStandard ? state.objektStandard : null,null);
+  const costs=Array.isArray(state && state.kostenarten) ? state.kostenarten.filter(k=>k && k.kostenart && k.inNK === "Ja") : [];
+  const prepayments=tenants.reduce((sum,tenant)=>sum+num(tenant.nkVoraus),0);
   const objectValidation=safeOverviewCall(()=>validateObjectStandard(state),{valid:false,errors:[],warnings:[],infos:[]});
-  const billingReadiness=safeOverviewCall(()=>validateBillingReadiness(state),{valid:false,errors:[],warnings:[],infos:[],meterSelection:{included:[],excluded:[]}});
-  const meters=safeOverviewCall(()=>{
-    if (objectStandard && Array.isArray(objectStandard.zaehler)) return objectStandard.zaehler;
-    if (state && state.waterMeters && Array.isArray(state.waterMeters.rows)) return state.waterMeters.rows;
-    if (state && Array.isArray(state.wasserzaehler)) return state.wasserzaehler;
-    if (state && Array.isArray(state.zaehler)) return state.zaehler;
-    return [];
-  },[]);
-  const electricityDummyMeters=meters.filter(meter=>safeOverviewCall(()=>NK_PRO_MODULES.objectStandard.isElectricityDummyMeter(meter),false));
-  const archives=safeOverviewCall(()=>{
-    const values=[];
-    if (state && Array.isArray(state.jahresArchiv)) values.push(...state.jahresArchiv);
-    if (state && Array.isArray(state.yearArchive)) values.push(...state.yearArchive);
-    if (state && state.meta && Array.isArray(state.meta.yearArchive)) values.push(...state.meta.yearArchive);
-    return values.length;
-  },0);
-  return {units,activeUnits,tenants,archivedTenants,costs,activeCosts,completeCosts,income,calc,totals,quality,issues,errors,checks,meters,electricityDummyMeters,objectStandard,objectValidation,billingReadiness,archives,
-    year:safeOverviewCall(()=>currentAbrechnungsjahr(),"–"), finalized:safeOverviewCall(()=>NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized(),false)};
-}
-function overviewStatus(stats) {
-  if (stats.errors.length) return {status:"error",headline:stats.errors.length+" Fehler",items:[{text:"Fehler vor der Ausgabe beheben",status:"error"},{text:stats.checks.length+" zusätzliche Prüfpunkte",status:stats.checks.length?"warn":"ok"}]};
-  if (stats.checks.length) return {status:"warn",headline:stats.checks.length+" Prüfpunkte",items:[{text:"Fachliche Kontrolle erforderlich",status:"warn"},{text:"Keine blockierenden technischen Fehler erkannt",status:"ok"}]};
-  return {status:"ok",headline:"Plausibel",items:[{text:"Keine offenen Fehler",status:"ok"},{text:"Datenstand weiter fachlich kontrollieren",status:"ok"}]};
-}
-function overviewStructuredValidation(result, successText) {
-  const errors=Array.isArray(result && result.errors)?result.errors:[];
-  const warnings=Array.isArray(result && result.warnings)?result.warnings:[];
-  if (errors.length) return {status:"error",headline:errors.length+" blockierende Fehler",items:[{text:errors[0].message||String(errors[0]),status:"error"},{text:warnings.length+" zusätzliche Hinweise",status:warnings.length?"warn":"ok"}]};
-  if (warnings.length) return {status:"warn",headline:warnings.length+" Hinweise",items:[{text:warnings[0].message||String(warnings[0]),status:"warn"},{text:"Snapshot wird nur bei kritischen Fehlern blockiert",status:"ok"}]};
-  return {status:"ok",headline:successText||"Plausibel",items:[{text:"Objektstandard 1 gültig",status:"ok"},{text:"Keine blockierenden Objektfehler",status:"ok"}]};
-}
-
-function buildOverviewData(tabId) {
-  const s=overviewCoreStats();
-  const commonValidation=overviewStatus(s);
-  const next=(text,target,label="Bereich öffnen")=>({text,action:{label,action:"navigation.openSection",args:[target],primary:true}});
-  const go=(label,target,primary=false)=>({label,action:"navigation.switchTab",args:[target],primary});
-  const open=(label,target,primary=false)=>({label,action:"navigation.openSection",args:[target],primary});
-  const save={label:"Speichern",action:"application.save",args:[],primary:true};
-  const data={
-    objekt:{summary:[["Objekt-ID",s.objectStandard&&s.objectStandard.objekt?(s.objectStandard.objekt.id||"–"):"–"],["Gebäude",s.objectStandard&&Array.isArray(s.objectStandard.gebaeude)?s.objectStandard.gebaeude.length:0],["Einheiten / Verträge",(s.objectStandard&&Array.isArray(s.objectStandard.einheiten)?s.objectStandard.einheiten.length:0)+" / "+(s.objectStandard&&Array.isArray(s.objectStandard.vertraege)?s.objectStandard.vertraege.length:0)],["Zähler / Strom-Dummys",s.meters.length+" / "+s.electricityDummyMeters.length]],validation:overviewStructuredValidation(s.objectValidation,"Objektstandard 1 gültig"),next:next("Objektstandard und abrechnungsrelevante Zuordnungen prüfen.","objectValidationSection"),actions:[go("Wohnungen öffnen","wohnungsverwaltung",true),go("Mieter öffnen","mieterverwaltung"),go("Datensicherung","sicherung")]},
-    start:{summary:[["Arbeitsjahr",s.year],["Abrechnungen im Archiv",s.archives],["Mietverhältnisse",s.tenants.length],["Wohnungen",s.units.length]],validation:commonValidation,next:next("Aktuellen Arbeitsstand öffnen oder eine neue Abrechnung anlegen.","startRecordsSection"),actions:[open("Abrechnungen öffnen","startRecordsSection",true),go("Datensicherung & System","sicherung"),save]},
-    archiv:{summary:[["Archivierte Abrechnungen",s.archives],["Aktuelle Abrechnung",NK_PRO_MODULES.archiveActions.hasActiveCurrentBilling()?s.year:"Keine"],["Datenbestand","Lokal"],["Schema",DATA_SCHEMA_VERSION]],validation:{status:"ok",headline:"Archiv getrennt erreichbar",items:[{text:"Historische Datensätze bleiben unverändert",status:"ok"},{text:"Öffnen erfolgt schreibgeschützt",status:"ok"}]},next:next("Archivierte Abrechnung auswählen und in der Nur-Ansicht prüfen.","archiveRecordsSection"),actions:[open("Archiv öffnen","archiveRecordsSection",true),{label:"Archiv herunterladen",action:"archive.downloadFull",args:[]},go("Abrechnungsübersicht","start")]},
-    mieterverwaltung:{summary:[["Mietverhältnisse",s.tenants.length],["Archiviert",s.archivedTenants.length],["Wohnungen",s.units.length],["Abrechnungsjahr",s.year]],validation:commonValidation,next:next("Mieterstammdaten und archivierte Mietverhältnisse vollständig prüfen.","masterTenantSection"),actions:[open("Mietverhältnisse öffnen","masterTenantSection",true),open("Archiv öffnen","masterTenantArchiveSection"),save]},
-    wohnungsverwaltung:{summary:[["Wohnungen gesamt",s.units.length],["Aktiv",s.activeUnits.length],["Inaktiv",Math.max(0,s.units.length-s.activeUnits.length)],["Wohnfläche aktiv",s.activeUnits.reduce((a,w)=>a+num(w.wohnflaeche),0).toLocaleString("de-DE")+" m²"]],validation:commonValidation,next:next("Wohnungsbestand und Flächenangaben kontrollieren.","masterUnitSection"),actions:[open("Wohnungsbestand öffnen","masterUnitSection",true),go("Mieterverwaltung","mieterverwaltung"),save]},
-    sicherung:{summary:[["Version",APP_VERSION],["Archivstände",s.archives],["Betriebsart","Offline · lokal"],["Abrechnungsjahr",s.year]],validation:{status:"ok",headline:"Sicherung verfügbar",items:[{text:"Lokale Gesamtsicherung vorhanden",status:"ok"},{text:"Neuer PWA-Cache für V99.4.19",status:"ok"}]},next:next("Vollständige JSON-Sicherung erstellen und Versionsinformationen prüfen.","backupMainSection"),actions:[open("Gesamtsicherung öffnen","backupMainSection",true),open("Version anzeigen","backupVersionSection"),save]},
-    mieter:{summary:[["Wohnungen gesamt",s.units.length],["Wohnungen aktiv",s.activeUnits.length],["Mietverhältnisse",s.tenants.length],["Archivierte Mieter",s.archivedTenants.length]],validation:commonValidation,next:next("Bestand und Abrechnung in der Prüfbox abgleichen; danach Kostenarten bearbeiten.","tenantControlSection"),actions:[open("Prüfung öffnen","tenantControlSection",true),open("Mietverhältnisse öffnen","tenantRelationsSection"),go("Kostenarten öffnen","einstellungen")]},
-    einstellungen:{summary:[["Kostenarten",s.costs.length],["Aktiv in NK",s.activeCosts.length],["Vollständig",s.completeCosts.length],["Gesamtkosten",overviewMoney(s.activeCosts.reduce((a,k)=>a+num(k.gesamtbetrag),0))]],validation:{status:s.completeCosts.length===s.activeCosts.length?"ok":"warn",headline:s.completeCosts.length+" von "+s.activeCosts.length+" vollständig",items:[{text:"Umlageschlüssel und Beträge prüfen",status:s.completeCosts.length===s.activeCosts.length?"ok":"warn"},{text:"Umlage wird automatisch berechnet",status:"ok"}]},next:next("Fehlende Beträge und Umlageschlüssel vervollständigen.","costEditSection"),actions:[open("Kostenarten bearbeiten","costEditSection",true),()=>{}].filter(Boolean)},
-    einnahmen:{summary:[["Kaltmiete erhalten",overviewMoney(s.income.rent)],["NK-Vorauszahlungen",overviewMoney(s.income.prepayments)],["Korrekturen",overviewMoney(s.income.corrections)],["Mietverhältnisse",s.tenants.length]],validation:commonValidation,next:next("Kaltmieten und Vorauszahlungen vollständig prüfen; danach manuelle und externe Werte bearbeiten.","incomeRentSection"),actions:[open("Kaltmiete öffnen","incomeRentSection",true),open("Vorauszahlungen öffnen","incomePrepaymentSection"),go("Manuelle Werte","manuellewerte")]},
-    wasser:{summary:[["Wasserzähler","14 Dummy"],["Wärmemengenzähler","6 Dummy"],["Heizkostenverteiler","24 Dummy"],["Weitere Zähler","4 Dummy"]],validation:{status:"info",headline:"Reiner Clickdummy",items:[{text:"Keine Speicherung oder fachliche Verarbeitung",status:"info"},{text:"Produktive Verbrauchserfassung ist getrennt",status:"ok"}]},next:{text:"Echte Ablesewerte werden ausschließlich innerhalb einer geöffneten Abrechnung unter „Verbräuche erfassen“ bearbeitet.",action:{label:"Abrechnungsübersicht öffnen",action:"navigation.switchTab",args:["start"],primary:true}},actions:[go("Wohnungen öffnen","wohnungsverwaltung",true),go("Mieter öffnen","mieterverwaltung"),go("Abrechnungsübersicht","start")]},
-    manuellewerte:{summary:[["Eingabequellen",Object.keys(state.umlageInputs||{}).length],["Miet-/Nutzungseinheiten",s.tenants.length],["Aktive Kostenarten",s.activeCosts.length],["Abrechnungsjahr",s.year]],validation:commonValidation,next:next("Eingabeart je Kostenart festlegen und Summen abgleichen; danach Verbräuche erfassen.","manualValuesSection"),actions:[open("Werte öffnen","manualValuesSection",true),open("Summenkontrolle","manualExternalControlSection"),go("Verbräuche erfassen","verbraeuche")]},
-    verbraeuche:{summary:[["Zähler-/Messdatensätze",s.meters.length],["Aktive Wohnungen",s.activeUnits.length],["Verbrauchskosten",s.activeCosts.filter(k=>String(k.umlageschluessel||"").toLowerCase().includes("verbrauch")).length],["Abrechnungsjahr",s.year]],validation:commonValidation,next:next("Zählerstände erfassen und Verbrauchskontrolle durchführen.","meterEntrySection"),actions:[open("Verbräuche erfassen","meterEntrySection",true),open("Kontrolle öffnen","meterControlSection"),go("Umlage berechnen","umlage")]},
-    umlage:{summary:[["Gesamtkosten",s.totals?overviewMoney(s.totals.totalCosts):"–"],["Vorauszahlungen",s.totals?overviewMoney(s.totals.prepayments):"–"],["Mietersaldo",s.totals?overviewMoney(s.totals.balance):"–"],["Kostenarten",s.activeCosts.length]],validation:commonValidation,next:next("Umlageergebnis je Mieter und Kostenart kontrollieren.","allocationTenantResultSection"),actions:[open("Ergebnisse öffnen","allocationTenantResultSection",true),open("Wohnungsnachweis","allocationUnitProofSection"),go("Qualitätsprüfung","qualitaet")]},
-    vorauszahlungsanpassung:{summary:[["Mietverhältnisse",s.tenants.length],["NK-Vorauszahlungen",overviewMoney(s.income.prepayments)],["Kostenarten",s.activeCosts.length],["Abrechnungsjahr",s.year]],validation:commonValidation,next:next("Berechnungsregeln und Empfehlungen je Mieter fachlich prüfen.","prepaymentRulesSection"),actions:[open("Regeln öffnen","prepaymentRulesSection",true),open("Empfehlungen öffnen","prepaymentRecommendationSection"),go("Briefe öffnen","briefe")]},
-    qualitaet:{summary:[["Offene Fehler",s.errors.length],["Prüfpunkte",s.checks.length],["Hinweise",Math.max(0,s.issues.length-s.errors.length-s.checks.length)],["Finalisierung",s.finalized?"Finalisiert":"Bearbeitbar"]],validation:commonValidation,next:next(s.issues.length?"Offene Aufgaben nach Priorität bearbeiten.":"Keine offenen Prüfpunkte; Briefausgabe vorbereiten.","qualityOpenIssuesSection"),actions:[open("Prüfstatus öffnen","qualityOverviewSection",true),open("Offene Aufgaben","qualityOpenIssuesSection"),go("Briefe öffnen","briefe")]},
-    briefe:{summary:[["Empfänger",s.tenants.length],["Abrechnungsjahr",s.year],["Umlage",s.totals?"Berechnet":"Prüfen"],["Status",s.finalized?"Finalisiert":"Entwurf"]],validation:commonValidation,next:next("Brief auswählen, Vorschau prüfen und erst danach drucken oder als PDF sichern.","lettersEditorSection"),actions:[open("Briefbereich öffnen","lettersEditorSection",true),go("Qualitätsprüfung","qualitaet"),go("Export öffnen","export")]},
-    export:{summary:[["Abrechnungsjahr",s.year],["Kostenarten",s.costs.length],["Mietverhältnisse",s.tenants.length],["Archivstände",s.archives]],validation:commonValidation,next:next("Aktuelle Abrechnung als JSON sichern; Gesamtsicherung zusätzlich im Verwaltungsbereich erstellen.","exportActionsSection"),actions:[open("Exportaktionen öffnen","exportActionsSection",true),go("Gesamtsicherung","sicherung"),save]}
+  const quality=safeOverviewCall(()=>NK_PRO_MODULES.qualityAssurance.inspect({scope:"currentBilling"}),null);
+  const qualityIssues=quality && Array.isArray(quality.issues) ? quality.issues.filter(issue=>issue && issue.severity !== "OK") : [];
+  const activeBilling=safeOverviewCall(()=>NK_PRO_MODULES.archiveActions.hasActiveCurrentBilling(),false);
+  const finalized=safeOverviewCall(()=>NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized(),false);
+  return {
+    units, tenants, costs, prepayments, objectValidation, qualityIssues, activeBilling, finalized,
+    objectLabel:safeOverviewCall(()=>currentObjectLabel(),"Objekt"), year:safeOverviewCall(()=>currentAbrechnungsjahr(),"–")
   };
-  // Kostenarten-Schnellaktionen bewusst ohne „Neu berechnen“.
-  data.einstellungen.actions=[open("Kostenarten bearbeiten","costEditSection",true),{label:"Kostenart hinzufügen",action:"cost.openSelectionDialog",args:[]},{label:"Qualitätsprüfung",action:"navigation.switchTab",args:["qualitaet"]}];
-  return data[tabId] || data.start;
 }
-Object.entries(TAB_DEFINITIONS).forEach(([tabId, definition]) => {
-  definition.getOverview = () => buildOverviewData(tabId);
-});
-
-function renderOverviewCards(tabId, config) {
-  const grid=document.getElementById("overview-"+tabId);
-  if (!grid || !config) return;
-  grid.replaceChildren();
-  const visual=AP16_VISUALS[tabId]||{titles:OVERVIEW_TITLES,icon:"chart",tone:"blue"};
-  grid.dataset.tone=visual.tone;
-  grid.classList.add("overview-dashboard");
-
-  const metrics=(config.summary||[]).slice(0,4);
-  metrics.forEach((pair,index)=>{
-    const card=document.createElement("article");
-    card.className="overview-card overview-card--metric";
-    card.dataset.overviewRole="metric";
-    card.dataset.metricIndex=String(index);
-    const heading=document.createElement("div"); heading.className="overview-card__heading";
-    const icon=document.createElement("span"); icon.className="overview-card__icon"; icon.innerHTML=ap16Icon(index===1?"shield":visual.icon);
-    const label=document.createElement("span"); label.className="overview-card__metric-label"; label.textContent=String(pair[0]);
-    heading.append(icon,label);
-    const value=document.createElement("strong"); value.className="overview-card__metric-value"; value.textContent=String(pair[1]);
-    const hint=document.createElement("span"); hint.className="overview-card__metric-hint"; hint.textContent=index===0?"Aktueller Bestand":(index===1?"Aktueller Status":"Aus dem Arbeitsstand");
-    card.append(heading,value,hint);
-    grid.appendChild(card);
-  });
-
-  const validation=document.createElement("article");
-  validation.className="overview-card overview-card--status";
-  validation.dataset.overviewRole="validation";
-  validation.dataset.status=(config.validation&&config.validation.status)||"info";
-  const statusHead=document.createElement("div"); statusHead.className="overview-card__heading";
-  const statusIcon=document.createElement("span"); statusIcon.className="overview-card__icon"; statusIcon.innerHTML=ap16Icon("shield");
-  const statusTitle=document.createElement("h3"); statusTitle.className="overview-card__title"; statusTitle.textContent=visual.titles[1];
-  statusHead.append(statusIcon,statusTitle);
-  const statusLead=document.createElement("p"); statusLead.className="overview-card__status-lead"; statusLead.textContent=(config.validation&&config.validation.headline)||"Prüfstatus";
-  const statusList=document.createElement("ul"); statusList.className="overview-card__checklist";
-  ((config.validation&&config.validation.items)||[]).slice(0,4).forEach(item=>{
-    const normalized=typeof item==="string"?{text:item,status:"info"}:item;
-    const itemStatus=["ok","warn","error","info"].includes(normalized.status)?normalized.status:"info";
-    const li=document.createElement("li");li.className="overview-check-item is-"+itemStatus;
-    const mark=document.createElement("span");mark.className="overview-check-icon";mark.setAttribute("aria-hidden","true");mark.textContent=itemStatus==="ok"?"✓":(itemStatus==="warn"?"!":(itemStatus==="error"?"×":"i"));
-    const text=document.createElement("span");text.textContent=normalized.text||"";li.append(mark,text);statusList.appendChild(li);
-  });
-  validation.append(statusHead,statusLead,statusList);
-  grid.appendChild(validation);
-
-  const workflow=document.createElement("article");
-  workflow.className="overview-card overview-card--workflow";
-  workflow.dataset.overviewRole="workflow";
-  const workflowHead=document.createElement("div"); workflowHead.className="overview-card__heading";
-  const workflowIcon=document.createElement("span"); workflowIcon.className="overview-card__icon"; workflowIcon.innerHTML=ap16Icon(visual.icon);
-  const workflowTitle=document.createElement("h3"); workflowTitle.className="overview-card__title"; workflowTitle.textContent=visual.titles[2];
-  workflowHead.append(workflowIcon,workflowTitle);
-  const workflowText=document.createElement("p"); workflowText.className="overview-card__workflow-text"; workflowText.textContent=(config.next&&config.next.text)||"Nächsten Arbeitsschritt öffnen.";
-  const workflowActions=document.createElement("div"); workflowActions.className="overview-card__actions overview-card__actions--workflow";
-  if (config.next&&config.next.action) workflowActions.appendChild(overviewActionButton(config.next.action));
-  workflow.append(workflowHead,workflowText,workflowActions);
-  grid.appendChild(workflow);
-
-  const actions=document.createElement("article");
-  actions.className="overview-card overview-card--actions";
-  actions.dataset.overviewRole="quick-actions";
-  const actionHead=document.createElement("div"); actionHead.className="overview-card__heading";
-  const actionIcon=document.createElement("span"); actionIcon.className="overview-card__icon"; actionIcon.innerHTML=ap16Icon(visual.icon);
-  const actionTitle=document.createElement("h3"); actionTitle.className="overview-card__title"; actionTitle.textContent=visual.titles[3];
-  actionHead.append(actionIcon,actionTitle);
-  const actionButtons=document.createElement("div"); actionButtons.className="overview-card__actions quick-actions";
-  (config.actions||[]).forEach(action=>actionButtons.appendChild(overviewActionButton(action)));
-  actions.append(actionHead,actionButtons);
-  grid.appendChild(actions);
+function valueKindBadge(kind) { return '<span class="dashboard-value-badge dashboard-value-badge--'+kind+'">'+(kind === "dummy" ? "Vorschau" : "Echtwert")+'</span>'; }
+function dashboardValue(label,value,kind="real",hint="",tone="blue") {
+  return '<article class="dashboard-value-card dashboard-value-card--'+tone+'" data-value-kind="'+kind+'"><div class="dashboard-value-card__top"><span>'+escapeHtml(label)+'</span>'+valueKindBadge(kind)+'</div><strong>'+escapeHtml(String(value))+'</strong>'+(hint?'<small>'+escapeHtml(hint)+'</small>':'')+'</article>';
 }
-function overviewActionButton(action) {
-  const button=document.createElement("button"); button.type="button"; button.textContent=action.label||"Aktion";
-  if (action.primary) button.classList.add("primary");
-  if (action.action) { button.setAttribute("data-ui-action", action.action); button.setAttribute("data-ui-args", JSON.stringify(action.args || [])); }
-  return button;
+function dashboardAction(label,target,icon,meta="") {
+  return '<button class="dashboard-entry" type="button" data-ui-action="navigation.switchTab" data-ui-args="[&quot;'+escapeHtml(target)+'&quot;]"><span class="dashboard-entry__icon">'+ap17Icon(icon)+'</span><span class="dashboard-entry__copy"><strong>'+escapeHtml(label)+'</strong>'+(meta?'<small>'+escapeHtml(meta)+'</small>':'')+'</span><span class="dashboard-entry__arrow" aria-hidden="true">→</span></button>';
 }
-function renderOverviewForTab(tabId) { const definition=TAB_DEFINITIONS[tabId]; if (definition) renderOverviewCards(tabId,definition.getOverview()); }
-function renderAllOverviewCards() { Object.keys(TAB_DEFINITIONS).forEach(renderOverviewForTab); }
+function renderObjectDashboard(root, stats) {
+  const validation=stats.objectValidation || {errors:[],warnings:[]};
+  const errors=Array.isArray(validation.errors)?validation.errors.length:0;
+  const warnings=Array.isArray(validation.warnings)?validation.warnings.length:0;
+  const openCount=errors+warnings;
+  const status=errors ? "Prüfung erforderlich" : (warnings ? "Mit Hinweisen" : "Vorbereitet");
+  const statusTone=errors ? "red" : (warnings ? "orange" : "green");
+  root.innerHTML = '<div class="dashboard-preview-notice"><strong>Hinweis zu Vorschauwerten</strong><span>Mit „Vorschau“ gekennzeichnete Werte sind fiktiv. Die fachliche Logik für Vollständigkeit und Empfehlungen wird in einem späteren Arbeitspaket entwickelt.</span></div>'+
+    '<div class="dashboard-value-grid">'+
+      dashboardValue("Aktuelles Objekt",stats.objectLabel,"real","Ein Gebäude im vereinfachten Objektmodell","blue")+
+      dashboardValue("Gebäudekurzcode","ARB5","real","Verbindlicher Projektkontext","petrol")+
+      dashboardValue("Wohnungen",stats.units.length,"real","Vorhandene Wohnungsdatensätze","blue")+
+      dashboardValue("Mietverhältnisse",stats.tenants.length,"real","Abrechnungsrelevante Datensätze","violet")+
+    '</div>'+
+    '<div class="dashboard-summary-grid">'+
+      '<article class="dashboard-status-panel dashboard-status-panel--'+statusTone+'"><div class="dashboard-panel-heading"><span>'+ap17Icon("shield")+'</span><div><h3>Objektstatus</h3>'+valueKindBadge("real")+'</div></div><strong data-value-kind="real">'+escapeHtml(status)+'</strong><p><span data-value-kind="real">'+escapeHtml(String(openCount))+'</span> offene oder unvollständige Angaben aus der vorhandenen Objektprüfung.</p></article>'+
+      '<article class="dashboard-status-panel dashboard-status-panel--blue" data-value-kind="dummy"><div class="dashboard-panel-heading"><span>'+ap17Icon("dashboard")+'</span><div><h3>Stammdatenvollständigkeit</h3>'+valueKindBadge("dummy")+'</div></div><strong>82 %</strong><p>Fiktiver Orientierungswert; Berechnungsregeln sind noch festzulegen.</p></article>'+
+      '<article class="dashboard-next-step" data-value-kind="dummy"><div><span class="dashboard-next-step__label">Nächster sinnvoller Vorbereitungsschritt</span>'+valueKindBadge("dummy")+'<h3>Wohnungsflächen und Zuordnungen prüfen</h3><p>Diese Empfehlung ist eine Vorschau und noch nicht fachlich berechnet.</p></div><button class="primary" data-ui-action="navigation.switchTab" data-ui-args="[&quot;wohnungsverwaltung&quot;]" type="button">Wohnungen öffnen</button></article>'+
+    '</div>'+
+    '<section class="dashboard-entry-section"><div class="dashboard-section-heading"><div><p class="page-header__kicker">Direkteinstiege</p><h3>Objekt vorbereiten</h3></div><span>4 Arbeitsbereiche</span></div><div class="dashboard-entry-grid dashboard-entry-grid--four">'+
+      dashboardAction("Objektdaten","objekt","building","Objektstandard und Zuordnungen")+
+      dashboardAction("Wohnungen","wohnungsverwaltung","home","Bestand und Flächen")+
+      dashboardAction("Mieter","mieterverwaltung","users","Verträge und Kontakte")+
+      dashboardAction("Zähler-DUMMY","wasser","meter","Reiner Clickdummy")+
+    '</div></section>';
+}
+function workflowStage(label,target,icon,status,statusClass) {
+  return '<button class="workflow-stage workflow-stage--'+statusClass+'" type="button" data-value-kind="dummy" data-ui-action="navigation.switchTab" data-ui-args="[&quot;'+escapeHtml(target)+'&quot;]"><span class="workflow-stage__icon">'+ap17Icon(icon)+'</span><span class="workflow-stage__copy"><strong>'+escapeHtml(label)+'</strong><small>Vorschau-Status</small></span><span class="workflow-stage__status">'+escapeHtml(status)+'</span></button>';
+}
+function renderBillingDashboard(root, stats) {
+  const status=stats.finalized ? "Finalisiert" : (stats.activeBilling ? "In Bearbeitung" : "Noch nicht angelegt");
+  const statusTone=stats.finalized ? "petrol" : (stats.activeBilling ? "green" : "orange");
+  const openIssues=stats.qualityIssues.length;
+  root.innerHTML = '<div class="dashboard-preview-notice"><strong>Hinweis zu Vorschauwerten</strong><span>Fortschritt, empfohlener nächster Schritt und Workflowstatus sind fiktive Vorschauwerte. Produktive Fachlogik wird dadurch nicht vorgetäuscht.</span></div>'+
+    '<div class="dashboard-value-grid dashboard-value-grid--five">'+
+      dashboardValue("Aktuelles Objekt",stats.objectLabel,"real","Aktiver Projektkontext","blue")+
+      dashboardValue("Gebäudekurzcode","ARB5","real","Verbindlicher Objektkurzcode","blue")+
+      dashboardValue("Abrechnungsjahr",stats.year,"real","Aktueller lokaler Arbeitsstand","petrol")+
+      dashboardValue("Bearbeitungsstatus",status,"real",stats.activeBilling?"Abrechnung vorhanden":"Über „Neue Abrechnung“ anlegen",statusTone)+
+      dashboardValue("Abrechnungsfortschritt","64 %","dummy","Fiktiver Orientierungswert","violet")+
+    '</div>'+
+    '<div class="billing-fact-strip">'+
+      '<div data-value-kind="real"><span>Wohnungen</span><strong>'+stats.units.length+'</strong>'+valueKindBadge("real")+'</div>'+
+      '<div data-value-kind="real"><span>Mietverhältnisse</span><strong>'+stats.tenants.length+'</strong>'+valueKindBadge("real")+'</div>'+
+      '<div data-value-kind="real"><span>Aktive Kostenarten</span><strong>'+stats.costs.length+'</strong>'+valueKindBadge("real")+'</div>'+
+      '<div data-value-kind="real"><span>NK-Vorauszahlungen</span><strong>'+escapeHtml(overviewMoney(stats.prepayments))+'</strong>'+valueKindBadge("real")+'</div>'+
+      '<div data-value-kind="real"><span>Offene Prüfhinweise</span><strong>'+openIssues+'</strong>'+valueKindBadge("real")+'</div>'+
+    '</div>'+
+    '<article class="dashboard-next-step dashboard-next-step--billing" data-value-kind="dummy"><div><span class="dashboard-next-step__label">Nächster sinnvoller Arbeitsschritt</span>'+valueKindBadge("dummy")+'<h3>Kostenarten und Rechnungsbeträge vervollständigen</h3><p>Fiktive Empfehlung; die spätere Logik muss Abhängigkeiten und Blockaden belastbar auswerten.</p></div><button class="primary" data-ui-action="navigation.switchTab" data-ui-args="[&quot;einstellungen&quot;]" type="button">Kosten erfassen</button></article>'+
+    '<section class="dashboard-entry-section"><div class="dashboard-section-heading"><div><p class="page-header__kicker">Abrechnungsprozess</p><h3>Arbeitsschritte und Direkteinstiege</h3></div><span>Vorschau-Workflow</span></div><div class="workflow-stage-grid">'+
+      workflowStage("Mieter & Wohnungen","mieter","users","Erledigt","done")+
+      workflowStage("Miete & Vorauszahlungen","einnahmen","wallet","Erledigt","done")+
+      workflowStage("Kosten erfassen","einstellungen","receipt","Warnung","warning")+
+      workflowStage("Manuelle & externe Werte","manuellewerte","input","Offen","open")+
+      workflowStage("Verbräuche erfassen","verbraeuche","droplet","Blockiert","blocked")+
+      workflowStage("Verteilung","umlage","distribution","Blockiert","blocked")+
+      workflowStage("Prüfung","qualitaet","shield","Warnung","warning")+
+      workflowStage("Neue Vorauszahlungen","vorauszahlungsanpassung","calculator","Offen","open")+
+      workflowStage("Briefe","briefe","mail","Blockiert","blocked")+
+      workflowStage("Export","export","download","Blockiert","blocked")+
+      workflowStage("Archiv","archiv","archive","Offen","open")+
+    '</div></section>';
+}
+function renderOverviewForTab(tabId) {
+  if (!AP17_DASHBOARD_TABS.includes(tabId)) return;
+  const root=document.querySelector('[data-area-dashboard="'+(tabId === "start" ? "billing" : "object")+'"]');
+  if (!root) return;
+  const stats=dashboardStats();
+  if (tabId === "start") renderBillingDashboard(root,stats);
+  else renderObjectDashboard(root,stats);
+}
+function renderAllOverviewCards() { AP17_DASHBOARD_TABS.forEach(renderOverviewForTab); }
+
 function pageHeaderPeriodLabel() {
   const format = value => {
     const match = String(value || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
@@ -341,23 +273,27 @@ function updateAllPageHeaders() {
 }
 
 function auditV992Structure() {
-  const expected=OVERVIEW_TITLES;
-  const results=Object.entries(TAB_DEFINITIONS).map(([tabId,def])=>{
-    const tab=document.getElementById(tabId);
-    const page=tab&&tab.querySelector(':scope > .app-page');
-    const header=page&&page.querySelector(':scope > .page-header');
-    const grids=page?Array.from(page.querySelectorAll(':scope > .overview-grid')):[];
-    const cards=grids[0]?Array.from(grids[0].children).filter(x=>x.classList.contains('overview-card')):[];
-    const titles=cards.map(c=>(c.querySelector('.overview-card__title')||{}).textContent||'');
-    const sections=page?Array.from(page.querySelectorAll(':scope > .page-sections > .page-section')):[];
-    const validation=sections.length?sections[sections.length-1]:null;
-    const footnote=page&&page.querySelector(':scope > .page-footnote');
-    const checks={page:!!page,headerCount:page?page.querySelectorAll(':scope > .page-header').length===1:false,overviewGridCount:grids.length===1,directCardCount:cards.length>=7,cardTitles:cards.filter(c=>c.dataset.overviewRole==='metric').length>=1,noNestedCardGrid:!(grids[0]&&grids[0].querySelector('.overview-grid')),quickActionsAreButtons:(()=>{const c=cards.find(x=>x.dataset.overviewRole==='quick-actions');return !!c&&Array.from(c.querySelectorAll('.overview-card__actions > *')).every(x=>x.tagName==='BUTTON');})(),validationSectionIsLast:!!(validation&&validation.dataset.sectionRole==='validation'),primarySectionOpen:sections.length?sections[0].open:true,footnoteAfterValidation:!footnote||footnote.previousElementSibling===page.querySelector(':scope > .page-sections')};
-    return {tab:tabId,title:def.title,headerCount:page?page.querySelectorAll(':scope > .page-header').length:0,overviewGridCount:grids.length,directCardCount:cards.length,cardTitles:titles,legacyCardsFound:!!(page&&page.querySelector('.cards,.workspace-overview-grid,.cost-overview-grid,.tenant-overview-grid,.meter-overview-grid')),nestedCardGridFound:!checks.noNestedCardGrid,quickActionsAreButtons:checks.quickActionsAreButtons,validationSectionIsLast:checks.validationSectionIsLast,footnoteAfterValidation:checks.footnoteAfterValidation,result:Object.values(checks).every(Boolean)?'ok':'fehler',checks};
-  });
-  const report={version:APP_VERSION,generatedAt:new Date().toISOString(),tabCount:results.length,allPassed:results.every(r=>r.result==='ok'),results};
+  const objectDashboard=document.querySelector('[data-area-dashboard="object"]');
+  const billingDashboard=document.querySelector('[data-area-dashboard="billing"]');
+  const workingPages=Array.from(document.querySelectorAll('section.tab')).filter(tab=>!["landing","objektuebersicht","start"].includes(tab.id));
+  const checks={
+    objectDashboard:!!objectDashboard,
+    billingDashboard:!!billingDashboard,
+    objectDirectEntries:!!objectDashboard && objectDashboard.querySelectorAll('.dashboard-entry').length===4,
+    billingWorkflowEntries:!!billingDashboard && billingDashboard.querySelectorAll('.workflow-stage').length===11,
+    previewNotices:document.querySelectorAll('.dashboard-preview-notice').length===2,
+    realValues:document.querySelectorAll('[data-value-kind="real"]').length===15,
+    dummyValues:document.querySelectorAll('[data-value-kind="dummy"]').length===15,
+    noGenericOverviewGrids:document.querySelectorAll('.overview-grid').length===0,
+    workingPagesWithoutDashboards:workingPages.every(page=>!page.querySelector('.area-dashboard,.overview-grid')),
+    contextBar:!!document.querySelector('[data-global-billing-context]'),
+    svgSectionChevrons:Array.from(document.querySelectorAll('.page-section__chevron')).every(node=>!!node.querySelector('svg')),
+    compactHeaders:Array.from(document.querySelectorAll('.app-page')).every(page=>page.querySelectorAll(':scope > .page-header').length===1)
+  };
+  const report={version:APP_VERSION,workPackage:"AP17",generatedAt:new Date().toISOString(),allPassed:Object.values(checks).every(Boolean),checks};
   NK_PRO_MODULES.runtimeDiagnostics.setStructureAudit(report);
   document.documentElement.dataset.v992Audit=report.allPassed?'passed':'failed';
+  document.documentElement.dataset.ap17Audit=report.allPassed?'passed':'failed';
   return report;
 }
 

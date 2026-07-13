@@ -23,12 +23,12 @@ test("AP11-Navigation bildet Zielstruktur, Icons und Zustände vollständig ab",
 
   await expect(page.locator("nav.workflow-nav")).toHaveCount(1);
   await expect(page.locator(".workflow-nav > .nav-group")).toHaveCount(4);
-  await expect(page.locator(".workflow-nav .tab-btn[data-tab]")).toHaveCount(18);
+  await expect(page.locator(".workflow-nav .tab-btn[data-tab]")).toHaveCount(19);
   const uniqueTabs = await page.locator(".workflow-nav .tab-btn[data-tab]").evaluateAll(nodes => [...new Set(nodes.map(node => node.dataset.tab))]);
-  expect(uniqueTabs).toHaveLength(18);
+  expect(uniqueTabs).toHaveLength(19);
 
   const objectLabels = await page.locator('#nav-group-object > .nav-group-item .nav-item-label').allTextContents();
-  expect(objectLabels.map(value => value.trim())).toEqual(["Objekt", "Wohnungen", "Zähler", "Mieter"]);
+  expect(objectLabels.map(value => value.trim())).toEqual(["Übersicht", "Objektdaten", "Wohnungen", "Zähler", "Mieter"]);
   const billingLabels = await page.locator('#nav-group-billing > .nav-group-item .nav-item-label').allTextContents();
   expect(billingLabels.map(value => value.trim())).toEqual(["Abrechnungsübersicht", "Mieter & Wohnungen", "Miete & Vorauszahlungen", "Kosten erfassen", "Manuelle & externe Werte", "Verbräuche erfassen", "Verteilung", "Prüfung", "Neue Vorauszahlungen", "Briefe", "Export"]);
   await expect(page.locator("#nav-group-billing .nav-subsection")).toHaveCount(0);
@@ -133,7 +133,7 @@ test("Tastatur, geringe Höhe und schmale Fenster bleiben vollständig bedienbar
   const focusStyle = await archiveToggle.evaluate(node => getComputedStyle(node).outlineStyle);
   expect(focusStyle).not.toBe("none");
 
-  await page.locator('[data-nav-toggle="group-billing"]').click();
+  await page.evaluate(() => NKProNavigation.setGroupExpanded("group-billing", true));
   const heightMetrics = await page.evaluate(() => {
     const nav = document.querySelector(".workflow-nav");
     const footer = document.querySelector(".sidebar-footer-zone");

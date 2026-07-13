@@ -1,0 +1,27 @@
+{
+  "version": "99.4.20",
+  "workPackage": "AP17",
+  "newSubstartPages": 2,
+  "realDashboardValues": 15,
+  "dummyDashboardValues": 15,
+  "documentedOpenLogics": 6,
+  "removedOrConvertedCards": 119,
+  "reviewedAndUnifiedBillingIcons": 11,
+  "productionFiles": [
+    "index.html",
+    "assets/app.css",
+    "js/navigation.js",
+    "js/ui-bindings.js",
+    "js/ui-page-controller.js",
+    "js/app-runtime-config.js",
+    "manifest.webmanifest",
+    "service-worker.js",
+    "package.json",
+    "package-lock.json",
+    "nk-pro-project.json"
+  ],
+  "newTestFiles": [
+    "tests/ap17-area-dashboards.test.cjs",
+    "tests/ap17-area-dashboards.spec.js"
+  ]
+}

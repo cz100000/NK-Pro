@@ -21,20 +21,20 @@ assert(JSON.stringify(groups) === JSON.stringify(["object", "billing", "archive"
 
 const tabs = [...html.matchAll(/class="tab-btn nav-group-item[^"]*"[^>]*data-tab="([^"]+)"/g)].map(match => match[1]);
 const expectedTabs = [
-  "objekt", "wohnungsverwaltung", "wasser", "mieterverwaltung",
+  "objektuebersicht", "objekt", "wohnungsverwaltung", "wasser", "mieterverwaltung",
   "start", "mieter", "einnahmen", "einstellungen", "manuellewerte", "verbraeuche",
   "umlage", "qualitaet", "vorauszahlungsanpassung", "briefe", "export",
   "archiv", "sicherung"
 ];
-assert(tabs.length === 17 && new Set(tabs).size === 17, "Die fachliche Gruppennavigation muss 17 eindeutige Ziele enthalten.");
+assert(tabs.length === 18 && new Set(tabs).size === 18, "Die fachliche Gruppennavigation muss 18 eindeutige Ziele enthalten.");
 assert(JSON.stringify(tabs) === JSON.stringify(expectedTabs), `Navigationsreihenfolge ist inkonsistent: ${tabs.join(", ")}`);
 
 assert(html.includes('class="tab-btn nav-start-link"') && html.includes('data-tab="landing"') && html.includes('class="nav-item-label">Start</span>'), "Startnavigation fehlt.");
 assert(html.indexOf('class="nav-start-entry"') < html.indexOf('data-nav-group-section="object"'), "Startnavigation steht nicht oberhalb von Objekt.");
 const labels = [...html.matchAll(/class="nav-item-label">([^<]+)<\/span>/g)].map(match => match[1].replace(/&amp;/g, "&"));
 assert(labels[0] === "Start", "Start ist nicht der erste Navigationspunkt.");
-assert(JSON.stringify(labels.slice(1, 5)) === JSON.stringify(["Objekt", "Wohnungen", "Zähler", "Mieter"]), "Objektgruppe entspricht nicht dem freigegebenen Zielbild.");
-assert(JSON.stringify(labels.slice(5, 16)) === JSON.stringify(["Abrechnungsübersicht", "Mieter & Wohnungen", "Miete & Vorauszahlungen", "Kosten erfassen", "Manuelle & externe Werte", "Verbräuche erfassen", "Verteilung", "Prüfung", "Neue Vorauszahlungen", "Briefe", "Export"]), "Abrechnungsnavigation entspricht nicht der freigegebenen Ablaufreihenfolge.");
+assert(JSON.stringify(labels.slice(1, 6)) === JSON.stringify(["Übersicht", "Objektdaten", "Wohnungen", "Zähler", "Mieter"]), "Objektgruppe entspricht nicht dem freigegebenen Zielbild.");
+assert(JSON.stringify(labels.slice(6, 17)) === JSON.stringify(["Abrechnungsübersicht", "Mieter & Wohnungen", "Miete & Vorauszahlungen", "Kosten erfassen", "Manuelle & externe Werte", "Verbräuche erfassen", "Verteilung", "Prüfung", "Neue Vorauszahlungen", "Briefe", "Export"]), "Abrechnungsnavigation entspricht nicht der freigegebenen Ablaufreihenfolge.");
 assert(!html.includes("Weitere Abrechnungsschritte"), "Die entfernte Unterüberschrift ist noch vorhanden.");
 assert(!html.includes("nav-group-item--secondary"), "Sekundäre Abrechnungsnavigation ist noch vorhanden.");
 
@@ -65,7 +65,7 @@ assert(navigation.includes('home.classList.toggle("active", landing)'), "Arbeits
 assert(!/\b(localStorage|indexedDB|caches)\b/.test(navigation), "Navigationsrenderer greift direkt auf Browser-Speicher zu.");
 assert(!/\bstate\s*[.[]/.test(navigation), "Navigationsmodul greift direkt auf Fachzustand zu.");
 
-assert(runtimeConfig.includes('const APP_VERSION = "V99.4.19";'), "Laufzeitversion ist nicht V99.4.19.");
-assert(runtimeConfig.includes('const APP_VERSION_NAME = "AP16-Look & Feel, Kachelsystem und visuelle Interaktionsqualität";'), "Versionsname ist inkonsistent.");
+assert(runtimeConfig.includes('const APP_VERSION = "V99.4.20";'), "Laufzeitversion ist nicht V99.4.20.");
+assert(runtimeConfig.includes('const APP_VERSION_NAME = "AP17-Bereichs-Dashboards, Navigationslogik und UI-Bereinigung";'), "Versionsname ist inkonsistent.");
 
-process.stdout.write("AP11-Navigationsprüfung abgeschlossen: Start plus 4 Gruppen, 17 fachliche Ziele und 11 gleichrangige Abrechnungsschritte in freigegebener Ablaufreihenfolge sind konsistent.\n");
+process.stdout.write("AP11-Navigationsprüfung abgeschlossen: Start plus 4 Gruppen, 18 fachliche Ziele und 11 gleichrangige Abrechnungsschritte in freigegebener Ablaufreihenfolge sind konsistent.\n");

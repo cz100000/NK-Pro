@@ -1,0 +1,32 @@
+{
+  "version": "1",
+  "release": "99.4.20",
+  "required": [
+    "productive HTML, CSS and JavaScript",
+    "used images, icons and PWA resources",
+    "migration, import, export and restore logic",
+    "current tests and test configuration",
+    "AP17 release and project documentation",
+    "package.json and package-lock.json"
+  ],
+  "excluded": [
+    "node_modules",
+    "embedded release archives",
+    "browser profiles and caches",
+    "generated test reports",
+    "historical screenshots and control outputs",
+    "obsolete work orders and hand-off copies",
+    "temporary, backup and log files"
+  ],
+  "retainedExceptions": [
+    {
+      "path": "AP9_BASELINE_INVENTORY.json",
+      "reason": "Direct current-test dependency of tests/ap9-core-orchestration.test.cjs."
+    },
+    {
+      "pathPrefix": "AP15_",
+      "reason": "Baseline release-hardening evidence remains referenced by AP15 regression tests."
+    }
+  ],
+  "automaticDeletion": false
+}

@@ -38,7 +38,7 @@ test("Deklarative UI-Aktionen aktualisieren Navigation und AP5-Zählerdaten", as
   const runtime = attachRuntimeGuards(page);
   await openFreshApp(page);
   await page.locator('#landing [data-ui-action="navigation.enterObjectPreparation"]').click();
-  await expect(page.locator("#objekt")).toHaveClass(/active/);
+  await expect(page.locator("#objektuebersicht")).toHaveClass(/active/);
 
   const result = await page.evaluate(() => {
     const before = JSON.stringify(state.zaehlerDaten || null);

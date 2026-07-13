@@ -45,7 +45,8 @@ module.exports = defineConfig({
     { name:"ap12-orchestration", testMatch:"ap12-orchestration.spec.js" },
     { name:"ap13-letter-layout", testMatch:"ap13-letter-layout.spec.js" },
     { name:"ap14-ui-navigation", testMatch:"ap14-ui-navigation.spec.js" },
-    { name:"ap15-integration-release", testMatch:"ap15-integration-release.spec.js" }
+    { name:"ap15-integration-release", testMatch:"ap15-integration-release.spec.js" },
+    { name:"ap17-area-dashboards", testMatch:"ap17-area-dashboards.spec.js" }
   ],
   use: {
     baseURL: "http://127.0.0.1:4173",

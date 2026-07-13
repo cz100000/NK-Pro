@@ -1,0 +1,93 @@
+{
+  "version": "99.4.20",
+  "workPackage": "AP17",
+  "status": "passed",
+  "schema": 5,
+  "dataLayerContract": 1,
+  "documentLayoutVersion": 4,
+  "newSubstartPages": 2,
+  "realDashboardValues": 15,
+  "dummyDashboardValues": 15,
+  "documentedOpenLogics": 6,
+  "removedOrConvertedCards": 119,
+  "reviewedAndUnifiedBillingIcons": 11,
+  "checks": {
+    "javascriptSyntax": {
+      "status": "passed",
+      "units": 51
+    },
+    "fixtures": {
+      "status": "passed",
+      "cases": 6
+    },
+    "meteringDomain": {
+      "status": "passed"
+    },
+    "architectureAndStaticRegression": {
+      "status": "passed",
+      "workPackages": [
+        "AP6",
+        "AP7",
+        "AP8",
+        "AP9",
+        "AP10",
+        "AP11",
+        "AP12",
+        "AP13",
+        "AP14",
+        "AP15",
+        "AP17"
+      ]
+    },
+    "releaseContents": {
+      "status": "passed",
+      "filesChecked": 153,
+      "nodeModulesExcluded": true
+    },
+    "releaseConsistency": {
+      "status": "passed"
+    },
+    "browserRegression": {
+      "status": "passed",
+      "testsDiscovered": 80,
+      "passed": 77,
+      "skipped": 3,
+      "failed": 0,
+      "execution": "serial, split into deterministic project batches because of host command-runtime limits"
+    },
+    "navigation": {
+      "status": "passed"
+    },
+    "keyboardAndFocus": {
+      "status": "passed"
+    },
+    "responsive": {
+      "status": "passed",
+      "viewports": [
+        "desktop",
+        "760 px",
+        "390 px",
+        "low-height"
+      ]
+    },
+    "pwaAndOffline": {
+      "status": "passed-with-environment-note",
+      "serviceWorkerSemanticTest": "passed",
+      "mandatoryAppShellChecks": "passed",
+      "optionalRealLoopbackOfflineTest": "not assessable in host environment; browser navigation was blocked by administrator policy before application load"
+    },
+    "letterPrintPdfRegression": {
+      "status": "passed",
+      "tests": 8
+    },
+    "freshZipStart": {
+      "status": "passed",
+      "validation": "release copy without node_modules/test artifacts; release consistency and all six AP17 browser tests passed"
+    }
+  },
+  "knownLimitations": [
+    "Die 15 Vorschauwerte besitzen bewusst noch keine produktive Fachlogik.",
+    "ARB5 bleibt der verbindliche Einzelobjekt-Kontext; Mehrgebäude- und Mehrabrechnungsauswahl sind nicht Bestandteil von AP17.",
+    "Der optionale reale Loopback-Offline-Browsertest konnte in der Ausführungsumgebung wegen einer administrativen Browserrichtlinie nicht gestartet werden; Service-Worker-Semantik und App-Shell wurden durch die regulären Tests vollständig geprüft."
+  ]
+}

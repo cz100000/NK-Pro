@@ -1,4 +1,4 @@
-# NK-Pro – Roadmap ab V99.4.18
+# NK-Pro – Roadmap ab V99.4.20
 
 ## Abgeschlossen
 
@@ -6,11 +6,14 @@
 - AP12: Restentkopplung von `app.js` und globale Zustandsbereinigung.
 - AP13: Brieflayout, Druckbild und Vorschaukonsistenz.
 - AP14: Navigationsbereinigung und visuelles UI-System.
+- AP15: Gesamtintegration, Releasehärtung und schlanke Arbeitsbasis.
+- AP16: Look & Feel, Kachelsystem und mockupnahe UI.
+- AP17: Bereichs-Dashboards, Navigationslogik und UI-Bereinigung.
 
 ## Aktueller Stand
 
-V99.4.17 enthält das unveränderte AP13-Dokumentmodell und zusätzlich das AP14-UI-System. Zählerinventar und Verbrauchserfassung sind fachlich getrennt, die Navigation besitzt 17 Ziele, die normale App nutzt Segoe UI und der bestehende Kopfbereich enthält Hilfe und Menü.
+V99.4.20 besitzt zwei Bereichsübersichten, eine globale Abrechnungskontextleiste, unabhängig klappbare Navigationsgruppen und bearbeitungsorientierte Unterseiten ohne generische Karten. Datenschema 5, Datenebenenvertrag 1 und AP13-Dokumentlayout 4 bleiben unverändert.
 
-## Nächstes Arbeitspaket
+## Nächste fachliche Kandidaten
 
-Noch nicht festgelegt. Der Zählerinventar-DUMMY darf erst in einem ausdrücklich definierten Folgepaket um echte Datenhaltung und Fachlogik erweitert werden.
+Die dokumentierten Vorschauwerte dürfen erst in einem ausdrücklich definierten Folgepaket durch produktive Logiken für Vollständigkeit, Fortschritt, offene Punkte, Empfehlungen, Workflowstatus und Qualitätsverdichtung ersetzt werden. Der Zählerinventar-DUMMY bleibt bis zu einem gesonderten Fachpaket unverändert.

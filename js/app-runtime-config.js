@@ -45,8 +45,8 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.19";
-const APP_VERSION_NAME = "AP16-Look & Feel, Kachelsystem und visuelle Interaktionsqualität";
+const APP_VERSION = "V99.4.20";
+const APP_VERSION_NAME = "AP17-Bereichs-Dashboards, Navigationslogik und UI-Bereinigung";
 const APP_RELEASE_DATE = "2026-07-13";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
@@ -307,7 +307,7 @@ const UNIT_ID_ALIASES = {
 
 let state = null;
 let archiveReturnState = null;
-const START_NAV_TABS = ["landing","objekt","mieterverwaltung","wohnungsverwaltung","wasser","start","archiv","sicherung"];
+const START_NAV_TABS = ["landing","objektuebersicht","objekt","mieterverwaltung","wohnungsverwaltung","wasser","start","archiv","sicherung"];
 const BILLING_NAV_TABS = ["qualitaet","mieter","einstellungen","einnahmen","manuellewerte","verbraeuche","umlage","vorauszahlungsanpassung","briefe","export"];
 let appUiMode = ARCHIVE_VIEW_MODE ? "billing" : "start";
 let billingContextOpen = ARCHIVE_VIEW_MODE;
