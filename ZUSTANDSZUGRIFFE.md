@@ -1,4 +1,7 @@
-# Zustandszugriffe V99.4.13
+# NK-Pro – Zustandszugriffe V99.4.14
+
+
+AP13 ergänzt ausschließlich kompatible Brieftexteinstellungen. Berechnungs- und Root-State-Eigentum bleiben unverändert; der Renderer schreibt nicht in den Anwendungszustand.
 
 `state` ist die einzige fachliche Arbeitswahrheit. Root-Zustandsersetzung erfolgt ausschließlich durch `app-state-persistence.js`; `state-access.js` stellt kontrollierte Lese-, Commit- und Transaktionspfade bereit. `app.js` besitzt null direkte State-Referenzen und null direkte State-Schreibstellen.
 

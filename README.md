@@ -1,21 +1,35 @@
-# NK-Pro V99.4.13 – Restentkopplung und globale Zustandsbereinigung
+# NK-Pro V99.4.14 – Brieflayout, Druckbild und Vorschaukonsistenz
 
-NK-Pro ist eine lokale, frameworkfreie HTML/CSS/JavaScript-PWA zur Erstellung, Prüfung, Archivierung und Ausgabe von Nebenkostenabrechnungen. V99.4.13 reduziert `app.js` auf Start und Verdrahtung, ordnet Zustandseigentum eindeutig zu und isoliert UI-, Dialog-, Seiten- und Browserabläufe.
+NK-Pro ist eine lokale, frameworkfreie HTML/CSS/JavaScript-PWA zur Erstellung, Prüfung, Archivierung und Ausgabe von Nebenkostenabrechnungen. V99.4.14 setzt AP13 um und vereinheitlicht Bildschirmvorschau, Druck und PDF auf ein gemeinsames DIN-A4-Dokumentmodell.
 
 ## Verbindlicher Stand
 
 | Merkmal | Stand |
 |---|---|
-| App-Version | V99.4.13 |
-| Ausgangsversion | V99.4.12 |
+| App-Version | V99.4.14 |
+| Ausgangsversion | V99.4.13 |
+| Versionsname | Brieflayout, Druckbild und Vorschaukonsistenz |
 | Datenschema / Datenebenenvertrag | 5 / 1, unverändert |
 | Objektstandard / Abrechnungssnapshot | 1 / 2, unverändert |
 | Zählerstandards | 1, unverändert |
-| UI | 13 Controller, 99 Aktionskennungen, zentrale Ereignisdelegation |
-| Navigation | AP11-Grundsystem: 4 Gruppen, 16 Ziele, 22 lokale SVG-Icons; Abrechnungsgruppe ohne Untergruppe korrigiert |
-| `app.js` | 225 Zeilen, 15.599 Byte; Start, Verdrahtung und Orchestrierung |
-| PWA-Cache | `nk-pro-v99-4-13` |
+| Dokumentlayout | AP13-Version 1; gemeinsames HTML/CSS für Vorschau, Druck und PDF |
+| Seitenformat | DIN A4, feste 210 × 297 mm |
+| Seitenlogik | 1 Seite standardmäßig; Seite 2 nur bei Zusatzhinweis und/oder Vorauszahlungsanpassung |
+| Navigation | AP11-Grundsystem mit vier Gruppen und 16 Zielen; Abrechnungsgruppe ohne Untergruppe |
+| `app.js` | 225 Zeilen; Start, Verdrahtung und Orchestrierung |
+| PWA-Cache | `nk-pro-v99-4-14` |
 | Technik | statisches HTML, CSS und JavaScript; kein Framework, TypeScript oder Buildsystem |
+
+## AP13-Kernergebnis
+
+- vollständiges Briefdesign nach den finalen Ein- und Zweiseitenreferenzen,
+- neunspaltige Haupttabelle mit Vorauszahlungen und vollständigen Trennlinien,
+- kein separater Vorauszahlungs- oder Abrechnungsergebnisblock,
+- identischer Kopf und Informationsblock auf Seite 2,
+- Gruß-/Unterschriftenblock genau einmal am Dokumentende,
+- variable Standardtexte weiterhin bearbeitbar,
+- skalierte vollständige A4-Vorschau ohne alternatives Umbruchmodell,
+- ein- und zweiseitige Kontroll-PDFs im Projektstamm.
 
 ## Start und Tests
 
@@ -28,7 +42,14 @@ npm run test:fixtures
 npm run test:metering
 npm run test:architecture
 npm run test:release
-CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:browser -- --workers=1
+CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:browser -- --workers=4
 ```
 
-AP12-Nachweise beginnen mit `AP12_RESTENTKOPPLUNG_UND_ZUSTANDSBEREINIGUNG.md`. AP13 ist für Brieflayout, Druckbild und Vorschaukonsistenz reserviert.
+Nur AP13 prüfen beziehungsweise Kontrollausgaben neu erzeugen:
+
+```bash
+CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:ap13
+CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium node tools/generate-ap13-controls.cjs
+```
+
+Technische Details: `AP13_BRIEFLAYOUT_DRUCKBILD_VORSCHAUKONSISTENZ.md`. Prüfergebnisse: `AP13_PRUEFBERICHT.md` und `AP13_TEST_RESULTS.json`.

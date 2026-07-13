@@ -1,5 +1,24 @@
 # Changelog
 
+## V99.4.14 – Brieflayout, Druckbild und Vorschaukonsistenz (13.07.2026)
+
+### Geändert
+
+- Vorschau, Druck und PDF auf einen gemeinsamen AP13-Dokumentrenderer mit identischem HTML und CSS umgestellt.
+- vollständige DIN-A4-Seiten mit 210 × 297 mm, physischen Maßeinheiten und skalierter Ganzseitenvorschau eingeführt.
+- verbindliche Ein-/Zweiseitenlogik umgesetzt: Seite 2 ausschließlich bei Zusatzhinweis und/oder Vorauszahlungsanpassung.
+- neunspaltige Haupttabelle über den vollständigen Satzspiegel umgesetzt; Vorauszahlungen und Ergebnis in die Tabelle integriert.
+- sämtliche inneren Tabellenlinien einschließlich der Trennlinie zwischen „Preis pro Einheit“ und „Ihr Anteil“ vereinheitlicht.
+- Briefkopf, Informationsblock, Anschriftenfenster, Ergebnisleiste, Hinweisbox, Zahlungstext, Abschlussblock, Anlagenhinweis und Fußzeile an die finalen Referenzen angeglichen.
+- Tabelle zur Vorauszahlungsanpassung in derselben blauen visuellen Sprache wie die Haupttabelle umgesetzt.
+- variable Standardtexte vollständig erhalten und um getrennte Zahlungsformulierungen sowie Dauerauftrag-/Abschlusstextfelder ergänzt.
+- AP13-Struktur- und Browsertests sowie ein- und zweiseitige Kontroll-PDFs ergänzt.
+- PWA-, Paket-, Laufzeit- und Projektversion auf V99.4.14 aktualisiert.
+
+### Unverändert
+
+Fachliche Berechnungen, Werte, Rundungen, Vorzeichenlogik, Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Abrechnungssnapshot 2, alle Zählerstandards 1, 13 UI-Controller und 99 Aktionskennungen.
+
 ## V99.4.13 – Restentkopplung und globale Zustandsbereinigung (13.07.2026)
 
 - `app.js` von 6.294 auf 225 Zeilen reduziert.

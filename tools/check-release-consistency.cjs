@@ -52,6 +52,7 @@ function main(){
   const baseline=JSON.parse(read("AP12_BASELINE_INVENTORY.json"));
   const navInventory=JSON.parse(read("AP11_NAVIGATION_INVENTORY.json"));
   const testResults=JSON.parse(read("AP12_TEST_RESULTS.json"));
+  const ap13Results=JSON.parse(read("AP13_TEST_RESULTS.json"));
   const html=read("index.html");
   const css=read("assets/app.css");
   const app=read("js/app.js");
@@ -59,24 +60,33 @@ function main(){
   const stateOwner=read("js/app-state-persistence.js");
   const diagnostics=read("js/runtime-diagnostics.js");
   const navigation=read("js/navigation.js");
+  const documentRenderer=read("js/document-renderer.js");
+  const documentUi=read("js/ui-documents.js");
   const worker=read("service-worker.js");
   const metrics=JSON.parse(childProcess.execFileSync(process.execPath,[path.join(root,"tools/analyze-app-js.cjs")],{encoding:"utf8"}));
   const architecture=JSON.parse(childProcess.execFileSync(process.execPath,[path.join(root,"tools/analyze-ap12-architecture.cjs")],{encoding:"utf8"}));
 
-  assert(packageJson.name==="nk-pro-v99-4-13"&&packageJson.version==="99.4.13","Paketversion ist inkonsistent.");
-  assert(lockJson.name==="nk-pro-v99-4-13"&&lockJson.version==="99.4.13","Package-Lock-Version ist inkonsistent.");
-  assert(lockJson.packages?.[""]?.name==="nk-pro-v99-4-13"&&lockJson.packages?.[""]?.version==="99.4.13","Package-Lock-Root ist inkonsistent.");
-  assert(manifest.version==="99.4.13"&&manifest.name.includes("V99.4.13"),"Manifestversion ist inkonsistent.");
-  assert(project.appVersion==="99.4.13"&&project.displayVersion==="V99.4.13"&&project.basedOn==="99.4.12","Projektversionsmetadaten sind inkonsistent.");
-  assert(project.versionName==="Restentkopplung und globale Zustandsbereinigung","Versionsname ist inkonsistent.");
+  assert(packageJson.name==="nk-pro-v99-4-14"&&packageJson.version==="99.4.14","Paketversion ist inkonsistent.");
+  assert(lockJson.name==="nk-pro-v99-4-14"&&lockJson.version==="99.4.14","Package-Lock-Version ist inkonsistent.");
+  assert(lockJson.packages?.[""]?.name==="nk-pro-v99-4-14"&&lockJson.packages?.[""]?.version==="99.4.14","Package-Lock-Root ist inkonsistent.");
+  assert(manifest.version==="99.4.14"&&manifest.name.includes("V99.4.14"),"Manifestversion ist inkonsistent.");
+  assert(project.appVersion==="99.4.14"&&project.displayVersion==="V99.4.14"&&project.basedOn==="99.4.13","Projektversionsmetadaten sind inkonsistent.");
+  assert(project.versionName==="Brieflayout, Druckbild und Vorschaukonsistenz","Versionsname ist inkonsistent.");
   assert(project.schemaVersion===5&&project.dataLayerContractVersion===1,"Datenschema oder Datenebenenvertrag wurde verändert.");
   assert(project.objectStandardVersion===1&&project.billingSnapshotVersion===2,"Objektstandard oder Snapshotversion wurde verändert.");
   for(const key of ["meterMasterStandardVersion","meterReadingStandardVersion","meterPeriodStandardVersion","meterAssignmentStandardVersion","meterReplacementStandardVersion"]){
     assert(project[key]===1,`${key} ist inkonsistent.`);
   }
-  assert(runtimeConfig.includes('const APP_VERSION = "V99.4.13";')&&runtimeConfig.includes('const APP_VERSION_NAME = "Restentkopplung und globale Zustandsbereinigung";'),"Laufzeitversion ist inkonsistent.");
-  assert(html.includes("<title>NK-Pro V99.4.13 – Restentkopplung und globale Zustandsbereinigung</title>"),"HTML-Titel ist inkonsistent.");
-  assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-13";'),"Service-Worker-Cache ist inkonsistent.");
+  assert(runtimeConfig.includes('const APP_VERSION = "V99.4.14";')&&runtimeConfig.includes('const APP_VERSION_NAME = "Brieflayout, Druckbild und Vorschaukonsistenz";'),"Laufzeitversion ist inkonsistent.");
+  assert(html.includes("<title>NK-Pro V99.4.14 – Brieflayout, Druckbild und Vorschaukonsistenz</title>"),"HTML-Titel ist inkonsistent.");
+  assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-14";'),"Service-Worker-Cache ist inkonsistent.");
+
+  assert(project.documentLayoutVersion===1,"AP13-Dokumentlayoutversion fehlt.");
+  assert(documentRenderer.includes("data-nk-letter-styles")&&documentRenderer.includes("data-document-pages"),"Gemeinsames AP13-Dokumentmodell fehlt.");
+  assert(documentRenderer.includes("Ihre<br>Vorauszahlung")&&documentRenderer.includes("<col class=\"col-balance\">"),"AP13-Haupttabelle ist unvollständig.");
+  assert(documentRenderer.includes("const hasSupplement = !!additionalText || prepaymentAdjustmentRequired"),"AP13-Seitenlogik ist inkonsistent.");
+  assert(documentUi.includes("Zahlungstext bei Guthaben")&&documentUi.includes("Hinweis zum Dauerauftrag")&&documentUi.includes("Optionaler Abschlusstext vor der Grußformel"),"AP13-Texteditoren sind unvollständig.");
+  assert(css.includes("V99.4.14 - AP13: gemeinsame DIN-A4-Vorschau")&&css.includes("--nk-letter-preview-scale"),"AP13-Vorschau-Skalierung fehlt.");
 
   assert(metrics.lines===225&&metrics.bytes===15599,`app.js-Metrik ist unerwartet: ${metrics.bytes} Byte/${metrics.lines} Zeilen.`);
   assert(metrics.lines<300&&metrics.bytes<20000,"app.js überschreitet die AP12-Zielgrenze.");
@@ -134,6 +144,8 @@ function main(){
   assert(read("js/billing-snapshot.js").includes("const BILLING_SNAPSHOT_VERSION = 2;"),"Snapshotversion 2 fehlt.");
   assert(testResults.status==="passed"&&testResults.notExecuted.length===0,"AP12-Testbericht ist nicht vollständig bestanden.");
   assert(testResults.unchangedStandards.uiControllers===13&&testResults.unchangedStandards.uiActions===99,"UI-Controller-/Aktionsstand ist inkonsistent.");
+  assert(ap13Results.status==="passed"&&ap13Results.browserTests===5&&ap13Results.controlPdfs.standardPages===1&&ap13Results.controlPdfs.extendedPages===2,"AP13-Testbericht ist nicht vollständig bestanden.");
+  assert(ap13Results.sharedDocumentModel===true&&ap13Results.previewPrintParity===true,"AP13-Dokumentparität ist nicht bestätigt.");
 
   const required=[
     "README.md","ARCHITECTURE.md","MODULE_UEBERSICHT.md","UI_ARCHITEKTUR_AKTUELL.md","ABHAENGIGKEITSUEBERSICHT.md","ANWENDUNGSSTART.md",
@@ -143,12 +155,14 @@ function main(){
     "AP12_MUTATIONSINVENTAR.md","AP12_WINDOW_BINDUNGEN.md","AP12_RENDERER_DIALOG_NAVIGATION.md","AP12_ABHAENGIGKEITEN_UND_START.md",
     "AP12_LEGACY_KOMPATIBILITAET.md","AP12_PRUEFBERICHT.md","AP12_BASELINE_INVENTORY.json","AP12_APP_JS_INVENTORY_BEFORE.json",
     "AP12_APP_JS_INVENTORY_AFTER.json","AP12_ARCHITECTURE_INVENTORY.json","AP12_FUNKTIONSINVENTAR.json","AP12_MUTATIONSINVENTAR.json",
-    "AP12_RENDERER_INVENTAR.json","AP12_ZUSTANDSINVENTAR.json","AP12_TEST_RESULTS.json","AP12_FINAL_RELEASE_VERIFICATION.json","AP12_DATEIAENDERUNGEN.md","AP12_DATEIAENDERUNGEN.json"
+    "AP12_RENDERER_INVENTAR.json","AP12_ZUSTANDSINVENTAR.json","AP12_TEST_RESULTS.json","AP12_FINAL_RELEASE_VERIFICATION.json","AP12_DATEIAENDERUNGEN.md","AP12_DATEIAENDERUNGEN.json",
+    "AP13_BRIEFLAYOUT_DRUCKBILD_VORSCHAUKONSISTENZ.md","AP13_PRUEFBERICHT.md","AP13_TEST_RESULTS.json","AP13_CONTROL_OUTPUT_METRICS.json",
+    "AP13_Kontrollausgabe_Standard_1_Seite.pdf","AP13_Kontrollausgabe_Erweitert_2_Seiten.pdf","tests/ap13-letter-layout.test.cjs","tests/ap13-letter-layout.spec.js","tools/generate-ap13-controls.cjs"
   ];
   for(const file of required) assert(exists(file),`${file} fehlt.`);
   for(const moduleName of baseline.newModules) assert(exists(`js/${moduleName}`),`AP12-Modul fehlt: js/${moduleName}`);
   assert(!exists("js/app.v99.4.12.baseline.js"),"Temporäre AP12-Baseline ist im Release enthalten.");
   verifyChecksums();
-  process.stdout.write("Release-Konsistenzprüfung abgeschlossen: V99.4.13, app.js 225 Zeilen, 1 Root-State-Ersetzung, 46 seiteneffektfreie Renderer, 75 explizite Wrapper, AP11-Navigation, 13 Controller, 99 Aktionen und vollständige PWA-App-Shell sind konsistent.\n");
+  process.stdout.write("Release-Konsistenzprüfung abgeschlossen: V99.4.14 mit AP13-Dokumentmodell, app.js 225 Zeilen, 1 Root-State-Ersetzung, 46 seiteneffektfreie Renderer, 75 explizite Wrapper, AP11-Navigation, 13 Controller, 99 Aktionen und vollständige PWA-App-Shell sind konsistent.\n");
 }
 try{main();}catch(error){process.stderr.write(`FEHLER: ${error.message}\n`);process.exit(1);}

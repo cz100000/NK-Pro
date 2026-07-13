@@ -1,7 +1,7 @@
 {
-  "name": "NK-Pro V99.4.13 – Nebenkostenabrechnung",
-  "short_name": "NK-Pro V99.4.13",
-  "description": "Lokale Nebenkostenabrechnung mit konsistenter, barrierearmer Navigation und vollständig offline verfügbarem visuellem Grundsystem.",
+  "name": "NK-Pro V99.4.14 – Nebenkostenabrechnung",
+  "short_name": "NK-Pro V99.4.14",
+  "description": "Lokale Nebenkostenabrechnung mit konsistentem DIN-A4-Brieflayout für Vorschau, Druck und PDF.",
   "lang": "de-DE",
   "id": "./",
   "start_url": "./",
@@ -9,7 +9,7 @@
   "display": "standalone",
   "background_color": "#f4f6f9",
   "theme_color": "#031d41",
-  "version": "99.4.13",
+  "version": "99.4.14",
   "icons": [
     {
       "src": "./icons/icon-192.png",

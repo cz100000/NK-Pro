@@ -1,6 +1,6 @@
-# NK-Pro – Tests V99.4.13
+# NK-Pro – Teststrategie V99.4.14
 
-## Vollständiger Lauf
+## Standardlauf
 
 ```bash
 npm ci
@@ -9,7 +9,16 @@ npm run test:fixtures
 npm run test:metering
 npm run test:architecture
 npm run test:release
-CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npx playwright test --workers=1
+CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:browser -- --workers=4
 ```
 
-Bei Browser-Teardown-Problemen dürfen Projekte in frischen Prozessen ausgeführt werden. Der AP12-Abschlusslauf umfasst Syntax, sechs Referenzfälle, Zählerstandard, Architekturprüfungen AP6–AP12, Releasekonsistenz sowie zwölf Playwright-Projekte. Ergebnisse und Sonderfall des geteilten Snapshot-Laufs stehen in `AP12_PRUEFBERICHT.md` und `AP12_TEST_RESULTS.json`.
+## AP13
+
+```bash
+CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:ap13
+CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium node tools/generate-ap13-controls.cjs
+```
+
+AP13 prüft das gemeinsame Dokumentmodell, DIN-A4-Maße, neun Tabellen-spalten, vollständige Linien, Ein-/Zweiseitenlogik, Abschlussblock, Vorauszahlungsanpassung, Nachzahlung/Guthaben, lange Empfängerdaten und skalierte Vorschau. Die erzeugten PDFs werden zusätzlich mit `pdfinfo`, Textextraktion und gerenderten Seitenbildern kontrolliert.
+
+Maschinenlesbare Ergebnisse: `AP13_TEST_RESULTS.json`. Ausführlicher Bericht: `AP13_PRUEFBERICHT.md`.

@@ -142,7 +142,7 @@
       const costRows = briefCostRows(calc, tenant);
       const html = buildBriefHtml(calc, result) || "";
       const styles = briefPrintStyles();
-      const pageCount = (html.match(/letter-sheet/g) || []).length;
+      const pageCount = (html.match(/<section class="letter-sheet/g) || []).length;
       const prepayEnabled = s.vorauszahlungPrintMode !== "Nicht drucken" && s.showVorauszahlungPage === "Ja";
   
       add("ok", "Empfänger", tenantDisplayId(tenant) + " · " + (tenant.name || "ohne Namen"));
@@ -154,19 +154,19 @@
       if (s.zahlungsziel) add("ok", "Zahlungsziel", dateDe(s.zahlungsziel) || String(s.zahlungsziel));
       else add("warn", "Zahlungsziel", "Kein Zahlungsziel hinterlegt. Wird aktuell nicht prominent gedruckt, sollte aber vor Versand geprüft werden.");
   
-      if (html.includes('class="footer"') && s.bankverbindung) add("ok", "Fußzeile", "Kontoverbindung/Fußzeile vorhanden.");
+      if (html.includes('class="letter-footer"') && s.bankverbindung) add("ok", "Fußzeile", "Kontoverbindung/Fußzeile vorhanden.");
       else add("warn", "Fußzeile", "Fußzeile oder Bankverbindung fehlt.");
   
-      if (html.includes("letter-sheet") && styles.includes("@page{size:A4;margin:0") && styles.includes("width:210mm") && styles.includes("height:297mm")) {
+      if (html.includes("data-nk-letter-styles") && html.includes("data-page-count") && styles.includes("@page{size:A4;margin:0") && styles.includes("width:210mm") && styles.includes("height:297mm")) {
         add("ok", "DIN-A4", "Feste A4-Seitenstruktur und Druck-CSS vorhanden.");
       } else {
         add("err", "DIN-A4", "A4-Seitenstruktur oder Druck-CSS unvollständig.");
       }
   
-      if (styles.includes("tbody td{white-space:nowrap") && styles.includes("thead th") && styles.includes("white-space:normal")) {
-        add("ok", "Tabellenlayout", "Datenzeilen einzeilig, Tabellenköpfe umbruchfähig.");
+      if (html.includes("<col class=\"col-balance\">") && html.includes("Ihre<br>Vorauszahlung") && html.includes("border-right:.25mm solid")) {
+        add("ok", "Tabellenlayout", "Neunspaltige Haupttabelle mit vollständigen Trennlinien und Vorauszahlungen innerhalb der Tabelle vorhanden.");
       } else {
-        add("err", "Tabellenlayout", "Tabellen-Umbruchregeln für Druck fehlen oder sind verändert.");
+        add("err", "Tabellenlayout", "AP13-Haupttabelle, Spalten oder Trennlinien fehlen oder sind verändert.");
       }
   
       if (pageCount <= 0) add("err", "Seiten", "Keine Briefseite erzeugt.");

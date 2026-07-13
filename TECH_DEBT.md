@@ -1,4 +1,7 @@
-# Technischer Schuldenstand V99.4.13
+# NK-Pro – Technische Restpunkte V99.4.14
+
+
+AP13 beseitigt die parallelen Vorschau-/Drucklayouts. Verbleibend ist nur die externe Abhängigkeit von den Einstellungen des konkreten Browser-Druckdialogs beziehungsweise Druckertreibers.
 
 ## In AP12 erledigt
 

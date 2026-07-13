@@ -41,7 +41,8 @@ module.exports = defineConfig({
     { name:"service-worker", testMatch:"service-worker.spec.js" },
     { name:"ap10-orchestration", testMatch:"ap10-orchestration.spec.js" },
     { name:"ap11-navigation", testMatch:"ap11-navigation.spec.js" },
-    { name:"ap12-orchestration", testMatch:"ap12-orchestration.spec.js" }
+    { name:"ap12-orchestration", testMatch:"ap12-orchestration.spec.js" },
+    { name:"ap13-letter-layout", testMatch:"ap13-letter-layout.spec.js" }
   ],
   use: {
     baseURL: "http://127.0.0.1:4173",

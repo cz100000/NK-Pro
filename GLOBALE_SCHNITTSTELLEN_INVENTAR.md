@@ -1,4 +1,7 @@
-# Globale Schnittstellen – V99.4.13
+# NK-Pro – Globale Schnittstellen V99.4.14
+
+
+AP13 führt keine neue unkontrollierte globale Schnittstelle ein. Bestehende Dokument-Kompatibilitätsaufrufe delegieren an `NK_PRO_MODULES.documentRenderer`.
 
 ## Zulässige Schnittstellen
 

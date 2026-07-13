@@ -3107,3 +3107,81 @@
       .landing-choice { min-height:220px; padding:24px; }
       .sidebar-billing-context__details > div { grid-template-columns:82px minmax(0,1fr); }
     }
+
+/* V99.4.14 - AP13: gemeinsame DIN-A4-Vorschau fuer Vorschau, Druck und PDF */
+.letter-preview-wrap {
+  min-width:0;
+  max-height:none;
+  overflow:auto;
+  padding:20px;
+  background:#eef2f5;
+}
+#briefPreview.letter-page {
+  width:100%;
+  max-width:none;
+  min-height:0;
+  margin:0;
+  padding:0;
+  border:0;
+  background:transparent;
+  box-shadow:none;
+  overflow:visible;
+}
+#briefPreview > style { display:none; }
+#briefPreview .nk-letter-document {
+  width:210mm;
+  margin:0 auto;
+  zoom:var(--nk-letter-preview-scale, 1);
+}
+#briefPreview .nk-letter-document .letter-sheet {
+  width:210mm;
+  height:297mm;
+  min-height:297mm;
+  max-width:none;
+  margin:0 auto 6mm;
+  padding:0;
+  border:0;
+  box-shadow:0 16px 40px rgba(16,24,40,.18);
+  overflow:hidden;
+}
+#briefPreview .nk-letter-document .letter-title,
+#briefPreview .nk-letter-document .supplement-title { display:block; }
+
+@media print {
+  body.document-print-window .print-guide { display:none !important; }
+  body.document-print-window .nk-letter-document { width:210mm !important; margin:0 !important; zoom:1 !important; }
+
+  body:not(.document-print-window) .app-sidebar,
+  body:not(.document-print-window) .app-header,
+  body:not(.document-print-window) .period-banner,
+  body:not(.document-print-window) #briefe .page-header,
+  body:not(.document-print-window) #briefe .overview-grid,
+  body:not(.document-print-window) #briefe .page-section__summary,
+  body:not(.document-print-window) #briefe .page-section__body > .hint,
+  body:not(.document-print-window) #briefe .letter-settings,
+  body:not(.document-print-window) #lettersValidationSection,
+  body:not(.document-print-window) section.tab:not(#briefe) { display:none !important; }
+
+  body:not(.document-print-window),
+  body:not(.document-print-window) main,
+  body:not(.document-print-window) #briefe,
+  body:not(.document-print-window) #briefe .app-page,
+  body:not(.document-print-window) #briefe .page-sections,
+  body:not(.document-print-window) #lettersEditorSection,
+  body:not(.document-print-window) #lettersEditorSection > .page-section__body,
+  body:not(.document-print-window) #briefe .letter-layout,
+  body:not(.document-print-window) #briefe .letter-preview-wrap,
+  body:not(.document-print-window) #briefPreview {
+    display:block !important;
+    width:210mm !important;
+    max-width:none !important;
+    min-height:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:0 !important;
+    background:#fff !important;
+    box-shadow:none !important;
+    overflow:visible !important;
+  }
+  body:not(.document-print-window) #briefPreview .nk-letter-document { zoom:1 !important; margin:0 !important; }
+}

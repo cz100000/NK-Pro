@@ -1,11 +1,13 @@
-# NK-Pro – Projektstand V99.4.13
+# NK-Pro – Projektstand V99.4.14
 
-**Versionsname:** Restentkopplung und globale Zustandsbereinigung  
-**Basis:** V99.4.12  
+**Versionsname:** Brieflayout, Druckbild und Vorschaukonsistenz  
+**Basis:** V99.4.13  
 **Datum:** 13. Juli 2026
 
-AP12 ist fachlich und technisch umgesetzt. `app.js` dient nur noch Start, Verdrahtung und zentraler Orchestrierung. Zustand, UI-Renderer, Dialoge, Seitensteuerung und Browser-I/O besitzen klar dokumentierte Eigentümer. Zentrale Ereignisdelegation, AP11-Navigationsgrundsystem, PWA/Offlinebetrieb und alle fachlichen Standards bleiben bestehen. Die Abrechnungsgruppe wurde nach AP12 ohne Unterüberschrift in zehn gleichrangige Arbeitsschritte korrigiert.
+AP13 ist umgesetzt. Die Nebenkostenabrechnung wird durch einen gemeinsamen Renderer als vollständiges DIN-A4-Dokument erzeugt. Vorschau, Druckfenster und PDF verwenden dasselbe HTML und dasselbe Basis-Stylesheet. Die Vorschau skaliert nur die vollständigen Seiten und erzeugt keine eigenen Umbrüche.
 
-Die Referenzabrechnungen sind semantisch unverändert. Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Abrechnungssnapshot 2 und Zählerstandards 1 bleiben verbindlich.
+Die Haupttabelle besitzt neun Spalten, enthält die Vorauszahlungen und weist sämtliche inneren Trennlinien aus. Seite 2 entsteht ausschließlich bei zusätzlichem Hinweistext und/oder einer auszugebenden Vorauszahlungsanpassung. Briefkopf und Informationsblock werden dort identisch wiederholt. Gruß, Unterschrift und Anlagenhinweis erscheinen genau einmal am tatsächlichen Dokumentende.
 
-**Nächster Schritt:** AP13 – Brieflayout, Druckbild und Vorschaukonsistenz.
+Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Abrechnungssnapshot 2, Zählerstandards 1, fachliche Berechnungen, Rundungen und Vorzeichenlogik bleiben unverändert. Die AP12-Modulgrenzen und die korrigierte AP11-Navigation bestehen fort.
+
+**Nächster Schritt:** Noch nicht festgelegt; zunächst produktive Sichtprüfung von V99.4.14.

@@ -45,8 +45,8 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.13";
-const APP_VERSION_NAME = "Restentkopplung und globale Zustandsbereinigung";
+const APP_VERSION = "V99.4.14";
+const APP_VERSION_NAME = "Brieflayout, Druckbild und Vorschaukonsistenz";
 const APP_RELEASE_DATE = "2026-07-13";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
@@ -112,6 +112,9 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
+  "V99.4.14 setzt AP13 mit einem gemeinsamen DIN-A4-Dokumentmodell für Vorschau, Druckfenster und PDF-Ausgabe um.",
+  "Die neunspaltige Haupttabelle enthält Vorauszahlungen und vollständige Trennlinien; Seite 2 entsteht ausschließlich für Zusatzhinweise und/oder eine Vorauszahlungsanpassung.",
+  "Briefkopf, Informationsblock, Ergebnisleiste, Hinweis- und Zahlungstext, Abschlussblock, Anlagenhinweis und dynamische Seitenzahlen folgen den finalen AP13-Referenzmustern.",
   "V99.4.13 reduziert app.js auf Start, Verdrahtung und zentrale Orchestrierung und trennt die bisherigen Laufzeitbereiche in klar benannte Zustands-, UI-, Browser- und Seitenmodule.",
   "Ein gekapseltes Laufzeitdiagnosemodul ersetzt vier einzelne window-Testbindungen; Zustandsersetzungen laufen über eine zentrale Eigentümerfunktion und Renderer führen keine vorbereitenden Datenmutationen mehr aus.",
   "V99.4.12 setzt die produktive Navigation nach dem verbindlichen Referenzbild mit lokalen SVG-Icons, Design-Tokens, responsivem Verhalten und barrierearmen Zuständen neu um.",

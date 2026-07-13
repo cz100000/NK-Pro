@@ -1,4 +1,7 @@
-# Kompatibilitätsschicht V99.4.13
+# NK-Pro – Kompatibilitätsschicht V99.4.14
+
+
+AP13 erhält die vorhandenen Dokumentweiterleitungen. Die Implementierung liegt im Dokumentrenderer; es wurde kein zweiter Renderer in der Kompatibilitätsschicht ergänzt.
 
 Die Schicht ist explizit statt pauschal. `app.js` registriert genau 75 bekannte Namen aus Berechnung, Dokumentdaten, Dokumentrenderer, Export, Tabellen und Archiv. 37 nicht mehr aufgerufene Weiterleitungen wurden entfernt. Die Registry exportiert keine neuen Modulmethoden automatisch.
 

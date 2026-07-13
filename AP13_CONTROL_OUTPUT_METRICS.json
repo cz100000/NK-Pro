@@ -1,0 +1,39 @@
+{
+  "standard": {
+    "pages": 1,
+    "metrics": [
+      {
+        "page": 1,
+        "contentClientHeight": 733,
+        "contentScrollHeight": 733,
+        "contentBeforeFooter": true,
+        "sheetWidth": 793.69,
+        "sheetHeight": 1122.52,
+        "expectedA4": true
+      }
+    ]
+  },
+  "extended": {
+    "pages": 2,
+    "metrics": [
+      {
+        "page": 1,
+        "contentClientHeight": 733,
+        "contentScrollHeight": 733,
+        "contentBeforeFooter": true,
+        "sheetWidth": 793.69,
+        "sheetHeight": 1122.52,
+        "expectedA4": true
+      },
+      {
+        "page": 2,
+        "contentClientHeight": 964,
+        "contentScrollHeight": 964,
+        "contentBeforeFooter": true,
+        "sheetWidth": 793.69,
+        "sheetHeight": 1122.52,
+        "expectedA4": true
+      }
+    ]
+  }
+}

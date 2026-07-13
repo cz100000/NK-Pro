@@ -86,16 +86,21 @@ function normalizeBriefDefaultTexts() {
   function normalizeLegacyProse(value) {
     return String(value || "").replace(/\\n/g, " ").replace(/\r?\n/g, " ").replace(/\s+/g, " ").trim();
   }
-  const newIntroText = "untenstehend erhalten Sie die Nebenkostenabrechnung für das Jahr {jahr}. Der finale Betrag befindet sich am Ende der Aufstellung.";
-  const newSaldoText = "Bei negativen Beträgen handelt es sich um Nachzahlungen an die Vermieterin. Bei positiven Beträgen handelt es sich um Guthaben zu Ihren Gunsten. Bitte begleichen Sie eine etwaige Nachzahlung umgehend.";
-  const newPrepayText = "Um den gestiegenen Energiekosten und Ihrem individuellen Verbrauch Rechnung zu tragen, erhöhen sich Ihre monatlichen Nebenkostenvorauszahlungen zum {datum}. Die Details entnehmen Sie bitte der untenstehenden Tabelle.";
-  const oldIntro = "untenstehend erhalten Sie Nebenkostenabrechnung für das Jahr {jahr}. Der finale Betrag befindet sich am Ende der Aufstellung.";
-  const oldSaldo = "Bei negativen Beträgen, handelt es sich um Nachzahlungen an die Vermieterin. Bei positiven Beträgen handelt es sich um Guthaben zu Ihren Gunsten. Ich bitte Sie, eine etwaige Nachzahlung umgehend zu begleichen.";
-  const oldPrepay = "Um den gestiegenen Energiekosten und Ihrem individuellen Verbrauch Rechnung zu tragen, erhöhen sich Ihre monatlichen Nebenkostenvorauszahlungen zum {datum}. Die Details entnehmen Sie bitte der untenstehenden Tabelle.";
-  if (normalizeLegacyProse(state.briefSettings.introText) === oldIntro) state.briefSettings.introText = newIntroText;
-  if (normalizeLegacyProse(state.briefSettings.saldoTextNachzahlung) === oldSaldo) state.briefSettings.saldoTextNachzahlung = newSaldoText;
-  if (normalizeLegacyProse(state.briefSettings.saldoTextGuthaben) === oldSaldo) state.briefSettings.saldoTextGuthaben = newSaldoText;
-  if (normalizeLegacyProse(state.briefSettings.vorauszahlungIntro) === oldPrepay) state.briefSettings.vorauszahlungIntro = newPrepayText;
+  const defaults = defaultBriefSettings();
+  const legacyIntros = [
+    "untenstehend erhalten Sie Nebenkostenabrechnung für das Jahr {jahr}. Der finale Betrag befindet sich am Ende der Aufstellung.",
+    "untenstehend erhalten Sie die Nebenkostenabrechnung für das Jahr {jahr}. Der finale Betrag befindet sich am Ende der Aufstellung."
+  ];
+  const legacySaldoTexts = [
+    "Bei negativen Beträgen, handelt es sich um Nachzahlungen an die Vermieterin. Bei positiven Beträgen handelt es sich um Guthaben zu Ihren Gunsten. Ich bitte Sie, eine etwaige Nachzahlung umgehend zu begleichen.",
+    "Bei negativen Beträgen handelt es sich um Nachzahlungen an die Vermieterin. Bei positiven Beträgen handelt es sich um Guthaben zu Ihren Gunsten. Bitte begleichen Sie eine etwaige Nachzahlung umgehend."
+  ];
+  const legacyPrepay = "Um den gestiegenen Energiekosten und Ihrem individuellen Verbrauch Rechnung zu tragen, erhöhen sich Ihre monatlichen Nebenkostenvorauszahlungen zum {datum}. Die Details entnehmen Sie bitte der untenstehenden Tabelle.";
+  if (legacyIntros.includes(normalizeLegacyProse(state.briefSettings.introText))) state.briefSettings.introText = defaults.introText;
+  if (legacySaldoTexts.includes(normalizeLegacyProse(state.briefSettings.saldoTextNachzahlung))) state.briefSettings.saldoTextNachzahlung = defaults.saldoTextNachzahlung;
+  if (legacySaldoTexts.includes(normalizeLegacyProse(state.briefSettings.saldoTextGuthaben))) state.briefSettings.saldoTextGuthaben = defaults.saldoTextGuthaben;
+  if (normalizeLegacyProse(state.briefSettings.vorauszahlungIntro) === legacyPrepay) state.briefSettings.vorauszahlungIntro = defaults.vorauszahlungIntro;
+  if (normalizeLegacyProse(state.briefSettings.heizkostenFussnote).startsWith("*) Heiz- und Warmwasserkosten")) state.briefSettings.heizkostenFussnote = defaults.heizkostenFussnote;
 }
 function defaultBriefSettings() {
   const today = todayIso();
@@ -116,19 +121,22 @@ function defaultBriefSettings() {
     bankverbindung: "Kreissparkasse Birkenfeld / IBAN: DE32 5625 0030 0021 1302 99 / BIC: BILADE55XXX",
     betreff: "Nebenkostenabrechnung",
     anredeModus: "Sehr geehrte(r) Mieter/in,",
-    introText: "untenstehend erhalten Sie die Nebenkostenabrechnung für das Jahr {jahr}. Der finale Betrag befindet sich am Ende der Aufstellung.",
-    saldoTextNachzahlung: "Bei negativen Beträgen handelt es sich um Nachzahlungen an die Vermieterin. Bei positiven Beträgen handelt es sich um Guthaben zu Ihren Gunsten. Bitte begleichen Sie eine etwaige Nachzahlung umgehend.",
-    saldoTextGuthaben: "Bei negativen Beträgen handelt es sich um Nachzahlungen an die Vermieterin. Bei positiven Beträgen handelt es sich um Guthaben zu Ihren Gunsten. Bitte begleichen Sie eine etwaige Nachzahlung umgehend.",
+    introText: "für die oben bezeichnete Wohnung erhalten Sie hiermit Ihre Nebenkostenabrechnung für den Zeitraum {zeitraum}. Die Kostenverteilung und Ihr Anteil sind nachfolgend dargestellt:",
+    saldoTextNachzahlung: "Bitte überweisen Sie den Betrag bis zum {zahlungsziel} auf das Ihnen bekannte Konto.",
+    saldoTextGuthaben: "Ihr Guthaben wird Ihnen bis zum {zahlungsziel} auf das bekannte Konto überwiesen beziehungsweise mit der nächsten Zahlung verrechnet.",
     outroText: "",
+    abschlusstext: "Bei Fragen stehe ich Ihnen selbstverständlich gern zur Verfügung.",
     gruss: "Mit freundlichen Grüßen",
-    signatur: "Ute Zimmermann\\nVermieterin",
+    signatur: "Ute Zimmermann\nVermieterin",
+    anlagenText: "Heiz- und Warmwasserkostenabrechnung der Fa. Techem",
     fusszeile: "",
-    heizkostenFussnote: "*) Heiz- und Warmwasserkosten sind entsprechend der separaten Abrechnung der Fa. Techem aufgelistet. Die Abrechnung liegt bei.",
+    heizkostenFussnote: "Die Heiz- und Warmwasserkosten wurden gemäß der beigefügten Abrechnung des Messdienstleisters (Fa. Techem) übernommen. Diese liegt diesem Schreiben bei.",
     showVorauszahlungPage: "Nein",
     vorauszahlungPrintMode: "Nicht drucken",
     useCalculatedPrepaymentAdjustments: "Ja",
     vorauszahlungAb: "01.01." + nextYear,
-    vorauszahlungIntro: "Um den gestiegenen Energiekosten und Ihrem individuellen Verbrauch Rechnung zu tragen, erhöhen sich Ihre monatlichen Nebenkostenvorauszahlungen zum {datum}. Die Details entnehmen Sie bitte der untenstehenden Tabelle.",
+    vorauszahlungIntro: "Auf Grundlage der vorliegenden Abrechnung wird Ihre monatliche Betriebskostenvorauszahlung ab dem {datum} wie folgt angepasst:",
+    dauerauftragText: "Bitte passen Sie Ihren monatlichen Dauerauftrag ab dem {datum} auf {betrag} an.",
     vzChangeHeizung: 15,
     vzChangeWasser: 0,
     vzChangeAbfall: 7,
@@ -247,7 +255,7 @@ function printHardeningReport(calc, result) {
     add("err", "Empfänger", "Kein Briefempfänger für die Druckprüfung verfügbar.");
   } else {
     const html = buildBriefHtml(calc, result) || "";
-    const pageCount = (html.match(/letter-sheet/g) || []).length;
+    const pageCount = (html.match(/<section class="letter-sheet/g) || []).length;
     const costRows = briefCostRows(calc, result.tenant);
     const maxCostName = costRows.reduce((max,row) => Math.max(max, compactTextLength(row.kostenart)), 0);
     if (pageCount <= 0) add("err", "Seitenanzahl", "Keine A4-Seite erzeugt.");
@@ -410,18 +418,38 @@ function renderBrief() {
     '<label>Manuell: Änderung sonstige Verbrauchskosten monatlich</label><input class="money" value="' + escapeHtml(s.vzChangeSonstige) + '" ' + uiActionAttributes("document.setBriefSetting", ["vzChangeSonstige","$value"], "change") + '>';
 
   textsEl.innerHTML =
-    '<label>Einleitungstext ({jahr} und {zeitraum} werden ersetzt)</label>' + textareaHtml(s.introText, "setBriefSetting('introText',this.value)") +
-    '<label>Hinweistext Nachzahlung/Guthaben</label>' + textareaHtml(s.saldoTextNachzahlung, "setBriefSetting('saldoTextNachzahlung',this.value)") +
-    '<label>Text Vorauszahlungsanpassung ({datum} wird ersetzt)</label>' + textareaHtml(s.vorauszahlungIntro, "setBriefSetting('vorauszahlungIntro',this.value)") +
-    '<label>Fußnote Heizkosten</label>' + textareaHtml(s.heizkostenFussnote, "setBriefSetting('heizkostenFussnote',this.value)") +
-    '<label>Zusatztext nach Abrechnung</label>' + textareaHtml(s.outroText, "setBriefSetting('outroText',this.value)") +
+    '<label>Einleitungstext ({jahr}, {zeitraum}, {zahlungsziel} und {betrag} werden ersetzt)</label>' + textareaHtml(s.introText, "setBriefSetting('introText',this.value)") +
+    '<label>Zahlungstext bei Nachzahlung</label>' + textareaHtml(s.saldoTextNachzahlung, "setBriefSetting('saldoTextNachzahlung',this.value)") +
+    '<label>Zahlungstext bei Guthaben</label>' + textareaHtml(s.saldoTextGuthaben, "setBriefSetting('saldoTextGuthaben',this.value)") +
+    '<label>Allgemeiner Hinweistext unter der Tabelle</label>' + textareaHtml(s.heizkostenFussnote, "setBriefSetting('heizkostenFussnote',this.value)") +
+    '<label>Zusätzlicher Hinweistext (erzeugt Seite 2)</label>' + textareaHtml(s.outroText, "setBriefSetting('outroText',this.value)") +
+    '<label>Text zur Vorauszahlungsanpassung ({datum} und {betrag} werden ersetzt)</label>' + textareaHtml(s.vorauszahlungIntro, "setBriefSetting('vorauszahlungIntro',this.value)") +
+    '<label>Hinweis zum Dauerauftrag</label>' + textareaHtml(s.dauerauftragText, "setBriefSetting('dauerauftragText',this.value)") +
+    '<label>Optionaler Abschlusstext vor der Grußformel</label>' + textareaHtml(s.abschlusstext, "setBriefSetting('abschlusstext',this.value)") +
     '<label>Grußformel</label>' + textareaHtml(s.gruss, "setBriefSetting('gruss',this.value)") +
-    '<label>Signatur</label>' + textareaHtml(s.signatur, "setBriefSetting('signatur',this.value)");
+    '<label>Signatur</label>' + textareaHtml(s.signatur, "setBriefSetting('signatur',this.value)") +
+    '<label>Anlagenhinweis</label>' + textareaHtml(s.anlagenText, "setBriefSetting('anlagenText',this.value)");
 
   previewEl.dataset.hasBrief = selected && !briefValidation.errors.length ? "true" : "false";
   previewEl.dataset.validationErrors = String(briefValidation.errors.length);
   previewEl.dataset.validationWarnings = String(briefValidation.warnings.length);
   previewEl.innerHTML = buildBriefHtml(calc, selected);
+  requestAnimationFrame(applyBriefPreviewScale);
+  if (!previewEl.__nkAp13ResizeObserver && typeof ResizeObserver !== "undefined") {
+    previewEl.__nkAp13ResizeObserver = new ResizeObserver(applyBriefPreviewScale);
+    const wrap = previewEl.closest(".letter-preview-wrap");
+    if (wrap) previewEl.__nkAp13ResizeObserver.observe(wrap);
+  }
+}
+
+function applyBriefPreviewScale() {
+  const preview = document.getElementById("briefPreview");
+  const wrap = preview && preview.closest(".letter-preview-wrap");
+  if (!preview || !wrap) return;
+  const a4WidthPx = 210 * 96 / 25.4;
+  const availableWidth = Math.max(180, wrap.clientWidth - 40);
+  const scale = Math.min(1, Math.max(0.25, availableWidth / a4WidthPx));
+  preview.style.setProperty("--nk-letter-preview-scale", String(scale));
 }
 function currentBriefPreviewOrWarn() {
   const preview = document.getElementById("briefPreview");

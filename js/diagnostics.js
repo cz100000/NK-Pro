@@ -465,13 +465,16 @@
       return "Gesamtexport mit globalen Ebenen und Archiv · Einzelabrechnung als begrenzter Snapshot";
     }));
   
-    runCheck("Brief", "Tabellen-Lesbarkeit ohne Umbruch", () => {
-      const styles = briefPrintStyles();
-      if (!styles.includes("tbody td{white-space:nowrap")) throw new Error("Briefdruck-CSS setzt Datenzellen nicht auf nowrap");
-      if (!styles.includes("thead th,.prepay-table thead th{white-space:normal")) throw new Error("Briefdruck-CSS erlaubt Tabellenkopf-Umbruch nicht");
-      if (!styles.includes("font-size:10.15px")) throw new Error("Briefdruck-CSS enthält nicht die V62/V63-Schriftgröße für Tabellen");
-      return "Tabellenzellen ohne Umbruch · größere Schrift aktiviert";
-    });
+    runCheck("Brief", "AP13-Haupttabelle und gemeinsame Layoutquelle", () => withAuditState(auditBriefState(), () => {
+      const calc = calculateUmlage();
+      const selected = selectedBriefTenant(calc);
+      const html = buildBriefHtml(calc, selected);
+      if (!html.includes("data-nk-letter-styles")) throw new Error("Gemeinsame Dokument-CSS fehlt");
+      if (!html.includes("Ihre<br>Vorauszahlung")) throw new Error("Vorauszahlungsspalte fehlt");
+      if ((html.match(/<th>/g) || []).length < 9) throw new Error("Neunspaltige Haupttabelle fehlt");
+      if (!html.includes("border-right:.25mm solid")) throw new Error("Vertikale Tabellentrennlinien fehlen");
+      return "Gemeinsame Dokument-CSS · neun Spalten · vollständige Trennlinien";
+    }));
   
     runCheck("Brief", "Eigentümer-/Privat aus Mieterbriefen ausgeschlossen", () => withAuditState(auditBriefState(), () => {
       const calc = calculateUmlage();
@@ -486,9 +489,10 @@
       const selected = selectedBriefTenant(calc);
       const html = buildBriefHtml(calc, selected);
       if (!html.includes("letter-sheet")) throw new Error("A4-Seite fehlt");
-      if (!html.includes('class="footer"')) throw new Error("Fußzeile fehlt");
-      if (!html.includes("summary-spacer")) throw new Error("Summenblock-Abstand fehlt");
-      return "Briefstruktur enthält A4-Seite, Fußzeile und Summenblock-Abstand";
+      if (!html.includes('class="letter-footer"')) throw new Error("Fußzeile fehlt");
+      if (!html.includes("table-total-row")) throw new Error("Summenzeile fehlt");
+      if (!html.includes("result-strip")) throw new Error("Ergebnisleiste fehlt");
+      return "Briefstruktur enthält A4-Seite, Fußzeile, Ergebnisleiste und Summenzeile";
     }));
   
     runCheck("Brief", "Preflight-Status", () => withAuditState(auditBriefState(), () => {
