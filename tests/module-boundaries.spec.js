@@ -14,7 +14,11 @@ test("Fach-, Technik-, Start- und Kompatibilitätsmodule sind vor app.js geladen
       "ui-controller.js", "ui-bindings.js", "ui-events.js", "navigation.js", "modal-events.js", "persistence.js", "migration.js", "backup-recovery.js",
       "meter-master.js", "meter-readings.js", "meter-periods.js", "meter-validation.js", "object-standard.js",
       "billing-snapshot.js", "archive.js", "archive-actions.js", "year-transition-actions.js", "quality-assurance.js", "diagnostics.js", "billing-calculation.js", "document-data.js", "document-renderer.js",
-      "export-service.js", "ui-table-tools.js", "app-bootstrap.js", "compatibility.js", "default-seed.js", "app.js"
+      "export-service.js", "ui-table-tools.js", "app-bootstrap.js", "compatibility.js", "default-seed.js",
+      "runtime-diagnostics.js", "app-runtime-config.js", "app-state-persistence.js", "ui-master-data.js",
+      "ui-quality.js", "ui-costs.js", "ui-navigation-pages.js", "ui-archive-pages.js", "browser-io.js",
+      "ui-metering.js", "ui-billing-allocation.js", "ui-documents.js", "ui-table-actions.js",
+      "ui-diagnostics.js", "ui-page-controller.js", "app.js"
     ];
     const order = names.map(name => scripts.indexOf(name));
     const snapshot = window.NKProBillingWorkflow.createSnapshot();
@@ -41,6 +45,7 @@ test("Fach-, Technik-, Start- und Kompatibilitätsmodule sind vor app.js geladen
       uiTableTools:window.NKProUiTableTools,
       appBootstrap:window.NKProAppBootstrap,
       compatibilityRegistry:window.NKProCompatibility,
+      runtimeDiagnostics:window.NKProRuntimeDiagnostics,
       uiPreferences:window.NKProUiPreferences,
       stateAccess:window.NKProStateAccess,
       applicationActions:window.NKProApplicationActions,
@@ -53,12 +58,14 @@ test("Fach-, Technik-, Start- und Kompatibilitätsmodule sind vor app.js geladen
       navigation:window.NKProNavigation,
       modalEvents:window.NKProModalEvents
     };
+    const runtimeDiagnostics = window.NKProRuntimeDiagnostics.snapshot();
     return {
       order,
       modules:Object.fromEntries(Object.entries(moduleEntries).map(([key, value]) => [key, !!value])),
       frozen:Object.fromEntries(Object.entries(moduleEntries).map(([key, value]) => [key, Object.isFrozen(value)])),
-      startup:{ ok:window.__NKPRO_STARTUP__ && window.__NKPRO_STARTUP__.ok, completed:window.__NKPRO_STARTUP__ && window.__NKPRO_STARTUP__.completed.length },
-      registered:(window.__NKPRO_COMPATIBILITY__ || []).map(entry => [entry.moduleName, entry.wrapperCount]),
+      startup:{ ok:runtimeDiagnostics.startup && runtimeDiagnostics.startup.ok, completed:runtimeDiagnostics.startup && runtimeDiagnostics.startup.completed.length },
+      registered:(runtimeDiagnostics.compatibility || []).map(entry => [entry.moduleName, entry.wrapperCount]),
+      removedGlobals:["__V992_AUDIT__", "__NKPRO_UI_ARCHITECTURE__", "__NKPRO_STARTUP__", "__NKPRO_COMPATIBILITY__"].every(name => !(name in window)),
       wrappers:{
         calculateUmlage:calculateUmlage === window.calculateUmlage && typeof calculateUmlage === "function",
         buildBriefHtml:buildBriefHtml === window.buildBriefHtml && typeof buildBriefHtml === "function",
@@ -78,17 +85,15 @@ test("Fach-, Technik-, Start- und Kompatibilitätsmodule sind vor app.js geladen
   expect(Object.values(result.frozen).every(Boolean)).toBe(true);
   expect(result.order.every(index => index >= 0)).toBe(true);
   expect(result.order).toEqual([...result.order].sort((a, b) => a - b));
-  expect(result.startup).toEqual({ ok:true, completed:13 });
+  expect(result.startup).toEqual({ ok:true, completed:16 });
+  expect(result.removedGlobals).toBe(true);
   expect(result.registered).toEqual([
-    ["billingCalculation", 48],
-    ["documentData", 26],
-    ["documentRenderer", 14],
-    ["exportService", 18],
-    ["uiTableTools", 6],
-    ["archiveActions", 33],
-    ["yearTransitionActions", 27],
-    ["qualityAssurance", 10],
-    ["diagnostics", 8]
+    ["billingCalculation", 30],
+    ["documentData", 22],
+    ["documentRenderer", 9],
+    ["exportService", 12],
+    ["uiTableTools", 1],
+    ["archiveActions", 1]
   ]);
   expect(result.wrappers).toEqual({ calculateUmlage:true, buildBriefHtml:true, downloadFullExportPackage:true });
   expect(result.compatibility).toEqual({ integrity:true, schema:5, bounded:true });

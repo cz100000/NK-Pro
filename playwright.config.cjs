@@ -40,7 +40,8 @@ module.exports = defineConfig({
     { name:"reference-cases", testMatch:"reference-cases.spec.js" },
     { name:"service-worker", testMatch:"service-worker.spec.js" },
     { name:"ap10-orchestration", testMatch:"ap10-orchestration.spec.js" },
-    { name:"ap11-navigation", testMatch:"ap11-navigation.spec.js" }
+    { name:"ap11-navigation", testMatch:"ap11-navigation.spec.js" },
+    { name:"ap12-orchestration", testMatch:"ap12-orchestration.spec.js" }
   ],
   use: {
     baseURL: "http://127.0.0.1:4173",

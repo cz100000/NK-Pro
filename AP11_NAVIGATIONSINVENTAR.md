@@ -1,71 +1,57 @@
 # AP11 – Navigationsinventar und Zuordnung
 
-**Version:** NK-Pro V99.4.12  
+**Ursprüngliche Version:** NK-Pro V99.4.12  
+**Korrigierter Stand:** NK-Pro V99.4.13  
 **Produktive Navigationsquelle:** genau ein semantisches `<nav class="workflow-nav">` in `index.html`  
 **Bestand:** 4 Gruppen, 16 produktive Ziele, 22 lokale SVG-Piktogramme, 1 deaktivierter Footer-Dummy.
 
-## Zielstruktur
+## Verbindliche Zielstruktur
 
 ### Objekt vorbereiten (`object`)
 
 | Menüpunkt | Zielseite | Aktionskennung | aktive Abrechnung erforderlich | Rang |
 |---|---|---|---|---|
-| Objekt | `objekt` | `navigation.switchTab` | nein | primär |
-| Wohnungen | `wohnungsverwaltung` | `navigation.switchTab` | nein | primär |
-| Zähler | `wasser` | `navigation.switchTab` | ja | primär |
-| Mieter | `mieterverwaltung` | `navigation.switchTab` | nein | primär |
+| Objekt | `objekt` | `navigation.switchTab` | nein | gleichrangig |
+| Wohnungen | `wohnungsverwaltung` | `navigation.switchTab` | nein | gleichrangig |
+| Zähler | `wasser` | `navigation.switchTab` | ja | gleichrangig |
+| Mieter | `mieterverwaltung` | `navigation.switchTab` | nein | gleichrangig |
 
 ### Nebenkosten abrechnen (`billing`)
 
-| Menüpunkt | Zielseite | Aktionskennung | aktive Abrechnung erforderlich | Rang |
-|---|---|---|---|---|
-| Kosten erfassen | `einstellungen` | `navigation.switchTab` | ja | primär |
-| Verteilung | `umlage` | `navigation.switchTab` | ja | primär |
-| Prüfung | `qualitaet` | `navigation.switchTab` | ja | primär |
-| Briefe | `briefe` | `navigation.switchTab` | ja | primär |
-| Export | `export` | `navigation.switchTab` | ja | primär |
-| Abrechnungsübersicht | `start` | `navigation.switchTab` | nein | ergänzend |
-| Mieter & Wohnungen | `mieter` | `navigation.switchTab` | ja | ergänzend |
-| Miete & Vorauszahlungen | `einnahmen` | `navigation.switchTab` | ja | ergänzend |
-| Manuelle & externe Werte | `manuellewerte` | `navigation.switchTab` | ja | ergänzend |
-| Neue Vorauszahlungen | `vorauszahlungsanpassung` | `navigation.switchTab` | ja | ergänzend |
+Innerhalb dieser Gruppe existiert keine Untergruppe und keine Überschrift „Weitere Abrechnungsschritte“. Alle zehn Einträge verwenden dieselbe Navigationsebene und denselben visuellen Rang.
+
+| Reihenfolge | Menüpunkt | Zielseite | Aktionskennung | aktive Abrechnung erforderlich | Rang |
+|---:|---|---|---|---|---|
+| 1 | Abrechnungsübersicht | `start` | `navigation.switchTab` | nein | gleichrangig |
+| 2 | Mieter & Wohnungen | `mieter` | `navigation.switchTab` | ja | gleichrangig |
+| 3 | Miete & Vorauszahlungen | `einnahmen` | `navigation.switchTab` | ja | gleichrangig |
+| 4 | Kosten erfassen | `einstellungen` | `navigation.switchTab` | ja | gleichrangig |
+| 5 | Manuelle & externe Werte | `manuellewerte` | `navigation.switchTab` | ja | gleichrangig |
+| 6 | Verteilung | `umlage` | `navigation.switchTab` | ja | gleichrangig |
+| 7 | Prüfung | `qualitaet` | `navigation.switchTab` | ja | gleichrangig |
+| 8 | Neue Vorauszahlungen | `vorauszahlungsanpassung` | `navigation.switchTab` | ja | gleichrangig |
+| 9 | Briefe | `briefe` | `navigation.switchTab` | ja | gleichrangig |
+| 10 | Export | `export` | `navigation.switchTab` | ja | gleichrangig |
 
 ### Archiv (`archive`)
 
 | Menüpunkt | Zielseite | Aktionskennung | aktive Abrechnung erforderlich | Rang |
 |---|---|---|---|---|
-| Abrechnungsarchiv | `archiv` | `navigation.switchTab` | nein | primär |
+| Abrechnungsarchiv | `archiv` | `navigation.switchTab` | nein | gleichrangig |
 
 ### Extras (`extras`)
 
 | Menüpunkt | Zielseite | Aktionskennung | aktive Abrechnung erforderlich | Rang |
 |---|---|---|---|---|
-| Datensicherung & System | `sicherung` | `navigation.switchTab` | nein | primär |
+| Datensicherung & System | `sicherung` | `navigation.switchTab` | nein | gleichrangig |
 
-## Zuordnung V99.4.11 → V99.4.12
+## Korrektur nach AP12
 
-| Bisheriger Menüpunkt | Zielgruppe | Neuer Menüpunkt | Aktion beziehungsweise Seite | Änderung |
-|---|---|---|---|---|
-| Objekt | Objekt vorbereiten | Objekt | `navigation.switchTab` → `#objekt` | Position/Design vereinheitlicht; Ziel und Aktion unverändert |
-| Wohnungen | Objekt vorbereiten | Wohnungen | `navigation.switchTab` → `#wohnungsverwaltung` | Position/Design vereinheitlicht; Ziel und Aktion unverändert |
-| Zählerstände | Objekt vorbereiten | Zähler | `navigation.switchTab` → `#wasser` | Gruppe billing → object; Bezeichnung gekürzt: „Zählerstände“ → „Zähler“ |
-| Mieter | Objekt vorbereiten | Mieter | `navigation.switchTab` → `#mieterverwaltung` | Position/Design vereinheitlicht; Ziel und Aktion unverändert |
-| Kosten erfassen | Nebenkosten abrechnen | Kosten erfassen | `navigation.switchTab` → `#einstellungen` | Position/Design vereinheitlicht; Ziel und Aktion unverändert |
-| Verteilung & Berechnung | Nebenkosten abrechnen | Verteilung | `navigation.switchTab` → `#umlage` | Bezeichnung gekürzt: „Verteilung & Berechnung“ → „Verteilung“ |
-| Qualitätsprüfung | Nebenkosten abrechnen | Prüfung | `navigation.switchTab` → `#qualitaet` | Bezeichnung gekürzt: „Qualitätsprüfung“ → „Prüfung“ |
-| Briefe | Nebenkosten abrechnen | Briefe | `navigation.switchTab` → `#briefe` | Position/Design vereinheitlicht; Ziel und Aktion unverändert |
-| Export | Nebenkosten abrechnen | Export | `navigation.switchTab` → `#export` | Position/Design vereinheitlicht; Ziel und Aktion unverändert |
-| Abrechnungsübersicht | Nebenkosten abrechnen | Abrechnungsübersicht | `navigation.switchTab` → `#start` | als ergänzender Abrechnungsschritt nach Primärworkflow eingeordnet |
-| Mieter & Wohnungen | Nebenkosten abrechnen | Mieter & Wohnungen | `navigation.switchTab` → `#mieter` | als ergänzender Abrechnungsschritt nach Primärworkflow eingeordnet |
-| Miete & Vorauszahlungen | Nebenkosten abrechnen | Miete & Vorauszahlungen | `navigation.switchTab` → `#einnahmen` | als ergänzender Abrechnungsschritt nach Primärworkflow eingeordnet |
-| Manuelle & externe Werte | Nebenkosten abrechnen | Manuelle & externe Werte | `navigation.switchTab` → `#manuellewerte` | als ergänzender Abrechnungsschritt nach Primärworkflow eingeordnet |
-| Neue Vorauszahlungen | Nebenkosten abrechnen | Neue Vorauszahlungen | `navigation.switchTab` → `#vorauszahlungsanpassung` | als ergänzender Abrechnungsschritt nach Primärworkflow eingeordnet |
-| Abrechnungsarchiv | Archiv | Abrechnungsarchiv | `navigation.switchTab` → `#archiv` | Position/Design vereinheitlicht; Ziel und Aktion unverändert |
-| Datensicherung & System | Extras | Datensicherung & System | `navigation.switchTab` → `#sicherung` | Position/Design vereinheitlicht; Ziel und Aktion unverändert |
+Die in V99.4.12 eingeführte künstliche Unterteilung in fünf hervorgehobene und fünf ergänzende Abrechnungsschritte wurde entfernt. Die Korrektur ändert ausschließlich Reihenfolge, Klassen und Darstellung der vorhandenen Navigationspunkte. Tab-IDs, Aktionskennungen, Kontextbedingungen und Fachfunktionen bleiben unverändert.
 
 ## Erhalt der Aktionen
 
-Alle 16 Menüeinträge verwenden weiterhin die bestehende Aktionskennung `navigation.switchTab`. Die sechs weiteren Navigation-Controlleraktionen sowie die Gesamtzahl von 13 UI-Controllern und 99 eindeutigen Aktionskennungen bleiben unverändert. Es wurde keine zweite Navigationszustandsquelle eingeführt.
+Alle 16 Menüeinträge verwenden weiterhin die bestehende Aktionskennung `navigation.switchTab`. Die weiteren Navigation-Controlleraktionen sowie die Gesamtzahl von 13 UI-Controllern und 99 eindeutigen Aktionskennungen bleiben unverändert. Es wurde keine zweite Navigationszustandsquelle eingeführt.
 
 ## Kontextbedingungen
 

@@ -1,25 +1,4 @@
-# NK-Pro – Testkonzept V99.4.12
-
-## Statische Prüfungen
-
-- Syntax aller produktiven JavaScriptdateien,
-- Fixture-Konsistenz und Materialisierbarkeit,
-- Zählerdomänentests,
-- AP6–AP11-Architekturgrenzen,
-- Versions-, App-Shell-, Dokument- und SHA-256-Konsistenz.
-
-## AP11-Prüfungen
-
-`tests/ap11-navigation.test.cjs` prüft Struktur, eine einzige Navigation, 16 Ziele, 22 Inline-SVGs, Tokens, Einstellungen-Dummy, Ereignis- und Zustandsgrenzen. `tests/ap11-navigation.spec.js` prüft im Browser:
-
-- Referenzstruktur und Iconkonsistenz,
-- genau einen aktiven Punkt und `aria-current`,
-- zustandsneutralen Einstellungen-Dummy,
-- Tastatur, sichtbaren Fokus und Gruppensteuerung,
-- geringe Höhe und schmalen Drawer,
-- 1920×1080, 1600×900, 1366×768, 1280×720,
-- Zoomsimulation 80/100/125/150 Prozent,
-- optionale visuelle Referenzscreenshots.
+# NK-Pro – Tests V99.4.13
 
 ## Vollständiger Lauf
 
@@ -30,11 +9,7 @@ npm run test:fixtures
 npm run test:metering
 npm run test:architecture
 npm run test:release
-CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:browser
+CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npx playwright test --workers=1
 ```
 
-Bei instabiler gemeinsamer Playwright-Ausführung werden die elf Projekte in frischen Prozessen mit `--workers=1` ausgeführt. Das ist ein zulässiger Testmodus und wird im Prüfbericht vollständig ausgewiesen.
-
-## Freigabe
-
-Nicht ausgeführte Prüfungen dürfen nicht als bestanden gelten. Ergebnisse, Laufzeiten, Ersatzprüfungen und visuelle Referenzen werden in `AP11_TEST_RESULTS.json` und `AP11_PRUEFBERICHT.md` dokumentiert. Die Releaseprüfung validiert abschließend alle in `SHA256SUMS.txt` aufgeführten Dateien.
+Bei Browser-Teardown-Problemen dürfen Projekte in frischen Prozessen ausgeführt werden. Der AP12-Abschlusslauf umfasst Syntax, sechs Referenzfälle, Zählerstandard, Architekturprüfungen AP6–AP12, Releasekonsistenz sowie zwölf Playwright-Projekte. Ergebnisse und Sonderfall des geteilten Snapshot-Laufs stehen in `AP12_PRUEFBERICHT.md` und `AP12_TEST_RESULTS.json`.

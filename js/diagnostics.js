@@ -126,15 +126,12 @@
   }
   
   function withAuditState(tempState, fn) {
-    const oldState = state;
     const oldPendingStorageWarning = pendingStorageWarning;
     const oldLastActionMessage = lastActionMessage;
     const oldRenderErrors = Array.isArray(renderErrors) ? renderErrors.slice() : [];
     try {
-      state = tempState;
-      return fn();
+      return d.withIsolatedState(tempState, fn);
     } finally {
-      state = oldState;
       pendingStorageWarning = oldPendingStorageWarning;
       lastActionMessage = oldLastActionMessage;
       renderErrors = oldRenderErrors;

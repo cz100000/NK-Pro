@@ -48,13 +48,12 @@ test("CSV-Aufbereitung nutzt ausschließlich das übergebene Fachergebnis und bl
       ...calc.tenantResults.map(item => [item.tenant.id, item.tenant.name, item.costShare, item.prepayments])
     ];
     const before = JSON.stringify(state);
-    const csvViaWrapper = toCsv(rows);
     const csvViaModule = NKProExportService.toCsv(rows);
     const escaped = NKProExportService.csvEscape('Wert; mit "Zitat"');
     const after = JSON.stringify(state);
     return {
       sameState: before === after,
-      sameCsv: csvViaWrapper === csvViaModule,
+      legacyWrapperRemoved:typeof globalThis.toCsv === "undefined",
       csv: csvViaModule,
       escaped,
       lineCount: csvViaModule.split("\n").length,
@@ -63,7 +62,7 @@ test("CSV-Aufbereitung nutzt ausschließlich das übergebene Fachergebnis und bl
   });
 
   expect(result.sameState).toBe(true);
-  expect(result.sameCsv).toBe(true);
+  expect(result.legacyWrapperRemoved).toBe(true);
   expect(result.csv).toContain("Mieter-ID;Name;Kostenanteil;Vorauszahlungen");
   expect(result.escaped).toBe('"Wert; mit ""Zitat"""');
   expect(result.lineCount).toBe(result.expectedLineCount);

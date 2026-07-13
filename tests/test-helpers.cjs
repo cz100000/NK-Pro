@@ -90,7 +90,7 @@ async function openFreshApp(page, initialEntries = {}) {
 async function loadFixture(page, fixtureName) {
   const fixture = loadFixtureData(fixtureName);
   await page.evaluate(data => {
-    state = normalizeLoadedData(JSON.parse(JSON.stringify(data)));
+    replaceApplicationState(normalizeLoadedData(JSON.parse(JSON.stringify(data))));
     prepareStateForPersistence("Playwright-Referenzfall");
     renderAll({ forceAll: true, reason: "playwright-fixture" });
     switchToTab("start");

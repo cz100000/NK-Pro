@@ -1,23 +1,18 @@
-# NK-Pro – Technischer Schuldenstand V99.4.12
+# Technischer Schuldenstand V99.4.13
 
-## In AP11 erledigt
+## In AP12 erledigt
 
-- produktive Navigation statt visueller Überlagerung umgebaut,
-- alte parallele Navigations-CSS-Blöcke entfernt,
-- semantisches `<nav>`, konsistente SVG-Icons und zentrale Tokens eingeführt,
-- aktive/deaktivierte Zustände und Tastaturfokus regressiv abgesichert,
-- geringe Höhe, Notebookbreite und Drawer konsistent gelöst,
-- Einstellungen-Dummy ohne leere Seite oder Fachzustandswirkung umgesetzt.
+- `app.js` von 6.294 auf 225 Zeilen reduziert.
+- Root-State-Ersetzungen von zehn auf eine Eigentümerfunktion reduziert.
+- direkte Schreibstellen in `app.js` von 96 auf null reduziert.
+- neun Render-Vorbereitungsnebenwirkungen entfernt; 46 Renderer sind seiteneffektfrei.
+- vier alte Einzel-Globals entfernt.
+- 37 ungenutzte Kompatibilitätswrapper entfernt.
 
-## Verbleibend
+## Begründet verbleibend
 
-1. `app.js` bleibt mit 6.294 Zeilen, 518 Top-Level-Funktionen, 67 Top-Level-Bindungen und 96 direkten Schreibstellen groß. AP12 muss Restorchestrierung und globale Bindungen abbauen.
-2. 112 Legacy-Kompatibilitätswrapper bestehen fort und sind in AP12 kontrolliert zu reduzieren.
-3. Formulare, Tabellen und Dialoge verwenden noch ältere Einzelstile; AP11 vereinheitlicht nur die angrenzenden Grundflächen.
-4. Briefvorschau und Druckausgabe besitzen eigenständige Altstile und sind ausdrücklich Gegenstand von AP13.
-5. Der Footer zeigt bewusst nur lokalen Status; eine echte Benutzer- oder Einstellungsverwaltung existiert nicht.
-6. Der Drawer ist Desktop-first und keine vollständige mobile Informationsarchitektur.
-
-## Schutzregeln
-
-Keine Schuldenbereinigung darf Datenschema 5, Vertrag 1, Objektstandard 1, Zählerstandards 1, Snapshot 2 oder Referenzabrechnungen stillschweigend verändern.
+1. 75 Classic-Script-Kompatibilitätswrapper; zentral registriert und regressiv geprüft.
+2. Eingefrorene globale Modulnamensräume, solange kein Buildsystem eingeführt werden darf.
+3. Direkte Eigenschaftsmutationen innerhalb dokumentierter Owner-/Aktionsmodule; weitere Reduktion nur fachlich paketweise.
+4. Brief-, Druck- und Vorschaugestaltung ist inhaltlich unverändert und bleibt AP13.
+5. Vollständige Umstellung auf native ES-Module wäre ein eigenes Architekturpaket und ist nicht Bestandteil der aktuellen Grenzen.

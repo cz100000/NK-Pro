@@ -1,0 +1,64 @@
+{
+  "phase": "after AP12",
+  "sourceVersion": "99.4.13",
+  "file": "js/app.js",
+  "sha256": "6fe9969ca2b4fac4f7d766bc7f8052a07f4ce2330f2dc890627e17e78ddf1c4a",
+  "bytes": 15599,
+  "lines": 225,
+  "topLevelFunctionDeclarations": 8,
+  "topLevelFunctionNames": [
+    {
+      "name": "configureCoreOrchestrationModules",
+      "line": 4
+    },
+    {
+      "name": "configureStateAccess",
+      "line": 76
+    },
+    {
+      "name": "configureApplicationActions",
+      "line": 88
+    },
+    {
+      "name": "configureNavigationModule",
+      "line": 136
+    },
+    {
+      "name": "registerUiControllers",
+      "line": 139
+    },
+    {
+      "name": "startUiEvents",
+      "line": 140
+    },
+    {
+      "name": "updateUiArchitectureAudit",
+      "line": 143
+    },
+    {
+      "name": "configureCompatibilityRegistry",
+      "line": 179
+    }
+  ],
+  "topLevelBindings": 2,
+  "topLevelBindingNames": [
+    "COMPATIBILITY_WRAPPERS",
+    "STARTUP_RESULT"
+  ],
+  "topLevelFunctionExpressions": 0,
+  "topLevelFunctionExpressionNames": [],
+  "directStatePathReferences": 0,
+  "directStatePropertyWriteSites": 0,
+  "directStateRootReplacementSites": 0,
+  "directStateWriteSites": 0,
+  "directStatePropertyWriteLines": [],
+  "directStateRootReplacementLines": [],
+  "commitCalls": 2,
+  "saveCalls": 0,
+  "renderCalls": 5,
+  "validationCalls": 0,
+  "snapshotCalls": 2,
+  "moduleCalls": 49,
+  "globalAssignments": 0,
+  "dynamicGlobalAccesses": 0
+}

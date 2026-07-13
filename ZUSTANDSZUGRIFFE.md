@@ -1,33 +1,5 @@
-<!-- AP10-CURRENT -->
-# Zustandszugriffe V99.4.12
+# Zustandszugriffe V99.4.13
 
-AP10 reduziert direkte `state`-Pfadreferenzen in `app.js` von 503 auf 306 und Schreibstellen von 195 auf 96. Archiv und Jahreswechsel schreiben nur in `NKProStateAccess.transact()`; Qualität und Diagnose laufen auf einer Zustandskopie. Root-Ersetzungen sinken von 13 auf 10. Das vollständige Zeileninventar steht in `AP10_ZUSTANDSZUGRIFFE.json`.
+`state` ist die einzige fachliche Arbeitswahrheit. Root-Zustandsersetzung erfolgt ausschließlich durch `app-state-persistence.js`; `state-access.js` stellt kontrollierte Lese-, Commit- und Transaktionspfade bereit. `app.js` besitzt null direkte State-Referenzen und null direkte State-Schreibstellen.
 
-<!-- AP9-HISTORIC -->
-# Zustandszugriffe V99.4.10
-
-`state` bleibt der einzige veränderliche Arbeitszustand. AP9 reduziert direkte Pfadreferenzen in `app.js` von 640 auf 503 und direkte Schreibstellen von 246 auf 195. Neue Anwendungsaktionen verwenden `NKProStateAccess.transact()` mit Rollback und höchstens einem Commit. Root-Ersetzung aus einem Aktionsresultat ist nur noch explizit über `replaceStateResult:true` möglich.
-
-# Zustandszugriffe – V99.4.9
-
-## Verbindlicher Zustand
-
-NK-Pro besitzt weiterhin genau einen veränderlichen Arbeitszustand `state`. AP7 führt keinen zweiten Store, keine Kopie als UI-Zustand und kein Framework-State-Management ein.
-
-## Zugriffsebenen
-
-1. DOM-Ereignisse werden durch `NKProUiEvents` erfasst.
-2. `NKProUiController` ordnet die Aktion einem Controller zu.
-3. `NKProUiBindings` ruft die bestehende Anwendungsfunktion oder den vorhandenen Fach-/Exportdienst auf.
-4. Änderungen werden über den bestehenden Commit- und Persistenzpfad abgeschlossen.
-5. Renderer erhalten den aktuellen Zustand oder definierte Berechnungs-/Dokumentergebnisse.
-
-`NKProStateAccess` kapselt die Adapter `current`, `select`, `replace` und `update`. Der Adapter kann den bestehenden Zustand ersetzen und Änderungen über `commitStateChange` abschließen.
-
-## Schreibzugriffe
-
-Direkte Schreibzugriffe aus HTML, Inline-Handlern und den früheren sechs `app.js`-Listenern wurden vollständig entfernt. Bestehende Anwendungsfunktionen ändern intern weiterhin `state`; sie sind nun ausschließlich über benannte Controlleraktionen erreichbar. Eine vollständige Ausgliederung dieser Orchestrierungsfunktionen ist nicht Bestandteil von AP7 und bleibt als technische Altlast dokumentiert.
-
-## Persistenzgrenze
-
-Nur `js/persistence.js` und `js/ui-preferences.js` greifen direkt auf `localStorage` zu. Fachliche UI-Aktionen, Renderer, Controller und Fachmodule besitzen keinen eigenen Speicherweg. UI-Präferenzen bleiben getrennt von Fachdaten.
+Renderer, Navigation und Dialogöffnung verändern keinen Fachzustand. Persistenz erfolgt ausschließlich in den vorgesehenen Persistenzpfaden. Einzelbesitz, Leser und Schreiber stehen in `AP12_ZUSTANDSINVENTAR.md`; alle statisch erkannten Mutationen in `AP12_MUTATIONSINVENTAR.md`.

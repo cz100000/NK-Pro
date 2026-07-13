@@ -1,42 +1,22 @@
-<!-- AP10-CURRENT -->
-# Anwendungsstart V99.4.12
+# NK-Pro – Anwendungsstart V99.4.13
 
-Nach `NKProStateAccess` werden die AP8/AP9-Anwendungsmodule sowie `NKProArchiveActions`, `NKProYearTransitionActions`, `NKProQualityAssurance` und `NKProDiagnostics` konfiguriert. Erst danach registriert `app.js` die Anwendungsaktionen und die unveränderten 13 UI-Controller mit 99 Aktionskennungen. `index.html` und Service-Worker-App-Shell führen alle vier AP10-Module vor `app.js`.
+| Nr. | Startschritt |
+|---|---|
+| 1 | Kernmodule konfigurieren |
+| 2 | Arbeitszustand laden |
+| 3 | Zustandszugriff konfigurieren |
+| 4 | Anwendungsaktionen konfigurieren |
+| 5 | Navigation konfigurieren |
+| 6 | UI-Controller registrieren |
+| 7 | UI-Ereignisse registrieren |
+| 8 | Kompatibilität registrieren |
+| 9 | Arbeitsstand vorbereiten |
+| 10 | Erste Darstellung |
+| 11 | Navigation initialisieren |
+| 12 | Arbeitsbereiche schließen |
+| 13 | Seitenköpfe aktualisieren |
+| 14 | Übersichtskarten aktualisieren |
+| 15 | Strukturprüfung |
+| 16 | UI-Architekturprüfung |
 
-<!-- AP9-CURRENT -->
-# Anwendungsstart V99.4.10
-
-Vor Registrierung der UI-Controller konfiguriert `app.js` zuerst `NKProStateAccess`, danach die drei Kernorchestrierungsmodule und anschließend `NKProApplicationActions`. Die statische Ladefolge in `index.html` und die App-Shell-Reihenfolge im Service Worker enthalten alle neuen Module vor `app.js`.
-
-# Anwendungsstart und Orchestrierung V99.4.9
-
-## Startdienst
-
-`js/app-bootstrap.js` stellt `NKProAppBootstrap.start(steps, options)` bereit. Der Dienst kennt keine Fachmodule und keinen DOM. Er führt ausschließlich benannte Schritte in fester Reihenfolge aus und bricht bei einem Fehler kontrolliert ab.
-
-## Startschritte
-
-| Reihenfolge | Schritt | Verantwortung |
-|---:|---|---|
-| 1 | Zustandszugriff konfigurieren | bestehenden Einzelzustand an `NKProStateAccess` anbinden |
-| 2 | Navigation konfigurieren | Datenprovider und UI-Callbacks für `NKProNavigation` setzen |
-| 3 | UI-Controller registrieren | 13 Controller und 99 Aktionen einmalig registrieren |
-| 4 | UI-Ereignisse registrieren | fünf delegierte Ereignisarten einmalig aktivieren |
-| 5 | Arbeitsstand vorbereiten | Normalisierung und persistenzfähiger Zustand |
-| 6 | Erste Darstellung | aktiven Arbeitsbereich rendern |
-| 7 | Navigation initialisieren | bestehende Navigationsstruktur aktivieren |
-| 8 | Arbeitsbereiche schließen | vorhandene Details-Elemente initial vereinheitlichen |
-| 9 | Seitenköpfe aktualisieren | Status und Periodeninformation darstellen |
-| 10 | Übersichtskarten aktualisieren | deklarative Schnellaktionen rendern |
-| 11 | Strukturprüfung | DOM- und Navigationsstruktur auditieren |
-| 12 | UI-Architekturprüfung | Controller-, Ereignis-, Zustands- und Kompatibilitätsstatus veröffentlichen |
-
-`window.__NKPRO_STARTUP__` enthält den vollständigen Startstatus. `window.__NKPRO_UI_ARCHITECTURE__` enthält die schreibgeschützte Laufzeitbeschreibung der UI-Architektur.
-
-## Reihenfolgeregeln
-
-- State-Adapter, Navigation, Controller und Ereignisse werden vor dem ersten Rendern konfiguriert.
-- Ereignisregistrierung ist idempotent und erzeugt keine doppelten Listener.
-- Fachmodule werden vor `app.js` geladen.
-- Bei einem Startfehler wird kein nachfolgender Schritt ausgeführt.
-- Die Fehleranzeige verwendet den bestehenden Fallbackpfad.
+`app-bootstrap.js` protokolliert die Schritte und verhindert Doppelstarts. Der Zustand wird vor zustandsabhängigen Modulen kontrolliert erzeugt. Controller und Ereignisdelegation werden jeweils einmal registriert. `app.js` bildet nur die letzte Startfehlergrenze.

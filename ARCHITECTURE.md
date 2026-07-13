@@ -1,46 +1,19 @@
-# NK-Pro – Architekturstand V99.4.12
+# NK-Pro – Architekturstand V99.4.13
 
-**Datenschema:** 5 · **Datenebenenvertrag:** 1 · **Objektstandard:** 1 · **Zählerstandards:** 1 · **Abrechnungssnapshot:** 2
-
-## Laufzeit
-
-NK-Pro läuft ohne Framework und Buildschritt als lokale HTML/CSS/JavaScript-PWA. Produktive Daten verbleiben im Browser oder in explizit exportierten Dateien.
+**Datenschema 5 · Datenebenenvertrag 1 · Objektstandard 1 · Zählerstandards 1 · Abrechnungssnapshot 2**
 
 ## Schichten
 
-1. **Markup, Navigation und UI:** `index.html`, `assets/app.css`, `navigation.js`, `ui-events.js`, `ui-controller.js`, `ui-bindings.js`.
-2. **Anwendungsaktionen:** `application-actions.js`, `master-data-actions.js`, `cost-actions.js`, `billing-workflow.js`, `archive-actions.js`, `year-transition-actions.js`.
-3. **Fach- und Prüfmodule:** Berechnung, Zähler, Objektstandard, Snapshot, Qualität und Diagnose.
-4. **Dokument und Export:** `document-data.js`, `document-renderer.js`, `export-service.js`.
-5. **Persistenz und Lebenszyklus:** `persistence.js`, `migration.js`, `backup-recovery.js`, `archive.js`.
-6. **Start und Kompatibilität:** `app-bootstrap.js`, `compatibility.js`, `app.js`.
+1. **Start und Verdrahtung:** `app.js`, `app-bootstrap.js`, `app-runtime-config.js`.
+2. **UI-Ereignisse und Controller:** `ui-events.js`, `ui-controller.js`, `ui-bindings.js` sowie spezialisierte `ui-*.js`-Module.
+3. **Anwendungsaktionen:** `application-actions.js`, Stammdaten-, Kosten-, Abrechnungs-, Archiv- und Jahreswechselaktionen.
+4. **Fachmodule:** Berechnung, Zähler, Objektstandard, Snapshot, Qualität und Diagnose.
+5. **Dokumente und Browser-I/O:** `document-data.js`, `document-renderer.js`, `ui-documents.js`, `browser-io.js`, `export-service.js`.
+6. **Zustand und Persistenz:** `state-access.js`, `app-state-persistence.js`, `persistence.js`, Migration und Backup/Restore.
+7. **PWA:** `service-worker.js`, `service-worker-register.js`.
 
-## AP11-Navigationsgrenze
+## Verbindliche Grenzen
 
-```text
-Button/data-ui-action → zentrale Ereignisdelegation → navigation.switchTab
-                      → bestehender Tabwechsel → sichtbare section.tab.active
-                      → navigation.ensureNavigationPath → aria-current + Gruppenpfad
-```
+`app.js` besitzt keine Fach-, Renderer-, Dialog-, Persistenz- oder Browserimplementierung. `state` ist die einzige fachliche Arbeitswahrheit; vollständige Ersetzung erfolgt nur im Zustandseigentümer. Renderer sind seiteneffektfrei. Ereignisse laufen ausschließlich über die zentrale Delegation. Eingefrorene Modulnamensräume bilden die notwendige Classic-Script-Schnittstelle ohne Bundler.
 
-`index.html` enthält genau eine produktive semantische Hauptnavigation. `navigation.js` darf ausschließlich UI-Zustände wie geöffnetes Menü, Drawer und aktiven Pfad koordinieren. Es schreibt keine Abrechnungs-, Archiv-, Snapshot-, Kosten- oder Zählerdaten. Nicht fachliche Präferenzen laufen über `ui-preferences.js`; direkte Fachpersistenz bleibt `persistence.js` vorbehalten.
-
-## Ereignisse und Zustand
-
-Die zentrale Ereignisdelegation mit 13 UI-Controllern und 99 Aktionskennungen bleibt bestehen. `app.js` registriert keine DOM-Ereignisse. `state` bleibt der einzige Arbeitszustand; Renderer persistieren nicht.
-
-## AP10-Grenzen
-
-79 Archiv-, Jahreswechsel-, Qualitäts- und Diagnoseimplementierungen bleiben physisch in ihren Modulen. Schreibende Abläufe verwenden atomare Transaktionen; Qualitäts- und Diagnoseprüfungen arbeiten seiteneffektfrei.
-
-## Dokument-/Druckgrenze
-
-AP11 verändert die Dokumentarchitektur nicht. Briefdaten, HTML-Renderer und Drucksteuerung bleiben getrennt; die gestalterische Vereinheitlichung von Vorschau und Druck ist AP13.
-
-## PWA
-
-`service-worker.js` cached die vollständige statische App-Shell unter `nk-pro-v99-4-12`. Die AP11-Icons sind Inline-SVGs und benötigen keine zusätzlichen Netzressourcen.
-
-## Verbleibende Grenze
-
-`app.js` bleibt mit 6.294 Zeilen ein großer Orchestrierungs- und Legacy-Kontext. AP12 adressiert Restentkopplung und globale Zustandsbereinigung.
+Das AP11-Navigationsgrundsystem bleibt erhalten. Nach AP12 wurde ausschließlich die künstliche Untergruppe innerhalb „Nebenkosten abrechnen“ entfernt und die zehn vorhandenen Punkte gleichrangig geordnet. Briefgestaltung und Druckkonsistenz bleiben AP13.

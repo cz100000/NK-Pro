@@ -1,0 +1,2269 @@
+{
+  "phase": "before AP12",
+  "sourceVersion": "99.4.12",
+  "file": "js/app.js",
+  "sha256": "d5700020d5e5ec1bc07509f0d9ab34fe39e667f340e01c71aa23e337c67f51c3",
+  "bytes": 382650,
+  "lines": 6294,
+  "topLevelFunctionDeclarations": 518,
+  "topLevelFunctionNames": [
+    {
+      "name": "clone",
+      "line": 299
+    },
+    {
+      "name": "withIsolatedState",
+      "line": 301
+    },
+    {
+      "name": "persistenceModuleOptions",
+      "line": 311
+    },
+    {
+      "name": "backupRecoveryModuleOptions",
+      "line": 321
+    },
+    {
+      "name": "validateMigrationData",
+      "line": 334
+    },
+    {
+      "name": "migrationModuleOptions",
+      "line": 344
+    },
+    {
+      "name": "meteringModuleOptions",
+      "line": 363
+    },
+    {
+      "name": "synchronizeMeteringData",
+      "line": 375
+    },
+    {
+      "name": "validateMeteringData",
+      "line": 379
+    },
+    {
+      "name": "migrateMeteringData",
+      "line": 383
+    },
+    {
+      "name": "objectStandardModuleOptions",
+      "line": 387
+    },
+    {
+      "name": "billingSnapshotModuleOptions",
+      "line": 396
+    },
+    {
+      "name": "normalizeObjectStandard",
+      "line": 415
+    },
+    {
+      "name": "validateObjectStandard",
+      "line": 419
+    },
+    {
+      "name": "validateBillingReadiness",
+      "line": 423
+    },
+    {
+      "name": "validateBillingSnapshot",
+      "line": 427
+    },
+    {
+      "name": "addElectricityDummyMeter",
+      "line": 431
+    },
+    {
+      "name": "archiveModuleOptions",
+      "line": 438
+    },
+    {
+      "name": "isSnapshotTechnicalMetaKey",
+      "line": 456
+    },
+    {
+      "name": "snapshotMetaFrom",
+      "line": 460
+    },
+    {
+      "name": "createBoundedBillingSnapshotData",
+      "line": 464
+    },
+    {
+      "name": "hasHistoricalWaterMeterData",
+      "line": 468
+    },
+    {
+      "name": "adoptHistoricalWaterMeterDataFromArchive",
+      "line": 472
+    },
+    {
+      "name": "archiveBoundaryFacts",
+      "line": 476
+    },
+    {
+      "name": "normalizeArchiveCollectionBoundaries",
+      "line": 480
+    },
+    {
+      "name": "enforceWorkingStateDataContract",
+      "line": 484
+    },
+    {
+      "name": "copyWorkingOperationalMeta",
+      "line": 488
+    },
+    {
+      "name": "ensureWaterMeterHistory",
+      "line": 494
+    },
+    {
+      "name": "notifyStorageProblem",
+      "line": 504
+    },
+    {
+      "name": "integrityHash",
+      "line": 514
+    },
+    {
+      "name": "dataWithoutIntegrity",
+      "line": 518
+    },
+    {
+      "name": "calculateDataIntegrity",
+      "line": 522
+    },
+    {
+      "name": "protectDataForStorage",
+      "line": 526
+    },
+    {
+      "name": "validateStoredDataIntegrity",
+      "line": 530
+    },
+    {
+      "name": "readStoredDataResult",
+      "line": 534
+    },
+    {
+      "name": "readStoredData",
+      "line": 538
+    },
+    {
+      "name": "writeProtectedStorage",
+      "line": 553
+    },
+    {
+      "name": "migrationCandidatesForData",
+      "line": 557
+    },
+    {
+      "name": "migrationPathLabelsForCandidates",
+      "line": 580
+    },
+    {
+      "name": "createPreMigrationBackup",
+      "line": 592
+    },
+    {
+      "name": "ensurePreMigrationBackup",
+      "line": 607
+    },
+    {
+      "name": "readPreMigrationBackupResult",
+      "line": 613
+    },
+    {
+      "name": "readRestoreCheckpointResult",
+      "line": 617
+    },
+    {
+      "name": "migrationBackupFileName",
+      "line": 621
+    },
+    {
+      "name": "downloadPreMigrationBackup",
+      "line": 627
+    },
+    {
+      "name": "createRestoreCheckpoint",
+      "line": 637
+    },
+    {
+      "name": "restorePreMigrationBackup",
+      "line": 650
+    },
+    {
+      "name": "rollbackLastRestore",
+      "line": 672
+    },
+    {
+      "name": "loadData",
+      "line": 691
+    },
+    {
+      "name": "isAppDataShape",
+      "line": 713
+    },
+    {
+      "name": "jsonByteLength",
+      "line": 718
+    },
+    {
+      "name": "formatBytes",
+      "line": 724
+    },
+    {
+      "name": "storageUsageForData",
+      "line": 731
+    },
+    {
+      "name": "currentStorageUsage",
+      "line": 741
+    },
+    {
+      "name": "parseJsonFileText",
+      "line": 745
+    },
+    {
+      "name": "importValidationReport",
+      "line": 755
+    },
+    {
+      "name": "importSummaryText",
+      "line": 792
+    },
+    {
+      "name": "addImportMetadata",
+      "line": 818
+    },
+    {
+      "name": "backupEventLabel",
+      "line": 826
+    },
+    {
+      "name": "ensureBackupMetadata",
+      "line": 837
+    },
+    {
+      "name": "registerBackupEvent",
+      "line": 843
+    },
+    {
+      "name": "daysSinceIso",
+      "line": 874
+    },
+    {
+      "name": "backupStatusReport",
+      "line": 881
+    },
+    {
+      "name": "backupStatusHint",
+      "line": 905
+    },
+    {
+      "name": "confirmRiskyDataAction",
+      "line": 910
+    },
+    {
+      "name": "renderBackupStatus",
+      "line": 915
+    },
+    {
+      "name": "withFinalizationWriteBypass",
+      "line": 941
+    },
+    {
+      "name": "renderFinalizationStatus",
+      "line": 947
+    },
+    {
+      "name": "exportSnapshot",
+      "line": 975
+    },
+    {
+      "name": "backupFileName",
+      "line": 1002
+    },
+    {
+      "name": "errorMessage",
+      "line": 1009
+    },
+    {
+      "name": "recordStartupError",
+      "line": 1014
+    },
+    {
+      "name": "persistStartupMeterRepair",
+      "line": 1020
+    },
+    {
+      "name": "loadInitialState",
+      "line": 1034
+    },
+    {
+      "name": "currentDataSchemaVersion",
+      "line": 1060
+    },
+    {
+      "name": "recordDataMigration",
+      "line": 1064
+    },
+    {
+      "name": "migrateDataSchema",
+      "line": 1068
+    },
+    {
+      "name": "renderSystemMessages",
+      "line": 1072
+    },
+    {
+      "name": "setActionMessage",
+      "line": 1088
+    },
+    {
+      "name": "renderActionFeedback",
+      "line": 1093
+    },
+    {
+      "name": "runRenderStep",
+      "line": 1104
+    },
+    {
+      "name": "normalizeLoadedData",
+      "line": 1112
+    },
+    {
+      "name": "importAppData",
+      "line": 1134
+    },
+    {
+      "name": "simpleArchiveIdentityForMerge",
+      "line": 1140
+    },
+    {
+      "name": "mergePreloadedV41Archives",
+      "line": 1144
+    },
+    {
+      "name": "normalizeLegacyData",
+      "line": 1148
+    },
+    {
+      "name": "normalizedTextKey",
+      "line": 1214
+    },
+    {
+      "name": "isoPeriodToShortRange",
+      "line": 1218
+    },
+    {
+      "name": "dataSourceForMeta",
+      "line": 1224
+    },
+    {
+      "name": "ensureUnifiedBillingFields",
+      "line": 1233
+    },
+    {
+      "name": "archiveDataSource",
+      "line": 1272
+    },
+    {
+      "name": "wohnungLabelForTenant",
+      "line": 1280
+    },
+    {
+      "name": "billingEntryForTenant",
+      "line": 1286
+    },
+    {
+      "name": "knownArchiveCostContext",
+      "line": 1296
+    },
+    {
+      "name": "importedEntryPeriodForCost",
+      "line": 1311
+    },
+    {
+      "name": "entryBriefValidationStatus",
+      "line": 1319
+    },
+    {
+      "name": "applyExcelWaterReadings2024ToData",
+      "line": 1326
+    },
+    {
+      "name": "saveData",
+      "line": 1386
+    },
+    {
+      "name": "commitStateChange",
+      "line": 1435
+    },
+    {
+      "name": "fmtMoney",
+      "line": 1450
+    },
+    {
+      "name": "num",
+      "line": 1451
+    },
+    {
+      "name": "escapeHtml",
+      "line": 1452
+    },
+    {
+      "name": "escapeJsString",
+      "line": 1453
+    },
+    {
+      "name": "statusClass",
+      "line": 1454
+    },
+    {
+      "name": "ensureCostSettings",
+      "line": 1463
+    },
+    {
+      "name": "costExclusionHandling",
+      "line": 1468
+    },
+    {
+      "name": "costFullyRedistributes",
+      "line": 1470
+    },
+    {
+      "name": "normalizeManualUmlageValue",
+      "line": 1472
+    },
+    {
+      "name": "resetCostUnitPriceToAuto",
+      "line": 1474
+    },
+    {
+      "name": "isFreeCostSlot",
+      "line": 1485
+    },
+    {
+      "name": "costGroupLabel",
+      "line": 1486
+    },
+    {
+      "name": "renderCostSelectionPanel",
+      "line": 1502
+    },
+    {
+      "name": "priceCellHtml",
+      "line": 1534
+    },
+    {
+      "name": "openCostPriceEditor",
+      "line": 1547
+    },
+    {
+      "name": "closeCostPriceEditor",
+      "line": 1565
+    },
+    {
+      "name": "saveCostPriceFromDialog",
+      "line": 1571
+    },
+    {
+      "name": "resetCostPriceFromDialog",
+      "line": 1578
+    },
+    {
+      "name": "recalculateAll",
+      "line": 1584
+    },
+    {
+      "name": "setNested",
+      "line": 1590
+    },
+    {
+      "name": "editDisabledAttr",
+      "line": 1607
+    },
+    {
+      "name": "uiActionAttributes",
+      "line": 1609
+    },
+    {
+      "name": "legacyUiActionAttributes",
+      "line": 1610
+    },
+    {
+      "name": "selectHtml",
+      "line": 1612
+    },
+    {
+      "name": "inputHtml",
+      "line": 1615
+    },
+    {
+      "name": "dateInputHtml",
+      "line": 1616
+    },
+    {
+      "name": "hasTenantData",
+      "line": 1618
+    },
+    {
+      "name": "ensureTenantContactFields",
+      "line": 1622
+    },
+    {
+      "name": "normalizeUnitIdentityText",
+      "line": 1640
+    },
+    {
+      "name": "canonicalUnitIdFor",
+      "line": 1648
+    },
+    {
+      "name": "generatedUnitIdForLabel",
+      "line": 1664
+    },
+    {
+      "name": "migrateUnitIdsInData",
+      "line": 1669
+    },
+    {
+      "name": "ensureTenantIdentityFields",
+      "line": 1715
+    },
+    {
+      "name": "ensureTenantIdentityData",
+      "line": 1720
+    },
+    {
+      "name": "tenantDisplayId",
+      "line": 1730
+    },
+    {
+      "name": "tenantIdCellHtml",
+      "line": 1734
+    },
+    {
+      "name": "ensureUnitIdentityFields",
+      "line": 1738
+    },
+    {
+      "name": "ensureUnitIdentityData",
+      "line": 1744
+    },
+    {
+      "name": "unitDisplayId",
+      "line": 1748
+    },
+    {
+      "name": "unitByInternalId",
+      "line": 1752
+    },
+    {
+      "name": "unitDisplayIdByInternalId",
+      "line": 1757
+    },
+    {
+      "name": "unitIdCellHtml",
+      "line": 1761
+    },
+    {
+      "name": "unitRefCellHtml",
+      "line": 1765
+    },
+    {
+      "name": "unitSelectHtmlFromRows",
+      "line": 1769
+    },
+    {
+      "name": "unitSelectHtml",
+      "line": 1784
+    },
+    {
+      "name": "masterUnitSelectHtml",
+      "line": 1788
+    },
+    {
+      "name": "ensureTenantContactData",
+      "line": 1792
+    },
+    {
+      "name": "comparableTenantName",
+      "line": 1797
+    },
+    {
+      "name": "applyKnownMasterTenantEntryDates",
+      "line": 1806
+    },
+    {
+      "name": "renderBillingStammdatenStatus",
+      "line": 1831
+    },
+    {
+      "name": "ensureZimmermannTenantForLegacyData",
+      "line": 1849
+    },
+    {
+      "name": "tenantLastName",
+      "line": 1905
+    },
+    {
+      "name": "tenantAddressPrefix",
+      "line": 1912
+    },
+    {
+      "name": "tenantMailingAddress",
+      "line": 1920
+    },
+    {
+      "name": "tenantSalutationFromTemplate",
+      "line": 1927
+    },
+    {
+      "name": "isArchivedTenant",
+      "line": 1934
+    },
+    {
+      "name": "isoDateSerial",
+      "line": 1938
+    },
+    {
+      "name": "billingPeriodSerials",
+      "line": 1951
+    },
+    {
+      "name": "tenantOverlapsPeriod",
+      "line": 1961
+    },
+    {
+      "name": "tenantOverlapsCurrentPeriod",
+      "line": 1970
+    },
+    {
+      "name": "tenantRelevantForCurrentBilling",
+      "line": 1974
+    },
+    {
+      "name": "tenantActiveDaysInCurrentPeriod",
+      "line": 1978
+    },
+    {
+      "name": "tenantOpenStatus",
+      "line": 1989
+    },
+    {
+      "name": "visibleTenantRows",
+      "line": 1997
+    },
+    {
+      "name": "archivedTenantRows",
+      "line": 2003
+    },
+    {
+      "name": "isPrivateTenant",
+      "line": 2009
+    },
+    {
+      "name": "isBillableTenant",
+      "line": 2011
+    },
+    {
+      "name": "billableTenantRows",
+      "line": 2013
+    },
+    {
+      "name": "privateTenantRows",
+      "line": 2015
+    },
+    {
+      "name": "nextMietId",
+      "line": 2017
+    },
+    {
+      "name": "addMietverhaeltnis",
+      "line": 2025
+    },
+    {
+      "name": "archiveMietverhaeltnis",
+      "line": 2062
+    },
+    {
+      "name": "restoreMietverhaeltnis",
+      "line": 2071
+    },
+    {
+      "name": "tenantHeaderHtml",
+      "line": 2079
+    },
+    {
+      "name": "unitHeaderHtml",
+      "line": 2085
+    },
+    {
+      "name": "renderVersionInfo",
+      "line": 2092
+    },
+    {
+      "name": "qualitySeverityClass",
+      "line": 2102
+    },
+    {
+      "name": "storageWritable",
+      "line": 2111
+    },
+    {
+      "name": "hasCompleteMailingAddress",
+      "line": 2117
+    },
+    {
+      "name": "costPrepaymentRow",
+      "line": 2121
+    },
+    {
+      "name": "prepaymentMatrixSumForCost",
+      "line": 2125
+    },
+    {
+      "name": "specialCaseSeverityClass",
+      "line": 2146
+    },
+    {
+      "name": "specialCaseBadgesForTenant",
+      "line": 2154
+    },
+    {
+      "name": "renderSpecialCaseWatch",
+      "line": 2171
+    },
+    {
+      "name": "settlementInfoForResult",
+      "line": 2184
+    },
+    {
+      "name": "briefSettlementSummaryHtml",
+      "line": 2186
+    },
+    {
+      "name": "acceptanceProtocolData",
+      "line": 2190
+    },
+    {
+      "name": "acceptanceLevel",
+      "line": 2192
+    },
+    {
+      "name": "acceptanceLabel",
+      "line": 2194
+    },
+    {
+      "name": "finalBillingReportText",
+      "line": 2196
+    },
+    {
+      "name": "acceptanceProtocolRowsHtml",
+      "line": 2276
+    },
+    {
+      "name": "acceptanceProtocolHtml",
+      "line": 2290
+    },
+    {
+      "name": "renderAcceptanceProtocolSummary",
+      "line": 2322
+    },
+    {
+      "name": "showAcceptanceProtocol",
+      "line": 2331
+    },
+    {
+      "name": "downloadAcceptanceProtocolHtml",
+      "line": 2344
+    },
+    {
+      "name": "showFinalBillingReport",
+      "line": 2349
+    },
+    {
+      "name": "qualityAreaTab",
+      "line": 2365
+    },
+    {
+      "name": "qualityItemKey",
+      "line": 2379
+    },
+    {
+      "name": "qualityAckStore",
+      "line": 2383
+    },
+    {
+      "name": "qualityAckFor",
+      "line": 2389
+    },
+    {
+      "name": "qualityAckLabel",
+      "line": 2393
+    },
+    {
+      "name": "acknowledgeQualityIssue",
+      "line": 2400
+    },
+    {
+      "name": "reopenQualityIssue",
+      "line": 2408
+    },
+    {
+      "name": "qualityIssueSearchText",
+      "line": 2416
+    },
+    {
+      "name": "highlightQualityTarget",
+      "line": 2420
+    },
+    {
+      "name": "jumpToQualityIssue",
+      "line": 2437
+    },
+    {
+      "name": "jumpToFirstOpenQualityIssue",
+      "line": 2443
+    },
+    {
+      "name": "showOnlyQualityErrors",
+      "line": 2452
+    },
+    {
+      "name": "qualityIssueActionHtml",
+      "line": 2457
+    },
+    {
+      "name": "qualityTaskRowHtml",
+      "line": 2470
+    },
+    {
+      "name": "renderQuality",
+      "line": 2476
+    },
+    {
+      "name": "renderDashboard",
+      "line": 2547
+    },
+    {
+      "name": "activePrepaymentCostIds",
+      "line": 2594
+    },
+    {
+      "name": "activeCostRowsForMatrix",
+      "line": 2596
+    },
+    {
+      "name": "tenantIdForUmlage",
+      "line": 2600
+    },
+    {
+      "name": "isCostAllowedForTenant",
+      "line": 2602
+    },
+    {
+      "name": "costTenantToggleHtml",
+      "line": 2607
+    },
+    {
+      "name": "renderKostenMieterUmlageMatrix",
+      "line": 2613
+    },
+    {
+      "name": "toggleCostRowSelection",
+      "line": 2642
+    },
+    {
+      "name": "toggleAllVisibleCostRows",
+      "line": 2649
+    },
+    {
+      "name": "updateCostSelectionUi",
+      "line": 2659
+    },
+    {
+      "name": "deactivateSelectedCosts",
+      "line": 2688
+    },
+    {
+      "name": "setCostPageSize",
+      "line": 2714
+    },
+    {
+      "name": "toggleAllCostRows",
+      "line": 2721
+    },
+    {
+      "name": "openCostColumnInfo",
+      "line": 2726
+    },
+    {
+      "name": "openCostSelectionDialog",
+      "line": 2731
+    },
+    {
+      "name": "closeCostSelectionDialog",
+      "line": 2745
+    },
+    {
+      "name": "activateCostFromDialog",
+      "line": 2751
+    },
+    {
+      "name": "renderCostSelectionDialog",
+      "line": 2765
+    },
+    {
+      "name": "createFreeCostRow",
+      "line": 2811
+    },
+    {
+      "name": "costUnitLabel",
+      "line": 2825
+    },
+    {
+      "name": "costDisplayGroup",
+      "line": 2836
+    },
+    {
+      "name": "costIsComplete",
+      "line": 2842
+    },
+    {
+      "name": "renderCostMockupOverview",
+      "line": 2846
+    },
+    {
+      "name": "renderEinstellungen",
+      "line": 2883
+    },
+    {
+      "name": "renderWohnungen",
+      "line": 2955
+    },
+    {
+      "name": "renderEinnahmen",
+      "line": 3024
+    },
+    {
+      "name": "renderKosten",
+      "line": 3084
+    },
+    {
+      "name": "addCostRow",
+      "line": 3102
+    },
+    {
+      "name": "download",
+      "line": 3106
+    },
+    {
+      "name": "ensureYearData",
+      "line": 3108
+    },
+    {
+      "name": "currentAbrechnungsjahr",
+      "line": 3120
+    },
+    {
+      "name": "periodStart",
+      "line": 3125
+    },
+    {
+      "name": "periodEnd",
+      "line": 3130
+    },
+    {
+      "name": "periodLabelShort",
+      "line": 3135
+    },
+    {
+      "name": "periodYearFromDate",
+      "line": 3139
+    },
+    {
+      "name": "periodDaysExact",
+      "line": 3151
+    },
+    {
+      "name": "renderPeriodInfo",
+      "line": 3158
+    },
+    {
+      "name": "archiveYearNumbers",
+      "line": 3171
+    },
+    {
+      "name": "latestKnownYear",
+      "line": 3176
+    },
+    {
+      "name": "isViewingOlderArchiveYear",
+      "line": 3182
+    },
+    {
+      "name": "isArchiveViewer",
+      "line": 3186
+    },
+    {
+      "name": "isLegacyArchiveView",
+      "line": 3190
+    },
+    {
+      "name": "startModeText",
+      "line": 3194
+    },
+    {
+      "name": "archiveReturnUrl",
+      "line": 3200
+    },
+    {
+      "name": "closeArchiveViewer",
+      "line": 3204
+    },
+    {
+      "name": "currentAppMode",
+      "line": 3242
+    },
+    {
+      "name": "tabVisibleInMode",
+      "line": 3246
+    },
+    {
+      "name": "setAppMode",
+      "line": 3251
+    },
+    {
+      "name": "enterBillingMode",
+      "line": 3255
+    },
+    {
+      "name": "returnToStartPage",
+      "line": 3262
+    },
+    {
+      "name": "initializeNavigationMode",
+      "line": 3270
+    },
+    {
+      "name": "switchToTab",
+      "line": 3277
+    },
+    {
+      "name": "updateTopNavigationVisibility",
+      "line": 3310
+    },
+    {
+      "name": "openCurrentBilling",
+      "line": 3325
+    },
+    {
+      "name": "archiveStatusBadgeHtml",
+      "line": 3344
+    },
+    {
+      "name": "showArchiveValidation",
+      "line": 3367
+    },
+    {
+      "name": "archiveActionButtonsHtml",
+      "line": 3380
+    },
+    {
+      "name": "archiveStatusBadgeLiteHtml",
+      "line": 3410
+    },
+    {
+      "name": "currentBillingSaldoStartText",
+      "line": 3415
+    },
+    {
+      "name": "currentBillingStatusHtml",
+      "line": 3419
+    },
+    {
+      "name": "latestVisibleRecordYear",
+      "line": 3434
+    },
+    {
+      "name": "currentObjectLabel",
+      "line": 3443
+    },
+    {
+      "name": "isBillingContextOpen",
+      "line": 3455
+    },
+    {
+      "name": "setBillingContextOpen",
+      "line": 3459
+    },
+    {
+      "name": "currentBillingActionsHtml",
+      "line": 3464
+    },
+    {
+      "name": "currentBillingRecordRowHtml",
+      "line": 3475
+    },
+    {
+      "name": "archiveRecordRowsHtml",
+      "line": 3490
+    },
+    {
+      "name": "billingRecordsTableShell",
+      "line": 3505
+    },
+    {
+      "name": "buildCurrentBillingTableHtml",
+      "line": 3510
+    },
+    {
+      "name": "buildArchiveRecordsTableHtml",
+      "line": 3515
+    },
+    {
+      "name": "buildBillingRecordsTableHtml",
+      "line": 3520
+    },
+    {
+      "name": "openCreateBillingModal",
+      "line": 3527
+    },
+    {
+      "name": "closeCreateBillingModal",
+      "line": 3544
+    },
+    {
+      "name": "randomDeleteCode",
+      "line": 3552
+    },
+    {
+      "name": "openDeleteBillingModal",
+      "line": 3556
+    },
+    {
+      "name": "closeDeleteBillingModal",
+      "line": 3582
+    },
+    {
+      "name": "confirmDeleteBilling",
+      "line": 3589
+    },
+    {
+      "name": "createNewBillingFromModal",
+      "line": 3610
+    },
+    {
+      "name": "openLatestKnownYear",
+      "line": 3632
+    },
+    {
+      "name": "legacyArchiveEntries",
+      "line": 3648
+    },
+    {
+      "name": "renderLegacyArchiveDetails",
+      "line": 3652
+    },
+    {
+      "name": "workflowDashboardReport",
+      "line": 3685
+    },
+    {
+      "name": "renderWorkflowDashboard",
+      "line": 3709
+    },
+    {
+      "name": "renderStart",
+      "line": 3725
+    },
+    {
+      "name": "renderArchive",
+      "line": 3739
+    },
+    {
+      "name": "renderStartTenantManagement",
+      "line": 3751
+    },
+    {
+      "name": "renderStartUnitManagement",
+      "line": 3785
+    },
+    {
+      "name": "localStorageUsageBytes",
+      "line": 3801
+    },
+    {
+      "name": "developerDiagnosticsData",
+      "line": 3805
+    },
+    {
+      "name": "renderDeveloperDiagnostics",
+      "line": 3821
+    },
+    {
+      "name": "downloadDeveloperDiagnostics",
+      "line": 3856
+    },
+    {
+      "name": "renderSicherung",
+      "line": 3880
+    },
+    {
+      "name": "buildArchiveTableHtml",
+      "line": 3886
+    },
+    {
+      "name": "replaceArchiveViewerPart",
+      "line": 3897
+    },
+    {
+      "name": "createArchiveViewerHtml",
+      "line": 3902
+    },
+    {
+      "name": "openArchiveStateInApp",
+      "line": 3933
+    },
+    {
+      "name": "archiveViewerFileName",
+      "line": 3945
+    },
+    {
+      "name": "openArchiveViewerDocument",
+      "line": 3951
+    },
+    {
+      "name": "openArchiveYear",
+      "line": 3988
+    },
+    {
+      "name": "loadArchiveYear",
+      "line": 4008
+    },
+    {
+      "name": "hasEnteredMeterValue",
+      "line": 4019
+    },
+    {
+      "name": "renderPrepaymentCarryForwardNotice",
+      "line": 4053
+    },
+    {
+      "name": "downloadArchiveYear",
+      "line": 4087
+    },
+    {
+      "name": "downloadFullArchive",
+      "line": 4102
+    },
+    {
+      "name": "renderYearArchive",
+      "line": 4120
+    },
+    {
+      "name": "normalizeLegacyImportText",
+      "line": 4146
+    },
+    {
+      "name": "decodeLegacyArrayBuffer",
+      "line": 4156
+    },
+    {
+      "name": "firstMatch",
+      "line": 4169
+    },
+    {
+      "name": "parseEuroFromText",
+      "line": 4174
+    },
+    {
+      "name": "legacyMoneyValues",
+      "line": 4180
+    },
+    {
+      "name": "legacySlice",
+      "line": 4186
+    },
+    {
+      "name": "parseLegacyLastMoneyInWindow",
+      "line": 4198
+    },
+    {
+      "name": "parseLegacyMoneyAfter",
+      "line": 4203
+    },
+    {
+      "name": "parseLegacyPeriodAfter",
+      "line": 4211
+    },
+    {
+      "name": "nameFromLegacyFilename",
+      "line": 4216
+    },
+    {
+      "name": "wohnungFromLegacyFilename",
+      "line": 4224
+    },
+    {
+      "name": "isoFromLegacyShortDate",
+      "line": 4229
+    },
+    {
+      "name": "parseLegacyBillingFromText",
+      "line": 4236
+    },
+    {
+      "name": "safeFilePart",
+      "line": 4367
+    },
+    {
+      "name": "downloadJsonFile",
+      "line": 4369
+    },
+    {
+      "name": "downloadFullJson",
+      "line": 4371
+    },
+    {
+      "name": "downloadCurrentBillingJson",
+      "line": 4373
+    },
+    {
+      "name": "downloadJson",
+      "line": 4375
+    },
+    {
+      "name": "csvEscape",
+      "line": 4376
+    },
+    {
+      "name": "toCsv",
+      "line": 4377
+    },
+    {
+      "name": "downloadKostenCsv",
+      "line": 4378
+    },
+    {
+      "name": "downloadMieterCsv",
+      "line": 4379
+    },
+    {
+      "name": "csvFileName",
+      "line": 4381
+    },
+    {
+      "name": "txtFileName",
+      "line": 4383
+    },
+    {
+      "name": "downloadUmlageCsv",
+      "line": 4385
+    },
+    {
+      "name": "downloadArchiveIndexCsv",
+      "line": 4387
+    },
+    {
+      "name": "downloadFinalBillingReport",
+      "line": 4389
+    },
+    {
+      "name": "downloadAppHtmlCopy",
+      "line": 4391
+    },
+    {
+      "name": "downloadExportPackage",
+      "line": 4393
+    },
+    {
+      "name": "downloadFullExportPackage",
+      "line": 4395
+    },
+    {
+      "name": "resetData",
+      "line": 4397
+    },
+    {
+      "name": "handleDeleteBillingKey",
+      "line": 4463
+    },
+    {
+      "name": "tenantRowsWithIndex",
+      "line": 4474
+    },
+    {
+      "name": "wohnungArea",
+      "line": 4476
+    },
+    {
+      "name": "tenantArea",
+      "line": 4478
+    },
+    {
+      "name": "normalizeActiveDayValue",
+      "line": 4480
+    },
+    {
+      "name": "normalizeTenantActiveDays",
+      "line": 4482
+    },
+    {
+      "name": "tenantDays",
+      "line": 4491
+    },
+    {
+      "name": "personDays",
+      "line": 4493
+    },
+    {
+      "name": "allWohnungen",
+      "line": 4495
+    },
+    {
+      "name": "activeWohnungen",
+      "line": 4497
+    },
+    {
+      "name": "periodDaysApprox",
+      "line": 4499
+    },
+    {
+      "name": "unitHasTenantForAllocation",
+      "line": 4501
+    },
+    {
+      "name": "unitsForCostAllocation",
+      "line": 4503
+    },
+    {
+      "name": "allocateByWohneinheiten",
+      "line": 4505
+    },
+    {
+      "name": "formatPlainNumber",
+      "line": 4507
+    },
+    {
+      "name": "umlageBasisInfo",
+      "line": 4509
+    },
+    {
+      "name": "defaultWaterMeterSettings",
+      "line": 4546
+    },
+    {
+      "name": "consumptionCosts",
+      "line": 4558
+    },
+    {
+      "name": "isWaterCost",
+      "line": 4562
+    },
+    {
+      "name": "ensureWaterMeterData",
+      "line": 4566
+    },
+    {
+      "name": "waterConsumption",
+      "line": 4641
+    },
+    {
+      "name": "genericMeterConsumption",
+      "line": 4643
+    },
+    {
+      "name": "waterTotalForTenantIndex",
+      "line": 4645
+    },
+    {
+      "name": "meterTotalForCostAndTenant",
+      "line": 4647
+    },
+    {
+      "name": "waterMeterRowStatus",
+      "line": 4649
+    },
+    {
+      "name": "genericMeterRowStatus",
+      "line": 4659
+    },
+    {
+      "name": "isMeterAutoEnabledForCost",
+      "line": 4665
+    },
+    {
+      "name": "isWaterAutoEnabledForCost",
+      "line": 4667
+    },
+    {
+      "name": "applyWaterMetersToUmlage",
+      "line": 4669
+    },
+    {
+      "name": "setWaterMeterSetting",
+      "line": 4684
+    },
+    {
+      "name": "setWaterMeterValue",
+      "line": 4694
+    },
+    {
+      "name": "setGenericMeterValue",
+      "line": 4710
+    },
+    {
+      "name": "meterInput",
+      "line": 4727
+    },
+    {
+      "name": "genericMeterInput",
+      "line": 4733
+    },
+    {
+      "name": "renderWaterCostSection",
+      "line": 4739
+    },
+    {
+      "name": "renderGenericMeterSection",
+      "line": 4793
+    },
+    {
+      "name": "meterHistoryValue",
+      "line": 4825
+    },
+    {
+      "name": "meterHistoryDeltaFor",
+      "line": 4831
+    },
+    {
+      "name": "meterHistoryReadingFor",
+      "line": 4836
+    },
+    {
+      "name": "currentMeterEndBlankStatus",
+      "line": 4841
+    },
+    {
+      "name": "renderWaterMeterCarryForwardNotice",
+      "line": 4864
+    },
+    {
+      "name": "archivedWaterHistoryByUnit",
+      "line": 4872
+    },
+    {
+      "name": "renderWaterMeterHistory",
+      "line": 4894
+    },
+    {
+      "name": "hasWaterSettingValue",
+      "line": 4903
+    },
+    {
+      "name": "houseMeterConsumption",
+      "line": 4907
+    },
+    {
+      "name": "waterDifferenceState",
+      "line": 4914
+    },
+    {
+      "name": "houseMeterMetricHtml",
+      "line": 4927
+    },
+    {
+      "name": "waterValidationItemHtml",
+      "line": 4934
+    },
+    {
+      "name": "renderWaterMeters",
+      "line": 4941
+    },
+    {
+      "name": "inferManualInputMode",
+      "line": 5042
+    },
+    {
+      "name": "defaultManualInputMode",
+      "line": 5043
+    },
+    {
+      "name": "manualInputModeForCost",
+      "line": 5044
+    },
+    {
+      "name": "syncUmlageInputs",
+      "line": 5045
+    },
+    {
+      "name": "rawVorauszahlungByCostAndTenant",
+      "line": 5054
+    },
+    {
+      "name": "vorauszahlungByCostAndTenant",
+      "line": 5056
+    },
+    {
+      "name": "totalVorauszahlungForTenant",
+      "line": 5058
+    },
+    {
+      "name": "allocationDistributionStatus",
+      "line": 5060
+    },
+    {
+      "name": "eligibleTenantsForCost",
+      "line": 5062
+    },
+    {
+      "name": "finalizeCostAllocationResult",
+      "line": 5064
+    },
+    {
+      "name": "allocationForCost",
+      "line": 5066
+    },
+    {
+      "name": "renderManualExternalValues",
+      "line": 5068
+    },
+    {
+      "name": "calculateUmlage",
+      "line": 5088
+    },
+    {
+      "name": "umlageTotals",
+      "line": 5090
+    },
+    {
+      "name": "renderUmlage",
+      "line": 5091
+    },
+    {
+      "name": "todayIso",
+      "line": 5168
+    },
+    {
+      "name": "addDaysIso",
+      "line": 5176
+    },
+    {
+      "name": "dateDe",
+      "line": 5185
+    },
+    {
+      "name": "defaultPrepaymentAdjustmentSettings",
+      "line": 5194
+    },
+    {
+      "name": "ensurePrepaymentAdjustmentSettings",
+      "line": 5197
+    },
+    {
+      "name": "prepaymentRoundingStep",
+      "line": 5203
+    },
+    {
+      "name": "roundMonthlyPrepayment",
+      "line": 5205
+    },
+    {
+      "name": "tenantAnnualizationFactor",
+      "line": 5207
+    },
+    {
+      "name": "adjustmentGroupForCost",
+      "line": 5209
+    },
+    {
+      "name": "prepaymentAdjustmentData",
+      "line": 5211
+    },
+    {
+      "name": "calculatedMonthlyPrepaymentRowsForTenant",
+      "line": 5213
+    },
+    {
+      "name": "prepaymentAdjustmentStatusClass",
+      "line": 5215
+    },
+    {
+      "name": "renderPrepaymentAdjustment",
+      "line": 5220
+    },
+    {
+      "name": "briefTextWithLineBreaks",
+      "line": 5276
+    },
+    {
+      "name": "briefProseHtml",
+      "line": 5277
+    },
+    {
+      "name": "normalizeBriefDefaultTexts",
+      "line": 5278
+    },
+    {
+      "name": "defaultBriefSettings",
+      "line": 5294
+    },
+    {
+      "name": "ensureBriefSettings",
+      "line": 5333
+    },
+    {
+      "name": "setBriefSetting",
+      "line": 5349
+    },
+    {
+      "name": "ensureBriefAddresses",
+      "line": 5370
+    },
+    {
+      "name": "getBriefTenantAddress",
+      "line": 5375
+    },
+    {
+      "name": "salutationForTenant",
+      "line": 5380
+    },
+    {
+      "name": "textareaHtml",
+      "line": 5392
+    },
+    {
+      "name": "briefPrintStyles",
+      "line": 5397
+    },
+    {
+      "name": "effectivePrepaymentDateLabel",
+      "line": 5398
+    },
+    {
+      "name": "effectivePrepaymentYearLabel",
+      "line": 5404
+    },
+    {
+      "name": "validateBriefResult",
+      "line": 5410
+    },
+    {
+      "name": "longestTextLineLength",
+      "line": 5414
+    },
+    {
+      "name": "compactTextLength",
+      "line": 5416
+    },
+    {
+      "name": "briefLongTextRisks",
+      "line": 5418
+    },
+    {
+      "name": "briefPreflightReport",
+      "line": 5420
+    },
+    {
+      "name": "briefPreflightBoxHtml",
+      "line": 5422
+    },
+    {
+      "name": "printGuideHtml",
+      "line": 5425
+    },
+    {
+      "name": "printHardeningReport",
+      "line": 5427
+    },
+    {
+      "name": "printHardeningBoxHtml",
+      "line": 5466
+    },
+    {
+      "name": "currentPrintHardeningReport",
+      "line": 5468
+    },
+    {
+      "name": "printReportText",
+      "line": 5474
+    },
+    {
+      "name": "showPrintModeCheck",
+      "line": 5476
+    },
+    {
+      "name": "printWindowHtml",
+      "line": 5482
+    },
+    {
+      "name": "openPrintWindow",
+      "line": 5484
+    },
+    {
+      "name": "allLettersPrintReadiness",
+      "line": 5498
+    },
+    {
+      "name": "showAllLettersPrintReady",
+      "line": 5500
+    },
+    {
+      "name": "currentBriefPreflightReport",
+      "line": 5517
+    },
+    {
+      "name": "confirmBriefAction",
+      "line": 5519
+    },
+    {
+      "name": "briefResultRows",
+      "line": 5531
+    },
+    {
+      "name": "selectedBriefTenant",
+      "line": 5533
+    },
+    {
+      "name": "plainLetterTextFromHtml",
+      "line": 5535
+    },
+    {
+      "name": "isManualExternalCostDefinition",
+      "line": 5537
+    },
+    {
+      "name": "manualExternalLetterLineLabel",
+      "line": 5539
+    },
+    {
+      "name": "isBriefCostRowRelevant",
+      "line": 5541
+    },
+    {
+      "name": "briefCostSortValue",
+      "line": 5543
+    },
+    {
+      "name": "briefCostRows",
+      "line": 5545
+    },
+    {
+      "name": "dateDeShortYear",
+      "line": 5547
+    },
+    {
+      "name": "letterPeriod",
+      "line": 5549
+    },
+    {
+      "name": "fmtMoneySigned",
+      "line": 5551
+    },
+    {
+      "name": "fmtUnits",
+      "line": 5553
+    },
+    {
+      "name": "letterCostGroup",
+      "line": 5555
+    },
+    {
+      "name": "settlementLabel",
+      "line": 5557
+    },
+    {
+      "name": "costSectionRows",
+      "line": 5559
+    },
+    {
+      "name": "monthlyPrepaymentRows",
+      "line": 5561
+    },
+    {
+      "name": "buildPrepaymentPage",
+      "line": 5563
+    },
+    {
+      "name": "briefMainPageOverflows",
+      "line": 5565
+    },
+    {
+      "name": "buildBriefHtml",
+      "line": 5567
+    },
+    {
+      "name": "renderBrief",
+      "line": 5568
+    },
+    {
+      "name": "currentBriefPreviewOrWarn",
+      "line": 5628
+    },
+    {
+      "name": "printCurrentBrief",
+      "line": 5643
+    },
+    {
+      "name": "fallbackCopyText",
+      "line": 5649
+    },
+    {
+      "name": "copyCurrentBriefText",
+      "line": 5666
+    },
+    {
+      "name": "cellSortValue",
+      "line": 5711
+    },
+    {
+      "name": "sortTable",
+      "line": 5713
+    },
+    {
+      "name": "applyTableFilter",
+      "line": 5715
+    },
+    {
+      "name": "clearTableFilter",
+      "line": 5717
+    },
+    {
+      "name": "ensureTableTools",
+      "line": 5719
+    },
+    {
+      "name": "enhanceTables",
+      "line": 5721
+    },
+    {
+      "name": "showReleaseAuditReport",
+      "line": 5737
+    },
+    {
+      "name": "downloadReleaseAuditReport",
+      "line": 5743
+    },
+    {
+      "name": "renderReleaseAuditSummary",
+      "line": 5747
+    },
+    {
+      "name": "runAppSelfTest",
+      "line": 5768
+    },
+    {
+      "name": "activeTabId",
+      "line": 5780
+    },
+    {
+      "name": "prepareStateForPersistence",
+      "line": 5785
+    },
+    {
+      "name": "renderStepsForTab",
+      "line": 5813
+    },
+    {
+      "name": "renderCurrentView",
+      "line": 5818
+    },
+    {
+      "name": "renderStatusAndFeedbackSafely",
+      "line": 5845
+    },
+    {
+      "name": "closeAllTabAccordions",
+      "line": 5879
+    },
+    {
+      "name": "safeOverviewCall",
+      "line": 5884
+    },
+    {
+      "name": "overviewMoney",
+      "line": 5888
+    },
+    {
+      "name": "overviewOpenSection",
+      "line": 5889
+    },
+    {
+      "name": "overviewCoreStats",
+      "line": 5895
+    },
+    {
+      "name": "overviewStatus",
+      "line": 5931
+    },
+    {
+      "name": "overviewStructuredValidation",
+      "line": 5936
+    },
+    {
+      "name": "buildOverviewData",
+      "line": 5944
+    },
+    {
+      "name": "renderOverviewCards",
+      "line": 5977
+    },
+    {
+      "name": "overviewActionButton",
+      "line": 6018
+    },
+    {
+      "name": "renderOverviewForTab",
+      "line": 6024
+    },
+    {
+      "name": "renderAllOverviewCards",
+      "line": 6025
+    },
+    {
+      "name": "pageHeaderPeriodLabel",
+      "line": 6026
+    },
+    {
+      "name": "updateAllPageHeaders",
+      "line": 6033
+    },
+    {
+      "name": "auditV992Structure",
+      "line": 6062
+    },
+    {
+      "name": "renderAll",
+      "line": 6083
+    },
+    {
+      "name": "showLandingPage",
+      "line": 6116
+    },
+    {
+      "name": "openCostTenantDetails",
+      "line": 6117
+    },
+    {
+      "name": "configureCoreOrchestrationModules",
+      "line": 6118
+    },
+    {
+      "name": "configureStateAccess",
+      "line": 6190
+    },
+    {
+      "name": "configureApplicationActions",
+      "line": 6202
+    },
+    {
+      "name": "configureNavigationModule",
+      "line": 6250
+    },
+    {
+      "name": "registerUiControllers",
+      "line": 6253
+    },
+    {
+      "name": "startUiEvents",
+      "line": 6254
+    },
+    {
+      "name": "updateUiArchitectureAudit",
+      "line": 6257
+    }
+  ],
+  "topLevelBindings": 67,
+  "topLevelBindingNames": [
+    "NK_PRO_MODULES",
+    "UMLAGE_MANUAL",
+    "UMLAGE_MANUAL_LEGACY",
+    "APP_VERSION",
+    "APP_VERSION_NAME",
+    "APP_RELEASE_DATE",
+    "DATA_SCHEMA_VERSION",
+    "DATA_LAYER_CONTRACT_VERSION",
+    "ARCHIVE_SNAPSHOT_SCOPE",
+    "ARCHIVE_SNAPSHOT_DATA_KEYS",
+    "SNAPSHOT_TECHNICAL_META_KEYS",
+    "COST_EXCLUSION_FULL",
+    "COST_EXCLUSION_OWNER",
+    "COST_EXCLUSION_OPTIONS",
+    "MASTER_TENANT_ENTRY_DATE_FIX_ID",
+    "MASTER_TENANT_ENTRY_DATES",
+    "ARCHIVE_VIEW_MODE",
+    "APP_CHANGELOG",
+    "STORAGE_KEY",
+    "STORAGE_RECOVERY_KEY",
+    "STORAGE_PRE_MIGRATION_BACKUP_KEY",
+    "STORAGE_RESTORE_CHECKPOINT_KEY",
+    "STORAGE_INTEGRITY_ALGORITHM",
+    "APP_HTML_TEMPLATE",
+    "LEGACY_STORAGE_KEYS",
+    "STORAGE_WARN_BYTES",
+    "STORAGE_CRITICAL_BYTES",
+    "storageWarningShown",
+    "storageReadWarningShown",
+    "pendingStorageWarning",
+    "startupErrors",
+    "renderErrors",
+    "renderInProgress",
+    "renderQueued",
+    "renderCount",
+    "renderLastDurationMs",
+    "renderLastActiveTab",
+    "lastActionMessage",
+    "lastActionLevel",
+    "UNIT_ID_ALIASES",
+    "state",
+    "archiveReturnState",
+    "START_NAV_TABS",
+    "BILLING_NAV_TABS",
+    "appUiMode",
+    "billingContextOpen",
+    "navigationInitialized",
+    "DEFAULT_WATER_METER_HISTORY",
+    "finalizationWriteBypass",
+    "statePreparationInProgress",
+    "statePreparationCount",
+    "COST_GROUP_OPTIONS",
+    "STANDARD_COST_GROUP_BY_ID",
+    "activeCostPriceEditorIndex",
+    "costPageSize",
+    "costShowAllRows",
+    "selectedCostRows",
+    "deleteBillingTargetIndex",
+    "deleteBillingCode",
+    "DEFAULT_UMLAGE_INPUTS",
+    "MANUAL_INPUT_MODES",
+    "tableFilters",
+    "tableSortState",
+    "tableLabels",
+    "OVERVIEW_TITLES",
+    "TAB_DEFINITIONS",
+    "STARTUP_RESULT"
+  ],
+  "topLevelFunctionExpressions": 1,
+  "topLevelFunctionExpressionNames": [
+    "NK_PRO_MODULES"
+  ],
+  "directStatePathReferences": 306,
+  "directStatePropertyWriteSites": 86,
+  "directStateRootReplacementSites": 10,
+  "directStateWriteSites": 96,
+  "directStatePropertyWriteLines": [
+    661,
+    662,
+    663,
+    838,
+    839,
+    855,
+    857,
+    858,
+    859,
+    860,
+    863,
+    864,
+    867,
+    868,
+    1399,
+    1401,
+    1402,
+    1403,
+    1413,
+    1415,
+    1416,
+    1417,
+    1418,
+    1426,
+    1427,
+    1596,
+    1599,
+    2056,
+    2057,
+    2384,
+    2385,
+    2707,
+    3109,
+    3112,
+    3114,
+    3115,
+    3116,
+    3117,
+    4567,
+    4568,
+    4571,
+    4573,
+    4574,
+    4575,
+    4576,
+    4577,
+    4589,
+    4593,
+    4617,
+    4672,
+    4678,
+    4679,
+    4680,
+    4687,
+    4688,
+    4696,
+    4697,
+    4699,
+    4700,
+    4702,
+    4703,
+    4712,
+    4713,
+    4714,
+    4716,
+    4717,
+    4719,
+    4720,
+    5289,
+    5290,
+    5291,
+    5292,
+    5335,
+    5338,
+    5342,
+    5343,
+    5344,
+    5346,
+    5352,
+    5354,
+    5355,
+    5357,
+    5361,
+    5364,
+    5365,
+    5371
+  ],
+  "directStateRootReplacementLines": [
+    291,
+    304,
+    307,
+    660,
+    681,
+    3206,
+    3936,
+    4408,
+    4450,
+    6193
+  ],
+  "commitCalls": 18,
+  "saveCalls": 7,
+  "renderCalls": 128,
+  "validationCalls": 36,
+  "snapshotCalls": 9,
+  "moduleCalls": 337,
+  "globalAssignments": 5,
+  "dynamicGlobalAccesses": 0
+}

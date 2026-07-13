@@ -906,24 +906,6 @@
     }
     .app-sidebar .workflow-nav .tab-btn:disabled .nav-item-icon,
     .app-sidebar .workflow-nav .tab-btn[aria-disabled="true"] .nav-item-icon { color:var(--sidebar-disabled); }
-    .nav-subsection {
-      position:relative;
-      display:flex;
-      align-items:center;
-      gap:8px;
-      margin:12px 0 4px;
-      color:#6b7688;
-      font-size:10.5px;
-      line-height:1.2;
-      font-weight:700;
-      letter-spacing:.045em;
-      text-transform:uppercase;
-    }
-    .nav-subsection::before,
-    .nav-subsection::after { content:""; height:1px; flex:1; background:var(--sidebar-line); }
-    .nav-subsection span { white-space:nowrap; }
-    .app-sidebar .workflow-nav .nav-group-item--secondary { min-height:40px; font-size:13.5px; color:#35445a; }
-    .app-sidebar .workflow-nav .nav-group-item--secondary .nav-icon-svg { width:21px; height:21px; }
     .workflow-nav.archive-nav [data-nav-group-section="object"],
     .workflow-nav.archive-nav [data-nav-group-section="archive"],
     .workflow-nav.archive-nav [data-nav-group-section="extras"],

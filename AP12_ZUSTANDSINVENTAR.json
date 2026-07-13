@@ -1,0 +1,311 @@
+{
+  "version": "99.4.13",
+  "states": [
+    {
+      "state": "meta",
+      "owner": "app-state-persistence.js / fachlich zuständige Aktionen",
+      "readers": [
+        "js/app-state-persistence.js",
+        "js/diagnostics.js",
+        "js/quality-assurance.js",
+        "js/ui-archive-pages.js",
+        "js/ui-documents.js",
+        "js/ui-master-data.js",
+        "js/ui-metering.js",
+        "js/ui-navigation-pages.js",
+        "js/ui-page-controller.js",
+        "js/ui-quality.js"
+      ],
+      "writers": [
+        "js/app-state-persistence.js",
+        "js/diagnostics.js",
+        "js/ui-documents.js",
+        "js/ui-master-data.js",
+        "js/ui-metering.js",
+        "js/ui-navigation-pages.js",
+        "js/ui-quality.js"
+      ],
+      "persisted": true,
+      "derived": false,
+      "globalNecessary": true,
+      "measure": "Einzelzustand bleibt maßgeblich; Schreibrechte sind dem Owner bzw. kontrollierten Aktionen zugeordnet."
+    },
+    {
+      "state": "stammdaten",
+      "owner": "master-data-actions.js",
+      "readers": [],
+      "writers": [],
+      "persisted": true,
+      "derived": false,
+      "globalNecessary": true,
+      "measure": "Einzelzustand bleibt maßgeblich; Schreibrechte sind dem Owner bzw. kontrollierten Aktionen zugeordnet."
+    },
+    {
+      "state": "wohnungen",
+      "owner": "master-data-actions.js / ui-master-data.js",
+      "readers": [
+        "js/billing-calculation.js",
+        "js/diagnostics.js",
+        "js/quality-assurance.js",
+        "js/ui-costs.js",
+        "js/ui-master-data.js",
+        "js/ui-page-controller.js",
+        "js/ui-quality.js"
+      ],
+      "writers": [
+        "js/diagnostics.js"
+      ],
+      "persisted": true,
+      "derived": false,
+      "globalNecessary": true,
+      "measure": "Einzelzustand bleibt maßgeblich; Schreibrechte sind dem Owner bzw. kontrollierten Aktionen zugeordnet."
+    },
+    {
+      "state": "mieter",
+      "owner": "master-data-actions.js / ui-master-data.js",
+      "readers": [
+        "js/billing-calculation.js",
+        "js/diagnostics.js",
+        "js/export-service.js",
+        "js/quality-assurance.js",
+        "js/ui-costs.js",
+        "js/ui-master-data.js",
+        "js/ui-metering.js",
+        "js/ui-page-controller.js"
+      ],
+      "writers": [
+        "js/diagnostics.js",
+        "js/ui-master-data.js"
+      ],
+      "persisted": true,
+      "derived": false,
+      "globalNecessary": true,
+      "measure": "Einzelzustand bleibt maßgeblich; Schreibrechte sind dem Owner bzw. kontrollierten Aktionen zugeordnet."
+    },
+    {
+      "state": "kostenarten",
+      "owner": "cost-actions.js / ui-costs.js",
+      "readers": [
+        "js/billing-calculation.js",
+        "js/diagnostics.js",
+        "js/export-service.js",
+        "js/quality-assurance.js",
+        "js/ui-billing-allocation.js",
+        "js/ui-costs.js",
+        "js/ui-master-data.js",
+        "js/ui-metering.js",
+        "js/ui-page-controller.js",
+        "js/ui-quality.js"
+      ],
+      "writers": [
+        "js/diagnostics.js",
+        "js/ui-costs.js"
+      ],
+      "persisted": true,
+      "derived": false,
+      "globalNecessary": true,
+      "measure": "Einzelzustand bleibt maßgeblich; Schreibrechte sind dem Owner bzw. kontrollierten Aktionen zugeordnet."
+    },
+    {
+      "state": "vorauszahlungen",
+      "owner": "cost-actions.js / billing-workflow.js",
+      "readers": [
+        "js/billing-calculation.js",
+        "js/diagnostics.js",
+        "js/quality-assurance.js",
+        "js/ui-costs.js",
+        "js/ui-master-data.js"
+      ],
+      "writers": [
+        "js/diagnostics.js"
+      ],
+      "persisted": true,
+      "derived": false,
+      "globalNecessary": true,
+      "measure": "Einzelzustand bleibt maßgeblich; Schreibrechte sind dem Owner bzw. kontrollierten Aktionen zugeordnet."
+    },
+    {
+      "state": "umlageInputs",
+      "owner": "billing-workflow.js / ui-billing-allocation.js",
+      "readers": [
+        "js/billing-calculation.js",
+        "js/diagnostics.js",
+        "js/document-data.js",
+        "js/quality-assurance.js",
+        "js/ui-billing-allocation.js",
+        "js/ui-metering.js",
+        "js/ui-page-controller.js"
+      ],
+      "writers": [
+        "js/diagnostics.js",
+        "js/ui-metering.js"
+      ],
+      "persisted": true,
+      "derived": false,
+      "globalNecessary": true,
+      "measure": "Einzelzustand bleibt maßgeblich; Schreibrechte sind dem Owner bzw. kontrollierten Aktionen zugeordnet."
+    },
+    {
+      "state": "kostenartenMieterUmlage",
+      "owner": "cost-actions.js",
+      "readers": [
+        "js/billing-calculation.js",
+        "js/diagnostics.js"
+      ],
+      "writers": [
+        "js/diagnostics.js"
+      ],
+      "persisted": true,
+      "derived": false,
+      "globalNecessary": true,
+      "measure": "Einzelzustand bleibt maßgeblich; Schreibrechte sind dem Owner bzw. kontrollierten Aktionen zugeordnet."
+    },
+    {
+      "state": "waterMeters",
+      "owner": "meter-* / ui-metering.js",
+      "readers": [
+        "js/billing-calculation.js",
+        "js/diagnostics.js",
+        "js/quality-assurance.js",
+        "js/ui-metering.js",
+        "js/ui-page-controller.js"
+      ],
+      "writers": [
+        "js/ui-metering.js"
+      ],
+      "persisted": true,
+      "derived": false,
+      "globalNecessary": true,
+      "measure": "Einzelzustand bleibt maßgeblich; Schreibrechte sind dem Owner bzw. kontrollierten Aktionen zugeordnet."
+    },
+    {
+      "state": "meterReadings",
+      "owner": "meter-* / ui-metering.js",
+      "readers": [
+        "js/billing-calculation.js",
+        "js/ui-metering.js"
+      ],
+      "writers": [
+        "js/ui-metering.js"
+      ],
+      "persisted": true,
+      "derived": false,
+      "globalNecessary": true,
+      "measure": "Einzelzustand bleibt maßgeblich; Schreibrechte sind dem Owner bzw. kontrollierten Aktionen zugeordnet."
+    },
+    {
+      "state": "briefSettings",
+      "owner": "ui-documents.js / document-data.js",
+      "readers": [
+        "js/document-data.js",
+        "js/document-renderer.js",
+        "js/ui-documents.js",
+        "js/ui-navigation-pages.js"
+      ],
+      "writers": [
+        "js/ui-documents.js",
+        "js/ui-navigation-pages.js"
+      ],
+      "persisted": true,
+      "derived": false,
+      "globalNecessary": true,
+      "measure": "Einzelzustand bleibt maßgeblich; Schreibrechte sind dem Owner bzw. kontrollierten Aktionen zugeordnet."
+    },
+    {
+      "state": "briefAddresses",
+      "owner": "ui-documents.js",
+      "readers": [
+        "js/ui-documents.js"
+      ],
+      "writers": [
+        "js/ui-documents.js"
+      ],
+      "persisted": true,
+      "derived": false,
+      "globalNecessary": true,
+      "measure": "Einzelzustand bleibt maßgeblich; Schreibrechte sind dem Owner bzw. kontrollierten Aktionen zugeordnet."
+    },
+    {
+      "state": "prepaymentAdjustmentSettings",
+      "owner": "billing-workflow.js / ui-documents.js",
+      "readers": [
+        "js/billing-calculation.js",
+        "js/diagnostics.js",
+        "js/ui-documents.js"
+      ],
+      "writers": [
+        "js/diagnostics.js",
+        "js/ui-documents.js"
+      ],
+      "persisted": true,
+      "derived": false,
+      "globalNecessary": true,
+      "measure": "Einzelzustand bleibt maßgeblich; Schreibrechte sind dem Owner bzw. kontrollierten Aktionen zugeordnet."
+    },
+    {
+      "state": "jahresArchiv",
+      "owner": "archive-actions.js",
+      "readers": [
+        "js/diagnostics.js",
+        "js/export-service.js",
+        "js/quality-assurance.js",
+        "js/ui-archive-pages.js",
+        "js/ui-metering.js",
+        "js/ui-navigation-pages.js",
+        "js/ui-page-controller.js"
+      ],
+      "writers": [
+        "js/diagnostics.js",
+        "js/ui-navigation-pages.js"
+      ],
+      "persisted": true,
+      "derived": false,
+      "globalNecessary": true,
+      "measure": "Einzelzustand bleibt maßgeblich; Schreibrechte sind dem Owner bzw. kontrollierten Aktionen zugeordnet."
+    },
+    {
+      "state": "active page / app mode",
+      "owner": "navigation.js und ui-page-controller.js",
+      "readers": [
+        "js/navigation.js",
+        "js/ui-page-controller.js"
+      ],
+      "writers": [
+        "js/navigation.js"
+      ],
+      "persisted": false,
+      "derived": true,
+      "globalNecessary": false,
+      "measure": "Sichtbare Seite und aktive Navigation werden aus demselben Navigationszustand abgeleitet."
+    },
+    {
+      "state": "runtime diagnostics",
+      "owner": "runtime-diagnostics.js",
+      "readers": [
+        "Tests/Diagnoseansicht"
+      ],
+      "writers": [
+        "app.js",
+        "ui-diagnostics.js"
+      ],
+      "persisted": false,
+      "derived": true,
+      "globalNecessary": false,
+      "measure": "Vier einzelne window.__…-Bindungen durch ein eingefrorenes Diagnose-Namespace ersetzt."
+    },
+    {
+      "state": "UI preferences",
+      "owner": "ui-preferences.js",
+      "readers": [
+        "js/ui-preferences.js"
+      ],
+      "writers": [
+        "js/ui-preferences.js"
+      ],
+      "persisted": true,
+      "derived": false,
+      "globalNecessary": false,
+      "measure": "Getrennt vom Fachzustand über begrenzten localStorage-Adapter."
+    }
+  ]
+}

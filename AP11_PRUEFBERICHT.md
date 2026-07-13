@@ -15,7 +15,7 @@ Die Architekturwerte wurden am Quellcode verifiziert: statisches HTML/CSS/JavaSc
 - genau eine produktive semantische Hauptnavigation,
 - vier Gruppen und 16 weiterhin erreichbare Zielseiten,
 - Reihenfolge der Objektgruppe: Objekt, Wohnungen, Zähler, Mieter,
-- fünf hervorgehobene Abrechnungsschritte plus fünf ergänzende Workflowseiten,
+- zehn gleichrangige Abrechnungsschritte in fachlicher Ablaufreihenfolge,
 - 22 lokale Inline-SVGs mit einheitlichem 24-Pixel-Raster und 1,8-Pixel-Strich,
 - aktiver Zustand mit Hintergrund, Text/Icon, 4-Pixel-Seitenmarker und `aria-current=page`,
 - sichtbarer, fokussierbarer und aktionsloser Einstellungen-Dummy mit „Noch nicht verfügbar“,

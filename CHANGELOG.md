@@ -1,12 +1,26 @@
 # Changelog
 
+## V99.4.13 – Restentkopplung und globale Zustandsbereinigung (13.07.2026)
+
+- `app.js` von 6.294 auf 225 Zeilen reduziert.
+- 15 spezialisierte Laufzeit-, Zustands-, UI-, Browser- und Seitenmodule eingeführt.
+- Root-State-Eigentum zentralisiert; `app.js` frei von direkten State-Zugriffen und -Schreibstellen.
+- 46 Renderer seiteneffektfrei gemacht.
+- vier alte Diagnoseglobals entfernt und eine eingefrorene Diagnoseschnittstelle eingeführt.
+- Kompatibilitätswrapper von 112 auf 75 reduziert und explizit registriert.
+- deterministische 16-stufige Initialisierung dokumentiert.
+- AP11-Navigation, Fachstandards, Referenzabrechnungen, Archive, Jahreswechsel und PWA regressiv geprüft.
+- Navigationskorrektur: Unterüberschrift „Weitere Abrechnungsschritte“ und sekundäre Darstellung entfernt; alle zehn Punkte unter „Nebenkosten abrechnen“ gleichrangig in fachlicher Ablaufreihenfolge angeordnet.
+
+# Changelog
+
 ## V99.4.12 – Navigationsstruktur und visuelles Grundsystem (13.07.2026)
 
 ### Geändert
 
 - Produktive Seitenleiste nach verbindlicher Bildreferenz strukturell und visuell umgebaut.
 - Semantische Hauptnavigation mit vier Gruppen und 16 unveränderten Zielseiten eingeführt.
-- „Zähler“ in die Objektvorbereitung vor „Mieter“ verschoben; Primärworkflow der Abrechnung auf Kosten, Verteilung, Prüfung, Briefe und Export fokussiert.
+- „Zähler“ in die Objektvorbereitung vor „Mieter“ verschoben; alle Abrechnungsschritte bleiben gleichrangig innerhalb der Abrechnungsgruppe.
 - 22 lokale Inline-SVGs, zentrale Farb-/Typografie-/Abstandstokens und konsistente Zustände eingeführt.
 - Aktive Seite mit Fläche, Text/Icon, 4-Pixel-Marker und `aria-current=page` synchronisiert.
 - Sichtbaren, deaktivierten Einstellungen-Dummy im Footer mit zugänglichem Hinweis „Noch nicht verfügbar“ ergänzt.

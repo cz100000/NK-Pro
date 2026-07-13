@@ -1,70 +1,13 @@
-<!-- AP10-CURRENT -->
-# Abhängigkeitsübersicht V99.4.12
-
-`ui-bindings` → `application-actions` → (`archive-actions` | `year-transition-actions` | `quality-assurance`) → `state-access` beziehungsweise isolierter Lesezugriff. `diagnostics` verwendet ausschließlich konfigurierte Lese- und Prüfhelfer. Archiv- und Jahreswechselmodule kennen weder DOM noch Browser-Speicher; Qualitäts- und Diagnosemodule committen, persistieren und rendern nicht.
-
-<!-- AP9-CURRENT -->
-# Abhängigkeitsübersicht V99.4.10
-
-`ui-bindings` → `application-actions` → (`master-data-actions` | `cost-actions` | `billing-workflow`) → `state-access` → zentraler Commit. Die Orchestrierungsmodule erhalten Fachhelfer ausschließlich über `configure()`. `billing-calculation`, `billing-snapshot`, Objekt- und Zählermodule bleiben fachliche Quellen; Persistenz und DOM sind keine Abhängigkeiten der neuen Module.
-
-# Abhängigkeitsübersicht V99.4.9
-
-## AP7-Hauptrichtung
+# Abhängigkeitsübersicht V99.4.13
 
 ```text
-DOM → ui-events → ui-controller → ui-bindings → app/Fachdienste
-                                              ├→ AP5-Zählermodule
-                                              ├→ AP6-Berechnung/Dokument/Export
-                                              └→ Persistenz/Recovery
+index.html / DOM
+  → ui-events → ui-controller → ui-bindings
+  → application-actions → spezialisierte Action-/Workflowmodule
+  → state-access → Commit/Persistenz
+
+Fachresultate → Renderer
+Dokumentdaten → Dokumentrenderer → browser-io/export-service
 ```
 
-Rückabhängigkeiten von Fachmodulen auf DOM, Controller oder Renderer sind unzulässig.
-
-## Zulässige Hauptrichtung
-
-```text
-DOM / Benutzeraktion
-        │
-        ▼
-app.js / navigation.js / ui-table-tools.js
-        │
-        ├──────────────► billing-calculation.js
-        │                         │
-        │                         ├────► AP5-Zählermodule
-        │                         └────► bestehende Stammdaten-/Hilfsfunktionen
-        │
-        ├──────────────► document-data.js
-        │                         │
-        │                         └────► zentrale Berechnungsergebnisse
-        │
-        ├──────────────► document-renderer.js
-        │                         └────► document-data.js / Berechnungsergebnis
-        │
-        ├──────────────► export-service.js
-        │
-        ├──────────────► persistence.js / migration.js / backup-recovery.js / archive.js
-        │
-        └──────────────► app-bootstrap.js / compatibility.js / ui-preferences.js
-```
-
-## Produktive Ladefolge
-
-Die Module werden in `index.html` in folgender Reihenfolge geladen:
-
-1. UI-Präferenzadapter,
-2. Navigation und Modalereignisse,
-3. Persistenz, Migration, Backup/Restore,
-4. Zähler- und Objektmodule,
-5. Snapshot und Archiv,
-6. Berechnung, Dokumentdaten, Dokumentrenderer, Export und Tabellenhilfen,
-7. Bootstrap und Kompatibilitätsregistry,
-8. Seed,
-9. `app.js`,
-10. Service-Worker-Registrierung.
-
-Alle von `app.js` benötigten Schnittstellen sind daher vor dessen Ausführung verfügbar.
-
-## Zirkularität
-
-Die neuen Dateien referenzieren keine Scriptdateien und importieren einander nicht dynamisch. Die Übergangskompatibilität nutzt denselben klassischen globalen Laufzeitkontext. Dadurch gibt es keine zyklische Ladeabhängigkeit; fachliche Restkopplung über globale Bindungen ist als technische Altlast dokumentiert.
+Abhängigkeiten werden in der Startphase explizit über `configure()` übergeben. Fachmodule greifen nicht auf DOM, Dialoge oder Browser-Speicher zu. `index.html` definiert die deterministische Scriptreihenfolge; `service-worker.js` enthält dieselbe vollständige App-Shell. Versteckte Funktionsaufrufe über 75 Übergangswrapper sind zentral in `app.js` registriert und in `AP12_LEGACY_KOMPATIBILITAET.md` dokumentiert.

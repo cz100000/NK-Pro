@@ -19,7 +19,7 @@ test("Start, Version, Seitenstruktur und interne Audits sind fehlerfrei", async 
   const runtime = attachRuntimeGuards(page);
   await openFreshApp(page);
 
-  await expect(page).toHaveTitle("NK-Pro V99.4.12 – Navigationsstruktur und visuelles Grundsystem");
+  await expect(page).toHaveTitle("NK-Pro V99.4.13 – Restentkopplung und globale Zustandsbereinigung");
   const result = await page.evaluate(() => {
     const release = window.NKProDiagnostics.releaseAuditReport();
     const selfReport = window.NKProDiagnostics.appSelfTestReport();
@@ -43,8 +43,8 @@ test("Start, Version, Seitenstruktur und interne Audits sind fehlerfrei", async 
     };
   });
 
-  expect(result.version).toBe("V99.4.12");
-  expect(result.versionName).toBe("Navigationsstruktur und visuelles Grundsystem");
+  expect(result.version).toBe("V99.4.13");
+  expect(result.versionName).toBe("Restentkopplung und globale Zustandsbereinigung");
   expect(result.schema).toBe(5);
   expect(result.activeTab).toBe("landing");
   expect(result.structure.allPassed).toBe(true);
@@ -185,14 +185,14 @@ test("Archiv ist eigenständig erreichbar und öffnet die Nur-Ansicht", async ({
 test("Manifest und PWA-Version stimmen mit der Anwendung überein", async () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(root, "manifest.webmanifest"), "utf8"));
   const worker = fs.readFileSync(path.join(root, "service-worker.js"), "utf8");
-  expect(manifest.version).toBe("99.4.12");
-  expect(manifest.name).toContain("V99.4.12");
-  expect(worker).toContain('const CACHE_NAME = "nk-pro-v99-4-12";');
+  expect(manifest.version).toBe("99.4.13");
+  expect(manifest.name).toContain("V99.4.13");
+  expect(worker).toContain('const CACHE_NAME = "nk-pro-v99-4-13";');
   expect(worker).toContain('"./index.html"');
   expect(worker).toContain('"./manifest.webmanifest"');
 });
 
-test("V99.4.12 lädt produktive Styles und Skripte ausschließlich aus separaten Dateien", async ({ page, request }) => {
+test("V99.4.13 lädt produktive Styles und Skripte ausschließlich aus separaten Dateien", async ({ page, request }) => {
   const response = await request.get("/index.html");
   expect(response.ok()).toBeTruthy();
   const html = await response.text();
@@ -207,7 +207,7 @@ test("V99.4.12 lädt produktive Styles und Skripte ausschließlich aus separaten
     scripts: [...document.scripts].map(script => script.src || "")
   }));
   expect(loaded.styles.some(resource => resource.includes("assets/app.css"))).toBeTruthy();
-  for (const expected of ["js/ui-preferences.js", "js/navigation.js", "js/modal-events.js", "js/persistence.js", "js/migration.js", "js/backup-recovery.js", "js/meter-master.js", "js/meter-readings.js", "js/meter-periods.js", "js/meter-validation.js", "js/object-standard.js", "js/billing-snapshot.js", "js/archive.js", "js/archive-actions.js", "js/year-transition-actions.js", "js/quality-assurance.js", "js/diagnostics.js", "js/billing-calculation.js", "js/document-data.js", "js/document-renderer.js", "js/export-service.js", "js/ui-table-tools.js", "js/app-bootstrap.js", "js/compatibility.js", "js/default-seed.js", "js/app.js", "js/service-worker-register.js"]) {
+  for (const expected of ["js/ui-preferences.js", "js/navigation.js", "js/modal-events.js", "js/persistence.js", "js/migration.js", "js/backup-recovery.js", "js/meter-master.js", "js/meter-readings.js", "js/meter-periods.js", "js/meter-validation.js", "js/object-standard.js", "js/billing-snapshot.js", "js/archive.js", "js/archive-actions.js", "js/year-transition-actions.js", "js/quality-assurance.js", "js/diagnostics.js", "js/billing-calculation.js", "js/document-data.js", "js/document-renderer.js", "js/export-service.js", "js/ui-table-tools.js", "js/app-bootstrap.js", "js/compatibility.js", "js/default-seed.js", "js/runtime-diagnostics.js", "js/app-runtime-config.js", "js/app-state-persistence.js", "js/ui-master-data.js", "js/ui-quality.js", "js/ui-costs.js", "js/ui-navigation-pages.js", "js/ui-archive-pages.js", "js/browser-io.js", "js/ui-metering.js", "js/ui-billing-allocation.js", "js/ui-documents.js", "js/ui-table-actions.js", "js/ui-diagnostics.js", "js/ui-page-controller.js", "js/app.js", "js/service-worker-register.js"]) {
     expect(loaded.scripts.some(resource => resource.includes(expected))).toBeTruthy();
   }
 });

@@ -1,4 +1,4 @@
-const CACHE_NAME = "nk-pro-v99-4-12";
+const CACHE_NAME = "nk-pro-v99-4-13";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -37,6 +37,21 @@ const APP_SHELL = [
   "./js/app-bootstrap.js",
   "./js/compatibility.js",
   "./js/default-seed.js",
+  "./js/runtime-diagnostics.js",
+  "./js/app-runtime-config.js",
+  "./js/app-state-persistence.js",
+  "./js/ui-master-data.js",
+  "./js/ui-quality.js",
+  "./js/ui-costs.js",
+  "./js/ui-navigation-pages.js",
+  "./js/ui-archive-pages.js",
+  "./js/browser-io.js",
+  "./js/ui-metering.js",
+  "./js/ui-billing-allocation.js",
+  "./js/ui-documents.js",
+  "./js/ui-table-actions.js",
+  "./js/ui-diagnostics.js",
+  "./js/ui-page-controller.js",
   "./js/app.js",
   "./js/service-worker-register.js",
   "./icons/icon-180.png",

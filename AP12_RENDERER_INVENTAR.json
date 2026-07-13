@@ -1,0 +1,419 @@
+{
+  "version": "99.4.13",
+  "renderers": [
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 631,
+      "name": "renderBackupStatus",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 663,
+      "name": "renderFinalizationStatus",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 788,
+      "name": "renderSystemMessages",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 809,
+      "name": "renderActionFeedback",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-archive-pages.js",
+      "line": 24,
+      "name": "renderDeveloperDiagnostics",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-archive-pages.js",
+      "line": 83,
+      "name": "renderSicherung",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-archive-pages.js",
+      "line": 256,
+      "name": "renderPrepaymentCarryForwardNotice",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-archive-pages.js",
+      "line": 323,
+      "name": "renderYearArchive",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-billing-allocation.js",
+      "line": 26,
+      "name": "renderManualExternalValues",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-billing-allocation.js",
+      "line": 49,
+      "name": "renderUmlage",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-costs.js",
+      "line": 23,
+      "name": "renderKostenMieterUmlageMatrix",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-costs.js",
+      "line": 175,
+      "name": "renderCostSelectionDialog",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-costs.js",
+      "line": 256,
+      "name": "renderCostMockupOverview",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-costs.js",
+      "line": 293,
+      "name": "renderEinstellungen",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-costs.js",
+      "line": 364,
+      "name": "renderWohnungen",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-costs.js",
+      "line": 433,
+      "name": "renderEinnahmen",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-costs.js",
+      "line": 490,
+      "name": "renderKosten",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-diagnostics.js",
+      "line": 27,
+      "name": "renderReleaseAuditSummary",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 28,
+      "name": "renderPrepaymentAdjustment",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 368,
+      "name": "renderBrief",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 234,
+      "name": "renderCostSelectionPanel",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 563,
+      "name": "renderBillingStammdatenStatus",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 824,
+      "name": "renderVersionInfo",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 265,
+      "name": "renderWaterCostSection",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 319,
+      "name": "renderGenericMeterSection",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 390,
+      "name": "renderWaterMeterCarryForwardNotice",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 420,
+      "name": "renderWaterMeterHistory",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 467,
+      "name": "renderWaterMeters",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-navigation-pages.js",
+      "line": 59,
+      "name": "renderPeriodInfo",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-navigation-pages.js",
+      "line": 552,
+      "name": "renderLegacyArchiveDetails",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-navigation-pages.js",
+      "line": 609,
+      "name": "renderWorkflowDashboard",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-navigation-pages.js",
+      "line": 625,
+      "name": "renderStart",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-navigation-pages.js",
+      "line": 638,
+      "name": "renderArchive",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-navigation-pages.js",
+      "line": 649,
+      "name": "renderStartTenantManagement",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-navigation-pages.js",
+      "line": 683,
+      "name": "renderStartUnitManagement",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-page-controller.js",
+      "line": 41,
+      "name": "renderStepsForTab",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-page-controller.js",
+      "line": 46,
+      "name": "renderCurrentView",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-page-controller.js",
+      "line": 73,
+      "name": "renderStatusAndFeedbackSafely",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-page-controller.js",
+      "line": 205,
+      "name": "renderOverviewCards",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-page-controller.js",
+      "line": 252,
+      "name": "renderOverviewForTab",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-page-controller.js",
+      "line": 253,
+      "name": "renderAllOverviewCards",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-page-controller.js",
+      "line": 311,
+      "name": "renderAll",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-quality.js",
+      "line": 44,
+      "name": "renderSpecialCaseWatch",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-quality.js",
+      "line": 195,
+      "name": "renderAcceptanceProtocolSummary",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-quality.js",
+      "line": 352,
+      "name": "renderQuality",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-quality.js",
+      "line": 423,
+      "name": "renderDashboard",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    }
+  ]
+}

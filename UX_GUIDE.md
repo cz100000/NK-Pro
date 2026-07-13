@@ -2,7 +2,7 @@
 
 **Ziel:** einfacher, stabiler und nachvollziehbarer Arbeitsablauf  
 **Ausgangsversion:** V99.3.0  
-**Aktueller Stand:** V99.4.9  
+**Aktueller Stand:** V99.4.13  
 **Status:** Phase-1-Ziel umgesetzt; Datenmodellziele offen
 
 ## 1. Leitprinzip
@@ -41,19 +41,18 @@ Die Landingpage ist nur eine Arbeitsweiche. Sie ersetzt nicht die Navigation. Be
 ▼ Objekt vorbereiten
   Objekt
   Wohnungen
+  Zähler
   Mieter
-  Zählerverwaltung
-  Kostenarten (Standard)
-  Umlageschlüssel (Standard)
-  Einstellungen
 
 ▼ Nebenkosten abrechnen
   Abrechnungsübersicht
+  Mieter & Wohnungen
+  Miete & Vorauszahlungen
   Kosten erfassen
-  Zählerstände
   Manuelle & externe Werte
-  Verteilung & Berechnung
-  Qualitätsprüfung
+  Verteilung
+  Prüfung
+  Neue Vorauszahlungen
   Briefe
   Export
 
@@ -66,6 +65,7 @@ Die Landingpage ist nur eine Arbeitsweiche. Sie ersetzt nicht die Navigation. Be
 
 - Accordion-Gruppen sind erwünscht.
 - Alle Funktionen bleiben jederzeit erreichbar.
+- Innerhalb „Nebenkosten abrechnen“ gibt es keine Untergruppe; alle zehn Einträge sind gleichrangig.
 - Nur der zur Aufgabe passende Zweig muss geöffnet sein.
 - Der aktive Eintrag ist eindeutig markiert.
 - Gruppenstatus wird gespeichert, darf aber nie den fachlichen Zustand verändern.

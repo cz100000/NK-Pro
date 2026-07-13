@@ -1,8 +1,8 @@
 {
-  "name": "nk-pro-v99-4-12",
-  "version": "99.4.12",
+  "name": "nk-pro-v99-4-13",
+  "version": "99.4.13",
   "private": true,
-  "description": "Navigations-, Designsystem-, Barrierefreiheits-, Architektur-, PWA- und Browserprüfungen für NK-Pro V99.4.12",
+  "description": "Restentkopplungs-, Zustands-, Architektur-, PWA- und Browserprüfungen für NK-Pro V99.4.13",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
     "test:fixtures": "node tools/check-fixtures.cjs",
@@ -12,7 +12,7 @@
     "test:report": "playwright show-report",
     "test:release": "node tools/check-release-consistency.cjs",
     "test:metering": "node tests/metering-domain.test.cjs",
-    "test:architecture": "node tests/ap6-modularization.test.cjs && node tests/ap7-ui-integration.test.cjs && node tests/ap8-application-actions.test.cjs && node tests/ap9-core-orchestration.test.cjs && node tests/ap10-archive-year-quality-diagnostics.test.cjs && node tests/ap11-navigation.test.cjs",
+    "test:architecture": "node tests/ap6-modularization.test.cjs && node tests/ap7-ui-integration.test.cjs && node tests/ap8-application-actions.test.cjs && node tests/ap9-core-orchestration.test.cjs && node tests/ap10-archive-year-quality-diagnostics.test.cjs && node tests/ap11-navigation.test.cjs && node tests/ap12-app-decoupling.test.cjs",
     "test:visual": "playwright test --project=ap11-navigation --grep \"Visuelle AP11-Referenzen\" --workers=1"
   },
   "devDependencies": {

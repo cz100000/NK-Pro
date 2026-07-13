@@ -31,7 +31,7 @@ function main() {
   const app = read("js/app.js");
   const html = read("index.html");
   const appLines = app.split(/\r?\n/).length;
-  assert(appLines < 9500, `app.js wurde nicht ausreichend verkleinert (${appLines} Zeilen).`);
+  assert(appLines < 300, `app.js ist nicht auf Start und Orchestrierung begrenzt (${appLines} Zeilen).`);
 
   Object.entries(modules).forEach(([name, relative]) => {
     const source = read(relative);
@@ -44,18 +44,19 @@ function main() {
   assert(!/\bdocument\b|\blocalStorage\b|\bindexedDB\b/.test(documentData), "Dokumentdatenmodul enthält DOM- oder Speicherzugriffe.");
 
   const wrapperChecks = [
-    ["calculateUmlage", "billingCalculation"],
-    ["allocationForCost", "billingCalculation"],
-    ["prepaymentAdjustmentData", "billingCalculation"],
-    ["briefCostRows", "documentData"],
-    ["buildBriefHtml", "documentRenderer"],
-    ["downloadFullExportPackage", "exportService"],
-    ["enhanceTables", "uiTableTools"]
+    ["calculateUmlage", "billingCalculation", "js/ui-billing-allocation.js"],
+    ["prepaymentAdjustmentData", "billingCalculation", "js/ui-documents.js"],
+    ["briefCostRows", "documentData", "js/ui-documents.js"],
+    ["buildBriefHtml", "documentRenderer", "js/ui-documents.js"],
+    ["downloadFullExportPackage", "exportService", "js/browser-io.js"],
+    ["enhanceTables", "uiTableTools", "js/ui-table-actions.js"]
   ];
-  wrapperChecks.forEach(([fn, moduleName]) => {
+  wrapperChecks.forEach(([fn, moduleName, relative]) => {
     const expected = `function ${fn}(...args) { return NK_PRO_MODULES.${moduleName}.${fn}(...args); }`;
-    assert(app.includes(expected), `Kompatibilitätsweiterleitung fehlt oder enthält Parallelfachlogik: ${fn}.`);
+    assert(read(relative).includes(expected), `Kompatibilitätsweiterleitung fehlt oder enthält Parallelfachlogik: ${fn}.`);
+    assert(app.includes(`"${fn}"`), `Kompatibilitätsweiterleitung ist nicht explizit registriert: ${fn}.`);
   });
+  assert(!app.includes('"allocationForCost"'), "Entfernter Legacy-Wrapper allocationForCost ist noch registriert.");
 
   const productiveJs = fs.readdirSync(path.join(root, "js")).filter(name => name.endsWith(".js"));
   const storageUsers = productiveJs.filter(name => /\blocalStorage\b/.test(read(`js/${name}`))).sort();

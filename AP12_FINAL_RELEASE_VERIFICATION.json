@@ -1,0 +1,31 @@
+{
+  "version": "99.4.13",
+  "source": "fresh extraction of final release ZIP",
+  "status": "passed",
+  "checksums": {
+    "passed": 196,
+    "failed": 0
+  },
+  "static": [
+    "syntax: 51/51",
+    "fixtures: 6/6",
+    "metering: passed",
+    "architecture AP6-AP12: passed",
+    "release consistency: passed"
+  ],
+  "browser": {
+    "projectsPassed": 12,
+    "testsPassed": 52,
+    "intentionalSkipped": 1,
+    "execution": "12 Projekte in frischen Prozessen; Snapshot 9 Einzeltests wegen Teardown-Hänger"
+  },
+  "environment": {
+    "chromium": "/usr/bin/chromium",
+    "workers": 1
+  },
+  "infrastructureNotes": [
+    "stale port 4173 vor Wiederholung bereinigt",
+    "Playwright-/Webserver-Teardown konnte gebündelte Prozesse hängen lassen; betroffene Projekte wurden frisch wiederholt",
+    "alle 52 produktiven Browserassertionen bestanden; 1 optionaler visueller Capture-Test bestimmungsgemäß übersprungen"
+  ]
+}

@@ -1,11 +1,11 @@
 {
-  "appVersion": "99.4.12",
-  "displayVersion": "V99.4.12",
-  "versionName": "Navigationsstruktur und visuelles Grundsystem",
+  "appVersion": "99.4.13",
+  "displayVersion": "V99.4.13",
+  "versionName": "Restentkopplung und globale Zustandsbereinigung",
   "schemaVersion": 5,
   "dataLayerContractVersion": 1,
   "snapshotScope": "billingSnapshot",
-  "basedOn": "99.4.11",
+  "basedOn": "99.4.12",
   "releaseDate": "2026-07-13",
   "runtime": [
     "HTML",
@@ -14,7 +14,7 @@
   ],
   "framework": null,
   "buildSystem": null,
-  "nextWorkPackage": "AP12: Restentkopplung von app.js und globale Zustandsbereinigung",
+  "nextWorkPackage": "AP13: Brieflayout, Druckbild und Vorschaukonsistenz",
   "objectStandardVersion": 1,
   "billingSnapshotVersion": 2,
   "meterMasterStandardVersion": 1,
@@ -22,9 +22,12 @@
   "meterPeriodStandardVersion": 1,
   "meterAssignmentStandardVersion": 1,
   "meterReplacementStandardVersion": 1,
-  "architectureVersion": 2,
-  "compatibilityLayerVersion": 2,
+  "architectureVersion": 3,
+  "compatibilityLayerVersion": 3,
   "uiControllerVersion": 1,
   "uiEventContractVersion": 1,
-  "navigationDesignSystemVersion": 1
+  "navigationDesignSystemVersion": 1,
+  "appOrchestrationVersion": 1,
+  "stateOwnershipVersion": 1,
+  "runtimeDiagnosticsVersion": 1
 }

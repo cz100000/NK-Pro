@@ -29,8 +29,10 @@ test("AP11-Navigation bildet Zielstruktur, Icons und Zustände vollständig ab",
 
   const objectLabels = await page.locator('#nav-group-object > .nav-group-item .nav-item-label').allTextContents();
   expect(objectLabels.map(value => value.trim())).toEqual(["Objekt", "Wohnungen", "Zähler", "Mieter"]);
-  const billingLabels = await page.locator('#nav-group-billing > .nav-group-item:not(.nav-group-item--secondary) .nav-item-label').allTextContents();
-  expect(billingLabels.map(value => value.trim())).toEqual(["Kosten erfassen", "Verteilung", "Prüfung", "Briefe", "Export"]);
+  const billingLabels = await page.locator('#nav-group-billing > .nav-group-item .nav-item-label').allTextContents();
+  expect(billingLabels.map(value => value.trim())).toEqual(["Abrechnungsübersicht", "Mieter & Wohnungen", "Miete & Vorauszahlungen", "Kosten erfassen", "Manuelle & externe Werte", "Verteilung", "Prüfung", "Neue Vorauszahlungen", "Briefe", "Export"]);
+  await expect(page.locator("#nav-group-billing .nav-subsection")).toHaveCount(0);
+  await expect(page.locator("#nav-group-billing .nav-group-item--secondary")).toHaveCount(0);
 
   const icons = page.locator("#appSidebar .nav-icon-svg");
   expect(await icons.count()).toBeGreaterThanOrEqual(22);

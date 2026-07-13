@@ -1,0 +1,55 @@
+{
+  "versionBefore": "99.4.12",
+  "versionAfter": "99.4.13",
+  "appJsBefore": {
+    "bytes": 382650,
+    "lines": 6294,
+    "topLevelFunctionDeclarations": 518,
+    "topLevelBindings": 67,
+    "directStatePathReferences": 306,
+    "directStateWriteSites": 96,
+    "globalAssignments": 5,
+    "dynamicGlobalAccesses": 0
+  },
+  "appJsAfter": {
+    "bytes": 15599,
+    "lines": 225,
+    "topLevelFunctionDeclarations": 8,
+    "topLevelBindings": 2,
+    "directStatePathReferences": 0,
+    "directStateWriteSites": 0,
+    "globalAssignments": 0,
+    "dynamicGlobalAccesses": 0
+  },
+  "rootStateReplacementSitesBefore": 10,
+  "rootStateReplacementSitesAfterProjectWide": 1,
+  "rendererCount": 46,
+  "rendererSideEffectsAfter": 0,
+  "rendererPreparationSideEffectsBefore": 9,
+  "legacyCompatibilityWrappersBefore": 112,
+  "legacyCompatibilityWrappersAfter": 75,
+  "legacyCompatibilityWrappersRemoved": 37,
+  "oldIndividualWindowBindingsRemoved": [
+    "__V992_AUDIT__",
+    "__NKPRO_UI_ARCHITECTURE__",
+    "__NKPRO_STARTUP__",
+    "__NKPRO_COMPATIBILITY__"
+  ],
+  "newModules": [
+    "runtime-diagnostics.js",
+    "app-runtime-config.js",
+    "app-state-persistence.js",
+    "ui-master-data.js",
+    "ui-quality.js",
+    "ui-costs.js",
+    "ui-navigation-pages.js",
+    "ui-archive-pages.js",
+    "browser-io.js",
+    "ui-metering.js",
+    "ui-billing-allocation.js",
+    "ui-documents.js",
+    "ui-table-actions.js",
+    "ui-diagnostics.js",
+    "ui-page-controller.js"
+  ]
+}

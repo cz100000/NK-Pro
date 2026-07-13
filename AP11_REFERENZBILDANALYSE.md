@@ -27,7 +27,7 @@
 - Hover-, Fokus-, deaktivierte und reduzierte-Bewegungszustände für Maus, Tastatur und Barrierefreiheit.
 - Drawer-Verhalten unter 981 Pixel Breite; das Referenzbild zeigt nur die Desktopansicht.
 - Kontextpanel für aktive Abrechnung bleibt erhalten, wird aber in die weiße Navigationsfläche integriert.
-- Ein kompakter sekundärer Abrechnungsblock erhält die weiterhin produktiv benötigten Seiten, die im Referenzbild nicht vollständig sichtbar sind.
+- Alle produktiv benötigten Abrechnungsseiten bleiben ohne zusätzliche Untergruppe gleichrangig innerhalb „Nebenkosten abrechnen“ erreichbar.
 
 ## Nicht eindeutig erkennbar und konsistent festgelegt
 

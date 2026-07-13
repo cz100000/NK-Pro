@@ -6,7 +6,7 @@
 | Kopf | geometrisches Logo + „NK-PRO“, keine Unterzeile | Wortmarke „NK-Pro“ + „Nebenkostenabrechnung“ |
 | Icons | nur wenige Steuericons, Gruppen-Chevron als Textzeichen | 22 einheitliche lokale Kontur-SVGs |
 | Objektgruppe | Objekt, Wohnungen, Mieter | Objekt, Wohnungen, Zähler, Mieter |
-| Abrechnung | 11 gleichrangige Einträge | 5 primäre Arbeitsschritte + 5 klar getrennte ergänzende Schritte |
+| Abrechnung | 11 gleichrangige Einträge | 10 gleichrangige Einträge in fachlicher Ablaufreihenfolge |
 | Bezeichnungen | „Zählerstände“, „Verteilung & Berechnung“, „Qualitätsprüfung“ | „Zähler“, „Verteilung“, „Prüfung“ |
 | aktiver Zustand | blaue Vollfläche aus altem Grundstil; semantisch nicht vollständig synchron | helle aktive Fläche, Text/Icons, 4-px-Marker und `aria-current` |
 | Footer | nur Einklappschalter | lokaler Status, Version und deaktivierter Einstellungen-Dummy |

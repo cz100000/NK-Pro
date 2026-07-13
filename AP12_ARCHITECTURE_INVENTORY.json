@@ -1,0 +1,4817 @@
+{
+  "generatedAt": "2026-07-13T05:46:22.521Z",
+  "version": "99.4.13",
+  "files": {
+    "js/app-bootstrap.js": {
+      "bytes": 968,
+      "lines": 26,
+      "sha256": "fc6122cfb321aeb00e801cc0fd85d097bc42ee5c226c2e5bd0cf9e21b6a8bdf3",
+      "functions": [],
+      "renderers": []
+    },
+    "js/app-runtime-config.js": {
+      "bytes": 30418,
+      "lines": 304,
+      "sha256": "f512c2288266082f41aa498b6a815074f7ecb9bd7adff7299c9b5591572db96f",
+      "functions": [],
+      "renderers": []
+    },
+    "js/app-state-persistence.js": {
+      "bytes": 52244,
+      "lines": 987,
+      "sha256": "ba87bd62f06d427cd165f7261767f786060b11cb1ee7ee8e1cccdd2e5a381743",
+      "functions": [
+        {
+          "name": "initializeApplicationState",
+          "line": 4
+        },
+        {
+          "name": "replaceApplicationState",
+          "line": 9
+        },
+        {
+          "name": "clone",
+          "line": 15
+        },
+        {
+          "name": "withIsolatedState",
+          "line": 17
+        },
+        {
+          "name": "persistenceModuleOptions",
+          "line": 27
+        },
+        {
+          "name": "backupRecoveryModuleOptions",
+          "line": 37
+        },
+        {
+          "name": "validateMigrationData",
+          "line": 50
+        },
+        {
+          "name": "migrationModuleOptions",
+          "line": 60
+        },
+        {
+          "name": "meteringModuleOptions",
+          "line": 79
+        },
+        {
+          "name": "synchronizeMeteringData",
+          "line": 91
+        },
+        {
+          "name": "validateMeteringData",
+          "line": 95
+        },
+        {
+          "name": "migrateMeteringData",
+          "line": 99
+        },
+        {
+          "name": "objectStandardModuleOptions",
+          "line": 103
+        },
+        {
+          "name": "billingSnapshotModuleOptions",
+          "line": 112
+        },
+        {
+          "name": "normalizeObjectStandard",
+          "line": 131
+        },
+        {
+          "name": "validateObjectStandard",
+          "line": 135
+        },
+        {
+          "name": "validateBillingReadiness",
+          "line": 139
+        },
+        {
+          "name": "validateBillingSnapshot",
+          "line": 143
+        },
+        {
+          "name": "addElectricityDummyMeter",
+          "line": 147
+        },
+        {
+          "name": "archiveModuleOptions",
+          "line": 154
+        },
+        {
+          "name": "isSnapshotTechnicalMetaKey",
+          "line": 172
+        },
+        {
+          "name": "snapshotMetaFrom",
+          "line": 176
+        },
+        {
+          "name": "createBoundedBillingSnapshotData",
+          "line": 180
+        },
+        {
+          "name": "hasHistoricalWaterMeterData",
+          "line": 184
+        },
+        {
+          "name": "adoptHistoricalWaterMeterDataFromArchive",
+          "line": 188
+        },
+        {
+          "name": "archiveBoundaryFacts",
+          "line": 192
+        },
+        {
+          "name": "normalizeArchiveCollectionBoundaries",
+          "line": 196
+        },
+        {
+          "name": "enforceWorkingStateDataContract",
+          "line": 200
+        },
+        {
+          "name": "copyWorkingOperationalMeta",
+          "line": 204
+        },
+        {
+          "name": "ensureWaterMeterHistory",
+          "line": 210
+        },
+        {
+          "name": "notifyStorageProblem",
+          "line": 220
+        },
+        {
+          "name": "integrityHash",
+          "line": 230
+        },
+        {
+          "name": "dataWithoutIntegrity",
+          "line": 234
+        },
+        {
+          "name": "calculateDataIntegrity",
+          "line": 238
+        },
+        {
+          "name": "protectDataForStorage",
+          "line": 242
+        },
+        {
+          "name": "validateStoredDataIntegrity",
+          "line": 246
+        },
+        {
+          "name": "readStoredDataResult",
+          "line": 250
+        },
+        {
+          "name": "readStoredData",
+          "line": 254
+        },
+        {
+          "name": "writeProtectedStorage",
+          "line": 269
+        },
+        {
+          "name": "migrationCandidatesForData",
+          "line": 273
+        },
+        {
+          "name": "migrationPathLabelsForCandidates",
+          "line": 296
+        },
+        {
+          "name": "createPreMigrationBackup",
+          "line": 308
+        },
+        {
+          "name": "ensurePreMigrationBackup",
+          "line": 323
+        },
+        {
+          "name": "readPreMigrationBackupResult",
+          "line": 329
+        },
+        {
+          "name": "readRestoreCheckpointResult",
+          "line": 333
+        },
+        {
+          "name": "migrationBackupFileName",
+          "line": 337
+        },
+        {
+          "name": "downloadPreMigrationBackup",
+          "line": 343
+        },
+        {
+          "name": "createRestoreCheckpoint",
+          "line": 353
+        },
+        {
+          "name": "restorePreMigrationBackup",
+          "line": 366
+        },
+        {
+          "name": "rollbackLastRestore",
+          "line": 388
+        },
+        {
+          "name": "loadData",
+          "line": 407
+        },
+        {
+          "name": "isAppDataShape",
+          "line": 429
+        },
+        {
+          "name": "jsonByteLength",
+          "line": 434
+        },
+        {
+          "name": "formatBytes",
+          "line": 440
+        },
+        {
+          "name": "storageUsageForData",
+          "line": 447
+        },
+        {
+          "name": "currentStorageUsage",
+          "line": 457
+        },
+        {
+          "name": "parseJsonFileText",
+          "line": 461
+        },
+        {
+          "name": "importValidationReport",
+          "line": 471
+        },
+        {
+          "name": "importSummaryText",
+          "line": 508
+        },
+        {
+          "name": "addImportMetadata",
+          "line": 534
+        },
+        {
+          "name": "backupEventLabel",
+          "line": 542
+        },
+        {
+          "name": "ensureBackupMetadata",
+          "line": 553
+        },
+        {
+          "name": "registerBackupEvent",
+          "line": 559
+        },
+        {
+          "name": "daysSinceIso",
+          "line": 590
+        },
+        {
+          "name": "backupStatusReport",
+          "line": 597
+        },
+        {
+          "name": "backupStatusHint",
+          "line": 621
+        },
+        {
+          "name": "confirmRiskyDataAction",
+          "line": 626
+        },
+        {
+          "name": "renderBackupStatus",
+          "line": 631
+        },
+        {
+          "name": "withFinalizationWriteBypass",
+          "line": 657
+        },
+        {
+          "name": "renderFinalizationStatus",
+          "line": 663
+        },
+        {
+          "name": "exportSnapshot",
+          "line": 691
+        },
+        {
+          "name": "backupFileName",
+          "line": 718
+        },
+        {
+          "name": "errorMessage",
+          "line": 725
+        },
+        {
+          "name": "recordStartupError",
+          "line": 730
+        },
+        {
+          "name": "persistStartupMeterRepair",
+          "line": 736
+        },
+        {
+          "name": "loadInitialState",
+          "line": 750
+        },
+        {
+          "name": "currentDataSchemaVersion",
+          "line": 776
+        },
+        {
+          "name": "recordDataMigration",
+          "line": 780
+        },
+        {
+          "name": "migrateDataSchema",
+          "line": 784
+        },
+        {
+          "name": "renderSystemMessages",
+          "line": 788
+        },
+        {
+          "name": "setActionMessage",
+          "line": 804
+        },
+        {
+          "name": "renderActionFeedback",
+          "line": 809
+        },
+        {
+          "name": "runRenderStep",
+          "line": 820
+        },
+        {
+          "name": "normalizeLoadedData",
+          "line": 828
+        },
+        {
+          "name": "importAppData",
+          "line": 850
+        },
+        {
+          "name": "simpleArchiveIdentityForMerge",
+          "line": 856
+        },
+        {
+          "name": "mergePreloadedV41Archives",
+          "line": 860
+        },
+        {
+          "name": "normalizeLegacyData",
+          "line": 864
+        },
+        {
+          "name": "normalizedTextKey",
+          "line": 930
+        },
+        {
+          "name": "isoPeriodToShortRange",
+          "line": 934
+        },
+        {
+          "name": "dataSourceForMeta",
+          "line": 940
+        },
+        {
+          "name": "ensureUnifiedBillingFields",
+          "line": 949
+        }
+      ],
+      "renderers": [
+        {
+          "name": "renderBackupStatus",
+          "line": 631
+        },
+        {
+          "name": "renderFinalizationStatus",
+          "line": 663
+        },
+        {
+          "name": "renderSystemMessages",
+          "line": 788
+        },
+        {
+          "name": "renderActionFeedback",
+          "line": 809
+        }
+      ]
+    },
+    "js/app.js": {
+      "bytes": 15599,
+      "lines": 226,
+      "sha256": "6fe9969ca2b4fac4f7d766bc7f8052a07f4ce2330f2dc890627e17e78ddf1c4a",
+      "functions": [
+        {
+          "name": "configureCoreOrchestrationModules",
+          "line": 4
+        },
+        {
+          "name": "configureStateAccess",
+          "line": 76
+        },
+        {
+          "name": "configureApplicationActions",
+          "line": 88
+        },
+        {
+          "name": "configureNavigationModule",
+          "line": 136
+        },
+        {
+          "name": "registerUiControllers",
+          "line": 139
+        },
+        {
+          "name": "startUiEvents",
+          "line": 140
+        },
+        {
+          "name": "updateUiArchitectureAudit",
+          "line": 143
+        },
+        {
+          "name": "configureCompatibilityRegistry",
+          "line": 179
+        }
+      ],
+      "renderers": []
+    },
+    "js/application-actions.js": {
+      "bytes": 1832,
+      "lines": 44,
+      "sha256": "4f9cb5963a0232f279dbd2004c7a53cfab81d7841f5112e804a11d94114a71a1",
+      "functions": [],
+      "renderers": []
+    },
+    "js/archive-actions.js": {
+      "bytes": 32973,
+      "lines": 544,
+      "sha256": "63fb83497bb97d5cb6bf7102bfceff577aa82c08c050b6edaea9598944ac3eb8",
+      "functions": [],
+      "renderers": []
+    },
+    "js/archive.js": {
+      "bytes": 9860,
+      "lines": 187,
+      "sha256": "4f148c7df20d5301f4902fd464b584fd39eaa713da9a6a20820a2dfc1ef9c87e",
+      "functions": [],
+      "renderers": []
+    },
+    "js/backup-recovery.js": {
+      "bytes": 9839,
+      "lines": 196,
+      "sha256": "92b2f1df919acf425be770eb554373a23fc54b792249bbb33e88229475760bc7",
+      "functions": [],
+      "renderers": []
+    },
+    "js/billing-calculation.js": {
+      "bytes": 25847,
+      "lines": 639,
+      "sha256": "2d1a130455e6dc0e2b541f80edeb9c12cfd8ffe9f9b0460f368f35030e7050c2",
+      "functions": [],
+      "renderers": []
+    },
+    "js/billing-snapshot.js": {
+      "bytes": 25558,
+      "lines": 392,
+      "sha256": "65148329226ab031e9bcab3f03d9403cd017ecb2a841a3c0dc2373fec0e12b47",
+      "functions": [],
+      "renderers": []
+    },
+    "js/billing-workflow.js": {
+      "bytes": 20682,
+      "lines": 462,
+      "sha256": "00aa86daa078cff406032bdda03a08294ac5e87b0513373a89f8da03a44e87f4",
+      "functions": [],
+      "renderers": []
+    },
+    "js/browser-io.js": {
+      "bytes": 9131,
+      "lines": 165,
+      "sha256": "9eafc53e35916a71f4a6b2de436a38a0749b91e1a4b2f26ca6cec4aa71ad34d2",
+      "functions": [
+        {
+          "name": "safeFilePart",
+          "line": 70
+        },
+        {
+          "name": "downloadJsonFile",
+          "line": 72
+        },
+        {
+          "name": "downloadFullJson",
+          "line": 74
+        },
+        {
+          "name": "downloadCurrentBillingJson",
+          "line": 76
+        },
+        {
+          "name": "downloadKostenCsv",
+          "line": 78
+        },
+        {
+          "name": "downloadMieterCsv",
+          "line": 79
+        },
+        {
+          "name": "txtFileName",
+          "line": 82
+        },
+        {
+          "name": "downloadUmlageCsv",
+          "line": 84
+        },
+        {
+          "name": "downloadFinalBillingReport",
+          "line": 87
+        },
+        {
+          "name": "downloadExportPackage",
+          "line": 90
+        },
+        {
+          "name": "downloadFullExportPackage",
+          "line": 92
+        },
+        {
+          "name": "resetData",
+          "line": 94
+        },
+        {
+          "name": "handleDeleteBillingKey",
+          "line": 160
+        }
+      ],
+      "renderers": []
+    },
+    "js/compatibility.js": {
+      "bytes": 1079,
+      "lines": 31,
+      "sha256": "1904a38bbc0b88a4777ae897ff63f7fe4ba66fb02aa01bd19325cfe36c0409d6",
+      "functions": [],
+      "renderers": []
+    },
+    "js/cost-actions.js": {
+      "bytes": 12562,
+      "lines": 290,
+      "sha256": "7bc64711742c8654f9c86853618aa2b06ab4e99acf5616be8003f6bcbe922729",
+      "functions": [],
+      "renderers": []
+    },
+    "js/default-seed.js": {
+      "bytes": 196754,
+      "lines": 4,
+      "sha256": "1e62636860c65f7507a017028d8e845dc6b2e90bbe6bf762f7ae27dd755d1439",
+      "functions": [],
+      "renderers": []
+    },
+    "js/diagnostics.js": {
+      "bytes": 67525,
+      "lines": 937,
+      "sha256": "710aaaa2ab3c2d49b8daec660e16674c1a9b111814ae5715c7aabb3925340feb",
+      "functions": [],
+      "renderers": []
+    },
+    "js/document-data.js": {
+      "bytes": 21030,
+      "lines": 403,
+      "sha256": "36bbffc05da03e6c7311ad565b9bda9426353d6caf3499a160d0e4e358facfdb",
+      "functions": [],
+      "renderers": []
+    },
+    "js/document-renderer.js": {
+      "bytes": 27533,
+      "lines": 299,
+      "sha256": "1ce304027af1e68f9f5d862af7abec331546ebbf3bc3406fa91aa66e40ca1667",
+      "functions": [],
+      "renderers": []
+    },
+    "js/export-service.js": {
+      "bytes": 8125,
+      "lines": 159,
+      "sha256": "4954c06643fe10afbaa03f7c89aca36a4e20a3fd0336fccca65e1b615b280b87",
+      "functions": [],
+      "renderers": []
+    },
+    "js/master-data-actions.js": {
+      "bytes": 24485,
+      "lines": 568,
+      "sha256": "5bcdc4eaadc3875da740d30ae5551c8edcc2429f24f2c7777d149b5227f87c82",
+      "functions": [],
+      "renderers": []
+    },
+    "js/meter-master.js": {
+      "bytes": 15517,
+      "lines": 329,
+      "sha256": "d7da1a6f4458c82343c62b079fb8fcc699215432f2f486f9a46a259007f168a3",
+      "functions": [],
+      "renderers": []
+    },
+    "js/meter-periods.js": {
+      "bytes": 19427,
+      "lines": 358,
+      "sha256": "23b762d65478c6b7c2aa0fe5ce0ac13d03845b3903986eb2a6d0275efa5bc2ea",
+      "functions": [],
+      "renderers": []
+    },
+    "js/meter-readings.js": {
+      "bytes": 13466,
+      "lines": 287,
+      "sha256": "f55538060d23ff4aee6e9b9af7bbfafa38f66a58f8aeec3b4c05e04445b3890f",
+      "functions": [],
+      "renderers": []
+    },
+    "js/meter-validation.js": {
+      "bytes": 25048,
+      "lines": 294,
+      "sha256": "a69f8f989cb89e053296690f55f9a7cd0240e0fa53d2817f36e90adeb2211ae4",
+      "functions": [],
+      "renderers": []
+    },
+    "js/migration.js": {
+      "bytes": 14904,
+      "lines": 311,
+      "sha256": "24db7607caca48ce1fb244f8bc0d9f3b4835a5e53c47868f02a673c9e9722828",
+      "functions": [],
+      "renderers": []
+    },
+    "js/modal-events.js": {
+      "bytes": 934,
+      "lines": 24,
+      "sha256": "6e075d6d92597280d03b357a59b1301f745e6b1210c2c408e0251f232188b0f6",
+      "functions": [],
+      "renderers": []
+    },
+    "js/navigation.js": {
+      "bytes": 9130,
+      "lines": 180,
+      "sha256": "b613a2506de41d94342d555026de838da6999abc3e0b7444277ba6cf941d3a8c",
+      "functions": [],
+      "renderers": []
+    },
+    "js/object-standard.js": {
+      "bytes": 30417,
+      "lines": 545,
+      "sha256": "64f68daf6c5a5100482403637c2b24c64001dbbfabc69e77112ad47b41a89046",
+      "functions": [],
+      "renderers": []
+    },
+    "js/persistence.js": {
+      "bytes": 5268,
+      "lines": 158,
+      "sha256": "c22eab211ae2d080ce82b3050f83edf173752e610688050330f0f12547cd6c6b",
+      "functions": [],
+      "renderers": []
+    },
+    "js/quality-assurance.js": {
+      "bytes": 25652,
+      "lines": 438,
+      "sha256": "2da15fc07a2e2793b97f24aa417e732e283a4cc876c72019df9021afae1c8896",
+      "functions": [],
+      "renderers": []
+    },
+    "js/runtime-diagnostics.js": {
+      "bytes": 862,
+      "lines": 28,
+      "sha256": "30623cb3a0162e1e4173ba9d2fb68ed08d4d130c99758bde143a0034524200a3",
+      "functions": [],
+      "renderers": []
+    },
+    "js/service-worker-register.js": {
+      "bytes": 1139,
+      "lines": 27,
+      "sha256": "124ca3b8c1821e66153e571f129c9320214371f10e743477b37ebc0d3db3b1db",
+      "functions": [],
+      "renderers": []
+    },
+    "js/state-access.js": {
+      "bytes": 3441,
+      "lines": 83,
+      "sha256": "4e4cd3e72edac6f611a8c4e7bc05f313c539f898f60ff1843ce36332772e827d",
+      "functions": [],
+      "renderers": []
+    },
+    "js/ui-archive-pages.js": {
+      "bytes": 25703,
+      "lines": 503,
+      "sha256": "4b8dffa930f710042d77813d04270cf74e03219551773b50945a05a88cdbd01d",
+      "functions": [
+        {
+          "name": "localStorageUsageBytes",
+          "line": 4
+        },
+        {
+          "name": "developerDiagnosticsData",
+          "line": 8
+        },
+        {
+          "name": "renderDeveloperDiagnostics",
+          "line": 24
+        },
+        {
+          "name": "downloadDeveloperDiagnostics",
+          "line": 59
+        },
+        {
+          "name": "renderSicherung",
+          "line": 83
+        },
+        {
+          "name": "buildArchiveTableHtml",
+          "line": 89
+        },
+        {
+          "name": "replaceArchiveViewerPart",
+          "line": 100
+        },
+        {
+          "name": "createArchiveViewerHtml",
+          "line": 105
+        },
+        {
+          "name": "openArchiveStateInApp",
+          "line": 136
+        },
+        {
+          "name": "archiveViewerFileName",
+          "line": 148
+        },
+        {
+          "name": "openArchiveViewerDocument",
+          "line": 154
+        },
+        {
+          "name": "openArchiveYear",
+          "line": 191
+        },
+        {
+          "name": "loadArchiveYear",
+          "line": 211
+        },
+        {
+          "name": "hasEnteredMeterValue",
+          "line": 222
+        },
+        {
+          "name": "renderPrepaymentCarryForwardNotice",
+          "line": 256
+        },
+        {
+          "name": "downloadArchiveYear",
+          "line": 290
+        },
+        {
+          "name": "downloadFullArchive",
+          "line": 305
+        },
+        {
+          "name": "renderYearArchive",
+          "line": 323
+        },
+        {
+          "name": "normalizeLegacyImportText",
+          "line": 348
+        },
+        {
+          "name": "decodeLegacyArrayBuffer",
+          "line": 358
+        },
+        {
+          "name": "firstMatch",
+          "line": 371
+        },
+        {
+          "name": "parseEuroFromText",
+          "line": 376
+        },
+        {
+          "name": "legacyMoneyValues",
+          "line": 382
+        },
+        {
+          "name": "legacySlice",
+          "line": 388
+        },
+        {
+          "name": "parseLegacyLastMoneyInWindow",
+          "line": 400
+        },
+        {
+          "name": "parseLegacyMoneyAfter",
+          "line": 405
+        },
+        {
+          "name": "parseLegacyPeriodAfter",
+          "line": 413
+        },
+        {
+          "name": "nameFromLegacyFilename",
+          "line": 418
+        },
+        {
+          "name": "wohnungFromLegacyFilename",
+          "line": 426
+        },
+        {
+          "name": "isoFromLegacyShortDate",
+          "line": 431
+        },
+        {
+          "name": "parseLegacyBillingFromText",
+          "line": 438
+        }
+      ],
+      "renderers": [
+        {
+          "name": "renderDeveloperDiagnostics",
+          "line": 24
+        },
+        {
+          "name": "renderSicherung",
+          "line": 83
+        },
+        {
+          "name": "renderPrepaymentCarryForwardNotice",
+          "line": 256
+        },
+        {
+          "name": "renderYearArchive",
+          "line": 323
+        }
+      ]
+    },
+    "js/ui-billing-allocation.js": {
+      "bytes": 11524,
+      "lines": 151,
+      "sha256": "e65d79c4f4213b11e1381207f08878be6cb1a5532c812056499076ecba6b1dc1",
+      "functions": [
+        {
+          "name": "inferManualInputMode",
+          "line": 4
+        },
+        {
+          "name": "defaultManualInputMode",
+          "line": 5
+        },
+        {
+          "name": "manualInputModeForCost",
+          "line": 6
+        },
+        {
+          "name": "syncUmlageInputs",
+          "line": 7
+        },
+        {
+          "name": "rawVorauszahlungByCostAndTenant",
+          "line": 16
+        },
+        {
+          "name": "vorauszahlungByCostAndTenant",
+          "line": 18
+        },
+        {
+          "name": "totalVorauszahlungForTenant",
+          "line": 20
+        },
+        {
+          "name": "renderManualExternalValues",
+          "line": 26
+        },
+        {
+          "name": "calculateUmlage",
+          "line": 46
+        },
+        {
+          "name": "umlageTotals",
+          "line": 48
+        },
+        {
+          "name": "renderUmlage",
+          "line": 49
+        },
+        {
+          "name": "todayIso",
+          "line": 126
+        },
+        {
+          "name": "addDaysIso",
+          "line": 134
+        },
+        {
+          "name": "dateDe",
+          "line": 143
+        }
+      ],
+      "renderers": [
+        {
+          "name": "renderManualExternalValues",
+          "line": 26
+        },
+        {
+          "name": "renderUmlage",
+          "line": 49
+        }
+      ]
+    },
+    "js/ui-bindings.js": {
+      "bytes": 12869,
+      "lines": 173,
+      "sha256": "45db94b48b01c257a6e2375480204c53004bfd2bf5f5b3b1ea4c5f6ae6ce3265",
+      "functions": [],
+      "renderers": []
+    },
+    "js/ui-controller.js": {
+      "bytes": 2397,
+      "lines": 60,
+      "sha256": "2eb8f2688aea6916c8d7038ca7429b4f3d7ff1124d802670ffda549b967ae2dc",
+      "functions": [],
+      "renderers": []
+    },
+    "js/ui-costs.js": {
+      "bytes": 28820,
+      "lines": 512,
+      "sha256": "376b0e53ead9070cd43cacada87e39cfaa73086694a2ce13a2c1d36c4881fda0",
+      "functions": [
+        {
+          "name": "activePrepaymentCostIds",
+          "line": 4
+        },
+        {
+          "name": "activeCostRowsForMatrix",
+          "line": 6
+        },
+        {
+          "name": "tenantIdForUmlage",
+          "line": 10
+        },
+        {
+          "name": "isCostAllowedForTenant",
+          "line": 12
+        },
+        {
+          "name": "costTenantToggleHtml",
+          "line": 17
+        },
+        {
+          "name": "renderKostenMieterUmlageMatrix",
+          "line": 23
+        },
+        {
+          "name": "toggleCostRowSelection",
+          "line": 52
+        },
+        {
+          "name": "toggleAllVisibleCostRows",
+          "line": 59
+        },
+        {
+          "name": "updateCostSelectionUi",
+          "line": 69
+        },
+        {
+          "name": "deactivateSelectedCosts",
+          "line": 98
+        },
+        {
+          "name": "setCostPageSize",
+          "line": 124
+        },
+        {
+          "name": "toggleAllCostRows",
+          "line": 131
+        },
+        {
+          "name": "openCostColumnInfo",
+          "line": 136
+        },
+        {
+          "name": "openCostSelectionDialog",
+          "line": 141
+        },
+        {
+          "name": "closeCostSelectionDialog",
+          "line": 155
+        },
+        {
+          "name": "activateCostFromDialog",
+          "line": 161
+        },
+        {
+          "name": "renderCostSelectionDialog",
+          "line": 175
+        },
+        {
+          "name": "createFreeCostRow",
+          "line": 221
+        },
+        {
+          "name": "costUnitLabel",
+          "line": 235
+        },
+        {
+          "name": "costDisplayGroup",
+          "line": 246
+        },
+        {
+          "name": "costIsComplete",
+          "line": 252
+        },
+        {
+          "name": "renderCostMockupOverview",
+          "line": 256
+        },
+        {
+          "name": "renderEinstellungen",
+          "line": 293
+        },
+        {
+          "name": "renderWohnungen",
+          "line": 364
+        },
+        {
+          "name": "renderEinnahmen",
+          "line": 433
+        },
+        {
+          "name": "renderKosten",
+          "line": 490
+        },
+        {
+          "name": "addCostRow",
+          "line": 508
+        }
+      ],
+      "renderers": [
+        {
+          "name": "renderKostenMieterUmlageMatrix",
+          "line": 23
+        },
+        {
+          "name": "renderCostSelectionDialog",
+          "line": 175
+        },
+        {
+          "name": "renderCostMockupOverview",
+          "line": 256
+        },
+        {
+          "name": "renderEinstellungen",
+          "line": 293
+        },
+        {
+          "name": "renderWohnungen",
+          "line": 364
+        },
+        {
+          "name": "renderEinnahmen",
+          "line": 433
+        },
+        {
+          "name": "renderKosten",
+          "line": 490
+        }
+      ]
+    },
+    "js/ui-diagnostics.js": {
+      "bytes": 2480,
+      "lines": 59,
+      "sha256": "759468aa5e32f0580c3790c9f5f17027ad3f96f786982d020abf2e593c25ed85",
+      "functions": [
+        {
+          "name": "showReleaseAuditReport",
+          "line": 17
+        },
+        {
+          "name": "downloadReleaseAuditReport",
+          "line": 23
+        },
+        {
+          "name": "renderReleaseAuditSummary",
+          "line": 27
+        },
+        {
+          "name": "runAppSelfTest",
+          "line": 48
+        }
+      ],
+      "renderers": [
+        {
+          "name": "renderReleaseAuditSummary",
+          "line": 27
+        }
+      ]
+    },
+    "js/ui-documents.js": {
+      "bytes": 31547,
+      "lines": 509,
+      "sha256": "39bc74cbd08fe700bbaaf70193104ca4dc35c257c3c5ea3c84203e1e91ce969a",
+      "functions": [
+        {
+          "name": "defaultPrepaymentAdjustmentSettings",
+          "line": 5
+        },
+        {
+          "name": "ensurePrepaymentAdjustmentSettings",
+          "line": 8
+        },
+        {
+          "name": "adjustmentGroupForCost",
+          "line": 17
+        },
+        {
+          "name": "prepaymentAdjustmentData",
+          "line": 19
+        },
+        {
+          "name": "calculatedMonthlyPrepaymentRowsForTenant",
+          "line": 20
+        },
+        {
+          "name": "prepaymentAdjustmentStatusClass",
+          "line": 23
+        },
+        {
+          "name": "renderPrepaymentAdjustment",
+          "line": 28
+        },
+        {
+          "name": "normalizeBriefDefaultTexts",
+          "line": 84
+        },
+        {
+          "name": "defaultBriefSettings",
+          "line": 100
+        },
+        {
+          "name": "ensureBriefSettings",
+          "line": 139
+        },
+        {
+          "name": "setBriefSetting",
+          "line": 155
+        },
+        {
+          "name": "ensureBriefAddresses",
+          "line": 176
+        },
+        {
+          "name": "getBriefTenantAddress",
+          "line": 181
+        },
+        {
+          "name": "salutationForTenant",
+          "line": 186
+        },
+        {
+          "name": "textareaHtml",
+          "line": 198
+        },
+        {
+          "name": "briefPrintStyles",
+          "line": 203
+        },
+        {
+          "name": "effectivePrepaymentDateLabel",
+          "line": 204
+        },
+        {
+          "name": "effectivePrepaymentYearLabel",
+          "line": 210
+        },
+        {
+          "name": "validateBriefResult",
+          "line": 216
+        },
+        {
+          "name": "compactTextLength",
+          "line": 221
+        },
+        {
+          "name": "briefPreflightReport",
+          "line": 224
+        },
+        {
+          "name": "briefPreflightBoxHtml",
+          "line": 226
+        },
+        {
+          "name": "printHardeningReport",
+          "line": 230
+        },
+        {
+          "name": "printHardeningBoxHtml",
+          "line": 269
+        },
+        {
+          "name": "currentPrintHardeningReport",
+          "line": 271
+        },
+        {
+          "name": "printReportText",
+          "line": 277
+        },
+        {
+          "name": "showPrintModeCheck",
+          "line": 279
+        },
+        {
+          "name": "printWindowHtml",
+          "line": 285
+        },
+        {
+          "name": "openPrintWindow",
+          "line": 287
+        },
+        {
+          "name": "allLettersPrintReadiness",
+          "line": 301
+        },
+        {
+          "name": "showAllLettersPrintReady",
+          "line": 303
+        },
+        {
+          "name": "currentBriefPreflightReport",
+          "line": 320
+        },
+        {
+          "name": "confirmBriefAction",
+          "line": 322
+        },
+        {
+          "name": "briefResultRows",
+          "line": 334
+        },
+        {
+          "name": "selectedBriefTenant",
+          "line": 336
+        },
+        {
+          "name": "plainLetterTextFromHtml",
+          "line": 338
+        },
+        {
+          "name": "isBriefCostRowRelevant",
+          "line": 342
+        },
+        {
+          "name": "briefCostRows",
+          "line": 345
+        },
+        {
+          "name": "dateDeShortYear",
+          "line": 347
+        },
+        {
+          "name": "fmtMoneySigned",
+          "line": 350
+        },
+        {
+          "name": "fmtUnits",
+          "line": 351
+        },
+        {
+          "name": "isManualExternalCostDefinition",
+          "line": 352
+        },
+        {
+          "name": "letterCostGroup",
+          "line": 353
+        },
+        {
+          "name": "letterPeriod",
+          "line": 354
+        },
+        {
+          "name": "manualExternalLetterLineLabel",
+          "line": 355
+        },
+        {
+          "name": "monthlyPrepaymentRows",
+          "line": 356
+        },
+        {
+          "name": "settlementLabel",
+          "line": 357
+        },
+        {
+          "name": "costSectionRows",
+          "line": 362
+        },
+        {
+          "name": "buildBriefHtml",
+          "line": 367
+        },
+        {
+          "name": "renderBrief",
+          "line": 368
+        },
+        {
+          "name": "currentBriefPreviewOrWarn",
+          "line": 426
+        },
+        {
+          "name": "printCurrentBrief",
+          "line": 441
+        },
+        {
+          "name": "fallbackCopyText",
+          "line": 447
+        },
+        {
+          "name": "copyCurrentBriefText",
+          "line": 464
+        }
+      ],
+      "renderers": [
+        {
+          "name": "renderPrepaymentAdjustment",
+          "line": 28
+        },
+        {
+          "name": "renderBrief",
+          "line": 368
+        }
+      ]
+    },
+    "js/ui-events.js": {
+      "bytes": 7012,
+      "lines": 141,
+      "sha256": "32493fc75894a237e046fb562493cbf8e89eb62bd71bdc4b73f524f47620d961",
+      "functions": [],
+      "renderers": []
+    },
+    "js/ui-master-data.js": {
+      "bytes": 39112,
+      "lines": 863,
+      "sha256": "06746c7e8189de0291be1ad730d1c9d8a658464731c35ef3e59682991620866d",
+      "functions": [
+        {
+          "name": "archiveDataSource",
+          "line": 5
+        },
+        {
+          "name": "wohnungLabelForTenant",
+          "line": 13
+        },
+        {
+          "name": "billingEntryForTenant",
+          "line": 19
+        },
+        {
+          "name": "knownArchiveCostContext",
+          "line": 29
+        },
+        {
+          "name": "importedEntryPeriodForCost",
+          "line": 44
+        },
+        {
+          "name": "entryBriefValidationStatus",
+          "line": 52
+        },
+        {
+          "name": "applyExcelWaterReadings2024ToData",
+          "line": 59
+        },
+        {
+          "name": "saveData",
+          "line": 119
+        },
+        {
+          "name": "commitStateChange",
+          "line": 168
+        },
+        {
+          "name": "fmtMoney",
+          "line": 183
+        },
+        {
+          "name": "num",
+          "line": 184
+        },
+        {
+          "name": "escapeHtml",
+          "line": 185
+        },
+        {
+          "name": "escapeJsString",
+          "line": 186
+        },
+        {
+          "name": "statusClass",
+          "line": 187
+        },
+        {
+          "name": "ensureCostSettings",
+          "line": 196
+        },
+        {
+          "name": "costExclusionHandling",
+          "line": 201
+        },
+        {
+          "name": "normalizeManualUmlageValue",
+          "line": 204
+        },
+        {
+          "name": "resetCostUnitPriceToAuto",
+          "line": 206
+        },
+        {
+          "name": "isFreeCostSlot",
+          "line": 217
+        },
+        {
+          "name": "costGroupLabel",
+          "line": 218
+        },
+        {
+          "name": "renderCostSelectionPanel",
+          "line": 234
+        },
+        {
+          "name": "priceCellHtml",
+          "line": 266
+        },
+        {
+          "name": "openCostPriceEditor",
+          "line": 279
+        },
+        {
+          "name": "closeCostPriceEditor",
+          "line": 297
+        },
+        {
+          "name": "saveCostPriceFromDialog",
+          "line": 303
+        },
+        {
+          "name": "resetCostPriceFromDialog",
+          "line": 310
+        },
+        {
+          "name": "recalculateAll",
+          "line": 316
+        },
+        {
+          "name": "setNested",
+          "line": 322
+        },
+        {
+          "name": "editDisabledAttr",
+          "line": 339
+        },
+        {
+          "name": "uiActionAttributes",
+          "line": 341
+        },
+        {
+          "name": "legacyUiActionAttributes",
+          "line": 342
+        },
+        {
+          "name": "selectHtml",
+          "line": 344
+        },
+        {
+          "name": "inputHtml",
+          "line": 347
+        },
+        {
+          "name": "dateInputHtml",
+          "line": 348
+        },
+        {
+          "name": "hasTenantData",
+          "line": 350
+        },
+        {
+          "name": "ensureTenantContactFields",
+          "line": 354
+        },
+        {
+          "name": "normalizeUnitIdentityText",
+          "line": 372
+        },
+        {
+          "name": "canonicalUnitIdFor",
+          "line": 380
+        },
+        {
+          "name": "generatedUnitIdForLabel",
+          "line": 396
+        },
+        {
+          "name": "migrateUnitIdsInData",
+          "line": 401
+        },
+        {
+          "name": "ensureTenantIdentityFields",
+          "line": 447
+        },
+        {
+          "name": "ensureTenantIdentityData",
+          "line": 452
+        },
+        {
+          "name": "tenantDisplayId",
+          "line": 462
+        },
+        {
+          "name": "tenantIdCellHtml",
+          "line": 466
+        },
+        {
+          "name": "ensureUnitIdentityFields",
+          "line": 470
+        },
+        {
+          "name": "ensureUnitIdentityData",
+          "line": 476
+        },
+        {
+          "name": "unitDisplayId",
+          "line": 480
+        },
+        {
+          "name": "unitByInternalId",
+          "line": 484
+        },
+        {
+          "name": "unitDisplayIdByInternalId",
+          "line": 489
+        },
+        {
+          "name": "unitIdCellHtml",
+          "line": 493
+        },
+        {
+          "name": "unitRefCellHtml",
+          "line": 497
+        },
+        {
+          "name": "unitSelectHtmlFromRows",
+          "line": 501
+        },
+        {
+          "name": "unitSelectHtml",
+          "line": 516
+        },
+        {
+          "name": "masterUnitSelectHtml",
+          "line": 520
+        },
+        {
+          "name": "ensureTenantContactData",
+          "line": 524
+        },
+        {
+          "name": "comparableTenantName",
+          "line": 529
+        },
+        {
+          "name": "applyKnownMasterTenantEntryDates",
+          "line": 538
+        },
+        {
+          "name": "renderBillingStammdatenStatus",
+          "line": 563
+        },
+        {
+          "name": "ensureZimmermannTenantForLegacyData",
+          "line": 581
+        },
+        {
+          "name": "tenantLastName",
+          "line": 637
+        },
+        {
+          "name": "tenantAddressPrefix",
+          "line": 644
+        },
+        {
+          "name": "tenantMailingAddress",
+          "line": 652
+        },
+        {
+          "name": "tenantSalutationFromTemplate",
+          "line": 659
+        },
+        {
+          "name": "isArchivedTenant",
+          "line": 666
+        },
+        {
+          "name": "isoDateSerial",
+          "line": 670
+        },
+        {
+          "name": "tenantOverlapsCurrentPeriod",
+          "line": 702
+        },
+        {
+          "name": "tenantRelevantForCurrentBilling",
+          "line": 706
+        },
+        {
+          "name": "tenantActiveDaysInCurrentPeriod",
+          "line": 710
+        },
+        {
+          "name": "tenantOpenStatus",
+          "line": 721
+        },
+        {
+          "name": "visibleTenantRows",
+          "line": 729
+        },
+        {
+          "name": "archivedTenantRows",
+          "line": 735
+        },
+        {
+          "name": "isPrivateTenant",
+          "line": 741
+        },
+        {
+          "name": "isBillableTenant",
+          "line": 743
+        },
+        {
+          "name": "billableTenantRows",
+          "line": 745
+        },
+        {
+          "name": "privateTenantRows",
+          "line": 747
+        },
+        {
+          "name": "nextMietId",
+          "line": 749
+        },
+        {
+          "name": "addMietverhaeltnis",
+          "line": 757
+        },
+        {
+          "name": "archiveMietverhaeltnis",
+          "line": 794
+        },
+        {
+          "name": "restoreMietverhaeltnis",
+          "line": 803
+        },
+        {
+          "name": "tenantHeaderHtml",
+          "line": 811
+        },
+        {
+          "name": "unitHeaderHtml",
+          "line": 817
+        },
+        {
+          "name": "renderVersionInfo",
+          "line": 824
+        },
+        {
+          "name": "qualitySeverityClass",
+          "line": 834
+        },
+        {
+          "name": "storageWritable",
+          "line": 843
+        },
+        {
+          "name": "hasCompleteMailingAddress",
+          "line": 849
+        },
+        {
+          "name": "costPrepaymentRow",
+          "line": 853
+        },
+        {
+          "name": "prepaymentMatrixSumForCost",
+          "line": 857
+        }
+      ],
+      "renderers": [
+        {
+          "name": "renderCostSelectionPanel",
+          "line": 234
+        },
+        {
+          "name": "renderBillingStammdatenStatus",
+          "line": 563
+        },
+        {
+          "name": "renderVersionInfo",
+          "line": 824
+        }
+      ]
+    },
+    "js/ui-metering.js": {
+      "bytes": 34676,
+      "lines": 567,
+      "sha256": "86473202b39a68fec2191d88913759b8b0606e37567e74db608e223f0a300b43",
+      "functions": [
+        {
+          "name": "tenantRowsWithIndex",
+          "line": 10
+        },
+        {
+          "name": "normalizeActiveDayValue",
+          "line": 14
+        },
+        {
+          "name": "normalizeTenantActiveDays",
+          "line": 16
+        },
+        {
+          "name": "tenantDays",
+          "line": 25
+        },
+        {
+          "name": "allWohnungen",
+          "line": 28
+        },
+        {
+          "name": "activeWohnungen",
+          "line": 30
+        },
+        {
+          "name": "formatPlainNumber",
+          "line": 36
+        },
+        {
+          "name": "umlageBasisInfo",
+          "line": 38
+        },
+        {
+          "name": "defaultWaterMeterSettings",
+          "line": 75
+        },
+        {
+          "name": "consumptionCosts",
+          "line": 87
+        },
+        {
+          "name": "isWaterCost",
+          "line": 91
+        },
+        {
+          "name": "ensureWaterMeterData",
+          "line": 95
+        },
+        {
+          "name": "waterConsumption",
+          "line": 170
+        },
+        {
+          "name": "genericMeterConsumption",
+          "line": 172
+        },
+        {
+          "name": "meterTotalForCostAndTenant",
+          "line": 175
+        },
+        {
+          "name": "waterMeterRowStatus",
+          "line": 177
+        },
+        {
+          "name": "genericMeterRowStatus",
+          "line": 187
+        },
+        {
+          "name": "applyWaterMetersToUmlage",
+          "line": 195
+        },
+        {
+          "name": "setWaterMeterSetting",
+          "line": 210
+        },
+        {
+          "name": "setWaterMeterValue",
+          "line": 220
+        },
+        {
+          "name": "setGenericMeterValue",
+          "line": 236
+        },
+        {
+          "name": "meterInput",
+          "line": 253
+        },
+        {
+          "name": "genericMeterInput",
+          "line": 259
+        },
+        {
+          "name": "renderWaterCostSection",
+          "line": 265
+        },
+        {
+          "name": "renderGenericMeterSection",
+          "line": 319
+        },
+        {
+          "name": "meterHistoryValue",
+          "line": 351
+        },
+        {
+          "name": "meterHistoryDeltaFor",
+          "line": 357
+        },
+        {
+          "name": "meterHistoryReadingFor",
+          "line": 362
+        },
+        {
+          "name": "currentMeterEndBlankStatus",
+          "line": 367
+        },
+        {
+          "name": "renderWaterMeterCarryForwardNotice",
+          "line": 390
+        },
+        {
+          "name": "archivedWaterHistoryByUnit",
+          "line": 398
+        },
+        {
+          "name": "renderWaterMeterHistory",
+          "line": 420
+        },
+        {
+          "name": "hasWaterSettingValue",
+          "line": 429
+        },
+        {
+          "name": "houseMeterConsumption",
+          "line": 433
+        },
+        {
+          "name": "waterDifferenceState",
+          "line": 440
+        },
+        {
+          "name": "houseMeterMetricHtml",
+          "line": 453
+        },
+        {
+          "name": "waterValidationItemHtml",
+          "line": 460
+        },
+        {
+          "name": "renderWaterMeters",
+          "line": 467
+        }
+      ],
+      "renderers": [
+        {
+          "name": "renderWaterCostSection",
+          "line": 265
+        },
+        {
+          "name": "renderGenericMeterSection",
+          "line": 319
+        },
+        {
+          "name": "renderWaterMeterCarryForwardNotice",
+          "line": 390
+        },
+        {
+          "name": "renderWaterMeterHistory",
+          "line": 420
+        },
+        {
+          "name": "renderWaterMeters",
+          "line": 467
+        }
+      ]
+    },
+    "js/ui-navigation-pages.js": {
+      "bytes": 34495,
+      "lines": 699,
+      "sha256": "80c91f1849ea02e118972a7cd73b35053e55eec2323fe476cb0b82b38b6b0394",
+      "functions": [
+        {
+          "name": "download",
+          "line": 4
+        },
+        {
+          "name": "ensureYearData",
+          "line": 6
+        },
+        {
+          "name": "currentAbrechnungsjahr",
+          "line": 18
+        },
+        {
+          "name": "periodStart",
+          "line": 24
+        },
+        {
+          "name": "periodEnd",
+          "line": 30
+        },
+        {
+          "name": "periodLabelShort",
+          "line": 36
+        },
+        {
+          "name": "periodYearFromDate",
+          "line": 40
+        },
+        {
+          "name": "periodDaysExact",
+          "line": 52
+        },
+        {
+          "name": "renderPeriodInfo",
+          "line": 59
+        },
+        {
+          "name": "archiveYearNumbers",
+          "line": 71
+        },
+        {
+          "name": "latestKnownYear",
+          "line": 76
+        },
+        {
+          "name": "isViewingOlderArchiveYear",
+          "line": 82
+        },
+        {
+          "name": "isArchiveViewer",
+          "line": 86
+        },
+        {
+          "name": "isLegacyArchiveView",
+          "line": 90
+        },
+        {
+          "name": "startModeText",
+          "line": 94
+        },
+        {
+          "name": "archiveReturnUrl",
+          "line": 100
+        },
+        {
+          "name": "closeArchiveViewer",
+          "line": 104
+        },
+        {
+          "name": "currentAppMode",
+          "line": 142
+        },
+        {
+          "name": "setAppMode",
+          "line": 151
+        },
+        {
+          "name": "enterBillingMode",
+          "line": 155
+        },
+        {
+          "name": "returnToStartPage",
+          "line": 162
+        },
+        {
+          "name": "initializeNavigationMode",
+          "line": 170
+        },
+        {
+          "name": "switchToTab",
+          "line": 177
+        },
+        {
+          "name": "updateTopNavigationVisibility",
+          "line": 210
+        },
+        {
+          "name": "openCurrentBilling",
+          "line": 225
+        },
+        {
+          "name": "archiveStatusBadgeHtml",
+          "line": 244
+        },
+        {
+          "name": "showArchiveValidation",
+          "line": 267
+        },
+        {
+          "name": "archiveActionButtonsHtml",
+          "line": 280
+        },
+        {
+          "name": "archiveStatusBadgeLiteHtml",
+          "line": 310
+        },
+        {
+          "name": "currentBillingSaldoStartText",
+          "line": 315
+        },
+        {
+          "name": "currentBillingStatusHtml",
+          "line": 319
+        },
+        {
+          "name": "latestVisibleRecordYear",
+          "line": 334
+        },
+        {
+          "name": "currentObjectLabel",
+          "line": 343
+        },
+        {
+          "name": "isBillingContextOpen",
+          "line": 355
+        },
+        {
+          "name": "setBillingContextOpen",
+          "line": 359
+        },
+        {
+          "name": "currentBillingActionsHtml",
+          "line": 364
+        },
+        {
+          "name": "currentBillingRecordRowHtml",
+          "line": 375
+        },
+        {
+          "name": "archiveRecordRowsHtml",
+          "line": 390
+        },
+        {
+          "name": "billingRecordsTableShell",
+          "line": 405
+        },
+        {
+          "name": "buildCurrentBillingTableHtml",
+          "line": 410
+        },
+        {
+          "name": "buildArchiveRecordsTableHtml",
+          "line": 415
+        },
+        {
+          "name": "buildBillingRecordsTableHtml",
+          "line": 420
+        },
+        {
+          "name": "openCreateBillingModal",
+          "line": 427
+        },
+        {
+          "name": "closeCreateBillingModal",
+          "line": 444
+        },
+        {
+          "name": "randomDeleteCode",
+          "line": 452
+        },
+        {
+          "name": "openDeleteBillingModal",
+          "line": 456
+        },
+        {
+          "name": "closeDeleteBillingModal",
+          "line": 482
+        },
+        {
+          "name": "confirmDeleteBilling",
+          "line": 489
+        },
+        {
+          "name": "createNewBillingFromModal",
+          "line": 510
+        },
+        {
+          "name": "openLatestKnownYear",
+          "line": 532
+        },
+        {
+          "name": "legacyArchiveEntries",
+          "line": 548
+        },
+        {
+          "name": "renderLegacyArchiveDetails",
+          "line": 552
+        },
+        {
+          "name": "workflowDashboardReport",
+          "line": 585
+        },
+        {
+          "name": "renderWorkflowDashboard",
+          "line": 609
+        },
+        {
+          "name": "renderStart",
+          "line": 625
+        },
+        {
+          "name": "renderArchive",
+          "line": 638
+        },
+        {
+          "name": "renderStartTenantManagement",
+          "line": 649
+        },
+        {
+          "name": "renderStartUnitManagement",
+          "line": 683
+        }
+      ],
+      "renderers": [
+        {
+          "name": "renderPeriodInfo",
+          "line": 59
+        },
+        {
+          "name": "renderLegacyArchiveDetails",
+          "line": 552
+        },
+        {
+          "name": "renderWorkflowDashboard",
+          "line": 609
+        },
+        {
+          "name": "renderStart",
+          "line": 625
+        },
+        {
+          "name": "renderArchive",
+          "line": 638
+        },
+        {
+          "name": "renderStartTenantManagement",
+          "line": 649
+        },
+        {
+          "name": "renderStartUnitManagement",
+          "line": 683
+        }
+      ]
+    },
+    "js/ui-page-controller.js": {
+      "bytes": 31440,
+      "lines": 346,
+      "sha256": "6bfeb94d571f38a614603b01c7b1be3606c218be1a2ab9567951dcee68b1c4de",
+      "functions": [
+        {
+          "name": "activeTabId",
+          "line": 5
+        },
+        {
+          "name": "prepareStateForPersistence",
+          "line": 10
+        },
+        {
+          "name": "renderStepsForTab",
+          "line": 41
+        },
+        {
+          "name": "renderCurrentView",
+          "line": 46
+        },
+        {
+          "name": "renderStatusAndFeedbackSafely",
+          "line": 73
+        },
+        {
+          "name": "closeAllTabAccordions",
+          "line": 107
+        },
+        {
+          "name": "safeOverviewCall",
+          "line": 112
+        },
+        {
+          "name": "overviewMoney",
+          "line": 116
+        },
+        {
+          "name": "overviewOpenSection",
+          "line": 117
+        },
+        {
+          "name": "overviewCoreStats",
+          "line": 123
+        },
+        {
+          "name": "overviewStatus",
+          "line": 159
+        },
+        {
+          "name": "overviewStructuredValidation",
+          "line": 164
+        },
+        {
+          "name": "buildOverviewData",
+          "line": 172
+        },
+        {
+          "name": "renderOverviewCards",
+          "line": 205
+        },
+        {
+          "name": "overviewActionButton",
+          "line": 246
+        },
+        {
+          "name": "renderOverviewForTab",
+          "line": 252
+        },
+        {
+          "name": "renderAllOverviewCards",
+          "line": 253
+        },
+        {
+          "name": "pageHeaderPeriodLabel",
+          "line": 254
+        },
+        {
+          "name": "updateAllPageHeaders",
+          "line": 261
+        },
+        {
+          "name": "auditV992Structure",
+          "line": 290
+        },
+        {
+          "name": "renderAll",
+          "line": 311
+        },
+        {
+          "name": "showLandingPage",
+          "line": 344
+        },
+        {
+          "name": "openCostTenantDetails",
+          "line": 345
+        }
+      ],
+      "renderers": [
+        {
+          "name": "renderStepsForTab",
+          "line": 41
+        },
+        {
+          "name": "renderCurrentView",
+          "line": 46
+        },
+        {
+          "name": "renderStatusAndFeedbackSafely",
+          "line": 73
+        },
+        {
+          "name": "renderOverviewCards",
+          "line": 205
+        },
+        {
+          "name": "renderOverviewForTab",
+          "line": 252
+        },
+        {
+          "name": "renderAllOverviewCards",
+          "line": 253
+        },
+        {
+          "name": "renderAll",
+          "line": 311
+        }
+      ]
+    },
+    "js/ui-preferences.js": {
+      "bytes": 1389,
+      "lines": 53,
+      "sha256": "a472ed364ef2013ad8ded86552b4d6a61ead72c01c911bb33cd59886352948b3",
+      "functions": [],
+      "renderers": []
+    },
+    "js/ui-quality.js": {
+      "bytes": 36507,
+      "lines": 469,
+      "sha256": "69c162f7f6db4a5ea9d72d0bb8e07f835c9eee83819ab6dea7f3c15a2fe3c377",
+      "functions": [
+        {
+          "name": "specialCaseSeverityClass",
+          "line": 19
+        },
+        {
+          "name": "specialCaseBadgesForTenant",
+          "line": 27
+        },
+        {
+          "name": "renderSpecialCaseWatch",
+          "line": 44
+        },
+        {
+          "name": "settlementInfoForResult",
+          "line": 57
+        },
+        {
+          "name": "briefSettlementSummaryHtml",
+          "line": 59
+        },
+        {
+          "name": "acceptanceProtocolData",
+          "line": 63
+        },
+        {
+          "name": "acceptanceLevel",
+          "line": 65
+        },
+        {
+          "name": "acceptanceLabel",
+          "line": 67
+        },
+        {
+          "name": "finalBillingReportText",
+          "line": 69
+        },
+        {
+          "name": "acceptanceProtocolRowsHtml",
+          "line": 149
+        },
+        {
+          "name": "acceptanceProtocolHtml",
+          "line": 163
+        },
+        {
+          "name": "renderAcceptanceProtocolSummary",
+          "line": 195
+        },
+        {
+          "name": "showAcceptanceProtocol",
+          "line": 204
+        },
+        {
+          "name": "downloadAcceptanceProtocolHtml",
+          "line": 217
+        },
+        {
+          "name": "showFinalBillingReport",
+          "line": 222
+        },
+        {
+          "name": "qualityAreaTab",
+          "line": 238
+        },
+        {
+          "name": "qualityItemKey",
+          "line": 252
+        },
+        {
+          "name": "qualityAckStore",
+          "line": 256
+        },
+        {
+          "name": "qualityAckFor",
+          "line": 265
+        },
+        {
+          "name": "qualityAckLabel",
+          "line": 269
+        },
+        {
+          "name": "acknowledgeQualityIssue",
+          "line": 276
+        },
+        {
+          "name": "reopenQualityIssue",
+          "line": 284
+        },
+        {
+          "name": "qualityIssueSearchText",
+          "line": 292
+        },
+        {
+          "name": "highlightQualityTarget",
+          "line": 296
+        },
+        {
+          "name": "jumpToQualityIssue",
+          "line": 313
+        },
+        {
+          "name": "jumpToFirstOpenQualityIssue",
+          "line": 319
+        },
+        {
+          "name": "showOnlyQualityErrors",
+          "line": 328
+        },
+        {
+          "name": "qualityIssueActionHtml",
+          "line": 333
+        },
+        {
+          "name": "qualityTaskRowHtml",
+          "line": 346
+        },
+        {
+          "name": "renderQuality",
+          "line": 352
+        },
+        {
+          "name": "renderDashboard",
+          "line": 423
+        }
+      ],
+      "renderers": [
+        {
+          "name": "renderSpecialCaseWatch",
+          "line": 44
+        },
+        {
+          "name": "renderAcceptanceProtocolSummary",
+          "line": 195
+        },
+        {
+          "name": "renderQuality",
+          "line": 352
+        },
+        {
+          "name": "renderDashboard",
+          "line": 423
+        }
+      ]
+    },
+    "js/ui-table-actions.js": {
+      "bytes": 179,
+      "lines": 12,
+      "sha256": "068d3b4de734d3a09fdd51b85d52788878ca25945f7fbaa0799c1b691c71db6e",
+      "functions": [
+        {
+          "name": "enhanceTables",
+          "line": 9
+        }
+      ],
+      "renderers": []
+    },
+    "js/ui-table-tools.js": {
+      "bytes": 5014,
+      "lines": 127,
+      "sha256": "2bc057d25eba389005fa26b4b51ac7e76ebf09d63136b607870cd6d30f7641b1",
+      "functions": [],
+      "renderers": []
+    },
+    "js/year-transition-actions.js": {
+      "bytes": 31480,
+      "lines": 515,
+      "sha256": "ee4d97ada4ca06895f1ff8485cb0a42902f9daa9a7adb9fbea4c9a9895b250de",
+      "functions": [],
+      "renderers": []
+    }
+  },
+  "totals": {
+    "files": 50,
+    "bytes": 1095893,
+    "lines": 15684,
+    "functions": 481,
+    "renderers": 46,
+    "stateWrites": 129,
+    "stateRootAssignments": 1,
+    "stateMutatingCalls": 4,
+    "stateDeletes": 1,
+    "globalAssignments": 0,
+    "moduleExports": 31,
+    "compatibilityWrappers": 115
+  },
+  "stateWrites": [
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 377,
+      "function": "restorePreMigrationBackup",
+      "expression": "state.meta ="
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 378,
+      "function": "restorePreMigrationBackup",
+      "expression": "state.meta.restoreCheckpointCreatedAt ="
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 379,
+      "function": "restorePreMigrationBackup",
+      "expression": "state.meta.restoreCheckpointBackupId ="
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 554,
+      "function": "ensureBackupMetadata",
+      "expression": "state.meta ="
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 555,
+      "function": "ensureBackupMetadata",
+      "expression": "state.meta.backupEvents ="
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 571,
+      "function": "registerBackupEvent",
+      "expression": "state.meta.backupEvents ="
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 573,
+      "function": "registerBackupEvent",
+      "expression": "state.meta.lastFullBackupAt ="
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 574,
+      "function": "registerBackupEvent",
+      "expression": "state.meta.lastFullBackupType ="
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 575,
+      "function": "registerBackupEvent",
+      "expression": "state.meta.lastFullBackupFile ="
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 576,
+      "function": "registerBackupEvent",
+      "expression": "state.meta.lastFullBackupAppVersion ="
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 579,
+      "function": "registerBackupEvent",
+      "expression": "state.meta.lastCurrentBillingBackupAt ="
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 580,
+      "function": "registerBackupEvent",
+      "expression": "state.meta.lastCurrentBillingBackupFile ="
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 583,
+      "function": "registerBackupEvent",
+      "expression": "state.meta.lastArchiveBackupAt ="
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 584,
+      "function": "registerBackupEvent",
+      "expression": "state.meta.lastArchiveBackupFile ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 188,
+      "function": "<top-level>",
+      "expression": "state.jahresArchiv.length ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 241,
+      "function": "<top-level>",
+      "expression": "state.mieter ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 245,
+      "function": "<top-level>",
+      "expression": "state.wohnungen ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 249,
+      "function": "<top-level>",
+      "expression": "state.kostenarten ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 250,
+      "function": "<top-level>",
+      "expression": "state.umlageInputs ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 264,
+      "function": "<top-level>",
+      "expression": "state.kostenarten ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 278,
+      "function": "<top-level>",
+      "expression": "state.meta.abrechnungsjahr ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 279,
+      "function": "<top-level>",
+      "expression": "state.meta.abrechnungsbeginn ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 280,
+      "function": "<top-level>",
+      "expression": "state.meta.abrechnungsende ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 299,
+      "function": "<top-level>",
+      "expression": "state.meta.abrechnungsjahr ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 300,
+      "function": "<top-level>",
+      "expression": "state.meta.abrechnungsbeginn ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 301,
+      "function": "<top-level>",
+      "expression": "state.meta.abrechnungsende ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 302,
+      "function": "<top-level>",
+      "expression": "state.meta.meterEndValuesTouchedForYear ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 303,
+      "function": "<top-level>",
+      "expression": "state.meta.meterEndDateFieldsTouchedForYear ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 317,
+      "function": "<top-level>",
+      "expression": "state.meta.abrechnungsjahr ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 318,
+      "function": "<top-level>",
+      "expression": "state.meta.abrechnungsbeginn ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 319,
+      "function": "<top-level>",
+      "expression": "state.meta.abrechnungsende ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 320,
+      "function": "<top-level>",
+      "expression": "state.meta.meterNumericEndValuesTouchedForYear ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 349,
+      "function": "<top-level>",
+      "expression": "state.kostenarten ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 359,
+      "function": "<top-level>",
+      "expression": "state.kostenarten ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 360,
+      "function": "<top-level>",
+      "expression": "state.vorauszahlungen ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 361,
+      "function": "<top-level>",
+      "expression": "state.mieter[0].vorjahresKorrektur ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 380,
+      "function": "<top-level>",
+      "expression": "state.wohnungen[0].wohnflaeche ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 381,
+      "function": "<top-level>",
+      "expression": "state.wohnungen[1].wohnflaeche ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 382,
+      "function": "<top-level>",
+      "expression": "state.wohnungen[2].wohnflaeche ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 383,
+      "function": "<top-level>",
+      "expression": "state.kostenarten ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 398,
+      "function": "<top-level>",
+      "expression": "state.mieter[0].aktiveTage ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 399,
+      "function": "<top-level>",
+      "expression": "state.mieter[0].auszug ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 400,
+      "function": "<top-level>",
+      "expression": "state.mieter[1].aktiveTage ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 401,
+      "function": "<top-level>",
+      "expression": "state.mieter[1].einzug ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 402,
+      "function": "<top-level>",
+      "expression": "state.mieter[2].auszug ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 403,
+      "function": "<top-level>",
+      "expression": "state.kostenarten ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 418,
+      "function": "<top-level>",
+      "expression": "state.kostenarten ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 419,
+      "function": "<top-level>",
+      "expression": "state.umlageInputs ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 431,
+      "function": "<top-level>",
+      "expression": "state.kostenarten ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 432,
+      "function": "<top-level>",
+      "expression": "state.umlageInputs ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 434,
+      "function": "<top-level>",
+      "expression": "state.kostenartenMieterUmlage.K901.T2 ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 444,
+      "function": "<top-level>",
+      "expression": "state.kostenarten ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 445,
+      "function": "<top-level>",
+      "expression": "state.vorauszahlungen ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 446,
+      "function": "<top-level>",
+      "expression": "state.prepaymentAdjustmentSettings ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 524,
+      "function": "<top-level>",
+      "expression": "state.mieter[0].auszug ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 525,
+      "function": "<top-level>",
+      "expression": "state.mieter[0].aktiveTage ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 526,
+      "function": "<top-level>",
+      "expression": "state.mieter[1].einzug ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 527,
+      "function": "<top-level>",
+      "expression": "state.mieter[1].aktiveTage ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 781,
+      "function": "<top-level>",
+      "expression": "state.meta.currentBillingFinalized ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 782,
+      "function": "<top-level>",
+      "expression": "state.meta.currentBillingFinalizationKey ="
+    },
+    {
+      "file": "js/diagnostics.js",
+      "line": 783,
+      "function": "<top-level>",
+      "expression": "state.meta.currentBillingFinalizedAt ="
+    },
+    {
+      "file": "js/ui-costs.js",
+      "line": 117,
+      "function": "deactivateSelectedCosts",
+      "expression": "state.kostenarten[index].inNK ="
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 95,
+      "function": "normalizeBriefDefaultTexts",
+      "expression": "state.briefSettings.introText ="
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 96,
+      "function": "normalizeBriefDefaultTexts",
+      "expression": "state.briefSettings.saldoTextNachzahlung ="
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 97,
+      "function": "normalizeBriefDefaultTexts",
+      "expression": "state.briefSettings.saldoTextGuthaben ="
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 98,
+      "function": "normalizeBriefDefaultTexts",
+      "expression": "state.briefSettings.vorauszahlungIntro ="
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 141,
+      "function": "ensureBriefSettings",
+      "expression": "state.briefSettings ="
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 144,
+      "function": "ensureBriefSettings",
+      "expression": "state.briefSettings[key] ="
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 148,
+      "function": "ensureBriefSettings",
+      "expression": "state.briefSettings.vorauszahlungPrintMode ="
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 149,
+      "function": "ensureBriefSettings",
+      "expression": "state.briefSettings.useCalculatedPrepaymentAdjustments ="
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 150,
+      "function": "ensureBriefSettings",
+      "expression": "state.briefSettings.showVorauszahlungPage ="
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 152,
+      "function": "ensureBriefSettings",
+      "expression": "state.briefSettings.tenantId ="
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 158,
+      "function": "setBriefSetting",
+      "expression": "state.briefSettings[key] ="
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 160,
+      "function": "setBriefSetting",
+      "expression": "state.briefSettings.showVorauszahlungPage ="
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 161,
+      "function": "setBriefSetting",
+      "expression": "state.briefSettings.useCalculatedPrepaymentAdjustments ="
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 163,
+      "function": "setBriefSetting",
+      "expression": "state.prepaymentAdjustmentSettings.letterPrintMode ="
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 167,
+      "function": "setBriefSetting",
+      "expression": "state.prepaymentAdjustmentSettings.effectiveFrom ="
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 170,
+      "function": "setBriefSetting",
+      "expression": "state.meta ="
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 171,
+      "function": "setBriefSetting",
+      "expression": "state.meta.abrechnungsjahr ="
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 177,
+      "function": "ensureBriefAddresses",
+      "expression": "state.briefAddresses ="
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 132,
+      "function": "saveData",
+      "expression": "state.meta ="
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 134,
+      "function": "saveData",
+      "expression": "state.meta.lastSavedAt ="
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 135,
+      "function": "saveData",
+      "expression": "state.meta.lastSavedWithAppVersion ="
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 146,
+      "function": "saveData",
+      "expression": "state.meta.storageRole ="
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 148,
+      "function": "saveData",
+      "expression": "state.meta.storageIntegrityAlgorithm ="
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 149,
+      "function": "saveData",
+      "expression": "state.meta.storageIntegrityChecksum ="
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 150,
+      "function": "saveData",
+      "expression": "state.meta.storageIntegrityProtectedAt ="
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 151,
+      "function": "saveData",
+      "expression": "state.meta.storageIntegrityProtectedWithAppVersion ="
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 159,
+      "function": "saveData",
+      "expression": "state.meta ="
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 160,
+      "function": "saveData",
+      "expression": "state.meta.lastSaveError ="
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 328,
+      "function": "setNested",
+      "expression": "state[collection][index][key] ="
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 331,
+      "function": "setNested",
+      "expression": "state[collection][index].status ="
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 788,
+      "function": "addMietverhaeltnis",
+      "expression": "state.mieter[blankIndex] ="
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 96,
+      "function": "ensureWaterMeterData",
+      "expression": "state.waterMeters ="
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 97,
+      "function": "ensureWaterMeterData",
+      "expression": "state.waterMeters.settings ="
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 100,
+      "function": "ensureWaterMeterData",
+      "expression": "state.waterMeters.settings[key] ="
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 102,
+      "function": "ensureWaterMeterData",
+      "expression": "state.waterMeters.settings.enabled ="
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 103,
+      "function": "ensureWaterMeterData",
+      "expression": "state.waterMeters.settings.houseMeterStartDate ="
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 104,
+      "function": "ensureWaterMeterData",
+      "expression": "state.waterMeters.settings.houseMeterEndDate ="
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 105,
+      "function": "ensureWaterMeterData",
+      "expression": "state.meterReadings ="
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 106,
+      "function": "ensureWaterMeterData",
+      "expression": "state.meterReadings.readings ="
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 118,
+      "function": "ensureWaterMeterData",
+      "expression": "state.waterMeters.readings ="
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 146,
+      "function": "ensureWaterMeterData",
+      "expression": "state.meterReadings.readings[cost.id] ="
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 198,
+      "function": "applyWaterMetersToUmlage",
+      "expression": "state.waterMeters.settings.enabled ="
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 205,
+      "function": "applyWaterMetersToUmlage",
+      "expression": "state.umlageInputs[cost.id].values[i] ="
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 206,
+      "function": "applyWaterMetersToUmlage",
+      "expression": "state.umlageInputs[cost.id].values[t.originalIndex] ="
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 213,
+      "function": "setWaterMeterSetting",
+      "expression": "state.waterMeters.settings[key] ="
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 214,
+      "function": "setWaterMeterSetting",
+      "expression": "state.waterMeters.settings.enabled ="
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 222,
+      "function": "setWaterMeterValue",
+      "expression": "state.waterMeters.readings[index] ="
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 223,
+      "function": "setWaterMeterValue",
+      "expression": "state.waterMeters.readings[index][key] ="
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 225,
+      "function": "setWaterMeterValue",
+      "expression": "state.meta ="
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 226,
+      "function": "setWaterMeterValue",
+      "expression": "state.meta.meterNumericEndValuesTouchedForYear ="
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 228,
+      "function": "setWaterMeterValue",
+      "expression": "state.meta ="
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 229,
+      "function": "setWaterMeterValue",
+      "expression": "state.meta.meterEndDateFieldsTouchedForYear ="
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 238,
+      "function": "setGenericMeterValue",
+      "expression": "state.meterReadings.readings[costId] ="
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 239,
+      "function": "setGenericMeterValue",
+      "expression": "state.meterReadings.readings[costId][index] ="
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 240,
+      "function": "setGenericMeterValue",
+      "expression": "state.meterReadings.readings[costId][index][key] ="
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 242,
+      "function": "setGenericMeterValue",
+      "expression": "state.meta ="
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 243,
+      "function": "setGenericMeterValue",
+      "expression": "state.meta.meterNumericEndValuesTouchedForYear ="
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 245,
+      "function": "setGenericMeterValue",
+      "expression": "state.meta ="
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 246,
+      "function": "setGenericMeterValue",
+      "expression": "state.meta.meterEndDateFieldsTouchedForYear ="
+    },
+    {
+      "file": "js/ui-navigation-pages.js",
+      "line": 7,
+      "function": "ensureYearData",
+      "expression": "state.meta ="
+    },
+    {
+      "file": "js/ui-navigation-pages.js",
+      "line": 10,
+      "function": "ensureYearData",
+      "expression": "state.meta.abrechnungsjahr ="
+    },
+    {
+      "file": "js/ui-navigation-pages.js",
+      "line": 12,
+      "function": "ensureYearData",
+      "expression": "state.meta.abrechnungsbeginn ="
+    },
+    {
+      "file": "js/ui-navigation-pages.js",
+      "line": 13,
+      "function": "ensureYearData",
+      "expression": "state.meta.abrechnungsende ="
+    },
+    {
+      "file": "js/ui-navigation-pages.js",
+      "line": 14,
+      "function": "ensureYearData",
+      "expression": "state.jahresArchiv ="
+    },
+    {
+      "file": "js/ui-navigation-pages.js",
+      "line": 15,
+      "function": "ensureYearData",
+      "expression": "state.briefSettings.abrechnungsjahr ="
+    },
+    {
+      "file": "js/ui-quality.js",
+      "line": 260,
+      "function": "qualityAckStore",
+      "expression": "state.meta ="
+    },
+    {
+      "file": "js/ui-quality.js",
+      "line": 261,
+      "function": "qualityAckStore",
+      "expression": "state.meta.qualityAcknowledgements ="
+    }
+  ],
+  "stateRootAssignments": [
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 11,
+      "function": "replaceApplicationState",
+      "expression": "state = nextState;"
+    }
+  ],
+  "stateMutatingCalls": [
+    {
+      "file": "js/diagnostics.js",
+      "line": 523,
+      "function": "<top-level>",
+      "method": "push",
+      "expression": "state.wohnungen.push("
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 789,
+      "function": "addMietverhaeltnis",
+      "method": "push",
+      "expression": "state.mieter.push("
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 122,
+      "function": "ensureWaterMeterData",
+      "method": "push",
+      "expression": "state.waterMeters.readings.push("
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 204,
+      "function": "applyWaterMetersToUmlage",
+      "method": "push",
+      "expression": "state.umlageInputs[cost.id].values.push("
+    }
+  ],
+  "stateDeletes": [
+    {
+      "file": "js/ui-master-data.js",
+      "line": 136,
+      "function": "saveData",
+      "expression": "delete state.meta.lastSaveError"
+    }
+  ],
+  "globalAssignments": [],
+  "moduleExports": [
+    {
+      "file": "js/app-bootstrap.js",
+      "line": 24,
+      "binding": "NKProAppBootstrap"
+    },
+    {
+      "file": "js/application-actions.js",
+      "line": 42,
+      "binding": "NKProApplicationActions"
+    },
+    {
+      "file": "js/archive-actions.js",
+      "line": 535,
+      "binding": "NKProArchiveActions"
+    },
+    {
+      "file": "js/archive.js",
+      "line": 173,
+      "binding": "NKProArchive"
+    },
+    {
+      "file": "js/backup-recovery.js",
+      "line": 183,
+      "binding": "NKProBackupRecovery"
+    },
+    {
+      "file": "js/billing-calculation.js",
+      "line": 588,
+      "binding": "NKProBillingCalculation"
+    },
+    {
+      "file": "js/billing-snapshot.js",
+      "line": 379,
+      "binding": "NKProBillingSnapshot"
+    },
+    {
+      "file": "js/billing-workflow.js",
+      "line": 440,
+      "binding": "NKProBillingWorkflow"
+    },
+    {
+      "file": "js/compatibility.js",
+      "line": 29,
+      "binding": "NKProCompatibility"
+    },
+    {
+      "file": "js/cost-actions.js",
+      "line": 272,
+      "binding": "NKProCostActions"
+    },
+    {
+      "file": "js/document-data.js",
+      "line": 374,
+      "binding": "NKProDocumentData"
+    },
+    {
+      "file": "js/document-renderer.js",
+      "line": 282,
+      "binding": "NKProDocumentRenderer"
+    },
+    {
+      "file": "js/export-service.js",
+      "line": 138,
+      "binding": "NKProExportService"
+    },
+    {
+      "file": "js/master-data-actions.js",
+      "line": 542,
+      "binding": "NKProMasterDataActions"
+    },
+    {
+      "file": "js/meter-master.js",
+      "line": 310,
+      "binding": "NKProMeterMaster"
+    },
+    {
+      "file": "js/meter-periods.js",
+      "line": 341,
+      "binding": "NKProMeterPeriods"
+    },
+    {
+      "file": "js/meter-readings.js",
+      "line": 274,
+      "binding": "NKProMeterReadings"
+    },
+    {
+      "file": "js/meter-validation.js",
+      "line": 282,
+      "binding": "NKProMeterValidation"
+    },
+    {
+      "file": "js/migration.js",
+      "line": 298,
+      "binding": "NKProMigration"
+    },
+    {
+      "file": "js/modal-events.js",
+      "line": 22,
+      "binding": "NKProModalEvents"
+    },
+    {
+      "file": "js/navigation.js",
+      "line": 168,
+      "binding": "NKProNavigation"
+    },
+    {
+      "file": "js/object-standard.js",
+      "line": 532,
+      "binding": "NKProObjectStandard"
+    },
+    {
+      "file": "js/persistence.js",
+      "line": 143,
+      "binding": "NKProPersistence"
+    },
+    {
+      "file": "js/runtime-diagnostics.js",
+      "line": 20,
+      "binding": "NKProRuntimeDiagnostics"
+    },
+    {
+      "file": "js/state-access.js",
+      "line": 81,
+      "binding": "NKProStateAccess"
+    },
+    {
+      "file": "js/ui-bindings.js",
+      "line": 171,
+      "binding": "NKProUiBindings"
+    },
+    {
+      "file": "js/ui-controller.js",
+      "line": 58,
+      "binding": "NKProUiController"
+    },
+    {
+      "file": "js/ui-events.js",
+      "line": 139,
+      "binding": "NKProUiEvents"
+    },
+    {
+      "file": "js/ui-preferences.js",
+      "line": 51,
+      "binding": "NKProUiPreferences"
+    },
+    {
+      "file": "js/ui-table-tools.js",
+      "line": 118,
+      "binding": "NKProUiTableTools"
+    },
+    {
+      "file": "js/year-transition-actions.js",
+      "line": 505,
+      "binding": "NKProYearTransitionActions"
+    }
+  ],
+  "compatibilityWrappers": [
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 91,
+      "wrapper": "synchronizeMeteringData",
+      "module": "meterValidation",
+      "target": "synchronizeMeteringData"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 95,
+      "wrapper": "validateMeteringData",
+      "module": "meterValidation",
+      "target": "validateMeteringData"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 99,
+      "wrapper": "migrateMeteringData",
+      "module": "meterValidation",
+      "target": "migrateMeteringData"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 131,
+      "wrapper": "normalizeObjectStandard",
+      "module": "objectStandard",
+      "target": "normalizeObjectStandard"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 135,
+      "wrapper": "validateObjectStandard",
+      "module": "objectStandard",
+      "target": "validateObjectStandard"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 139,
+      "wrapper": "validateBillingReadiness",
+      "module": "billingSnapshot",
+      "target": "validateBillingReadiness"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 143,
+      "wrapper": "validateBillingSnapshot",
+      "module": "billingSnapshot",
+      "target": "validateBillingSnapshot"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 172,
+      "wrapper": "isSnapshotTechnicalMetaKey",
+      "module": "archive",
+      "target": "isSnapshotTechnicalMetaKey"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 176,
+      "wrapper": "snapshotMetaFrom",
+      "module": "archive",
+      "target": "snapshotMetaFrom"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 180,
+      "wrapper": "createBoundedBillingSnapshotData",
+      "module": "archive",
+      "target": "createBoundedBillingSnapshotData"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 184,
+      "wrapper": "hasHistoricalWaterMeterData",
+      "module": "archive",
+      "target": "hasHistoricalWaterMeterData"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 188,
+      "wrapper": "adoptHistoricalWaterMeterDataFromArchive",
+      "module": "archive",
+      "target": "adoptHistoricalWaterMeterDataFromArchive"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 192,
+      "wrapper": "archiveBoundaryFacts",
+      "module": "archive",
+      "target": "archiveBoundaryFacts"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 196,
+      "wrapper": "normalizeArchiveCollectionBoundaries",
+      "module": "archive",
+      "target": "normalizeArchiveCollectionBoundaries"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 200,
+      "wrapper": "enforceWorkingStateDataContract",
+      "module": "archive",
+      "target": "enforceWorkingStateDataContract"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 204,
+      "wrapper": "copyWorkingOperationalMeta",
+      "module": "archive",
+      "target": "copyWorkingOperationalMeta"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 230,
+      "wrapper": "integrityHash",
+      "module": "persistence",
+      "target": "integrityHash"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 234,
+      "wrapper": "dataWithoutIntegrity",
+      "module": "persistence",
+      "target": "dataWithoutIntegrity"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 238,
+      "wrapper": "calculateDataIntegrity",
+      "module": "persistence",
+      "target": "calculateDataIntegrity"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 242,
+      "wrapper": "protectDataForStorage",
+      "module": "persistence",
+      "target": "protectDataForStorage"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 246,
+      "wrapper": "validateStoredDataIntegrity",
+      "module": "persistence",
+      "target": "validateStoredDataIntegrity"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 250,
+      "wrapper": "readStoredDataResult",
+      "module": "persistence",
+      "target": "readStoredDataResult"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 269,
+      "wrapper": "writeProtectedStorage",
+      "module": "persistence",
+      "target": "writeProtectedStorage"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 329,
+      "wrapper": "readPreMigrationBackupResult",
+      "module": "backupRecovery",
+      "target": "readBackupEnvelopeResult"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 333,
+      "wrapper": "readRestoreCheckpointResult",
+      "module": "backupRecovery",
+      "target": "readBackupEnvelopeResult"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 776,
+      "wrapper": "currentDataSchemaVersion",
+      "module": "migration",
+      "target": "currentDataSchemaVersion"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 780,
+      "wrapper": "recordDataMigration",
+      "module": "migration",
+      "target": "recordDataMigration"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 784,
+      "wrapper": "migrateDataSchema",
+      "module": "migration",
+      "target": "migrateDataSchema"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 856,
+      "wrapper": "simpleArchiveIdentityForMerge",
+      "module": "migration",
+      "target": "simpleArchiveIdentityForMerge"
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 860,
+      "wrapper": "mergePreloadedV41Archives",
+      "module": "migration",
+      "target": "mergePreloadedArchives"
+    },
+    {
+      "file": "js/app.js",
+      "line": 88,
+      "wrapper": "configureApplicationActions",
+      "module": "applicationActions",
+      "target": "configure"
+    },
+    {
+      "file": "js/app.js",
+      "line": 136,
+      "wrapper": "configureNavigationModule",
+      "module": "navigation",
+      "target": "configure"
+    },
+    {
+      "file": "js/app.js",
+      "line": 139,
+      "wrapper": "registerUiControllers",
+      "module": "uiBindings",
+      "target": "register"
+    },
+    {
+      "file": "js/browser-io.js",
+      "line": 70,
+      "wrapper": "safeFilePart",
+      "module": "exportService",
+      "target": "safeFilePart"
+    },
+    {
+      "file": "js/browser-io.js",
+      "line": 72,
+      "wrapper": "downloadJsonFile",
+      "module": "exportService",
+      "target": "downloadJsonFile"
+    },
+    {
+      "file": "js/browser-io.js",
+      "line": 74,
+      "wrapper": "downloadFullJson",
+      "module": "exportService",
+      "target": "downloadFullJson"
+    },
+    {
+      "file": "js/browser-io.js",
+      "line": 76,
+      "wrapper": "downloadCurrentBillingJson",
+      "module": "exportService",
+      "target": "downloadCurrentBillingJson"
+    },
+    {
+      "file": "js/browser-io.js",
+      "line": 78,
+      "wrapper": "downloadKostenCsv",
+      "module": "exportService",
+      "target": "downloadKostenCsv"
+    },
+    {
+      "file": "js/browser-io.js",
+      "line": 79,
+      "wrapper": "downloadMieterCsv",
+      "module": "exportService",
+      "target": "downloadMieterCsv"
+    },
+    {
+      "file": "js/browser-io.js",
+      "line": 82,
+      "wrapper": "txtFileName",
+      "module": "exportService",
+      "target": "txtFileName"
+    },
+    {
+      "file": "js/browser-io.js",
+      "line": 84,
+      "wrapper": "downloadUmlageCsv",
+      "module": "exportService",
+      "target": "downloadUmlageCsv"
+    },
+    {
+      "file": "js/browser-io.js",
+      "line": 87,
+      "wrapper": "downloadFinalBillingReport",
+      "module": "exportService",
+      "target": "downloadFinalBillingReport"
+    },
+    {
+      "file": "js/browser-io.js",
+      "line": 90,
+      "wrapper": "downloadExportPackage",
+      "module": "exportService",
+      "target": "downloadExportPackage"
+    },
+    {
+      "file": "js/browser-io.js",
+      "line": 92,
+      "wrapper": "downloadFullExportPackage",
+      "module": "exportService",
+      "target": "downloadFullExportPackage"
+    },
+    {
+      "file": "js/ui-archive-pages.js",
+      "line": 4,
+      "wrapper": "localStorageUsageBytes",
+      "module": "persistence",
+      "target": "totalStorageUsageBytes"
+    },
+    {
+      "file": "js/ui-billing-allocation.js",
+      "line": 4,
+      "wrapper": "inferManualInputMode",
+      "module": "billingCalculation",
+      "target": "inferManualInputMode"
+    },
+    {
+      "file": "js/ui-billing-allocation.js",
+      "line": 5,
+      "wrapper": "defaultManualInputMode",
+      "module": "billingCalculation",
+      "target": "defaultManualInputMode"
+    },
+    {
+      "file": "js/ui-billing-allocation.js",
+      "line": 6,
+      "wrapper": "manualInputModeForCost",
+      "module": "billingCalculation",
+      "target": "manualInputModeForCost"
+    },
+    {
+      "file": "js/ui-billing-allocation.js",
+      "line": 7,
+      "wrapper": "syncUmlageInputs",
+      "module": "billingWorkflow",
+      "target": "syncUmlageInputs"
+    },
+    {
+      "file": "js/ui-billing-allocation.js",
+      "line": 16,
+      "wrapper": "rawVorauszahlungByCostAndTenant",
+      "module": "billingCalculation",
+      "target": "rawVorauszahlungByCostAndTenant"
+    },
+    {
+      "file": "js/ui-billing-allocation.js",
+      "line": 18,
+      "wrapper": "vorauszahlungByCostAndTenant",
+      "module": "billingCalculation",
+      "target": "vorauszahlungByCostAndTenant"
+    },
+    {
+      "file": "js/ui-billing-allocation.js",
+      "line": 20,
+      "wrapper": "totalVorauszahlungForTenant",
+      "module": "billingCalculation",
+      "target": "totalVorauszahlungForTenant"
+    },
+    {
+      "file": "js/ui-billing-allocation.js",
+      "line": 46,
+      "wrapper": "calculateUmlage",
+      "module": "billingCalculation",
+      "target": "calculateUmlage"
+    },
+    {
+      "file": "js/ui-billing-allocation.js",
+      "line": 48,
+      "wrapper": "umlageTotals",
+      "module": "billingCalculation",
+      "target": "umlageTotals"
+    },
+    {
+      "file": "js/ui-costs.js",
+      "line": 4,
+      "wrapper": "activePrepaymentCostIds",
+      "module": "billingCalculation",
+      "target": "activePrepaymentCostIds"
+    },
+    {
+      "file": "js/ui-costs.js",
+      "line": 10,
+      "wrapper": "tenantIdForUmlage",
+      "module": "billingCalculation",
+      "target": "tenantIdForUmlage"
+    },
+    {
+      "file": "js/ui-costs.js",
+      "line": 12,
+      "wrapper": "isCostAllowedForTenant",
+      "module": "billingCalculation",
+      "target": "isCostAllowedForTenant"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 5,
+      "wrapper": "defaultPrepaymentAdjustmentSettings",
+      "module": "billingWorkflow",
+      "target": "defaultPrepaymentAdjustmentSettings"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 8,
+      "wrapper": "ensurePrepaymentAdjustmentSettings",
+      "module": "billingWorkflow",
+      "target": "ensurePrepaymentAdjustmentSettings"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 17,
+      "wrapper": "adjustmentGroupForCost",
+      "module": "billingCalculation",
+      "target": "adjustmentGroupForCost"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 19,
+      "wrapper": "prepaymentAdjustmentData",
+      "module": "billingCalculation",
+      "target": "prepaymentAdjustmentData"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 20,
+      "wrapper": "calculatedMonthlyPrepaymentRowsForTenant",
+      "module": "billingCalculation",
+      "target": "calculatedMonthlyPrepaymentRowsForTenant"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 203,
+      "wrapper": "briefPrintStyles",
+      "module": "documentRenderer",
+      "target": "briefPrintStyles"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 216,
+      "wrapper": "validateBriefResult",
+      "module": "documentData",
+      "target": "validateBriefResult"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 221,
+      "wrapper": "compactTextLength",
+      "module": "documentData",
+      "target": "compactTextLength"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 224,
+      "wrapper": "briefPreflightReport",
+      "module": "documentData",
+      "target": "briefPreflightReport"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 226,
+      "wrapper": "briefPreflightBoxHtml",
+      "module": "documentRenderer",
+      "target": "briefPreflightBoxHtml"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 269,
+      "wrapper": "printHardeningBoxHtml",
+      "module": "documentRenderer",
+      "target": "printHardeningBoxHtml"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 277,
+      "wrapper": "printReportText",
+      "module": "documentRenderer",
+      "target": "printReportText"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 285,
+      "wrapper": "printWindowHtml",
+      "module": "documentRenderer",
+      "target": "printWindowHtml"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 301,
+      "wrapper": "allLettersPrintReadiness",
+      "module": "documentData",
+      "target": "allLettersPrintReadiness"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 320,
+      "wrapper": "currentBriefPreflightReport",
+      "module": "documentData",
+      "target": "currentBriefPreflightReport"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 334,
+      "wrapper": "briefResultRows",
+      "module": "documentData",
+      "target": "briefResultRows"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 336,
+      "wrapper": "selectedBriefTenant",
+      "module": "documentData",
+      "target": "selectedBriefTenant"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 338,
+      "wrapper": "plainLetterTextFromHtml",
+      "module": "documentRenderer",
+      "target": "plainLetterTextFromHtml"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 342,
+      "wrapper": "isBriefCostRowRelevant",
+      "module": "documentData",
+      "target": "isBriefCostRowRelevant"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 345,
+      "wrapper": "briefCostRows",
+      "module": "documentData",
+      "target": "briefCostRows"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 347,
+      "wrapper": "dateDeShortYear",
+      "module": "documentData",
+      "target": "dateDeShortYear"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 350,
+      "wrapper": "fmtMoneySigned",
+      "module": "documentData",
+      "target": "fmtMoneySigned"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 351,
+      "wrapper": "fmtUnits",
+      "module": "documentData",
+      "target": "fmtUnits"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 352,
+      "wrapper": "isManualExternalCostDefinition",
+      "module": "documentData",
+      "target": "isManualExternalCostDefinition"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 353,
+      "wrapper": "letterCostGroup",
+      "module": "documentData",
+      "target": "letterCostGroup"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 354,
+      "wrapper": "letterPeriod",
+      "module": "documentData",
+      "target": "letterPeriod"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 355,
+      "wrapper": "manualExternalLetterLineLabel",
+      "module": "documentData",
+      "target": "manualExternalLetterLineLabel"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 356,
+      "wrapper": "monthlyPrepaymentRows",
+      "module": "documentData",
+      "target": "monthlyPrepaymentRows"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 357,
+      "wrapper": "settlementLabel",
+      "module": "documentData",
+      "target": "settlementLabel"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 362,
+      "wrapper": "costSectionRows",
+      "module": "documentRenderer",
+      "target": "costSectionRows"
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 367,
+      "wrapper": "buildBriefHtml",
+      "module": "documentRenderer",
+      "target": "buildBriefHtml"
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 201,
+      "wrapper": "costExclusionHandling",
+      "module": "billingCalculation",
+      "target": "costExclusionHandling"
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 204,
+      "wrapper": "normalizeManualUmlageValue",
+      "module": "billingCalculation",
+      "target": "normalizeManualUmlageValue"
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 341,
+      "wrapper": "uiActionAttributes",
+      "module": "uiEvents",
+      "target": "attributes"
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 342,
+      "wrapper": "legacyUiActionAttributes",
+      "module": "uiEvents",
+      "target": "legacyAttributes"
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 741,
+      "wrapper": "isPrivateTenant",
+      "module": "billingCalculation",
+      "target": "isPrivateTenant"
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 743,
+      "wrapper": "isBillableTenant",
+      "module": "billingCalculation",
+      "target": "isBillableTenant"
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 745,
+      "wrapper": "billableTenantRows",
+      "module": "billingCalculation",
+      "target": "billableTenantRows"
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 747,
+      "wrapper": "privateTenantRows",
+      "module": "billingCalculation",
+      "target": "privateTenantRows"
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 843,
+      "wrapper": "storageWritable",
+      "module": "persistence",
+      "target": "storageWritable"
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 857,
+      "wrapper": "prepaymentMatrixSumForCost",
+      "module": "billingCalculation",
+      "target": "prepaymentMatrixSumForCost"
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 10,
+      "wrapper": "tenantRowsWithIndex",
+      "module": "billingCalculation",
+      "target": "tenantRowsWithIndex"
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 14,
+      "wrapper": "normalizeActiveDayValue",
+      "module": "billingCalculation",
+      "target": "normalizeActiveDayValue"
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 25,
+      "wrapper": "tenantDays",
+      "module": "billingCalculation",
+      "target": "tenantDays"
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 28,
+      "wrapper": "allWohnungen",
+      "module": "billingCalculation",
+      "target": "allWohnungen"
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 30,
+      "wrapper": "activeWohnungen",
+      "module": "billingCalculation",
+      "target": "activeWohnungen"
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 36,
+      "wrapper": "formatPlainNumber",
+      "module": "billingCalculation",
+      "target": "formatPlainNumber"
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 170,
+      "wrapper": "waterConsumption",
+      "module": "billingCalculation",
+      "target": "waterConsumption"
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 172,
+      "wrapper": "genericMeterConsumption",
+      "module": "billingCalculation",
+      "target": "genericMeterConsumption"
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 175,
+      "wrapper": "meterTotalForCostAndTenant",
+      "module": "billingCalculation",
+      "target": "meterTotalForCostAndTenant"
+    },
+    {
+      "file": "js/ui-navigation-pages.js",
+      "line": 4,
+      "wrapper": "download",
+      "module": "exportService",
+      "target": "download"
+    },
+    {
+      "file": "js/ui-navigation-pages.js",
+      "line": 82,
+      "wrapper": "isViewingOlderArchiveYear",
+      "module": "archiveActions",
+      "target": "yearNumber"
+    },
+    {
+      "file": "js/ui-quality.js",
+      "line": 57,
+      "wrapper": "settlementInfoForResult",
+      "module": "documentData",
+      "target": "settlementInfoForResult"
+    },
+    {
+      "file": "js/ui-quality.js",
+      "line": 59,
+      "wrapper": "briefSettlementSummaryHtml",
+      "module": "documentRenderer",
+      "target": "briefSettlementSummaryHtml"
+    },
+    {
+      "file": "js/ui-quality.js",
+      "line": 63,
+      "wrapper": "acceptanceProtocolData",
+      "module": "documentData",
+      "target": "acceptanceProtocolData"
+    },
+    {
+      "file": "js/ui-quality.js",
+      "line": 65,
+      "wrapper": "acceptanceLevel",
+      "module": "documentData",
+      "target": "acceptanceLevel"
+    },
+    {
+      "file": "js/ui-quality.js",
+      "line": 67,
+      "wrapper": "acceptanceLabel",
+      "module": "documentData",
+      "target": "acceptanceLabel"
+    },
+    {
+      "file": "js/ui-table-actions.js",
+      "line": 9,
+      "wrapper": "enhanceTables",
+      "module": "uiTableTools",
+      "target": "enhanceTables"
+    }
+  ],
+  "renderers": [
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 631,
+      "name": "renderBackupStatus",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 663,
+      "name": "renderFinalizationStatus",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 788,
+      "name": "renderSystemMessages",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/app-state-persistence.js",
+      "line": 809,
+      "name": "renderActionFeedback",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-archive-pages.js",
+      "line": 24,
+      "name": "renderDeveloperDiagnostics",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-archive-pages.js",
+      "line": 83,
+      "name": "renderSicherung",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-archive-pages.js",
+      "line": 256,
+      "name": "renderPrepaymentCarryForwardNotice",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-archive-pages.js",
+      "line": 323,
+      "name": "renderYearArchive",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-billing-allocation.js",
+      "line": 26,
+      "name": "renderManualExternalValues",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-billing-allocation.js",
+      "line": 49,
+      "name": "renderUmlage",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-costs.js",
+      "line": 23,
+      "name": "renderKostenMieterUmlageMatrix",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-costs.js",
+      "line": 175,
+      "name": "renderCostSelectionDialog",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-costs.js",
+      "line": 256,
+      "name": "renderCostMockupOverview",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-costs.js",
+      "line": 293,
+      "name": "renderEinstellungen",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-costs.js",
+      "line": 364,
+      "name": "renderWohnungen",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-costs.js",
+      "line": 433,
+      "name": "renderEinnahmen",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-costs.js",
+      "line": 490,
+      "name": "renderKosten",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-diagnostics.js",
+      "line": 27,
+      "name": "renderReleaseAuditSummary",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 28,
+      "name": "renderPrepaymentAdjustment",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-documents.js",
+      "line": 368,
+      "name": "renderBrief",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 234,
+      "name": "renderCostSelectionPanel",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 563,
+      "name": "renderBillingStammdatenStatus",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-master-data.js",
+      "line": 824,
+      "name": "renderVersionInfo",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 265,
+      "name": "renderWaterCostSection",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 319,
+      "name": "renderGenericMeterSection",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 390,
+      "name": "renderWaterMeterCarryForwardNotice",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 420,
+      "name": "renderWaterMeterHistory",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-metering.js",
+      "line": 467,
+      "name": "renderWaterMeters",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-navigation-pages.js",
+      "line": 59,
+      "name": "renderPeriodInfo",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-navigation-pages.js",
+      "line": 552,
+      "name": "renderLegacyArchiveDetails",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-navigation-pages.js",
+      "line": 609,
+      "name": "renderWorkflowDashboard",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-navigation-pages.js",
+      "line": 625,
+      "name": "renderStart",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-navigation-pages.js",
+      "line": 638,
+      "name": "renderArchive",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-navigation-pages.js",
+      "line": 649,
+      "name": "renderStartTenantManagement",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-navigation-pages.js",
+      "line": 683,
+      "name": "renderStartUnitManagement",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-page-controller.js",
+      "line": 41,
+      "name": "renderStepsForTab",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-page-controller.js",
+      "line": 46,
+      "name": "renderCurrentView",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-page-controller.js",
+      "line": 73,
+      "name": "renderStatusAndFeedbackSafely",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-page-controller.js",
+      "line": 205,
+      "name": "renderOverviewCards",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-page-controller.js",
+      "line": 252,
+      "name": "renderOverviewForTab",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-page-controller.js",
+      "line": 253,
+      "name": "renderAllOverviewCards",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-page-controller.js",
+      "line": 311,
+      "name": "renderAll",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-quality.js",
+      "line": 44,
+      "name": "renderSpecialCaseWatch",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-quality.js",
+      "line": 195,
+      "name": "renderAcceptanceProtocolSummary",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-quality.js",
+      "line": 352,
+      "name": "renderQuality",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    },
+    {
+      "file": "js/ui-quality.js",
+      "line": 423,
+      "name": "renderDashboard",
+      "mutatesState": false,
+      "persists": false,
+      "navigates": false,
+      "opensDialog": false
+    }
+  ],
+  "scriptOrder": [
+    "./js/ui-preferences.js",
+    "./js/state-access.js",
+    "./js/application-actions.js",
+    "./js/master-data-actions.js",
+    "./js/cost-actions.js",
+    "./js/billing-workflow.js",
+    "./js/ui-controller.js",
+    "./js/ui-bindings.js",
+    "./js/ui-events.js",
+    "./js/navigation.js",
+    "./js/modal-events.js",
+    "./js/persistence.js",
+    "./js/migration.js",
+    "./js/backup-recovery.js",
+    "./js/meter-master.js",
+    "./js/meter-readings.js",
+    "./js/meter-periods.js",
+    "./js/meter-validation.js",
+    "./js/object-standard.js",
+    "./js/billing-snapshot.js",
+    "./js/archive.js",
+    "./js/archive-actions.js",
+    "./js/year-transition-actions.js",
+    "./js/quality-assurance.js",
+    "./js/diagnostics.js",
+    "./js/billing-calculation.js",
+    "./js/document-data.js",
+    "./js/document-renderer.js",
+    "./js/export-service.js",
+    "./js/ui-table-tools.js",
+    "./js/app-bootstrap.js",
+    "./js/compatibility.js",
+    "./js/default-seed.js",
+    "./js/runtime-diagnostics.js",
+    "./js/app-runtime-config.js",
+    "./js/app-state-persistence.js",
+    "./js/ui-master-data.js",
+    "./js/ui-quality.js",
+    "./js/ui-costs.js",
+    "./js/ui-navigation-pages.js",
+    "./js/ui-archive-pages.js",
+    "./js/browser-io.js",
+    "./js/ui-metering.js",
+    "./js/ui-billing-allocation.js",
+    "./js/ui-documents.js",
+    "./js/ui-table-actions.js",
+    "./js/ui-diagnostics.js",
+    "./js/ui-page-controller.js",
+    "./js/app.js",
+    "./js/service-worker-register.js"
+  ],
+  "appShell": [
+    "./index.html",
+    "./manifest.webmanifest",
+    "./assets/app.css",
+    "./js/ui-preferences.js",
+    "./js/state-access.js",
+    "./js/application-actions.js",
+    "./js/master-data-actions.js",
+    "./js/cost-actions.js",
+    "./js/billing-workflow.js",
+    "./js/ui-controller.js",
+    "./js/ui-bindings.js",
+    "./js/ui-events.js",
+    "./js/navigation.js",
+    "./js/modal-events.js",
+    "./js/persistence.js",
+    "./js/migration.js",
+    "./js/backup-recovery.js",
+    "./js/meter-master.js",
+    "./js/meter-readings.js",
+    "./js/meter-periods.js",
+    "./js/meter-validation.js",
+    "./js/object-standard.js",
+    "./js/billing-snapshot.js",
+    "./js/archive.js",
+    "./js/archive-actions.js",
+    "./js/year-transition-actions.js",
+    "./js/quality-assurance.js",
+    "./js/diagnostics.js",
+    "./js/billing-calculation.js",
+    "./js/document-data.js",
+    "./js/document-renderer.js",
+    "./js/export-service.js",
+    "./js/ui-table-tools.js",
+    "./js/app-bootstrap.js",
+    "./js/compatibility.js",
+    "./js/default-seed.js",
+    "./js/runtime-diagnostics.js",
+    "./js/app-runtime-config.js",
+    "./js/app-state-persistence.js",
+    "./js/ui-master-data.js",
+    "./js/ui-quality.js",
+    "./js/ui-costs.js",
+    "./js/ui-navigation-pages.js",
+    "./js/ui-archive-pages.js",
+    "./js/browser-io.js",
+    "./js/ui-metering.js",
+    "./js/ui-billing-allocation.js",
+    "./js/ui-documents.js",
+    "./js/ui-table-actions.js",
+    "./js/ui-diagnostics.js",
+    "./js/ui-page-controller.js",
+    "./js/app.js",
+    "./js/service-worker-register.js",
+    "./icons/icon-180.png",
+    "./icons/icon-192.png",
+    "./icons/icon-512.png",
+    "./index.html"
+  ]
+}

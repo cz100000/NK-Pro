@@ -1,5 +1,5 @@
 {
-  "version": "99.4.12",
+  "version": "99.4.13",
   "sourceVersion": "99.4.11",
   "groups": [
     {
@@ -45,52 +45,13 @@
       "label": "Nebenkosten abrechnen",
       "items": [
         {
-          "tab": "einstellungen",
-          "label": "Kosten erfassen",
-          "group": "billing",
-          "action": "navigation.switchTab",
-          "requiresBilling": true,
-          "secondary": false
-        },
-        {
-          "tab": "umlage",
-          "label": "Verteilung",
-          "group": "billing",
-          "action": "navigation.switchTab",
-          "requiresBilling": true,
-          "secondary": false
-        },
-        {
-          "tab": "qualitaet",
-          "label": "Prüfung",
-          "group": "billing",
-          "action": "navigation.switchTab",
-          "requiresBilling": true,
-          "secondary": false
-        },
-        {
-          "tab": "briefe",
-          "label": "Briefe",
-          "group": "billing",
-          "action": "navigation.switchTab",
-          "requiresBilling": true,
-          "secondary": false
-        },
-        {
-          "tab": "export",
-          "label": "Export",
-          "group": "billing",
-          "action": "navigation.switchTab",
-          "requiresBilling": true,
-          "secondary": false
-        },
-        {
           "tab": "start",
           "label": "Abrechnungsübersicht",
           "group": "billing",
           "action": "navigation.switchTab",
           "requiresBilling": false,
-          "secondary": true
+          "secondary": false,
+          "workflowPosition": 1
         },
         {
           "tab": "mieter",
@@ -98,7 +59,8 @@
           "group": "billing",
           "action": "navigation.switchTab",
           "requiresBilling": true,
-          "secondary": true
+          "secondary": false,
+          "workflowPosition": 2
         },
         {
           "tab": "einnahmen",
@@ -106,7 +68,17 @@
           "group": "billing",
           "action": "navigation.switchTab",
           "requiresBilling": true,
-          "secondary": true
+          "secondary": false,
+          "workflowPosition": 3
+        },
+        {
+          "tab": "einstellungen",
+          "label": "Kosten erfassen",
+          "group": "billing",
+          "action": "navigation.switchTab",
+          "requiresBilling": true,
+          "secondary": false,
+          "workflowPosition": 4
         },
         {
           "tab": "manuellewerte",
@@ -114,7 +86,26 @@
           "group": "billing",
           "action": "navigation.switchTab",
           "requiresBilling": true,
-          "secondary": true
+          "secondary": false,
+          "workflowPosition": 5
+        },
+        {
+          "tab": "umlage",
+          "label": "Verteilung",
+          "group": "billing",
+          "action": "navigation.switchTab",
+          "requiresBilling": true,
+          "secondary": false,
+          "workflowPosition": 6
+        },
+        {
+          "tab": "qualitaet",
+          "label": "Prüfung",
+          "group": "billing",
+          "action": "navigation.switchTab",
+          "requiresBilling": true,
+          "secondary": false,
+          "workflowPosition": 7
         },
         {
           "tab": "vorauszahlungsanpassung",
@@ -122,7 +113,26 @@
           "group": "billing",
           "action": "navigation.switchTab",
           "requiresBilling": true,
-          "secondary": true
+          "secondary": false,
+          "workflowPosition": 8
+        },
+        {
+          "tab": "briefe",
+          "label": "Briefe",
+          "group": "billing",
+          "action": "navigation.switchTab",
+          "requiresBilling": true,
+          "secondary": false,
+          "workflowPosition": 9
+        },
+        {
+          "tab": "export",
+          "label": "Export",
+          "group": "billing",
+          "action": "navigation.switchTab",
+          "requiresBilling": true,
+          "secondary": false,
+          "workflowPosition": 10
         }
       ]
     },
@@ -215,5 +225,7 @@
     "--sidebar-disabled": "#97a0ae",
     "--workspace-bg": "#f4f6f9",
     "--workspace-line": "#d9e2ec"
-  }
+  },
+  "correctedAfterAP12": true,
+  "correction": "Keine Untergruppe innerhalb „Nebenkosten abrechnen“; alle zehn Einträge sind gleichrangig und folgen dem fachlichen Ablauf."
 }

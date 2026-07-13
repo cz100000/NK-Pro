@@ -222,14 +222,9 @@
   }
 
   function selectedBriefTenant(calc) {
-    ensureBriefSettings();
     const rows = briefResultRows(calc);
-    let result = rows.find(r => r.tenant.id === state.briefSettings.tenantId);
-    if (!result && rows.length) {
-      result = rows[0];
-      state.briefSettings.tenantId = result.tenant.id;
-    }
-    return result;
+    const selectedId = state && state.briefSettings ? state.briefSettings.tenantId : "";
+    return rows.find(r => r.tenant.id === selectedId) || rows[0] || null;
   }
 
   function isManualExternalCostDefinition(costOrRow) {
