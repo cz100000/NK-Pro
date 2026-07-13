@@ -1,5 +1,5 @@
 <!-- AP10-CURRENT -->
-# Globale Schnittstellen – Stand V99.4.11
+# Globale Schnittstellen – Stand V99.4.12
 
 `app.js` enthält 518 Top-Level-Funktionsdeklarationen und 67 Bindungen. 79 AP10-Implementierungen wurden entfernt; `withIsolatedState()` wurde als eine Infrastrukturgrenze ergänzt, sodass die Nettoverringerung 78 Funktionen beträgt. Dynamische Globalzugriffe sinken von 1 auf 0. Neue globale Modulobjekte: `NKProArchiveActions`, `NKProYearTransitionActions`, `NKProQualityAssurance`, `NKProDiagnostics`. AP10 legt keine globalen Fachlogik-Wrapper an.
 

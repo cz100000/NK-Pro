@@ -19,7 +19,7 @@ test("Start, Version, Seitenstruktur und interne Audits sind fehlerfrei", async 
   const runtime = attachRuntimeGuards(page);
   await openFreshApp(page);
 
-  await expect(page).toHaveTitle("NK-Pro V99.4.11 – Physisch extrahierte Archiv-, Jahreswechsel-, Qualitäts- und Diagnoseorchestrierung");
+  await expect(page).toHaveTitle("NK-Pro V99.4.12 – Navigationsstruktur und visuelles Grundsystem");
   const result = await page.evaluate(() => {
     const release = window.NKProDiagnostics.releaseAuditReport();
     const selfReport = window.NKProDiagnostics.appSelfTestReport();
@@ -43,8 +43,8 @@ test("Start, Version, Seitenstruktur und interne Audits sind fehlerfrei", async 
     };
   });
 
-  expect(result.version).toBe("V99.4.11");
-  expect(result.versionName).toBe("Physisch extrahierte Archiv-, Jahreswechsel-, Qualitäts- und Diagnoseorchestrierung");
+  expect(result.version).toBe("V99.4.12");
+  expect(result.versionName).toBe("Navigationsstruktur und visuelles Grundsystem");
   expect(result.schema).toBe(5);
   expect(result.activeTab).toBe("landing");
   expect(result.structure.allPassed).toBe(true);
@@ -83,8 +83,8 @@ test("Accordion-Navigation ist logisch gruppiert und per Tastatur bedienbar", as
   const runtime = attachRuntimeGuards(page);
   await openFreshApp(page);
 
-  const groupLabels = await page.locator(".workflow-nav > .nav-group > .nav-group-toggle").evaluateAll(nodes => nodes.map(node => node.textContent.trim()));
-  expect(groupLabels).toEqual(["⌄Objekt vorbereiten", "⌄Nebenkosten abrechnen", "⌄Archiv", "⌄Extras"]);
+  const groupLabels = await page.locator(".workflow-nav > .nav-group .nav-group-label").allTextContents();
+  expect(groupLabels.map(label => label.trim())).toEqual(["Objekt vorbereiten", "Nebenkosten abrechnen", "Archiv", "Extras"]);
 
   const toggles = page.locator(".nav-group-toggle[data-nav-toggle]");
   await expect(toggles).toHaveCount(4);
@@ -185,14 +185,14 @@ test("Archiv ist eigenständig erreichbar und öffnet die Nur-Ansicht", async ({
 test("Manifest und PWA-Version stimmen mit der Anwendung überein", async () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(root, "manifest.webmanifest"), "utf8"));
   const worker = fs.readFileSync(path.join(root, "service-worker.js"), "utf8");
-  expect(manifest.version).toBe("99.4.11");
-  expect(manifest.name).toContain("V99.4.11");
-  expect(worker).toContain('const CACHE_NAME = "nk-pro-v99-4-11";');
+  expect(manifest.version).toBe("99.4.12");
+  expect(manifest.name).toContain("V99.4.12");
+  expect(worker).toContain('const CACHE_NAME = "nk-pro-v99-4-12";');
   expect(worker).toContain('"./index.html"');
   expect(worker).toContain('"./manifest.webmanifest"');
 });
 
-test("V99.4.11 lädt produktive Styles und Skripte ausschließlich aus separaten Dateien", async ({ page, request }) => {
+test("V99.4.12 lädt produktive Styles und Skripte ausschließlich aus separaten Dateien", async ({ page, request }) => {
   const response = await request.get("/index.html");
   expect(response.ok()).toBeTruthy();
   const html = await response.text();

@@ -39,7 +39,8 @@ module.exports = defineConfig({
     { name:"persistence-backup", testMatch:"persistence-backup.spec.js" },
     { name:"reference-cases", testMatch:"reference-cases.spec.js" },
     { name:"service-worker", testMatch:"service-worker.spec.js" },
-    { name:"ap10-orchestration", testMatch:"ap10-orchestration.spec.js" }
+    { name:"ap10-orchestration", testMatch:"ap10-orchestration.spec.js" },
+    { name:"ap11-navigation", testMatch:"ap11-navigation.spec.js" }
   ],
   use: {
     baseURL: "http://127.0.0.1:4173",

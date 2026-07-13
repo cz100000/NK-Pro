@@ -790,7 +790,7 @@
       return "Finalisieren/Entsperren-Status OK";
     }));
   
-    runCheck("Navigation", "Physische AP10-Orchestrierung V99.4.11", () => {
+    runCheck("Navigation", "AP11-Navigationsstruktur V99.4.12", () => {
       const nav = document.querySelector(".workflow-nav");
       if (!nav) throw new Error("Workflow-Navigation fehlt");
       const groups = Array.from(nav.querySelectorAll(":scope > .nav-group")).map(group => group.dataset.navGroupSection);
@@ -803,7 +803,14 @@
       const landingChoices = document.querySelectorAll("#landing .landing-choice");
       if (landingChoices.length !== 2) throw new Error("Landingpage besitzt nicht genau zwei Einstiege");
       if (!NK_PRO_MODULES.navigation || typeof NK_PRO_MODULES.navigation.ensureNavigationPath !== "function" || typeof NK_PRO_MODULES.navigation.updateWorkflowNavigationContext !== "function") throw new Error("Zentrales Navigationsmodul fehlt");
-      return "4 Accordion-Gruppen, 16 eindeutige Navigationsziele und genau 2 Landingpage-Einstiege";
+      const semanticNav = nav.tagName === "NAV" && nav.getAttribute("aria-label");
+      if (!semanticNav) throw new Error("Navigation ist nicht semantisch als NAV ausgezeichnet");
+      if (nav.querySelectorAll(".nav-item-icon svg").length < 20) throw new Error("Lokales SVG-Iconsystem ist unvollständig");
+      const settings = document.querySelector(".sidebar-settings-dummy");
+      if (!settings || settings.getAttribute("aria-disabled") !== "true" || settings.dataset.uiAction) throw new Error("Einstellungen-Dummy ist nicht korrekt deaktiviert");
+      if (settings.dataset.navHint !== "Noch nicht verfügbar") throw new Error("Einstellungen-Hinweis fehlt");
+      if (document.querySelectorAll(".workflow-nav").length !== 1) throw new Error("Parallele Navigation erkannt");
+      return "4 Accordion-Gruppen, 16 eindeutige Navigationsziele, lokales SVG-System, Einstellungen-Dummy und genau 2 Landingpage-Einstiege";
     });
   
     runCheck("Startseite", "Sicherungstab und Entschlackung", () => {

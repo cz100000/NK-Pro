@@ -1,29 +1,27 @@
-<!-- AP10-CURRENT -->
-# Teststand V99.4.11
+# NK-Pro – Testkonzept V99.4.12
 
-Zusätzlich zu allen bisherigen Prüfungen gibt es den statischen AP10-Architekturtest und fünf Browserfälle für Seiteneffektfreiheit, Einzelcommit, Erhalt unbekannter Felder/Stromzähler-Dummy sowie vollständigen Archiv- und Jahreswechselrollback. Alle 46 Browserfälle wurden mit System-Chromium und je einem Worker projektweise in frischen Playwright-Prozessen bestanden. Ein einzelner Prozess über alle Projekte hängt in dieser Containerumgebung sporadisch beim Projektwechsel oder Chromium-Teardown ohne fehlgeschlagene Assertion; dieser kombinierte Lauf wird deshalb ausdrücklich nicht als erfolgreich gewertet.
+## Statische Prüfungen
 
-<!-- AP9-HISTORIC -->
-# Teststand V99.4.10
+- Syntax aller produktiven JavaScriptdateien,
+- Fixture-Konsistenz und Materialisierbarkeit,
+- Zählerdomänentests,
+- AP6–AP11-Architekturgrenzen,
+- Versions-, App-Shell-, Dokument- und SHA-256-Konsistenz.
 
-Die Releaseprüfung umfasst Syntax, sechs Referenzfixtures, Zählerdomäne, AP6–AP9-Architekturtests und 41 Playwright-Browserfälle. Browserfälle decken Start, UI, Module, Migration/Restore/Rollback, Objektstandard/Snapshot, Persistenz/Backup, sechs Referenzabrechnungen, Dokument/Export und Service Worker ab. System-Chromium 144 wurde erfolgreich verwendet.
+## AP11-Prüfungen
 
-# NK-Pro – Testkonzept
+`tests/ap11-navigation.test.cjs` prüft Struktur, eine einzige Navigation, 16 Ziele, 22 Inline-SVGs, Tokens, Einstellungen-Dummy, Ereignis- und Zustandsgrenzen. `tests/ap11-navigation.spec.js` prüft im Browser:
 
-**Aktueller Stand:** V99.4.9, Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Zählerstandard 1, Snapshot 2, Architektur 2
+- Referenzstruktur und Iconkonsistenz,
+- genau einen aktiven Punkt und `aria-current`,
+- zustandsneutralen Einstellungen-Dummy,
+- Tastatur, sichtbaren Fokus und Gruppensteuerung,
+- geringe Höhe und schmalen Drawer,
+- 1920×1080, 1600×900, 1366×768, 1280×720,
+- Zoomsimulation 80/100/125/150 Prozent,
+- optionale visuelle Referenzscreenshots.
 
-## Prüfstufen
-
-1. **Syntax:** alle produktiven JavaScript-Dateien und der Service Worker.
-2. **Referenzfälle:** sechs kanonische Datensätze mit unveränderten Ergebnissen.
-3. **Zählerdomäne:** Migration, stabile IDs, Messwerte, Perioden, Korrektur, Wechsel, Zuordnung, Dummy-Ausschluss und Snapshotprojektion.
-4. **AP6-Architektur:** Modulschnittstellen, DOM-freie Berechnung, DOM-freie Dokumentdaten, reine Wrapper, Speichergrenzen, Ladefolge, Bootstrap und Registry.
-5. **AP7-UI-Architektur:** 130 entfernte Inline-Handler, 13 Controller, 99 eindeutige Aktionen, zentrale Ereignisdelegation, Zustandsgrenze und entfernte Navigationsglobals.
-6. **Release-Konsistenz:** Versionen, Standards, Module, PWA-App-Shell, Dokumente und Datenvertrag.
-7. **Browserregression:** 41 Fälle für Start, Navigation, Berechnung, Persistenz, Migration, Restore, Snapshot, Archiv, Dokumente, Exporte und Service Worker.
-7. **Frische Entpackung:** Wiederholung aller Prüfungen aus der finalen ZIP.
-
-## Befehle
+## Vollständiger Lauf
 
 ```bash
 npm ci
@@ -35,21 +33,8 @@ npm run test:release
 CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:browser
 ```
 
-Ist das Playwright-Browserpaket nicht lokal installiert, wird ein vorhandenes Chromium über `CHROMIUM_EXECUTABLE_PATH` verwendet.
+Bei instabiler gemeinsamer Playwright-Ausführung werden die elf Projekte in frischen Prozessen mit `--workers=1` ausgeführt. Das ist ein zulässiger Testmodus und wird im Prüfbericht vollständig ausgewiesen.
 
-## AP6-Pflichtfälle
+## Freigabe
 
-- `app.js` liegt unter 9.500 Zeilen,
-- alle neuen Module exportieren feste Schnittstellen,
-- Berechnungsmodul enthält keinen DOM- oder Speicherzugriff,
-- Dokumentdatenmodul enthält keinen DOM- oder Speicherzugriff,
-- globale Kompatibilitätswrapper enthalten keine Parallelfachlogik,
-- direkte Speicherzugriffe liegen nur in Persistenz und UI-Präferenzen,
-- Startschritte laufen in dokumentierter Reihenfolge,
-- Referenzabrechnungen bleiben unverändert,
-- Zähler-Dummy bleibt ausgeschlossen,
-- Snapshot, Backup, Restore und Rollback bleiben kompatibel,
-- App-Shell enthält alle neuen Dateien,
-- Brief- und CSV-Erzeugung stimmen über Modul- und Kompatibilitätsaufruf überein und bleiben zustandsneutral.
-
-Die konkreten Freigabeergebnisse stehen in `AP6_PRUEFBERICHT.md`.
+Nicht ausgeführte Prüfungen dürfen nicht als bestanden gelten. Ergebnisse, Laufzeiten, Ersatzprüfungen und visuelle Referenzen werden in `AP11_TEST_RESULTS.json` und `AP11_PRUEFBERICHT.md` dokumentiert. Die Releaseprüfung validiert abschließend alle in `SHA256SUMS.txt` aufgeführten Dateien.

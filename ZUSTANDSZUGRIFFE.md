@@ -1,5 +1,5 @@
 <!-- AP10-CURRENT -->
-# Zustandszugriffe V99.4.11
+# Zustandszugriffe V99.4.12
 
 AP10 reduziert direkte `state`-Pfadreferenzen in `app.js` von 503 auf 306 und Schreibstellen von 195 auf 96. Archiv und Jahreswechsel schreiben nur in `NKProStateAccess.transact()`; Qualität und Diagnose laufen auf einer Zustandskopie. Root-Ersetzungen sinken von 13 auf 10. Das vollständige Zeileninventar steht in `AP10_ZUSTANDSZUGRIFFE.json`.
 

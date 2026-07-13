@@ -6,9 +6,9 @@
   const NAV_GROUP_STORAGE_KEY = "nkpro.workflowNavigation.v3";
   const GROUP_KEYS = ["group-object", "group-billing", "group-archive", "group-extras"];
   const TAB_PATHS = {
-    objekt:"group-object", mieterverwaltung:"group-object", wohnungsverwaltung:"group-object",
+    objekt:"group-object", mieterverwaltung:"group-object", wohnungsverwaltung:"group-object", wasser:"group-object",
     start:"group-billing", mieter:"group-billing", einstellungen:"group-billing", einnahmen:"group-billing",
-    wasser:"group-billing", manuellewerte:"group-billing", umlage:"group-billing",
+    manuellewerte:"group-billing", umlage:"group-billing",
     vorauszahlungsanpassung:"group-billing", qualitaet:"group-billing", briefe:"group-billing", export:"group-billing",
     archiv:"group-archive", sicherung:"group-extras"
   };
@@ -55,6 +55,18 @@
   }
   function markActiveNavigationBranch(tabId) {
     document.querySelectorAll(".nav-group").forEach(function (node) { node.classList.remove("has-active"); });
+    document.querySelectorAll(".tab-btn[data-tab]").forEach(function (node) {
+      const current = node.dataset.tab === tabId;
+      if (current) node.setAttribute("aria-current", "page");
+      else node.removeAttribute("aria-current");
+    });
+    const home = document.querySelector(".sidebar-brand-home");
+    if (home) {
+      const landing = tabId === "landing";
+      home.classList.toggle("active", landing);
+      if (landing) home.setAttribute("aria-current", "page");
+      else home.removeAttribute("aria-current");
+    }
     const active = document.querySelector('.tab-btn[data-tab="' + tabId + '"]');
     const group = active ? active.closest(".nav-group") : null;
     if (group) group.classList.add("has-active");

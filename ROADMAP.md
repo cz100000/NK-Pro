@@ -1,20 +1,9 @@
-# NK-Pro – Roadmap
+# NK-Pro – Roadmap nach V99.4.12
 
-**Basis:** V99.4.11 vom 13. Juli 2026
+| Paket | Status | Inhalt |
+|---|---|---|
+| AP11 | abgeschlossen in V99.4.12 | Navigationsstruktur und visuelles Grundsystem nach Referenzbild; Icons, Tokens, aktive/deaktivierte Zustände, Responsivität, Tastatur und PWA |
+| AP12 | als Nächstes | Restentkopplung von `app.js` und globale Zustandsbereinigung; verbleibende Renderer, Dialog-/Seitensteuerung, Legacy-Importe und Kompatibilitätswrapper reduzieren |
+| AP13 | reserviert | Brieflayout, Druckbild und Vorschaukonsistenz; Typografie, Ränder, Umbrüche, Tabellen und ein-/zweiseitige Ausgabe |
 
-## Abgeschlossen
-
-- V99.4.1–V99.4.10: Datenebenen, Migration/Recovery, Objekt-/Zähler-/Snapshotstandards, Fachmodule, UI-Controller und Kernorchestrierung.
-- V99.4.11 / AP10: allgemeine Archiv-, Jahreswechsel-, Qualitäts- und Diagnoseorchestrierung physisch extrahiert; 79 Implementierungen entfernt; atomare Schreib- und seiteneffektfreie Lesepfade nachgewiesen.
-
-## AP11 – nächstes und verbindlich reserviertes Arbeitspaket
-
-- Navigationsstruktur und visuelles Grundsystem nach dem festgelegten Referenzbild,
-- Icons, Farben, Typografie, Hintergründe, Abstände, Gruppenlogik, Zustände, Responsivität und Bar,
-- keine Änderung der in AP10 stabilisierten Fach-/Persistenzgrenzen.
-
-## Danach
-
-- verbleibende Renderer-/Dokument-UI-Orchestrierung weiter trennen,
-- AP6-Kompatibilität nur nach konkreter Abhängigkeitsanalyse reduzieren,
-- globale UI-Hilfen und verbleibende direkte Zustandszugriffe schrittweise abbauen.
+AP12 darf die in AP11 geschaffene produktive Navigation nicht parallel ersetzen. AP13 darf auf den Design-Tokens aufbauen, muss Brief- und Druckregeln aber eigenständig spezifizieren und testen.

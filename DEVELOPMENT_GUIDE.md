@@ -1,49 +1,29 @@
-<!-- AP10-CURRENT -->
-# Entwicklungshinweise V99.4.11
+# NK-Pro – Entwicklungsleitfaden V99.4.12
 
-Archiv- und Jahreswechselaktionen werden als DOM- und speicherfreie Transaktionen in den zuständigen AP10-Modulen umgesetzt und über `NKProApplicationActions` gebunden. Qualitäts- und Diagnoseprüfungen sind reine Leseoperationen auf isolierten Zustandskopien. Fachlogik, Persistenz, Rendering, Dialoge und Navigation dürfen nicht in Kompatibilitätsweiterleitungen oder Prüfmodule zurückwandern.
+## Quellenhierarchie
 
-<!-- AP9-CURRENT -->
-# Entwicklungshinweise V99.4.10
+Maßgeblich sind freigegebene Versions-ZIP, tatsächlicher Quellcode, enthaltene Projektdokumente und automatisierte Tests.
 
-Neue fachliche UI-Aktionen sind als DOM-freie Operation in einem zuständigen Anwendungsmodul zu implementieren, über `application-actions.js` zu registrieren und in `ui-bindings.js` zu präsentieren. Direkte Speicherung, Rendering, Dialoge oder Navigation sind in Anwendungsmodulen unzulässig. Schreibaktionen verwenden `NKProStateAccess.transact()` und höchstens einen zentralen Commit.
+## Unveränderliche Leitplanken
 
-# NK-Pro – Entwicklungsleitfaden
+- statisches HTML, CSS und JavaScript ohne Framework oder Buildsystem,
+- DOM-Ereignisse über deklarative `data-ui-*`-Aktionen und zentrale Ereignisdelegation,
+- Fachpersistenz nur über `persistence.js`, UI-Präferenzen nur über `ui-preferences.js`,
+- keine Fachberechnung in UI-, Navigations-, Druck- oder Exportcode duplizieren,
+- Schema-, Vertrags- und Standardversionen nur mit eigenem Migrations-/Freigabepaket ändern,
+- unbekannte Felder bei Normalisierung und Migration erhalten.
 
-**Aktueller Umsetzungsstand:** V99.4.9, Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Zählerstandard 1, Snapshot 2, Architektur 2
+## AP11-Regeln
 
-## 1. Quellenhierarchie
+- Es darf genau eine produktive Hauptnavigation geben.
+- Neue Navigationseinträge verwenden vorhandene Controlleraktionen oder erhalten einen ausdrücklich getesteten Vertrag.
+- Aktive Navigation wird aus dem sichtbaren Arbeitskontext abgeleitet, nicht aus einem unabhängigen DOM-Flag.
+- Icons müssen lokal, einheitlich und für Screenreader nicht redundant sein.
+- Farben, Größen und Zustände werden als CSS Custom Properties gepflegt.
+- Einstellungen bleibt bis zu einem späteren Paket ein aktionsloser, zugänglich erläuterter Dummy.
+- Responsive Änderungen dürfen Fachseiten weder überlagern noch horizontal verschieben.
 
-Maßgeblich sind ausschließlich die freigegebene Versions-ZIP, der darin enthaltene Quellcode, die Projektdokumente und automatisierten Tests.
-
-## 2. Leitplanken
-
-- HTML, CSS und JavaScript ohne Framework oder Buildsystem,
-- DOM-Ereignisse ausschließlich über deklarative `data-ui-*`-Aktionen und `ui-events.js`,
-- Controlleraktionen ausschließlich über `ui-controller.js`/`ui-bindings.js`,
-- Fachdatenspeicherung ausschließlich über `persistence.js`,
-- UI-Präferenzen ausschließlich über `ui-preferences.js`,
-- keine stillschweigende Schema-, Vertrags- oder Standardänderung,
-- keine historische Umschreibung gespeicherter Snapshots,
-- unbekannte Felder bei Normalisierung und Migration bewahren,
-- keine Fachberechnung in UI-, Druck- oder Exportfunktionen duplizieren.
-
-## 3. AP6-Modulregeln
-
-- zentrale Kostenverteilung nur in `billing-calculation.js`,
-- fachliche Briefdaten nur in `document-data.js`,
-- Brief-/Druck-HTML nur in `document-renderer.js`,
-- Serialisierung und Download nur in `export-service.js`,
-- Tabellenfilter und Sortierung nur in `ui-table-tools.js`,
-- Startreihenfolge nur über `app-bootstrap.js`,
-- globale Legacy-Namen nur als Einzeilen-Wrapper,
-- neue Module exportieren eine eingefrorene API.
-
-## 4. Daten- und Snapshotregeln
-
-Vor jeder datenverändernden Migration ist eine Vor-Migrationssicherung zu erzeugen. Änderungen laufen auf Kopien und werden vor Übernahme validiert. Snapshot 1 bleibt unverändert lesbar; Snapshot 2 wird nicht nachträglich verändert. `electricity-dummy` darf niemals abrechenbare Verbräuche erzeugen.
-
-## 5. Pflichtprüfung
+## Pflichtprüfung
 
 ```bash
 npm ci
@@ -55,6 +35,6 @@ npm run test:release
 CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:browser
 ```
 
-## 6. Definition of Done
+## Definition of Done
 
-Quellcode, Modulgrenzen, Tests, Dokumentation, Versionsangaben, App-Shell und Prüfsummenliste sind konsistent; alle verfügbaren Prüfungen bestehen; die finale ZIP wird frisch entpackt und erneut validiert.
+Quellcode, Navigation, Modulgrenzen, Tests, Dokumentation, Versionen, App-Shell und Prüfsummen sind konsistent. Die finale ZIP wird in ein leeres Verzeichnis entpackt und erneut vollständig geprüft.

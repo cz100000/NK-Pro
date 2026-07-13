@@ -1,17 +1,23 @@
-# NK-Pro – Technische Schulden
+# NK-Pro – Technischer Schuldenstand V99.4.12
 
-**Basis:** V99.4.11
+## In AP11 erledigt
 
-| ID | Thema | Priorität | Stand nach AP10 |
-|---|---|---:|---|
-| TD-001 | Umfang von `app.js` | hoch | 6.292 Zeilen; Archiv/Jahreswechsel/Qualität/Diagnose extrahiert; UI-/Renderer-Orchestrierung verbleibt |
-| TD-002 | klassischer globaler Laufzeitkontext | hoch | 518 Top-Level-Funktionen und 67 Bindungen |
-| TD-003 | 112 AP6-Kompatibilitätswrapper | mittel | unverändert rein/registriert; konkrete Alt-/Testabhängigkeiten verbleiben |
-| TD-004 | direkte Zustandszugriffe in Altbereichen | hoch | 306 Referenzen, 96 Schreibstellen |
-| TD-005 | Archiv-/Jahreswechselorchestrierung | erledigt | atomare Module, Einzelcommit und Rollback |
-| TD-006 | Qualitäts-/Diagnoseorchestrierung | erledigt | isoliert lesend, stabile Codes, keine Persistenz/Renderer |
-| TD-007 | Renderer- und Dokument-UI-Verantwortungsdichte | mittel | für Folgepakete offen |
-| TD-008 | Legacy-Archive ohne vollständig rekonstruierbare Messwertbezüge | mittel | weiterhin unverändert als `legacy-partial` gekennzeichnet |
-| TD-009 | tagesanteilige Verbrauchsschätzung ohne Zwischenablesung | mittel | weiterhin `estimated`; fachliche UI-Freigabe offen |
-| TD-010 | browserabhängige lokale Persistenz | mittel | Backup-/Recovery-Fundament unverändert |
-| TD-011 | paralleler Playwright-Teardown in Containerumgebung | niedrig | Tests fachlich erfolgreich; finale Freigabe seriell mit `--workers=1` |
+- produktive Navigation statt visueller Überlagerung umgebaut,
+- alte parallele Navigations-CSS-Blöcke entfernt,
+- semantisches `<nav>`, konsistente SVG-Icons und zentrale Tokens eingeführt,
+- aktive/deaktivierte Zustände und Tastaturfokus regressiv abgesichert,
+- geringe Höhe, Notebookbreite und Drawer konsistent gelöst,
+- Einstellungen-Dummy ohne leere Seite oder Fachzustandswirkung umgesetzt.
+
+## Verbleibend
+
+1. `app.js` bleibt mit 6.294 Zeilen, 518 Top-Level-Funktionen, 67 Top-Level-Bindungen und 96 direkten Schreibstellen groß. AP12 muss Restorchestrierung und globale Bindungen abbauen.
+2. 112 Legacy-Kompatibilitätswrapper bestehen fort und sind in AP12 kontrolliert zu reduzieren.
+3. Formulare, Tabellen und Dialoge verwenden noch ältere Einzelstile; AP11 vereinheitlicht nur die angrenzenden Grundflächen.
+4. Briefvorschau und Druckausgabe besitzen eigenständige Altstile und sind ausdrücklich Gegenstand von AP13.
+5. Der Footer zeigt bewusst nur lokalen Status; eine echte Benutzer- oder Einstellungsverwaltung existiert nicht.
+6. Der Drawer ist Desktop-first und keine vollständige mobile Informationsarchitektur.
+
+## Schutzregeln
+
+Keine Schuldenbereinigung darf Datenschema 5, Vertrag 1, Objektstandard 1, Zählerstandards 1, Snapshot 2 oder Referenzabrechnungen stillschweigend verändern.

@@ -1,46 +1,27 @@
-<!-- AP10-CURRENT -->
-# Modulübersicht V99.4.11
+# NK-Pro – Modulübersicht V99.4.12
 
-| Modul | Verantwortung | DOM | Browser-Speicher | Commit/Rendering |
-|---|---|---:|---:|---|
-| `archive-actions.js` | allgemeine Archivaktionen und Archivleser | nein | nein | atomar, max. 1 Commit; kein Rendering |
-| `year-transition-actions.js` | Neuanlage/Jahreswechsel und Übernahmeregeln | nein | nein | atomar, max. 1 Commit; kein Rendering |
-| `quality-assurance.js` | Qualitäts-, Vollständigkeits- und Bereitschaftsprüfung | nein | nein | kein Commit, kein Rendering |
-| `diagnostics.js` | Release-Audit, Selbsttest, Supportdiagnose | nur lesende Strukturprüfung | nein | kein Commit, keine Persistenz, kein Rendering |
+| Modul/Datei | Verantwortung im aktuellen Stand |
+|---|---|
+| `index.html` | produktives Markup, genau eine Navigation, lokale SVG-Piktogramme und Fachseiten |
+| `assets/app.css` | zentrale Tokens, Navigationsdarstellung, Responsive-/Fokuszustände und bestehende Fachseitenstile |
+| `navigation.js` | Gruppenpfad, aktiver UI-Zustand, Drawer/Collapse und Abrechnungskontext; keine Fachmutation |
+| `ui-events.js` | zentrale deklarative Ereignisdelegation |
+| `ui-controller.js` / `ui-bindings.js` | 13 Controller, 99 Aktionen und UI-Adapter |
+| `application-actions.js` | eingefrorenes Register der Anwendungsaktionen |
+| `master-data-actions.js` | Stammdatenorchestrierung |
+| `cost-actions.js` | Kostenorchestrierung |
+| `billing-workflow.js` | laufender Abrechnungsworkflow und Snapshot-Koordination |
+| `archive-actions.js` | atomare Archivmutationen |
+| `year-transition-actions.js` | Neuanlage und Jahreswechsel |
+| `quality-assurance.js` / `diagnostics.js` | seiteneffektfreie Qualitäts- und Systemprüfungen |
+| `billing-calculation.js` | zentrale Kosten-, Verbrauchs-, Vorauszahlungs- und Saldenberechnung |
+| `meter-*` | Zählerstammdaten, Messwerte, Perioden und Validierung |
+| `object-standard.js` / `billing-snapshot.js` | Objektstandard 1 und Snapshot 2 |
+| `document-data.js` / `document-renderer.js` | fachliche Dokumentdaten und Ausgabe-HTML |
+| `export-service.js` | JSON/CSV/Paketexporte und Downloads |
+| `persistence.js` / `migration.js` / `backup-recovery.js` | Speicherung, Migration, Sicherung, Restore und Rollback |
+| `app-bootstrap.js` / `compatibility.js` | Startreihenfolge und Legacy-Schnittstellen |
+| `app.js` | verbleibende UI-/Legacy-Orchestrierung; AP12-Ziel |
+| `service-worker.js` | App-Shell und Offlinecache V99.4.12 |
 
-<!-- AP9-HISTORIC -->
-# Modulübersicht V99.4.10
-
-Neu: `master-data-actions.js` (Stammdaten/Übernahme), `cost-actions.js` (Kosten/Vorauszahlungsarten/Freigaben) und `billing-workflow.js` (Periode, Finalisierung, Snapshotkoordination, manuelle Werte, Vorauszahlungen). Alle drei exportieren eine eingefrorene API, verwenden den einzigen Zustand über `NKProStateAccess` und greifen weder auf DOM noch Browser-Speicher zu.
-
-# Modulübersicht NK-Pro V99.4.9
-
-| Modul | Verantwortung | DOM | Fachspeicher | Öffentliche Schnittstelle |
-|---|---|---:|---:|---|
-| `ui-preferences.js` | nicht fachliche Navigations-/Darstellungspräferenzen | nein | nein | `get`, `set`, `remove`, Boolean-Hilfen |
-| `state-access.js` | kontrollierter Zugriff auf den bestehenden Einzelzustand | nein | nein | `NKProStateAccess` |
-| `ui-controller.js` | DOM-freie Controller- und Aktionsregistry | nein | nein | `NKProUiController` |
-| `ui-bindings.js` | 99 Aktionsbindungen in 13 Verantwortungsbereichen | nein | nein | `NKProUiBindings` |
-| `ui-events.js` | zentrale Ereignisdelegation und Argumentauflösung | ja | nein | `NKProUiEvents` |
-| `navigation.js` | Navigationsbaum, Sidebar, Arbeitskontext | ja | nein | `NKProNavigation` |
-| `modal-events.js` | Backdrop-/Escape-Ereignisse mit Controllerdispatch | ja | nein | `NKProModalEvents` |
-| `persistence.js` | geschütztes Laden/Speichern, Integrität, Storage-Adapter | nein | ja | `NKProPersistence` |
-| `migration.js` | Migrationsregistry und atomare Migration | nein | über Adapter | `NKProMigration` |
-| `backup-recovery.js` | Sicherungshüllen, Restore, Checkpoint | nein | über Adapter | `NKProBackupRecovery` |
-| `meter-master.js` | Zählerstammdaten und Dummy-Ausschluss | nein | nein | `NKProMeterMaster` |
-| `meter-readings.js` | Messwerte, Korrektur und Storno | nein | nein | `NKProMeterReadings` |
-| `meter-periods.js` | Messperioden, Wechsel, Zuordnung, Verbrauch | nein | nein | `NKProMeterPeriods` |
-| `meter-validation.js` | Zählerstandardmigration und Validierung | nein | nein | `NKProMeterValidation` |
-| `object-standard.js` | Objektstandardprojektion und Validierung | nein | nein | `NKProObjectStandard` |
-| `billing-snapshot.js` | Snapshot-Erzeugung, Integrität und Lesbarkeit | nein | nein | `NKProBillingSnapshot` |
-| `archive.js` | begrenzte Archivprojektion und Legacybehandlung | nein | nein | `NKProArchive` |
-| `billing-calculation.js` | Kostenverteilung, Verbrauch, Vorauszahlung, Saldo | nein | nein | `NKProBillingCalculation` |
-| `document-data.js` | Brief-, Prüf- und Dokument-View-Modelle | nein | nein | `NKProDocumentData` |
-| `document-renderer.js` | Brief- und Druck-HTML | ja, nur Klartextkonvertierung | nein | `NKProDocumentRenderer` |
-| `export-service.js` | Dateinamen, JSON/CSV, Downloadauslösung | ja, Downloadanker | nein | `NKProExportService` |
-| `ui-table-tools.js` | Tabellenfilter, Sortierung, Werkzeuge | ja | nein | `NKProUiTableTools` |
-| `app-bootstrap.js` | benannte Startreihenfolge und Fehlerpfad | nein | nein | `NKProAppBootstrap` |
-| `compatibility.js` | Registry der Legacy-Weiterleitungen | nein | nein | `NKProCompatibility` |
-| `default-seed.js` | unveränderte Ausgangsdaten | nein | nein | globale `SEED`-Bindung |
-| `app.js` | UI-Controller, Arbeitsabläufe, verbleibende Legacy-Orchestrierung | ja | nur über Module | globale Kompatibilität und UI-Aktionen |
-| `service-worker-register.js` | Service-Worker-Registrierung | Browser-API | nein | keine Fachschnittstelle |
+Die verbindliche Skriptreihenfolge steht in `index.html` und wird durch die Releaseprüfung mit der Service-Worker-App-Shell abgeglichen.

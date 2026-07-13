@@ -1,20 +1,6 @@
-# NK-Pro – Anwendungsaktionsübersicht V99.4.11
+# NK-Pro – Anwendungsaktionsübersicht V99.4.12
 
-Neu registriert sind die Domänen `archive`, `yearTransition` und `quality`.
-
-| Domäne | Aktion | direktes Ziel |
-|---|---|---|
-| archive | `currentYear` | `NKProArchiveActions.archiveCurrent` |
-| archive | `reopenForRework` | `NKProArchiveActions.reopenForRework` |
-| archive | `deleteAt` | `NKProArchiveActions.deleteAt` |
-| archive | `importItems` | `NKProArchiveActions.importItems` |
-| yearTransition | `createBilling` | `NKProYearTransitionActions.createBilling` |
-| yearTransition | `prepareNextYear` | `NKProYearTransitionActions.prepareNextYear` |
-| quality | `inspect` | `NKProQualityAssurance.inspect` |
-| quality | `specialCases` | `NKProQualityAssurance.specialCases` |
-| quality | `finalBillingReadiness` | `NKProQualityAssurance.finalBillingReadiness` |
-
-`diagnostics` bleibt bewusst keine schreibende Anwendungsaktionsdomäne; die UI ruft die lesende Modul-API direkt auf.
+AP11 ändert keine Anwendungsaktionsdomäne. Alle 16 Navigationsziele verwenden weiterhin `navigation.switchTab`; Gruppensteuerung, Drawer und Einstellungen-Dummy führen keine Fachaktion aus. Das Gesamtinventar bleibt bei 13 UI-Controllern und 99 eindeutigen Aktionskennungen. Die seit V99.4.11 registrierten Domänen `archive`, `yearTransition` und `quality` bleiben unverändert.
 
 # NK-Pro – Anwendungsaktionsübersicht V99.4.10
 

@@ -1,5 +1,5 @@
 <!-- AP10-CURRENT -->
-# Kompatibilitätsschicht V99.4.11
+# Kompatibilitätsschicht V99.4.12
 
 AP10 entfernt 79 implementierungstragende globale Funktionen aus `app.js` und ergänzt **keine** AP10-Weiterleitung. Die bestehenden 112 AP6-Wrapper bleiben unverändert, weil ihre registrierten klassischen Laufzeit- und Regressionstestabhängigkeiten außerhalb des AP10-Umfangs weiterhin bestehen. Neu registrierte Modulobjekte besitzen zwar lesende Kompatibilitätsmetadaten, aber keine Fachlogik-Wrapper in `app.js`.
 

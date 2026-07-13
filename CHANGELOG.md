@@ -1,5 +1,22 @@
 # Changelog
 
+## V99.4.12 – Navigationsstruktur und visuelles Grundsystem (13.07.2026)
+
+### Geändert
+
+- Produktive Seitenleiste nach verbindlicher Bildreferenz strukturell und visuell umgebaut.
+- Semantische Hauptnavigation mit vier Gruppen und 16 unveränderten Zielseiten eingeführt.
+- „Zähler“ in die Objektvorbereitung vor „Mieter“ verschoben; Primärworkflow der Abrechnung auf Kosten, Verteilung, Prüfung, Briefe und Export fokussiert.
+- 22 lokale Inline-SVGs, zentrale Farb-/Typografie-/Abstandstokens und konsistente Zustände eingeführt.
+- Aktive Seite mit Fläche, Text/Icon, 4-Pixel-Marker und `aria-current=page` synchronisiert.
+- Sichtbaren, deaktivierten Einstellungen-Dummy im Footer mit zugänglichem Hinweis „Noch nicht verfügbar“ ergänzt.
+- Desktop-, Notebook-, geringe-Höhe-, Drawer-, Zoom-, Tastatur- und Fokusverhalten umgesetzt und getestet.
+- PWA-Metadaten und Cache auf V99.4.12 aktualisiert; keine externen Assets ergänzt.
+
+### Unverändert
+
+Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, alle Zählerstandards 1, Snapshot 2, 13 UI-Controller, 99 Aktionskennungen sowie sämtliche Abrechnungs-, Archiv-, Migrations-, Sicherungs-, Dokument- und Exportregeln.
+
 ## V99.4.11 – Physisch extrahierte Archiv-, Jahreswechsel-, Qualitäts- und Diagnoseorchestrierung (13. Juli 2026)
 
 - 79 Archiv-, Jahreswechsel-, Qualitäts- und Diagnoseimplementierungen physisch aus `app.js` entfernt und in vier Module verlagert.

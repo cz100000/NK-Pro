@@ -1,7 +1,6 @@
-<!-- AP10-CURRENT -->
-# UI-Controller V99.4.11
+# UI-Controller V99.4.12
 
-Die 13 Controller und 99 Aktionskennungen bleiben erhalten. Der Archiv-Controller bindet Archivierung, Import, Löschen und Wiederbearbeitung über `NKProApplicationActions.archive`; der Billing-Controller bindet Neuanlage und Jahreswechsel über `NKProApplicationActions.yearTransition`. Qualitäts- und System-Controller zeigen ausschließlich strukturierte Ergebnisse aus `NKProQualityAssurance` und `NKProDiagnostics`. Dialoge, Navigation, Persistenzabschluss und gezieltes Rendering verbleiben in `ui-bindings.js` beziehungsweise der zentralen UI-Schicht.
+Die 13 Controller und 99 Aktionskennungen bleiben erhalten. AP11 verändert nur produktives Markup, Navigationsdarstellung und die Synchronisation des aktiven UI-Pfads. Alle Menüziele bleiben über `navigation.switchTab` angebunden; der Einstellungen-Dummy besitzt absichtlich keine Aktionskennung. Ereignisdelegation, Dialoge, Persistenzabschluss und Fachmodule bleiben unverändert.
 
 <!-- AP9-CURRENT -->
 # UI-Controller V99.4.10

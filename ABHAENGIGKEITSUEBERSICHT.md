@@ -1,5 +1,5 @@
 <!-- AP10-CURRENT -->
-# Abhängigkeitsübersicht V99.4.11
+# Abhängigkeitsübersicht V99.4.12
 
 `ui-bindings` → `application-actions` → (`archive-actions` | `year-transition-actions` | `quality-assurance`) → `state-access` beziehungsweise isolierter Lesezugriff. `diagnostics` verwendet ausschließlich konfigurierte Lese- und Prüfhelfer. Archiv- und Jahreswechselmodule kennen weder DOM noch Browser-Speicher; Qualitäts- und Diagnosemodule committen, persistieren und rendern nicht.
 

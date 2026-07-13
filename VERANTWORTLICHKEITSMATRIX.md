@@ -1,5 +1,5 @@
 <!-- AP10-CURRENT -->
-# Verantwortlichkeitsmatrix V99.4.11
+# Verantwortlichkeitsmatrix V99.4.12
 
 | Verantwortung | Primär zuständig | explizite Grenze |
 |---|---|---|
