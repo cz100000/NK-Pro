@@ -12,13 +12,22 @@ npm run test:release
 CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:browser -- --workers=4
 ```
 
-## AP13
+## AP14
 
 ```bash
-CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:ap13
-CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium node tools/generate-ap13-controls.cjs
+CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:ap14
 ```
 
-AP13 prüft das gemeinsame Dokumentmodell, DIN-A4-Maße, neun Tabellen-spalten, vollständige Linien, Ein-/Zweiseitenlogik, Abschlussblock, Vorauszahlungsanpassung, Nachzahlung/Guthaben, lange Empfängerdaten und skalierte Vorschau. Die erzeugten PDFs werden zusätzlich mit `pdfinfo`, Textextraktion und gerenderten Seitenbildern kontrolliert.
+AP14 prüft statisch und im Browser:
 
-Maschinenlesbare Ergebnisse: `AP13_TEST_RESULTS.json`. Ausführlicher Bericht: `AP13_PRUEFBERICHT.md`.
+- 17 fachliche Navigationsziele und die neue Reihenfolge,
+- zustandsneutralen Zählerinventar-DUMMY,
+- vollständige produktive Verbrauchserfassung unter `verbraeuche`,
+- korrekte aktive Navigationszustände,
+- identische Startseiten- und Navigationsicons,
+- Segoe-UI-Appschrift und unveränderte Arial-Briefdarstellung,
+- Hilfe-/Menüfunktionen im bestehenden Kopfbereich,
+- keine zusätzliche Hauptbereich-Tab-Leiste,
+- kleinere Fenstergrößen, PWA-App-Shell und fehlerfreie Browserkonsole.
+
+AP13-Dokumenttests bleiben Bestandteil des vollständigen Testlaufs. Maschinenlesbare Ergebnisse: `AP14_TEST_RESULTS.json`. Ausführlicher Bericht: `AP14_PRUEFBERICHT.md`.

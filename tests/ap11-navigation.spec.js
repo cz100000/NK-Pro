@@ -23,14 +23,14 @@ test("AP11-Navigation bildet Zielstruktur, Icons und Zustände vollständig ab",
 
   await expect(page.locator("nav.workflow-nav")).toHaveCount(1);
   await expect(page.locator(".workflow-nav > .nav-group")).toHaveCount(4);
-  await expect(page.locator(".workflow-nav .tab-btn[data-tab]")).toHaveCount(17);
+  await expect(page.locator(".workflow-nav .tab-btn[data-tab]")).toHaveCount(18);
   const uniqueTabs = await page.locator(".workflow-nav .tab-btn[data-tab]").evaluateAll(nodes => [...new Set(nodes.map(node => node.dataset.tab))]);
-  expect(uniqueTabs).toHaveLength(17);
+  expect(uniqueTabs).toHaveLength(18);
 
   const objectLabels = await page.locator('#nav-group-object > .nav-group-item .nav-item-label').allTextContents();
   expect(objectLabels.map(value => value.trim())).toEqual(["Objekt", "Wohnungen", "Zähler", "Mieter"]);
   const billingLabels = await page.locator('#nav-group-billing > .nav-group-item .nav-item-label').allTextContents();
-  expect(billingLabels.map(value => value.trim())).toEqual(["Abrechnungsübersicht", "Mieter & Wohnungen", "Miete & Vorauszahlungen", "Kosten erfassen", "Manuelle & externe Werte", "Verteilung", "Prüfung", "Neue Vorauszahlungen", "Briefe", "Export"]);
+  expect(billingLabels.map(value => value.trim())).toEqual(["Abrechnungsübersicht", "Mieter & Wohnungen", "Miete & Vorauszahlungen", "Kosten erfassen", "Manuelle & externe Werte", "Verbräuche erfassen", "Verteilung", "Prüfung", "Neue Vorauszahlungen", "Briefe", "Export"]);
   await expect(page.locator("#nav-group-billing .nav-subsection")).toHaveCount(0);
   await expect(page.locator("#nav-group-billing .nav-group-item--secondary")).toHaveCount(0);
 

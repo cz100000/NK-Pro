@@ -1,8 +1,5 @@
-# NK-Pro – Zustandszugriffe V99.4.16
+# NK-Pro – Zustandszugriffe V99.4.17
 
+AP14 verändert weder Root-State-Eigentum noch Persistenzpfade. `wasser` enthält ausschließlich statische Beispieldaten; Navigation und Tabellenfilter schreiben nicht in den Fachzustand. `verbraeuche` nutzt unverändert die bestehenden Zähler- und Abrechnungsdaten.
 
-AP13 ergänzt ausschließlich kompatible Brieftexteinstellungen. Berechnungs- und Root-State-Eigentum bleiben unverändert; der Renderer schreibt nicht in den Anwendungszustand.
-
-`state` ist die einzige fachliche Arbeitswahrheit. Root-Zustandsersetzung erfolgt ausschließlich durch `app-state-persistence.js`; `state-access.js` stellt kontrollierte Lese-, Commit- und Transaktionspfade bereit. `app.js` besitzt null direkte State-Referenzen und null direkte State-Schreibstellen.
-
-Renderer, Navigation und Dialogöffnung verändern keinen Fachzustand. Persistenz erfolgt ausschließlich in den vorgesehenen Persistenzpfaden. Einzelbesitz, Leser und Schreiber stehen in `AP12_ZUSTANDSINVENTAR.md`; alle statisch erkannten Mutationen in `AP12_MUTATIONSINVENTAR.md`.
+Root-Zustandsersetzung erfolgt ausschließlich durch `app-state-persistence.js`; `app.js` besitzt weiterhin keine direkten State-Zugriffe.

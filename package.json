@@ -2,7 +2,7 @@
   "name": "nk-pro-v99-4-17",
   "version": "99.4.17",
   "private": true,
-  "description": "AP13-Briefsteuerung, Schwarzweißdruck, Sticky-Vorschau und Startnavigation für NK-Pro V99.4.17",
+  "description": "AP14-Navigationsbereinigung und visuelles UI-System für NK-Pro V99.4.17",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
     "test:fixtures": "node tools/check-fixtures.cjs",
@@ -12,9 +12,10 @@
     "test:report": "playwright show-report",
     "test:release": "node tools/check-release-consistency.cjs",
     "test:metering": "node tests/metering-domain.test.cjs",
-    "test:architecture": "node tests/ap6-modularization.test.cjs && node tests/ap7-ui-integration.test.cjs && node tests/ap8-application-actions.test.cjs && node tests/ap9-core-orchestration.test.cjs && node tests/ap10-archive-year-quality-diagnostics.test.cjs && node tests/ap11-navigation.test.cjs && node tests/ap12-app-decoupling.test.cjs && node tests/ap13-letter-layout.test.cjs",
+    "test:architecture": "node tests/ap6-modularization.test.cjs && node tests/ap7-ui-integration.test.cjs && node tests/ap8-application-actions.test.cjs && node tests/ap9-core-orchestration.test.cjs && node tests/ap10-archive-year-quality-diagnostics.test.cjs && node tests/ap11-navigation.test.cjs && node tests/ap12-app-decoupling.test.cjs && node tests/ap13-letter-layout.test.cjs && node tests/ap14-ui-navigation.test.cjs",
     "test:visual": "playwright test --project=ap11-navigation --grep \"Visuelle AP11-Referenzen\" --workers=1",
-    "test:ap13": "node tests/ap13-letter-layout.test.cjs && playwright test --project=ap13-letter-layout --workers=1"
+    "test:ap13": "node tests/ap13-letter-layout.test.cjs && playwright test --project=ap13-letter-layout --workers=1",
+    "test:ap14": "node tests/ap14-ui-navigation.test.cjs && playwright test --project=ap14-ui-navigation --workers=1"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1"

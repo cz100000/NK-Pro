@@ -811,7 +811,7 @@
       if (!settings || settings.getAttribute("aria-disabled") !== "true" || settings.dataset.uiAction) throw new Error("Einstellungen-Dummy ist nicht korrekt deaktiviert");
       if (settings.dataset.navHint !== "Noch nicht verfügbar") throw new Error("Einstellungen-Hinweis fehlt");
       if (document.querySelectorAll(".workflow-nav").length !== 1) throw new Error("Parallele Navigation erkannt");
-      return "Start plus 4 Accordion-Gruppen, 16 fachliche Navigationsziele, lokales SVG-System, Einstellungen-Dummy und genau 2 Landingpage-Einstiege";
+      return "Start plus 4 Accordion-Gruppen, 17 fachliche Navigationsziele, lokales SVG-System, Einstellungen-Dummy und genau 2 Landingpage-Einstiege";
     });
   
     runCheck("Startseite", "Sicherungstab und Entschlackung", () => {

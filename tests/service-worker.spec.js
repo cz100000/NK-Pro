@@ -10,7 +10,7 @@ test("Service Worker installiert den V99.4.17-App-Shell und entfernt Alt-Caches"
   const result = await page.evaluate(async workerSource => {
     const listeners = {};
     const log = { added: [], deleted: [], skipWaiting: 0, claimed: 0 };
-    const cacheNames = new Set(["nk-pro-v99-2-7", "nk-pro-v99-3-0", "nk-pro-v99-4-0", "nk-pro-v99-4-1", "nk-pro-v99-4-2", "fremder-cache"]);
+    const cacheNames = new Set(["nk-pro-v99-2-7", "nk-pro-v99-3-0", "nk-pro-v99-4-0", "nk-pro-v99-4-1", "nk-pro-v99-4-2", "nk-pro-v99-4-17", "fremder-cache"]);
     const cacheApi = {
       async addAll(items) { log.added.push(...items); },
       async put() {}
@@ -67,6 +67,6 @@ test("Service Worker installiert den V99.4.17-App-Shell und entfernt Alt-Caches"
   ]));
   expect(result.log.skipWaiting).toBe(1);
   expect(result.log.claimed).toBe(1);
-  expect(result.remaining).toEqual(["nk-pro-v99-4-16"]);
-  expect(result.log.deleted).toEqual(expect.arrayContaining(["nk-pro-v99-2-7", "nk-pro-v99-4-0", "fremder-cache"]));
+  expect(result.remaining).toEqual(["nk-pro-v99-4-17-ap14"]);
+  expect(result.log.deleted).toEqual(expect.arrayContaining(["nk-pro-v99-2-7", "nk-pro-v99-4-0", "nk-pro-v99-4-17", "fremder-cache"]));
 });

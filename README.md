@@ -1,35 +1,32 @@
-# NK-Pro V99.4.17 – Brieflayout, Druckbild und Vorschaukonsistenz
+# NK-Pro V99.4.17 – Navigationsbereinigung und visuelles UI-System
 
-NK-Pro ist eine lokale, frameworkfreie HTML/CSS/JavaScript-PWA zur Erstellung, Prüfung, Archivierung und Ausgabe von Nebenkostenabrechnungen. V99.4.17 setzt AP13 um und vereinheitlicht Bildschirmvorschau, Druck und PDF auf ein gemeinsames DIN-A4-Dokumentmodell.
+NK-Pro ist eine lokale, frameworkfreie HTML/CSS/JavaScript-PWA zur Erstellung, Prüfung, Archivierung und Ausgabe von Nebenkostenabrechnungen. AP14 vereinheitlicht die normale Anwendungsoberfläche, trennt Zählerinventar und Verbrauchserfassung fachlich und erhält das AP13-Brief- und Drucksystem unverändert.
 
 ## Verbindlicher Stand
 
 | Merkmal | Stand |
 |---|---|
 | App-Version | V99.4.17 |
-| Ausgangsversion | V99.4.13 |
-| Versionsname | Brieflayout, Druckbild und Vorschaukonsistenz |
+| Technische Grundlage | Abschlussstand AP13, ebenfalls V99.4.17 |
+| Versionsname | AP14-Navigationsbereinigung und visuelles UI-System |
 | Datenschema / Datenebenenvertrag | 5 / 1, unverändert |
 | Objektstandard / Abrechnungssnapshot | 1 / 2, unverändert |
 | Zählerstandards | 1, unverändert |
-| Dokumentlayout | AP13-Version 1; gemeinsames HTML/CSS für Vorschau, Druck und PDF |
-| Seitenformat | DIN A4, feste 210 × 297 mm |
-| Seitenlogik | 1 Seite standardmäßig; Seite 2 nur bei Zusatzhinweis und/oder Vorauszahlungsanpassung |
-| Navigation | AP11-Grundsystem mit vier Gruppen und 16 Zielen; Abrechnungsgruppe ohne Untergruppe |
-| `app.js` | 225 Zeilen; Start, Verdrahtung und Orchestrierung |
-| PWA-Cache | `nk-pro-v99-4-16` |
+| Navigation | vier Gruppen, 17 fachliche Ziele und eigener Start-Link |
+| App-Typografie | `"Segoe UI", Arial, sans-serif` |
+| Brief-/Drucktypografie | Arial; vom App-System getrennt |
+| PWA-Cache | `nk-pro-v99-4-17-ap14` |
 | Technik | statisches HTML, CSS und JavaScript; kein Framework, TypeScript oder Buildsystem |
 
-## AP13-Kernergebnis
+## AP14-Kernergebnis
 
-- vollständiges Briefdesign nach den finalen Ein- und Zweiseitenreferenzen,
-- neunspaltige Haupttabelle mit Vorauszahlungen und vollständigen Trennlinien,
-- kein separater Vorauszahlungs- oder Abrechnungsergebnisblock,
-- identischer Kopf und Informationsblock auf Seite 2,
-- Gruß-/Unterschriftenblock genau einmal am Dokumentende,
-- variable Standardtexte weiterhin bearbeitbar,
-- skalierte vollständige A4-Vorschau ohne alternatives Umbruchmodell,
-- ein- und zweiseitige Kontroll-PDFs im Projektstamm.
+- dunkle Navigation, heller Arbeitsbereich und Blau als appweite Akzentfarbe,
+- einheitliche Buttons, Links, Felder, Fokuszustände, Karten, Tabellen und Filterflächen,
+- bestehender Kopfbereich mit sichtbaren Funktionen **Hilfe** und **Menü** samt lokalen SVG-Icons,
+- `Projekt vorbereiten → Zähler` als deutlich gekennzeichneter, rein statischer Zählerinventar-DUMMY,
+- vollständige bisherige Verbrauchserfassung unter `Nebenkosten abrechnen → Verbräuche erfassen`, direkt nach `Manuelle & externe Werte`,
+- identische SVG-Motive für Startseitenkacheln und korrespondierende Navigationsgruppen,
+- keine neuen Hauptbereich-Tabs, keine neue Persistenz und keine Änderung an Brief, Druck oder PDF.
 
 ## Start und Tests
 
@@ -45,11 +42,10 @@ npm run test:release
 CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:browser -- --workers=4
 ```
 
-Nur AP13 prüfen beziehungsweise Kontrollausgaben neu erzeugen:
+AP14 gezielt prüfen:
 
 ```bash
-CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:ap13
-CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium node tools/generate-ap13-controls.cjs
+CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:ap14
 ```
 
-Technische Details: `AP13_BRIEFLAYOUT_DRUCKBILD_VORSCHAUKONSISTENZ.md`. Prüfergebnisse: `AP13_PRUEFBERICHT.md` und `AP13_TEST_RESULTS.json`.
+Technische Details: `AP14_NAVIGATIONSBEREINIGUNG_UND_VISUELLES_UI_SYSTEM.md`. Prüfergebnisse: `AP14_PRUEFBERICHT.md` und `AP14_TEST_RESULTS.json`.

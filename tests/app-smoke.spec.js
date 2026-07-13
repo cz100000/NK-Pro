@@ -19,7 +19,7 @@ test("Start, Version, Seitenstruktur und interne Audits sind fehlerfrei", async 
   const runtime = attachRuntimeGuards(page);
   await openFreshApp(page);
 
-  await expect(page).toHaveTitle("NK-Pro V99.4.17 – AP13-Briefsteuerung, Schwarzweißdruck und Startnavigation");
+  await expect(page).toHaveTitle("NK-Pro V99.4.17 – AP14-Navigationsbereinigung und visuelles UI-System");
   const result = await page.evaluate(() => {
     const release = window.NKProDiagnostics.releaseAuditReport();
     const selfReport = window.NKProDiagnostics.appSelfTestReport();
@@ -44,11 +44,11 @@ test("Start, Version, Seitenstruktur und interne Audits sind fehlerfrei", async 
   });
 
   expect(result.version).toBe("V99.4.17");
-  expect(result.versionName).toBe("AP13-Briefsteuerung, Schwarzweißdruck und Startnavigation");
+  expect(result.versionName).toBe("AP14-Navigationsbereinigung und visuelles UI-System");
   expect(result.schema).toBe(5);
   expect(result.activeTab).toBe("landing");
   expect(result.structure.allPassed).toBe(true);
-  expect(result.structure.tabCount).toBe(16);
+  expect(result.structure.tabCount).toBe(17);
   expect(result.release.errors).toBe(0);
   expect(result.release.warnings).toBe(0);
   expect(result.release.ok).toBeGreaterThanOrEqual(28);
@@ -71,7 +71,7 @@ test("Landingpage besitzt genau zwei Arbeitswege", async ({ page }) => {
 
   await choices.nth(0).click();
   await expect(page.locator("#objekt")).toHaveClass(/active/);
-  await page.locator('[data-ui-action="navigation.showLanding"]').click();
+  await page.locator(".sidebar-brand-home").click();
   await expect(page.locator("#landing")).toHaveClass(/active/);
   await choices.nth(1).click();
   await expect(page.locator("#start")).toHaveClass(/active/);
@@ -107,7 +107,7 @@ test("Jeder Navigationspunkt öffnet genau seinen Tab", async ({ page }) => {
   const runtime = attachRuntimeGuards(page);
   await openFreshApp(page);
 
-  const nonBillingTabs = ["objekt", "wohnungsverwaltung", "mieterverwaltung", "start", "archiv", "sicherung"];
+  const nonBillingTabs = ["objekt", "wohnungsverwaltung", "wasser", "mieterverwaltung", "start", "archiv", "sicherung"];
   for (const tabId of nonBillingTabs) {
     await page.evaluate(id => switchToTab(id), tabId);
     await expect(page.locator(`#${tabId}`)).toHaveClass(/active/);
@@ -116,7 +116,7 @@ test("Jeder Navigationspunkt öffnet genau seinen Tab", async ({ page }) => {
   }
 
   await createActiveBilling(page);
-  const billingTabs = ["mieter", "einstellungen", "einnahmen", "wasser", "manuellewerte", "umlage", "vorauszahlungsanpassung", "qualitaet", "briefe", "export"];
+  const billingTabs = ["mieter", "einstellungen", "einnahmen", "manuellewerte", "verbraeuche", "umlage", "vorauszahlungsanpassung", "qualitaet", "briefe", "export"];
   for (const tabId of billingTabs) {
     await page.evaluate(id => switchToTab(id), tabId);
     await expect(page.locator(`#${tabId}`)).toHaveClass(/active/);
@@ -187,7 +187,7 @@ test("Manifest und PWA-Version stimmen mit der Anwendung überein", async () => 
   const worker = fs.readFileSync(path.join(root, "service-worker.js"), "utf8");
   expect(manifest.version).toBe("99.4.17");
   expect(manifest.name).toContain("V99.4.17");
-  expect(worker).toContain('const CACHE_NAME = "nk-pro-v99-4-16";');
+  expect(worker).toContain('const CACHE_NAME = "nk-pro-v99-4-17-ap14";');
   expect(worker).toContain('"./index.html"');
   expect(worker).toContain('"./manifest.webmanifest"');
 });
@@ -222,8 +222,8 @@ test("Navigation ist entschlackt und K002 bleibt ausschließlich bei den Zähler
   await createActiveBilling(page);
   await page.evaluate(() => enterBillingMode("manuellewerte"));
   await expect(page.locator("#manualExternalValuesTable tbody")).not.toContainText("K002");
-  await page.evaluate(() => switchToTab("wasser"));
-  await expect(page.locator("#wasser")).toHaveClass(/active/);
+  await page.evaluate(() => switchToTab("verbraeuche"));
+  await expect(page.locator("#verbraeuche")).toHaveClass(/active/);
   const mode = await page.evaluate(() => manualInputModeForCost(state.kostenarten.find(k => k.id === "K002")));
   expect(mode).toBe("Zählerstände");
   runtime.assertClean();

@@ -1,7 +1,7 @@
 {
   "name": "NK-Pro V99.4.17",
   "short_name": "NK-Pro V99.4.17",
-  "description": "Lokale Nebenkostenabrechnung mit isolierter, druckidentischer DIN-A4-Briefvorschau.",
+  "description": "Lokale Nebenkostenabrechnung mit bereinigter Navigation, einheitlichem UI-System und isolierter DIN-A4-Briefdarstellung.",
   "lang": "de-DE",
   "id": "./",
   "start_url": "./",

@@ -492,7 +492,7 @@ function renderWaterMeters() {
   const houseVsTenant = waterDifferenceState(houseWaterTotal, tenantWaterTotal > 0 ? tenantWaterTotal : null, { invalid:houseResult.invalid, percentBase:"left" });
   const meterStatus = currentMeterEndBlankStatus();
 
-  if (typeof renderOverviewForTab === "function") renderOverviewForTab("wasser");
+  if (typeof renderOverviewForTab === "function") renderOverviewForTab("verbraeuche");
 
   settingsEl.innerHTML =
     '<label class="house-meter-field"><span>Hauszählerstand Beginn</span><input class="number" value="' + escapeHtml(settings.houseMeterStart ?? "") + '" ' + uiActionAttributes("meter.setWaterSetting", ["houseMeterStart","$value"], "change") + '></label>' +

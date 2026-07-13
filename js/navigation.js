@@ -8,7 +8,7 @@
   const TAB_PATHS = {
     objekt:"group-object", mieterverwaltung:"group-object", wohnungsverwaltung:"group-object", wasser:"group-object",
     start:"group-billing", mieter:"group-billing", einstellungen:"group-billing", einnahmen:"group-billing",
-    manuellewerte:"group-billing", umlage:"group-billing",
+    manuellewerte:"group-billing", verbraeuche:"group-billing", umlage:"group-billing",
     vorauszahlungsanpassung:"group-billing", qualitaet:"group-billing", briefe:"group-billing", export:"group-billing",
     archiv:"group-archive", sicherung:"group-extras"
   };
@@ -121,6 +121,38 @@
       if (control) control.addEventListener("click", function () { setSidebarCollapsed(true); });
     });
   }
+  function closeWorkspaceHeaderPanels(exceptId) {
+    document.querySelectorAll(".workspace-header-panel").forEach(function (panel) {
+      if (panel.id === exceptId) return;
+      panel.hidden = true;
+      const trigger = document.querySelector('[data-header-panel-target="' + panel.id + '"]');
+      if (trigger) trigger.setAttribute("aria-expanded", "false");
+    });
+  }
+  function initializeWorkspaceHeaderControls() {
+    document.querySelectorAll("[data-header-panel-target]").forEach(function (trigger) {
+      trigger.addEventListener("click", function (event) {
+        event.stopPropagation();
+        const panel = document.getElementById(trigger.dataset.headerPanelTarget || "");
+        if (!panel) return;
+        const willOpen = panel.hidden;
+        closeWorkspaceHeaderPanels(willOpen ? panel.id : null);
+        panel.hidden = !willOpen;
+        trigger.setAttribute("aria-expanded", willOpen ? "true" : "false");
+      });
+    });
+    document.querySelectorAll(".workspace-header-panel").forEach(function (panel) {
+      panel.addEventListener("click", function (event) {
+        if (event.target.closest("button[data-ui-action]")) closeWorkspaceHeaderPanels();
+      });
+    });
+    document.addEventListener("click", function (event) {
+      if (!event.target.closest(".workspace-action-menu")) closeWorkspaceHeaderPanels();
+    });
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") closeWorkspaceHeaderPanels();
+    });
+  }
   function initializeWorkflowNavigation() {
     if (initialized) return;
     initialized = true;
@@ -132,6 +164,7 @@
     if (active) ensureNavigationPath(active.id, {persist:false});
     updateWorkflowNavigationContext();
     initializeSidebarCollapse();
+    initializeWorkspaceHeaderControls();
     const toggle = document.getElementById("sidebarToggle");
     if (toggle) toggle.addEventListener("click", function () {
       if (document.body.classList.contains("sidebar-collapsed")) {

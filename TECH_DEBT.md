@@ -1,21 +1,11 @@
 # NK-Pro – Technische Restpunkte V99.4.17
 
+## In AP14 bewusst verbleibend
 
-AP13 beseitigt die parallelen Vorschau-/Drucklayouts. Verbleibend ist nur die externe Abhängigkeit von den Einstellungen des konkreten Browser-Druckdialogs beziehungsweise Druckertreibers.
+1. Das Zählerinventar ist ausschließlich ein statischer Clickdummy; Datenhaltung und Fachlogik benötigen ein eigenes Folgepaket.
+2. Der sichtbare Tabellenfilter des DUMMY arbeitet nur im DOM und speichert nichts.
+3. Reale Druckergebnisse hängen weiterhin vom Browser-Druckdialog und Druckertreiber ab.
+4. 75 Classic-Script-Kompatibilitätswrapper und globale Modulnamensräume bleiben begründet bestehen.
+5. Eine Umstellung auf native ES-Module oder ein Buildsystem ist nicht Bestandteil von AP14.
 
-## In AP12 erledigt
-
-- `app.js` von 6.294 auf 225 Zeilen reduziert.
-- Root-State-Ersetzungen von zehn auf eine Eigentümerfunktion reduziert.
-- direkte Schreibstellen in `app.js` von 96 auf null reduziert.
-- neun Render-Vorbereitungsnebenwirkungen entfernt; 46 Renderer sind seiteneffektfrei.
-- vier alte Einzel-Globals entfernt.
-- 37 ungenutzte Kompatibilitätswrapper entfernt.
-
-## Begründet verbleibend
-
-1. 75 Classic-Script-Kompatibilitätswrapper; zentral registriert und regressiv geprüft.
-2. Eingefrorene globale Modulnamensräume, solange kein Buildsystem eingeführt werden darf.
-3. Direkte Eigenschaftsmutationen innerhalb dokumentierter Owner-/Aktionsmodule; weitere Reduktion nur fachlich paketweise.
-4. Brief-, Druck- und Vorschaugestaltung ist inhaltlich unverändert und bleibt AP13.
-5. Vollständige Umstellung auf native ES-Module wäre ein eigenes Architekturpaket und ist nicht Bestandteil der aktuellen Grenzen.
+AP14 hat keine neue technische Abhängigkeit oder Datenschemaänderung eingeführt.

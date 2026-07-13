@@ -1,4 +1,16 @@
-# Changelog
+# Änderungsprotokoll
+
+## V99.4.17 – AP14-Navigationsbereinigung und visuelles UI-System (13.07.2026)
+
+- normale App-Oberfläche zentral auf `"Segoe UI", Arial, sans-serif` und ein konsistentes Blau-/Grausystem umgestellt; Brief/Druck/PDF bleiben Arial-isoliert,
+- bestehenden Kopfbereich um Hilfe und Menü mit lokalen SVG-Icons und Text ergänzt,
+- `Projekt vorbereiten → Zähler` in einen rein statischen, deutlich markierten Zählerinventar-DUMMY umgewandelt,
+- produktive Verbrauchserfassung vollständig und ohne Datenlogikänderung nach `Nebenkosten abrechnen → Verbräuche erfassen` verschoben,
+- neuen Navigationspunkt direkt unter `Manuelle & externe Werte` einsortiert und aktive Zustände angepasst,
+- Startseitenkacheln auf exakt dieselben SVG-Motive wie die korrespondierenden Navigationsgruppen vereinheitlicht,
+- zentrale Zustände für Buttons, Links, Fokus, Felder, Karten, Tabellen, Filter und deaktivierte Elemente ergänzt,
+- AP14-Struktur-, Browser-, Responsivitäts-, PWA- und Releaseprüfungen ergänzt; veraltete Cache-Erwartung in AP12-Kontrolltests korrigiert.
+- PWA-Cache auf `nk-pro-v99-4-17-ap14` gesetzt, damit installierte AP13-Stände trotz identischer sichtbarer Versionsnummer sicher aktualisiert werden.
 
 ## V99.4.17 – AP13-Briefsteuerung, Schwarzweißdruck und Startnavigation
 

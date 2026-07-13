@@ -1,8 +1,5 @@
-# NK-Pro – Kompatibilitätsschicht V99.4.16
+# NK-Pro – Kompatibilitätsschicht V99.4.17
 
+AP14 ergänzt keinen Kompatibilitätswrapper. Das neue Seitenziel `verbraeuche` wird über die bestehende Navigation und den vorhandenen Verbrauchsrenderer erreicht. Die Schicht bleibt bei genau 75 bekannten Übergangsnamen.
 
-AP13 erhält die vorhandenen Dokumentweiterleitungen. Die Implementierung liegt im Dokumentrenderer; es wurde kein zweiter Renderer in der Kompatibilitätsschicht ergänzt.
-
-Die Schicht ist explizit statt pauschal. `app.js` registriert genau 75 bekannte Namen aus Berechnung, Dokumentdaten, Dokumentrenderer, Export, Tabellen und Archiv. 37 nicht mehr aufgerufene Weiterleitungen wurden entfernt. Die Registry exportiert keine neuen Modulmethoden automatisch.
-
-Vollständige Namen und Begründung: `AP12_LEGACY_KOMPATIBILITAET.md`. Die Schicht bleibt technische Altlast der no-build Classic-Script-Architektur und soll in späteren, fachlich passenden Paketen weiter reduziert werden.
+Vollständige Namen und Begründung: `AP12_LEGACY_KOMPATIBILITAET.md`.

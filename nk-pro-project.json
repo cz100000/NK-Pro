@@ -1,11 +1,11 @@
 {
   "appVersion": "99.4.17",
   "displayVersion": "V99.4.17",
-  "versionName": "AP13-Briefsteuerung, Schwarzweißdruck und Startnavigation",
+  "versionName": "AP14-Navigationsbereinigung und visuelles UI-System",
   "schemaVersion": 5,
   "dataLayerContractVersion": 1,
   "snapshotScope": "billingSnapshot",
-  "basedOn": "99.4.16",
+  "basedOn": "99.4.17-AP13",
   "releaseDate": "2026-07-13",
   "runtime": [
     "HTML",
@@ -26,9 +26,12 @@
   "compatibilityLayerVersion": 3,
   "uiControllerVersion": 1,
   "uiEventContractVersion": 1,
-  "navigationDesignSystemVersion": 2,
+  "navigationDesignSystemVersion": 3,
   "appOrchestrationVersion": 1,
   "stateOwnershipVersion": 1,
   "runtimeDiagnosticsVersion": 1,
-  "documentLayoutVersion": 4
+  "documentLayoutVersion": 4,
+  "uiVisualSystemVersion": 1,
+  "meterInventoryDummyVersion": 1,
+  "pwaCacheName": "nk-pro-v99-4-17-ap14"
 }
