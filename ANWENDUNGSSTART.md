@@ -1,4 +1,4 @@
-# NK-Pro – Anwendungsstart V99.4.16
+# NK-Pro – Anwendungsstart V99.4.17
 
 
 AP13 verändert die deterministische Startreihenfolge nicht. Das Dokumentlayout wird über die bereits registrierten Module geladen; es gibt keinen zusätzlichen Startpfad.

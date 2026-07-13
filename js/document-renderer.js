@@ -64,7 +64,7 @@
 .nk-letter-document .letter-address{padding-top:1.7mm;color:${AP13_TEXT};font-size:9pt;line-height:1.22;white-space:normal}
 .nk-letter-document .letter-main-content{position:absolute;top:96mm;left:19mm;right:19mm;bottom:20mm;display:flex;min-height:0;flex-direction:column;padding:0}
 .nk-letter-document .letter-title{display:block;margin:0 0 6.25mm;color:${AP13_DARK_BLUE};font-size:13pt;line-height:1.08;font-weight:700;letter-spacing:-.08pt}
-.nk-letter-document .letter-salutation{margin:0 0 8mm;font-size:10pt;line-height:1.2}
+.nk-letter-document .letter-salutation{margin:0 0 4.8mm;font-size:10pt;line-height:1.2}
 .nk-letter-document .letter-intro{margin:0 0 6mm;font-size:10pt;line-height:1.32}
 .nk-letter-document .letter-intro strong{font-weight:700}
 .nk-letter-document .result-strip{display:grid;grid-template-columns:repeat(3,1fr);height:18mm;margin:0 0 6mm;border-top:.3mm solid ${AP13_LINE};border-bottom:.3mm solid ${AP13_LINE}}
@@ -144,6 +144,19 @@
 .nk-letter-document .supplement-closing-text{margin:0 0 8mm;font-size:9pt;line-height:1.3}
 .nk-letter-document .supplement-end{margin-top:8mm}
 .nk-letter-document .supplement-end .document-end{margin-top:0;padding-top:3.5mm}
+.nk-letter-document .continuation-hint{position:absolute;right:19mm;bottom:13mm;color:${AP13_MUTED};font-size:6.8pt;line-height:1;font-weight:400}
+.nk-letter-document.is-monochrome{color:#202020}
+.nk-letter-document.is-monochrome .letter-header{border-bottom-color:#444}
+.nk-letter-document.is-monochrome .letter-brand-owner,.nk-letter-document.is-monochrome .detail-heading,.nk-letter-document.is-monochrome .supplement-heading,.nk-letter-document.is-monochrome .notice-title,.nk-letter-document.is-monochrome .payment-notice-title,.nk-letter-document.is-monochrome .attachment-title{color:#222}
+.nk-letter-document.is-monochrome .letter-brand-separator,.nk-letter-document.is-monochrome .letter-brand-role,.nk-letter-document.is-monochrome .letter-contact,.nk-letter-document.is-monochrome .letter-return-address,.nk-letter-document.is-monochrome .letter-footer,.nk-letter-document.is-monochrome .attachment,.nk-letter-document.is-monochrome .signature-role,.nk-letter-document.is-monochrome .continuation-hint{color:#555}
+.nk-letter-document.is-monochrome .letter-info th,.nk-letter-document.is-monochrome .result-cell,.nk-letter-document.is-monochrome .notice-box,.nk-letter-document.is-monochrome .additional-note-box,.nk-letter-document.is-monochrome .payment-notice{background:#f0f0f0;color:#333}
+.nk-letter-document.is-monochrome .abrechnung-table thead th,.nk-letter-document.is-monochrome .prepay-table thead th{background:#3a3a3a;color:#fff;border-color:#fff}
+.nk-letter-document.is-monochrome .table-total-row td,.nk-letter-document.is-monochrome .prepay-table .prepay-summary td,.nk-letter-document.is-monochrome .prepay-table .prepay-final td{background:#d9d9d9;border-color:#555}
+.nk-letter-document.is-monochrome .prepay-table .prepay-rent td,.nk-letter-document.is-monochrome .abrechnung-table tbody tr:nth-child(even):not(.table-total-row):not(.table-correction-row) td,.nk-letter-document.is-monochrome .prepay-table tbody tr:nth-child(even):not(.prepay-summary):not(.prepay-final) td{background:#f2f2f2}
+.nk-letter-document.is-monochrome .result-cell--final.is-due{background:repeating-linear-gradient(135deg,#d7d7d7 0,#d7d7d7 1.5mm,#eeeeee 1.5mm,#eeeeee 3mm);box-shadow:inset 0 0 0 .35mm #555}
+.nk-letter-document.is-monochrome .result-cell--final.is-credit{background:#f7f7f7;box-shadow:inset 0 0 0 .35mm #777}
+.nk-letter-document.is-monochrome .result-cell--final.is-due .result-value,.nk-letter-document.is-monochrome .result-cell--final.is-credit .result-value,.nk-letter-document.is-monochrome .table-total-row .balance-due{color:#111}
+.nk-letter-document.is-monochrome .notice-box,.nk-letter-document.is-monochrome .additional-note-box,.nk-letter-document.is-monochrome .payment-notice{border-left-color:#444}
 .nk-letter-document table,.nk-letter-document tr,.nk-letter-document .document-end,.nk-letter-document .letter-footer{page-break-inside:avoid;break-inside:avoid}
 @media print{html,body{width:210mm;margin:0!important;padding:0!important;background:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.nk-letter-document{margin:0!important}.nk-letter-document .letter-sheet{margin:0!important;border:0!important;box-shadow:none!important}}
 `;
@@ -385,8 +398,8 @@
   function prepaymentSectionHtml(costRows, tenant) {
     ensureBriefSettings();
     const settings = state.briefSettings;
+    if (!prepaymentAdjustmentRequired(costRows, tenant)) return "";
     const rows = prepaymentRowsForDocument(costRows, tenant);
-    if (!rows.some(row => Math.abs(num(row.change)) >= 0.01)) return "";
     const effectiveDate = typeof effectivePrepaymentDateLabel === "function" ? effectivePrepaymentDateLabel() : String(settings.vorauszahlungAb || "");
     const sumNew = rows.reduce((sum, row) => sum + num(row.newMonthly), 0);
     const coldRent = num(tenant && tenant.kaltSoll) / 12;
@@ -427,6 +440,7 @@
       (String(settings.heizkostenFussnote || "").trim() ? '<div class="notice-box"><span class="notice-title">Hinweise</span>' + briefProseHtml(settings.heizkostenFussnote) + '</div>' : '') +
       (paymentText.trim() ? '<p class="payment-text">' + briefProseHtml(paymentText) + '</p>' : '') +
       (pageCount === 1 ? documentEndHtml(settings, false) : '') + '</main>' +
+      (pageCount > 1 ? '<div class="continuation-hint">Weiter auf Seite 2</div>' : '') +
       briefFooterHtml(settings, 1, pageCount) + '</section>';
   }
 
@@ -475,7 +489,8 @@
     const pageCount = hasSupplement ? 2 : 1;
     const pages = mainPageHtml(settings, tenant, year, costRows, result, correction, settlement, pageCount) +
       (hasSupplement ? supplementPageHtml(settings, tenant, costRows, additionalText, pageCount) : "");
-    return '<style data-nk-letter-styles>' + documentStyleText() + '</style><div class="nk-letter-document" data-document-pages="' + pageCount + '">' + pages + '</div>';
+    const monochrome = settings.schwarzweissOptimiert === "Ja";
+    return '<style data-nk-letter-styles>' + documentStyleText() + '</style><div class="nk-letter-document' + (monochrome ? ' is-monochrome' : '') + '" data-print-mode="' + (monochrome ? 'monochrome' : 'color') + '" data-document-pages="' + pageCount + '">' + pages + '</div>';
   }
 
   function plainLetterTextFromHtml(htmlText) {

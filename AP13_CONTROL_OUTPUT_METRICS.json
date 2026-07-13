@@ -35,5 +35,28 @@
         "expectedA4": true
       }
     ]
+  },
+  "monochrome": {
+    "pages": 2,
+    "metrics": [
+      {
+        "page": 1,
+        "contentClientHeight": 684,
+        "contentScrollHeight": 684,
+        "contentBeforeFooter": true,
+        "sheetWidth": 793.69,
+        "sheetHeight": 1122.52,
+        "expectedA4": true
+      },
+      {
+        "page": 2,
+        "contentClientHeight": 862,
+        "contentScrollHeight": 862,
+        "contentBeforeFooter": true,
+        "sheetWidth": 793.69,
+        "sheetHeight": 1122.52,
+        "expectedA4": true
+      }
+    ]
   }
 }

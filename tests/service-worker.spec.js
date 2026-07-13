@@ -5,7 +5,7 @@ const path = require("node:path");
 const { test, expect } = require("@playwright/test");
 const { root } = require("./test-helpers.cjs");
 
-test("Service Worker installiert den V99.4.16-App-Shell und entfernt Alt-Caches", async ({ page }) => {
+test("Service Worker installiert den V99.4.17-App-Shell und entfernt Alt-Caches", async ({ page }) => {
   const source = fs.readFileSync(path.join(root, "service-worker.js"), "utf8");
   const result = await page.evaluate(async workerSource => {
     const listeners = {};

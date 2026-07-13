@@ -63,8 +63,9 @@
     const home = document.querySelector(".sidebar-brand-home");
     if (home) {
       const landing = tabId === "landing";
+      const dedicatedStart = document.querySelector('.nav-start-link[data-tab="landing"]');
       home.classList.toggle("active", landing);
-      if (landing) home.setAttribute("aria-current", "page");
+      if (landing && !dedicatedStart) home.setAttribute("aria-current", "page");
       else home.removeAttribute("aria-current");
     }
     const active = document.querySelector('.tab-btn[data-tab="' + tabId + '"]');

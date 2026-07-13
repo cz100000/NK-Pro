@@ -1,4 +1,4 @@
-# NK-Pro – Roadmap ab V99.4.16
+# NK-Pro – Roadmap ab V99.4.17
 
 ## Abgeschlossen
 
@@ -8,8 +8,8 @@
 
 ## Aktueller Stand
 
-V99.4.16 verwendet für Vorschau, Druck und PDF dasselbe vollständige DIN-A4-Dokumentmodell. Ein- und Zweiseitenlogik, Haupttabelle, Vorauszahlungsanpassung, variable Texte und Abschlussblock sind gemäß den finalen AP13-Referenzen umgesetzt und geprüft.
+V99.4.17 verwendet für Vorschau, Druck und PDF dasselbe vollständige DIN-A4-Dokumentmodell. Ein- und Zweiseitenlogik, Haupttabelle, Vorauszahlungsanpassung, variable Texte und Abschlussblock sind gemäß den finalen AP13-Referenzen umgesetzt und geprüft.
 
 ## Nächstes Arbeitspaket
 
-Noch nicht festgelegt. Ein Folgepaket ist erst nach produktiver Sichtprüfung der V99.4.16 und einer neuen verbindlichen Zieldefinition zu benennen.
+Noch nicht festgelegt. Ein Folgepaket ist erst nach produktiver Sichtprüfung der V99.4.17 und einer neuen verbindlichen Zieldefinition zu benennen.

@@ -1,71 +1,30 @@
-# AP13 – Test- und Prüfbericht
+# NK-Pro V99.4.17 – Prüfbericht
 
-**Version:** V99.4.16  
-**Datum:** 13. Juli 2026  
-**Gesamtergebnis:** bestanden, mit einer transparenten externen Druckereinschränkung
+## Ergebnis
 
-## Nachprüfung der V99.4.16-Korrekturen
+Die Korrekturpunkte 21 bis 26 sind umgesetzt. Vorschau, PDF und Druck verwenden weiterhin dasselbe AP13-Dokumentmodell.
 
-Die acht zusätzlich abgestimmten Korrekturpunkte 13 bis 20 wurden in statischen und browsergestützten Prüfungen abgesichert. Zusätzlich wurden die ein- und zweiseitigen Kontrollausgaben neu erzeugt, als PNG gerendert und visuell auf Zentrierung, Abstände, Spaltenbreiten, Farbzustände und Seite-2-Aufbau geprüft.
+## Geprüft
 
-## Automatisierte AP13-Prüfungen
+- Vorauszahlungsanpassung bei aktivem und deaktiviertem Schalter
+- Ein- und Zweiseitenlogik einschließlich „Weiter auf Seite 2“
+- Farb- und Schwarzweißmodus in Vorschau und Druckquelle
+- Sticky-Vorschau bei breiten Ansichten und Rückfall auf normalen Fluss unter 1100 px
+- Startnavigation, aktiver Zustand, Home-Icon und Trennlinie
+- Standard-, erweiterte und schwarzweißoptimierte A4-Kontrollausgabe ohne DOM-Überlauf
+- Syntax-, Referenzfall-, Zähler-, Architektur-, PWA- und Release-Konsistenzprüfungen
 
-| Prüfung | Ergebnis |
-|---|---|
-| Statische AP13-Strukturprüfung | bestanden |
-| Gemeinsames HTML/CSS in Vorschau und Druckfenster | bestanden |
-| DIN-A4-Seitenmaß 210 × 297 mm | bestanden |
-| Neun Spalten und vollständige Tabellenlinien | bestanden |
-| Zahlungstext und Brieftext mit identischer Schriftgröße | bestanden |
-| Explizite Ein-/Zweiseitenlogik | bestanden |
-| Abschlussblock genau einmal am Dokumentende | bestanden |
-| Vorauszahlungsanpassung in gleicher Tabellenvisualisierung | bestanden |
-| Nachzahlung/Guthaben mit unveränderter Vorzeichenlogik | bestanden |
-| Lange Empfängerdaten und lange Zusatztexte ohne Überlauf | bestanden |
-| Skalierte Vorschau bei schmalem Viewport | bestanden |
-| Kontroll-PDF Standard | 1 DIN-A4-Seite |
-| Kontroll-PDF erweitert | 2 DIN-A4-Seiten |
+## Testergebnis
 
-## Abnahmekriterien aus der Gestaltungsspezifikation
+- 13 Browserprojekte bestanden
+- 60 produktive Browsertests bestanden
+- 1 optionaler AP11-Bildaufnahmefall bestimmungsgemäß übersprungen
+- 8/8 AP13-Brief- und Bedienfälle bestanden
+- 211 Release-Dateien in der Prüfsummenliste
+- Standard-PDF: 1 A4-Seite
+- Erweiterte PDF: 2 A4-Seiten
+- Schwarzweiß-PDF: 2 A4-Seiten
 
-| Nr. | Testfall | Prüfmethode | Ergebnis |
-|---:|---|---|---|
-| 1 | Einseitige Abrechnung mit Nachzahlung | Browserfall mit synthetisch angepasstem Ergebnis bei unveränderter Berechnungslogik | bestanden |
-| 2 | Einseitige Abrechnung mit Guthaben | Standardfixture und Browserassertion | bestanden |
-| 3 | Einseitig ohne optionalen Hinweis | Seitenbedingung und Kontroll-PDF | bestanden |
-| 4 | Zweiseitig nur mit Zusatzhinweis | Browserassertion | bestanden |
-| 5 | Zweiseitig nur mit Vorauszahlungsanpassung | Browserassertion | bestanden |
-| 6 | Zweiseitig mit beiden Zusatzblöcken | Kontroll-PDF und Langtextfall | bestanden |
-| 7 | Langer Name und lange Anschrift | Browserfall mit erweitertem Empfänger | bestanden |
-| 8 | Mehrere/lange Kostenarten | umfangreiche Eingabequellen-Fixture und Tabellenüberlaufprüfung | bestanden |
-| 9 | Lange variable Standardtexte | Browserfall mit mehreren Absätzen | bestanden |
-| 10 | Verschiedene Bildschirmgrößen | Viewport- und Skalierungsprüfung | bestanden |
-| 11 | PDF-Ausgabe | Chromium-PDF, A4-Seitenformat und Textinhalt geprüft | bestanden |
-| 12 | Physischer Druck beziehungsweise Druckvorschau | Chromium-Druckmedium und Druck-DOM geprüft | Druckvorschau bestanden; kein physischer Drucker im Prüfsystem verfügbar |
-| 13 | Farbdruck | farbige PDF-Renderings und Referenzabgleich | bestanden |
-| 14 | Graustufendruck | Graustufenrendering auf Kontrast und Informationsverständlichkeit geprüft | bestanden |
-| 15 | Sichtfenster-Anschriftenfeld | physische CSS-Position und Langadressfall geprüft | bestanden |
+## Einschränkung
 
-## Visueller Abgleich
-
-Die ein- und zweiseitigen Kontrollausgaben wurden als PDF erzeugt, erneut gerendert und mit den finalen Referenz-PDFs verglichen. Geprüft wurden insbesondere:
-
-- Briefkopf, Trennlinie und Informationsblock,
-- Anschriftenfenster und Rücksendezeile,
-- obere Begrenzung der Informationsbox sowie Titel-, Anrede- und Textabstände,
-- Ergebnisleiste,
-- Tabellenbreiten, Spaltenreihenfolge, Linien, zentrierte Gesamtkostenspalte und Summenzeile,
-- Hinweisbox und Zahlungstext,
-- wiederholter Kopf auf Seite 2,
-- Vorauszahlungsanpassung,
-- isolierte, druckidentische Vorschau sowie Abschlussblock, Anlagenhinweis und Fußzeilen.
-
-Erkennbare strukturelle Abweichungen aus dem Altstand wurden beseitigt. Inhalte und Beträge der Kontrollausgaben stammen aus den NK-Pro-Testdaten und müssen deshalb nicht den Musterwerten der Referenz-PDFs entsprechen.
-
-## Fachliche Regression
-
-Die vollständigen Referenz-, Zähler-, Architektur-, PWA- und Browserprüfungen wurden ausgeführt. AP13 besitzt keine neue Berechnungsroutine. Alle 13 Playwright-Projekte bestanden: 57 produktive Browsertests, dazu ein bestimmungsgemäß übersprungener optionaler AP11-Bildaufnahmefall. Wegen eines bekannten Zeitlimits des gebündelten Playwright-Gesamtprozesses wurden die Projekte zusätzlich vollständig in getrennten frischen Projektläufen ausgeführt. Die Nachzahlungs-/Guthabenentscheidung greift weiterhin auf das bestehende fachliche Ergebnis zu und verändert dessen Vorzeichen nicht.
-
-## Verbleibende Einschränkung
-
-Ein realer Ausdruck auf einem konkreten physischen Druckermodell konnte in der automatisierten Umgebung nicht durchgeführt werden. Für den Ausdruck müssen im Druckdialog DIN A4, 100 % Skalierung, deaktivierte Browser-Kopf-/Fußzeilen und aktivierte Hintergrundgrafiken verwendet werden. Das durch Chromium verwendete Druckmedium sowie die erzeugten A4-PDFs wurden vollständig geprüft.
+Ein realer Ausdruck auf einem physischen Druckermodell war in der automatisierten Prüfumgebung nicht möglich. Druckvorschau und erzeugte PDF-Dateien wurden geprüft.

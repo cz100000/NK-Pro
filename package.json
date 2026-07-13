@@ -1,8 +1,8 @@
 {
-  "name": "nk-pro-v99-4-16",
-  "version": "99.4.16",
+  "name": "nk-pro-v99-4-17",
+  "version": "99.4.17",
   "private": true,
-  "description": "AP13-Layoutkorrekturen, isolierte Vorschau sowie Druck-, Architektur-, PWA- und Browserprüfungen für NK-Pro V99.4.16",
+  "description": "AP13-Briefsteuerung, Schwarzweißdruck, Sticky-Vorschau und Startnavigation für NK-Pro V99.4.17",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
     "test:fixtures": "node tools/check-fixtures.cjs",

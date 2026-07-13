@@ -1,8 +1,8 @@
 {
-  "version": "99.4.16",
+  "version": "99.4.17",
   "date": "2026-07-13",
   "status": "passed",
-  "browserTests": 5,
+  "browserTests": 8,
   "sharedDocumentModel": true,
   "previewPrintParity": true,
   "controlPdfs": {
@@ -10,17 +10,18 @@
     "standardPages": 1,
     "extended": "AP13_Kontrollausgabe_Erweitert_2_Seiten.pdf",
     "extendedPages": 2,
+    "monochrome": "AP13_Kontrollausgabe_Schwarzweiss_2_Seiten.pdf",
+    "monochromePages": 2,
     "pageFormat": "A4"
   },
   "staticChecks": [
     "gemeinsames eingebettetes Dokument-CSS",
     "explizite Ein-/Zweiseitenangabe",
-    "neunspaltige Haupttabelle mit Vorauszahlungen",
-    "keine separate Box Abrechnungsergebnis",
-    "vollständige variable Textfelder",
-    "skalierte vollständige DIN-A4-Vorschau im isolierten Shadow DOM",
-    "Bedienfelder im Direktdruck ausgeblendet",
-    "Korrekturpunkte 13 bis 20 strukturell abgesichert"
+    "Vorauszahlungsschalter vor dem Dokumentaufbau geprüft",
+    "Fortsetzungshinweis ausschließlich bei zwei Seiten",
+    "gemeinsamer Farb- und Schwarzweißmodus für Vorschau und Druck",
+    "responsive Sticky-Vorschau",
+    "Startnavigation mit Home-Icon und Trennlinie"
   ],
   "browserCases": [
     {
@@ -28,7 +29,7 @@
       "result": "passed"
     },
     {
-      "name": "Seite 2 nur für Zusatzinhalt; Abschluss genau einmal",
+      "name": "Seite 2 nur für Zusatzinhalt; Fortsetzungshinweis und Abschluss genau einmal",
       "result": "passed"
     },
     {
@@ -40,11 +41,23 @@
       "result": "passed"
     },
     {
+      "name": "Schalter Im Brief andrucken unterdrückt den gesamten Anpassungsblock",
+      "result": "passed"
+    },
+    {
+      "name": "Schwarzweißmodus gilt identisch für Vorschau und Druckquelle",
+      "result": "passed"
+    },
+    {
+      "name": "Sticky-Vorschau auf breiten und normaler Fluss auf schmalen Ansichten",
+      "result": "passed"
+    },
+    {
       "name": "Lange Empfängerdaten, Texte und schmale Vorschau ohne Überlauf",
       "result": "passed"
     }
   ],
-  "acceptanceCases": 15,
+  "acceptanceCases": 21,
   "physicalPrint": {
     "printPreview": "passed",
     "physicalDevice": "not available in automated environment",
@@ -66,14 +79,14 @@
   },
   "fullReleaseSuite": {
     "status": "passed",
-    "browserTests": "57 passed, 1 intentional visual-capture skip",
+    "browserTests": "60 passed, 1 intentional visual-capture skip",
     "staticSuites": [
       "syntax",
       "fixtures",
       "metering",
-      "architecture AP6–AP13"
-    ],
-    "executionNote": "Wegen des bekannten Playwright-Gesamtprozess-Timeouts wurden alle 13 Projekte zusätzlich vollständig in getrennten frischen Projektläufen ausgeführt."
+      "architecture AP6–AP13",
+      "release consistency"
+    ]
   },
   "browserProjects": {
     "total": 13,
@@ -141,7 +154,7 @@
       },
       {
         "project": "ap13-letter-layout",
-        "tests": "5/5",
+        "tests": "8/8",
         "result": "passed"
       }
     ]
@@ -149,22 +162,19 @@
   "pdfVerification": {
     "standardPages": 1,
     "extendedPages": 2,
-    "pageSize": "594.96 × 841.92 pt (A4)",
+    "monochromePages": 2,
+    "pageSize": "A4",
     "searchableText": true,
     "domOverflow": false,
-    "grayscaleReadable": true,
-    "addressWindowCss": "top 51 mm, left 19 mm, width 99 mm, height 42 mm"
+    "grayscaleReadable": true
   },
-  "documentLayoutVersion": 3,
+  "documentLayoutVersion": 4,
   "correctionsVerified": [
-    "obere Begrenzungslinie der Informationsbox ergänzt",
-    "Betreff auf 13 pt verkleinert und unterhalb des Sichtfensterbereichs positioniert",
-    "Abstand zwischen Betreff und Anrede halbiert",
-    "Abstände vor und nach der dreizelligen Ergebnisleiste vereinheitlicht",
-    "sichtbare Verteilungsbezeichnung auf Wohneinheiten gekürzt",
-    "Gesamtkostenspalte einschließlich Werte zentriert",
-    "Vorschau in offenem Shadow DOM vom allgemeinen Anwendungs-CSS isoliert",
-    "Vorschau und Druck verwenden denselben Dokument-HTML- und CSS-Quelltext",
-    "Abstand zwischen letzter Hinweisbox und Abschlussblock auf Seite 2 reduziert"
+    "Vorauszahlungsanpassung folgt dem Schalter Im Brief andrucken",
+    "Weiter auf Seite 2 erscheint nur bei zweiseitigen Briefen",
+    "Abstand zwischen Anrede und Einleitung um rund 40 Prozent reduziert",
+    "Schwarzweißoptimierung steuert Vorschau und Druck gemeinsam",
+    "Briefvorschau bleibt auf breiten Ansichten beim Scrollen sichtbar",
+    "Startnavigation mit Home-Icon und dezenter Trennlinie ergänzt"
   ]
 }

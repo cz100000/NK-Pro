@@ -1,4 +1,4 @@
-# NK-Pro – Teststrategie V99.4.16
+# NK-Pro – Teststrategie V99.4.17
 
 ## Standardlauf
 

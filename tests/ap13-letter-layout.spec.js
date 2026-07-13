@@ -135,6 +135,9 @@ test("AP13 erzeugt Seite 2 nur für Zusatzinhalt und setzt den Abschluss genau e
   await expect(preview.locator(".letter-main-sheet .letter-footer")).toContainText("Seite 1 von 2");
   await expect(preview.locator(".letter-supplement-sheet .letter-footer")).toContainText("Seite 2 von 2");
   await expect(preview.locator(".additional-note-box")).toContainText("zusätzliche fallbezogene Hinweis");
+  await expect(preview.locator(".letter-main-sheet .continuation-hint")).toHaveText("Weiter auf Seite 2");
+  await expect(preview.locator(".prepayment-section")).toHaveCount(0);
+  await expect(preview.locator(".payment-notice")).toHaveCount(0);
 
   await configureBrief(page, {
     outroText: "",
@@ -143,6 +146,7 @@ test("AP13 erzeugt Seite 2 nur für Zusatzinhalt und setzt den Abschluss genau e
   });
   await expect(preview.locator("section.letter-sheet")).toHaveCount(1);
   await expect(preview.locator(".nk-letter-document")).toHaveAttribute("data-document-pages", "1");
+  await expect(preview.locator(".continuation-hint")).toHaveCount(0);
   runtime.assertClean();
 });
 
@@ -251,6 +255,101 @@ test("AP13 kennzeichnet Nachzahlung und Guthaben mit unveränderter Vorzeichenlo
   expect(result.debitLabel).toBe("Ihre Nachzahlung an die Vermieterin");
   expect(result.debitClass).toContain("is-due");
   expect(result.debitPayment).toContain("überweisen");
+  runtime.assertClean();
+});
+
+test("AP13-Schalter unterdrückt die Vorauszahlungsanpassung vollständig", async ({ page }) => {
+  const runtime = attachRuntimeGuards(page);
+  await openFreshApp(page);
+  await loadFixture(page, "standardfall.json");
+  await page.evaluate(() => { switchToTab("briefe"); document.getElementById("lettersEditorSection").open = true; });
+  await configureBrief(page, {
+    outroText: "Ein Zusatzhinweis hält die zweite Seite unabhängig von der Vorauszahlungsanpassung offen.",
+    vorauszahlungPrintMode: "Manuelle Werte drucken",
+    showVorauszahlungPage: "Ja",
+    vzChangeHeizung: 15,
+    vzChangeWasser: 5
+  });
+  const preview = page.locator("#briefPreview");
+  await expect(preview.locator(".prepayment-section")).toHaveCount(1);
+
+  const printMode = page.locator("#briefSettings select").filter({ has: page.locator('option[value="Nicht drucken"]') });
+  await printMode.selectOption("Nicht drucken", { force:true });
+  await expect(preview.locator(".nk-letter-document")).toHaveAttribute("data-document-pages", "2");
+  await expect(preview.locator(".additional-note-box")).toHaveCount(1);
+  await expect(preview.locator(".prepayment-section")).toHaveCount(0);
+  await expect(preview.locator(".payment-notice")).toHaveCount(0);
+  expect(await page.evaluate(() => state.briefSettings.showVorauszahlungPage)).toBe("Nein");
+
+  await configureBrief(page, { outroText:"", vorauszahlungPrintMode:"Nicht drucken", showVorauszahlungPage:"Nein" });
+  await expect(preview.locator(".nk-letter-document")).toHaveAttribute("data-document-pages", "1");
+  await expect(preview.locator(".continuation-hint")).toHaveCount(0);
+  runtime.assertClean();
+});
+
+test("AP13-Schwarzweißmodus gilt identisch für Vorschau und Druckquelle", async ({ page }) => {
+  const runtime = attachRuntimeGuards(page);
+  await openFreshApp(page);
+  await loadFixture(page, "standardfall.json");
+  await page.evaluate(() => { switchToTab("briefe"); document.getElementById("lettersEditorSection").open = true; });
+  await configureBrief(page, { schwarzweissOptimiert:"Nein", outroText:"", vorauszahlungPrintMode:"Nicht drucken", showVorauszahlungPage:"Nein" });
+  const toggle = page.locator('#briefSettings input[type="checkbox"][aria-label="Für Schwarzweißdruck optimieren"]');
+  await expect(toggle).toHaveCount(1);
+  expect(await toggle.isChecked()).toBe(false);
+  await toggle.evaluate(node => { node.checked = true; node.dispatchEvent(new Event("change", { bubbles:true })); });
+  const preview = page.locator("#briefPreview");
+  await expect(preview.locator(".nk-letter-document")).toHaveClass(/is-monochrome/);
+  await expect(preview.locator(".nk-letter-document")).toHaveAttribute("data-print-mode", "monochrome");
+  const mode = await preview.evaluate(node => {
+    const root = node.shadowRoot || node;
+    const doc = root.querySelector(".nk-letter-document");
+    const tableHead = root.querySelector(".abrechnung-table thead th");
+    const source = String(node.__nkBriefHtml || "");
+    const printHtml = printWindowHtml("S/W-Kontrolle", source, "AP13");
+    return {
+      sourceMode: source.includes('data-print-mode="monochrome"'),
+      printMode: printHtml.includes('data-print-mode="monochrome"'),
+      headBackground: getComputedStyle(tableHead).backgroundColor,
+      headColor: getComputedStyle(tableHead).color
+    };
+  });
+  expect(mode.sourceMode).toBe(true);
+  expect(mode.printMode).toBe(true);
+  expect(mode.headBackground).toBe("rgb(58, 58, 58)");
+  expect(mode.headColor).toBe("rgb(255, 255, 255)");
+  expect(await page.evaluate(() => state.briefSettings.schwarzweissOptimiert)).toBe("Ja");
+  await toggle.evaluate(node => { node.checked = false; node.dispatchEvent(new Event("change", { bubbles:true })); });
+  await expect(preview.locator(".nk-letter-document")).not.toHaveClass(/is-monochrome/);
+  await expect(preview.locator(".nk-letter-document")).toHaveAttribute("data-print-mode", "color");
+  runtime.assertClean();
+});
+
+test("AP13-Vorschau bleibt auf breiten Ansichten beim Scrollen sichtbar", async ({ page }) => {
+  const runtime = attachRuntimeGuards(page);
+  await page.setViewportSize({ width:1440, height:760 });
+  await openFreshApp(page);
+  await loadFixture(page, "alle-eingabequellen.json");
+  await page.evaluate(() => { switchToTab("briefe"); window.scrollTo(0, 0); });
+  await page.waitForTimeout(120);
+  await page.locator("#lettersEditorSection").evaluate(node => { node.open = true; });
+  await expect(page.locator("#lettersEditorSection")).toHaveAttribute("open", "");
+  const wrap = page.locator(".letter-preview-wrap");
+  const before = await wrap.evaluate(node => ({ top:node.getBoundingClientRect().top, position:getComputedStyle(node).position, maxHeight:getComputedStyle(node).maxHeight }));
+  await page.evaluate(() => {
+    const node = document.querySelector(".letter-preview-wrap");
+    const target = node.getBoundingClientRect().top + window.scrollY + 120;
+    window.scrollTo(0, target);
+  });
+  await page.waitForTimeout(80);
+  const after = await wrap.evaluate(node => ({ top:node.getBoundingClientRect().top, position:getComputedStyle(node).position }));
+  expect(before.position).toBe("sticky");
+  expect(before.maxHeight).not.toBe("none");
+  expect(after.position).toBe("sticky");
+  expect(after.top).toBeGreaterThanOrEqual(17);
+  expect(after.top).toBeLessThanOrEqual(20);
+
+  await page.setViewportSize({ width:1000, height:760 });
+  expect(await wrap.evaluate(node => getComputedStyle(node).position)).toBe("static");
   runtime.assertClean();
 });
 

@@ -1,13 +1,13 @@
 # Changelog
 
-## V99.4.16 – AP13-Layoutkorrekturen und Vorschauangleichung
+## V99.4.17 – AP13-Briefsteuerung, Schwarzweißdruck und Startnavigation
 
 - Informationsbox oben geschlossen, Betreff verkleinert und unterhalb des Fensterbereichs positioniert.
 - Ergebnisleistenabstände vereinheitlicht, Gesamtkosten zentriert und Verteilungslabel verkürzt.
 - Vorschau per Shadow DOM vom Anwendungs-CSS isoliert; Druck und Vorschau nutzen denselben Dokumentquelltext.
 - Abstand vor dem Abschlussblock auf Seite 2 reduziert.
 
-## V99.4.16 – AP13-Briefkorrekturen und Layoutfeinschliff (13.07.2026)
+## V99.4.17 – AP13-Briefkorrekturen und Layoutfeinschliff (13.07.2026)
 
 ### Geändert
 
@@ -21,7 +21,7 @@
 - Abstand zwischen Abschlusstext und Grußformel reduziert.
 - „Preis pro Einheit“, „bisheriger Betrag“ und „Änderung ab“ zentriert.
 - Zahlungshinweis auf Seite 2 um den blauen Akzentstrich ergänzt.
-- Dokumentlayoutversion auf 2 und PWA-/Releaseversion auf V99.4.16 erhöht.
+- Dokumentlayoutversion auf 2 und PWA-/Releaseversion auf V99.4.17 erhöht.
 
 ### Unverändert
 
@@ -40,7 +40,7 @@ Fachliche Berechnungen, Abrechnungswerte, Rundungen, Vorzeichenlogik, Datenschem
 - Tabelle zur Vorauszahlungsanpassung in derselben blauen visuellen Sprache wie die Haupttabelle umgesetzt.
 - variable Standardtexte vollständig erhalten und um getrennte Zahlungsformulierungen sowie Dauerauftrag-/Abschlusstextfelder ergänzt.
 - AP13-Struktur- und Browsertests sowie ein- und zweiseitige Kontroll-PDFs ergänzt.
-- PWA-, Paket-, Laufzeit- und Projektversion auf V99.4.16 aktualisiert.
+- PWA-, Paket-, Laufzeit- und Projektversion auf V99.4.17 aktualisiert.
 
 ### Unverändert
 

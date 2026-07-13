@@ -123,6 +123,7 @@ function defaultBriefSettings() {
     ort: "Baumholder",
     absenderZeile: "Ute Zimmermann · Albert-Schweitzer-Straße 10 · 55774 Baumholder",
     bankverbindung: "Kreissparkasse Birkenfeld / IBAN: DE32 5625 0030 0021 1302 99 / BIC: BILADE55XXX",
+    schwarzweissOptimiert: "Nein",
     betreff: "Nebenkostenabrechnung",
     anredeModus: "Sehr geehrte(r) Mieter/in,",
     introText: "für die oben bezeichnete Wohnung erhalten Sie hiermit Ihre Nebenkostenabrechnung für den Zeitraum {zeitraum}. Die Kostenverteilung und Ihr Anteil sind nachfolgend dargestellt:",
@@ -434,6 +435,7 @@ function renderBrief() {
     '<label>Telefon</label><input value="' + escapeHtml(s.absenderTelefon) + '" ' + uiActionAttributes("document.setBriefSetting", ["absenderTelefon","$value"], "change") + '>' +
 
     '<label>Bankverbindung</label><input value="' + escapeHtml(s.bankverbindung) + '" ' + uiActionAttributes("document.setBriefSetting", ["bankverbindung","$value"], "change") + '>' +
+    '<label class="brief-print-mode-switch"><span class="brief-print-mode-copy"><strong>Für Schwarzweißdruck optimieren</strong><small>Vorschau, PDF und Ausdruck werden kontrastreich in Graustufen dargestellt.</small></span><input type="checkbox" ' + (s.schwarzweissOptimiert === "Ja" ? 'checked ' : '') + uiActionAttributes("document.setBriefSetting", ["schwarzweissOptimiert",{checkedValues:["Ja","Nein"]}], "change") + ' aria-label="Für Schwarzweißdruck optimieren"><span class="brief-switch-track" aria-hidden="true"><span class="brief-switch-knob"></span></span></label>' +
     '<h3>Vorauszahlungsanpassung</h3>' +
     '<label>Im Brief andrucken?</label>' + selectHtml(s.vorauszahlungPrintMode, ["Nicht drucken","Berechnete Werte drucken","Manuelle Werte drucken"], "setBriefSetting('vorauszahlungPrintMode',this.value)") +
     '<label>Neue Vorauszahlung ab</label><input value="' + escapeHtml(s.vorauszahlungAb) + '" ' + uiActionAttributes("document.setBriefSetting", ["vorauszahlungAb","$value"], "change") + '>' +

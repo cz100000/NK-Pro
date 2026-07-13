@@ -1,11 +1,11 @@
 {
-  "appVersion": "99.4.16",
-  "displayVersion": "V99.4.16",
-  "versionName": "AP13-Layoutkorrekturen und Vorschauangleichung",
+  "appVersion": "99.4.17",
+  "displayVersion": "V99.4.17",
+  "versionName": "AP13-Briefsteuerung, Schwarzweißdruck und Startnavigation",
   "schemaVersion": 5,
   "dataLayerContractVersion": 1,
   "snapshotScope": "billingSnapshot",
-  "basedOn": "99.4.15",
+  "basedOn": "99.4.16",
   "releaseDate": "2026-07-13",
   "runtime": [
     "HTML",
@@ -26,9 +26,9 @@
   "compatibilityLayerVersion": 3,
   "uiControllerVersion": 1,
   "uiEventContractVersion": 1,
-  "navigationDesignSystemVersion": 1,
+  "navigationDesignSystemVersion": 2,
   "appOrchestrationVersion": 1,
   "stateOwnershipVersion": 1,
   "runtimeDiagnosticsVersion": 1,
-  "documentLayoutVersion": 3
+  "documentLayoutVersion": 4
 }

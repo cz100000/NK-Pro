@@ -1,12 +1,12 @@
-# NK-Pro V99.4.16 – Brieflayout, Druckbild und Vorschaukonsistenz
+# NK-Pro V99.4.17 – Brieflayout, Druckbild und Vorschaukonsistenz
 
-NK-Pro ist eine lokale, frameworkfreie HTML/CSS/JavaScript-PWA zur Erstellung, Prüfung, Archivierung und Ausgabe von Nebenkostenabrechnungen. V99.4.16 setzt AP13 um und vereinheitlicht Bildschirmvorschau, Druck und PDF auf ein gemeinsames DIN-A4-Dokumentmodell.
+NK-Pro ist eine lokale, frameworkfreie HTML/CSS/JavaScript-PWA zur Erstellung, Prüfung, Archivierung und Ausgabe von Nebenkostenabrechnungen. V99.4.17 setzt AP13 um und vereinheitlicht Bildschirmvorschau, Druck und PDF auf ein gemeinsames DIN-A4-Dokumentmodell.
 
 ## Verbindlicher Stand
 
 | Merkmal | Stand |
 |---|---|
-| App-Version | V99.4.16 |
+| App-Version | V99.4.17 |
 | Ausgangsversion | V99.4.13 |
 | Versionsname | Brieflayout, Druckbild und Vorschaukonsistenz |
 | Datenschema / Datenebenenvertrag | 5 / 1, unverändert |

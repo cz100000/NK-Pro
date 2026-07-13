@@ -799,7 +799,7 @@
       const expanded = Array.from(nav.querySelectorAll('.nav-group-toggle[aria-expanded="true"]'));
       if (expanded.length !== 1) throw new Error("Es muss genau eine Navigationsgruppe geöffnet sein");
       const tabIds = Array.from(nav.querySelectorAll(".tab-btn[data-tab]")).map(button => button.dataset.tab);
-      const expected = START_NAV_TABS.concat(BILLING_NAV_TABS).filter(id => id !== "landing");
+      const expected = START_NAV_TABS.concat(BILLING_NAV_TABS);
       if (tabIds.length !== expected.length || new Set(tabIds).size !== expected.length || expected.some(id => !tabIds.includes(id))) throw new Error("Tabs fehlen oder sind mehrfach in der Navigation enthalten");
       const landingChoices = document.querySelectorAll("#landing .landing-choice");
       if (landingChoices.length !== 2) throw new Error("Landingpage besitzt nicht genau zwei Einstiege");
@@ -811,7 +811,7 @@
       if (!settings || settings.getAttribute("aria-disabled") !== "true" || settings.dataset.uiAction) throw new Error("Einstellungen-Dummy ist nicht korrekt deaktiviert");
       if (settings.dataset.navHint !== "Noch nicht verfügbar") throw new Error("Einstellungen-Hinweis fehlt");
       if (document.querySelectorAll(".workflow-nav").length !== 1) throw new Error("Parallele Navigation erkannt");
-      return "4 Accordion-Gruppen, 16 eindeutige Navigationsziele, lokales SVG-System, Einstellungen-Dummy und genau 2 Landingpage-Einstiege";
+      return "Start plus 4 Accordion-Gruppen, 16 fachliche Navigationsziele, lokales SVG-System, Einstellungen-Dummy und genau 2 Landingpage-Einstiege";
     });
   
     runCheck("Startseite", "Sicherungstab und Entschlackung", () => {

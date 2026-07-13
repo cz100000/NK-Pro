@@ -77,7 +77,8 @@ async function writePdf(browser, fileName, payload) {
       abrechnungsjahr: "2025",
       briefdatum: "2026-07-06",
       zahlungsziel: "2026-07-31",
-      abschlusstext: "Bei Fragen stehe ich Ihnen selbstverständlich gern zur Verfügung."
+      abschlusstext: "Bei Fragen stehe ich Ihnen selbstverständlich gern zur Verfügung.",
+      schwarzweissOptimiert: "Nein"
     };
     const standard = await documentHtml(app, {
       ...common,
@@ -98,17 +99,33 @@ async function writePdf(browser, fileName, payload) {
       vzChangeSonstige: 0
     });
 
+    const monochrome = await documentHtml(app, {
+      ...common,
+      schwarzweissOptimiert: "Ja",
+      outroText: "Ergänzend weisen wir darauf hin, dass die in der Abrechnung angesetzten Heiz- und Warmwasserkosten aus der beigefügten Einzelabrechnung des Messdienstleisters übernommen wurden.",
+      vorauszahlungPrintMode: "Manuelle Werte drucken",
+      showVorauszahlungPage: "Ja",
+      vorauszahlungAb: "01.01.2026",
+      vzChangeHeizung: 15,
+      vzChangeWasser: 5,
+      vzChangeAbfall: 2,
+      vzChangeAntenne: -2,
+      vzChangeSonstige: 0
+    });
+
     if (standard.pages !== 1) throw new Error(`Standardausgabe hat ${standard.pages} statt 1 Seite.`);
     if (extended.pages !== 2) throw new Error(`Erweiterte Ausgabe hat ${extended.pages} statt 2 Seiten.`);
+    if (monochrome.pages !== 2) throw new Error(`Schwarzweißausgabe hat ${monochrome.pages} statt 2 Seiten.`);
 
     standard.metrics = await writePdf(browser, "AP13_Kontrollausgabe_Standard_1_Seite.pdf", standard);
     extended.metrics = await writePdf(browser, "AP13_Kontrollausgabe_Erweitert_2_Seiten.pdf", extended);
-    if ([...standard.metrics, ...extended.metrics].some(item => item.contentScrollHeight > item.contentClientHeight + 1 || !item.contentBeforeFooter || !item.expectedA4)) {
+    monochrome.metrics = await writePdf(browser, "AP13_Kontrollausgabe_Schwarzweiss_2_Seiten.pdf", monochrome);
+    if ([...standard.metrics, ...extended.metrics, ...monochrome.metrics].some(item => item.contentScrollHeight > item.contentClientHeight + 1 || !item.contentBeforeFooter || !item.expectedA4)) {
       throw new Error("Kontrollausgabe enthält einen Überlauf oder kein vollständiges DIN-A4-Seitenmaß.");
     }
-    fs.writeFileSync(path.join(root, "AP13_CONTROL_OUTPUT_METRICS.json"), JSON.stringify({ standard, extended }, (key, value) => key === "html" ? undefined : value, 2) + "\n");
+    fs.writeFileSync(path.join(root, "AP13_CONTROL_OUTPUT_METRICS.json"), JSON.stringify({ standard, extended, monochrome }, (key, value) => key === "html" ? undefined : value, 2) + "\n");
     await app.close();
-    console.log("AP13-Kontrollausgaben erzeugt: 1 Seite und 2 Seiten, ohne DOM-Überlauf.");
+    console.log("AP13-Kontrollausgaben erzeugt: Standard, erweitert und schwarzweiß, ohne DOM-Überlauf.");
   } finally {
     await browser.close();
   }

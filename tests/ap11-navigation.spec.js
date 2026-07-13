@@ -23,9 +23,9 @@ test("AP11-Navigation bildet Zielstruktur, Icons und Zustände vollständig ab",
 
   await expect(page.locator("nav.workflow-nav")).toHaveCount(1);
   await expect(page.locator(".workflow-nav > .nav-group")).toHaveCount(4);
-  await expect(page.locator(".workflow-nav .tab-btn[data-tab]")).toHaveCount(16);
+  await expect(page.locator(".workflow-nav .tab-btn[data-tab]")).toHaveCount(17);
   const uniqueTabs = await page.locator(".workflow-nav .tab-btn[data-tab]").evaluateAll(nodes => [...new Set(nodes.map(node => node.dataset.tab))]);
-  expect(uniqueTabs).toHaveLength(16);
+  expect(uniqueTabs).toHaveLength(17);
 
   const objectLabels = await page.locator('#nav-group-object > .nav-group-item .nav-item-label').allTextContents();
   expect(objectLabels.map(value => value.trim())).toEqual(["Objekt", "Wohnungen", "Zähler", "Mieter"]);
@@ -41,7 +41,15 @@ test("AP11-Navigation bildet Zielstruktur, Icons und Zustände vollständig ab",
 
   await expect(page.locator(".sidebar-brand-title")).toHaveText("NK-Pro");
   await expect(page.locator(".sidebar-brand-subtitle")).toHaveText("Nebenkostenabrechnung");
-  await expect(page.locator(".sidebar-brand-home")).toHaveAttribute("aria-current", "page");
+  const start = page.locator(".nav-start-link");
+  await expect(start).toHaveText(/Start/);
+  await expect(start).toHaveAttribute("data-tab", "landing");
+  await expect(start).toHaveAttribute("title", "Zur Startseite");
+  await expect(start).toHaveAttribute("aria-current", "page");
+  await expect(page.locator(".sidebar-brand-home")).not.toHaveAttribute("aria-current", "page");
+  const separator = await page.locator(".nav-start-entry").evaluate(node => ({ width:getComputedStyle(node).borderBottomWidth, color:getComputedStyle(node).borderBottomColor }));
+  expect(parseFloat(separator.width)).toBeGreaterThan(0);
+  expect(separator.color).not.toBe("rgba(0, 0, 0, 0)");
   runtime.assertClean();
 });
 
@@ -71,6 +79,10 @@ test("Aktiver Zustand bleibt eindeutig, sichtbar und semantisch korrekt", async 
   await expect(page.locator(".workflow-nav .tab-btn.active")).toHaveCount(1);
   await expect(page.locator('[data-tab="objekt"]')).toHaveAttribute("aria-current", "page");
   await expect(page.locator('[data-nav-toggle="group-object"]')).toHaveAttribute("aria-expanded", "true");
+  await page.locator(".nav-start-link").click();
+  await expect(page.locator("#landing")).toHaveClass(/active/);
+  await expect(page.locator(".nav-start-link")).toHaveClass(/active/);
+  await expect(page.locator(".nav-start-link")).toHaveAttribute("aria-current", "page");
   runtime.assertClean();
 });
 

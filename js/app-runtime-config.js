@@ -45,8 +45,8 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.16";
-const APP_VERSION_NAME = "AP13-Layoutkorrekturen und Vorschauangleichung";
+const APP_VERSION = "V99.4.17";
+const APP_VERSION_NAME = "AP13-Briefsteuerung, Schwarzweißdruck und Startnavigation";
 const APP_RELEASE_DATE = "2026-07-13";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
@@ -112,7 +112,10 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
-  "V99.4.16 verfeinert AP13 mit grünem Guthabenzustand, optimierten Spaltenbreiten, zentrierten Brief- und Tabelleninhalten sowie korrigierten Guthaben- und Vorauszahlungstexten.",
+  "V99.4.17 beachtet den Schalter für die Vorauszahlungsanpassung verbindlich und kennzeichnet zweiseitige Briefe auf Seite 1 mit einem Fortsetzungshinweis.",
+  "Ein gemeinsamer Schwarzweißmodus gilt identisch für Vorschau, PDF und Druck; die Briefvorschau bleibt auf breiten Ansichten beim Scrollen sichtbar.",
+  "Die Navigation erhält oberhalb der Objektverwaltung den Hauptpunkt Start mit Home-Icon und dezenter Trennlinie zur Arbeitsnavigation.",
+  "V99.4.17 verfeinert AP13 mit grünem Guthabenzustand, optimierten Spaltenbreiten, zentrierten Brief- und Tabelleninhalten sowie korrigierten Guthaben- und Vorauszahlungstexten.",
   "Seite 2 beginnt unterhalb des Informationsblocks, verzichtet auf den technischen Einleitungstext und führt Zahlungshinweis sowie Abschlussabstände konsistent fort.",
   "V99.4.14 setzt AP13 mit einem gemeinsamen DIN-A4-Dokumentmodell für Vorschau, Druckfenster und PDF-Ausgabe um.",
   "Die neunspaltige Haupttabelle enthält Vorauszahlungen und vollständige Trennlinien; Seite 2 entsteht ausschließlich für Zusatzhinweise und/oder eine Vorauszahlungsanpassung.",

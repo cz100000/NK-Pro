@@ -33,4 +33,11 @@ assert(renderer.includes('label === "Verteilung nur auf aktive Wohneinheiten" ? 
 assert(renderer.includes('<td class="money center">'), "Gesamtkostenspalte ist nicht zentriert.");
 assert(renderer.includes("supplement-end{margin-top:8mm}"), "Abstand vor Abschlussblock auf Seite 2 ist nicht reduziert.");
 
+assert(renderer.includes('if (!prepaymentAdjustmentRequired(costRows, tenant)) return "";'), "Schalter Im Brief andrucken wird im Dokumentrenderer nicht beachtet.");
+assert(renderer.includes('class="continuation-hint">Weiter auf Seite 2'), "Fortsetzungshinweis für Seite 1 fehlt.");
+assert(renderer.includes('data-print-mode="') && renderer.includes('is-monochrome'), "Gemeinsamer Schwarzweißmodus für Vorschau und Druck fehlt.");
+assert(renderer.includes("margin:0 0 4.8mm"), "Reduzierter Abstand zwischen Anrede und Einleitung fehlt.");
+assert(ui.includes("Für Schwarzweißdruck optimieren") && ui.includes("schwarzweissOptimiert"), "Schwarzweißschalter fehlt.");
+assert(css.includes("position:sticky") && css.includes("max-width:1100px"), "Responsive Sticky-Vorschau fehlt.");
+
 console.log("AP13-Strukturprüfung abgeschlossen: gemeinsames DIN-A4-Dokumentmodell, kontrollierte Seitenlogik und vollständige Textfelder sind vorhanden.");

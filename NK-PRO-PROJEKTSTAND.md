@@ -1,4 +1,4 @@
-# NK-Pro – Projektstand V99.4.16
+# NK-Pro – Projektstand V99.4.17
 
 **Versionsname:** Brieflayout, Druckbild und Vorschaukonsistenz  
 **Basis:** V99.4.13  
@@ -10,4 +10,4 @@ Die Haupttabelle besitzt neun Spalten, enthält die Vorauszahlungen und weist s�
 
 Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Abrechnungssnapshot 2, Zählerstandards 1, fachliche Berechnungen, Rundungen und Vorzeichenlogik bleiben unverändert. Die AP12-Modulgrenzen und die korrigierte AP11-Navigation bestehen fort.
 
-**Nächster Schritt:** Noch nicht festgelegt; zunächst produktive Sichtprüfung von V99.4.16.
+**Nächster Schritt:** Noch nicht festgelegt; zunächst produktive Sichtprüfung von V99.4.17.
