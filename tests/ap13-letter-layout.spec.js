@@ -52,7 +52,11 @@ test("AP13-Standardbrief nutzt eine gemeinsame DIN-A4-Struktur mit neun Spalten"
       sheetWidth: getComputedStyle(sheet).width,
       sheetHeight: getComputedStyle(sheet).height,
       paymentFont: getComputedStyle(node.querySelector(".payment-text")).fontSize,
-      proseFont: getComputedStyle(node.querySelector(".letter-intro")).fontSize
+      proseFont: getComputedStyle(node.querySelector(".letter-intro")).fontSize,
+      headerTextAlign: getComputedStyle(node.querySelector(".letter-header")).textAlign,
+      priceTextAlign: getComputedStyle(node.querySelector(".abrechnung-table tbody tr td:nth-child(5)")).textAlign,
+      balanceWidth: getComputedStyle(node.querySelector(".abrechnung-table col.col-balance")).width,
+      finalSumFits: (() => { const cell = node.querySelector(".table-total-row td:last-child"); return cell.scrollWidth <= cell.clientWidth + 1; })()
     };
   });
 
@@ -65,6 +69,9 @@ test("AP13-Standardbrief nutzt eine gemeinsame DIN-A4-Struktur mit neun Spalten"
   expect(parseFloat(layout.sheetWidth)).toBeCloseTo(210 * 96 / 25.4, 1);
   expect(parseFloat(layout.sheetHeight)).toBeCloseTo(297 * 96 / 25.4, 1);
   expect(layout.paymentFont).toBe(layout.proseFont);
+  expect(layout.headerTextAlign).toBe("center");
+  expect(layout.priceTextAlign).toBe("center");
+  expect(layout.finalSumFits).toBe(true);
 
   const parity = await page.evaluate(() => {
     const preview = document.getElementById("briefPreview");
@@ -141,6 +148,9 @@ test("AP13-Vorauszahlungsanpassung nutzt Seite 2 und dieselbe blaue Tabellenvisu
   await expect(preview.locator(".prepay-summary")).toHaveCount(1);
   await expect(preview.locator(".prepay-final")).toHaveCount(1);
   await expect(preview.locator(".payment-notice")).toHaveCount(1);
+  await expect(preview.locator(".payment-notice")).toContainText("Hinweis zur Zahlung");
+  await expect(preview.locator(".prepayment-section .supplement-heading")).toHaveText("Anpassung der Nebenkostenvorauszahlung");
+  await expect(preview.locator(".supplement-title")).toHaveCount(0);
   await expect(preview.locator(".signature-name")).toHaveCount(1);
 
   const visualLanguage = await preview.evaluate(node => {
@@ -151,12 +161,26 @@ test("AP13-Vorauszahlungsanpassung nutzt Seite 2 und dieselbe blaue Tabellenvisu
       sameHeaderColor: getComputedStyle(mainHead).backgroundColor === getComputedStyle(prepayHead).backgroundColor,
       tableWidth: table.getBoundingClientRect().width,
       parentWidth: table.parentElement.getBoundingClientRect().width,
-      noOverflow: table.scrollWidth <= table.clientWidth + 1
+      noOverflow: table.scrollWidth <= table.clientWidth + 1,
+      oldAmountAlign: getComputedStyle(table.querySelector("tbody tr td:nth-child(3)")).textAlign,
+      changeAlign: getComputedStyle(table.querySelector("tbody tr td:nth-child(5)")).textAlign,
+      paymentBorder: getComputedStyle(node.querySelector(".payment-notice")).borderLeftWidth,
+      infoBottom: node.querySelector(".letter-supplement-sheet .letter-info").getBoundingClientRect().bottom,
+      sectionTop: node.querySelector(".letter-supplement-sheet .supplement-sections").getBoundingClientRect().top,
+      closingGap: node.querySelector(".closing-greeting").getBoundingClientRect().top - node.querySelector(".supplement-closing-text").getBoundingClientRect().bottom,
+      introText: node.querySelector(".prepayment-intro").textContent
     };
   });
   expect(visualLanguage.sameHeaderColor).toBe(true);
   expect(Math.abs(visualLanguage.tableWidth - visualLanguage.parentWidth)).toBeLessThan(1.5);
   expect(visualLanguage.noOverflow).toBe(true);
+  expect(visualLanguage.oldAmountAlign).toBe("center");
+  expect(visualLanguage.changeAlign).toBe("center");
+  expect(parseFloat(visualLanguage.paymentBorder)).toBeGreaterThan(0);
+  expect(visualLanguage.sectionTop).toBeGreaterThan(visualLanguage.infoBottom);
+  expect(visualLanguage.closingGap).toBeGreaterThan(0);
+  expect(visualLanguage.closingGap).toBeLessThan(70);
+  expect(visualLanguage.introText).toContain("Auf Basis Ihres individuellen Verbrauchs");
   runtime.assertClean();
 });
 
@@ -180,17 +204,24 @@ test("AP13 kennzeichnet Nachzahlung und Guthaben mit unveränderter Vorzeichenlo
     const debitHtml = buildBriefHtml(debitCalc, debitResult);
     const host = document.createElement("div");
     host.innerHTML = creditHtml;
-    const creditLabel = host.querySelector(".result-cell--final .result-label").textContent;
-    const creditClass = host.querySelector(".result-cell--final").className;
+    const creditCell = host.querySelector(".result-cell--final");
+    const creditLabel = creditCell.querySelector(".result-label").textContent;
+    const creditClass = creditCell.className;
+    const creditPayment = host.querySelector(".payment-text").textContent;
+    document.body.appendChild(host);
+    const creditBackground = getComputedStyle(creditCell).backgroundColor;
+    host.remove();
     host.innerHTML = debitHtml;
     const debitLabel = host.querySelector(".result-cell--final .result-label").textContent;
     const debitClass = host.querySelector(".result-cell--final").className;
     const debitPayment = host.querySelector(".payment-text").textContent;
-    return { creditLabel, creditClass, debitLabel, debitClass, debitPayment };
+    return { creditLabel, creditClass, creditBackground, creditPayment, debitLabel, debitClass, debitPayment };
   });
 
   expect(result.creditLabel).toBe("Ihr Guthaben");
   expect(result.creditClass).toContain("is-credit");
+  expect(result.creditBackground).not.toBe("rgba(0, 0, 0, 0)");
+  expect(result.creditPayment).toBe("Ihr Guthaben wird Ihnen auf das bekannte Konto überwiesen beziehungsweise mit offenen Abrechnungen verrechnet.");
   expect(result.debitLabel).toBe("Ihre Nachzahlung an die Vermieterin");
   expect(result.debitClass).toContain("is-due");
   expect(result.debitPayment).toContain("überweisen");

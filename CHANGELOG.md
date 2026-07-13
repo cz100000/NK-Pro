@@ -1,5 +1,25 @@
 # Changelog
 
+## V99.4.15 – AP13-Briefkorrekturen und Layoutfeinschliff (13.07.2026)
+
+### Geändert
+
+- Guthaben im Ergebnisfeld dezent grün hinterlegt; Nachzahlung bleibt dezent rot.
+- Spalten der Detailtabelle neu gewichtet, damit die letzte Summe vollständig in der Abrechnungsspalte bleibt.
+- Guthabentext ohne Zahlungsdatum und mit Verrechnung offener Abrechnungen formuliert.
+- Abstand zwischen Detailtabelle und Hinweisbox um rund 40 % reduziert.
+- Briefkopf auf sämtlichen Seiten horizontal zentriert.
+- Seite-2-Inhalt beginnt erst unterhalb des Informationsblocks; technischer Einleitungstext entfernt.
+- Überschrift und Standardtext auf „Nebenkostenvorauszahlung“ umgestellt.
+- Abstand zwischen Abschlusstext und Grußformel reduziert.
+- „Preis pro Einheit“, „bisheriger Betrag“ und „Änderung ab“ zentriert.
+- Zahlungshinweis auf Seite 2 um den blauen Akzentstrich ergänzt.
+- Dokumentlayoutversion auf 2 und PWA-/Releaseversion auf V99.4.15 erhöht.
+
+### Unverändert
+
+Fachliche Berechnungen, Abrechnungswerte, Rundungen, Vorzeichenlogik, Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Abrechnungssnapshot 2 und Zählerstandards 1.
+
 ## V99.4.14 – Brieflayout, Druckbild und Vorschaukonsistenz (13.07.2026)
 
 ### Geändert
@@ -13,7 +33,7 @@
 - Tabelle zur Vorauszahlungsanpassung in derselben blauen visuellen Sprache wie die Haupttabelle umgesetzt.
 - variable Standardtexte vollständig erhalten und um getrennte Zahlungsformulierungen sowie Dauerauftrag-/Abschlusstextfelder ergänzt.
 - AP13-Struktur- und Browsertests sowie ein- und zweiseitige Kontroll-PDFs ergänzt.
-- PWA-, Paket-, Laufzeit- und Projektversion auf V99.4.14 aktualisiert.
+- PWA-, Paket-, Laufzeit- und Projektversion auf V99.4.15 aktualisiert.
 
 ### Unverändert
 

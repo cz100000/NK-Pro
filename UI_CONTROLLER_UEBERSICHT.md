@@ -1,4 +1,4 @@
-# NK-Pro – UI-Controllerübersicht V99.4.14
+# NK-Pro – UI-Controllerübersicht V99.4.15
 
 
 Die Zahl der Controller und Aktionen bleibt 13 beziehungsweise 99. AP13 verwendet die vorhandenen Dokumentaktionen und ergänzt keine Parallelsteuerung.

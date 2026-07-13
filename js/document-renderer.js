@@ -14,6 +14,8 @@
   const AP13_LIGHT_ALT = "#EAF1F6";
   const AP13_RESULT_RED = "#8B2D2D";
   const AP13_RESULT_RED_BG = "#FBEDED";
+  const AP13_RESULT_GREEN = "#2F6B45";
+  const AP13_RESULT_GREEN_BG = "#EDF7F0";
 
   function briefSettlementSummaryHtml(result) {
     if (!result) return "";
@@ -46,8 +48,8 @@
 .nk-letter-document{width:210mm;margin:0;padding:0;color:${AP13_TEXT};font-family:Arial,"Liberation Sans",sans-serif;font-size:10pt;line-height:1.28;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .nk-letter-document .letter-sheet{position:relative;width:210mm;height:297mm;min-height:297mm;max-width:none;margin:0 0 6mm;padding:0;overflow:hidden;background:#fff;color:${AP13_TEXT};page-break-after:always;break-after:page;page-break-inside:avoid;break-inside:avoid}
 .nk-letter-document .letter-sheet:last-child{margin-bottom:0;page-break-after:auto;break-after:auto}
-.nk-letter-document .letter-header{position:absolute;top:7mm;left:19mm;right:19mm;height:11mm;border-bottom:.55mm solid ${AP13_BLUE};padding-bottom:1.4mm}
-.nk-letter-document .letter-brand{display:flex;align-items:baseline;gap:2.2mm;white-space:nowrap;line-height:1}
+.nk-letter-document .letter-header{position:absolute;top:7mm;left:19mm;right:19mm;height:11mm;border-bottom:.55mm solid ${AP13_BLUE};padding-bottom:1.4mm;text-align:center}
+.nk-letter-document .letter-brand{display:flex;align-items:baseline;justify-content:center;gap:2.2mm;white-space:nowrap;line-height:1}
 .nk-letter-document .letter-brand-owner{font-size:11pt;font-weight:700;color:${AP13_DARK_BLUE}}
 .nk-letter-document .letter-brand-separator{font-size:9pt;color:${AP13_MUTED}}
 .nk-letter-document .letter-brand-role{font-size:9pt;font-weight:400;color:${AP13_MUTED}}
@@ -68,23 +70,25 @@
 .nk-letter-document .result-cell{display:flex;align-items:center;justify-content:center;flex-direction:column;min-width:0;background:${AP13_LIGHT};border-right:.25mm solid #fff;text-align:center;padding:2mm}
 .nk-letter-document .result-cell:last-child{border-right:0}
 .nk-letter-document .result-cell--final.is-due{background:${AP13_RESULT_RED_BG}}
+.nk-letter-document .result-cell--final.is-credit{background:${AP13_RESULT_GREEN_BG}}
 .nk-letter-document .result-label{color:#4D5F6E;font-size:7pt;line-height:1.12;font-weight:700}
 .nk-letter-document .result-value{margin-top:1mm;color:${AP13_DARK_BLUE};font-size:12pt;line-height:1;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
 .nk-letter-document .result-cell--middle .result-value{color:${AP13_TEXT}}
 .nk-letter-document .result-cell--final.is-due .result-value{color:${AP13_RESULT_RED}}
+.nk-letter-document .result-cell--final.is-credit .result-value{color:${AP13_RESULT_GREEN}}
 .nk-letter-document .detail-heading,.nk-letter-document .supplement-heading{margin:0;color:${AP13_DARK_BLUE};font-size:10.5pt;line-height:1.15;font-weight:700}
 .nk-letter-document .detail-heading{margin-bottom:1.6mm}
 .nk-letter-document table{border-collapse:collapse;border-spacing:0;table-layout:fixed;width:100%;max-width:100%;margin:0}
-.nk-letter-document .abrechnung-table{font-size:6pt;line-height:1.1;margin-bottom:10mm}
-.nk-letter-document .abrechnung-table col.col-cost{width:20.5%}
+.nk-letter-document .abrechnung-table{font-size:6pt;line-height:1.1;margin-bottom:6mm}
+.nk-letter-document .abrechnung-table col.col-cost{width:18.5%}
 .nk-letter-document .abrechnung-table col.col-total{width:11%}
-.nk-letter-document .abrechnung-table col.col-distribution{width:10%}
-.nk-letter-document .abrechnung-table col.col-total-units{width:10.2%}
-.nk-letter-document .abrechnung-table col.col-price{width:10.2%}
+.nk-letter-document .abrechnung-table col.col-distribution{width:9.5%}
+.nk-letter-document .abrechnung-table col.col-total-units{width:10%}
+.nk-letter-document .abrechnung-table col.col-price{width:10%}
 .nk-letter-document .abrechnung-table col.col-share-units{width:9%}
-.nk-letter-document .abrechnung-table col.col-cost-share{width:9.5%}
-.nk-letter-document .abrechnung-table col.col-prepayment{width:10%}
-.nk-letter-document .abrechnung-table col.col-balance{width:9.6%}
+.nk-letter-document .abrechnung-table col.col-cost-share{width:10%}
+.nk-letter-document .abrechnung-table col.col-prepayment{width:10.5%}
+.nk-letter-document .abrechnung-table col.col-balance{width:11.5%}
 .nk-letter-document .abrechnung-table thead th{height:10.4mm;padding:1.2mm .9mm;background:${AP13_BLUE};color:#fff;border:.25mm solid #fff;border-top:0;font-size:6pt;line-height:1.08;font-weight:700;text-align:center;vertical-align:middle;white-space:normal;overflow-wrap:normal;word-break:normal;hyphens:none}
 .nk-letter-document .abrechnung-table thead th:first-child{text-align:left}
 .nk-letter-document .abrechnung-table tbody td{height:6.2mm;padding:1mm .9mm;color:${AP13_TEXT};border-right:.25mm solid ${AP13_LINE};border-bottom:.25mm solid ${AP13_LINE};vertical-align:middle;white-space:normal;overflow-wrap:anywhere;word-break:normal;hyphens:auto}
@@ -107,7 +111,7 @@
 .nk-letter-document .attachment{text-align:right;color:${AP13_MUTED};font-size:7.5pt;line-height:1.15}
 .nk-letter-document .attachment-title{display:block;color:${AP13_DARK_BLUE};font-size:8pt;font-weight:700}
 .nk-letter-document .letter-footer{position:absolute;left:19mm;right:19mm;bottom:6mm;height:5.5mm;border-top:.25mm solid ${AP13_LINE};padding-top:2.1mm;color:${AP13_MUTED};font-size:6.5pt;line-height:1;text-align:center;white-space:nowrap}
-.nk-letter-document .supplement-content{position:absolute;top:22mm;left:19mm;right:19mm;bottom:20mm;display:flex;min-height:0;flex-direction:column;padding:0}
+.nk-letter-document .supplement-content{position:absolute;top:49mm;left:19mm;right:19mm;bottom:20mm;display:flex;min-height:0;flex-direction:column;padding:0}
 .nk-letter-document .supplement-lead{width:92mm;min-height:35mm}
 .nk-letter-document .supplement-title{display:block;margin:0 0 2mm;color:${AP13_DARK_BLUE};font-size:16pt;line-height:1.05;font-weight:700}
 .nk-letter-document .supplement-lead-text{margin:0;color:${AP13_TEXT};font-size:9pt;line-height:1.32}
@@ -134,11 +138,11 @@
 .nk-letter-document .prepay-table .prepay-summary td{background:#DCEAF3;border-top:.4mm solid ${AP13_BLUE};font-weight:700}
 .nk-letter-document .prepay-table .prepay-rent td{background:${AP13_LIGHT_ALT};font-weight:600}
 .nk-letter-document .prepay-table .prepay-final td{background:#DCEAF3;border-top:.55mm solid ${AP13_BLUE};border-bottom:.3mm solid ${AP13_BLUE};font-weight:700}
-.nk-letter-document .payment-notice{padding:3mm;background:${AP13_LIGHT};color:#4D5F6E;font-size:8pt;line-height:1.25}
+.nk-letter-document .payment-notice{padding:3mm;border-left:.6mm solid ${AP13_BLUE};background:${AP13_LIGHT};color:#4D5F6E;font-size:8pt;line-height:1.25}
 .nk-letter-document .payment-notice-title{display:block;margin-bottom:.7mm;color:${AP13_DARK_BLUE};font-size:8pt;font-weight:700}
-.nk-letter-document .supplement-closing-text{margin:0;font-size:9pt;line-height:1.3}
+.nk-letter-document .supplement-closing-text{margin:0 0 8mm;font-size:9pt;line-height:1.3}
 .nk-letter-document .supplement-end{margin-top:auto}
-.nk-letter-document .supplement-end .document-end{margin-top:0}
+.nk-letter-document .supplement-end .document-end{margin-top:0;padding-top:6mm}
 .nk-letter-document table,.nk-letter-document tr,.nk-letter-document .document-end,.nk-letter-document .letter-footer{page-break-inside:avoid;break-inside:avoid}
 @media print{html,body{width:210mm;margin:0!important;padding:0!important;background:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.nk-letter-document{margin:0!important}.nk-letter-document .letter-sheet{margin:0!important;border:0!important;box-shadow:none!important}}
 `;
@@ -307,7 +311,7 @@
         '<td class="money">' + fmtMoney(row.gesamtbetrag) + '</td>' +
         '<td class="center">' + escapeHtml(distributionLabel(row)) + '</td>' +
         '<td class="center">' + (manualExternal ? "siehe Anlage" : escapeHtml(unitsText(row.basisTotal, suffix))) + '</td>' +
-        '<td class="money">' + (manualExternal ? "siehe Anlage" : escapeHtml(priceText(row))) + '</td>' +
+        '<td class="money center">' + (manualExternal ? "siehe Anlage" : escapeHtml(priceText(row))) + '</td>' +
         '<td class="center">' + (manualExternal ? "siehe Anlage" : escapeHtml(unitsText(row.einheiten, suffix))) + '</td>' +
         '<td class="money">' + fmtMoney(row.anteil) + '</td>' +
         '<td class="money">' + prepaymentMoneyHtml(prepayment) + '</td>' +
@@ -388,12 +392,12 @@
     const rowHtml = rows.map(row => {
       const change = num(row.change);
       const operator = change > 0.004 ? "+" : (change < -0.004 ? "−" : "±");
-      return '<tr><td>' + escapeHtml(row.label) + '</td><td class="center">' + escapeHtml(row.turnus || "monatlich") + '</td><td class="money">' + fmtMoney(row.oldMonthly) + '</td><td class="center">' + operator + '</td><td class="money">' + fmtMoney(Math.abs(change)) + '</td><td class="center">=</td><td class="money">' + fmtMoney(row.newMonthly) + '</td></tr>';
+      return '<tr><td>' + escapeHtml(row.label) + '</td><td class="center">' + escapeHtml(row.turnus || "monatlich") + '</td><td class="money center">' + fmtMoney(row.oldMonthly) + '</td><td class="center">' + operator + '</td><td class="money center">' + fmtMoney(Math.abs(change)) + '</td><td class="center">=</td><td class="money">' + fmtMoney(row.newMonthly) + '</td></tr>';
     }).join("");
     const intro = replaceDocumentPlaceholders(settings.vorauszahlungIntro, { datum:effectiveDate, betrag:fmtMoney(warmRent) });
-    return '<section class="supplement-section prepayment-section"><h2 class="supplement-heading">Anpassung der Betriebskostenvorauszahlung</h2>' +
+    return '<section class="supplement-section prepayment-section"><h2 class="supplement-heading">Anpassung der Nebenkostenvorauszahlung</h2>' +
       (intro ? '<p class="prepayment-intro">' + briefProseHtml(intro) + '</p>' : '') +
-      '<table class="prepay-table" aria-label="Anpassung der Betriebskostenvorauszahlung"><colgroup><col class="col-prepay-label"><col class="col-prepay-turnus"><col class="col-prepay-old"><col class="col-prepay-operator"><col class="col-prepay-change"><col class="col-prepay-equals"><col class="col-prepay-new"></colgroup>' +
+      '<table class="prepay-table" aria-label="Anpassung der Nebenkostenvorauszahlung"><colgroup><col class="col-prepay-label"><col class="col-prepay-turnus"><col class="col-prepay-old"><col class="col-prepay-operator"><col class="col-prepay-change"><col class="col-prepay-equals"><col class="col-prepay-new"></colgroup>' +
       '<thead><tr><th>Art der Nebenkosten</th><th>Turnus</th><th>bisheriger<br>Betrag</th><th></th><th>Änderung ab<br>' + escapeHtml(effectiveDate) + '</th><th></th><th>Neuer Betrag ab<br>' + escapeHtml(effectiveDate) + '</th></tr></thead>' +
       '<tbody>' + rowHtml +
       '<tr class="prepay-summary"><td colspan="6">Summe Nebenkostenvorauszahlung ab ' + escapeHtml(effectiveDate) + '</td><td class="money">' + fmtMoney(sumNew) + '</td></tr>' +
@@ -430,9 +434,8 @@
     const extraSection = extra ? '<section class="supplement-section"><h2 class="supplement-heading">Zusätzliche Erläuterungen zur Abrechnung</h2><div class="additional-note-box">' + briefParagraphsHtml(extra, "letter-prose") + '</div></section>' : '';
     return '<section class="letter-sheet letter-supplement-sheet" data-page="2" data-page-count="' + pageCount + '">' +
       briefHeaderHtml(settings) + briefInfoHtml(settings, tenant) +
-      '<main class="supplement-content"><div class="supplement-lead"><h1 class="supplement-title">Ergänzende Hinweise</h1><p class="supplement-lead-text">Diese Folgeseite enthält ausschließlich ergänzende Erläuterungen und/oder die Anpassung der monatlichen Betriebskostenvorauszahlungen.</p></div>' +
-      '<div class="supplement-sections">' + extraSection + adjustmentHtml + (String(settings.abschlusstext || "").trim() ? '<p class="supplement-closing-text">' + briefProseHtml(settings.abschlusstext) + '</p>' : '') + '</div>' +
-      '<div class="supplement-end">' + documentEndHtml(settings, false) + '</div></main>' + briefFooterHtml(settings, 2, pageCount) + '</section>';
+      '<main class="supplement-content"><div class="supplement-sections">' + extraSection + adjustmentHtml + '</div>' +
+      '<div class="supplement-end">' + (String(settings.abschlusstext || "").trim() ? '<p class="supplement-closing-text">' + briefProseHtml(settings.abschlusstext) + '</p>' : '') + documentEndHtml(settings, false) + '</div></main>' + briefFooterHtml(settings, 2, pageCount) + '</section>';
   }
 
   function buildPrepaymentPage(costRows, tenant, extraNote = "") {

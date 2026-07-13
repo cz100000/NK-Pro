@@ -1,6 +1,6 @@
 {
-  "name": "NK-Pro V99.4.14 – Nebenkostenabrechnung",
-  "short_name": "NK-Pro V99.4.14",
+  "name": "NK-Pro V99.4.15 – Nebenkostenabrechnung",
+  "short_name": "NK-Pro V99.4.15",
   "description": "Lokale Nebenkostenabrechnung mit konsistentem DIN-A4-Brieflayout für Vorschau, Druck und PDF.",
   "lang": "de-DE",
   "id": "./",
@@ -9,7 +9,7 @@
   "display": "standalone",
   "background_color": "#f4f6f9",
   "theme_color": "#031d41",
-  "version": "99.4.14",
+  "version": "99.4.15",
   "icons": [
     {
       "src": "./icons/icon-192.png",

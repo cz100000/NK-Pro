@@ -1,4 +1,4 @@
-# NK-Pro – Kompatibilitätsschicht V99.4.14
+# NK-Pro – Kompatibilitätsschicht V99.4.15
 
 
 AP13 erhält die vorhandenen Dokumentweiterleitungen. Die Implementierung liegt im Dokumentrenderer; es wurde kein zweiter Renderer in der Kompatibilitätsschicht ergänzt.

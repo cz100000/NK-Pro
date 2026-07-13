@@ -1,4 +1,4 @@
-# NK-Pro – Architektur V99.4.14
+# NK-Pro – Architektur V99.4.15
 
 ## Laufzeit
 
@@ -25,4 +25,4 @@ Der Renderer entscheidet deterministisch zwischen einer und zwei Seiten. Seite 2
 - Objektstandard 1 und Abrechnungssnapshot 2,
 - alle Zählerstandards 1,
 - AP11-Navigation mit vier Gruppen und 16 Zielseiten,
-- Offline-App-Shell `nk-pro-v99-4-14`.
+- Offline-App-Shell `nk-pro-v99-4-15`.

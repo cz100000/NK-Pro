@@ -1,4 +1,4 @@
-# NK-Pro – Anwendungsaktionsübersicht V99.4.14
+# NK-Pro – Anwendungsaktionsübersicht V99.4.15
 
 
 AP13 ändert keine Aktionskennungen. Dokumentaktionen rufen weiterhin die bestehenden UI-Bindings auf; nur Renderer, Vorschau und Drucklayout wurden vereinheitlicht.

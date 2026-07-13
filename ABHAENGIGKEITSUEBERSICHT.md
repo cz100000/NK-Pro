@@ -1,4 +1,4 @@
-# NK-Pro – Abhängigkeitsübersicht V99.4.14
+# NK-Pro – Abhängigkeitsübersicht V99.4.15
 
 
 AP13 ergänzt keine neue externe Laufzeitabhängigkeit. Der gemeinsame Dokumentrenderer wird von `ui-documents.js` für Vorschau und vom vorhandenen Browser-I/O für Druck/PDF genutzt. Die bisherigen AP12-Abhängigkeitsgrenzen bleiben unverändert.

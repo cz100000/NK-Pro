@@ -45,7 +45,7 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.14";
+const APP_VERSION = "V99.4.15";
 const APP_VERSION_NAME = "Brieflayout, Druckbild und Vorschaukonsistenz";
 const APP_RELEASE_DATE = "2026-07-13";
 const DATA_SCHEMA_VERSION = 5;
@@ -112,6 +112,8 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
+  "V99.4.15 verfeinert AP13 mit grünem Guthabenzustand, optimierten Spaltenbreiten, zentrierten Brief- und Tabelleninhalten sowie korrigierten Guthaben- und Vorauszahlungstexten.",
+  "Seite 2 beginnt unterhalb des Informationsblocks, verzichtet auf den technischen Einleitungstext und führt Zahlungshinweis sowie Abschlussabstände konsistent fort.",
   "V99.4.14 setzt AP13 mit einem gemeinsamen DIN-A4-Dokumentmodell für Vorschau, Druckfenster und PDF-Ausgabe um.",
   "Die neunspaltige Haupttabelle enthält Vorauszahlungen und vollständige Trennlinien; Seite 2 entsteht ausschließlich für Zusatzhinweise und/oder eine Vorauszahlungsanpassung.",
   "Briefkopf, Informationsblock, Ergebnisleiste, Hinweis- und Zahlungstext, Abschlussblock, Anlagenhinweis und dynamische Seitenzahlen folgen den finalen AP13-Referenzmustern.",

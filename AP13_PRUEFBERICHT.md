@@ -1,8 +1,12 @@
 # AP13 – Test- und Prüfbericht
 
-**Version:** V99.4.14  
+**Version:** V99.4.15  
 **Datum:** 13. Juli 2026  
 **Gesamtergebnis:** bestanden, mit einer transparenten externen Druckereinschränkung
+
+## Nachprüfung der V99.4.15-Korrekturen
+
+Alle zwölf abgestimmten Korrekturen wurden in statischen und browsergestützten Prüfungen abgesichert. Zusätzlich wurden die ein- und zweiseitigen Kontrollausgaben neu erzeugt, als PNG gerendert und visuell auf Zentrierung, Abstände, Spaltenbreiten, Farbzustände und Seite-2-Aufbau geprüft.
 
 ## Automatisierte AP13-Prüfungen
 

@@ -3108,7 +3108,7 @@
       .sidebar-billing-context__details > div { grid-template-columns:82px minmax(0,1fr); }
     }
 
-/* V99.4.14 - AP13: gemeinsame DIN-A4-Vorschau fuer Vorschau, Druck und PDF */
+/* V99.4.15 - AP13: gemeinsame DIN-A4-Vorschau fuer Vorschau, Druck und PDF */
 .letter-preview-wrap {
   min-width:0;
   max-height:none;

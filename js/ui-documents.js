@@ -93,13 +93,17 @@ function normalizeBriefDefaultTexts() {
   ];
   const legacySaldoTexts = [
     "Bei negativen Beträgen, handelt es sich um Nachzahlungen an die Vermieterin. Bei positiven Beträgen handelt es sich um Guthaben zu Ihren Gunsten. Ich bitte Sie, eine etwaige Nachzahlung umgehend zu begleichen.",
-    "Bei negativen Beträgen handelt es sich um Nachzahlungen an die Vermieterin. Bei positiven Beträgen handelt es sich um Guthaben zu Ihren Gunsten. Bitte begleichen Sie eine etwaige Nachzahlung umgehend."
+    "Bei negativen Beträgen handelt es sich um Nachzahlungen an die Vermieterin. Bei positiven Beträgen handelt es sich um Guthaben zu Ihren Gunsten. Bitte begleichen Sie eine etwaige Nachzahlung umgehend.",
+    "Ihr Guthaben wird Ihnen bis zum {zahlungsziel} auf das bekannte Konto überwiesen beziehungsweise mit der nächsten Zahlung verrechnet."
   ];
-  const legacyPrepay = "Um den gestiegenen Energiekosten und Ihrem individuellen Verbrauch Rechnung zu tragen, erhöhen sich Ihre monatlichen Nebenkostenvorauszahlungen zum {datum}. Die Details entnehmen Sie bitte der untenstehenden Tabelle.";
+  const legacyPrepayTexts = [
+    "Um den gestiegenen Energiekosten und Ihrem individuellen Verbrauch Rechnung zu tragen, erhöhen sich Ihre monatlichen Nebenkostenvorauszahlungen zum {datum}. Die Details entnehmen Sie bitte der untenstehenden Tabelle.",
+    "Auf Grundlage der vorliegenden Abrechnung wird Ihre monatliche Betriebskostenvorauszahlung ab dem {datum} wie folgt angepasst:"
+  ];
   if (legacyIntros.includes(normalizeLegacyProse(state.briefSettings.introText))) state.briefSettings.introText = defaults.introText;
   if (legacySaldoTexts.includes(normalizeLegacyProse(state.briefSettings.saldoTextNachzahlung))) state.briefSettings.saldoTextNachzahlung = defaults.saldoTextNachzahlung;
   if (legacySaldoTexts.includes(normalizeLegacyProse(state.briefSettings.saldoTextGuthaben))) state.briefSettings.saldoTextGuthaben = defaults.saldoTextGuthaben;
-  if (normalizeLegacyProse(state.briefSettings.vorauszahlungIntro) === legacyPrepay) state.briefSettings.vorauszahlungIntro = defaults.vorauszahlungIntro;
+  if (legacyPrepayTexts.includes(normalizeLegacyProse(state.briefSettings.vorauszahlungIntro))) state.briefSettings.vorauszahlungIntro = defaults.vorauszahlungIntro;
   if (normalizeLegacyProse(state.briefSettings.heizkostenFussnote).startsWith("*) Heiz- und Warmwasserkosten")) state.briefSettings.heizkostenFussnote = defaults.heizkostenFussnote;
 }
 function defaultBriefSettings() {
@@ -123,7 +127,7 @@ function defaultBriefSettings() {
     anredeModus: "Sehr geehrte(r) Mieter/in,",
     introText: "für die oben bezeichnete Wohnung erhalten Sie hiermit Ihre Nebenkostenabrechnung für den Zeitraum {zeitraum}. Die Kostenverteilung und Ihr Anteil sind nachfolgend dargestellt:",
     saldoTextNachzahlung: "Bitte überweisen Sie den Betrag bis zum {zahlungsziel} auf das Ihnen bekannte Konto.",
-    saldoTextGuthaben: "Ihr Guthaben wird Ihnen bis zum {zahlungsziel} auf das bekannte Konto überwiesen beziehungsweise mit der nächsten Zahlung verrechnet.",
+    saldoTextGuthaben: "Ihr Guthaben wird Ihnen auf das bekannte Konto überwiesen beziehungsweise mit offenen Abrechnungen verrechnet.",
     outroText: "",
     abschlusstext: "Bei Fragen stehe ich Ihnen selbstverständlich gern zur Verfügung.",
     gruss: "Mit freundlichen Grüßen",
@@ -135,7 +139,7 @@ function defaultBriefSettings() {
     vorauszahlungPrintMode: "Nicht drucken",
     useCalculatedPrepaymentAdjustments: "Ja",
     vorauszahlungAb: "01.01." + nextYear,
-    vorauszahlungIntro: "Auf Grundlage der vorliegenden Abrechnung wird Ihre monatliche Betriebskostenvorauszahlung ab dem {datum} wie folgt angepasst:",
+    vorauszahlungIntro: "Auf Basis Ihres individuellen Verbrauchs und um Kostensteigerungen zu berücksichtigen, wird Ihre monatliche Nebenkostenvorauszahlung ab dem {datum} wie folgt angepasst:",
     dauerauftragText: "Bitte passen Sie Ihren monatlichen Dauerauftrag ab dem {datum} auf {betrag} an.",
     vzChangeHeizung: 15,
     vzChangeWasser: 0,

@@ -1,5 +1,5 @@
 {
-  "version": "99.4.14",
+  "version": "99.4.15",
   "date": "2026-07-13",
   "status": "passed",
   "browserTests": 5,
@@ -19,7 +19,8 @@
     "keine separate Box Abrechnungsergebnis",
     "vollständige variable Textfelder",
     "skalierte vollständige DIN-A4-Vorschau",
-    "Bedienfelder im Direktdruck ausgeblendet"
+    "Bedienfelder im Direktdruck ausgeblendet",
+    "zwölf AP13-Korrekturen strukturell abgesichert"
   ],
   "browserCases": [
     {
@@ -153,5 +154,20 @@
     "domOverflow": false,
     "grayscaleReadable": true,
     "addressWindowCss": "top 51 mm, left 19 mm, width 99 mm, height 42 mm"
-  }
+  },
+  "documentLayoutVersion": 2,
+  "correctionsVerified": [
+    "Guthaben grün und Nachzahlung rot",
+    "Summenspalte verbreitert ohne Tabellenüberlauf",
+    "Guthabentext ohne Datum und mit offenen Abrechnungen",
+    "Abstand Detailtabelle zu Hinweisbox reduziert",
+    "Briefkopf auf allen Seiten zentriert",
+    "Seite-2-Inhalt unterhalb des Informationsblocks",
+    "Nebenkostenvorauszahlung: Überschrift und Standardtext korrigiert",
+    "Abstand Abschlusstext zu Grußformel reduziert",
+    "Technischer Seite-2-Einleitungstext entfernt",
+    "Preis pro Einheit zentriert",
+    "Bisheriger Betrag und Änderung ab zentriert",
+    "Zahlungshinweis mit blauem Akzentstrich"
+  ]
 }
