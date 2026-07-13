@@ -1,4 +1,9 @@
-<!-- AP9-CURRENT -->
+<!-- AP10-CURRENT -->
+# Zustandszugriffe V99.4.11
+
+AP10 reduziert direkte `state`-Pfadreferenzen in `app.js` von 503 auf 306 und Schreibstellen von 195 auf 96. Archiv und Jahreswechsel schreiben nur in `NKProStateAccess.transact()`; Qualität und Diagnose laufen auf einer Zustandskopie. Root-Ersetzungen sinken von 13 auf 10. Das vollständige Zeileninventar steht in `AP10_ZUSTANDSZUGRIFFE.json`.
+
+<!-- AP9-HISTORIC -->
 # Zustandszugriffe V99.4.10
 
 `state` bleibt der einzige veränderliche Arbeitszustand. AP9 reduziert direkte Pfadreferenzen in `app.js` von 640 auf 503 und direkte Schreibstellen von 246 auf 195. Neue Anwendungsaktionen verwenden `NKProStateAccess.transact()` mit Rollback und höchstens einem Commit. Root-Ersetzung aus einem Aktionsresultat ist nur noch explizit über `replaceStateResult:true` möglich.

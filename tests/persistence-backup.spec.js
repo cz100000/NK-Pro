@@ -84,8 +84,8 @@ test("Archiv-Snapshots besitzen feste Grenzen und bleiben idempotent", async ({ 
     delete legacy.snapshotCompleteness;
     delete legacy.integrity;
 
-    const once = prepareArchiveItemForUse(legacy);
-    const twice = prepareArchiveItemForUse(once);
+    const once = window.NKProArchiveActions.prepareItem(legacy);
+    const twice = window.NKProArchiveActions.prepareItem(once);
     const fullBackup = exportSnapshot();
     const bounded = item => !!item && !!item.data &&
       !Object.prototype.hasOwnProperty.call(item.data, "jahresArchiv") &&
@@ -134,8 +134,7 @@ test("Wiederbearbeitung übernimmt die Abrechnung und behält aktuelle Stammdate
     state.waterMeterHistory.snapshotBoundaryTest = "aktuelle Historie";
     const archiveCount = state.jahresArchiv.length;
     const expectedYear = String(state.jahresArchiv[0].year);
-    window.prompt = () => "WIEDERBEARBEITEN";
-    reopenArchiveYearForRework(0);
+    window.NKProArchiveActions.reopenForRework(0, { confirmed:true, confirmationCode:"WIEDERBEARBEITEN" });
     return {
       masterMarker: state.stammdaten && state.stammdaten.snapshotBoundaryTest,
       historyMarker: state.waterMeterHistory && state.waterMeterHistory.snapshotBoundaryTest,

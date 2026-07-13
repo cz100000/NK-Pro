@@ -1,4 +1,9 @@
-<!-- AP9-CURRENT -->
+<!-- AP10-CURRENT -->
+# NK-Pro V99.4.11 – Physisch extrahierte Archiv-, Jahreswechsel-, Qualitäts- und Diagnoseorchestrierung
+
+V99.4.11 extrahiert 79 Implementierungen physisch aus `js/app.js` in `archive-actions.js`, `year-transition-actions.js`, `quality-assurance.js` und `diagnostics.js`. `app.js` umfasst nun 6.292 Zeilen statt 8.287. Schreibende AP10-Aktionen sind atomar; lesende Prüfungen sind nachgewiesen seiteneffektfrei. Verbindliche Details: `AP10_PHYSISCHE_ARCHIV_JAHRESWECHSEL_QUALITAET_DIAGNOSEORCHESTRIERUNG.md`, `AP10_PRUEFBERICHT.md` und `AP10_FUNKTIONSINVENTAR.md`.
+
+<!-- AP9-HISTORIC -->
 # NK-Pro V99.4.10 – Physisch extrahierte Kernorchestrierung
 
 V99.4.10 extrahiert Stammdaten-, Kosten- und laufende Abrechnungsorchestrierung physisch aus `js/app.js` in `master-data-actions.js`, `cost-actions.js` und `billing-workflow.js`. Die Anwendung bleibt eine statische lokale HTML/CSS/JavaScript-PWA ohne Framework oder Buildsystem. Verbindliche Details: `AP9_PHYSISCHE_KERNORCHESTRIERUNG.md`, `AP9_PRUEFBERICHT.md` und `AP9_EXTRAKTIONSINVENTAR.md`.

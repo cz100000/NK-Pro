@@ -23,6 +23,10 @@ const NK_PRO_MODULES = (() => {
     masterDataActions:globalThis.NKProMasterDataActions,
     costActions:globalThis.NKProCostActions,
     billingWorkflow:globalThis.NKProBillingWorkflow,
+    archiveActions:globalThis.NKProArchiveActions,
+    yearTransitionActions:globalThis.NKProYearTransitionActions,
+    qualityAssurance:globalThis.NKProQualityAssurance,
+    diagnostics:globalThis.NKProDiagnostics,
     uiController:globalThis.NKProUiController,
     uiBindings:globalThis.NKProUiBindings,
     uiEvents:globalThis.NKProUiEvents,
@@ -37,8 +41,8 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.10";
-const APP_VERSION_NAME = "Physisch extrahierte Kernorchestrierung";
+const APP_VERSION = "V99.4.11";
+const APP_VERSION_NAME = "Physisch extrahierte Archiv-, Jahreswechsel-, Qualitäts- und Diagnoseorchestrierung";
 const APP_RELEASE_DATE = "2026-07-13";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
@@ -104,6 +108,8 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
+  "V99.4.11 extrahiert Archiv-, Jahreswechsel-, Qualitäts- und Diagnoseorchestrierung physisch aus app.js in vier verantwortete Module.",
+  "Archiv- und Jahreswechselaktionen laufen atomar über NKProStateAccess; Qualitäts- und Diagnoseprüfungen bleiben ohne Commit, Persistenz und Rendering.",
   "V99.4.10 extrahiert Stammdaten-, Kosten- und Abrechnungsorchestrierung physisch aus app.js in drei kontrollierte Anwendungsmodule.",
   "UI-Aktionen rufen die neuen Module direkt auf; Zustandsänderungen laufen atomar über NKProStateAccess und den zentralen Commitpfad.",
   "V99.4.9 bindet die bestehende Oberfläche über zentrale Ereignisdelegation und fachlich benannte UI-Controller an die modularisierten Dienste an.",
@@ -290,6 +296,16 @@ let navigationInitialized = false;
 
 function clone(obj) { return JSON.parse(JSON.stringify(obj)); }
 
+function withIsolatedState(temporaryState, callback) {
+  const previousState = state;
+  try {
+    state = temporaryState;
+    return callback();
+  } finally {
+    state = previousState;
+  }
+}
+
 function persistenceModuleOptions(overrides = {}) {
   return {
     clone,
@@ -429,7 +445,7 @@ function archiveModuleOptions(overrides = {}) {
     normalizeLegacyData,
     billingSnapshot:NK_PRO_MODULES.billingSnapshot,
     billingSnapshotOptions:billingSnapshotModuleOptions(),
-    archivePeriodId,
+    archivePeriodId:NK_PRO_MODULES.archiveActions.periodId,
     todayIso,
     ...overrides
   };
@@ -762,8 +778,8 @@ function importValidationReport(data) {
 
   if (Array.isArray(data.jahresArchiv)) {
     data.jahresArchiv.forEach((item, index) => {
-      const validation = archiveItemValidation(item);
-      const label = archiveItemLabel(item, index);
+      const validation = NK_PRO_MODULES.archiveActions.validateItem(item);
+      const label = NK_PRO_MODULES.archiveActions.itemLabel(item, index);
       validation.errors.forEach(message => warnings.push("Archiv " + label + ": " + message + " (bleibt sichtbar, kann aber nicht geöffnet werden, bis der Datensatz korrigiert ist)"));
       validation.warnings.forEach(message => warnings.push("Archiv " + label + ": " + message));
     });
@@ -1018,7 +1034,7 @@ function loadInitialState() {
     const rawLoaded = loadData();
     ensurePreMigrationBackup(rawLoaded, { reason:"Automatische Migration beim Anwendungsstart", sourceStorageKey:STORAGE_KEY });
     const loaded = normalizeLoadedData(rawLoaded);
-    const cleared = clearAutofilledMeterEndValuesForNewBilling(loaded, { repairExistingNewBilling:true });
+    const cleared = NK_PRO_MODULES.yearTransitionActions.clearAutofilledMeterEndValues(loaded, { repairExistingNewBilling:true });
     persistStartupMeterRepair(loaded, cleared);
     return loaded;
   } catch(error) {
@@ -1252,7 +1268,7 @@ function ensureUnifiedBillingFields(data, options = {}) {
 
 // ===== Bereich: Archivmodell und Archivansicht =====
 function archiveDataSource(item) {
-  const meta = archiveMeta(item);
+  const meta = NK_PRO_MODULES.archiveActions.meta(item);
   if (meta.datenquelle) return meta.datenquelle;
   if (meta.legacyQuelle) return "Importiert / übernommen";
   if (meta.legacyArchivHinweis) return "Übernommen";
@@ -2088,23 +2104,13 @@ function qualitySeverityClass(severity) {
   return "err";
 }
 
-function duplicateValues(values) {
-  const counts = {};
-  values.filter(Boolean).forEach(value => {
-    const key = String(value).trim();
-    if (!key) return;
-    counts[key] = (counts[key] || 0) + 1;
-  });
-  return Object.keys(counts).filter(key => counts[key] > 1);
-}
+
 
 function storageWritable() {
   return NK_PRO_MODULES.persistence.storageWritable(STORAGE_KEY + "_write_test", persistenceModuleOptions());
 }
 
-function tenantQualityLabel(m) {
-  return (tenantDisplayId(m) || m.id || "ohne ID") + (m && m.name ? " · " + m.name : "");
-}
+
 
 function hasCompleteMailingAddress(tenant) {
   return !!(tenant && tenant.name && tenant.strasse && tenant.plz && tenant.ort);
@@ -2116,79 +2122,24 @@ function costPrepaymentRow(costId) {
 
 function prepaymentMatrixSumForCost(...args) { return NK_PRO_MODULES.billingCalculation.prepaymentMatrixSumForCost(...args); }
 
-function activeTenantByUnitMap() {
-  const map = {};
-  visibleTenantRows().forEach(t => {
-    if (!t.wohnung || !isBillableTenant(t)) return;
-    if (!map[t.wohnung]) map[t.wohnung] = [];
-    map[t.wohnung].push(t);
-  });
-  return map;
-}
 
-function missingBriefFieldsForTenant(tenant) {
-  const missing = [];
-  if (!tenant || !tenant.name) missing.push("Name");
-  if (!tenant || !tenant.geschlecht || tenant.geschlecht === "Frau/Herr") missing.push("Geschlecht/Anrede prüfen");
-  if (!tenant || !tenant.strasse) missing.push("Straße");
-  if (!tenant || !tenant.plz) missing.push("PLZ");
-  if (!tenant || !tenant.ort) missing.push("Ort");
-  return missing;
-}
+
+
 
 // ===== Bereich: V49-Fachcheck und finale Abrechnungssicherheit =====
-function tenantPeriodInterval(m) {
-  const period = billingPeriodSerials(periodStart(), periodEnd());
-  if (!period || !tenantOverlapsCurrentPeriod(m)) return null;
-  const leaseStart = isoDateSerial(m && m.einzug) ?? period.start;
-  const leaseEnd = isoDateSerial(m && m.auszug) ?? period.end;
-  const start = Math.max(leaseStart, period.start);
-  const end = Math.min(leaseEnd, period.end);
-  if (start > end) return null;
-  return { start, end };
-}
 
-function intervalDaysInclusive(interval) {
-  if (!interval) return 0;
-  return Math.max(0, Math.round((interval.end - interval.start) / 86400000) + 1);
-}
 
-function expectedTenantDaysInCurrentPeriod(m) {
-  return intervalDaysInclusive(tenantPeriodInterval(m));
-}
 
-function tenantIntervalsOverlap(a, b) {
-  const ia = tenantPeriodInterval(a);
-  const ib = tenantPeriodInterval(b);
-  return !!(ia && ib && ia.start <= ib.end && ib.start <= ia.end);
-}
 
-function tenantIntervalLabel(m) {
-  const start = m && m.einzug ? m.einzug : periodStart();
-  const end = m && m.auszug ? m.auszug : periodEnd();
-  return dateDe(start) + " bis " + dateDe(end);
-}
 
-function billableRowsByUnit(rows) {
-  const grouped = {};
-  (Array.isArray(rows) ? rows : []).forEach(t => {
-    const unit = String(t && t.wohnung || "");
-    if (!unit) return;
-    if (!grouped[unit]) grouped[unit] = [];
-    grouped[unit].push(t);
-  });
-  return grouped;
-}
 
-function tenantRowsHaveOverlappingIntervals(rows) {
-  const list = Array.isArray(rows) ? rows : [];
-  for (let i = 0; i < list.length; i += 1) {
-    for (let j = i + 1; j < list.length; j += 1) {
-      if (tenantIntervalsOverlap(list[i], list[j])) return true;
-    }
-  }
-  return false;
-}
+
+
+
+
+
+
+
 
 function specialCaseSeverityClass(severity) {
   if (severity === "Fehler") return "err";
@@ -2196,79 +2147,11 @@ function specialCaseSeverityClass(severity) {
   return "ok";
 }
 
-function specialCaseWatchReport() {
-  const rows = [];
-  function add(severity, type, subject, detail) {
-    rows.push({ severity, type, subject:subject || "", detail:detail || "" });
-  }
-  const units = allWohnungen();
-  const activeUnits = activeWohnungen();
-  const visible = visibleTenantRows();
-  const billable = billableTenantRows();
-  const privateRows = privateTenantRows();
-  const unitIds = new Set(units.map(w => w.id));
-  const activeUnitIds = new Set(activeUnits.map(w => w.id));
-  const periodDays = periodDaysExact();
-  const tenantMap = activeTenantByUnitMap();
 
-  activeUnits.forEach(w => {
-    const rowsForUnit = tenantMap[w.id] || [];
-    const privateOnUnit = privateRows.filter(t => t.wohnung === w.id);
-    if (!rowsForUnit.length && !privateOnUnit.length) add("Hinweis", "Leerstand", unitDisplayId(w), "Aktive Wohnung ohne abrechenbaren Mieter in der aktuellen Periode.");
-    if (!rowsForUnit.length && privateOnUnit.length) add("Info", "Eigentümer/Privat", unitDisplayId(w), privateOnUnit.map(tenantQualityLabel).join(", "));
-    if (rowsForUnit.length > 1) {
-      const detail = rowsForUnit.map(t => tenantQualityLabel(t) + " (" + tenantIntervalLabel(t) + ")").join(", ");
-      if (tenantRowsHaveOverlappingIntervals(rowsForUnit)) add("Fehler", "Mieterwechsel", unitDisplayId(w), "Überlappende Mietzeiträume: " + detail);
-      else add("Hinweis", "Mieterwechsel", unitDisplayId(w), "Unterjähriger Wechsel erkannt: " + detail);
-    }
-  });
-
-  visible.forEach(m => {
-    const label = tenantQualityLabel(m);
-    const expectedDays = expectedTenantDaysInCurrentPeriod(m);
-    const enteredDays = tenantDays(m);
-    if (!m.name) add("Prüfen", "Stammdaten", tenantDisplayId(m) || "ohne ID", "Name fehlt.");
-    if (!m.wohnung) add("Prüfen", "Stammdaten", label, "Wohnungszuordnung fehlt.");
-    else if (!unitIds.has(m.wohnung)) add("Fehler", "Stammdaten", label, "Wohnung " + m.wohnung + " existiert nicht im Wohnungsbestand.");
-    else if (!activeUnitIds.has(m.wohnung) && (isBillableTenant(m) || isPrivateTenant(m))) add("Prüfen", "Stammdaten", label, "Mietverhältnis liegt auf einer inaktiven Wohnung.");
-    if (m.einzug && m.auszug && isoDateSerial(m.einzug) !== null && isoDateSerial(m.auszug) !== null && isoDateSerial(m.auszug) < isoDateSerial(m.einzug)) add("Fehler", "Mieterwechsel", label, "Auszugsdatum liegt vor Einzugsdatum.");
-    if (expectedDays > 0 && expectedDays < periodDays) add("Hinweis", "Unterjährig", label, expectedDays + " von " + periodDays + " Tagen · " + tenantIntervalLabel(m));
-    if (expectedDays > 0 && Math.abs(enteredDays - expectedDays) > 1) add("Prüfen", "Aktive Tage", label, "Eingetragen " + enteredDays + ", erwartet " + expectedDays + " Tage.");
-    if (isPrivateTenant(m)) {
-      const hasMoney = Math.abs(num(m.nkVoraus)) > 0.01 || Math.abs(num(m.kaltErhalten)) > 0.01 || Math.abs(num(m.vorjahresKorrektur)) > 0.01;
-      add(hasMoney ? "Prüfen" : "Info", "Eigentümer/Privat", label, hasMoney ? "Privatdatensatz enthält Zahlungs-/Korrekturwerte." : "Privat-/Eigentümerrolle wird bewusst gesondert geführt.");
-    }
-  });
-
-  const errors = rows.filter(r => r.severity === "Fehler").length;
-  const checks = rows.filter(r => r.severity === "Prüfen").length;
-  const hints = rows.filter(r => r.severity === "Hinweis").length;
-  const infos = rows.filter(r => r.severity === "Info").length;
-  const underjaehrig = rows.filter(r => r.type === "Unterjährig" || r.type === "Mieterwechsel").length;
-  const leerstand = rows.filter(r => r.type === "Leerstand").length;
-  const level = errors ? "err" : (checks ? "warn" : "ok");
-  const label = errors ? "Fehler" : (checks ? "Prüfen" : (hints ? "Hinweise" : "OK"));
-  const message = errors ? "Sonderfälle enthalten harte Fehler." : (checks ? "Sonderfälle sollten vor Abschluss geprüft werden." : (hints ? "Sonderfälle erkannt, aber ohne harte Auffälligkeit." : "Keine kritischen Sonderfälle erkannt."));
-  return {
-    rows,
-    errors,
-    checks,
-    hints,
-    infos,
-    underjaehrig,
-    leerstand,
-    privateCount: privateRows.length,
-    billableCount: billable.length,
-    activeUnitCount: activeUnits.length,
-    level,
-    label,
-    message
-  };
-}
 
 function specialCaseBadgesForTenant(m) {
   const badges = [];
-  const expectedDays = expectedTenantDaysInCurrentPeriod(m);
+  const expectedDays = NK_PRO_MODULES.qualityAssurance.expectedTenantDaysInCurrentPeriod(m);
   const periodDays = periodDaysExact();
   const enteredDays = tenantDays(m);
   const unit = state.wohnungen.find(w => w.id === m.wohnung);
@@ -2286,7 +2169,7 @@ function specialCaseBadgesForTenant(m) {
 function renderSpecialCaseWatch() {
   const el = document.getElementById("sonderfallWatchBox");
   if (!el) return;
-  const report = specialCaseWatchReport();
+  const report = NK_PRO_MODULES.qualityAssurance.specialCases();
   const visibleRows = report.rows.filter(r => r.severity !== "Info");
   const infoRows = report.rows.filter(r => r.severity === "Info");
   const rowsHtml = visibleRows.length ? visibleRows.slice(0, 12).map(r => '<tr><td><span class="status ' + qualitySeverityClass(r.severity) + '">' + escapeHtml(r.severity) + '</span></td><td>' + escapeHtml(r.type) + '</td><td>' + escapeHtml(r.subject) + '</td><td>' + escapeHtml(r.detail) + '</td></tr>').join("") : '<tr><td colspan="4">Keine prüfpflichtigen Sonderfälle.</td></tr>';
@@ -2300,7 +2183,7 @@ function settlementInfoForResult(...args) { return NK_PRO_MODULES.documentData.s
 
 function briefSettlementSummaryHtml(...args) { return NK_PRO_MODULES.documentRenderer.briefSettlementSummaryHtml(...args); }
 
-function finalBillingReadiness(...args) { return NK_PRO_MODULES.documentData.finalBillingReadiness(...args); }
+
 
 function acceptanceProtocolData(...args) { return NK_PRO_MODULES.documentData.acceptanceProtocolData(...args); }
 
@@ -2345,13 +2228,13 @@ function finalBillingReportText() {
   if (!calc.tenantResults.length) lines.push("- Keine abrechenbaren Mieter.");
   calc.tenantResults.forEach(result => {
     const s = settlementInfoForResult(result, result.tenant);
-    lines.push("- " + tenantQualityLabel(result.tenant) + " · " + unitDisplayIdByInternalId(result.tenant.wohnung) + ": " + s.type + " " + fmtMoney(s.amount) + " (Kosten " + fmtMoney(result.costShare) + ", Vorauszahlungen " + fmtMoney(result.prepayments) + ", Korrektur " + fmtMoney(result.correction) + ")");
+    lines.push("- " + NK_PRO_MODULES.qualityAssurance.tenantQualityLabel(result.tenant) + " · " + unitDisplayIdByInternalId(result.tenant.wohnung) + ": " + s.type + " " + fmtMoney(s.amount) + " (Kosten " + fmtMoney(result.costShare) + ", Vorauszahlungen " + fmtMoney(result.prepayments) + ", Korrektur " + fmtMoney(result.correction) + ")");
   });
   if (calc.privateResults && calc.privateResults.length) {
     lines.push("");
     lines.push("Eigentümer-/Privatanteile");
     calc.privateResults.forEach(result => {
-      lines.push("- " + tenantQualityLabel(result.tenant) + " · " + unitDisplayIdByInternalId(result.tenant.wohnung) + ": " + fmtMoney(result.costShare));
+      lines.push("- " + NK_PRO_MODULES.qualityAssurance.tenantQualityLabel(result.tenant) + " · " + unitDisplayIdByInternalId(result.tenant.wohnung) + ": " + fmtMoney(result.costShare));
     });
   }
   lines.push("");
@@ -2392,9 +2275,9 @@ function acceptanceProtocolRowsHtml(data) {
   const calc = data.calc;
   const tenantRows = calc.tenantResults.length ? calc.tenantResults.map(result => {
     const s = settlementInfoForResult(result, result.tenant);
-    return '<tr><td>' + escapeHtml(tenantQualityLabel(result.tenant)) + '</td><td>' + escapeHtml(unitDisplayIdByInternalId(result.tenant.wohnung)) + '</td><td>' + escapeHtml(s.type) + '</td><td class="money">' + escapeHtml(fmtMoney(s.amount)) + '</td><td class="money">' + escapeHtml(fmtMoney(result.costShare)) + '</td><td class="money">' + escapeHtml(fmtMoney(result.prepayments)) + '</td><td class="money">' + escapeHtml(fmtMoney(result.correction)) + '</td></tr>';
+    return '<tr><td>' + escapeHtml(NK_PRO_MODULES.qualityAssurance.tenantQualityLabel(result.tenant)) + '</td><td>' + escapeHtml(unitDisplayIdByInternalId(result.tenant.wohnung)) + '</td><td>' + escapeHtml(s.type) + '</td><td class="money">' + escapeHtml(fmtMoney(s.amount)) + '</td><td class="money">' + escapeHtml(fmtMoney(result.costShare)) + '</td><td class="money">' + escapeHtml(fmtMoney(result.prepayments)) + '</td><td class="money">' + escapeHtml(fmtMoney(result.correction)) + '</td></tr>';
   }).join("") : '<tr><td colspan="7">Keine abrechenbaren Mieter.</td></tr>';
-  const privateRows = calc.privateResults && calc.privateResults.length ? calc.privateResults.map(result => '<tr><td>' + escapeHtml(tenantQualityLabel(result.tenant)) + '</td><td>' + escapeHtml(unitDisplayIdByInternalId(result.tenant.wohnung)) + '</td><td class="money">' + escapeHtml(fmtMoney(result.costShare)) + '</td></tr>').join("") : '<tr><td colspan="3">Keine Eigentümer-/Privatanteile.</td></tr>';
+  const privateRows = calc.privateResults && calc.privateResults.length ? calc.privateResults.map(result => '<tr><td>' + escapeHtml(NK_PRO_MODULES.qualityAssurance.tenantQualityLabel(result.tenant)) + '</td><td>' + escapeHtml(unitDisplayIdByInternalId(result.tenant.wohnung)) + '</td><td class="money">' + escapeHtml(fmtMoney(result.costShare)) + '</td></tr>').join("") : '<tr><td colspan="3">Keine Eigentümer-/Privatanteile.</td></tr>';
   const issueRows = data.quality.issues.length ? data.quality.issues.map(item => '<tr><td>' + escapeHtml(item.severity) + '</td><td>' + escapeHtml(item.area) + '</td><td>' + escapeHtml(item.point) + '</td><td>' + escapeHtml(item.detail || "") + '</td></tr>').join("") : '<tr><td colspan="4">Keine auffälligen Punkte.</td></tr>';
   const specialVisible = data.special && data.special.rows ? data.special.rows.filter(r => r.severity !== "Info") : [];
   const specialRows = specialVisible.length ? specialVisible.map(r => '<tr><td>' + escapeHtml(r.severity) + '</td><td>' + escapeHtml(r.type) + '</td><td>' + escapeHtml(r.subject) + '</td><td>' + escapeHtml(r.detail || "") + '</td></tr>').join("") : '<tr><td colspan="4">Keine prüfpflichtigen Sonderfälle.</td></tr>';
@@ -2474,224 +2357,7 @@ function showFinalBillingReport() {
   alert(text);
 }
 
-function collectQualityChecks(options = {}) {
-  const currentBillingOnly = options && options.scope === "currentBilling";
-  ensureYearData();
-  ensureUnitIdentityData(state);
-  ensureTenantContactData();
-  NK_PRO_MODULES.costActions.syncVorauszahlungen();
-  NK_PRO_MODULES.costActions.syncKostenartenMieterUmlage();
-  syncUmlageInputs();
-  applyWaterMetersToUmlage();
 
-  const issues = [];
-  const add = (severity, area, point, detail) => issues.push({ severity, area, point, detail });
-  const units = Array.isArray(state.wohnungen) ? state.wohnungen.filter(w => w && w.id) : [];
-  const activeUnits = units.filter(w => w.status === "aktiv");
-  const tenants = visibleTenantRows();
-  const billable = billableTenantRows();
-  const privateRows = privateTenantRows();
-  const archived = archivedTenantRows();
-  const activeCosts = state.kostenarten.filter(k => k.kostenart && k.inNK === "Ja");
-  const archiveItems = Array.isArray(state.jahresArchiv) ? state.jahresArchiv : [];
-  const storageInfo = currentStorageUsage();
-  if (NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized()) add("OK", "Finalisierung", "Abrechnung finalisiert", "Finalisiert am " + (state.meta && state.meta.currentBillingFinalizedAt ? new Date(state.meta.currentBillingFinalizedAt).toLocaleString("de-DE") : "unbekannt"));
-
-  activeCosts.forEach(k => {
-    if (num(k.gesamtbetrag) === 0) add("Prüfen", "Kostenarten", "Aktive Kostenart mit Betrag 0", (k.id || "") + " " + (k.kostenart || ""));
-  });
-  state.vorauszahlungen.filter(v => v && v.aktiv === "Ja").forEach(v => {
-    const sum = Array.isArray(v.werte) ? v.werte.reduce((a,b) => a + num(b), 0) : num(v.summe);
-    if (Math.abs(sum) < 0.01) add("Prüfen", "Vorauszahlungen", "Aktive Vorauszahlungszeile ohne Werte", (v.kostenId || "") + " " + (v.kostenart || ""));
-  });
-  tenants.forEach(m => {
-    if (hasTenantData(m) && !m.name) add("Prüfen", "Mieter", "Mietverhältnis ohne Namen", m.id || "ohne ID");
-    if (hasTenantData(m) && !m.wohnung) add("Prüfen", "Mieter", "Mietverhältnis ohne Wohnung", tenantQualityLabel(m));
-  });
-
-  if (!currentBillingOnly) {
-    if (!Array.isArray(state.jahresArchiv)) add("Fehler", "Archiv", "Jahresarchiv hat ungültige Datenstruktur", "JSON-Sicherung prüfen oder letzten funktionierenden Export importieren.");
-    if (!storageWritable()) add("Fehler", "Speicher", "Lokaler Speicher ist nicht beschreibbar", "JSON-Sicherung herunterladen und Browser-Speicher prüfen.");
-    if (storageInfo.error) add("Prüfen", "Speicher", "Datensatzgröße konnte nicht ermittelt werden", storageInfo.error);
-    else if (storageInfo.bytes > STORAGE_CRITICAL_BYTES) add("Fehler", "Speicher", "Lokaler Datensatz ist sehr groß", storageInfo.label + " · bitte JSON-Sicherung herunterladen und Archivumfang prüfen.");
-    else if (storageInfo.bytes > STORAGE_WARN_BYTES) add("Prüfen", "Speicher", "Lokaler Datensatz nähert sich typischen Browser-Grenzen", storageInfo.label + " · regelmäßige JSON-Sicherung empfohlen.");
-    if (pendingStorageWarning) add("Prüfen", "Speicher", "Letzte Speicherwarnung vorhanden", pendingStorageWarning);
-    if (state.meta && state.meta.lastSaveError) add("Fehler", "Speicher", "Letzter Speichervorgang hatte einen Fehler", state.meta.lastSaveError);
-
-    const schemaVersion = currentDataSchemaVersion(state);
-    if (schemaVersion < DATA_SCHEMA_VERSION) add("Prüfen", "Datenmodell", "Datenschema nicht aktuell", "Aktuell v" + schemaVersion + ", erwartet v" + DATA_SCHEMA_VERSION + ". Daten neu speichern oder JSON-Sicherung exportieren.");
-    else add("OK", "Datenmodell", "Datenschema aktuell", "Version " + schemaVersion);
-    if (startupErrors.length) add("Fehler", "System", "Startfehler beim Laden", startupErrors.map(e => e.area + ": " + e.message).join("; "));
-    if (renderErrors.length) add("Prüfen", "System", "Renderfehler in Teilbereich", renderErrors.map(e => e.area + ": " + e.message).join("; "));
-  }
-
-  if (!units.length) add("Fehler", "Stammdaten", "Keine Wohnungen vorhanden", "Mindestens eine Wohnung wird benötigt.");
-  if (!activeUnits.length) add("Prüfen", "Stammdaten", "Keine aktive Wohnung vorhanden", "Wohnungsstatus prüfen.");
-  if (!tenants.length) add("Fehler", "Stammdaten", "Keine Mietverhältnisse vorhanden", "Mindestens ein aktueller Datensatz wird benötigt.");
-  if (!billable.length) add("Prüfen", "Abrechnung", "Keine abrechenbaren Mieter vorhanden", "Einzug/Auszug, Abrechnungsperiode und Archivstatus prüfen.");
-  if (!activeCosts.length) add("Prüfen", "Kostenarten", "Keine aktive NK-Kostenart vorhanden", "Kostenarten & Einstellungen prüfen.");
-
-  activeCosts.forEach(k => {
-    const label = (k.id || "") + " · " + (k.kostenart || "");
-    if (num(k.gesamtbetrag) <= 0) add("Prüfen", "Kostenarten", "Gesamtbetrag fehlt oder ist 0", label);
-    if (k.umlageschluessel === "Verbrauch" && num(k.gesamtbetrag) > 0 && num(k.preisProEinheit) <= 0) {
-      add("Prüfen", "Kostenarten", "Preis pro Verbrauchseinheit fehlt", label);
-    }
-    if ((k.berechnungsart === "Manuell je Mieter" || k.umlageschluessel === UMLAGE_MANUAL) && num(k.gesamtbetrag) > 0) {
-      const input = state.umlageInputs && state.umlageInputs[k.id] && Array.isArray(state.umlageInputs[k.id].values) ? state.umlageInputs[k.id].values : [];
-      const sumInput = billable.reduce((sum,t) => sum + num(input[t.originalIndex]), 0);
-      if (Math.abs(sumInput - num(k.gesamtbetrag)) > 0.02) add("Prüfen", "Umlage", "Manuelle Einzelbeträge stimmen nicht mit Gesamtbetrag überein", label + ": Einzelwerte " + fmtMoney(sumInput) + " vs. Gesamtbetrag " + fmtMoney(k.gesamtbetrag));
-    }
-  });
-
-  const activePrepayCosts = activeCosts.filter(k => k.vorauszahlung === "Ja");
-  if (activePrepayCosts.length) {
-    billable.forEach(t => {
-      const totalPrepay = totalVorauszahlungForTenant(t.originalIndex);
-      if (Math.abs(totalPrepay) <= 0.01) add("Hinweis", "Vorauszahlungen", "Mieter ohne NK-Vorauszahlung", tenantQualityLabel(t));
-    });
-  }
-  const adjustmentSettings = ensurePrepaymentAdjustmentSettings();
-  if (adjustmentSettings.letterPrintMode === "Nicht drucken") add("Hinweis", "Vorauszahlungsanpassung", "Briefdruck der Vorauszahlungsanpassung ist ausgeschaltet", "Neue Vorauszahlungen werden berechnet, aber nicht automatisch im Brief gedruckt.");
-
-  duplicateValues(units.map(w => w.id)).forEach(id => add("Prüfen", "Stammdaten", "Doppelte Wohnungs-ID", id));
-  duplicateValues(state.mieter.filter(hasTenantData).map(m => m.id)).forEach(id => add("Prüfen", "Stammdaten", "Doppelte Mieter-ID", id));
-  if (!currentBillingOnly) duplicateValues(archiveItems.map(a => archivePeriodId(a))).forEach(id => add("Prüfen", "Archiv", "Doppelter Archivzeitraum", id));
-
-  const tenantMap = activeTenantByUnitMap();
-  activeUnits.forEach(w => {
-    const rows = tenantMap[w.id] || [];
-    if (!rows.length) {
-      const privateOnUnit = privateRows.filter(t => t.wohnung === w.id);
-      if (privateOnUnit.length) add("Hinweis", "Eigentümer/Privat", "Aktive Wohnung als Privatanteil geführt", unitDisplayId(w) + " · " + privateOnUnit.map(tenantQualityLabel).join(", "));
-      else add("Hinweis", "Stammdaten", "Aktive Wohnung ohne abrechenbaren Mieter", unitDisplayId(w) + " · " + (w.bezeichnung || w.lage || ""));
-    }
-    if (rows.length > 1) {
-      if (tenantRowsHaveOverlappingIntervals(rows)) add("Fehler", "Mieterwechsel", "Überlappende Mietzeiträume auf einer Wohnung", unitDisplayId(w) + " · " + rows.map(t => tenantQualityLabel(t) + " (" + tenantIntervalLabel(t) + ")").join(", "));
-      else add("Hinweis", "Mieterwechsel", "Unterjähriger Mieterwechsel erkannt", unitDisplayId(w) + " · " + rows.map(t => tenantQualityLabel(t) + " (" + tenantIntervalLabel(t) + ")").join(", "));
-    }
-  });
-
-  privateRows.forEach(m => {
-    if (num(m.nkVoraus) || num(m.kaltErhalten) || num(m.vorjahresKorrektur)) add("Hinweis", "Eigentümer/Privat", "Privatdatensatz mit Zahlungswerten", tenantQualityLabel(m));
-  });
-
-  activeCosts.forEach(k => {
-    const allowedRows = billable.filter(t => isCostAllowedForTenant(k.id, t));
-    if (!allowedRows.length) add("Prüfen", "Kostenarten", "Keine berechtigten Mieter für Kostenart", (k.id || "") + " · " + (k.kostenart || ""));
-    billable.filter(t => !isCostAllowedForTenant(k.id, t)).forEach(t => {
-      const rawPrepay = rawVorauszahlungByCostAndTenant(k.id, t.originalIndex);
-      if (Math.abs(rawPrepay) > 0.01) {
-        add("Prüfen", "Vorauszahlungen", "Vorauszahlung trotz Nein in Umlagefähigkeit", (k.id || "") + " · " + tenantQualityLabel(t) + ": " + fmtMoney(rawPrepay));
-      }
-    });
-  });
-
-  activeCosts.filter(k => k.vorauszahlung === "Ja").forEach(k => {
-    const matrixSum = prepaymentMatrixSumForCost(k.id, {allowedOnly:true});
-    const calcPrepay = billable.reduce((sum,t) => sum + vorauszahlungByCostAndTenant(k.id, t.originalIndex), 0);
-    const delta = matrixSum - calcPrepay;
-    if (Math.abs(delta) > 0.02) add("Prüfen", "Vorauszahlungen", (k.id || "") + " · " + (k.kostenart || ""), "Matrix " + fmtMoney(matrixSum) + " vs. Mieterwerte " + fmtMoney(calcPrepay));
-  });
-
-  if (!currentBillingOnly) {
-    archiveItems.forEach((item, idx) => {
-      const validation = archiveItemValidation(item);
-      const label = archiveItemLabel(item, idx);
-      validation.errors.forEach(message => add("Fehler", "Archiv", "Archivdatensatz kann nicht geöffnet werden", label + ": " + message));
-      validation.warnings.forEach(message => add("Hinweis", "Archiv", "Archivdatensatz ist unvollständig beschriftet", label + ": " + message));
-    });
-  }
-
-  const unitIds = new Set(units.map(w => w.id));
-  tenants.forEach(m => {
-    if (!m.name) add("Prüfen", "Mieter", "Mietername fehlt", tenantDisplayId(m) || "ohne ID");
-    if (!m.wohnung) add("Prüfen", "Mieter", "Wohnungszuordnung fehlt", tenantDisplayId(m) || m.name || "ohne ID");
-    else if (!unitIds.has(m.wohnung)) add("Prüfen", "Mieter", "Wohnung existiert nicht in Stammdaten", (tenantDisplayId(m) || "") + " → " + m.wohnung);
-    if (!m.einzug) add("Hinweis", "Mieter", "Einzugsdatum fehlt", tenantDisplayId(m) || m.name || "ohne ID");
-    if (tenantDays(m) <= 0) add("Prüfen", "Mieter", "Aktive Tage fehlen", tenantDisplayId(m) || m.name || "ohne ID");
-    if (num(m.personen) <= 0) add("Prüfen", "Mieter", "Personenzahl fehlt", tenantDisplayId(m) || m.name || "ohne ID");
-    if (m.einzug && m.auszug && isoDateSerial(m.auszug) !== null && isoDateSerial(m.einzug) !== null && isoDateSerial(m.auszug) < isoDateSerial(m.einzug)) add("Fehler", "Mieterwechsel", "Auszug liegt vor Einzug", tenantQualityLabel(m));
-    const expectedDays = expectedTenantDaysInCurrentPeriod(m);
-    const enteredDays = tenantDays(m);
-    if (expectedDays > 0 && Math.abs(enteredDays - expectedDays) > 1) add("Prüfen", "Mieterwechsel", "Aktive Tage weichen vom Zeitraum ab", tenantQualityLabel(m) + ": eingetragen " + enteredDays + " Tage, erwartet " + expectedDays + " Tage für " + tenantIntervalLabel(m));
-    if (isBillableTenant(m)) {
-      const missing = missingBriefFieldsForTenant(m);
-      if (missing.length) add("Prüfen", "Briefe", "Briefdaten unvollständig", tenantQualityLabel(m) + ": " + missing.join(", "));
-    }
-  });
-
-  const start = periodStart();
-  const end = periodEnd();
-  if (!start || !end || start > end) add("Fehler", "Abrechnungsperiode", "Abrechnungszeitraum ist ungültig", start + " bis " + end);
-
-  state.kostenarten.forEach(k => {
-    const status = NK_PRO_MODULES.costActions.kostenStatus(k);
-    if (k.kostenart && !["Vollständig","Nicht Bestandteil der NK-Abrechnung"].includes(status)) {
-      add("Prüfen", "Kostenart", (k.id || "") + " · " + k.kostenart, status);
-    }
-  });
-
-  if (state.waterMeters && Array.isArray(state.waterMeters.readings)) {
-    state.waterMeters.readings.forEach((r, idx) => {
-      if (!r) return;
-      if ((hasEnteredMeterValue(r.kwEnd) && num(r.kwEnd) < num(r.kwStart)) || (hasEnteredMeterValue(r.wwEnd) && num(r.wwEnd) < num(r.wwStart))) {
-        const tenant = state.mieter[idx] || {};
-        add("Prüfen", "Zählerstände", "Endstand kleiner als Anfangsstand", (tenantDisplayId(tenant) || "Mieter " + (idx + 1)) + " · " + (tenant.name || ""));
-      }
-    });
-  }
-
-  consumptionCosts().forEach(cost => {
-    const visibleConsumption = visibleTenantRows().reduce((sum,t) => sum + meterTotalForCostAndTenant(cost.id, t.originalIndex), 0);
-    if (num(cost.gesamtbetrag) > 0 && visibleConsumption <= 0) add("Prüfen", "Zählerstände", "Verbrauchskosten ohne Verbrauchswerte", (cost.id || "") + " · " + (cost.kostenart || ""));
-    if (num(cost.gesamtbetrag) > 0) {
-      const input = state.umlageInputs && state.umlageInputs[cost.id] && Array.isArray(state.umlageInputs[cost.id].values) ? state.umlageInputs[cost.id].values : [];
-      billable.forEach(t => {
-        if (isCostAllowedForTenant(cost.id, t) && tenantDays(t) > 0 && num(input[t.originalIndex]) <= 0) add("Hinweis", "Zählerstände", "Kein Verbrauchswert bei abrechenbarem Mieter", (cost.id || "") + " · " + tenantQualityLabel(t));
-      });
-    }
-    if (isWaterCost(cost.id) && state.waterMeters && state.waterMeters.settings && num(state.waterMeters.settings.houseWaterTotal) > 0) {
-      const delta = num(state.waterMeters.settings.houseWaterTotal) - visibleConsumption;
-      if (Math.abs(delta) > 0.5) add("Hinweis", "Zählerstände", "Hauswasser und Wohnungszähler weichen ab", "Haus " + formatPlainNumber(state.waterMeters.settings.houseWaterTotal, 3) + " · Wohnungen " + formatPlainNumber(visibleConsumption, 3));
-    }
-  });
-
-  const calc = calculateUmlage();
-  const totals = umlageTotals(calc);
-  const { totalCosts, allTenantShare, billableShare, privateShare, ownerShare, prepayments, corrections, balance, allocationDelta, prepaymentMatrixTotal } = totals;
-  if (Math.abs(prepaymentMatrixTotal - prepayments) > 0.02) add("Prüfen", "Vorauszahlungen", "Gesamte Vorauszahlungsmatrix weicht ab", "Matrix " + fmtMoney(prepaymentMatrixTotal) + " vs. Briefe/Mieter " + fmtMoney(prepayments));
-
-  calc.costResults.forEach(row => {
-    const costLabel = (row.cost.id || "") + " · " + (row.cost.kostenart || "");
-    const allocated = num(row.allTenantSum) + num(row.ownerShare);
-    const rowDelta = num(row.cost.gesamtbetrag) - allocated;
-    if (row.status && !["Vollständig","Nicht aktiv","Gesamtbetrag fehlt"].includes(row.status)) {
-      add(row.status === "Überverteilung prüfen" ? "Fehler" : "Prüfen", "Berechnung", costLabel, row.status);
-    }
-    if (Math.abs(rowDelta) > 0.02) add("Prüfen", "Summenabgleich", costLabel + " · Verteilung weicht ab", fmtMoney(rowDelta));
-    if (Math.abs(row.ownerShare) > 0.01) add("Hinweis", "Summenabgleich", costLabel + " · nicht auf Mieter umgelegt", fmtMoney(row.ownerShare));
-  });
-
-  if (Math.abs(allocationDelta) > 0.02) add("Prüfen", "Summenabgleich", "Aktive Kosten und Verteilung weichen ab", fmtMoney(allocationDelta));
-  if (Math.abs(ownerShare) > 0.01) add("Hinweis", "Summenabgleich", "Nicht auf Mieter umgelegter Anteil vorhanden", fmtMoney(ownerShare));
-  const briefResults = briefResultRows(calc);
-  if (!briefResults.length) add("Prüfen", "Briefe", "Keine Empfänger für Briefauswahl", "Aktive Mietverhältnisse und Eigentümer-/Privatrollen prüfen.");
-  else briefResults.forEach(result => {
-    const rows = briefCostRows(calc, result.tenant);
-    const rowShare = rows.reduce((sum,row) => sum + num(row.anteil), 0);
-    if (Math.abs(rowShare - num(result.costShare)) > 0.02) add("Fehler", "Briefe", "Briefkosten weichen von Umlage ab", tenantQualityLabel(result.tenant) + ": " + fmtMoney(rowShare) + " vs. " + fmtMoney(result.costShare));
-    if (!rows.length) add("Prüfen", "Briefe", "Keine Kostenzeilen im Brief", tenantQualityLabel(result.tenant));
-  });
-
-  return {
-    issues,
-    counts: { units:units.length, activeUnits:activeUnits.length, tenants:tenants.length, billable:billable.length, privateRows:privateRows.length, archived:archived.length, activeCosts:activeCosts.length, archives:archiveItems.length },
-    storage: storageInfo,
-    scope: currentBillingOnly ? "currentBilling" : "full",
-    sums: { totalCosts, allTenantShare, billableShare, privateShare, ownerShare, prepayments, corrections, balance, allocationDelta }
-  };
-}
 
 
 function qualityAreaTab(area) {
@@ -2773,7 +2439,7 @@ function jumpToQualityIssue(tab, encodedText) {
 }
 
 function jumpToFirstOpenQualityIssue() {
-  const report = collectQualityChecks({ scope:"currentBilling" });
+  const report = NK_PRO_MODULES.qualityAssurance.inspect({ scope:"currentBilling" });
   const open = report.issues.filter(i => i.severity !== "OK" && !qualityAckFor(i));
   const first = open.find(i => i.severity === "Fehler") || open.find(i => i.severity === "Prüfen") || open[0];
   if (!first) return alert("Keine offenen Prüfpunkte vorhanden.");
@@ -2815,8 +2481,8 @@ function renderQuality(filterMode) {
   const sumsEl = document.getElementById("qualitySumsTable");
   if (!summaryEl || !issuesEl || !sumsEl) return;
 
-  const report = collectQualityChecks({ scope:"currentBilling" });
-  const readiness = finalBillingReadiness(report);
+  const report = NK_PRO_MODULES.qualityAssurance.inspect({ scope:"currentBilling" });
+  const readiness = NK_PRO_MODULES.qualityAssurance.finalBillingReadiness(report);
   const allRelevant = report.issues.filter(i => i.severity !== "OK");
   const errors = allRelevant.filter(i => i.severity === "Fehler");
   const checks = allRelevant.filter(i => i.severity === "Prüfen");
@@ -3384,7 +3050,7 @@ function renderEinnahmen() {
   einnahmenEl.innerHTML = '<thead><tr><th>Mieter-ID</th><th>Wohnungs-ID</th><th>Mietername</th><th>Kaltmiete Soll/Jahr</th><th>Kaltmiete erhalten</th><th>NK-Vorauszahlungen automatisch</th><th>Einmalige Korrektur / Gutschrift</th><th>Einnahmen gesamt</th><th>Abrechnungsstatus</th></tr></thead><tbody>' + incomeRows + '</tbody>';
 
   NK_PRO_MODULES.costActions.syncVorauszahlungen();
-  ensurePrepaymentCarryForwardIfNeeded();
+  NK_PRO_MODULES.yearTransitionActions.ensurePrepaymentCarryForward(state);
   renderPrepaymentCarryForwardNotice();
   const activeIds = new Set(activePrepaymentCostIds());
   const tenantHeads = visibleRows.map(m => tenantHeaderHtml(m)).join("");
@@ -3502,17 +3168,17 @@ function renderPeriodInfo() {
 
 function archiveYearNumbers() {
   ensureYearData();
-  return state.jahresArchiv.map(a => yearNumber(a.year)).filter(n => Number.isFinite(n) && n > 0);
+  return state.jahresArchiv.map(a => NK_PRO_MODULES.archiveActions.yearNumber(a.year)).filter(n => Number.isFinite(n) && n > 0);
 }
 
 function latestKnownYear() {
   const years = archiveYearNumbers();
-  years.push(yearNumber(currentAbrechnungsjahr()));
+  years.push(NK_PRO_MODULES.archiveActions.yearNumber(currentAbrechnungsjahr()));
   return Math.max(...years);
 }
 
 function isViewingOlderArchiveYear() {
-  return yearNumber(currentAbrechnungsjahr()) < latestKnownYear();
+  return NK_PRO_MODULES.archiveActions.yearNumber(currentAbrechnungsjahr()) < latestKnownYear();
 }
 
 function isArchiveViewer() {
@@ -3586,7 +3252,7 @@ function setAppMode(mode) {
 
 function enterBillingMode(tabId = "mieter") {
   setAppMode("billing");
-  billingContextOpen = isArchiveViewer() || hasActiveCurrentBilling();
+  billingContextOpen = isArchiveViewer() || NK_PRO_MODULES.archiveActions.hasActiveCurrentBilling();
   renderPeriodInfo();
   switchToTab(tabId);
 }
@@ -3618,7 +3284,7 @@ function switchToTab(tabId) {
   const mode = currentAppMode();
   if (!tabVisibleInMode(tabId, mode)) tabId = mode === "billing" ? "mieter" : "landing";
   if (["landing", "start", "archiv"].includes(tabId)) billingContextOpen = false;
-  else if (BILLING_NAV_TABS.includes(tabId) && (isArchiveViewer() || hasActiveCurrentBilling())) billingContextOpen = true;
+  else if (BILLING_NAV_TABS.includes(tabId) && (isArchiveViewer() || NK_PRO_MODULES.archiveActions.hasActiveCurrentBilling())) billingContextOpen = true;
   const btn = document.querySelector('.tab-btn[data-tab="' + tabId + '"]');
   const section = document.getElementById(tabId);
   if (!section) return;
@@ -3659,7 +3325,7 @@ function openCurrentBilling() {
     alert("Dieses Fenster zeigt eine archivierte Abrechnung. Bearbeiten erfolgt im ursprünglichen Arbeitsfenster.");
     return;
   }
-  if (!hasActiveCurrentBilling()) {
+  if (!NK_PRO_MODULES.archiveActions.hasActiveCurrentBilling()) {
     alert("Es ist noch keine aktuelle Abrechnung angelegt. Bitte auf der Startseite über „+ Neue Abrechnung“ starten.");
     return;
   }
@@ -3667,180 +3333,34 @@ function openCurrentBilling() {
   enterBillingMode("mieter");
 }
 
-function archiveRecordType(item) {
-  return "Abrechnung";
-}
 
-function archiveRecordStatus(item) {
-  const validation = archiveItemValidation(item);
-  if (validation.errors.length) return "Fehler";
-  if (validation.warnings.length) return "Prüfen";
-  return "Archiviert";
-}
 
-function archiveRecordStatusClass(item) {
-  const validation = archiveItemValidation(item);
-  if (validation.errors.length) return "err";
-  if (validation.warnings.length) return "warn";
-  return "ok";
-}
+
+
+
 
 function archiveStatusBadgeHtml(item) {
-  return '<span class="status ' + archiveRecordStatusClass(item) + '">' + escapeHtml(archiveRecordStatus(item)) + '</span>';
-}
-
-function archiveRecordCorrections(item) {
-  if (!item) return 0;
-  if (item.summary && item.summary.korrekturen !== undefined) return num(item.summary.korrekturen);
-  const rows = item.data && Array.isArray(item.data.mieter) ? item.data.mieter : [];
-  return rows.reduce((sum,m) => {
-    if (!m || !m.id || !m.name) return sum;
-    if (m.status === "Archiviert" || m.status === "archiviert" || m.status === "Archiv") return sum;
-    if (m.abrechnungRolle === "Eigentümer/Privat") return sum;
-    return sum + num(m.vorjahresKorrektur);
-  }, 0);
-}
-
-function archiveRecordSaldo(item) {
-  if (!item || !item.summary) return 0;
-  const shares = item.summary.mieterKostenanteile !== undefined ? num(item.summary.mieterKostenanteile) : 0;
-  const prepayments = item.summary.vorauszahlungen !== undefined ? num(item.summary.vorauszahlungen) : 0;
-  if (item.summary.mieterKostenanteile !== undefined && item.summary.vorauszahlungen !== undefined) {
-    return shares - prepayments - archiveRecordCorrections(item);
-  }
-  return num(item.summary.saldo);
+  return '<span class="status ' + NK_PRO_MODULES.archiveActions.recordStatusClass(item) + '">' + escapeHtml(NK_PRO_MODULES.archiveActions.recordStatus(item)) + '</span>';
 }
 
 
-function archiveMeta(item) {
-  return item && (item.meta || (item.data && item.data.meta)) || {};
-}
 
-function archiveItemLabel(item, index) {
-  const meta = archiveMeta(item);
-  const year = item && (item.year || meta.abrechnungsjahr);
-  const period = item ? archivePeriodLabel(item) : "";
-  return [year || ("#" + (index + 1)), period].filter(Boolean).join(" · ");
-}
 
-function normalizeArchiveItem(item) {
-  return NK_PRO_MODULES.archive.normalizeArchiveItem(item, archiveModuleOptions());
-}
 
-function prepareArchiveItemForUse(item) {
-  return NK_PRO_MODULES.archive.prepareArchiveItemForUse(item, archiveModuleOptions());
-}
 
-function collectArchiveIdMigrationWarnings(data) {
-  const warnings = [];
-  if (!data || typeof data !== "object") return warnings;
-  const conversions = [];
-  if (Array.isArray(data.wohnungen)) {
-    data.wohnungen.forEach(w => {
-      if (!w) return;
-      const oldId = String(w.id || "").trim();
-      const nextId = canonicalUnitIdFor(w);
-      if (oldId && nextId && oldId !== nextId) conversions.push(oldId + " -> " + nextId);
-      if (oldId && !nextId) warnings.push("Wohnungs-ID kann nicht automatisch normalisiert werden: " + oldId);
-    });
-  }
-  if (Array.isArray(data.mieter)) {
-    data.mieter.filter(hasTenantData).forEach(m => {
-      if (!m || !m.wohnung) return;
-      const nextId = canonicalUnitIdFor(m.wohnung);
-      if (!nextId && String(m.wohnung || "").trim()) warnings.push("Mieter " + (m.id || m.name || "ohne ID") + " verweist auf nicht normalisierbare Wohnung: " + m.wohnung);
-    });
-  }
-  if (conversions.length) warnings.push("Alte Wohnungs-IDs werden beim Laden migriert: " + conversions.slice(0, 6).join(", ") + (conversions.length > 6 ? " ..." : ""));
-  return warnings;
-}
 
-function archiveItemValidation(item) {
-  const errors = [];
-  const warnings = [];
-  if (!item || typeof item !== "object" || Array.isArray(item)) {
-    errors.push("Archivdatensatz ist leer oder beschädigt.");
-    return { errors, warnings };
-  }
 
-  const sourceMeta = archiveMeta(item);
-  const sourceData = item.data && typeof item.data === "object" && !Array.isArray(item.data) ? item.data : null;
-  if (item.snapshotStatus === NK_PRO_MODULES.billingSnapshot.BILLING_SNAPSHOT_STATUS_COMPLETE) {
-    const snapshotValidation = validateBillingSnapshot(item);
-    snapshotValidation.errors.forEach(entry => errors.push(entry.message));
-    snapshotValidation.warnings.forEach(entry => warnings.push(entry.message));
-  } else if (item.snapshotStatus === NK_PRO_MODULES.billingSnapshot.BILLING_SNAPSHOT_STATUS_LEGACY_PARTIAL) {
-    warnings.push(item.legacySnapshotNotice || "Historischer Abrechnungsstand ist nur teilweise als neuer Snapshot rekonstruierbar.");
-  }
-  const sourceSchema = item.schemaVersion || (sourceData && sourceData.meta && sourceData.meta.dataSchemaVersion) || (sourceMeta && sourceMeta.dataSchemaVersion) || "";
-  collectArchiveIdMigrationWarnings(sourceData).forEach(message => warnings.push(message));
 
-  let prepared = null;
-  try {
-    prepared = prepareArchiveItemForUse(item);
-  } catch(error) {
-    errors.push("Archivdaten konnten nicht normalisiert werden: " + errorMessage(error));
-    prepared = normalizeArchiveItem(clone(item));
-  }
 
-  const meta = archiveMeta(prepared || item);
-  const data = prepared && prepared.data;
-  const year = String((prepared && prepared.year) || meta.abrechnungsjahr || "").trim();
-  if (!year) warnings.push("Abrechnungsjahr fehlt.");
-  else if (!/\d{4}/.test(year)) warnings.push("Abrechnungsjahr ist ungewöhnlich: " + year);
-  if (!prepared.archivedAt) warnings.push("Archivdatum fehlt.");
 
-  if (!sourceSchema) warnings.push("Datenschema-Version fehlt im Archiv; der Datensatz wird beim Laden auf v" + DATA_SCHEMA_VERSION + " normalisiert.");
-  else if (Number(sourceSchema) < DATA_SCHEMA_VERSION) warnings.push("Archivdatensatz nutzt altes Datenschema v" + sourceSchema + " und wird beim Laden auf v" + DATA_SCHEMA_VERSION + " migriert.");
 
-  if (sourceData) {
-    if (Array.isArray(sourceData.wohnungen) && !sourceData.wohnungen.length) errors.push("Keine Wohnungen im ursprünglichen Archivdatensatz vorhanden.");
-    if (Array.isArray(sourceData.mieter) && !sourceData.mieter.filter(hasTenantData).length) errors.push("Keine befüllten Mietverhältnisse im ursprünglichen Archivdatensatz vorhanden.");
-    if (Array.isArray(sourceData.kostenarten) && !sourceData.kostenarten.length) errors.push("Keine Kostenarten im ursprünglichen Archivdatensatz vorhanden.");
-  }
 
-  if (!data || typeof data !== "object" || Array.isArray(data)) {
-    errors.push("Archivdaten fehlen.");
-    return { errors, warnings };
-  }
 
-  if (!Array.isArray(data.wohnungen)) errors.push("Wohnungen fehlen im Archivdatensatz.");
-  else if (!data.wohnungen.length) errors.push("Keine Wohnungen im Archivdatensatz vorhanden.");
-  if (!Array.isArray(data.mieter)) errors.push("Mietverhältnisse fehlen im Archivdatensatz.");
-  else if (!data.mieter.filter(hasTenantData).length) warnings.push("Keine befüllten Mietverhältnisse im Archivdatensatz gefunden.");
-  if (!Array.isArray(data.kostenarten)) errors.push("Kostenarten fehlen im Archivdatensatz.");
-  else if (!data.kostenarten.length) errors.push("Keine Kostenarten im Archivdatensatz vorhanden.");
-  if (!data.meta || typeof data.meta !== "object") warnings.push("Periodendaten fehlen im Archivdatensatz.");
 
-  const dataMeta = data.meta || {};
-  const start = meta.abrechnungsbeginn || dataMeta.abrechnungsbeginn || "";
-  const end = meta.abrechnungsende || dataMeta.abrechnungsende || "";
-  if (!start || !end) warnings.push("Abrechnungszeitraum fehlt oder ist unvollständig.");
-  else if (!/^\d{4}-\d{2}-\d{2}$/.test(start) || !/^\d{4}-\d{2}-\d{2}$/.test(end)) warnings.push("Abrechnungszeitraum hat kein erwartetes Datumsformat.");
-  else if (start > end) errors.push("Abrechnungszeitraum im Archiv ist ungültig.");
 
-  if (Array.isArray(data.wohnungen) && Array.isArray(data.mieter)) {
-    const unitIds = new Set(data.wohnungen.map(w => w && w.id).filter(Boolean));
-    data.mieter.filter(hasTenantData).forEach(m => {
-      const unitId = canonicalUnitIdFor(m.wohnung) || m.wohnung || "";
-      if (unitId && !unitIds.has(unitId)) warnings.push("Mieter " + (m.id || m.name || "ohne ID") + " verweist auf unbekannte Wohnung " + unitId + ".");
-    });
-  }
 
-  const summary = prepared.summary || item.summary || null;
-  if (!summary || typeof summary !== "object") warnings.push("Archiv-Zusammenfassung fehlt; Saldo kann nur eingeschränkt geprüft werden.");
-  else {
-    const hasSaldoFields = ["saldo","mieterKostenanteile","vorauszahlungen","kostenNK"].some(key => summary[key] !== undefined && summary[key] !== null && summary[key] !== "");
-    if (!hasSaldoFields) warnings.push("Archiv-Summenfelder fehlen; Saldo ist nicht nachvollziehbar berechenbar.");
-  }
 
-  return { errors, warnings };
-}
 
-function archiveRecordHealth(item) {
-  const validation = archiveItemValidation(item);
-  return { validation, status:archiveRecordStatus(item), className:archiveRecordStatusClass(item) };
-}
 
 function showArchiveValidation(index) {
   ensureYearData();
@@ -3849,16 +3369,16 @@ function showArchiveValidation(index) {
     alert("Dieser Archivdatensatz wurde nicht gefunden.");
     return;
   }
-  const validation = archiveItemValidation(item);
-  const label = archiveItemLabel(item, index);
-  const details = archiveValidationMessage(validation) || "- Keine Strukturprobleme gefunden.";
+  const validation = NK_PRO_MODULES.archiveActions.validateItem(item);
+  const label = NK_PRO_MODULES.archiveActions.itemLabel(item, index);
+  const details = NK_PRO_MODULES.archiveActions.validationMessage(validation) || "- Keine Strukturprobleme gefunden.";
   alert("Archivprüfung: " + label + "\n\n" + details);
 }
 
 function archiveActionButtonsHtml(index, options) {
   options = options || {};
   const item = state.jahresArchiv[index];
-  const validation = options.validate === false ? {errors:[], warnings:[]} : archiveItemValidation(item);
+  const validation = options.validate === false ? {errors:[], warnings:[]} : NK_PRO_MODULES.archiveActions.validateItem(item);
   const buttons = [];
   if (options.open) {
     if (validation.errors.length) buttons.push('<button class="warn compact-action"' + uiActionAttributes("archive.showValidation", [index]) + '>Fehler anzeigen</button>');
@@ -3875,43 +3395,18 @@ function archiveActionButtonsHtml(index, options) {
   if (options.deleteButton) buttons.push('<button class="danger compact-action"' + uiActionAttributes("billing.openDeleteModal", [index]) + '>Löschen</button>');
   return buttons.join(" ");
 }
-function archiveValidationMessage(validation) {
-  const messages = [];
-  if (validation && validation.errors && validation.errors.length) messages.push(...validation.errors);
-  if (validation && validation.warnings && validation.warnings.length) messages.push(...validation.warnings);
-  return messages.map(m => "- " + m).join("\n");
-}
 
-function archivePeriodId(item) {
-  if (!item) return "";
-  const meta = archiveMeta(item);
-  if (item.periodId) return String(item.periodId);
-  if (meta.periodId) return String(meta.periodId);
-  if (meta.abrechnungsbeginn && meta.abrechnungsende) return String(item.year || meta.abrechnungsjahr || "") + "|" + meta.abrechnungsbeginn + "|" + meta.abrechnungsende + "|" + archiveDataSource(item);
-  return "year|" + String(item.year || "");
-}
 
-function archiveSortKey(item) {
-  const meta = archiveMeta(item);
-  const end = meta.abrechnungsende || (String(item && item.year || "") + "-12-31");
-  const y = yearNumber(item && item.year);
-  return String(end || "") + "|" + String(y).padStart(4,"0");
-}
 
-function archivePeriodLabel(item) {
-  const meta = archiveMeta(item);
-  const period = meta.abrechnungsbeginn && meta.abrechnungsende ? (dateDe(meta.abrechnungsbeginn) + " – " + dateDe(meta.abrechnungsende)) : String((item && item.year) || "");
-  return meta.legacyTeilperioden ? period + " (Einzelperioden)" : period;
-}
 
-function archiveRecordStatusLite(item) {
-  if (!item || typeof item !== "object") return { label:"Prüfen", className:"warn" };
-  if (!item.data || typeof item.data !== "object") return { label:"Prüfen", className:"warn" };
-  return { label:"Archiviert", className:"ok" };
-}
+
+
+
+
+
 
 function archiveStatusBadgeLiteHtml(item) {
-  const status = archiveRecordStatusLite(item);
+  const status = NK_PRO_MODULES.archiveActions.recordStatusLite(item);
   return '<span class="status ' + status.className + '">' + escapeHtml(status.label) + '</span>';
 }
 
@@ -3924,72 +3419,24 @@ function currentBillingStatusHtml() {
   return '<span class="status warn">In Bearbeitung</span>';
 }
 
-function hasNonEmptyAnnualCurrentBillingData(data = state) {
-  if (!data || typeof data !== "object") return false;
-  const costs = Array.isArray(data.kostenarten) ? data.kostenarten : [];
-  if (costs.some(k => k && String(k.inNK || "") === "Ja" && Math.abs(num(k.gesamtbetrag)) > 0.004)) return true;
-  const prepayments = Array.isArray(data.vorauszahlungen) ? data.vorauszahlungen : [];
-  if (prepayments.some(v => v && (Math.abs(num(v.summe)) > 0.004 || (Array.isArray(v.werte) && v.werte.some(x => Math.abs(num(x)) > 0.004))))) return true;
-  const tenants = Array.isArray(data.mieter) ? data.mieter : [];
-  if (tenants.some(m => m && m.id && m.name && (Math.abs(num(m.kaltErhalten)) > 0.004 || Math.abs(num(m.nkVoraus)) > 0.004 || Math.abs(num(m.einnahmen)) > 0.004 || Math.abs(num(m.vorjahresKorrektur)) > 0.004))) return true;
-  const inputs = data.umlageInputs && typeof data.umlageInputs === "object" ? data.umlageInputs : {};
-  if (Object.values(inputs).some(row => row && Array.isArray(row.values) && row.values.some(x => Math.abs(num(x)) > 0.004))) return true;
-  const wm = data.waterMeters || {};
-  if (wm.settings && Math.abs(num(wm.settings.houseWaterTotal)) > 0.004) return true;
-  if (Array.isArray(wm.readings) && wm.readings.some(r => r && (Math.abs(num(r.kwEnd) - num(r.kwStart)) > 0.004 || Math.abs(num(r.wwEnd) - num(r.wwStart)) > 0.004 || r.kwEndDate || r.wwEndDate))) return true;
-  return false;
-}
 
-function isCurrentBillingClosedAfterArchive(data = state) {
-  const meta = data && data.meta ? data.meta : {};
-  return !!(meta.currentBillingArchivedOnly || meta.currentBillingClosedAfterArchive);
-}
 
-function clearCurrentBillingArchiveClosure(data = state) {
-  if (!data.meta) data.meta = {};
-  delete data.meta.currentBillingArchivedOnly;
-  delete data.meta.currentBillingClosedAfterArchive;
-  delete data.meta.currentBillingArchivedAt;
-  delete data.meta.currentBillingArchivedWithAppVersion;
-  delete data.meta.currentBillingArchivedPeriodId;
-  delete data.meta.currentBillingArchivedHinweis;
-}
 
-function closeCurrentBillingAfterArchive(snapshot) {
-  if (!state.meta) state.meta = {};
-  state.meta.currentBillingArchivedOnly = true;
-  state.meta.currentBillingClosedAfterArchive = true;
-  state.meta.currentBillingArchivedAt = new Date().toISOString();
-  state.meta.currentBillingArchivedWithAppVersion = APP_VERSION;
-  state.meta.currentBillingArchivedPeriodId = snapshot && snapshot.periodId ? snapshot.periodId : archivePeriodId(snapshot || NK_PRO_MODULES.billingWorkflow.createSnapshot());
-  state.meta.currentBillingArchivedHinweis = "Diese Abrechnung wurde über die Startseite archiviert. Es wurde keine Folgeabrechnung automatisch angelegt.";
-  delete state.meta.currentBillingCreatedByUser;
-  delete state.meta.currentBillingExplicitlyCreated;
-  delete state.meta.preparedFromPreviousYear;
-}
 
-function hasActiveCurrentBilling(data = state) {
-  const meta = data && data.meta ? data.meta : {};
-  if (ARCHIVE_VIEW_MODE) return true;
-  if (isCurrentBillingClosedAfterArchive(data)) return false;
-  if (meta.currentBillingCreatedByUser || meta.currentBillingExplicitlyCreated || meta.preparedFromPreviousYear || meta.currentBillingFinalized || meta.currentBillingFinalizedAt) return true;
-  return hasNonEmptyAnnualCurrentBillingData(data);
-}
+
+
+
+
+
 
 function latestVisibleRecordYear() {
   const years = archiveYearNumbers();
-  if (hasActiveCurrentBilling()) years.push(yearNumber(currentAbrechnungsjahr()));
+  if (NK_PRO_MODULES.archiveActions.hasActiveCurrentBilling()) years.push(NK_PRO_MODULES.archiveActions.yearNumber(currentAbrechnungsjahr()));
   const valid = years.filter(n => Number.isFinite(n) && n > 0);
   return valid.length ? Math.max(...valid) : (new Date()).getFullYear() - 1;
 }
 
-function markCurrentBillingCreatedByUser() {
-  if (!state.meta) state.meta = {};
-  clearCurrentBillingArchiveClosure(state);
-  state.meta.currentBillingCreatedByUser = true;
-  state.meta.currentBillingCreatedAt = state.meta.currentBillingCreatedAt || new Date().toISOString();
-  state.meta.currentBillingCreatedWithAppVersion = APP_VERSION;
-}
+
 
 function currentObjectLabel(data = state) {
   const tenants = data && Array.isArray(data.mieter) ? data.mieter : [];
@@ -4004,11 +3451,11 @@ function currentObjectLabel(data = state) {
 }
 
 function isBillingContextOpen() {
-  return isArchiveViewer() || (billingContextOpen && hasActiveCurrentBilling());
+  return isArchiveViewer() || (billingContextOpen && NK_PRO_MODULES.archiveActions.hasActiveCurrentBilling());
 }
 
 function setBillingContextOpen(open) {
-  billingContextOpen = !!open && (isArchiveViewer() || hasActiveCurrentBilling());
+  billingContextOpen = !!open && (isArchiveViewer() || NK_PRO_MODULES.archiveActions.hasActiveCurrentBilling());
   NK_PRO_MODULES.navigation.updateWorkflowNavigationContext();
 }
 
@@ -4024,7 +3471,7 @@ function currentBillingActionsHtml() {
 }
 
 function currentBillingRecordRowHtml() {
-  const showCurrent = hasActiveCurrentBilling();
+  const showCurrent = NK_PRO_MODULES.archiveActions.hasActiveCurrentBilling();
   if (!showCurrent) return "";
   const finalized = NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized();
   const currentSource = finalized ? "Aktueller Arbeitsstand · geschützt" : "Aktueller Arbeitsstand";
@@ -4040,8 +3487,8 @@ function currentBillingRecordRowHtml() {
 
 function archiveRecordRowsHtml() {
   return Array.isArray(state.jahresArchiv) && state.jahresArchiv.length ? state.jahresArchiv.map((a,i) => {
-    const saldo = archiveRecordSaldo(a);
-    const period = archivePeriodLabel(a);
+    const saldo = NK_PRO_MODULES.archiveActions.recordSaldo(a);
+    const period = NK_PRO_MODULES.archiveActions.periodLabel(a);
     return '<tr class="archive-record-row">' +
       '<td>' + escapeHtml(a && a.year !== undefined ? a.year : "") + '</td>' +
       '<td>' + escapeHtml(period) + '</td>' +
@@ -4073,12 +3520,7 @@ function buildBillingRecordsTableHtml() {
   return billingRecordsTableShell(currentBillingRecordRowHtml() + archiveRecordRowsHtml(), 'Noch keine Abrechnung angelegt. Bitte über „+ Neue Abrechnung“ starten.');
 }
 
-function yearExistsInRecords(year) {
-  const y = String(year || "").trim();
-  if (!y) return false;
-  if (hasActiveCurrentBilling() && String(currentAbrechnungsjahr()) === y) return true;
-  return state.jahresArchiv.some(a => String(a.year) === y);
-}
+
 
 function openCreateBillingModal() {
   if (isArchiveViewer()) {
@@ -4119,9 +3561,9 @@ function openDeleteBillingModal(index) {
   if (!item) return;
   deleteBillingTargetIndex = index;
   deleteBillingCode = randomDeleteCode();
-  const meta = archiveMeta(item);
+  const meta = NK_PRO_MODULES.archiveActions.meta(item);
   const title = String(item.year || meta.abrechnungsjahr || "");
-  const period = archivePeriodLabel(item);
+  const period = NK_PRO_MODULES.archiveActions.periodLabel(item);
   const textEl = document.getElementById("deleteBillingText");
   const codeEl = document.getElementById("deleteBillingCodeDisplay");
   const inputEl = document.getElementById("deleteBillingCodeInput");
@@ -4156,76 +3598,42 @@ function confirmDeleteBilling() {
     return;
   }
   if (!confirmRiskyDataAction("Archivdatensatz löschen", "Diese Abrechnung wird nach korrekter Code-Eingabe jetzt endgültig aus dem lokalen Jahresarchiv entfernt.")) return;
-  state.jahresArchiv.splice(index, 1);
-  saveData();
+  const execution = NK_PRO_MODULES.applicationActions.execute("archive", "deleteAt", [index, { confirmed:true }]);
+  const result = execution.value;
   closeDeleteBillingModal();
-  renderAll();
+  if (result && result.message) alert(result.message);
+  if (result && result.changed) switchToTab(result.targetTab || "archiv");
 }
 
 function createNewBillingFromModal() {
-  if (isArchiveViewer()) {
-    alert("Dieses Fenster zeigt eine archivierte Abrechnung. Neue Abrechnungen legst du im ursprünglichen Arbeitsfenster an.");
-    return;
-  }
   const yearEl = document.getElementById("newBillingYear");
   const startEl = document.getElementById("newBillingStart");
   const endEl = document.getElementById("newBillingEnd");
-  const newYear = String((yearEl && yearEl.value) || "").trim();
-  const start = String((startEl && startEl.value) || "").trim();
-  const end = String((endEl && endEl.value) || "").trim();
-
-  if (!/^\d{4}$/.test(newYear)) {
-    alert("Bitte ein gültiges vierstelliges Abrechnungsjahr eingeben.");
-    return;
+  const args = [String((yearEl && yearEl.value) || "").trim(), String((startEl && startEl.value) || "").trim(), String((endEl && endEl.value) || "").trim()];
+  let execution = NK_PRO_MODULES.applicationActions.execute("yearTransition", "createBilling", args);
+  let result = execution.value;
+  if (result && result.requiresConfirmation) {
+    if (!confirmRiskyDataAction("Neue Abrechnung anlegen", result.confirmationMessage || "Neue Abrechnung anlegen?")) return execution;
+    execution = NK_PRO_MODULES.applicationActions.execute("yearTransition", "createBilling", args.concat([{ confirmed:true }]));
+    result = execution.value;
   }
-  if (!start || !end) {
-    alert("Bitte Beginn und Ende der Abrechnungsperiode eingeben.");
-    return;
+  if (result && result.message) alert(result.message);
+  if (result && result.changed) {
+    closeCreateBillingModal();
+    appUiMode = "start";
+    billingContextOpen = false;
+    switchToTab(result.targetTab || "start");
   }
-  if (start > end) {
-    alert("Der Beginn der Abrechnungsperiode darf nicht nach dem Ende liegen.");
-    return;
-  }
-  if (yearExistsInRecords(newYear)) {
-    alert("Für das Abrechnungsjahr " + newYear + " existiert bereits ein Datensatz. Bitte wähle ein anderes Jahr.");
-    return;
-  }
-
-  const currentYear = currentAbrechnungsjahr();
-  const hasCurrent = hasActiveCurrentBilling();
-  const confirmText = hasCurrent
-    ? "Der aktuelle Bearbeitungsstand " + currentYear + " wird jetzt als eigener Datensatz gesichert. Anschließend wird die neue Abrechnung " + newYear + " angelegt. Fortfahren?"
-    : "Es wird eine neue Abrechnung " + newYear + " angelegt. Es wird kein automatisch vorbereiteter Arbeitsstand archiviert. Fortfahren?";
-  if (!confirmRiskyDataAction("Neue Abrechnung anlegen", confirmText)) return;
-
-  if (hasCurrent && !upsertYearArchive(NK_PRO_MODULES.billingWorkflow.createSnapshot())) return;
-  resetAnnualValuesForNextYear(newYear, start, end);
-  state.meta.abrechnungsjahr = newYear;
-  state.meta.abrechnungsbeginn = start;
-  state.meta.abrechnungsende = end;
-  if (state.briefSettings) state.briefSettings.abrechnungsjahr = newYear;
-  state.meta.preparedFromPreviousYear = true;
-  state.meta.preparedFromPreviousYearHinweis = hasCurrent
-    ? "Die neue Abrechnung " + newYear + " wurde aus dem vorherigen Bearbeitungsstand vorbereitet. Der vorherige Stand wurde als eigener Datensatz gesichert."
-    : "Die neue Abrechnung " + newYear + " wurde bewusst über den Startseiten-Button angelegt. Ein automatisch vorbereiteter Seed-Arbeitsstand wurde nicht archiviert.";
-  markCurrentBillingCreatedByUser();
-  NK_PRO_MODULES.billingWorkflow.clearCurrentBillingFinalization();
-
-  saveData();
-  closeCreateBillingModal();
-  appUiMode = "start";
-  renderAll();
-  switchToTab("start");
-  alert("Neue Nebenkostenabrechnung " + newYear + " wurde angelegt. Du bleibst auf der Startseite; die Bearbeitung startest du über den Bearbeiten-Button in der Übersicht.");
+  return execution;
 }
 
 function openLatestKnownYear() {
   const latest = latestKnownYear();
-  if (yearNumber(currentAbrechnungsjahr()) === latest) {
+  if (NK_PRO_MODULES.archiveActions.yearNumber(currentAbrechnungsjahr()) === latest) {
     alert("Du bist bereits im aktuellsten bekannten Abrechnungsjahr.");
     return;
   }
-  const idx = state.jahresArchiv.findIndex(a => yearNumber(a.year) === latest);
+  const idx = state.jahresArchiv.findIndex(a => NK_PRO_MODULES.archiveActions.yearNumber(a.year) === latest);
   if (idx < 0) {
     alert("Das aktuellste bekannte Jahr ist bereits geöffnet oder wurde noch nicht archiviert.");
     return;
@@ -4273,9 +3681,9 @@ function renderLegacyArchiveDetails() {
 
 
 function workflowDashboardReport() {
-  if (!hasActiveCurrentBilling() || isArchiveViewer()) return null;
-  const report = withAuditState(clone(state), () => collectQualityChecks({ scope:"currentBilling" }));
-  const readiness = finalBillingReadiness(report);
+  if (!NK_PRO_MODULES.archiveActions.hasActiveCurrentBilling() || isArchiveViewer()) return null;
+  const report = NK_PRO_MODULES.qualityAssurance.inspect({ scope:"currentBilling" });
+  const readiness = NK_PRO_MODULES.qualityAssurance.finalBillingReadiness(report);
   const issues = Array.isArray(report && report.issues) ? report.issues.filter(i => i && i.severity !== "OK") : [];
   const groups = [
     { key:"master", label:"Stammdaten & Mieter", areas:["Stammdaten","Mieter","Eigentümer/Privat"] },
@@ -4397,56 +3805,16 @@ function developerDiagnosticsData() {
   const recoveryRaw = NK_PRO_MODULES.persistence.rawStorageValue(STORAGE_RECOVERY_KEY, persistenceModuleOptions());
   const preMigrationBackup = readPreMigrationBackupResult();
   const restoreCheckpoint = readRestoreCheckpointResult();
-  const errors = Array.isArray(renderErrors) ? renderErrors.slice(-10) : [];
-  return {
-    generatedAt: new Date().toISOString(),
-    app: { version:APP_VERSION, name:APP_VERSION_NAME, releaseDate:APP_RELEASE_DATE, schema:DATA_SCHEMA_VERSION },
-    browser: {
-      userAgent: navigator.userAgent,
-      online: navigator.onLine,
-      language: navigator.language,
-      viewport: window.innerWidth + "x" + window.innerHeight,
-      protocol: location.protocol,
-      serviceWorkerSupported: "serviceWorker" in navigator,
-      serviceWorkerControlled: !!(navigator.serviceWorker && navigator.serviceWorker.controller)
-    },
-    storage: {
-      writable: storageWritable(),
-      bytes: localStorageUsageBytes(),
-      protected: !!integrity.protected,
-      valid: !!integrity.valid,
-      reason: integrity.reason || "",
-      recoveryAvailable: !!recoveryRaw,
-      recoveryBytes: jsonByteLength(recoveryRaw),
-      preMigrationBackupAvailable:!!preMigrationBackup.valid,
-      preMigrationBackupId:preMigrationBackup.valid ? preMigrationBackup.envelope.metadata.backupId : "",
-      restoreCheckpointAvailable:!!restoreCheckpoint.valid
-    },
-    rendering: {
-      renderCount,
-      lastDurationMs: renderLastDurationMs,
-      lastActiveTab: renderLastActiveTab,
-      preparationCount: statePreparationCount,
-      inProgress: renderInProgress,
-      queued: renderQueued,
-      errors
-    },
-    billing: {
-      year: currentAbrechnungsjahr(),
-      period: periodLabelShort(),
-      active: hasActiveCurrentBilling(),
-      finalized: NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized(),
-      archiveCount: Array.isArray(state.jahresArchiv) ? state.jahresArchiv.length : 0
-    }
-  };
+  return NK_PRO_MODULES.diagnostics.developerSnapshot({
+    app:{ version:APP_VERSION, name:APP_VERSION_NAME, releaseDate:APP_RELEASE_DATE, schema:DATA_SCHEMA_VERSION },
+    browser:{ userAgent:navigator.userAgent, online:navigator.onLine, language:navigator.language, viewport:window.innerWidth + "x" + window.innerHeight, protocol:location.protocol, serviceWorkerSupported:"serviceWorker" in navigator, serviceWorkerControlled:!!(navigator.serviceWorker && navigator.serviceWorker.controller) },
+    storage:{ writable:storageWritable(), bytes:localStorageUsageBytes(), protected:!!integrity.protected, valid:!!integrity.valid, reason:integrity.reason || "", recoveryAvailable:!!recoveryRaw, recoveryBytes:jsonByteLength(recoveryRaw), preMigrationBackupAvailable:!!preMigrationBackup.valid, preMigrationBackupId:preMigrationBackup.valid ? preMigrationBackup.envelope.metadata.backupId : "", restoreCheckpointAvailable:!!restoreCheckpoint.valid },
+    rendering:{ renderCount, lastDurationMs:renderLastDurationMs, lastActiveTab:renderLastActiveTab, preparationCount:statePreparationCount, inProgress:renderInProgress, queued:renderQueued, errors:Array.isArray(renderErrors) ? renderErrors.slice(-10) : [] },
+    billing:{ year:currentAbrechnungsjahr(), period:periodLabelShort(), active:NK_PRO_MODULES.archiveActions.hasActiveCurrentBilling(), finalized:NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized(), archiveCount:Array.isArray(state.jahresArchiv) ? state.jahresArchiv.length : 0 }
+  });
 }
 
-function formatDiagnosticBytes(bytes) {
-  if (bytes < 0) return "nicht verfügbar";
-  if (bytes < 1024) return bytes + " B";
-  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
-  return (bytes / (1024 * 1024)).toFixed(2) + " MB";
-}
+
 
 function renderDeveloperDiagnostics() {
   const host = document.getElementById("sicherung");
@@ -4466,8 +3834,8 @@ function renderDeveloperDiagnostics() {
     '<div class="small">Technische Laufzeitinformationen. Dieser Bereich verändert keine Abrechnungsdaten.</div>' +
     '<div class="developer-grid">' +
       '<div class="developer-pill"><strong>Version</strong><br>' + escapeHtml(d.app.version + " · " + d.app.name) + '<br><span class="small">Schema ' + escapeHtml(d.app.schema) + '</span></div>' +
-      '<div class="developer-pill"><strong>Speicher</strong><br>' + escapeHtml(formatDiagnosticBytes(d.storage.bytes)) + '<br><span class="small">' + escapeHtml(d.storage.reason) + '</span></div>' +
-      '<div class="developer-pill"><strong>Rückfallstand</strong><br>' + (d.storage.recoveryAvailable ? "vorhanden" : "nicht vorhanden") + '<br><span class="small">' + escapeHtml(formatDiagnosticBytes(d.storage.recoveryBytes)) + '</span></div>' +
+      '<div class="developer-pill"><strong>Speicher</strong><br>' + escapeHtml(NK_PRO_MODULES.diagnostics.formatBytes(d.storage.bytes)) + '<br><span class="small">' + escapeHtml(d.storage.reason) + '</span></div>' +
+      '<div class="developer-pill"><strong>Rückfallstand</strong><br>' + (d.storage.recoveryAvailable ? "vorhanden" : "nicht vorhanden") + '<br><span class="small">' + escapeHtml(NK_PRO_MODULES.diagnostics.formatBytes(d.storage.recoveryBytes)) + '</span></div>' +
       '<div class="developer-pill"><strong>Rendering</strong><br>' + escapeHtml(String(d.rendering.lastDurationMs)) + ' ms zuletzt<br><span class="small">' + escapeHtml(String(d.rendering.renderCount)) + ' Läufe</span></div>' +
       '<div class="developer-pill"><strong>Service Worker</strong><br>' + (d.browser.serviceWorkerControlled ? "aktiv" : (d.browser.serviceWorkerSupported ? "registrierbar" : "nicht unterstützt")) + '<br><span class="small">' + escapeHtml(d.browser.protocol) + '</span></div>' +
       '<div class="developer-pill"><strong>Verbindung</strong><br>' + (d.browser.online ? "online" : "offline") + '<br><span class="small">' + escapeHtml(d.browser.viewport) + '</span></div>' +
@@ -4516,8 +3884,8 @@ function renderSicherung() {
 function buildArchiveTableHtml(withLoadButton) {
   ensureYearData();
   const rows = state.jahresArchiv.length ? state.jahresArchiv.map((a,i) => {
-    const saldo = archiveRecordSaldo(a);
-    const period = archivePeriodLabel(a);
+    const saldo = NK_PRO_MODULES.archiveActions.recordSaldo(a);
+    const period = NK_PRO_MODULES.archiveActions.periodLabel(a);
     const actions = archiveActionButtonsHtml(i, {open:!!withLoadButton, primaryOpen:true, openLabel:"In neuem Fenster öffnen", download:true});
     return '<tr><td>' + escapeHtml(a.year) + '</td><td>' + escapeHtml(period) + '</td><td>' + escapeHtml(dateDe(a.archivedAt)) + '</td><td>' + archiveStatusBadgeHtml(a) + '</td><td>' + (a.summary ? a.summary.mietverhaeltnisse : "–") + '</td><td>' + fmtMoney(a.summary ? a.summary.kostenNK : 0) + '</td><td>' + fmtMoney(a.summary ? a.summary.vorauszahlungen : 0) + '</td><td>' + (saldo >= 0 ? "Nachzahlung " : "Guthaben ") + fmtMoney(Math.abs(saldo)) + '</td><td>' + actions + '</td></tr>';
   }).join("") : '<tr><td colspan="9">Noch kein Abrechnungsjahr archiviert.</td></tr>';
@@ -4530,8 +3898,8 @@ function replaceArchiveViewerPart(html, pattern, replacement, label) {
 }
 
 function createArchiveViewerHtml(item) {
-  const archiveItem = prepareArchiveItemForUse(item);
-  const validation = archiveItemValidation(archiveItem);
+  const archiveItem = NK_PRO_MODULES.archiveActions.prepareItem(item);
+  const validation = NK_PRO_MODULES.archiveActions.validateItem(archiveItem);
   if (validation.errors.length) throw new Error("Archivdatensatz ist unvollständig: " + validation.errors.join(" "));
 
   const viewerState = normalizeLegacyData(clone(archiveItem.data || {}), { scope:ARCHIVE_SNAPSHOT_SCOPE });
@@ -4558,26 +3926,10 @@ function createArchiveViewerHtml(item) {
   return viewerHtml;
 }
 
-function archiveStateFromItem(item) {
-  const archiveItem = prepareArchiveItemForUse(item);
-  const validation = archiveItemValidation(archiveItem);
-  if (validation.errors.length) throw new Error("Archivdatensatz ist unvollständig: " + validation.errors.join(" "));
-  const viewerState = normalizeLegacyData(clone(archiveItem.data || {}), { scope:ARCHIVE_SNAPSHOT_SCOPE });
-  if (!viewerState.meta) viewerState.meta = {};
-  viewerState.meta.archiveViewer = true;
-  viewerState.meta.archivedAt = archiveItem.archivedAt || "";
-  viewerState.meta.archivedYear = archiveItem.year || "";
-  viewerState.meta.dataSchemaVersion = DATA_SCHEMA_VERSION;
-  viewerState.meta.dataLayerRole = "archiveViewerRuntime";
-  viewerState.jahresArchiv = [];
-  viewerState.waterMeterHistory = clone(state.waterMeterHistory || DEFAULT_WATER_METER_HISTORY);
-  ensureWaterMeterHistory(viewerState);
-  NK_PRO_MODULES.masterDataActions.ensureStammdatenData(viewerState);
-  return viewerState;
-}
+
 
 function openArchiveStateInApp(item) {
-  const viewerState = archiveStateFromItem(item);
+  const viewerState = NK_PRO_MODULES.archiveActions.viewerStateFromItem(item);
   if (!archiveReturnState) archiveReturnState = clone(state);
   state = viewerState;
   pendingStorageWarning = "";
@@ -4649,351 +4001,52 @@ function openArchiveYear(index) {
 
 // Rückwärtskompatibler Alias: Archiv wird nicht mehr im Arbeitsfenster geladen.
 
-function reopenArchiveYearForRework(index) {
-  if (isArchiveViewer()) {
-    alert("Dieses Fenster zeigt eine archivierte Abrechnung. Wiederbearbeitung ist nur auf der Startseite des ursprünglichen Arbeitsfensters möglich.");
-    return;
-  }
-  ensureYearData();
-  const item = state.jahresArchiv[index];
-  if (!item) {
-    alert("Diese archivierte Abrechnung wurde nicht gefunden.");
-    return;
-  }
-  const label = archiveItemLabel(item, index);
-  const code = "WIEDERBEARBEITEN";
-  if (!confirmRiskyDataAction("Archivierte Abrechnung zur Wiederbearbeitung öffnen", "Der aktuelle Arbeitsstand wird durch den Archivstand ersetzt: " + label + ". Der Archivdatensatz bleibt im Jahresarchiv erhalten. Vorher sollte eine Gesamt-JSON-Sicherung vorhanden sein.")) return;
-  const entered = prompt("Archivierte Abrechnung zur Wiederbearbeitung öffnen?\n\nGib zur Bestätigung " + code + " ein. Der aktuelle Arbeitsstand wird ersetzt, der Archivdatensatz bleibt erhalten.");
-  if (String(entered || "").trim().toUpperCase() !== code) return alert("Wiederbearbeitung wurde nicht geöffnet.");
 
-  let restored;
-  try {
-    restored = normalizeLegacyData(clone(prepareArchiveItemForUse(item).data || {}), { scope:ARCHIVE_SNAPSHOT_SCOPE });
-  } catch(e) {
-    alert("Archivdatensatz konnte nicht zur Wiederbearbeitung vorbereitet werden.\n" + errorMessage(e));
-    return;
-  }
-  const preservedArchive = clone(state.jahresArchiv || []);
-  const preservedMasterData = clone(state.stammdaten || {});
-  const preservedHistory = clone(state.waterMeterHistory || restored.waterMeterHistory || {});
-  const preservedOperationalMeta = clone(state.meta || {});
-  if (!restored.meta) restored.meta = {};
-  copyWorkingOperationalMeta(restored.meta, preservedOperationalMeta);
-  restored.meta.archiveViewer = false;
-  delete restored.meta.archiveReturnUrl;
-  delete restored.meta.archivedAt;
-  delete restored.meta.archivedYear;
-  restored.meta.reopenedFromArchiveAt = new Date().toISOString();
-  restored.meta.reopenedFromArchiveWithAppVersion = APP_VERSION;
-  restored.meta.reopenedFromArchiveLabel = label;
-  restored.meta.currentBillingCreatedByUser = true;
-  restored.meta.currentBillingCreatedAt = restored.meta.currentBillingCreatedAt || new Date().toISOString();
-  restored.meta.currentBillingCreatedWithAppVersion = APP_VERSION;
-  restored.meta.dataLayerContractVersion = DATA_LAYER_CONTRACT_VERSION;
-  restored.meta.dataLayerRole = "workingState";
-  restored.meta.storageRole = "working";
-  clearCurrentBillingArchiveClosure(restored);
-  restored.stammdaten = preservedMasterData;
-  restored.waterMeterHistory = preservedHistory;
-  restored.jahresArchiv = preservedArchive;
-  NK_PRO_MODULES.masterDataActions.ensureStammdatenData(restored);
-  ensureWaterMeterHistory(restored);
-  if (typeof NK_PRO_MODULES.billingWorkflow.clearCurrentBillingFinalization === "function") {
-    const oldState = state;
-    state = restored;
-    NK_PRO_MODULES.billingWorkflow.clearCurrentBillingFinalization();
-    state = oldState;
-  }
-  state = restored;
-  commitStateChange({ reason:"Benutzereingabe" });
-  billingContextOpen = true;
-  enterBillingMode("mieter");
-  alert("Archivierte Abrechnung wurde zur Wiederbearbeitung geöffnet: " + label);
-}
 
 function loadArchiveYear(index) {
   openArchiveYear(index);
 }
 
-function yearNumber(value) {
-  const m = String(value || "").match(/\d{4}/);
-  const n = m ? parseInt(m[0], 10) : NaN;
-  return Number.isFinite(n) ? n : new Date().getFullYear();
-}
 
 
-function upsertYearArchive(snapshot) {
-  ensureYearData();
-  let item;
-  try {
-    item = prepareArchiveItemForUse(snapshot);
-  } catch(error) {
-    console.warn("Archivdatensatz konnte nicht vorbereitet werden", error, snapshot);
-    if (typeof alert === "function") alert("Archivdatensatz konnte nicht vorbereitet werden:\n" + errorMessage(error));
-    return false;
-  }
-  const validation = archiveItemValidation(item);
-  if (validation.errors.length) {
-    console.warn("Archivdatensatz wurde nicht gespeichert", validation.errors, item);
-    if (typeof alert === "function") alert("Archivdatensatz konnte nicht gespeichert/importiert werden:\n" + archiveValidationMessage(validation));
-    return false;
-  }
-  if (validation.warnings.length && typeof console !== "undefined" && console.warn) console.warn("Archivdatensatz mit Hinweisen gespeichert", validation.warnings, item);
-  if (!item.periodId) item.periodId = archivePeriodId(item);
-  const id = archivePeriodId(item);
-  const idx = state.jahresArchiv.findIndex(a => archivePeriodId(a) === id);
-  if (idx >= 0) state.jahresArchiv[idx] = item;
-  else state.jahresArchiv.push(item);
-  state.jahresArchiv.sort((a,b) => archiveSortKey(b).localeCompare(archiveSortKey(a)));
-  return true;
-}
 
-function archiveCurrentYearOnly() {
-  if (!hasActiveCurrentBilling()) {
-    alert("Es ist noch keine aktuelle Abrechnung angelegt. Bitte zuerst über „+ Neue Abrechnung“ starten.");
-    return;
-  }
-  if (isArchiveViewer()) {
-    alert("Dieses Fenster zeigt eine archivierte Abrechnung. Archivieren ist nur im ursprünglichen Arbeitsfenster möglich.");
-    return;
-  }
-  const year = currentAbrechnungsjahr();
-  if (!confirmRiskyDataAction("Abrechnungsjahr archivieren", "Abrechnungsjahr " + year + " jetzt im Archiv speichern? Ein vorhandener Archivstand für dieses Jahr wird ersetzt. Es wird keine neue Folgeabrechnung angelegt.")) return;
-  const snapshot = NK_PRO_MODULES.billingWorkflow.createSnapshot();
-  if (!upsertYearArchive(snapshot)) return;
-  closeCurrentBillingAfterArchive(snapshot);
-  withFinalizationWriteBypass(() => saveData());
-  appUiMode = "start";
-  billingContextOpen = false;
-  renderAll();
-  switchToTab("archiv");
-  alert("Abrechnungsjahr " + year + " wurde archiviert. Es wurde keine neue Abrechnung angelegt; der Archivdatensatz ist jetzt im Archiv sichtbar.");
-}
+
+
+
 
 function hasEnteredMeterValue(value) {
   return value !== undefined && value !== null && String(value).trim() !== "";
 }
 
-function normalizeIsoDateValue(value, fallbackYear) {
-  const raw = String(value || "").trim();
-  if (!raw) return "";
-  if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
-  const de = raw.match(/^(\d{1,2})\.(\d{1,2})\.(\d{2}|\d{4})$/);
-  if (de) {
-    let year = de[3];
-    if (year.length === 2) year = String(2000 + parseInt(year, 10));
-    return year + "-" + String(de[2]).padStart(2, "0") + "-" + String(de[1]).padStart(2, "0");
-  }
-  const ym = raw.match(/^(\d{4})-(\d{1,2})$/);
-  if (ym) return ym[1] + "-" + String(ym[2]).padStart(2, "0") + "-01";
-  if (fallbackYear && /^(\d{1,2})\.(\d{1,2})\.$/.test(raw)) {
-    const m = raw.match(/^(\d{1,2})\.(\d{1,2})\.$/);
-    return String(fallbackYear) + "-" + String(m[2]).padStart(2, "0") + "-" + String(m[1]).padStart(2, "0");
-  }
-  return "";
-}
 
-function periodDateStartForData(data) {
-  const meta = data && data.meta ? data.meta : {};
-  const year = yearNumber(meta.abrechnungsjahr || currentAbrechnungsjahr());
-  return normalizeIsoDateValue(meta.abrechnungsbeginn, year) || (String(year) + "-01-01");
-}
 
-function periodDateEndForData(data) {
-  const meta = data && data.meta ? data.meta : {};
-  const year = yearNumber(meta.abrechnungsjahr || currentAbrechnungsjahr());
-  return normalizeIsoDateValue(meta.abrechnungsende, year) || (String(year) + "-12-31");
-}
 
-function monthStartIso(date) {
-  return date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0") + "-01";
-}
 
-function activeMonthStartsForData(data, tenant) {
-  const startIso = periodDateStartForData(data);
-  const endIso = periodDateEndForData(data);
-  const periodStartDate = new Date(startIso + "T00:00:00");
-  const periodEndDate = new Date(endIso + "T00:00:00");
-  if (Number.isNaN(periodStartDate.getTime()) || Number.isNaN(periodEndDate.getTime()) || periodStartDate > periodEndDate) return [];
-  let activeStart = new Date(periodStartDate.getTime());
-  let activeEnd = new Date(periodEndDate.getTime());
-  const tenantStartIso = normalizeIsoDateValue(tenant && tenant.einzug, periodStartDate.getFullYear());
-  const tenantEndIso = normalizeIsoDateValue(tenant && tenant.auszug, periodEndDate.getFullYear());
-  if (tenantStartIso) {
-    const d = new Date(tenantStartIso + "T00:00:00");
-    if (!Number.isNaN(d.getTime()) && d > activeStart) activeStart = d;
-  }
-  if (tenantEndIso) {
-    const d = new Date(tenantEndIso + "T00:00:00");
-    if (!Number.isNaN(d.getTime()) && d < activeEnd) activeEnd = d;
-  }
-  if (activeStart > activeEnd) return [];
-  const months = [];
-  let cursor = new Date(periodStartDate.getFullYear(), periodStartDate.getMonth(), 1);
-  const last = new Date(periodEndDate.getFullYear(), periodEndDate.getMonth(), 1);
-  while (cursor <= last) {
-    const monthStart = new Date(cursor.getFullYear(), cursor.getMonth(), 1);
-    const monthEnd = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0);
-    if (monthEnd >= activeStart && monthStart <= activeEnd) months.push(monthStartIso(monthStart));
-    cursor = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1);
-  }
-  return months;
-}
 
-function monthTotalForPrepaymentCarryForward(oldAnnual, previousData, previousTenant, currentTenant, effectiveIso, monthlyChange) {
-  const oldMonths = activeMonthStartsForData(previousData, previousTenant);
-  const currentMonths = activeMonthStartsForData(state, currentTenant);
-  const oldMonthCount = Math.max(1, oldMonths.length || 12);
-  const currentMonthCount = Math.max(1, currentMonths.length || 12);
-  const oldMonthly = num(oldAnnual) / oldMonthCount;
-  const change = num(monthlyChange);
-  if (!effectiveIso || Math.abs(change) < 0.005) return oldMonthly * currentMonthCount;
-  const newMonthly = Math.max(0, oldMonthly + change);
-  const total = currentMonths.reduce((sum, monthIso) => sum + (monthIso >= effectiveIso.slice(0, 7) + "-01" ? newMonthly : oldMonthly), 0);
-  return total || (newMonthly * currentMonthCount);
-}
 
-function previousYearArchiveDataForCurrentBilling() {
-  ensureYearData();
-  const currentYear = yearNumber(currentAbrechnungsjahr());
-  const previousYear = currentYear - 1;
-  const candidates = (state.jahresArchiv || []).filter(a => yearNumber(a && (a.year || (a.meta && a.meta.abrechnungsjahr))) === previousYear);
-  if (!candidates.length) return null;
-  const item = candidates
-    .slice()
-    .sort((a,b) => String(b.archivedAt || (b.meta && b.meta.archivedAt) || "").localeCompare(String(a.archivedAt || (a.meta && a.meta.archivedAt) || "")))[0];
-  try {
-    const prepared = prepareArchiveItemForUse(item);
-    return prepared && prepared.data ? { item:prepared, data:prepared.data, year:previousYear } : null;
-  } catch(error) {
-    console.warn("Vorjahresabrechnung konnte für Vorauszahlungsübernahme nicht gelesen werden", error);
-    return null;
-  }
-}
 
-function previousTenantRoleIsPrivate(tenant) {
-  const role = String(tenant && (tenant.abrechnungRolle || tenant.rolle || "") || "").toLocaleLowerCase("de-DE");
-  return role.includes("eigent") || role.includes("privat");
-}
 
-function normalizeTenantMatchText(value) {
-  return String(value || "").trim().toLocaleLowerCase("de-DE").replace(/\s+/g, " ");
-}
 
-function findPreviousTenantIndexForCarryForward(previousTenants, currentTenant) {
-  const rows = (Array.isArray(previousTenants) ? previousTenants : []).map((t,i) => ({...t, originalIndex:i})).filter(t => hasTenantData(t) && !previousTenantRoleIsPrivate(t));
-  if (!currentTenant || !rows.length) return -1;
-  const id = String(currentTenant.id || "").trim();
-  if (id) {
-    const byId = rows.find(t => String(t.id || "").trim() === id);
-    if (byId) return byId.originalIndex;
-  }
-  const name = normalizeTenantMatchText(currentTenant.name);
-  const unit = String(currentTenant.wohnung || "").trim();
-  if (name && unit) {
-    const byNameAndUnit = rows.find(t => normalizeTenantMatchText(t.name) === name && String(t.wohnung || "").trim() === unit);
-    if (byNameAndUnit) return byNameAndUnit.originalIndex;
-  }
-  if (name) {
-    const sameName = rows.filter(t => normalizeTenantMatchText(t.name) === name);
-    if (sameName.length === 1) return sameName[0].originalIndex;
-  }
-  return -1;
-}
 
-function activePrepaymentMatrixHasValues() {
-  NK_PRO_MODULES.costActions.syncVorauszahlungen();
-  const visibleRows = billableTenantRows();
-  const activeIds = new Set(activePrepaymentCostIds());
-  return state.vorauszahlungen
-    .filter(v => activeIds.has(v.kostenId) && v.aktiv === "Ja")
-    .some(v => visibleRows.some(m => Math.abs(num(v.werte && v.werte[m.originalIndex])) > 0.005));
-}
 
-function prepaymentAdjustmentWasPrinted(previousData) {
-  const bs = previousData && previousData.briefSettings ? previousData.briefSettings : {};
-  const ps = previousData && previousData.prepaymentAdjustmentSettings ? previousData.prepaymentAdjustmentSettings : {};
-  return bs.showVorauszahlungPage === "Ja" || bs.vorauszahlungPrintMode === "Berechnete Werte drucken" || bs.vorauszahlungPrintMode === "Manuelle Werte drucken" || (ps.letterPrintMode && ps.letterPrintMode !== "Nicht drucken");
-}
 
-function effectivePrepaymentIsoFromPreviousData(previousData) {
-  const currentYear = yearNumber(currentAbrechnungsjahr());
-  const bs = previousData && previousData.briefSettings ? previousData.briefSettings : {};
-  const ps = previousData && previousData.prepaymentAdjustmentSettings ? previousData.prepaymentAdjustmentSettings : {};
-  return normalizeIsoDateValue(ps.effectiveFrom || bs.vorauszahlungAb, currentYear);
-}
 
-function carryForwardPrepaymentsFromPreviousYear() {
-  NK_PRO_MODULES.costActions.syncVorauszahlungen();
-  const info = { sourceYear:"", copied:0, adjusted:0, warnings:[], details:[] };
-  const source = previousYearArchiveDataForCurrentBilling();
-  if (!source || !source.data) {
-    state.meta.prepaymentCarryForward = { sourceYear:"", copied:0, adjusted:0, warnings:["Keine Vorjahresabrechnung gefunden; NK-Vorauszahlungen wurden nicht automatisch übernommen."], details:[] };
-    return state.meta.prepaymentCarryForward;
-  }
-  const previousData = source.data;
-  info.sourceYear = String(source.year);
-  const previousTenants = Array.isArray(previousData.mieter) ? previousData.mieter : [];
-  const previousPrepayments = Array.isArray(previousData.vorauszahlungen) ? previousData.vorauszahlungen : [];
-  const currentRows = billableTenantRows();
-  const applyAdjustment = prepaymentAdjustmentWasPrinted(previousData);
-  const effectiveIso = effectivePrepaymentIsoFromPreviousData(previousData);
-  const previousPeriodDays = Math.max(1, Math.round((new Date(periodDateEndForData(previousData) + "T00:00:00") - new Date(periodDateStartForData(previousData) + "T00:00:00")) / 86400000) + 1);
-  const currentPeriodDays = periodDaysExact();
-  if (Math.abs(previousPeriodDays - currentPeriodDays) > 1) {
-    info.warnings.push("Abrechnungsperiode Vorjahr (" + previousPeriodDays + " Tage) weicht von aktueller Periode (" + currentPeriodDays + " Tage) ab.");
-  }
 
-  state.vorauszahlungen.forEach(row => {
-    const previousRow = previousPrepayments.find(v => v && v.kostenId === row.kostenId);
-    if (!previousRow || !Array.isArray(previousRow.werte)) return;
-    const currentCost = state.kostenarten.find(k => k.id === row.kostenId) || { id:row.kostenId, kostenart:row.kostenart };
-    const group = adjustmentGroupForCost(currentCost);
-    currentRows.forEach(tenant => {
-      const previousIndex = findPreviousTenantIndexForCarryForward(previousTenants, tenant);
-      if (previousIndex < 0) return;
-      const previousTenant = previousTenants[previousIndex];
-      const oldAnnual = num(previousRow.werte[previousIndex]);
-      const previousMonths = activeMonthStartsForData(previousData, previousTenant);
-      const currentMonths = activeMonthStartsForData(state, tenant);
-      if (!previousMonths.length || !currentMonths.length) return;
-      let change = 0;
-      if (applyAdjustment && previousTenant && previousTenant[group.changeKey] !== undefined && previousTenant[group.changeKey] !== null && String(previousTenant[group.changeKey]).trim() !== "") {
-        change = num(previousTenant[group.changeKey]);
-      }
-      const projected = monthTotalForPrepaymentCarryForward(oldAnnual, previousData, previousTenant, tenant, effectiveIso, change);
-      row.werte[tenant.originalIndex] = Math.round(projected * 100) / 100;
-      info.copied += 1;
-      if (Math.abs(change) > 0.005) info.adjusted += 1;
-      if (previousMonths.length !== currentMonths.length) {
-        info.warnings.push((tenantDisplayId(tenant) || tenant.id || "Mieter") + " · " + (tenant.name || "") + ": Vorjahr " + previousMonths.length + " Monat(e), aktuell " + currentMonths.length + " Monat(e); Vorauszahlung wurde hoch-/runtergerechnet.");
-      }
-      info.details.push({ tenantId:tenant.id, kostenId:row.kostenId, oldAnnual, newAnnual:row.werte[tenant.originalIndex], previousMonths:previousMonths.length, currentMonths:currentMonths.length, adjusted:Math.abs(change) > 0.005 });
-    });
-    row.summe = Array.isArray(row.werte) ? row.werte.reduce((a,b) => a + num(b), 0) : 0;
-  });
-  info.warnings = Array.from(new Set(info.warnings));
-  info.appliedForYear = currentAbrechnungsjahr();
-  info.appliedAt = new Date().toISOString();
-  state.meta.prepaymentCarryForward = info;
-  NK_PRO_MODULES.costActions.updateTenantPrepaymentTotals();
-  return info;
-}
 
-function ensurePrepaymentCarryForwardIfNeeded() {
-  if (!state.meta) state.meta = {};
-  NK_PRO_MODULES.costActions.syncVorauszahlungen();
-  const alreadyApplied = state.meta.prepaymentCarryForward && state.meta.prepaymentCarryForward.appliedForYear === currentAbrechnungsjahr() && num(state.meta.prepaymentCarryForward.copied) > 0;
-  if (alreadyApplied || activePrepaymentMatrixHasValues()) return state.meta.prepaymentCarryForward || null;
-  const source = previousYearArchiveDataForCurrentBilling();
-  if (!source || !source.data) return state.meta.prepaymentCarryForward || null;
-  const info = carryForwardPrepaymentsFromPreviousYear();
-  if (info && num(info.copied) > 0) {
-    state.meta.prepaymentCarryForwardRecovered = true;
-    state.meta.prepaymentCarryForwardRecoveredAt = new Date().toISOString();
-  }
-  return info;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function renderPrepaymentCarryForwardNotice() {
   const el = document.getElementById("prepaymentCarryForwardNotice");
@@ -5010,215 +4063,24 @@ function renderPrepaymentCarryForwardNotice() {
   el.innerHTML = '<div class="' + cls + '"><strong>Vorjahresübernahme NK-Vorauszahlungen' + source + ':</strong> ' + detail + '.' + (warnings.length ? '<ul>' + warnings.slice(0,8).map(w => '<li>' + escapeHtml(w) + '</li>').join('') + (warnings.length > 8 ? '<li>Weitere Hinweise vorhanden.</li>' : '') + '</ul>' : '') + '</div>';
 }
 
-function carryMeterEndToStart(snapshot = null) {
-  ensureWaterMeterData();
-  const sourceSnapshot = snapshot || NK_PRO_MODULES.masterDataActions.captureMeterReadingsSnapshot(state);
-  const startDate = periodStart() || (String(currentAbrechnungsjahr()) + "-01-01");
-  const endDate = periodEnd() || (String(currentAbrechnungsjahr()) + "-12-31");
-  const warnings = [];
-  const count = Math.max(20, state.mieter.length);
-  state.waterMeters.readings = Array(count).fill(null).map(() => ({}));
-  state.mieter.forEach((tenant,index) => {
-    const source = NK_PRO_MODULES.masterDataActions.meterSnapshotRowForTenant(sourceSnapshot.water, tenant) || {};
-    const label = (tenant.wohnung || tenant.id || ("Datensatz " + (index + 1)));
-    if (!hasEnteredMeterValue(source.kwEnd)) warnings.push("Kaltwasser-Endstand fehlt bei " + label);
-    if (!hasEnteredMeterValue(source.wwEnd)) warnings.push("Warmwasser-Endstand fehlt bei " + label);
-    state.waterMeters.readings[index] = {
-      kwStart:hasEnteredMeterValue(source.kwEnd) ? num(source.kwEnd) : (hasEnteredMeterValue(source.kwStart) ? num(source.kwStart) : ""),
-      kwStartDate:startDate, kwEnd:"", kwEndDate:endDate,
-      wwStart:hasEnteredMeterValue(source.wwEnd) ? num(source.wwEnd) : (hasEnteredMeterValue(source.wwStart) ? num(source.wwStart) : ""),
-      wwStartDate:startDate, wwEnd:"", wwEndDate:endDate, bemerkung:""
-    };
-  });
-  if (!state.meterReadings) state.meterReadings = { readings:{} };
-  if (!state.meterReadings.readings) state.meterReadings.readings = {};
-  const costIds = new Set(Object.keys(sourceSnapshot.generic || {}).concat(Object.keys(state.meterReadings.readings || {})));
-  costIds.forEach(costId => {
-    const rows = Array(count).fill(null).map(() => ({}));
-    state.mieter.forEach((tenant,index) => {
-      const source = NK_PRO_MODULES.masterDataActions.meterSnapshotRowForTenant(sourceSnapshot.generic && sourceSnapshot.generic[costId], tenant) || {};
-      const label = (tenant.wohnung || tenant.id || ("Datensatz " + (index + 1)));
-      if (!hasEnteredMeterValue(source.end)) warnings.push("Endstand fehlt bei " + costId + " / " + label);
-      rows[index] = { start:hasEnteredMeterValue(source.end) ? num(source.end) : (hasEnteredMeterValue(source.start) ? num(source.start) : ""), startDate, end:"", endDate, bemerkung:"" };
-    });
-    state.meterReadings.readings[costId] = rows;
-  });
-  if (!state.meta) state.meta = {};
-  state.meta.meterCarryForwardWarnings = Array.from(new Set(warnings));
-}
 
 
-function periodStartForData(data) {
-  const meta = data && data.meta ? data.meta : {};
-  const year = String(meta.abrechnungsjahr || "").trim();
-  return meta.abrechnungsbeginn || (year ? year + "-01-01" : "");
-}
 
-function periodEndForData(data) {
-  const meta = data && data.meta ? data.meta : {};
-  const year = String(meta.abrechnungsjahr || "").trim();
-  return meta.abrechnungsende || (year ? year + "-12-31" : "");
-}
 
-function numericMeterValueEquals(a, b) {
-  if (a === "" || a === null || a === undefined) return false;
-  return Math.abs(num(a) - num(b)) < 0.000001;
-}
 
-function isNewCurrentBillingData(data) {
-  const meta = data && data.meta ? data.meta : {};
-  if (!data || meta.currentBillingArchivedOnly || meta.currentBillingClosedAfterArchive || meta.legacyArchivHinweis || meta.archiveViewer) return false;
-  const y = parseInt(String(meta.abrechnungsjahr || ""), 10);
-  if (!Number.isFinite(y) || y <= 2024) return false;
-  // Ab V80 gilt jede nicht archivierte aktuelle Abrechnung ab 2025 als fortgeschriebene/neue Abrechnung.
-  // Archivierte Altstände bis 2024 bleiben ausgeschlossen.
-  return true;
-}
 
-function numericEndValuesWereManuallyTouchedForYear(data, year) {
-  const meta = data && data.meta ? data.meta : {};
-  return String(meta.meterNumericEndValuesTouchedForYear || "") === String(year || "");
-}
 
-function clearAutofilledMeterEndValuesForNewBilling(data = state, options = {}) {
-  if (!data || typeof data !== "object") return 0;
-  if (!options.force) {
-    if (typeof ARCHIVE_VIEW_MODE !== "undefined" && ARCHIVE_VIEW_MODE) return 0;
-    if (!isNewCurrentBillingData(data)) return 0;
-    const year = String((data.meta && data.meta.abrechnungsjahr) || "");
-    if (numericEndValuesWereManuallyTouchedForYear(data, year)) return 0;
-  }
-  const startDate = periodStartForData(data);
-  const endDate = periodEndForData(data);
-  let cleared = 0;
-  const force = !!options.force;
 
-  const readings = data.waterMeters && Array.isArray(data.waterMeters.readings) ? data.waterMeters.readings : [];
-  readings.forEach(r => {
-    if (!r) return;
-    if (startDate) {
-      if (r.kwStartDate === undefined || r.kwStartDate === "" || force) r.kwStartDate = startDate;
-      if (r.wwStartDate === undefined || r.wwStartDate === "" || force) r.wwStartDate = startDate;
-    }
-    if (endDate) {
-      if (r.kwEndDate === undefined || r.kwEndDate === "" || force) r.kwEndDate = endDate;
-      if (r.wwEndDate === undefined || r.wwEndDate === "" || force) r.wwEndDate = endDate;
-    }
-    if (force || numericMeterValueEquals(r.kwEnd, r.kwStart)) { if (r.kwEnd !== "") cleared++; r.kwEnd = ""; }
-    if (force || numericMeterValueEquals(r.wwEnd, r.wwStart)) { if (r.wwEnd !== "") cleared++; r.wwEnd = ""; }
-  });
 
-  const allReadings = data.meterReadings && data.meterReadings.readings && typeof data.meterReadings.readings === "object" ? data.meterReadings.readings : {};
-  Object.keys(allReadings).forEach(costId => {
-    const rows = Array.isArray(allReadings[costId]) ? allReadings[costId] : [];
-    rows.forEach(r => {
-      if (!r) return;
-      if (startDate && (r.startDate === undefined || r.startDate === "" || force)) r.startDate = startDate;
-      if (endDate && (r.endDate === undefined || r.endDate === "" || force)) r.endDate = endDate;
-      if (force || numericMeterValueEquals(r.end, r.start)) { if (r.end !== "") cleared++; r.end = ""; }
-    });
-  });
 
-  if (cleared && data.meta) {
-    data.meta.meterEndValuesClearedForYear = String(data.meta.abrechnungsjahr || "");
-    data.meta.meterEndValuesClearedWithAppVersion = APP_VERSION;
-    if (options.repairExistingNewBilling) data.meta.meterEndValuesAutofillRepairAppliedAt = new Date().toISOString();
-  }
-  return cleared;
-}
 
-function resetAnnualValuesForNextYear(nextYear, startIso, endIso) {
-  const previousMeterSnapshot = NK_PRO_MODULES.masterDataActions.captureMeterReadingsSnapshot(state);
-  state.meta.abrechnungsjahr = String(nextYear);
-  state.meta.abrechnungsbeginn = startIso || (String(nextYear) + "-01-01");
-  state.meta.abrechnungsende = endIso || (String(nextYear) + "-12-31");
-  if (state.briefSettings) {
-    state.briefSettings.abrechnungsjahr = String(nextYear);
-    state.briefSettings.briefdatum = todayIso();
-    state.briefSettings.zahlungsziel = addDaysIso(todayIso(), 14);
-  }
-  NK_PRO_MODULES.masterDataActions.applyStammdatenToCurrentBilling();
 
-  state.kostenarten.forEach(k => {
-    if (k.kostenart && k.inNK === "Ja") {
-      k.gesamtbetrag = 0;
-      if (k.umlageschluessel === "Verbrauch") k.preisProEinheit = "";
-      k.status = NK_PRO_MODULES.costActions.kostenStatus(k);
-    }
-  });
 
-  const periodDays = periodDaysExact();
-  state.mieter.forEach(m => {
-    if (!hasTenantData(m) || isArchivedTenant(m)) return;
-    m.kaltErhalten = 0;
-    m.nkVoraus = 0;
-    m.vorjahresKorrektur = 0;
-    m.wasserWeitereVorauszahlung = 0;
-    m.einnahmen = 0;
-    const activeDays = tenantActiveDaysInCurrentPeriod(m) || periodDays;
-    m.aktiveTage = activeDays;
-    m.personentage = num(m.personen) * activeDays;
-  });
 
-  if (Array.isArray(state.vorauszahlungen)) {
-    state.vorauszahlungen.forEach(v => {
-      if (Array.isArray(v.werte)) v.werte = v.werte.map(() => 0);
-      v.summe = 0;
-    });
-  }
-  if (state.meta) {
-    delete state.meta.prepaymentCarryForward;
-    delete state.meta.prepaymentCarryForwardRecovered;
-    delete state.meta.prepaymentCarryForwardRecoveredAt;
-  }
 
-  if (state.umlageInputs) {
-    Object.keys(state.umlageInputs).forEach(costId => {
-      const input = state.umlageInputs[costId];
-      if (!input || !Array.isArray(input.values)) return;
-      input.values = input.values.map(() => 0);
-    });
-  }
-  state.kostenartenMieterUmlage = {};
 
-  if (state.waterMeters && state.waterMeters.settings) {
-    const waterSettings = state.waterMeters.settings;
-    waterSettings.enabled = "Ja";
-    waterSettings.houseMeterStart = hasWaterSettingValue(waterSettings.houseMeterEnd) ? waterSettings.houseMeterEnd : "";
-    waterSettings.houseMeterStartDate = state.meta.abrechnungsbeginn;
-    waterSettings.houseMeterEnd = "";
-    waterSettings.houseMeterEndDate = state.meta.abrechnungsende;
-    waterSettings.houseWaterTotal = 0;
-    waterSettings.houseInvoiceNote = "";
-  }
-  carryMeterEndToStart(previousMeterSnapshot);
-  clearAutofilledMeterEndValuesForNewBilling(state, { force:true });
-  if (state.meta) {
-    state.meta.meterCarryForwardAppliedForYear = currentAbrechnungsjahr();
-    state.meta.meterEndValuesClearedForYear = currentAbrechnungsjahr();
-  }
-  NK_PRO_MODULES.costActions.syncVorauszahlungen();
-  carryForwardPrepaymentsFromPreviousYear();
-  syncUmlageInputs();
-  NK_PRO_MODULES.costActions.syncKostenartenMieterUmlage();
-  applyWaterMetersToUmlage();
-  NK_PRO_MODULES.costActions.updateTenantPrepaymentTotals();
-}
 
-function archiveAndPrepareNextYear() {
-  if (isArchiveViewer()) {
-    alert("Dieses Fenster zeigt eine archivierte Abrechnung. Neue Abrechnungen legst du im ursprünglichen Arbeitsfenster an.");
-    return;
-  }
-  const year = currentAbrechnungsjahr();
-  const nextYear = yearNumber(year) + 1;
-  if (!confirmRiskyDataAction("Jahreswechsel vorbereiten", "Abrechnungsjahr " + year + " archivieren und das Tool für " + nextYear + " vorbereiten?\\n\\nDabei werden Jahreswerte zurückgesetzt, Zähler-Endstände als neue Anfangsstände übernommen und neue Zähler-Endwerte leer gelassen.")) return;
 
-  if (!upsertYearArchive(NK_PRO_MODULES.billingWorkflow.createSnapshot())) return;
-  resetAnnualValuesForNextYear(nextYear);
-  commitStateChange({ reason:"Benutzereingabe" });
-  alert("Jahreswechsel abgeschlossen. Archiviert: " + year + ". Neues Abrechnungsjahr: " + nextYear + ".");
-}
 
 function downloadArchiveYear(index) {
   ensureYearData();
@@ -5227,10 +4089,10 @@ function downloadArchiveYear(index) {
     alert("Dieser Archivdatensatz wurde nicht gefunden. Bitte die Archivliste neu laden oder die Qualitätsprüfung öffnen.");
     return;
   }
-  const validation = archiveItemValidation(item);
-  if ((validation.errors.length || validation.warnings.length) && !confirm("Dieser Archivdatensatz enthält Prüfhinweise:\n" + archiveValidationMessage(validation) + "\n\nTrotzdem als JSON herunterladen?")) return;
+  const validation = NK_PRO_MODULES.archiveActions.validateItem(item);
+  if ((validation.errors.length || validation.warnings.length) && !confirm("Dieser Archivdatensatz enthält Prüfhinweise:\n" + NK_PRO_MODULES.archiveActions.validationMessage(validation) + "\n\nTrotzdem als JSON herunterladen?")) return;
   let downloadItem = item;
-  try { downloadItem = prepareArchiveItemForUse(item); } catch(error) { console.warn("Archivdatensatz wird unnormalisiert heruntergeladen", error); }
+  try { downloadItem = NK_PRO_MODULES.archiveActions.prepareItem(item); } catch(error) { console.warn("Archivdatensatz wird unnormalisiert heruntergeladen", error); }
   const filename = backupFileName("nk-pro-archiv", { meta:{ abrechnungsjahr:(downloadItem.year || item.year || "jahr") } });
   if (downloadJsonFile(filename, downloadItem)) registerBackupEvent("archive-year", filename);
 }
@@ -5241,13 +4103,13 @@ function downloadFullArchive() {
     alert("Es gibt noch keine archivierten Abrechnungen zum Herunterladen.");
     return;
   }
-  const problemRows = state.jahresArchiv.map((item, index) => ({ item, index, validation:archiveItemValidation(item) })).filter(row => row.validation.errors.length || row.validation.warnings.length);
+  const problemRows = state.jahresArchiv.map((item, index) => ({ item, index, validation:NK_PRO_MODULES.archiveActions.validateItem(item) })).filter(row => row.validation.errors.length || row.validation.warnings.length);
   if (problemRows.length) {
-    const preview = problemRows.slice(0, 5).map(row => archiveItemLabel(row.item, row.index) + ": " + archiveValidationMessage(row.validation).replace(/\n/g, " ")).join("\n");
+    const preview = problemRows.slice(0, 5).map(row => NK_PRO_MODULES.archiveActions.itemLabel(row.item, row.index) + ": " + NK_PRO_MODULES.archiveActions.validationMessage(row.validation).replace(/\n/g, " ")).join("\n");
     if (!confirm("Das Archiv enthält " + problemRows.length + " Datensatz/Datensätze mit Prüfhinweisen.\n\n" + preview + (problemRows.length > 5 ? "\n..." : "") + "\n\nTrotzdem gesamtes Archiv herunterladen?")) return;
   }
   const exportArchive = state.jahresArchiv.map(item => {
-    try { return prepareArchiveItemForUse(item); } catch(error) { console.warn("Archivdatensatz wird unnormalisiert exportiert", error, item); return item; }
+    try { return NK_PRO_MODULES.archiveActions.prepareItem(item); } catch(error) { console.warn("Archivdatensatz wird unnormalisiert exportiert", error, item); return item; }
   });
   const filename = backupFileName("nk-pro-jahresarchiv", { meta:{ abrechnungsjahr:currentAbrechnungsjahr() } });
   if (downloadJsonFile(filename, exportArchive)) registerBackupEvent("year-archive", filename);
@@ -5261,7 +4123,7 @@ function renderYearArchive() {
 
   ensureYearData();
   const year = currentAbrechnungsjahr();
-  const nextYear = yearNumber(year) + 1;
+  const nextYear = NK_PRO_MODULES.archiveActions.yearNumber(year) + 1;
   const archiveCount = state.jahresArchiv.length;
   const last = state.jahresArchiv[0];
 
@@ -5430,89 +4292,9 @@ function parseLegacyBillingFromText(text, filename) {
   };
 }
 
-function buildLegacyArchiveStateFromEntries(entries) {
-  const year = entries.map(e => e.jahr).filter(Boolean)[0] || String(new Date().getFullYear());
-  const starts = entries.map(e => String(e.periode || "").split(" bis ")[0]).filter(Boolean).sort();
-  const ends = entries.map(e => String(e.periode || "").split(" bis ")[1]).filter(Boolean).sort();
-  const start = starts[0] || (year + "-01-01");
-  const end = ends[ends.length-1] || (year + "-12-31");
-  const periodId = "legacy-" + year + "-" + start + "_" + end + "-" + Date.now();
-  const base = clone(SEED);
-  base.jahresArchiv = [];
-  base.meta = { abrechnungsjahr:year, abrechnungsbeginn:start, abrechnungsende:end, periodId, legacySammelArchiv:true, legacyTeilperioden:true, legacyArchivHinweis:"Reine Archivierung: importierte Einzelabrechnungen je Mieter/Wohnung.", legacyQuelle:"Lokaler Mehrfachupload im Browser" };
-  const units = [];
-  entries.forEach(e => { if (e.wohnung && !units.includes(e.wohnung)) units.push(e.wohnung); });
-  if (!units.length) units.push("Import");
-  base.wohnungen = units.map((u,i) => ({id:canonicalUnitIdFor({bezeichnung:u,lage:u}) || generatedUnitIdForLabel(u, i), bezeichnung:u, lage:u, wohnflaeche:55, zimmer:"", status:"aktiv", bemerkung:"Import"}));
-  const unitId = {}; base.wohnungen.forEach(w => unitId[w.bezeichnung] = w.id);
-  base.mieter = entries.map((e,i) => ({ id:"M" + String(i+1).padStart(3,"0"), wohnung:unitId[e.wohnung] || base.wohnungen[0].id, name:e.mieter, einzug:(e.periode || "").split(" bis ")[0] || start, auszug:(e.periode || "").split(" bis ")[1] || end, kaltSoll:0, kaltErhalten:0, nkVoraus:e.vorauszahlung, einnahmen:e.vorauszahlung, aktiveTage:365, wohnflaeche:55, bemerkung:"Import: Heizung " + (e.heizPeriode || "") + ", Wasser " + (e.wasserPeriode || "") + ", Abfall " + (e.abfallPeriode || ""), status:"Aktiv", personen:1, personentage:365, geschlecht:"Frau/Herr", standardanrede:"Sehr geehrte(r) Mieter/in,", strasse:"Am Rauhen Biehl 5", plz:"55774", ort:"Baumholder", telefon:"", email:"", wasserWeitereVorauszahlung:0, vorjahresKorrektur:0, abrechnungRolle:"Mieter", archivedAt:"" }));
 
-  const costIds = ["K006","K002","K009","K040"];
-  const sums = {K006:0,K002:0,K009:0,K040:0};
-  entries.forEach(e => { sums.K006 += num(e.heizkosten); sums.K002 += num(e.wasserkosten); sums.K009 += num(e.abfallkosten); sums.K040 += num(e.rundung); });
-  base.kostenarten.forEach(k => {
-    if (costIds.includes(k.id)) {
-      if (k.id === "K040") k.kostenart = "Rundung";
-      k.inNK = "Ja"; k.vorauszahlung = k.id === "K040" ? "Nein" : "Ja"; k.berechnungsart = "Manuell je Mieter"; k.umlageschluessel = UMLAGE_MANUAL; k.gesamtbetrag = Math.round(sums[k.id] * 100) / 100; k.preisProEinheit = ""; k.status = "Vollständig"; k.bemerkung = "Import je Einzelabrechnung";
-    } else if (k.kostenart) {
-      k.inNK="Nein"; k.vorauszahlung="Nein"; k.berechnungsart="Entfällt"; k.umlageschluessel="Entfällt"; k.gesamtbetrag=0; k.preisProEinheit=""; k.status="Nicht Bestandteil der NK-Abrechnung";
-    }
-  });
-  const len = Math.max(20, entries.length);
-  const fill = vals => { const out = vals.slice(); while(out.length < len) out.push(0); return out; };
-  const values = {
-    K006: fill(entries.map(e => num(e.heizkosten))),
-    K002: fill(entries.map(e => num(e.wasserkosten))),
-    K009: fill(entries.map(e => num(e.abfallkosten))),
-    K040: fill(entries.map(e => num(e.rundung)))
-  };
-  base.umlageInputs = {
-    K006:{kostenId:"K006", kostenart:"Heiz- und Warmwasserkosten", art:UMLAGE_MANUAL, values:values.K006},
-    K002:{kostenId:"K002", kostenart:"Wasserversorgung", art:UMLAGE_MANUAL, values:values.K002},
-    K009:{kostenId:"K009", kostenart:"Müllbeseitigung", art:UMLAGE_MANUAL, values:values.K009},
-    K040:{kostenId:"K040", kostenart:"Rundung", art:UMLAGE_MANUAL, values:values.K040}
-  };
-  const vHeizVals = entries.map(e => num(e.vHeiz));
-  const vWasserVals = entries.map(e => num(e.vWasser));
-  const vAbfallVals = entries.map(e => num(e.vAbfall));
-  const knownPrepay = vHeizVals.reduce((s,v)=>s+v,0) + vWasserVals.reduce((s,v)=>s+v,0) + vAbfallVals.reduce((s,v)=>s+v,0);
-  if (!knownPrepay) entries.forEach((e,i) => { vHeizVals[i] = num(e.vorauszahlung); });
-  base.vorauszahlungen = [
-    {kostenId:"K006", kostenart:"Heiz- und Warmwasserkosten", aktiv:"Ja", summe:Math.round(vHeizVals.reduce((s,v)=>s+v,0)*100)/100, werte:fill(vHeizVals)},
-    {kostenId:"K002", kostenart:"Wasserversorgung", aktiv:"Ja", summe:Math.round(vWasserVals.reduce((s,v)=>s+v,0)*100)/100, werte:fill(vWasserVals)},
-    {kostenId:"K009", kostenart:"Müllbeseitigung", aktiv:"Ja", summe:Math.round(vAbfallVals.reduce((s,v)=>s+v,0)*100)/100, werte:fill(vAbfallVals)}
-  ];
-  // Gesamtvorauszahlung bleibt zusätzlich je Mieter gespeichert; die aktive Matrix verhindert Überschreiben beim Rendern.
-  base.legacyEinzelabrechnungen = entries;
-  base.waterMeters = { settings:{enabled:"Nein", houseWaterTotal:0}, readings:[] };
-  base.meterReadings = { readings:{} };
-  if (base.briefSettings) base.briefSettings.abrechnungsjahr = year;
-  return { base, periodId, year, start, end };
-}
 
-function createLegacyArchiveItemFromEntries(entries) {
-  const built = buildLegacyArchiveStateFromEntries(entries);
-  const costs = entries.reduce((s,e) => s + num(e.kostenanteil), 0);
-  const prepays = entries.reduce((s,e) => s + num(e.vorauszahlung), 0);
-  return {
-    year: built.year,
-    periodId: built.periodId,
-    archivedAt: todayIso(),
-    meta: clone(built.base.meta),
-    summary: {
-      mietverhaeltnisse: entries.length,
-      datensaetzeUmlagebasis: entries.length,
-      eigentuemerPrivatDatensaetze: 0,
-      kostenNK: Math.round(costs * 100) / 100,
-      vorauszahlungen: Math.round(prepays * 100) / 100,
-      mieterKostenanteile: Math.round(costs * 100) / 100,
-      korrekturen: 0,
-      saldo: Math.round((costs - prepays) * 100) / 100,
-      legacyEinzelabrechnungen: entries.length
-    },
-    data: built.base
-  };
-}
+
 
 // ===== Bereich: Import, Export und Sicherung =====
 async function importLegacyBillingFiles(ev) {
@@ -5536,8 +4318,8 @@ async function importLegacyBillingFiles(ev) {
         if (Array.isArray(json)) json.forEach(e => entries.push(e));
         else if (Array.isArray(json.legacyEinzelabrechnungen)) json.legacyEinzelabrechnungen.forEach(e => entries.push(e));
         else if (json.summary && json.data) {
-          const prepared = prepareArchiveItemForUse(json);
-          const validation = archiveItemValidation(prepared);
+          const prepared = NK_PRO_MODULES.archiveActions.prepareItem(json);
+          const validation = NK_PRO_MODULES.archiveActions.validateItem(prepared);
           if (validation.errors.length) throw new Error("Archivdatensatz ungültig: " + validation.errors.join(" "));
           archiveJsonItems.push(prepared);
           archiveJsonImports++;
@@ -5560,23 +4342,24 @@ async function importLegacyBillingFiles(ev) {
     if (archiveJsonImports) {
       const msg = archiveJsonImports + " Archivdatensatz/Archivdatensätze importieren?" + backupStatusHint(backupStatusReport());
       if (!confirm(msg)) return;
-      archiveJsonItems.forEach(item => upsertYearArchive(item));
-      const saved = commitStateChange({ reason:"Benutzereingabe" });
-      alert(archiveJsonImports + " Archivdatensatz/Archivdatensätze wurden importiert" + (saved ? " und gespeichert." : ", konnten aber nicht im Browser-Speicher gespeichert werden. Bitte sofort eine JSON-Sicherung herunterladen."));
+      const execution = NK_PRO_MODULES.applicationActions.execute("archive", "importItems", [archiveJsonItems]);
+      const result = execution.value;
+      if (result && result.message) alert(result.message);
+      if (result && result.changed) switchToTab(result.targetTab || "archiv");
       return;
     }
     alert("Es konnten keine Abrechnungen erkannt werden. Bitte nur DOC/TXT/HTML-Dateien im bekannten Abrechnungsformat oder ein JSON mit Einzelabrechnungen importieren." + (failedFiles.length ? "\n\nDetails:\n- " + failedFiles.slice(0, 6).join("\n- ") : ""));
     return;
   }
-  const item = createLegacyArchiveItemFromEntries(entries);
-  const saldo = archiveRecordSaldo(item);
-  const label = archivePeriodLabel(item);
+  const item = NK_PRO_MODULES.archiveActions.createLegacyArchiveItem(entries);
+  const saldo = NK_PRO_MODULES.archiveActions.recordSaldo(item);
+  const label = NK_PRO_MODULES.archiveActions.periodLabel(item);
   const msg = entries.length + " Einzelabrechnung(en) als Archivsatz " + item.year + " / " + label + " importieren?\n\nSaldo: " + (saldo >= 0 ? "Nachzahlung " : "Guthaben ") + fmtMoney(Math.abs(saldo)) + backupStatusHint(backupStatusReport()) + (archiveJsonImports ? "\n\nZusätzlich wurden " + archiveJsonImports + " Archiv-JSON-Datensatz/Datensätze erkannt." : "") + (failedFiles.length ? "\n\nNicht importiert:\n- " + failedFiles.slice(0, 6).join("\n- ") : "");
   if (!confirm(msg)) return;
-  archiveJsonItems.forEach(archiveItem => upsertYearArchive(archiveItem));
-  if (!upsertYearArchive(item)) return;
-  const saved = commitStateChange({ reason:"Benutzereingabe" });
-  alert(saved ? "Abrechnung wurde dem Archiv hinzugefügt." : "Abrechnung wurde hinzugefügt, konnte aber nicht gespeichert werden. Bitte sofort eine JSON-Sicherung herunterladen.");
+  const execution = NK_PRO_MODULES.applicationActions.execute("archive", "importItems", [archiveJsonItems.concat([item])]);
+  const result = execution.value;
+  if (result && result.message) alert(result.message);
+  if (result && result.changed) switchToTab(result.targetTab || "archiv");
 }
 
 function safeFilePart(...args) { return NK_PRO_MODULES.exportService.safeFilePart(...args); }
@@ -6080,7 +4863,7 @@ function renderWaterMeterCarryForwardNotice() {
   const status=currentMeterEndBlankStatus(); const year=currentAbrechnungsjahr(); const warnings=state.meta&&Array.isArray(state.meta.meterCarryForwardWarnings)?state.meta.meterCarryForwardWarnings:[];
   if (warnings.length) return '<div class="hint feedback-box warn"><strong>⚠ Vorjahresübernahme prüfen:</strong><ul>'+warnings.slice(0,8).map(w=>'<li>'+escapeHtml(w)+'</li>').join('')+(warnings.length>8?'<li>Weitere Hinweise vorhanden.</li>':'')+'</ul></div>';
   if (state.meta && state.meta.meterCarryForwardAppliedForYear===year) return '<div class="hint feedback-box"><strong>✓ Vorjahresübernahme:</strong> Die Endstände des Vorjahres wurden als Anfangsstände für '+escapeHtml(year)+' übernommen; neue Endstände bleiben leer.</div>';
-  if (status.empty || status.filled===0 || numericEndValuesWereManuallyTouchedForYear(state,year)) return "";
+  if (status.empty || status.filled===0 || NK_PRO_MODULES.yearTransitionActions.numericEndValuesWereManuallyTouchedForYear(state,year)) return "";
   return '<div class="hint feedback-box warn"><strong>⚠ Zählerstände prüfen:</strong> Beim Anlegen der Abrechnung waren bereits '+escapeHtml(status.filled)+' Endwerte vorhanden. Bitte kontrollieren, ob diese Werte für die aktuelle Periode korrekt sind.</div>';
 }
 
@@ -6509,7 +5292,7 @@ function normalizeBriefDefaultTexts() {
 function defaultBriefSettings() {
   const today = todayIso();
   const year = currentAbrechnungsjahr();
-  const nextYear = String(yearNumber(year) + 1);
+  const nextYear = String(NK_PRO_MODULES.archiveActions.yearNumber(year) + 1);
   return {
     tenantId: "",
     abrechnungsjahr: year,
@@ -6937,543 +5720,32 @@ function enhanceTables(...args) { return NK_PRO_MODULES.uiTableTools.enhanceTabl
 
 
 // ===== Bereich: Release-Audit V75 =====
-function auditApproxEqual(actual, expected, tolerance = 0.02) {
-  return Math.abs(num(actual) - num(expected)) <= tolerance;
-}
-
-function auditBaseState() {
-  return {
-    meta:{ abrechnungsjahr:"2025", abrechnungsbeginn:"2025-01-01", abrechnungsende:"2025-12-31", dataSchemaVersion:DATA_SCHEMA_VERSION },
-    wohnungen:[
-      {id:"W1", bezeichnung:"Wohnung 1", lage:"EG", wohnflaeche:50, status:"aktiv"},
-      {id:"W2", bezeichnung:"Wohnung 2", lage:"OG", wohnflaeche:50, status:"aktiv"},
-      {id:"WP", bezeichnung:"Privat", lage:"UG", wohnflaeche:50, status:"aktiv"}
-    ],
-    mieter:[
-      {id:"T1", wohnung:"W1", name:"Test Mieter 1", einzug:"2025-01-01", auszug:"", status:"Aktiv", aktiveTage:365, personen:1, personentage:365, kaltSoll:6000, kaltErhalten:0, nkVoraus:0, einnahmen:0, abrechnungRolle:"Mieter", strasse:"Teststraße 1", plz:"12345", ort:"Teststadt", geschlecht:"Frau/Herr", standardanrede:"Automatisch"},
-      {id:"T2", wohnung:"W2", name:"Test Mieter 2", einzug:"2025-01-01", auszug:"", status:"Aktiv", aktiveTage:365, personen:1, personentage:365, kaltSoll:6000, kaltErhalten:0, nkVoraus:0, einnahmen:0, abrechnungRolle:"Mieter", strasse:"Teststraße 2", plz:"12345", ort:"Teststadt", geschlecht:"Frau/Herr", standardanrede:"Automatisch"},
-      {id:"TP", wohnung:"WP", name:"Test Privat", einzug:"2025-01-01", auszug:"", status:"Aktiv", aktiveTage:365, personen:1, personentage:365, kaltSoll:0, kaltErhalten:0, nkVoraus:0, einnahmen:0, abrechnungRolle:"Eigentümer/Privat", strasse:"Teststraße 3", plz:"12345", ort:"Teststadt", geschlecht:"Herr", standardanrede:"Automatisch"}
-    ],
-    kostenarten:[],
-    vorauszahlungen:[],
-    umlageInputs:{},
-    kostenartenMieterUmlage:{},
-    jahresArchiv:[],
-    briefSettings:{ selectedTenantId:"T1", briefDatum:"2026-01-15", betreff:"Nebenkostenabrechnung", introText:"untenstehend erhalten Sie die Nebenkostenabrechnung.", showVorauszahlungPage:"Nein", vorauszahlungPrintMode:"Nicht drucken" },
-    prepaymentAdjustmentSettings:defaultPrepaymentAdjustmentSettings(),
-    waterMeters:{ settings:{ enabled:"Nein", houseWaterTotal:0 }, readings:[] }
-  };
-}
-
-function auditBriefState() {
-  const data = auditBaseState();
-  data.mieter.forEach((m, idx) => {
-    if (!isPrivateTenant(m)) {
-      m.geschlecht = idx === 0 ? "Frau" : "Herr";
-      m.standardanrede = "Automatisch";
-    }
-  });
-  data.kostenarten = [{
-    id:"K900",
-    kostenart:"Audit Hauskosten",
-    inNK:"Ja",
-    vorauszahlung:"Ja",
-    berechnungsart:"Automatisch",
-    umlageschluessel:"Verteilung nur auf aktive Wohneinheiten",
-    gesamtbetrag:300,
-    gesamtverbrauch:"",
-    preisProEinheit:"",
-    ausschlussBehandlung:COST_EXCLUSION_FULL
-  }];
-  data.vorauszahlungen = [{ kostenId:"K900", kostenart:"Audit Hauskosten", aktiv:"Ja", summe:0, werte:[0,0,0] }];
-  data.briefSettings = Object.assign({}, data.briefSettings || {}, {
-    tenantId:"T1",
-    selectedTenantId:"T1",
-    briefdatum:"2026-01-15",
-    zahlungsziel:"2026-01-31",
-    absender:"Audit Vermieter",
-    absenderName:"Audit Vermieter",
-    absenderStrasse:"Auditstraße 1",
-    absenderOrt:"12345 Teststadt",
-    absenderZeile:"Audit Vermieter · Auditstraße 1 · 12345 Teststadt",
-    bankverbindung:"Audit-Bank / IBAN: DE00 0000 0000 0000 0000 00",
-    signatur:"Audit Vermieter",
-    showVorauszahlungPage:"Nein",
-    vorauszahlungPrintMode:"Nicht drucken"
-  });
-  return data;
-}
-
-function withAuditState(tempState, fn) {
-  const oldState = state;
-  const oldPendingStorageWarning = pendingStorageWarning;
-  const oldLastActionMessage = lastActionMessage;
-  const oldRenderErrors = Array.isArray(renderErrors) ? renderErrors.slice() : [];
-  try {
-    state = tempState;
-    return fn();
-  } finally {
-    state = oldState;
-    pendingStorageWarning = oldPendingStorageWarning;
-    lastActionMessage = oldLastActionMessage;
-    renderErrors = oldRenderErrors;
-  }
-}
-
-function releaseAuditReport() {
-  const rows = [];
-  function add(severity, area, point, detail) {
-    rows.push({ severity, area, point, detail: detail || "" });
-  }
-  function runCheck(area, point, fn) {
-    try {
-      add("OK", area, point, fn() || "OK");
-    } catch(error) {
-      add("Fehler", area, point, errorMessage(error));
-    }
-  }
-
-  runCheck("Technik", "Version und Schema", () => {
-    if (!/^V\d+(?:\.\d+)+$/.test(APP_VERSION)) throw new Error("Ungültige Versionskennung: " + APP_VERSION);
-    if (DATA_SCHEMA_VERSION < 5) throw new Error("Datenschema zu alt");
-    if (!Array.isArray(LEGACY_STORAGE_KEYS) || !LEGACY_STORAGE_KEYS.includes("nkpro_browser_v84_audit_dom_fix_data")) throw new Error("V84-Übernahme fehlt");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v83_release_audit_details_data")) throw new Error("V83-Übernahme fehlt");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v82_kostenarten_auswahl_verbrauchspreis_data")) throw new Error("V82-Übernahme fehlt");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v81_preis_je_einheit_quelle_data")) throw new Error("V81-Übernahme fehlt");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v80_wasser_endwerte_wirklich_leer_data")) throw new Error("V80-Übernahme fehlt");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v78_umlage_kostenart_kontrolltabelle_data")) throw new Error("V78-Übernahme fehlt");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v77_korrektur_vorjahr_zaehler_umlage_data")) throw new Error("V77-Übernahme fehlt");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v76_vorjahreswerte_umlage_data")) throw new Error("V76-Übernahme fehlt");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v75_startseite_kein_autoarchiv_data")) throw new Error("V75-Übernahme fehlt");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v74_neue_abrechnung_bleibt_startseite_data")) throw new Error("V74-Übernahme fehlt");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v73_startseite_keine_autoabrechnung_data")) throw new Error("V73-Übernahme fehlt");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v72_startseite_entschlackt_data")) throw new Error("V72-Übernahme fehlt");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v71_finalisierung_je_abrechnung_data")) throw new Error("V71-Übernahme fehlt");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v70_druck_pdf_haertung_data")) throw new Error("V70-Übernahme fehlt");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v69_abnahmeprotokoll_data")) throw new Error("V69-Übernahme fehlt");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v68_finalisieren_eingabeschutz_data")) throw new Error("V68-Übernahme fehlt");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v67_sonderfall_waechter_data")) throw new Error("V67-Übernahme fehlt");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v66_backup_schutz_data")) throw new Error("V66-Übernahme fehlt");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v64_rechenlogik_schutz_data")) throw new Error("V64-Übernahme fehlt");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v63_tabellenkopf_lesbar_data")) throw new Error("V63-Übernahme fehlt");
-    return "Version " + APP_VERSION + " · Schema v" + DATA_SCHEMA_VERSION + " · V84/V82/V81/V80/V78/V77/V76/V75/V74/V73/V72/V71/V70/V69/V68/V67/V66/V64/V63-Übernahme vorhanden";
-  });
-
-  runCheck("Startseite", "Keine automatische Seed-Abrechnung", () => withAuditState(clone(SEED), () => {
-    if (hasActiveCurrentBilling()) throw new Error("Unbearbeiteter Seed-Arbeitsstand wird als aktive Abrechnung erkannt");
-    const html = buildBillingRecordsTableHtml();
-    if (html.includes('<td>2025</td><td>01.01.2025')) throw new Error("Starttabelle zeigt automatisch eine 2025-Arbeitsabrechnung");
-    const before = state.jahresArchiv.length;
-    if (yearExistsInRecords("2025")) throw new Error("Seed-Jahr blockiert neue Abrechnung 2025");
-    markCurrentBillingCreatedByUser();
-    if (!hasActiveCurrentBilling()) throw new Error("bewusst angelegte Abrechnung wird nicht erkannt");
-    state.jahresArchiv.length = before;
-    return "Unbearbeiteter Seed bleibt unsichtbar · 2025 kann nur per Button gestartet werden";
-  }));
-
-  runCheck("Startseite", "Neue Abrechnung bleibt auf Startseite", () => {
-    const src = createNewBillingFromModal.toString();
-    if (src.includes('enterBillingMode("mieter")') || src.includes("enterBillingMode('mieter')")) throw new Error("Anlegen springt noch direkt ins Dashboard");
-    if (!src.includes('switchToTab("start")') && !src.includes("switchToTab('start')")) throw new Error("Startseiten-Rückkehr nach dem Anlegen fehlt");
-    return "Anlegen bleibt im Startmodus · Bearbeitung erfolgt über vorhandenen Tabellen-Button";
-  });
-
-  runCheck("Startseite", "Archivieren erzeugt keine Folgeabrechnung", () => withAuditState(clone(SEED), () => {
-    markCurrentBillingCreatedByUser();
-    const beforeYear = currentAbrechnungsjahr();
-    const beforeArchiveCount = state.jahresArchiv.length;
-    const snapshot = NK_PRO_MODULES.billingWorkflow.createSnapshot();
-    if (!upsertYearArchive(snapshot)) throw new Error("Archiv-Snapshot konnte im Audit nicht gespeichert werden");
-    closeCurrentBillingAfterArchive(snapshot);
-    if (hasActiveCurrentBilling()) throw new Error("Archivierte Bearbeitung bleibt als aktive Abrechnung sichtbar");
-    if (currentAbrechnungsjahr() !== beforeYear) throw new Error("Archivieren hat das Abrechnungsjahr verändert");
-    if (state.jahresArchiv.length !== beforeArchiveCount + 1) throw new Error("Archivieren hat nicht genau einen Archivdatensatz erzeugt");
-    const html = buildBillingRecordsTableHtml();
-    if (html.includes("current-record-row")) throw new Error("Starttabelle zeigt nach Archivierung noch einen aktuellen Arbeitsstand");
-    const srcOpen = openCurrentBilling.toString();
-    const srcFinalize = NK_PRO_MODULES.billingWorkflow.finalize.toString();
-    const srcArchive = archiveCurrentYearOnly.toString();
-    if (srcOpen.includes("resetAnnualValuesForNextYear") || srcFinalize.includes("resetAnnualValuesForNextYear") || srcArchive.includes("resetAnnualValuesForNextYear")) throw new Error("Startseitenaktion enthält Jahreswechsel-/Neuanlage-Logik");
-    return "Archivieren schließt die Bearbeitung und zeigt nur den Archivdatensatz; keine Folgeabrechnung";
-  }));
-
-  runCheck("V77/V79", "Vorjahreswerte und Zähler-Endwerte leer", () => withAuditState(clone(SEED), () => {
-    markCurrentBillingCreatedByUser();
-    NK_PRO_MODULES.costActions.syncVorauszahlungen();
-    resetAnnualValuesForNextYear("2025", "2025-01-01", "2025-12-31");
-    let info = state.meta && state.meta.prepaymentCarryForward;
-    if (!info || num(info.copied) <= 0) throw new Error("NK-Vorauszahlungen wurden nicht aus dem Vorjahr übernommen");
-    let anyPrepay = state.vorauszahlungen.some(v => v && Array.isArray(v.werte) && v.werte.some(x => num(x) > 0));
-    if (!anyPrepay) throw new Error("Vorauszahlungsmatrix bleibt trotz Vorjahr leer");
-    const before = JSON.stringify(state.vorauszahlungen.map(v => v.werte));
-    ensurePrepaymentCarryForwardIfNeeded();
-    const after = JSON.stringify(state.vorauszahlungen.map(v => v.werte));
-    if (before !== after) throw new Error("Nachhol-Logik überschreibt vorhandene Vorauszahlungswerte");
-    const row = state.waterMeters && state.waterMeters.readings && state.waterMeters.readings[0];
-    if (!row) throw new Error("Wasserzählerzeile fehlt");
-    if (row.kwEnd !== "" || row.wwEnd !== "") throw new Error("Zähler-Endwerte wurden nicht leer gelassen");
-    if (row.kwStartDate !== "2025-01-01" || row.kwEndDate !== "2025-12-31") throw new Error("Zählerdaten nicht auf Abrechnungsperiode gesetzt");
-    return "Vorjahres-Vorauszahlungen übernommen/nachholbar; Wasser-Endwerte bleiben bei Neuanlage leer, Datum 01.01.–31.12.";
-  }));
 
 
 
-  runCheck("V81/V82", "Verbrauchskosten nutzen Preis je Einheit als Quelle", () => withAuditState(auditBaseState(), () => {
-    state.mieter = [
-      {id:"T1", name:"Mieter 1", wohnung:"W1", status:"Aktiv", abrechnungRolle:"Mieter", einzug:"2025-01-01", auszug:"", aktiveTage:365, wohnflaeche:50, personen:1},
-      {id:"T2", name:"Mieter 2", wohnung:"W2", status:"Aktiv", abrechnungRolle:"Mieter", einzug:"2025-01-01", auszug:"", aktiveTage:365, wohnflaeche:50, personen:1}
-    ];
-    state.wohnungen = [
-      {id:"W1", bezeichnung:"W1", lage:"W1", status:"aktiv", wohnflaeche:50},
-      {id:"W2", bezeichnung:"W2", lage:"W2", status:"aktiv", wohnflaeche:50}
-    ];
-    state.kostenarten = [{ id:"K881", kostenart:"Audit Verbrauch", inNK:"Ja", vorauszahlung:"Nein", berechnungsart:"Automatisch", umlageschluessel:"Verbrauch", gesamtbetrag:999, gesamtverbrauch:399.6, preisProEinheit:2.5, preisProEinheitManuell:true, ausschlussBehandlung:COST_EXCLUSION_FULL }];
-    state.umlageInputs = { K881:{kostenId:"K881", kostenart:"Audit Verbrauch", art:"Verbrauch", mode:"Verbrauchsmenge", values:[10,20]} };
-    const calc = calculateUmlage();
-    const row = calc.costResults[0];
-    if (Math.abs(num(row.allocations[0]) - 25) > 0.01) throw new Error("Mieter 1 wird nicht mit Einheiten × Preis berechnet");
-    if (Math.abs(num(row.allocations[1]) - 50) > 0.01) throw new Error("Mieter 2 wird nicht mit Einheiten × Preis berechnet");
-    const basis = umlageBasisInfo(state.kostenarten[0], row);
-    if (!String(basis.unit).includes("2,50")) throw new Error("Kontrolltabelle nutzt nicht den Preis aus Kostenarten & Einstellungen");
-    const briefRow = briefCostRows(calc, calc.tenants[0]).find(r => r.id === "K881");
-    if (!briefRow || Math.abs(num(briefRow.preis) - 2.5) > 0.01 || Math.abs(num(briefRow.anteil) - 25) > 0.01) throw new Error("Brief nutzt nicht den Preis aus Kostenarten & Einstellungen");
-    return "Berechnung, Kontrolltabelle und Brief verwenden Preis je Einheit aus Kostenarten & Einstellungen";
-  }));
 
 
-  runCheck("V82", "Kostenarten-Auswahl und automatische Verbrauchspreise", () => withAuditState(auditBaseState(), () => {
-    state.kostenarten = [
-      { id:"K001", kostenart:"Grundsteuer", bereich:"Betriebskosten", inNK:"Nein", vorauszahlung:"Nein", berechnungsart:"Entfällt", umlageschluessel:"Entfällt", gesamtbetrag:0, gesamtverbrauch:"", preisProEinheit:"", ausschlussBehandlung:COST_EXCLUSION_FULL },
-      { id:"K002", kostenart:"Wasserversorgung", bereich:"Wasser", inNK:"Ja", vorauszahlung:"Ja", berechnungsart:"Automatisch", umlageschluessel:"Verbrauch", gesamtbetrag:150, gesamtverbrauch:50, preisProEinheit:"", preisProEinheitManuell:false, ausschlussBehandlung:COST_EXCLUSION_FULL },
-      { id:"K006", kostenart:"Heiz- und Warmwasserkosten", bereich:"Heizung", inNK:"Ja", vorauszahlung:"Ja", berechnungsart:"Manuell je Mieter", umlageschluessel:UMLAGE_MANUAL_LEGACY, gesamtbetrag:200, gesamtverbrauch:"", preisProEinheit:"", ausschlussBehandlung:COST_EXCLUSION_FULL }
-    ];
-    ensureCostSettings();
-    if (state.kostenarten[2].umlageschluessel !== UMLAGE_MANUAL) throw new Error("Legacy-Umlageschlüssel wurde nicht normalisiert");
-    if (Math.abs(num(state.kostenarten[1].preisProEinheit) - 3) > 0.0001) throw new Error("Auto-Preis wurde nicht aus Gesamtbetrag/Gesamtverbrauch gebildet");
-    const html = (() => { const el = { innerHTML:"" }; const oldDoc = typeof document !== "undefined" ? document : null; return "OK"; })();
-    return "Legacy-Bezeichnung kompatibel · Auto-Preis 150/50 = 3,00 · aktive Tabelle filtert über inNK";
-  }));
 
-  runCheck("V79", "Bestehende neue Abrechnung mit Start=End wird bereinigt", () => withAuditState(clone(SEED), () => {
-    markCurrentBillingCreatedByUser();
-    state.meta.abrechnungsjahr = "2025";
-    state.meta.abrechnungsbeginn = "2025-01-01";
-    state.meta.abrechnungsende = "2025-12-31";
-    ensureWaterMeterData();
-    const row = state.waterMeters.readings[0];
-    row.kwStart = 266;
-    row.kwEnd = 266;
-    row.wwStart = 108;
-    row.wwEnd = 108;
-    const cleared = clearAutofilledMeterEndValuesForNewBilling(state, { repairExistingNewBilling:true });
-    if (cleared < 2) throw new Error("Offensichtlich automatisch vorbelegte Endwerte wurden nicht geleert");
-    if (row.kwEnd !== "" || row.wwEnd !== "") throw new Error("Endwertfelder bleiben nach Bereinigung gefüllt");
-    const archiveBefore = JSON.stringify((state.jahresArchiv || []).map(a => a.data && a.data.waterMeters));
-    clearAutofilledMeterEndValuesForNewBilling(state, { repairExistingNewBilling:true });
-    const archiveAfter = JSON.stringify((state.jahresArchiv || []).map(a => a.data && a.data.waterMeters));
-    if (archiveBefore !== archiveAfter) throw new Error("Archivierte Alt-Wasserstände wurden verändert");
-    return "Bestehende aktuelle Neuanlage wird bereinigt; Archiv-/Excel-Historie bleibt unverändert";
-  }));
 
-  runCheck("V80", "Datumsfelder blockieren Endwert-Bereinigung nicht", () => withAuditState(clone(SEED), () => {
-    markCurrentBillingCreatedByUser();
-    state.meta.abrechnungsjahr = "2025";
-    state.meta.abrechnungsbeginn = "2025-01-01";
-    state.meta.abrechnungsende = "2025-12-31";
-    state.meta.meterEndValuesTouchedForYear = "2025"; // Alt-Flag aus V79 darf nicht mehr schützen
-    state.meta.meterEndDateFieldsTouchedForYear = "2025";
-    ensureWaterMeterData();
-    const row = state.waterMeters.readings[0];
-    row.kwStart = 266;
-    row.kwEnd = 266;
-    row.wwStart = 108;
-    row.wwEnd = 108;
-    const cleared = clearAutofilledMeterEndValuesForNewBilling(state, { repairExistingNewBilling:true });
-    if (cleared < 2 || row.kwEnd !== "" || row.wwEnd !== "") throw new Error("Datums-/Alt-Touch-Flag blockiert die Endwert-Bereinigung");
-    return "Alt-/Datums-Touch-Flags blockieren keine automatisch befüllten numerischen Endwerte mehr";
-  }));
 
-  runCheck("V80", "Manuell gesetzte Endwerte bleiben geschützt", () => withAuditState(clone(SEED), () => {
-    markCurrentBillingCreatedByUser();
-    state.meta.abrechnungsjahr = "2025";
-    state.meta.abrechnungsbeginn = "2025-01-01";
-    state.meta.abrechnungsende = "2025-12-31";
-    state.meta.meterNumericEndValuesTouchedForYear = "2025";
-    ensureWaterMeterData();
-    const row = state.waterMeters.readings[0];
-    row.kwStart = 266;
-    row.kwEnd = 266;
-    row.wwStart = 108;
-    row.wwEnd = 108;
-    const cleared = clearAutofilledMeterEndValuesForNewBilling(state, { repairExistingNewBilling:true });
-    if (cleared !== 0 || row.kwEnd === "" || row.wwEnd === "") throw new Error("Manuell markierte numerische Endwerte wurden überschrieben");
-    return "Nach V80 manuell berührte numerische Endwerte werden nicht automatisch geleert";
-  }));
 
-  runCheck("V78", "Umlage-Kontrolltabelle nach Kostenart", () => withAuditState(clone(SEED), () => {
-    markCurrentBillingCreatedByUser();
-    renderUmlage();
-    const costHtml = document.getElementById("umlageCostsTable").innerHTML || "";
-    if (!costHtml.includes("Umlageschlüssel") || !costHtml.includes("Berechnungsart")) throw new Error("Umlageart/ Berechnungsart fehlen in der Kostenart-Kontrolltabelle");
-    if (!costHtml.includes('th class="unit-head')) throw new Error("Wohneinheiten-/Mietparteien-Spalten fehlen in der Kostenart-Kontrolltabelle");
-    if (String(renderUmlage.toString()).includes("umlageUnitsTable")) throw new Error("Alte separate Wohneinheiten-Tabelle wird noch beschrieben");
-    const legacyUnitsTable = document.getElementById("umlageUnitsTable");
-    if (legacyUnitsTable && legacyUnitsTable.innerHTML) throw new Error("Alte Wohneinheiten-Tabelle wird noch befüllt");
-    if (!costHtml.includes("Differenz") || !costHtml.includes("Summe echte Mieter")) throw new Error("Kontrollsummen fehlen in der Kostenart-Kontrolltabelle");
-    return "Eine Zeile je Kostenart mit Umlageart, relevanten Werten, Summen, Differenz und Wohneinheiten-/Mietparteien-Spalten";
-  }));
 
-  runCheck("Datenintegrität", "Aktueller Datensatz serialisierbar", () => {
-    const text = JSON.stringify(state);
-    const parsed = JSON.parse(text);
-    if (!isAppDataShape(parsed)) throw new Error("Serialisierter Datensatz hat keine gültige App-Struktur");
-    return Math.round(text.length / 1024) + " KB JSON · Struktur OK";
-  });
 
-  runCheck("Berechnung", "Wohneinheiten inkl. Privatanteil", () => withAuditState(auditBaseState(), () => {
-    state.kostenarten = [{ id:"K900", kostenart:"Audit Hauskosten", inNK:"Ja", vorauszahlung:"Ja", berechnungsart:"Automatisch", umlageschluessel:"Verteilung nur auf aktive Wohneinheiten", gesamtbetrag:300, preisProEinheit:"", ausschlussBehandlung:COST_EXCLUSION_FULL }];
-    const calc = calculateUmlage();
-    const totals = umlageTotals(calc);
-    if (!auditApproxEqual(totals.billableShare, 200)) throw new Error("Mieteranteil erwartet 200, ist " + fmtMoney(totals.billableShare));
-    if (!auditApproxEqual(totals.privateShare, 100)) throw new Error("Privatanteil erwartet 100, ist " + fmtMoney(totals.privateShare));
-    if (!auditApproxEqual(totals.allocationDelta, 0)) throw new Error("Verteilung hat Differenz " + fmtMoney(totals.allocationDelta));
-    return "300 EUR auf drei aktive Einheiten = 200 EUR Mieter, 100 EUR Privat";
-  }));
-
-  runCheck("Berechnung", "Referenzsaldo und Summenformel", () => withAuditState(auditBaseState(), () => {
-    state.kostenarten = [{ id:"K902", kostenart:"Audit Saldo", inNK:"Ja", vorauszahlung:"Ja", berechnungsart:"Automatisch", umlageschluessel:"Verteilung nur auf aktive Wohneinheiten", gesamtbetrag:360, preisProEinheit:"", ausschlussBehandlung:COST_EXCLUSION_FULL }];
-    state.vorauszahlungen = [{ kostenId:"K902", kostenart:"Audit Saldo", aktiv:"Ja", summe:180, werte:[120,60,0] }];
-    state.mieter[0].vorjahresKorrektur = 12;
-    const calc = calculateUmlage();
-    const totals = umlageTotals(calc);
-    const t1 = calc.tenantResults.find(r => r.tenant.id === "T1");
-    const t2 = calc.tenantResults.find(r => r.tenant.id === "T2");
-    if (!t1 || !t2) throw new Error("Referenzmieter fehlen");
-    if (!auditApproxEqual(totals.totalCosts, 360)) throw new Error("Gesamtkosten erwartet 360, ist " + fmtMoney(totals.totalCosts));
-    if (!auditApproxEqual(totals.billableShare, 240)) throw new Error("Mieteranteil erwartet 240, ist " + fmtMoney(totals.billableShare));
-    if (!auditApproxEqual(totals.privateShare, 120)) throw new Error("Privatanteil erwartet 120, ist " + fmtMoney(totals.privateShare));
-    if (!auditApproxEqual(totals.prepayments, 180)) throw new Error("Vorauszahlungen erwartet 180, ist " + fmtMoney(totals.prepayments));
-    if (!auditApproxEqual(totals.corrections, 12)) throw new Error("Korrekturen erwartet 12, ist " + fmtMoney(totals.corrections));
-    if (!auditApproxEqual(totals.balance, 48)) throw new Error("Saldo erwartet 48, ist " + fmtMoney(totals.balance));
-    if (!auditApproxEqual(t1.balance, -12)) throw new Error("Saldo T1 erwartet -12, ist " + fmtMoney(t1.balance));
-    if (!auditApproxEqual(t2.balance, 60)) throw new Error("Saldo T2 erwartet 60, ist " + fmtMoney(t2.balance));
-    if (!auditApproxEqual(totals.allocationDelta, 0)) throw new Error("Verteilung hat Differenz " + fmtMoney(totals.allocationDelta));
-    return "Summenformel stabil: 240 Mieteranteil - 180 Vorauszahlungen - 12 Korrektur = 48 EUR Saldo";
-  }));
-
-  runCheck("Berechnung", "Referenzverteilung Wohnfläche", () => withAuditState(auditBaseState(), () => {
-    state.wohnungen[0].wohnflaeche = 40;
-    state.wohnungen[1].wohnflaeche = 60;
-    state.wohnungen[2].wohnflaeche = 100;
-    state.kostenarten = [{ id:"K903", kostenart:"Audit Wohnfläche", inNK:"Ja", vorauszahlung:"Nein", berechnungsart:"Automatisch", umlageschluessel:"Wohnfläche", gesamtbetrag:200, preisProEinheit:"", ausschlussBehandlung:COST_EXCLUSION_FULL }];
-    const calc = calculateUmlage();
-    const t1 = calc.tenantResults.find(r => r.tenant.id === "T1");
-    const t2 = calc.tenantResults.find(r => r.tenant.id === "T2");
-    const privateResult = calc.privateResults.find(r => r.tenant.id === "TP");
-    const totals = umlageTotals(calc);
-    if (!t1 || !t2 || !privateResult) throw new Error("Referenzergebnisse fehlen");
-    if (!auditApproxEqual(t1.costShare, 40)) throw new Error("Wohnfläche T1 erwartet 40, ist " + fmtMoney(t1.costShare));
-    if (!auditApproxEqual(t2.costShare, 60)) throw new Error("Wohnfläche T2 erwartet 60, ist " + fmtMoney(t2.costShare));
-    if (!auditApproxEqual(privateResult.costShare, 100)) throw new Error("Privatanteil erwartet 100, ist " + fmtMoney(privateResult.costShare));
-    if (!auditApproxEqual(totals.allocationDelta, 0)) throw new Error("Wohnflächenverteilung hat Differenz " + fmtMoney(totals.allocationDelta));
-    return "200 EUR nach 40/60/100 m² = 40/60/100 EUR";
-  }));
-
-  runCheck("Berechnung", "Referenzverteilung unterjährige Miettage", () => withAuditState(auditBaseState(), () => {
-    state.mieter[0].aktiveTage = 181;
-    state.mieter[0].auszug = "2025-06-30";
-    state.mieter[1].aktiveTage = 184;
-    state.mieter[1].einzug = "2025-07-01";
-    state.mieter[2].auszug = "2024-12-31";
-    state.kostenarten = [{ id:"K904", kostenart:"Audit Miettage", inNK:"Ja", vorauszahlung:"Nein", berechnungsart:"Automatisch", umlageschluessel:"Miettage", gesamtbetrag:365, preisProEinheit:"", ausschlussBehandlung:COST_EXCLUSION_FULL }];
-    const calc = calculateUmlage();
-    const t1 = calc.tenantResults.find(r => r.tenant.id === "T1");
-    const t2 = calc.tenantResults.find(r => r.tenant.id === "T2");
-    const totals = umlageTotals(calc);
-    if (!t1 || !t2) throw new Error("Unterjährige Referenzmieter fehlen");
-    if (calc.privateResults.length !== 0) throw new Error("Außerhalb des Zeitraums liegender Privatdatensatz wurde mitgerechnet");
-    if (!auditApproxEqual(t1.costShare, 181)) throw new Error("Miettage T1 erwartet 181, ist " + fmtMoney(t1.costShare));
-    if (!auditApproxEqual(t2.costShare, 184)) throw new Error("Miettage T2 erwartet 184, ist " + fmtMoney(t2.costShare));
-    if (!auditApproxEqual(totals.billableShare, 365)) throw new Error("Miettage-Mieteranteil erwartet 365, ist " + fmtMoney(totals.billableShare));
-    if (!auditApproxEqual(totals.allocationDelta, 0)) throw new Error("Miettageverteilung hat Differenz " + fmtMoney(totals.allocationDelta));
-    return "Unterjährige Miettage stabil: 181 + 184 Tage = 365 EUR";
-  }));
-
-  runCheck("Berechnung", "Manuelle externe Heizkosten", () => withAuditState(auditBaseState(), () => {
-    state.kostenarten = [{ id:"K006", kostenart:"Heiz- und Warmwasserkosten", inNK:"Ja", vorauszahlung:"Ja", berechnungsart:"Manuell je Mieter", umlageschluessel:UMLAGE_MANUAL, gesamtbetrag:300, preisProEinheit:"", ausschlussBehandlung:COST_EXCLUSION_FULL }];
-    state.umlageInputs = { K006:{ kostenId:"K006", kostenart:"Heiz- und Warmwasserkosten", art:UMLAGE_MANUAL, values:[100,200,0] } };
-    const calc = calculateUmlage();
-    const totals = umlageTotals(calc);
-    if (!auditApproxEqual(totals.billableShare, 300)) throw new Error("Heizkosten-Mieteranteil erwartet 300, ist " + fmtMoney(totals.billableShare));
-    const row = briefCostRows(calc, calc.tenantResults[0].tenant).find(x => x.id === "K006");
-    if (!row || !auditApproxEqual(row.anteil, 100)) throw new Error("Briefzeile für Heizkosten fehlt oder ist falsch");
-    const html = costSectionRows([row], "2025");
-    if (html.includes("x&nbsp;&nbsp;") || html.includes("laut externer Heizkostenabrechnung")) throw new Error("Heizkostenbrief enthält weiterhin Einheiten oder redundanten Hinweis");
-    return "Manuelle Heizkosten werden mit Einzelbetrag übernommen und im Brief ohne Einheiten ausgegeben";
-  }));
-
-  runCheck("Berechnung", "Individuelle Umlagefähigkeit", () => withAuditState(auditBaseState(), () => {
-    state.kostenarten = [{ id:"K901", kostenart:"Nur Mieter 1", inNK:"Ja", vorauszahlung:"Ja", berechnungsart:"Manuell je Mieter", umlageschluessel:UMLAGE_MANUAL, gesamtbetrag:120, preisProEinheit:"", ausschlussBehandlung:COST_EXCLUSION_OWNER }];
-    state.umlageInputs = { K901:{ kostenId:"K901", kostenart:"Nur Mieter 1", art:UMLAGE_MANUAL, values:[120,0,0] } };
-    NK_PRO_MODULES.costActions.syncKostenartenMieterUmlage();
-    state.kostenartenMieterUmlage.K901.T2 = false;
-    const calc = calculateUmlage();
-    const rowsT1 = briefCostRows(calc, calc.tenantResults[0].tenant);
-    const rowsT2 = briefCostRows(calc, calc.tenantResults[1].tenant);
-    if (!rowsT1.some(r => r.id === "K901" && auditApproxEqual(r.anteil, 120))) throw new Error("Kostenzeile fehlt bei berechtigtem Mieter");
-    if (rowsT2.some(r => r.id === "K901")) throw new Error("Ausgeschlossener Mieter erhält Kostenzeile");
-    return "Individuelle Kosten erscheinen nur beim berechtigten Mieter";
-  }));
-
-  runCheck("Vorauszahlungsanpassung", "Berechnung, Rundung und Mindeständerung", () => withAuditState(auditBaseState(), () => {
-    state.kostenarten = [{ id:"K900", kostenart:"Audit Hauskosten", inNK:"Ja", vorauszahlung:"Ja", berechnungsart:"Automatisch", umlageschluessel:"Verteilung nur auf aktive Wohneinheiten", gesamtbetrag:240, preisProEinheit:"", ausschlussBehandlung:COST_EXCLUSION_FULL }];
-    state.vorauszahlungen = [{ kostenId:"K900", kostenart:"Audit Hauskosten", aktiv:"Ja", summe:120, werte:[60,60,0] }];
-    state.prepaymentAdjustmentSettings = { effectiveFrom:"01.01.2026", safetyBufferPercent:0, roundingMode:"Auf 5 € runden", minimumMonthlyChange:1, annualizePartialTenants:"Ja", changePolicy:"Erhöhungen und Senkungen", letterPrintMode:"Nicht drucken" };
-    const data = prepaymentAdjustmentData();
-    const s1 = data.summaries.find(x => x.tenant.id === "T1");
-    if (!s1) throw new Error("Vorauszahlungszeile fehlt");
-    if (!auditApproxEqual(s1.oldMonthlyTotal, 5)) throw new Error("Alte Monatsvorauszahlung erwartet 5, ist " + fmtMoney(s1.oldMonthlyTotal));
-    if (!auditApproxEqual(s1.recommendedTenantMonthly, 10)) throw new Error("Neue Monatsvorauszahlung erwartet 10, ist " + fmtMoney(s1.recommendedTenantMonthly));
-    return "Vorauszahlungsberechnung stabil · Rundung auf 5 EUR geprüft";
-  }));
-
-  runCheck("Export", "Gesamt- und Einzelabrechnung getrennt", () => withAuditState(auditBriefState(), () => {
-    const full = exportSnapshot();
-    const current = NK_PRO_MODULES.billingWorkflow.createSnapshot();
-    if (!Array.isArray(full.jahresArchiv)) throw new Error("Gesamtexport enthält kein Jahresarchiv");
-    if (Object.prototype.hasOwnProperty.call(state, "stammdaten") && !Object.prototype.hasOwnProperty.call(full, "stammdaten")) throw new Error("Gesamtexport verliert Objekt-Stammdaten");
-    if (Object.prototype.hasOwnProperty.call(state, "waterMeterHistory") && !Object.prototype.hasOwnProperty.call(full, "waterMeterHistory")) throw new Error("Gesamtexport verliert globale Zählerhistorie");
-    if (Object.prototype.hasOwnProperty.call(current, "jahresArchiv")) throw new Error("Einzelabrechnungsexport enthält Jahresarchivdaten");
-    if (Object.prototype.hasOwnProperty.call(current, "stammdaten")) throw new Error("Einzelabrechnungsexport enthält Objekt-Stammdaten");
-    if (Object.prototype.hasOwnProperty.call(current, "waterMeterHistory")) throw new Error("Einzelabrechnungsexport enthält globale Zählerhistorie");
-    if (current.meta.exportScope !== "currentBillingOnly") throw new Error("Einzelabrechnungsexport hat falschen Scope");
-    return "Gesamtexport mit globalen Ebenen und Archiv · Einzelabrechnung als begrenzter Snapshot";
-  }));
-
-  runCheck("Brief", "Tabellen-Lesbarkeit ohne Umbruch", () => {
-    const styles = briefPrintStyles();
-    if (!styles.includes("tbody td{white-space:nowrap")) throw new Error("Briefdruck-CSS setzt Datenzellen nicht auf nowrap");
-    if (!styles.includes("thead th,.prepay-table thead th{white-space:normal")) throw new Error("Briefdruck-CSS erlaubt Tabellenkopf-Umbruch nicht");
-    if (!styles.includes("font-size:10.15px")) throw new Error("Briefdruck-CSS enthält nicht die V62/V63-Schriftgröße für Tabellen");
-    return "Tabellenzellen ohne Umbruch · größere Schrift aktiviert";
-  });
-
-  runCheck("Brief", "Eigentümer-/Privat aus Mieterbriefen ausgeschlossen", () => withAuditState(auditBriefState(), () => {
-    const calc = calculateUmlage();
-    const rows = briefResultRows(calc);
-    if (rows.some(r => isPrivateTenant(r.tenant))) throw new Error("Eigentümer-/Privat erscheint noch in der Briefauswahl");
-    if (!calc.privateResults.some(r => isPrivateTenant(r.tenant))) throw new Error("Eigentümer-/Privat fehlt in der Umlageberechnung");
-    return "Eigentümer-/Privat bleibt in der Kostenverteilung, erhält aber keinen Mieterbrief";
-  }));
-
-  runCheck("Brief", "A4-, Footer- und Summenblock-Struktur", () => withAuditState(auditBriefState(), () => {
-    const calc = calculateUmlage();
-    const selected = selectedBriefTenant(calc);
-    const html = buildBriefHtml(calc, selected);
-    if (!html.includes("letter-sheet")) throw new Error("A4-Seite fehlt");
-    if (!html.includes('class="footer"')) throw new Error("Fußzeile fehlt");
-    if (!html.includes("summary-spacer")) throw new Error("Summenblock-Abstand fehlt");
-    return "Briefstruktur enthält A4-Seite, Fußzeile und Summenblock-Abstand";
-  }));
-
-  runCheck("Brief", "Preflight-Status", () => withAuditState(auditBriefState(), () => {
-    const calc = calculateUmlage();
-    const selected = selectedBriefTenant(calc);
-    const report = briefPreflightReport(calc, selected);
-    if (!report || !Array.isArray(report.items)) throw new Error("Preflight-Report fehlt");
-    if (report.errors) throw new Error(report.errors + " Preflight-Fehler");
-    const html = briefPreflightBoxHtml(report);
-    if (!html.includes("Brief-Preflight")) throw new Error("Preflight-Box wird nicht aufgebaut");
-    if (!report.items.some(item => item.label === "DIN-A4")) throw new Error("A4-Prüfung fehlt im Preflight");
-    if (!report.items.some(item => item.label === "Tabellenlayout")) throw new Error("Tabellenlayout-Prüfung fehlt im Preflight");
-    return "Preflight aktiv · " + report.warnings + " Hinweise · " + report.ok + " OK";
-  }));
-
-  runCheck("Brief", "Druck-/PDF-Härtung", () => withAuditState(auditBriefState(), () => {
-    const calc = calculateUmlage();
-    const selected = selectedBriefTenant(calc);
-    const report = printHardeningReport(calc, selected);
-    if (!report || !Array.isArray(report.items)) throw new Error("Druckhärtungs-Report fehlt");
-    if (report.errors) throw new Error(report.errors + " Druckhärtungs-Fehler");
-    const box = printHardeningBoxHtml(report);
-    if (!box.includes("Druck-/PDF-Härtung")) throw new Error("Druckhärtungs-Box fehlt");
-    const styles = briefPrintStyles();
-    if (!styles.includes("print-color-adjust:exact")) throw new Error("Print color adjustment fehlt");
-    if (!styles.includes("page-break-inside:avoid")) throw new Error("Page-break-Härtung fehlt");
-    if (typeof printWindowHtml !== "function" || !printWindowHtml("Test", "<div></div>", "Audit").includes("Druck-/PDF-Hinweis")) throw new Error("Druckfenster-Hülle fehlt");
-    return "Druckfenster, A4-Härtung und PDF-Hinweise aktiv · " + report.warnings + " Hinweise";
-  }));
-
-  runCheck("Sonderfälle", "Sonderfall-Wächter", () => withAuditState(auditBaseState(), () => {
-    state.wohnungen.push({ id:"WL", bezeichnung:"Leerstand", lage:"DG", wohnflaeche:40, status:"aktiv" });
-    state.mieter[0].auszug = "2025-06-30";
-    state.mieter[0].aktiveTage = 181;
-    state.mieter[1].einzug = "2025-07-01";
-    state.mieter[1].aktiveTage = 184;
-    const report = specialCaseWatchReport();
-    if (!report || !Array.isArray(report.rows)) throw new Error("Sonderfall-Bericht fehlt");
-    if (!report.rows.some(r => r.type === "Unterjährig")) throw new Error("Unterjähriger Fall wird nicht erkannt");
-    if (!report.rows.some(r => r.type === "Leerstand")) throw new Error("Leerstand wird nicht erkannt");
-    if (!report.rows.some(r => r.type === "Eigentümer/Privat")) throw new Error("Eigentümer-/Privatrolle wird nicht erkannt");
-    const badgeHtml = specialCaseBadgesForTenant(state.mieter[0]);
-    if (!badgeHtml.includes("unterjährig")) throw new Error("Sonderfall-Badge fehlt");
-    return "Unterjährig, Leerstand und Eigentümer/Privat erkannt · " + report.rows.length + " Meldungen";
-  }));
-
-  runCheck("Backup", "Backup-Status und Exportnamen", () => {
-    const report = backupStatusReport();
-    if (!report || !report.storage) throw new Error("Backup-Status fehlt");
-    const name = backupFileName("nk-pro-gesamtbestand", { meta:{ abrechnungsjahr:"2025" } });
-    if (!name.includes(APP_VERSION)) throw new Error("Export-Dateiname enthält Version nicht");
-    if (!name.includes("2025")) throw new Error("Export-Dateiname enthält Jahr nicht");
-    if (typeof confirmRiskyDataAction !== "function") throw new Error("Sicherheitsabfrage für riskante Aktionen fehlt");
-    return "Backup-Status aktiv · Exportname mit Jahr und Version";
-  });
-
-  runCheck("Abnahmeprotokoll", "Berichtsfunktionen und HTML-Export", () => withAuditState(auditBriefState(), () => {
-    if (typeof acceptanceProtocolData !== "function") throw new Error("acceptanceProtocolData fehlt");
-    if (typeof acceptanceProtocolHtml !== "function") throw new Error("acceptanceProtocolHtml fehlt");
-    if (typeof downloadAcceptanceProtocolHtml !== "function") throw new Error("downloadAcceptanceProtocolHtml fehlt");
-    const html = acceptanceProtocolHtml();
-    if (!html.includes("Finaler Prüfbericht / Abnahmeprotokoll")) throw new Error("HTML-Bericht enthält keinen Protokolltitel");
-    if (!html.includes("Brief-Preflight") || !html.includes("Sonderfälle") || !html.includes("Offene Prüfpunkte")) throw new Error("Wichtige Protokollbereiche fehlen");
-    return "Abnahmeprotokoll enthält Titel, Brief-Preflight, Sonderfälle und Prüfpunkte";
-  }));
-
-  const errors = rows.filter(r => r.severity === "Fehler").length;
-  const ok = rows.filter(r => r.severity === "OK").length;
-  const warnings = rows.filter(r => r.severity === "Prüfen" || r.severity === "Hinweis").length;
-  return {
-    rows,
-    summary:{ errors, warnings, ok, level:errors ? "err" : (warnings ? "warn" : "ok"), message:"Release-Audit: " + errors + " Fehler, " + warnings + " Hinweise, " + ok + " OK." }
-  };
-}
-
-function releaseAuditReportText() {
-  const report = releaseAuditReport();
-  const lines = [];
-  lines.push("NK-Pro " + APP_VERSION + " · Release-Audit");
-  lines.push("Erstellt: " + new Date().toLocaleString("de-DE"));
-  lines.push(report.summary.message);
-  lines.push("");
-  report.rows.forEach(row => lines.push(row.severity + " · " + row.area + " · " + row.point + (row.detail ? ": " + row.detail : "")));
-  return lines.join("\n");
-}
 
 function showReleaseAuditReport() {
-  const text = releaseAuditReportText();
+  const text = NK_PRO_MODULES.diagnostics.releaseAuditReportText();
   alert(text);
   return text;
 }
 
 function downloadReleaseAuditReport() {
-  download(txtFileName("nk-pro-release-audit"), releaseAuditReportText(), "text/plain;charset=utf-8");
+  download(txtFileName("nk-pro-release-audit"), NK_PRO_MODULES.diagnostics.releaseAuditReportText(), "text/plain;charset=utf-8");
 }
 
 function renderReleaseAuditSummary() {
   const el = document.getElementById("releaseAuditSummary");
   if (!el) return;
-  const report = releaseAuditReport();
+  const report = NK_PRO_MODULES.diagnostics.releaseAuditReport();
   const s = report.summary;
   const problemRows = report.rows.filter(row => row.severity === "Fehler" || row.severity === "Prüfen" || row.severity === "Hinweis");
   const detailsHtml = problemRows.length ? '<div class="small" style="margin-top:10px"><strong>Details:</strong><ul style="margin:6px 0 0 18px; padding:0">' +
@@ -7485,342 +5757,22 @@ function renderReleaseAuditSummary() {
 
 // ===== Bereich: App-Selbsttest =====
 
-function stableStringify(value) { return JSON.stringify(value); }
-
-function appSelfTestReport() {
-  const rows = [];
-  function add(area, point, ok, detail, failSeverity = "Fehler") {
-    rows.push({ severity: ok ? "OK" : failSeverity, area, point, detail: detail || "" });
-  }
-  function runCheck(area, point, fn, failSeverity = "Fehler") {
-    try {
-      const detail = fn();
-      add(area, point, true, detail);
-    } catch(error) {
-      add(area, point, false, errorMessage(error), failSeverity);
-    }
-  }
-
-  runCheck("Architektur", "V96.2 Workflow-Dashboard nur im Abrechnungskontext", () => {
-    if (typeof workflowDashboardReport !== "function" || typeof renderWorkflowDashboard !== "function") throw new Error("Workflow-Dashboard-Funktionen fehlen");
-    const start = document.getElementById("start");
-    const dashboard = document.getElementById("dashboard");
-    const quality = document.getElementById("qualitaet");
-    if (dashboard) throw new Error("Entfernter Abrechnungsstatus-Tab ist noch vorhanden");
-    if (start && start.querySelector("#workflowDashboardBox")) throw new Error("Workflow-Status steht noch auf der Startseite");
-    if (!quality || !quality.querySelector("#workflowDashboardBox")) throw new Error("Workflow-Status fehlt in der Qualitätsprüfung");
-    const before = stableStringify(state);
-    const result = workflowDashboardReport();
-    const after = stableStringify(state);
-    if (before !== after) throw new Error("Workflow-Dashboard hat den produktiven Zustand verändert");
-    if (hasActiveCurrentBilling() && !isArchiveViewer() && (!result || !Array.isArray(result.groups))) throw new Error("Workflow-Dashboard liefert keine Bereichsdaten");
-    return "Startseite bleibt schlank; Qualitätsdaten werden nur im Abrechnungs-Dashboard auf einer Zustandskopie ausgewertet";
-  });
 
 
-  runCheck("App", "Start- und Renderstatus", () => {
-    const startupCount = Array.isArray(startupErrors) ? startupErrors.length : 0;
-    const renderCount = Array.isArray(renderErrors) ? renderErrors.length : 0;
-    if (startupCount || renderCount) throw new Error(startupCount + " Startfehler, " + renderCount + " Renderfehler");
-    return "Keine Start- oder Renderfehler";
-  });
-
-  runCheck("Datenmodell", "Datenschema", () => {
-    const version = state.meta && state.meta.dataSchemaVersion;
-    if (num(version) < DATA_SCHEMA_VERSION) throw new Error("Schema " + (version || "unbekannt") + " statt " + DATA_SCHEMA_VERSION);
-    return "Version " + version;
-  });
-
-  runCheck("Speicher", "LocalStorage beschreibbar", () => {
-    if (!storageWritable()) throw new Error("LocalStorage nicht beschreibbar");
-    return "OK";
-  });
-
-  runCheck("Speicher", "V92-Prüfsumme und Rückfallstand", () => {
-    const sample = auditBaseState();
-    const protectedSample = protectDataForStorage(sample);
-    const valid = validateStoredDataIntegrity(protectedSample);
-    if (!valid.valid || !valid.protected) throw new Error("Gültige Prüfsumme wird nicht erkannt");
-    const damaged = clone(protectedSample);
-    damaged.meta.abrechnungsjahr = "2099";
-    if (validateStoredDataIntegrity(damaged).valid) throw new Error("Manipulierter Datenstand wird nicht erkannt");
-    if (STORAGE_RECOVERY_KEY === STORAGE_KEY) throw new Error("Rückfallstand ist nicht getrennt");
-    return "Prüfsumme erkennt Änderungen; separater Rückfall-Speicher vorhanden";
-  });
-
-  runCheck("Speicher", "V59 bis V47-Datenübernahme", () => {
-    if (!Array.isArray(LEGACY_STORAGE_KEYS) || !LEGACY_STORAGE_KEYS.includes("nkpro_browser_v59_summenblock_abstand_data")) throw new Error("V59-Speicherbereich fehlt in der Legacy-Übernahme");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v57_brief_feinschliff_data")) throw new Error("V57-Speicherbereich fehlt in der Legacy-Übernahme");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v56_lesbarer_brief_data")) throw new Error("V56-Speicherbereich fehlt in der Legacy-Übernahme");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v55_brieflayout_fix_data")) throw new Error("V55-Speicherbereich fehlt in der Legacy-Übernahme");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v54_brieftext_format_data")) throw new Error("V54-Speicherbereich fehlt in der Legacy-Übernahme");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v53_heizkostenbrief_data")) throw new Error("V53-Speicherbereich fehlt in der Legacy-Übernahme");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v52_briefformat_data")) throw new Error("V52-Speicherbereich fehlt in der Legacy-Übernahme");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v50_getrennte_sicherung_data")) throw new Error("V50-Speicherbereich fehlt in der Legacy-Übernahme");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v49_fachcheck_exportpaket_data")) throw new Error("V49-Speicherbereich fehlt in der Legacy-Übernahme");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v48_stabilitaetsbasis_plus_data")) throw new Error("V48-Speicherbereich fehlt in der Legacy-Übernahme");
-    if (!LEGACY_STORAGE_KEYS.includes("nkpro_browser_v47_stabilitaetsbasis_data")) throw new Error("V47-Speicherbereich fehlt in der Legacy-Übernahme");
-    return "V59, V58, V57, V56, V55, V54, V52, V50, V49, V48 und V47 werden beim ersten Laden berücksichtigt";
-  });
-
-  runCheck("Stabilität", "Renderstrategie V50", () => {
-    if (typeof renderCurrentView !== "function") throw new Error("Gezielte Ansichtsaktualisierung fehlt");
-    if (typeof renderAll !== "function") throw new Error("Haupt-Renderfunktion fehlt");
-    return "Aktiver Tab: " + (activeTabId() || "unbekannt") + "; Renderläufe: " + renderCount + "; letzter Lauf: " + renderLastDurationMs + " ms";
-  });
-
-  runCheck("Fachcheck", "V50-Finalprüfung", () => {
-    const report = collectQualityChecks({ scope:"currentBilling" });
-    const readiness = finalBillingReadiness(report);
-    if (!readiness || !readiness.label) throw new Error("Finalprüfung liefert keinen Status");
-    return readiness.label + " · " + report.issues.length + " Prüfpunkte";
-  });
-
-  runCheck("Export", "V50-getrennte Sicherungsfunktionen", () => {
-    if (typeof downloadExportPackage !== "function") throw new Error("Abrechnungs-Exportpaket fehlt");
-    if (typeof downloadFullExportPackage !== "function") throw new Error("Vollständiges Exportpaket fehlt");
-    if (typeof downloadCurrentBillingJson !== "function") throw new Error("Abrechnungs-JSON fehlt");
-    if (typeof downloadFullJson !== "function") throw new Error("Gesamt-JSON fehlt");
-    if (typeof renderPrepaymentAdjustment !== "function") throw new Error("Vorauszahlungsanpassung-Tab fehlt");
-    if (typeof prepaymentAdjustmentData !== "function") throw new Error("Vorauszahlungsberechnung fehlt");
-    return "Abrechnungsexport, Gesamtexport und Vorauszahlungsanpassung verfügbar";
-  });
-
-  runCheck("Brief", "Manuelle Heizkosten ohne Einheiten", () => {
-    if (typeof costSectionRows !== "function" || typeof isManualExternalCostDefinition !== "function") throw new Error("Briefkosten-Formatlogik fehlt");
-    const html = costSectionRows([{ id:"K006", kostenart:"Heiz- und Warmwasserkosten", schluessel:UMLAGE_MANUAL, berechnungsart:"Manuell je Mieter", gesamtbetrag:999, anteil:123.45, vorauszahlung:0, weitereVorauszahlung:0, basisTotal:888, preis:7.77, einheiten:66, period:"01.01.24-31.12.24", settlement:-123.45 }], "2024");
-    if (html.includes("x&nbsp;&nbsp;") || html.includes("7,77") || html.includes(">888<") || html.includes(">66<")) throw new Error("Manuelle Heizkosten zeigen noch Einheiten/Preis im Brief");
-    if (html.includes("laut externer Heizkostenabrechnung")) throw new Error("Redundanter externer Heizkostenhinweis steht noch in der Tabellenzeile");
-    return "Manuelle Heizkosten werden ohne Einheiten-/Preis-Spalten und ohne redundanten Tabellenzusatz gedruckt";
-  });
-
-  runCheck("Brief", "Dynamische Kostenzeilen ohne Nullzeilen", () => {
-    if (typeof isBriefCostRowRelevant !== "function") throw new Error("Brief-Relevanzfilter fehlt");
-    const hidden = isBriefCostRowRelevant({ id:"K999", kostenart:"Testkosten", gesamtbetrag:100, anteil:0, vorauszahlung:0, weitereVorauszahlung:0, settlement:0 });
-    const shownByShare = isBriefCostRowRelevant({ id:"K999", kostenart:"Testkosten", gesamtbetrag:100, anteil:12.34, vorauszahlung:0, weitereVorauszahlung:0, settlement:-12.34 });
-    const shownByPrepay = isBriefCostRowRelevant({ id:"K999", kostenart:"Testkosten", gesamtbetrag:100, anteil:0, vorauszahlung:12.34, weitereVorauszahlung:0, settlement:12.34 });
-    if (hidden) throw new Error("Kostenzeile mit 0,00 EUR Mieterbezug würde im Brief erscheinen");
-    if (!shownByShare || !shownByPrepay) throw new Error("Relevante Kostenzeile wird nicht erkannt");
-    return "Nullzeilen werden ausgeblendet, relevante individuelle Kosten bleiben sichtbar";
-  });
-
-  runCheck("Architektur", "Konsolidierter Produktivpfad", () => {
-    if (typeof createNextBillingYearFromStart !== "undefined") throw new Error("Ungenutzter Alt-Einstieg createNextBillingYearFromStart noch vorhanden");
-    return "Eindeutig ungenutzter Alt-Einstieg entfernt";
-  });
-
-  runCheck("Architektur", "Zentraler Änderungsweg", () => {
-    if (typeof commitStateChange !== "function") throw new Error("Zentraler Änderungsweg fehlt");
-    return "Änderung, Aufbereitung, Speichern und Rendern gebündelt";
-  });
-
-  runCheck("Architektur", "Renderlauf bleibt datenfrei", () => {
-    if (typeof prepareStateForPersistence !== "function") throw new Error("Zentrale Zustandsaufbereitung fehlt");
-    const before = statePreparationCount;
-    renderCurrentView({ forceAll:false, reason:"architecture-test" });
-    if (statePreparationCount !== before) throw new Error("Renderlauf hat Zustandsaufbereitung ausgelöst");
-    return "Darstellung und Zustandsaufbereitung getrennt";
-  });
-
-  runCheck("Stabilität", "V91-Safe-Cleanup", () => {
-    const requiredDynamicFunctions = [
-      "resetData", "setWaterMeterSetting", "setWaterMeterValue", "setGenericMeterValue", "setBriefSetting",
-      "printCurrentBrief", "copyCurrentBriefText"
-    ];
-    const missing = requiredDynamicFunctions.filter(name => typeof globalThis[name] !== "function");
-    if (missing.length) throw new Error("Dynamische Bedienfunktionen fehlen: " + missing.join(", "));
-    const requiredActions = [
-      ["object","setMasterNested"], ["cost","setSetting"], ["billing","setManualInputMode"],
-      ["billing","resetAllocationInputs"], ["billing","setPrepaymentAdjustmentSetting"]
-    ];
-    const missingActions = requiredActions.filter(([domain, action]) => !NK_PRO_MODULES.applicationActions.has(domain, action));
-    if (missingActions.length) throw new Error("Extrahierte Anwendungsaktionen fehlen: " + missingActions.map(item => item.join(".")).join(", "));
-    if (typeof getBriefTenantAddress !== "function" || typeof validateBriefResult !== "function") throw new Error("Aktive Briefpfade fehlen");
-    return "Ungenutzte Altpfade entfernt; extrahierte Bedienaktionen und Briefpfade vorhanden";
-  });
-
-  runCheck("Stabilität", "Alle Hauptansichten renderbar", () => {
-    const before = renderErrors.length;
-    renderCurrentView({ forceAll:true, reason:"self-test" });
-    const created = renderErrors.slice(before);
-    if (created.length) throw new Error(created.map(e => e.area + ": " + e.message).join(" | "));
-    return "Alle Hauptansichten ohne Renderfehler geprüft";
-  });
-
-  runCheck("Berechnung", "Umlageberechnung", () => {
-    const calc = calculateUmlage();
-    if (!calc || !Array.isArray(calc.costResults) || !Array.isArray(calc.tenantResults)) throw new Error("Berechnung liefert kein erwartetes Ergebnis");
-    const totals = umlageTotals(calc);
-    Object.keys(totals).forEach(key => {
-      if (!Number.isFinite(num(totals[key]))) throw new Error("Summe ist ungültig: " + key);
-    });
-    return calc.costResults.length + " Kostenarten, " + calc.tenantResults.length + " Mietergebnisse";
-  });
-
-  runCheck("Qualität", "Qualitätsprüfung", () => {
-    const report = collectQualityChecks();
-    if (!report || !Array.isArray(report.issues)) throw new Error("Qualitätsbericht ist unvollständig");
-    const errors = report.issues.filter(i => i.severity === "Fehler").length;
-    const warnings = report.issues.filter(i => i.severity === "Prüfen" || i.severity === "Hinweis").length;
-    if (warnings) rows.push({ severity:"Hinweis", area:"Qualität", point:"Qualitätshinweise", detail:warnings + " Prüfpunkte mit Hinweis/Prüfen" });
-    if (errors) throw new Error(errors + " Fehler in der Qualitätsprüfung");
-    return report.issues.length + " Prüfpunkte, keine Fehler";
-  });
-
-  runCheck("Archiv", "Archivdatensätze", () => {
-    const items = Array.isArray(state.jahresArchiv) ? state.jahresArchiv : [];
-    let errors = 0;
-    let warnings = 0;
-    items.forEach(item => {
-      const validation = archiveItemValidation(item);
-      errors += validation.errors.length;
-      warnings += validation.warnings.length;
-    });
-    if (warnings) rows.push({ severity:"Hinweis", area:"Archiv", point:"Archivhinweise", detail:warnings + " Hinweise bei bestehenden Archivdaten" });
-    if (errors) throw new Error(errors + " Archivfehler");
-    return items.length + " Datensätze, " + warnings + " Hinweise";
-  });
-
-  runCheck("Brief", "A4-Seitenstruktur", () => {
-    const calc = calculateUmlage();
-    const selected = selectedBriefTenant(calc);
-    const html = buildBriefHtml(calc, selected);
-    if (!html.includes('letter-sheet')) throw new Error("Brief enthält keine A4-Seitenstruktur");
-    if (!html.includes('colgroup')) throw new Error("Brief enthält keine festen Tabellenspalten");
-    return "A4-Seiten und feste Spalten vorhanden";
-  });
-
-  runCheck("Finalisierung", "Schreibschutz-Funktionen", () => withAuditState(auditBaseState(), () => {
-    if (NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized()) throw new Error("Audit-Basis darf nicht finalisiert starten");
-    state.meta.currentBillingFinalized = true;
-    state.meta.currentBillingFinalizationKey = NK_PRO_MODULES.billingWorkflow.currentBillingFinalizationKey();
-    state.meta.currentBillingFinalizedAt = "2026-07-10T00:00:00.000Z";
-    if (!NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized()) throw new Error("Finalisierung wird nicht erkannt");
-    NK_PRO_MODULES.billingWorkflow.clearCurrentBillingFinalization();
-    if (NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized()) throw new Error("Finalisierung wurde nicht entfernt");
-    return "Finalisieren/Entsperren-Status OK";
-  }));
-
-  runCheck("Navigation", "Physische Kernorchestrierung V99.4.10", () => {
-    const nav = document.querySelector(".workflow-nav");
-    if (!nav) throw new Error("Workflow-Navigation fehlt");
-    const groups = Array.from(nav.querySelectorAll(":scope > .nav-group")).map(group => group.dataset.navGroupSection);
-    if (groups.join("|") !== "object|billing|archive|extras") throw new Error("Navigationsgruppen sind unvollständig oder falsch sortiert");
-    const expanded = Array.from(nav.querySelectorAll('.nav-group-toggle[aria-expanded="true"]'));
-    if (expanded.length !== 1) throw new Error("Es muss genau eine Navigationsgruppe geöffnet sein");
-    const tabIds = Array.from(nav.querySelectorAll(".tab-btn[data-tab]")).map(button => button.dataset.tab);
-    const expected = START_NAV_TABS.concat(BILLING_NAV_TABS).filter(id => id !== "landing");
-    if (tabIds.length !== expected.length || new Set(tabIds).size !== expected.length || expected.some(id => !tabIds.includes(id))) throw new Error("Tabs fehlen oder sind mehrfach in der Navigation enthalten");
-    const landingChoices = document.querySelectorAll("#landing .landing-choice");
-    if (landingChoices.length !== 2) throw new Error("Landingpage besitzt nicht genau zwei Einstiege");
-    if (!NK_PRO_MODULES.navigation || typeof NK_PRO_MODULES.navigation.ensureNavigationPath !== "function" || typeof NK_PRO_MODULES.navigation.updateWorkflowNavigationContext !== "function") throw new Error("Zentrales Navigationsmodul fehlt");
-    return "4 Accordion-Gruppen, 16 eindeutige Navigationsziele und genau 2 Landingpage-Einstiege";
-  });
-
-  runCheck("Startseite", "Sicherungstab und Entschlackung", () => {
-    const start = document.getElementById("start");
-    const sicherung = document.getElementById("sicherung");
-    if (!START_NAV_TABS.includes("sicherung")) throw new Error("Sicherungstab fehlt in der Startnavigation");
-    if (!sicherung) throw new Error("Sicherungstab fehlt im DOM");
-    if (start && start.querySelector("#backupStatusBox")) throw new Error("Backup-Status steht noch auf der Startseite");
-    if (start && start.querySelector("#globalBackupBox")) throw new Error("Gesamtsicherung steht noch auf der Startseite");
-    if (start && start.querySelector("#versionBox")) throw new Error("Versionsübersicht steht noch auf der Startseite");
-    if (!sicherung.querySelector("#backupStatusBox") || !sicherung.querySelector("#globalBackupBox") || !sicherung.querySelector("#versionBox")) throw new Error("Sicherungstab enthält nicht alle Sicherungs-/Versionsblöcke");
-    const html = document.getElementById("startArchiveUtilityActions") ? document.getElementById("startArchiveUtilityActions").innerHTML : "";
-    if (!html.includes("system.runSelfTest")) throw new Error("App-Selbsttest fehlt auf der Startseite");
-    if (html.includes("download-full-json") || html.includes("download-full-export-package") || html.includes("download-archive")) throw new Error("Backup-Aktionen stehen noch in der Startseiten-Nutzleiste");
-    return "Startseite reduziert; Datensicherung & System bündelt Backup, Import/Reset und Versionsübersicht";
-  });
 
 
-  runCheck("Finalisierung", "Startseite und Abrechnungsbezug", () => {
-    const start = document.getElementById("start");
-    const dashboard = document.getElementById("dashboard");
-    const quality = document.getElementById("qualitaet");
-    if (start && start.querySelector("#finalizationStatusBox")) throw new Error("Finalisierungsblock steht noch auf der Startseite");
-    if (!quality || !quality.querySelector("#finalizationStatusBox")) throw new Error("Finalisierungsblock fehlt in der Qualitätsprüfung");
-    const html = buildBillingRecordsTableHtml();
-    if (!html.includes("Finalisieren") || !html.includes("Archivieren")) throw new Error("Startseitenaktionen für aktuelle Abrechnung fehlen");
-    if (!html.includes("Wiederbearbeiten")) throw new Error("Archivierte Abrechnungen haben keine Wiederbearbeiten-Aktion");
-    return "Finalisierung im Abrechnungskontext; Startseite zeigt nur Status/Aktionen je Abrechnung";
-  });
 
-  runCheck("Stabilität", "V93 gezieltes Rendering", () => {
-    if (typeof commitStateChange !== "function" || typeof renderCurrentView !== "function") throw new Error("Zentraler Renderpfad fehlt");
-    const source = commitStateChange.toString() + renderCurrentView.toString();
-    if (!source.includes("tabIds") || !source.includes("includeCommon")) throw new Error("Gezielte Renderoptionen fehlen");
-    if (!setBriefSetting.toString().includes('tabId:"briefe"')) throw new Error("Brief-Einstellungen nutzen keinen lokalen Renderpfad");
-    if (!NK_PRO_MODULES.billingWorkflow.describe().actions.includes("setPrepaymentAdjustmentSetting")) throw new Error("Vorauszahlungsanpassung ist nicht im Workflowmodul registriert");
-    return "Lokale Renderpfade aktiv; Voll-Render bleibt für weitreichende Vorgänge erhalten";
-  });
-
-  runCheck("Brief", "Druck-CSS", () => {
-    const css = briefPrintStyles();
-    if (!css.includes('@page') || !css.includes('.letter-sheet')) throw new Error("Druck-CSS unvollständig");
-    return "Druck-CSS vorhanden";
-  });
-
-  runCheck("Briefe", "Mieteranschreiben", () => {
-    const calc = calculateUmlage();
-    let errors = 0;
-    let warnings = 0;
-    calc.tenantResults.forEach(result => {
-      const validation = validateBriefResult(calc, result);
-      errors += validation.errors.length;
-      warnings += validation.warnings.length;
-    });
-    if (warnings) rows.push({ severity:"Hinweis", area:"Briefe", point:"Brief-Hinweise", detail:warnings + " Hinweise in den Briefprüfungen" });
-    if (errors) throw new Error(errors + " Brief-Fehler");
-    return calc.tenantResults.length + " Briefe, " + warnings + " Hinweise";
-  });
-
-  runCheck("Oberfläche", "Kernbereiche rendern", () => {
-    renderStart();
-    renderQuality();
-    renderUmlage();
-    renderBrief();
-    return "Start, Qualität, Umlage und Briefe ohne Abbruch";
-  });
-
-  runCheck("Export", "JSON-Sicherung", () => {
-    const text = JSON.stringify(state);
-    JSON.parse(text);
-    if (text.length < 1000) throw new Error("Export wirkt ungewöhnlich klein");
-    return Math.round(text.length / 1024) + " KB JSON";
-  });
-
-  runCheck("Audit", "Release-Prüfszenarien V70", () => {
-    const audit = releaseAuditReport();
-    if (audit.summary.errors) throw new Error(audit.summary.errors + " Fehler im Release-Audit");
-    if (audit.summary.warnings) rows.push({ severity:"Hinweis", area:"Audit", point:"Release-Audit-Hinweise", detail:audit.summary.warnings + " Hinweise im Audit" });
-    return audit.summary.ok + " Prüfszenarien OK";
-  });
-
-  return rows;
-}
-
-function appSelfTestSummary(rows) {
-  const errors = rows.filter(row => row.severity === "Fehler").length;
-  const warnings = rows.filter(row => row.severity === "Prüfen" || row.severity === "Hinweis").length;
-  const ok = rows.filter(row => row.severity === "OK").length;
-  return {
-    errors,
-    warnings,
-    ok,
-    level: errors ? "err" : (warnings ? "warn" : "ok"),
-    message: "App-Selbsttest abgeschlossen: " + errors + " Fehler, " + warnings + " Hinweise, " + ok + " OK."
-  };
-}
 
 function runAppSelfTest() {
-  const rows = appSelfTestReport();
-  const summary = appSelfTestSummary(rows);
+  const report = NK_PRO_MODULES.diagnostics.appSelfTestReport();
+  const rows = Array.isArray(report && report.rows) ? report.rows : [];
+  const summary = report && report.summary ? report.summary : NK_PRO_MODULES.diagnostics.appSelfTestSummary(rows);
   setActionMessage(summary.message, summary.level);
   renderActionFeedback();
   const details = rows.map(row => row.severity + " · " + row.area + " · " + row.point + (row.detail ? ": " + row.detail : "")).join("\n");
   alert("App-Selbsttest\n\n" + summary.message + "\n\n" + details);
   if (summary.errors && typeof switchToTab === "function") switchToTab("qualitaet");
-  return rows;
+  return report;
 }
 // ===== Bereich: Tabellenwerkzeuge und App-Start =====
 function activeTabId() {
@@ -7949,7 +5901,7 @@ function overviewCoreStats() {
   const income=tenants.reduce((a,m)=>{a.rent+=num(m.kaltErhalten);a.prepayments+=num(m.nkVoraus);a.corrections+=num(m.vorjahresKorrektur);return a;},{rent:0,prepayments:0,corrections:0});
   const calc=safeOverviewCall(()=>calculateUmlage(),null);
   const totals=calc ? safeOverviewCall(()=>umlageTotals(calc),null) : null;
-  const quality=safeOverviewCall(()=>collectQualityChecks({scope:"currentBilling"}),null);
+  const quality=safeOverviewCall(()=>NK_PRO_MODULES.qualityAssurance.inspect({scope:"currentBilling"}),null);
   const issues=quality && Array.isArray(quality.issues) ? quality.issues.filter(i=>i.severity !== "OK") : [];
   const errors=issues.filter(i=>i.severity === "Fehler");
   const checks=issues.filter(i=>i.severity === "Prüfen");
@@ -7997,10 +5949,10 @@ function buildOverviewData(tabId) {
   const data={
     objekt:{summary:[["Objekt-ID",s.objectStandard&&s.objectStandard.objekt?(s.objectStandard.objekt.id||"–"):"–"],["Gebäude",s.objectStandard&&Array.isArray(s.objectStandard.gebaeude)?s.objectStandard.gebaeude.length:0],["Einheiten / Verträge",(s.objectStandard&&Array.isArray(s.objectStandard.einheiten)?s.objectStandard.einheiten.length:0)+" / "+(s.objectStandard&&Array.isArray(s.objectStandard.vertraege)?s.objectStandard.vertraege.length:0)],["Zähler / Strom-Dummys",s.meters.length+" / "+s.electricityDummyMeters.length]],validation:overviewStructuredValidation(s.objectValidation,"Objektstandard 1 gültig"),next:next("Objektstandard und abrechnungsrelevante Zuordnungen prüfen.","objectValidationSection"),actions:[go("Wohnungen öffnen","wohnungsverwaltung",true),go("Mieter öffnen","mieterverwaltung"),go("Datensicherung","sicherung")]},
     start:{summary:[["Arbeitsjahr",s.year],["Abrechnungen im Archiv",s.archives],["Mietverhältnisse",s.tenants.length],["Wohnungen",s.units.length]],validation:commonValidation,next:next("Aktuellen Arbeitsstand öffnen oder eine neue Abrechnung anlegen.","startRecordsSection"),actions:[open("Abrechnungen öffnen","startRecordsSection",true),go("Datensicherung & System","sicherung"),save]},
-    archiv:{summary:[["Archivierte Abrechnungen",s.archives],["Aktuelle Abrechnung",hasActiveCurrentBilling()?s.year:"Keine"],["Datenbestand","Lokal"],["Schema",DATA_SCHEMA_VERSION]],validation:{status:"ok",headline:"Archiv getrennt erreichbar",items:[{text:"Historische Datensätze bleiben unverändert",status:"ok"},{text:"Öffnen erfolgt schreibgeschützt",status:"ok"}]},next:next("Archivierte Abrechnung auswählen und in der Nur-Ansicht prüfen.","archiveRecordsSection"),actions:[open("Archiv öffnen","archiveRecordsSection",true),{label:"Archiv herunterladen",action:"archive.downloadFull",args:[]},go("Abrechnungsübersicht","start")]},
+    archiv:{summary:[["Archivierte Abrechnungen",s.archives],["Aktuelle Abrechnung",NK_PRO_MODULES.archiveActions.hasActiveCurrentBilling()?s.year:"Keine"],["Datenbestand","Lokal"],["Schema",DATA_SCHEMA_VERSION]],validation:{status:"ok",headline:"Archiv getrennt erreichbar",items:[{text:"Historische Datensätze bleiben unverändert",status:"ok"},{text:"Öffnen erfolgt schreibgeschützt",status:"ok"}]},next:next("Archivierte Abrechnung auswählen und in der Nur-Ansicht prüfen.","archiveRecordsSection"),actions:[open("Archiv öffnen","archiveRecordsSection",true),{label:"Archiv herunterladen",action:"archive.downloadFull",args:[]},go("Abrechnungsübersicht","start")]},
     mieterverwaltung:{summary:[["Mietverhältnisse",s.tenants.length],["Archiviert",s.archivedTenants.length],["Wohnungen",s.units.length],["Abrechnungsjahr",s.year]],validation:commonValidation,next:next("Mieterstammdaten und archivierte Mietverhältnisse vollständig prüfen.","masterTenantSection"),actions:[open("Mietverhältnisse öffnen","masterTenantSection",true),open("Archiv öffnen","masterTenantArchiveSection"),save]},
     wohnungsverwaltung:{summary:[["Wohnungen gesamt",s.units.length],["Aktiv",s.activeUnits.length],["Inaktiv",Math.max(0,s.units.length-s.activeUnits.length)],["Wohnfläche aktiv",s.activeUnits.reduce((a,w)=>a+num(w.wohnflaeche),0).toLocaleString("de-DE")+" m²"]],validation:commonValidation,next:next("Wohnungsbestand und Flächenangaben kontrollieren.","masterUnitSection"),actions:[open("Wohnungsbestand öffnen","masterUnitSection",true),go("Mieterverwaltung","mieterverwaltung"),save]},
-    sicherung:{summary:[["Version",APP_VERSION],["Archivstände",s.archives],["Betriebsart","Offline · lokal"],["Abrechnungsjahr",s.year]],validation:{status:"ok",headline:"Sicherung verfügbar",items:[{text:"Lokale Gesamtsicherung vorhanden",status:"ok"},{text:"Neuer PWA-Cache für V99.4.10",status:"ok"}]},next:next("Vollständige JSON-Sicherung erstellen und Versionsinformationen prüfen.","backupMainSection"),actions:[open("Gesamtsicherung öffnen","backupMainSection",true),open("Version anzeigen","backupVersionSection"),save]},
+    sicherung:{summary:[["Version",APP_VERSION],["Archivstände",s.archives],["Betriebsart","Offline · lokal"],["Abrechnungsjahr",s.year]],validation:{status:"ok",headline:"Sicherung verfügbar",items:[{text:"Lokale Gesamtsicherung vorhanden",status:"ok"},{text:"Neuer PWA-Cache für V99.4.11",status:"ok"}]},next:next("Vollständige JSON-Sicherung erstellen und Versionsinformationen prüfen.","backupMainSection"),actions:[open("Gesamtsicherung öffnen","backupMainSection",true),open("Version anzeigen","backupVersionSection"),save]},
     mieter:{summary:[["Wohnungen gesamt",s.units.length],["Wohnungen aktiv",s.activeUnits.length],["Mietverhältnisse",s.tenants.length],["Archivierte Mieter",s.archivedTenants.length]],validation:commonValidation,next:next("Bestand und Abrechnung in der Prüfbox abgleichen; danach Kostenarten bearbeiten.","tenantControlSection"),actions:[open("Prüfung öffnen","tenantControlSection",true),open("Mietverhältnisse öffnen","tenantRelationsSection"),go("Kostenarten öffnen","einstellungen")]},
     einstellungen:{summary:[["Kostenarten",s.costs.length],["Aktiv in NK",s.activeCosts.length],["Vollständig",s.completeCosts.length],["Gesamtkosten",overviewMoney(s.activeCosts.reduce((a,k)=>a+num(k.gesamtbetrag),0))]],validation:{status:s.completeCosts.length===s.activeCosts.length?"ok":"warn",headline:s.completeCosts.length+" von "+s.activeCosts.length+" vollständig",items:[{text:"Umlageschlüssel und Beträge prüfen",status:s.completeCosts.length===s.activeCosts.length?"ok":"warn"},{text:"Umlage wird automatisch berechnet",status:"ok"}]},next:next("Fehlende Beträge und Umlageschlüssel vervollständigen.","costEditSection"),actions:[open("Kostenarten bearbeiten","costEditSection",true),()=>{}].filter(Boolean)},
     einnahmen:{summary:[["Kaltmiete erhalten",overviewMoney(s.income.rent)],["NK-Vorauszahlungen",overviewMoney(s.income.prepayments)],["Korrekturen",overviewMoney(s.income.corrections)],["Mietverhältnisse",s.tenants.length]],validation:commonValidation,next:next("Kaltmieten und Vorauszahlungen vollständig prüfen; danach Zählerstände erfassen.","incomeRentSection"),actions:[open("Kaltmiete öffnen","incomeRentSection",true),open("Vorauszahlungen öffnen","incomePrepaymentSection"),go("Zählerstände","wasser")]},
@@ -8079,7 +6031,7 @@ function pageHeaderPeriodLabel() {
 function updateAllPageHeaders() {
   const archived=safeOverviewCall(()=>isArchiveViewer(),false);
   const finalized=safeOverviewCall(()=>NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized(),false);
-  const hasBilling=safeOverviewCall(()=>archived||hasActiveCurrentBilling(),archived);
+  const hasBilling=safeOverviewCall(()=>archived||NK_PRO_MODULES.archiveActions.hasActiveCurrentBilling(),archived);
   const period=hasBilling?safeOverviewCall(()=>pageHeaderPeriodLabel(),"–"):"–";
   Object.entries(TAB_DEFINITIONS).forEach(([tabId,def])=>{
     const page=document.querySelector('[data-page-tab="'+tabId+'"]'); if (!page) return;
@@ -8150,7 +6102,7 @@ function renderAll(options = {}) {
       renderAllOverviewCards();
       auditV992Structure();
     } catch(uiError) {
-      if (typeof console !== "undefined" && console.error) console.error("V99.4.10-Darstellung konnte nicht aktualisiert werden", uiError);
+      if (typeof console !== "undefined" && console.error) console.error("V99.4.11-Darstellung konnte nicht aktualisiert werden", uiError);
     }
     if (renderQueued) {
       renderQueued = false;
@@ -8178,11 +6130,30 @@ function configureCoreOrchestrationModules() {
     costExclusionOptions:COST_EXCLUSION_OPTIONS, costExclusionFull:COST_EXCLUSION_FULL,
     umlageManual:UMLAGE_MANUAL
   });
+  NK_PRO_MODULES.archiveActions.configure({
+    stateAccess:NK_PRO_MODULES.stateAccess, archive:NK_PRO_MODULES.archive,
+    billingSnapshot:NK_PRO_MODULES.billingSnapshot, masterDataActions:NK_PRO_MODULES.masterDataActions,
+    clone, num, todayIso, nowIso:() => new Date().toISOString(), archiveOptions:archiveModuleOptions,
+    validateBillingSnapshot, canonicalUnitIdFor, hasTenantData, dateDe, archiveDataSource,
+    normalizeLegacyData, ensureWaterMeterHistory, defaultWaterMeterHistory:() => DEFAULT_WATER_METER_HISTORY,
+    errorMessage, createSnapshot:() => NK_PRO_MODULES.billingWorkflow.createSnapshot(),
+    currentYear:() => currentAbrechnungsjahr(), isArchiveViewer, seed:() => SEED,
+    generatedUnitIdForLabel, appVersion:APP_VERSION, dataSchemaVersion:DATA_SCHEMA_VERSION,
+    dataLayerContractVersion:DATA_LAYER_CONTRACT_VERSION, snapshotScope:ARCHIVE_SNAPSHOT_SCOPE,
+    umlageManual:UMLAGE_MANUAL, copyWorkingOperationalMeta,
+    clearFinalization:data => NK_PRO_MODULES.billingWorkflow.clearCurrentBillingFinalization(data)
+  });
+  NK_PRO_MODULES.qualityAssurance.configure({
+    stateAccess:NK_PRO_MODULES.stateAccess, clone, withIsolatedState,
+    archiveActions:NK_PRO_MODULES.archiveActions, documentData:NK_PRO_MODULES.documentData
+  });
   NK_PRO_MODULES.billingWorkflow.configure({
     stateAccess:NK_PRO_MODULES.stateAccess,
     appVersion:APP_VERSION, umlageManual:UMLAGE_MANUAL, num,
     currentYear:() => currentAbrechnungsjahr(), periodLabelShort, periodYearFromDate,
-    collectQualityChecks, finalBillingReadiness, isArchiveViewer, hasActiveCurrentBilling,
+    collectQualityChecks:NK_PRO_MODULES.qualityAssurance.inspect,
+    finalBillingReadiness:NK_PRO_MODULES.qualityAssurance.finalBillingReadiness,
+    isArchiveViewer, hasActiveCurrentBilling:NK_PRO_MODULES.archiveActions.hasActiveCurrentBilling,
     getManualInputModes:() => MANUAL_INPUT_MODES, getDefaultUmlageInputs:() => DEFAULT_UMLAGE_INPUTS,
     inferManualInputMode, defaultManualInputMode, applyWaterMetersToUmlage,
     updateTenantPrepaymentTotals:NK_PRO_MODULES.costActions.updateTenantPrepaymentTotals, defaultBriefSettings,
@@ -8193,10 +6164,25 @@ function configureCoreOrchestrationModules() {
     archiveSnapshotScope:ARCHIVE_SNAPSHOT_SCOPE, dataLayerContractVersion:DATA_LAYER_CONTRACT_VERSION,
     dataSchemaVersion:DATA_SCHEMA_VERSION
   });
+  NK_PRO_MODULES.yearTransitionActions.configure({
+    stateAccess:NK_PRO_MODULES.stateAccess, archiveActions:NK_PRO_MODULES.archiveActions,
+    masterDataActions:NK_PRO_MODULES.masterDataActions, costActions:NK_PRO_MODULES.costActions,
+    billingWorkflow:NK_PRO_MODULES.billingWorkflow, num, todayIso, nowIso:() => new Date().toISOString(), addDaysIso,
+    currentYear:() => currentAbrechnungsjahr(), periodDaysExact, periodStart, periodEnd,
+    hasTenantData, isArchivedTenant, tenantActiveDaysInCurrentPeriod, hasWaterSettingValue,
+    ensureWaterMeterData, applyWaterMetersToUmlage, billableTenantRows, activePrepaymentCostIds,
+    adjustmentGroupForCost, tenantDisplayId, hasEnteredMeterValue, isArchiveViewer,
+    createSnapshot:() => NK_PRO_MODULES.billingWorkflow.createSnapshot(), appVersion:APP_VERSION
+  });
+  NK_PRO_MODULES.diagnostics.configure({
+    stateAccess:NK_PRO_MODULES.stateAccess, clone, withIsolatedState, archiveActions:NK_PRO_MODULES.archiveActions,
+    yearTransitionActions:NK_PRO_MODULES.yearTransitionActions, qualityAssurance:NK_PRO_MODULES.qualityAssurance
+  });
   return Object.freeze({
-    masterData:NK_PRO_MODULES.masterDataActions.describe(),
-    cost:NK_PRO_MODULES.costActions.describe(),
-    billing:NK_PRO_MODULES.billingWorkflow.describe()
+    masterData:NK_PRO_MODULES.masterDataActions.describe(), cost:NK_PRO_MODULES.costActions.describe(),
+    billing:NK_PRO_MODULES.billingWorkflow.describe(), archive:NK_PRO_MODULES.archiveActions.describe(),
+    yearTransition:NK_PRO_MODULES.yearTransitionActions.describe(), quality:NK_PRO_MODULES.qualityAssurance.describe(),
+    diagnostics:NK_PRO_MODULES.diagnostics.describe()
   });
 }
 function configureStateAccess() {
@@ -8241,18 +6227,33 @@ function configureApplicationActions() {
       setPrepaymentValue:NK_PRO_MODULES.billingWorkflow.setPrepaymentValue,
       setPrepaymentAdjustmentSetting:NK_PRO_MODULES.billingWorkflow.setPrepaymentAdjustmentSetting
     },
+    archive:{
+      currentYear:NK_PRO_MODULES.archiveActions.archiveCurrent,
+      reopenForRework:NK_PRO_MODULES.archiveActions.reopenForRework,
+      deleteAt:NK_PRO_MODULES.archiveActions.deleteAt,
+      importItems:NK_PRO_MODULES.archiveActions.importItems
+    },
+    yearTransition:{
+      createBilling:NK_PRO_MODULES.yearTransitionActions.createBilling,
+      prepareNextYear:NK_PRO_MODULES.yearTransitionActions.prepareNextYear
+    },
+    quality:{
+      inspect:NK_PRO_MODULES.qualityAssurance.inspect,
+      specialCases:NK_PRO_MODULES.qualityAssurance.specialCases,
+      finalBillingReadiness:NK_PRO_MODULES.qualityAssurance.finalBillingReadiness
+    },
     meter:{ setWaterValue:setWaterMeterValue, setGenericValue:setGenericMeterValue, setWaterSetting:setWaterMeterSetting }
   });
 }
 function configureNavigationModule() {
-  return NK_PRO_MODULES.navigation.configure({ currentYear:() => currentAbrechnungsjahr(), objectLabel:() => currentObjectLabel(), isArchiveViewer:() => isArchiveViewer(), hasActiveBilling:() => hasActiveCurrentBilling(), isFinalized:() => NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized(), isContextOpen:() => isBillingContextOpen(), tabTitle:tabId => TAB_DEFINITIONS[tabId] ? TAB_DEFINITIONS[tabId].title : "NK-Pro", updatePageHeaders:() => updateAllPageHeaders(), renderOverview:tabId => renderOverviewForTab(tabId) });
+  return NK_PRO_MODULES.navigation.configure({ currentYear:() => currentAbrechnungsjahr(), objectLabel:() => currentObjectLabel(), isArchiveViewer:() => isArchiveViewer(), hasActiveBilling:() => NK_PRO_MODULES.archiveActions.hasActiveCurrentBilling(), isFinalized:() => NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized(), isContextOpen:() => isBillingContextOpen(), tabTitle:tabId => TAB_DEFINITIONS[tabId] ? TAB_DEFINITIONS[tabId].title : "NK-Pro", updatePageHeaders:() => updateAllPageHeaders(), renderOverview:tabId => renderOverviewForTab(tabId) });
 }
 function registerUiControllers() { return NK_PRO_MODULES.uiBindings.register({ modules:{ exportService:NK_PRO_MODULES.exportService, applicationActions:NK_PRO_MODULES.applicationActions } }); }
 function startUiEvents() {
   return NK_PRO_MODULES.uiEvents.start({ root:document, onError(error, context) { setActionMessage("UI-Aktion fehlgeschlagen: " + errorMessage(error), "err"); renderActionFeedback(); if (typeof console !== "undefined" && console.error) console.error("NK-Pro UI-Controllerfehler", context, error); } });
 }
 function updateUiArchitectureAudit() {
-  const report = Object.freeze({ controllers:NK_PRO_MODULES.uiController.describe(), events:NK_PRO_MODULES.uiEvents.describe(), stateAccess:NK_PRO_MODULES.stateAccess.describe(), applicationActions:NK_PRO_MODULES.applicationActions.describe(), masterDataActions:NK_PRO_MODULES.masterDataActions.describe(), costActions:NK_PRO_MODULES.costActions.describe(), billingWorkflow:NK_PRO_MODULES.billingWorkflow.describe(), navigation:NK_PRO_MODULES.navigation.describe(), compatibility:NK_PRO_MODULES.compatibility.describe() });
+  const report = Object.freeze({ controllers:NK_PRO_MODULES.uiController.describe(), events:NK_PRO_MODULES.uiEvents.describe(), stateAccess:NK_PRO_MODULES.stateAccess.describe(), applicationActions:NK_PRO_MODULES.applicationActions.describe(), masterDataActions:NK_PRO_MODULES.masterDataActions.describe(), costActions:NK_PRO_MODULES.costActions.describe(), billingWorkflow:NK_PRO_MODULES.billingWorkflow.describe(), archiveActions:NK_PRO_MODULES.archiveActions.describe(), yearTransitionActions:NK_PRO_MODULES.yearTransitionActions.describe(), qualityAssurance:NK_PRO_MODULES.qualityAssurance.describe(), diagnostics:NK_PRO_MODULES.diagnostics.describe(), navigation:NK_PRO_MODULES.navigation.describe(), compatibility:NK_PRO_MODULES.compatibility.describe() });
   window.__NKPRO_UI_ARCHITECTURE__ = report; return report;
 }
 
@@ -8261,7 +6262,11 @@ function updateUiArchitectureAudit() {
   ["documentData", NK_PRO_MODULES.documentData],
   ["documentRenderer", NK_PRO_MODULES.documentRenderer],
   ["exportService", NK_PRO_MODULES.exportService],
-  ["uiTableTools", NK_PRO_MODULES.uiTableTools]
+  ["uiTableTools", NK_PRO_MODULES.uiTableTools],
+  ["archiveActions", NK_PRO_MODULES.archiveActions],
+  ["yearTransitionActions", NK_PRO_MODULES.yearTransitionActions],
+  ["qualityAssurance", NK_PRO_MODULES.qualityAssurance],
+  ["diagnostics", NK_PRO_MODULES.diagnostics]
 ].forEach(([name, api]) => NK_PRO_MODULES.compatibility.registerModule(name, api));
 
 const STARTUP_RESULT = NK_PRO_MODULES.appBootstrap.start([

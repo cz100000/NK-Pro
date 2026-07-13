@@ -97,10 +97,10 @@
     ensureYearData();
     const header = ["Jahr","Periode","Archiviert am","Status","Miet-/Einzelabrechnungen","Umlagefähige Kosten","Vorauszahlungen","Saldo","Perioden-ID"];
     const rows = (state.jahresArchiv || []).map((a, i) => {
-      const saldo = archiveRecordSaldo(a);
-      const validation = archiveItemValidation(a);
+      const saldo = global.NKProArchiveActions.recordSaldo(a);
+      const validation = global.NKProArchiveActions.validateItem(a);
       const status = validation.errors.length ? "Fehler" : (validation.warnings.length ? "Prüfen" : "OK");
-      return [a.year, archivePeriodLabel(a), dateDe(a.archivedAt), status, a.summary ? a.summary.mietverhaeltnisse : "", a.summary ? a.summary.kostenNK : "", a.summary ? a.summary.vorauszahlungen : "", saldo, archivePeriodId(a)];
+      return [a.year, global.NKProArchiveActions.periodLabel(a), dateDe(a.archivedAt), status, a.summary ? a.summary.mietverhaeltnisse : "", a.summary ? a.summary.kostenNK : "", a.summary ? a.summary.vorauszahlungen : "", saldo, global.NKProArchiveActions.periodId(a)];
     });
     download(csvFileName("nk-pro-jahresarchiv-index"), toCsv([header, ...rows]), "text/csv;charset=utf-8");
   }

@@ -1,4 +1,9 @@
-<!-- AP9-CURRENT -->
+<!-- AP10-CURRENT -->
+# Architekturstand V99.4.11
+
+Die Anwendungsschicht umfasst zusätzlich `archive-actions.js` und `year-transition-actions.js` als atomare Schreiborchestrierung sowie `quality-assurance.js` und `diagnostics.js` als lesende Prüfmodule. `state` bleibt der einzige Arbeitszustand. UI-Dialoge/Navigation bleiben in der UI-Schicht, Persistenz im zentralen Commitpfad und Rendering außerhalb der vier Module.
+
+<!-- AP9-HISTORIC -->
 # Architekturstand V99.4.10
 
 Die Anwendungsschicht besteht aus `application-actions.js` als Aktionsregister, drei DOM-/speicherfreien Orchestrierungsmodulen und `state-access.js` als atomarer Einzelzustandsgrenze. UI-Dialoge und Navigation bleiben in `ui-bindings.js`; Persistenz bleibt in `persistence.js`; Berechnung bleibt in `billing-calculation.js`; Snapshots bleiben in `billing-snapshot.js`. Details: `AP9_DATENFLUSS_UND_COMMIT.md`.

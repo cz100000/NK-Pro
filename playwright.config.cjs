@@ -38,7 +38,8 @@ module.exports = defineConfig({
     { name:"object-snapshot", testMatch:"object-standard-snapshot.spec.js" },
     { name:"persistence-backup", testMatch:"persistence-backup.spec.js" },
     { name:"reference-cases", testMatch:"reference-cases.spec.js" },
-    { name:"service-worker", testMatch:"service-worker.spec.js" }
+    { name:"service-worker", testMatch:"service-worker.spec.js" },
+    { name:"ap10-orchestration", testMatch:"ap10-orchestration.spec.js" }
   ],
   use: {
     baseURL: "http://127.0.0.1:4173",
@@ -53,7 +54,7 @@ module.exports = defineConfig({
     video: "off",
     launchOptions: {
       ...(executablePath ? { executablePath } : {}),
-      args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]
+      args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage", "--disable-gpu"]
     }
   }
 });

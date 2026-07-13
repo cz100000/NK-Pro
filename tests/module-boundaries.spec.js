@@ -13,7 +13,7 @@ test("Fach-, Technik-, Start- und Kompatibilitätsmodule sind vor app.js geladen
       "ui-preferences.js", "state-access.js", "application-actions.js", "master-data-actions.js", "cost-actions.js", "billing-workflow.js",
       "ui-controller.js", "ui-bindings.js", "ui-events.js", "navigation.js", "modal-events.js", "persistence.js", "migration.js", "backup-recovery.js",
       "meter-master.js", "meter-readings.js", "meter-periods.js", "meter-validation.js", "object-standard.js",
-      "billing-snapshot.js", "archive.js", "billing-calculation.js", "document-data.js", "document-renderer.js",
+      "billing-snapshot.js", "archive.js", "archive-actions.js", "year-transition-actions.js", "quality-assurance.js", "diagnostics.js", "billing-calculation.js", "document-data.js", "document-renderer.js",
       "export-service.js", "ui-table-tools.js", "app-bootstrap.js", "compatibility.js", "default-seed.js", "app.js"
     ];
     const order = names.map(name => scripts.indexOf(name));
@@ -23,6 +23,10 @@ test("Fach-, Technik-, Start- und Kompatibilitätsmodule sind vor app.js geladen
       persistence:window.NKProPersistence,
       migration:window.NKProMigration,
       archive:window.NKProArchive,
+      archiveActions:window.NKProArchiveActions,
+      yearTransitionActions:window.NKProYearTransitionActions,
+      qualityAssurance:window.NKProQualityAssurance,
+      diagnostics:window.NKProDiagnostics,
       backupRecovery:window.NKProBackupRecovery,
       meterMaster:window.NKProMeterMaster,
       meterReadings:window.NKProMeterReadings,
@@ -80,7 +84,11 @@ test("Fach-, Technik-, Start- und Kompatibilitätsmodule sind vor app.js geladen
     ["documentData", 26],
     ["documentRenderer", 14],
     ["exportService", 18],
-    ["uiTableTools", 6]
+    ["uiTableTools", 6],
+    ["archiveActions", 33],
+    ["yearTransitionActions", 27],
+    ["qualityAssurance", 10],
+    ["diagnostics", 8]
   ]);
   expect(result.wrappers).toEqual({ calculateUmlage:true, buildBriefHtml:true, downloadFullExportPackage:true });
   expect(result.compatibility).toEqual({ integrity:true, schema:5, bounded:true });

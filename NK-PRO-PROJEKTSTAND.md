@@ -1,27 +1,35 @@
-<!-- AP9-CURRENT -->
+<!-- AP10-CURRENT -->
+# NK-Pro – Projektstand V99.4.11
+
+**Stand:** 13. Juli 2026
+**Versionsname:** Physisch extrahierte Archiv-, Jahreswechsel-, Qualitäts- und Diagnoseorchestrierung
+
+AP10 ist abgeschlossen: 79 Implementierungen wurden aus `app.js` in vier Module verlagert. `app.js` umfasst 6.292 Zeilen und 382.309 Byte. Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Zählerstandards 1 und Snapshot 2 bleiben unverändert. AP11 ist das nächste Paket und bleibt ausschließlich für Navigationsstruktur und visuelles Grundsystem reserviert.
+
+<!-- AP9-HISTORIC -->
 # NK-Pro – Projektstand V99.4.10
 
-**Stand:** 13. Juli 2026  
+**Stand:** 13. Juli 2026
 **Versionsname:** Physisch extrahierte Kernorchestrierung
 
 AP9 ist abgeschlossen: 32 Implementierungen wurden physisch in drei Anwendungsmodulen ausgelagert, 28 überflüssige Übergangsweiterleitungen entfernt und `app.js` auf 8.287 Zeilen reduziert. Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Zählerstandards 1 und Snapshot 2 bleiben unverändert. Nächstes Paket ist AP10 für Archiv-, Jahreswechsel-, Qualitäts- und Diagnoseorchestrierung; AP11 bleibt für Navigation und visuelles Grundsystem reserviert.
 
 # NK-Pro – verbindlicher Projektstand
 
-**Stand:** 12. Juli 2026  
-**Anwendung:** V99.4.9  
-**Versionsname:** Modularisierte Anwendungsaktionen und fachliche Orchestrierung  
-**Datenschema:** 5, unverändert  
-**Datenebenenvertrag:** 1, unverändert  
-**Objektstandard:** 1, unverändert  
-**Zähler-/Messstandard:** 1, unverändert  
-**Abrechnungssnapshot:** 2; Version 1 kompatibel  
-**Architekturversion:** 2  
-**Kompatibilitätsschicht:** 2  
+**Stand:** 12. Juli 2026
+**Anwendung:** V99.4.9
+**Versionsname:** Modularisierte Anwendungsaktionen und fachliche Orchestrierung
+**Datenschema:** 5, unverändert
+**Datenebenenvertrag:** 1, unverändert
+**Objektstandard:** 1, unverändert
+**Zähler-/Messstandard:** 1, unverändert
+**Abrechnungssnapshot:** 2; Version 1 kompatibel
+**Architekturversion:** 2
+**Kompatibilitätsschicht:** 2
 **Ausgangsversion:** V99.4.6
 
-**UI-Controllervertrag:** 1  
-**UI-Ereignisvertrag:** 1  
+**UI-Controllervertrag:** 1
+**UI-Ereignisvertrag:** 1
 
 ## 1. Technische Grundlage
 

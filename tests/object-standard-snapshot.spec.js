@@ -221,7 +221,7 @@ test("vollständiger Snapshot 1 bleibt unverändert lesbar und wird nicht auf Ve
     legacy.integrity.checksum = integrityHash(JSON.stringify((() => {
       const copy = clone(legacy); delete copy.integrity; return copy;
     })()));
-    const prepared = prepareArchiveItemForUse(legacy);
+    const prepared = window.NKProArchiveActions.prepareItem(legacy);
     const validation = validateBillingSnapshot(prepared);
     return { version:prepared.snapshotVersion, sameId:prepared.snapshotId === legacy.snapshotId, warningCodes:validation.warnings.map(row => row.code), valid:validation.valid };
   });
@@ -240,7 +240,7 @@ test("historische Archive werden ohne fachliche Umschreibung als Legacy-Teilstan
     delete original.snapshotFormat;
     delete original.snapshotStatus;
     const originalData = JSON.stringify(original.data);
-    const prepared = prepareArchiveItemForUse(original);
+    const prepared = window.NKProArchiveActions.prepareItem(original);
     return {
       status:prepared.snapshotStatus,
       completeness:prepared.snapshotCompleteness,

@@ -1,5 +1,16 @@
 # Changelog
 
+## V99.4.11 – Physisch extrahierte Archiv-, Jahreswechsel-, Qualitäts- und Diagnoseorchestrierung (13. Juli 2026)
+
+- 79 Archiv-, Jahreswechsel-, Qualitäts- und Diagnoseimplementierungen physisch aus `app.js` entfernt und in vier Module verlagert.
+- `app.js` von 8.287 auf 6.292 Zeilen und von 510.210 auf 382.309 Byte reduziert.
+- Top-Level-Funktionen netto von 596 auf 518 reduziert; 79 entfernt, `withIsolatedState()` ergänzt.
+- Direkte `state`-Pfadreferenzen von 503 auf 306 und Schreibstellen von 195 auf 96 reduziert.
+- Archiv-/Jahreswechselaktionen atomar mit höchstens einem Commit und vollständigem Rollback.
+- Qualitäts-/Diagnoseaktionen mit stabilen Codes, isolierter Zustandskopie und nachgewiesener Seiteneffektfreiheit.
+- 13 UI-Controller, 99 Aktionskennungen und 112 AP6-Weiterleitungen unverändert; keine AP10-Weiterleitung ergänzt.
+- Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Zählerstandards 1 und Snapshot 2 unverändert.
+
 ## V99.4.10 – Physisch extrahierte Kernorchestrierung (13. Juli 2026)
 
 - 32 implementierungstragende Stammdaten-, Kosten- und Billing-/Snapshot-Funktionen physisch aus `app.js` in drei Anwendungsmodule verschoben.

@@ -1,4 +1,17 @@
-<!-- AP9-CURRENT -->
+<!-- AP10-CURRENT -->
+# Verantwortlichkeitsmatrix V99.4.11
+
+| Verantwortung | Primär zuständig | explizite Grenze |
+|---|---|---|
+| allgemeine Archivorchestrierung | `archive-actions.js` | keine Backup-/Restore-/Snapshotfachregel, kein DOM/Speicher |
+| Archivprojektion/Legacy | `archive.js` | fachliche Archivgrundlage |
+| Jahreswechsel | `year-transition-actions.js` | keine DOM-/Speicherlogik, keine parallele Berechnung |
+| Qualität | `quality-assurance.js` | ausschließlich isoliert lesend |
+| Diagnose | `diagnostics.js` | ausschließlich reproduzierbar/lesend |
+| Commit/Rollback | `state-access.js` + zentraler App-Adapter | ein Zustand, max. ein Commit |
+| Dialoge/Navigation/Ergebnisdarstellung | `ui-bindings.js`/`app.js` UI-Adapter | keine Fachmutation |
+
+<!-- AP9-HISTORIC -->
 # Verantwortlichkeitsmatrix V99.4.10
 
 | Verantwortung | Primär zuständig | Abgrenzung |

@@ -1,3 +1,8 @@
+<!-- AP10-CURRENT -->
+# Anwendungsstart V99.4.11
+
+Nach `NKProStateAccess` werden die AP8/AP9-Anwendungsmodule sowie `NKProArchiveActions`, `NKProYearTransitionActions`, `NKProQualityAssurance` und `NKProDiagnostics` konfiguriert. Erst danach registriert `app.js` die Anwendungsaktionen und die unveränderten 13 UI-Controller mit 99 Aktionskennungen. `index.html` und Service-Worker-App-Shell führen alle vier AP10-Module vor `app.js`.
+
 <!-- AP9-CURRENT -->
 # Anwendungsstart V99.4.10
 

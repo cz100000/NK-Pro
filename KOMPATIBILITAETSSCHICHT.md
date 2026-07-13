@@ -1,4 +1,9 @@
-<!-- AP9-CURRENT -->
+<!-- AP10-CURRENT -->
+# Kompatibilitätsschicht V99.4.11
+
+AP10 entfernt 79 implementierungstragende globale Funktionen aus `app.js` und ergänzt **keine** AP10-Weiterleitung. Die bestehenden 112 AP6-Wrapper bleiben unverändert, weil ihre registrierten klassischen Laufzeit- und Regressionstestabhängigkeiten außerhalb des AP10-Umfangs weiterhin bestehen. Neu registrierte Modulobjekte besitzen zwar lesende Kompatibilitätsmetadaten, aber keine Fachlogik-Wrapper in `app.js`.
+
+<!-- AP9-HISTORIC -->
 # Kompatibilitätsschicht V99.4.10
 
 AP9 entfernt 28 nicht mehr benötigte Übergangsweiterleitungen und ergänzt keine neuen Wrapper. Die 112 registrierten AP6-Wrapper in `compatibility.js` bleiben wegen konkreter klassischer globaler Aufrufer und Test-/Diagnosepfade bestehen. Verbleibende Wrapper leiten ausschließlich weiter und enthalten keine Fachlogik.

@@ -16,7 +16,7 @@ test("Referenzfall Standard bleibt vollständig und berechenbar", async ({ page 
       tenantResults: calc.tenantResults.length,
       privateResults: calc.privateResults.length,
       allCalculationTenants: calc.tenants.length,
-      audit: releaseAuditReport().summary
+      audit: window.NKProDiagnostics.releaseAuditReport().summary
     };
   });
   expect(result.schema).toBe(5);
@@ -51,7 +51,7 @@ test("Referenzfall Leerstand erkennt eine aktive Wohnung ohne Mietverhältnis", 
     const activeIds = activeWohnungen().map(w => w.id);
     const occupiedIds = new Set(state.mieter.filter(tenantRelevantForCurrentBilling).map(m => m.wohnung).filter(Boolean));
     const vacantIds = activeIds.filter(id => !occupiedIds.has(id));
-    return { activeIds, vacantIds, specialCases: specialCaseWatchReport().rows.map(row => row.type) };
+    return { activeIds, vacantIds, specialCases: window.NKProQualityAssurance.specialCases().rows.map(row => row.type) };
   });
   expect(result.activeIds).toContain("W005.DG-L");
   expect(result.vacantIds).toContain("W005.DG-L");

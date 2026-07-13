@@ -1,3 +1,8 @@
+<!-- AP10-CURRENT -->
+# UI-Controller V99.4.11
+
+Die 13 Controller und 99 Aktionskennungen bleiben erhalten. Der Archiv-Controller bindet Archivierung, Import, Löschen und Wiederbearbeitung über `NKProApplicationActions.archive`; der Billing-Controller bindet Neuanlage und Jahreswechsel über `NKProApplicationActions.yearTransition`. Qualitäts- und System-Controller zeigen ausschließlich strukturierte Ergebnisse aus `NKProQualityAssurance` und `NKProDiagnostics`. Dialoge, Navigation, Persistenzabschluss und gezieltes Rendering verbleiben in `ui-bindings.js` beziehungsweise der zentralen UI-Schicht.
+
 <!-- AP9-CURRENT -->
 # UI-Controller V99.4.10
 

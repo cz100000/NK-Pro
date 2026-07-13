@@ -43,12 +43,12 @@
   }
 
   function acceptanceProtocolData() {
-    const quality = collectQualityChecks({ scope:"currentBilling" });
+    const quality = global.NKProQualityAssurance.inspect({ scope:"currentBilling" });
     const readiness = finalBillingReadiness(quality);
     const calc = calculateUmlage();
     const totals = umlageTotals(calc);
     const backup = (typeof backupStatusReport === "function") ? backupStatusReport() : null;
-    const special = (typeof specialCaseWatchReport === "function") ? specialCaseWatchReport() : null;
+    const special = global.NKProQualityAssurance ? global.NKProQualityAssurance.specialCases() : null;
     const brief = (typeof currentBriefPreflightReport === "function") ? currentBriefPreflightReport() : null;
     const finalization = global.NKProBillingWorkflow.currentBillingFinalizationReport();
     const issues = Array.isArray(quality.issues) ? quality.issues : [];
@@ -83,7 +83,7 @@
       return { errors, warnings };
     }
     const tenant = result.tenant;
-    missingBriefFieldsForTenant(tenant).forEach(field => errors.push("Mieterdaten unvollständig: " + field));
+    global.NKProQualityAssurance.missingBriefFieldsForTenant(tenant).forEach(field => errors.push("Mieterdaten unvollständig: " + field));
     if (!s.briefdatum) errors.push("Briefdatum fehlt.");
     if (!s.ort) warnings.push("Ort im Briefkopf fehlt.");
     if (!s.absenderName) errors.push("Vermietername fehlt.");

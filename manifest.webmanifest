@@ -1,7 +1,7 @@
 {
-  "name": "NK-Pro V99.4.10 – Nebenkostenabrechnung",
-  "short_name": "NK-Pro V99.4.10",
-  "description": "Lokale Nebenkostenabrechnung mit zentraler UI-Ereignisdelegation, UI-Controllern und modularisierten Fach-, Dokument-, Export- und Persistenzdiensten.",
+  "name": "NK-Pro V99.4.11 – Nebenkostenabrechnung",
+  "short_name": "NK-Pro V99.4.11",
+  "description": "Lokale Nebenkostenabrechnung mit modularisierten Archiv-, Jahreswechsel-, Qualitäts-, Diagnose-, Fach-, Dokument-, Export- und Persistenzdiensten.",
   "lang": "de-DE",
   "id": "./",
   "start_url": "./",
@@ -9,7 +9,7 @@
   "display": "standalone",
   "background_color": "#f6f8fa",
   "theme_color": "#183b56",
-  "version": "99.4.10",
+  "version": "99.4.11",
   "icons": [
     {
       "src": "./icons/icon-192.png",

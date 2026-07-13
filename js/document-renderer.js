@@ -252,7 +252,7 @@
               <tr class="summary-spacer" aria-hidden="true"><td colspan="7"></td></tr>
               <tr class="summary summary-block-start"><td colspan="6">Ihr Anteil an den Gesamtkosten</td><td class="money">${fmtMoney(result.costShare)}</td></tr>
               <tr class="summary"><td colspan="6">Ihre Vorauszahlung</td><td class="money">${fmtMoney(result.prepayments)}</td></tr>
-              ${correction ? '<tr class="summary"><td colspan="6">Nebenkostenkorrektur ' + escapeHtml(String(yearNumber(year)-1)) + ' zu Ihren Gunsten</td><td class="money">' + fmtMoney(correction) + '</td></tr>' : ''}
+              ${correction ? '<tr class="summary"><td colspan="6">Nebenkostenkorrektur ' + escapeHtml(String(global.NKProArchiveActions.yearNumber(year)-1)) + ' zu Ihren Gunsten</td><td class="money">' + fmtMoney(correction) + '</td></tr>' : ''}
               <tr class="summary final"><td colspan="6">${escapeHtml(finalLabel)}</td><td class="money">${fmtMoney(settlement.amount)}</td></tr>
             </tbody>
           </table>

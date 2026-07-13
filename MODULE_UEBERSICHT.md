@@ -1,4 +1,14 @@
-<!-- AP9-CURRENT -->
+<!-- AP10-CURRENT -->
+# Modulübersicht V99.4.11
+
+| Modul | Verantwortung | DOM | Browser-Speicher | Commit/Rendering |
+|---|---|---:|---:|---|
+| `archive-actions.js` | allgemeine Archivaktionen und Archivleser | nein | nein | atomar, max. 1 Commit; kein Rendering |
+| `year-transition-actions.js` | Neuanlage/Jahreswechsel und Übernahmeregeln | nein | nein | atomar, max. 1 Commit; kein Rendering |
+| `quality-assurance.js` | Qualitäts-, Vollständigkeits- und Bereitschaftsprüfung | nein | nein | kein Commit, kein Rendering |
+| `diagnostics.js` | Release-Audit, Selbsttest, Supportdiagnose | nur lesende Strukturprüfung | nein | kein Commit, keine Persistenz, kein Rendering |
+
+<!-- AP9-HISTORIC -->
 # Modulübersicht V99.4.10
 
 Neu: `master-data-actions.js` (Stammdaten/Übernahme), `cost-actions.js` (Kosten/Vorauszahlungsarten/Freigaben) und `billing-workflow.js` (Periode, Finalisierung, Snapshotkoordination, manuelle Werte, Vorauszahlungen). Alle drei exportieren eine eingefrorene API, verwenden den einzigen Zustand über `NKProStateAccess` und greifen weder auf DOM noch Browser-Speicher zu.

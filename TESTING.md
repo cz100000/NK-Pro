@@ -1,4 +1,9 @@
-<!-- AP9-CURRENT -->
+<!-- AP10-CURRENT -->
+# Teststand V99.4.11
+
+Zusätzlich zu allen bisherigen Prüfungen gibt es den statischen AP10-Architekturtest und fünf Browserfälle für Seiteneffektfreiheit, Einzelcommit, Erhalt unbekannter Felder/Stromzähler-Dummy sowie vollständigen Archiv- und Jahreswechselrollback. Alle 46 Browserfälle wurden mit System-Chromium und je einem Worker projektweise in frischen Playwright-Prozessen bestanden. Ein einzelner Prozess über alle Projekte hängt in dieser Containerumgebung sporadisch beim Projektwechsel oder Chromium-Teardown ohne fehlgeschlagene Assertion; dieser kombinierte Lauf wird deshalb ausdrücklich nicht als erfolgreich gewertet.
+
+<!-- AP9-HISTORIC -->
 # Teststand V99.4.10
 
 Die Releaseprüfung umfasst Syntax, sechs Referenzfixtures, Zählerdomäne, AP6–AP9-Architekturtests und 41 Playwright-Browserfälle. Browserfälle decken Start, UI, Module, Migration/Restore/Rollback, Objektstandard/Snapshot, Persistenz/Backup, sechs Referenzabrechnungen, Dokument/Export und Service Worker ab. System-Chromium 144 wurde erfolgreich verwendet.

@@ -42,15 +42,22 @@
   function interactiveAppCall(applicationActions, domain, action, handlers) {
     if (!applicationActions || typeof applicationActions.execute !== "function") throw new Error("Anwendungsschicht fehlt.");
     return context => {
-      let execution = applicationActions.execute(domain, action, context.args);
+      const baseArgs = Array.isArray(context.args) ? context.args.slice() : [];
+      const interaction = {};
+      let execution = applicationActions.execute(domain, action, baseArgs);
       let result = applicationValue(execution);
-      if (result && result.requiresConfirmation) {
-        if (!requireHandler(handlers, "confirm")(result.confirmationMessage || "Aktion ausführen?")) return execution;
-        execution = applicationActions.execute(domain, action, context.args.concat([{ confirmed:true }]));
-        result = applicationValue(execution);
-      } else if (result && result.requiresPrompt) {
-        const entered = requireHandler(handlers, "prompt")(result.promptMessage || "Bestätigung eingeben:");
-        execution = applicationActions.execute(domain, action, context.args.concat([{ confirmationCode:entered }]));
+      let guard = 0;
+      while (result && guard < 4 && (result.requiresConfirmation || result.requiresPrompt)) {
+        guard += 1;
+        if (result.requiresConfirmation) {
+          if (!requireHandler(handlers, "confirm")(result.confirmationMessage || "Aktion ausführen?")) return execution;
+          interaction.confirmed = true;
+        } else if (result.requiresPrompt) {
+          const entered = requireHandler(handlers, "prompt")(result.promptMessage || "Bestätigung eingeben:");
+          if (entered === null) return execution;
+          interaction.confirmationCode = entered;
+        }
+        execution = applicationActions.execute(domain, action, baseArgs.concat([Object.assign({}, interaction)]));
         result = applicationValue(execution);
       }
       presentApplicationResult(handlers, result);
@@ -136,8 +143,8 @@
     });
     registerController("archive", "Archivansicht, Wiederbearbeitung und archivspezifische Downloads", {
       "archive.openYear":call(handlers, "openArchiveYear"), "archive.showValidation":call(handlers, "showArchiveValidation"),
-      "archive.downloadYear":call(handlers, "downloadArchiveYear"), "archive.reopenForRework":call(handlers, "reopenArchiveYearForRework"),
-      "archive.currentYear":call(handlers, "archiveCurrentYearOnly"), "archive.downloadFull":call(handlers, "downloadFullArchive"),
+      "archive.downloadYear":call(handlers, "downloadArchiveYear"), "archive.reopenForRework":interactiveAppCall(applicationActions, "archive", "reopenForRework", handlers),
+      "archive.currentYear":interactiveAppCall(applicationActions, "archive", "currentYear", handlers), "archive.downloadFull":call(handlers, "downloadFullArchive"),
       "archive.closeViewer":call(handlers, "closeArchiveViewer")
     });
     registerController("recovery", "Import, Vor-Migrationssicherung, Restore und Rollback", {

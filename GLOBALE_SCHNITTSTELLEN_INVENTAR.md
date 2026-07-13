@@ -1,4 +1,9 @@
-<!-- AP9-CURRENT -->
+<!-- AP10-CURRENT -->
+# Globale Schnittstellen – Stand V99.4.11
+
+`app.js` enthält 518 Top-Level-Funktionsdeklarationen und 67 Bindungen. 79 AP10-Implementierungen wurden entfernt; `withIsolatedState()` wurde als eine Infrastrukturgrenze ergänzt, sodass die Nettoverringerung 78 Funktionen beträgt. Dynamische Globalzugriffe sinken von 1 auf 0. Neue globale Modulobjekte: `NKProArchiveActions`, `NKProYearTransitionActions`, `NKProQualityAssurance`, `NKProDiagnostics`. AP10 legt keine globalen Fachlogik-Wrapper an.
+
+<!-- AP9-HISTORIC -->
 # Globale Schnittstellen – Stand V99.4.10
 
 `app.js` enthält 596 Top-Level-Funktionsdeklarationen, 67 Top-Level-Bindungen, 5 explizite globale Zuweisungen und einen dynamischen globalen Zugriff. AP9 entfernt 60 frühere Top-Level-Funktionen (32 Implementierungen und 28 Weiterleitungen) und ergänzt eine Konfigurationsfunktion. Neu öffentlich geladen werden ausschließlich die eingefrorenen Modulobjekte `NKProMasterDataActions`, `NKProCostActions` und `NKProBillingWorkflow`. Die vollständigen maschinenlesbaren Vorher-/Nachherwerte stehen in `AP9_BASELINE_INVENTORY.json`; die AP9-Funktionen stehen in `AP9_FUNKTIONSINVENTAR.md`.

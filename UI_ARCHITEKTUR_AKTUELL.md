@@ -1,3 +1,8 @@
+<!-- AP10-CURRENT -->
+# UI-Architektur V99.4.11
+
+Die 13 Controller und 99 Aktionskennungen bleiben unverändert. `ui-bindings.js` erfasst DOM-Eingaben, führt Bestätigungs- und Promptstufen aus und stellt strukturierte Resultate dar. Archiv- und Jahreswechselmutationen laufen direkt über AP10-Anwendungsaktionen; Qualitäts- und Diagnoseresultate werden ausschließlich angezeigt. AP11-Navigation und visuelles Grundsystem bleiben unberührt.
+
 <!-- AP9-CURRENT -->
 # UI-Architektur V99.4.10
 

@@ -1,0 +1,3239 @@
+[
+  {
+    "name": "archiveRecordType",
+    "baselineFile": "js/app.js",
+    "baselineLine": 3670,
+    "category": "Archiv",
+    "productiveCallers": [
+      "js/archive-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "recordType",
+    "targetLine": 42,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "archiveRecordStatus",
+    "baselineFile": "js/app.js",
+    "baselineLine": 3674,
+    "category": "Archiv",
+    "productiveCallers": [
+      "js/archive-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "item",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "recordStatus",
+    "targetLine": 214,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "archiveRecordStatusClass",
+    "baselineFile": "js/app.js",
+    "baselineLine": 3681,
+    "category": "Archiv",
+    "productiveCallers": [
+      "js/archive-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "item",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "recordStatusClass",
+    "targetLine": 221,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "archiveRecordCorrections",
+    "baselineFile": "js/app.js",
+    "baselineLine": 3692,
+    "category": "Archiv",
+    "productiveCallers": [
+      "js/archive-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "item",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "recordCorrections",
+    "targetLine": 83,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "archiveRecordSaldo",
+    "baselineFile": "js/app.js",
+    "baselineLine": 3704,
+    "category": "Archiv",
+    "productiveCallers": [
+      "js/archive-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "item",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "recordSaldo",
+    "targetLine": 96,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "archiveMeta",
+    "baselineFile": "js/app.js",
+    "baselineLine": 3715,
+    "category": "Archiv",
+    "productiveCallers": [
+      "js/archive-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "item",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "meta",
+    "targetLine": 44,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "archiveItemLabel",
+    "baselineFile": "js/app.js",
+    "baselineLine": 3719,
+    "category": "Archiv",
+    "productiveCallers": [
+      "js/archive-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "item, index",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "itemLabel",
+    "targetLine": 76,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "normalizeArchiveItem",
+    "baselineFile": "js/app.js",
+    "baselineLine": 3726,
+    "category": "Archiv",
+    "productiveCallers": [
+      "js/archive-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "item",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "normalizeItem",
+    "targetLine": 34,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "prepareArchiveItemForUse",
+    "baselineFile": "js/app.js",
+    "baselineLine": 3730,
+    "category": "Archiv",
+    "productiveCallers": [
+      "js/archive-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "item",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "prepareItem",
+    "targetLine": 35,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "collectArchiveIdMigrationWarnings",
+    "baselineFile": "js/app.js",
+    "baselineLine": 3734,
+    "category": "Archiv",
+    "productiveCallers": [
+      "js/archive-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "data",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "collectIdMigrationWarnings",
+    "targetLine": 107,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "archiveItemValidation",
+    "baselineFile": "js/app.js",
+    "baselineLine": 3758,
+    "category": "Archiv",
+    "productiveCallers": [
+      "js/archive-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "item",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "validateItem",
+    "targetLine": 132,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "archiveRecordHealth",
+    "baselineFile": "js/app.js",
+    "baselineLine": 3840,
+    "category": "Archiv",
+    "productiveCallers": [
+      "js/archive-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "item",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "recordHealth",
+    "targetLine": 228,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "archiveValidationMessage",
+    "baselineFile": "js/app.js",
+    "baselineLine": 3878,
+    "category": "Archiv",
+    "productiveCallers": [
+      "js/archive-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "validation",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "validationMessage",
+    "targetLine": 233,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "archivePeriodId",
+    "baselineFile": "js/app.js",
+    "baselineLine": 3885,
+    "category": "Archiv",
+    "productiveCallers": [
+      "js/archive-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "item",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "periodId",
+    "targetLine": 48,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "archiveSortKey",
+    "baselineFile": "js/app.js",
+    "baselineLine": 3894,
+    "category": "Archiv",
+    "productiveCallers": [
+      "js/archive-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "item",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "sortKey",
+    "targetLine": 60,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "archivePeriodLabel",
+    "baselineFile": "js/app.js",
+    "baselineLine": 3901,
+    "category": "Archiv",
+    "productiveCallers": [
+      "js/archive-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "item",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "periodLabel",
+    "targetLine": 67,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "archiveRecordStatusLite",
+    "baselineFile": "js/app.js",
+    "baselineLine": 3907,
+    "category": "Archiv",
+    "productiveCallers": [
+      "js/archive-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "item",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "recordStatusLite",
+    "targetLine": 240,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "hasNonEmptyAnnualCurrentBillingData",
+    "baselineFile": "js/app.js",
+    "baselineLine": 3927,
+    "category": "Archiv",
+    "productiveCallers": [
+      "js/archive-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "data = current(",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "hasNonEmptyAnnualData",
+    "targetLine": 245,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "isCurrentBillingClosedAfterArchive",
+    "baselineFile": "js/app.js",
+    "baselineLine": 3943,
+    "category": "Archiv",
+    "productiveCallers": [
+      "js/archive-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "data = current(",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "isClosedAfterArchive",
+    "targetLine": 262,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "clearCurrentBillingArchiveClosure",
+    "baselineFile": "js/app.js",
+    "baselineLine": 3948,
+    "category": "Archiv",
+    "productiveCallers": [
+      "js/archive-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "data",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [
+      "jahresArchiv",
+      "meta",
+      "Arbeitsdaten bei Wiederbearbeitung"
+    ],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "vor Mutation/innerhalb Transaktion",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "höchstens zentraler Einzelcommit",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "clearClosure",
+    "targetLine": 267,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "closeCurrentBillingAfterArchive",
+    "baselineFile": "js/app.js",
+    "baselineLine": 3958,
+    "category": "Archiv",
+    "productiveCallers": [
+      "js/archive-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "data, snapshot",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [
+      "jahresArchiv",
+      "meta",
+      "Arbeitsdaten bei Wiederbearbeitung"
+    ],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "vor Mutation/innerhalb Transaktion",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "höchstens zentraler Einzelcommit",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "closeAfterArchive",
+    "targetLine": 278,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "hasActiveCurrentBilling",
+    "baselineFile": "js/app.js",
+    "baselineLine": 3971,
+    "category": "Archiv",
+    "productiveCallers": [
+      "js/archive-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "data = current(",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "hasActiveCurrentBilling",
+    "targetLine": 293,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "archiveStateFromItem",
+    "baselineFile": "js/app.js",
+    "baselineLine": 4561,
+    "category": "Archiv",
+    "productiveCallers": [
+      "js/archive-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "item",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "viewerStateFromItem",
+    "targetLine": 380,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "yearNumber",
+    "baselineFile": "js/app.js",
+    "baselineLine": 4718,
+    "category": "Archiv",
+    "productiveCallers": [
+      "js/archive-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "value",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "yearNumber",
+    "targetLine": 36,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "upsertYearArchive",
+    "baselineFile": "js/app.js",
+    "baselineLine": 4725,
+    "category": "Archiv",
+    "productiveCallers": [
+      "js/archive-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "data, snapshot",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [
+      "jahresArchiv",
+      "meta",
+      "Arbeitsdaten bei Wiederbearbeitung"
+    ],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "vor Mutation/innerhalb Transaktion",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "höchstens zentraler Einzelcommit",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "upsertInto",
+    "targetLine": 302,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "archiveCurrentYearOnly",
+    "baselineFile": "js/app.js",
+    "baselineLine": 4751,
+    "category": "Archiv",
+    "productiveCallers": [
+      "NKProApplicationActions.archive",
+      "Archiv-UI/Import/Viewer",
+      "Dokument- und Exportlesepfade"
+    ],
+    "testCallers": [
+      "tests/ap10-orchestration.spec.js",
+      "tests/ap10-archive-year-quality-diagnostics.test.cjs"
+    ],
+    "dynamicCallers": [
+      "klassischer globaler Skriptkontext vor AP10"
+    ],
+    "inputs": "options = {}",
+    "returns": "strukturiertes Aktionsergebnis",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [
+      "jahresArchiv",
+      "meta",
+      "Arbeitsdaten bei Wiederbearbeitung"
+    ],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "vor Mutation/innerhalb Transaktion",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "höchstens zentraler Einzelcommit",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "archiveCurrent",
+    "targetLine": 322,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "reopenArchiveYearForRework",
+    "baselineFile": "js/app.js",
+    "baselineLine": 4652,
+    "category": "Archiv",
+    "productiveCallers": [
+      "NKProApplicationActions.archive",
+      "Archiv-UI/Import/Viewer",
+      "Dokument- und Exportlesepfade"
+    ],
+    "testCallers": [
+      "tests/ap10-orchestration.spec.js",
+      "tests/ap10-archive-year-quality-diagnostics.test.cjs"
+    ],
+    "dynamicCallers": [
+      "klassischer globaler Skriptkontext vor AP10"
+    ],
+    "inputs": "index, options = {}",
+    "returns": "strukturiertes Aktionsergebnis",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [
+      "jahresArchiv",
+      "meta",
+      "Arbeitsdaten bei Wiederbearbeitung"
+    ],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "vor Mutation/innerhalb Transaktion",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "höchstens zentraler Einzelcommit",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "reopenForRework",
+    "targetLine": 400,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "buildLegacyArchiveStateFromEntries",
+    "baselineFile": "js/app.js",
+    "baselineLine": 5433,
+    "category": "Archiv",
+    "productiveCallers": [
+      "js/archive-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "entries",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "buildLegacyArchiveState",
+    "targetLine": 452,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "createLegacyArchiveItemFromEntries",
+    "baselineFile": "js/app.js",
+    "baselineLine": 5493,
+    "category": "Archiv",
+    "productiveCallers": [
+      "js/archive-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "entries",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "jahresArchiv",
+      "Abrechnungs-/Snapshotdaten",
+      "Stammdaten/Zählerhistorie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchive",
+      "NKProBillingWorkflow",
+      "NKProBillingSnapshot"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/archive-actions.js",
+    "targetFunction": "createLegacyArchiveItem",
+    "targetLine": 509,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "markCurrentBillingCreatedByUser",
+    "baselineFile": "js/app.js",
+    "baselineLine": 3986,
+    "category": "Jahreswechsel",
+    "productiveCallers": [
+      "js/year-transition-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "data = current(",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "mieter",
+      "wohnungen",
+      "kostenarten",
+      "vorauszahlungen",
+      "umlageInputs",
+      "Zählerdaten",
+      "jahresArchiv"
+    ],
+    "writeStateAreas": [
+      "Jahreswerte",
+      "Periode",
+      "Vorauszahlungen",
+      "Zähler-Anfang/Ende",
+      "meta"
+    ],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchiveActions",
+      "NKProBillingWorkflow",
+      "NKProCostActions",
+      "Zählermodule"
+    ],
+    "validation": "vor Mutation/innerhalb Transaktion",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "höchstens zentraler Einzelcommit",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/year-transition-actions.js",
+    "targetFunction": "markCurrentBillingCreatedByUser",
+    "targetLine": 364,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "normalizeIsoDateValue",
+    "baselineFile": "js/app.js",
+    "baselineLine": 4777,
+    "category": "Jahreswechsel",
+    "productiveCallers": [
+      "js/year-transition-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "value, fallbackYear",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "mieter",
+      "wohnungen",
+      "kostenarten",
+      "vorauszahlungen",
+      "umlageInputs",
+      "Zählerdaten",
+      "jahresArchiv"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchiveActions",
+      "NKProBillingWorkflow",
+      "NKProCostActions",
+      "Zählermodule"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/year-transition-actions.js",
+    "targetFunction": "normalizeIsoDateValue",
+    "targetLine": 29,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "periodDateStartForData",
+    "baselineFile": "js/app.js",
+    "baselineLine": 4796,
+    "category": "Jahreswechsel",
+    "productiveCallers": [
+      "js/year-transition-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "data",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "mieter",
+      "wohnungen",
+      "kostenarten",
+      "vorauszahlungen",
+      "umlageInputs",
+      "Zählerdaten",
+      "jahresArchiv"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchiveActions",
+      "NKProBillingWorkflow",
+      "NKProCostActions",
+      "Zählermodule"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/year-transition-actions.js",
+    "targetFunction": "periodDateStartForData",
+    "targetLine": 48,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "periodDateEndForData",
+    "baselineFile": "js/app.js",
+    "baselineLine": 4802,
+    "category": "Jahreswechsel",
+    "productiveCallers": [
+      "js/year-transition-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "data",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "mieter",
+      "wohnungen",
+      "kostenarten",
+      "vorauszahlungen",
+      "umlageInputs",
+      "Zählerdaten",
+      "jahresArchiv"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchiveActions",
+      "NKProBillingWorkflow",
+      "NKProCostActions",
+      "Zählermodule"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/year-transition-actions.js",
+    "targetFunction": "periodDateEndForData",
+    "targetLine": 54,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "monthStartIso",
+    "baselineFile": "js/app.js",
+    "baselineLine": 4808,
+    "category": "Jahreswechsel",
+    "productiveCallers": [
+      "js/year-transition-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "date",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "mieter",
+      "wohnungen",
+      "kostenarten",
+      "vorauszahlungen",
+      "umlageInputs",
+      "Zählerdaten",
+      "jahresArchiv"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchiveActions",
+      "NKProBillingWorkflow",
+      "NKProCostActions",
+      "Zählermodule"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/year-transition-actions.js",
+    "targetFunction": "monthStartIso",
+    "targetLine": 60,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "activeMonthStartsForData",
+    "baselineFile": "js/app.js",
+    "baselineLine": 4812,
+    "category": "Jahreswechsel",
+    "productiveCallers": [
+      "js/year-transition-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "data, tenant",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "mieter",
+      "wohnungen",
+      "kostenarten",
+      "vorauszahlungen",
+      "umlageInputs",
+      "Zählerdaten",
+      "jahresArchiv"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchiveActions",
+      "NKProBillingWorkflow",
+      "NKProCostActions",
+      "Zählermodule"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/year-transition-actions.js",
+    "targetFunction": "activeMonthStartsForData",
+    "targetLine": 64,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "monthTotalForPrepaymentCarryForward",
+    "baselineFile": "js/app.js",
+    "baselineLine": 4843,
+    "category": "Jahreswechsel",
+    "productiveCallers": [
+      "js/year-transition-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "oldAnnual, previousData, previousTenant, currentData, currentTenant, effectiveIso, monthlyChange",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "mieter",
+      "wohnungen",
+      "kostenarten",
+      "vorauszahlungen",
+      "umlageInputs",
+      "Zählerdaten",
+      "jahresArchiv"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchiveActions",
+      "NKProBillingWorkflow",
+      "NKProCostActions",
+      "Zählermodule"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/year-transition-actions.js",
+    "targetFunction": "monthTotalForCarryForward",
+    "targetLine": 95,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "previousYearArchiveDataForCurrentBilling",
+    "baselineFile": "js/app.js",
+    "baselineLine": 4856,
+    "category": "Jahreswechsel",
+    "productiveCallers": [
+      "js/year-transition-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "data = current(",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "mieter",
+      "wohnungen",
+      "kostenarten",
+      "vorauszahlungen",
+      "umlageInputs",
+      "Zählerdaten",
+      "jahresArchiv"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchiveActions",
+      "NKProBillingWorkflow",
+      "NKProCostActions",
+      "Zählermodule"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/year-transition-actions.js",
+    "targetFunction": "previousYearArchiveData",
+    "targetLine": 110,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "previousTenantRoleIsPrivate",
+    "baselineFile": "js/app.js",
+    "baselineLine": 4874,
+    "category": "Jahreswechsel",
+    "productiveCallers": [
+      "js/year-transition-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "tenant",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "mieter",
+      "wohnungen",
+      "kostenarten",
+      "vorauszahlungen",
+      "umlageInputs",
+      "Zählerdaten",
+      "jahresArchiv"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchiveActions",
+      "NKProBillingWorkflow",
+      "NKProCostActions",
+      "Zählermodule"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/year-transition-actions.js",
+    "targetFunction": "previousTenantRoleIsPrivate",
+    "targetLine": 125,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "normalizeTenantMatchText",
+    "baselineFile": "js/app.js",
+    "baselineLine": 4879,
+    "category": "Jahreswechsel",
+    "productiveCallers": [
+      "js/year-transition-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "value",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "mieter",
+      "wohnungen",
+      "kostenarten",
+      "vorauszahlungen",
+      "umlageInputs",
+      "Zählerdaten",
+      "jahresArchiv"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchiveActions",
+      "NKProBillingWorkflow",
+      "NKProCostActions",
+      "Zählermodule"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/year-transition-actions.js",
+    "targetFunction": "normalizeTenantMatchText",
+    "targetLine": 130,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "findPreviousTenantIndexForCarryForward",
+    "baselineFile": "js/app.js",
+    "baselineLine": 4883,
+    "category": "Jahreswechsel",
+    "productiveCallers": [
+      "js/year-transition-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "previousTenants, currentTenant",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "mieter",
+      "wohnungen",
+      "kostenarten",
+      "vorauszahlungen",
+      "umlageInputs",
+      "Zählerdaten",
+      "jahresArchiv"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchiveActions",
+      "NKProBillingWorkflow",
+      "NKProCostActions",
+      "Zählermodule"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/year-transition-actions.js",
+    "targetFunction": "findPreviousTenantIndex",
+    "targetLine": 134,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "activePrepaymentMatrixHasValues",
+    "baselineFile": "js/app.js",
+    "baselineLine": 4904,
+    "category": "Jahreswechsel",
+    "productiveCallers": [
+      "js/year-transition-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "data = current(",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "mieter",
+      "wohnungen",
+      "kostenarten",
+      "vorauszahlungen",
+      "umlageInputs",
+      "Zählerdaten",
+      "jahresArchiv"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchiveActions",
+      "NKProBillingWorkflow",
+      "NKProCostActions",
+      "Zählermodule"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/year-transition-actions.js",
+    "targetFunction": "activePrepaymentMatrixHasValues",
+    "targetLine": 169,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "prepaymentAdjustmentWasPrinted",
+    "baselineFile": "js/app.js",
+    "baselineLine": 4913,
+    "category": "Jahreswechsel",
+    "productiveCallers": [
+      "js/year-transition-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "previousData",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "mieter",
+      "wohnungen",
+      "kostenarten",
+      "vorauszahlungen",
+      "umlageInputs",
+      "Zählerdaten",
+      "jahresArchiv"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchiveActions",
+      "NKProBillingWorkflow",
+      "NKProCostActions",
+      "Zählermodule"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/year-transition-actions.js",
+    "targetFunction": "prepaymentAdjustmentWasPrinted",
+    "targetLine": 156,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "effectivePrepaymentIsoFromPreviousData",
+    "baselineFile": "js/app.js",
+    "baselineLine": 4919,
+    "category": "Jahreswechsel",
+    "productiveCallers": [
+      "js/year-transition-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "previousData, data = current(",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "mieter",
+      "wohnungen",
+      "kostenarten",
+      "vorauszahlungen",
+      "umlageInputs",
+      "Zählerdaten",
+      "jahresArchiv"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchiveActions",
+      "NKProBillingWorkflow",
+      "NKProCostActions",
+      "Zählermodule"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/year-transition-actions.js",
+    "targetFunction": "effectivePrepaymentIso",
+    "targetLine": 162,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "carryForwardPrepaymentsFromPreviousYear",
+    "baselineFile": "js/app.js",
+    "baselineLine": 4926,
+    "category": "Jahreswechsel",
+    "productiveCallers": [
+      "js/year-transition-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "data = current(",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "mieter",
+      "wohnungen",
+      "kostenarten",
+      "vorauszahlungen",
+      "umlageInputs",
+      "Zählerdaten",
+      "jahresArchiv"
+    ],
+    "writeStateAreas": [
+      "Jahreswerte",
+      "Periode",
+      "Vorauszahlungen",
+      "Zähler-Anfang/Ende",
+      "meta"
+    ],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchiveActions",
+      "NKProBillingWorkflow",
+      "NKProCostActions",
+      "Zählermodule"
+    ],
+    "validation": "vor Mutation/innerhalb Transaktion",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "höchstens zentraler Einzelcommit",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/year-transition-actions.js",
+    "targetFunction": "carryForwardPrepayments",
+    "targetLine": 179,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "ensurePrepaymentCarryForwardIfNeeded",
+    "baselineFile": "js/app.js",
+    "baselineLine": 4983,
+    "category": "Jahreswechsel",
+    "productiveCallers": [
+      "js/year-transition-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "data = current(",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "mieter",
+      "wohnungen",
+      "kostenarten",
+      "vorauszahlungen",
+      "umlageInputs",
+      "Zählerdaten",
+      "jahresArchiv"
+    ],
+    "writeStateAreas": [
+      "Jahreswerte",
+      "Periode",
+      "Vorauszahlungen",
+      "Zähler-Anfang/Ende",
+      "meta"
+    ],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchiveActions",
+      "NKProBillingWorkflow",
+      "NKProCostActions",
+      "Zählermodule"
+    ],
+    "validation": "vor Mutation/innerhalb Transaktion",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "höchstens zentraler Einzelcommit",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/year-transition-actions.js",
+    "targetFunction": "ensurePrepaymentCarryForward",
+    "targetLine": 232,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "carryMeterEndToStart",
+    "baselineFile": "js/app.js",
+    "baselineLine": 5013,
+    "category": "Jahreswechsel",
+    "productiveCallers": [
+      "js/year-transition-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "data = current(",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "mieter",
+      "wohnungen",
+      "kostenarten",
+      "vorauszahlungen",
+      "umlageInputs",
+      "Zählerdaten",
+      "jahresArchiv"
+    ],
+    "writeStateAreas": [
+      "Jahreswerte",
+      "Periode",
+      "Vorauszahlungen",
+      "Zähler-Anfang/Ende",
+      "meta"
+    ],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchiveActions",
+      "NKProBillingWorkflow",
+      "NKProCostActions",
+      "Zählermodule"
+    ],
+    "validation": "vor Mutation/innerhalb Transaktion",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "höchstens zentraler Einzelcommit",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/year-transition-actions.js",
+    "targetFunction": "carryMeterEndToStart",
+    "targetLine": 249,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "periodStartForData",
+    "baselineFile": "js/app.js",
+    "baselineLine": 5051,
+    "category": "Jahreswechsel",
+    "productiveCallers": [
+      "js/year-transition-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "data",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "mieter",
+      "wohnungen",
+      "kostenarten",
+      "vorauszahlungen",
+      "umlageInputs",
+      "Zählerdaten",
+      "jahresArchiv"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchiveActions",
+      "NKProBillingWorkflow",
+      "NKProCostActions",
+      "Zählermodule"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/year-transition-actions.js",
+    "targetFunction": "periodStartForData",
+    "targetLine": 289,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "periodEndForData",
+    "baselineFile": "js/app.js",
+    "baselineLine": 5057,
+    "category": "Jahreswechsel",
+    "productiveCallers": [
+      "js/year-transition-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "data",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "mieter",
+      "wohnungen",
+      "kostenarten",
+      "vorauszahlungen",
+      "umlageInputs",
+      "Zählerdaten",
+      "jahresArchiv"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchiveActions",
+      "NKProBillingWorkflow",
+      "NKProCostActions",
+      "Zählermodule"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/year-transition-actions.js",
+    "targetFunction": "periodEndForData",
+    "targetLine": 295,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "numericMeterValueEquals",
+    "baselineFile": "js/app.js",
+    "baselineLine": 5063,
+    "category": "Jahreswechsel",
+    "productiveCallers": [
+      "js/year-transition-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "a, b",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "mieter",
+      "wohnungen",
+      "kostenarten",
+      "vorauszahlungen",
+      "umlageInputs",
+      "Zählerdaten",
+      "jahresArchiv"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchiveActions",
+      "NKProBillingWorkflow",
+      "NKProCostActions",
+      "Zählermodule"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/year-transition-actions.js",
+    "targetFunction": "numericMeterValueEquals",
+    "targetLine": 301,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "isNewCurrentBillingData",
+    "baselineFile": "js/app.js",
+    "baselineLine": 5068,
+    "category": "Jahreswechsel",
+    "productiveCallers": [
+      "js/year-transition-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "data",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "mieter",
+      "wohnungen",
+      "kostenarten",
+      "vorauszahlungen",
+      "umlageInputs",
+      "Zählerdaten",
+      "jahresArchiv"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchiveActions",
+      "NKProBillingWorkflow",
+      "NKProCostActions",
+      "Zählermodule"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/year-transition-actions.js",
+    "targetFunction": "isNewCurrentBillingData",
+    "targetLine": 307,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "numericEndValuesWereManuallyTouchedForYear",
+    "baselineFile": "js/app.js",
+    "baselineLine": 5078,
+    "category": "Jahreswechsel",
+    "productiveCallers": [
+      "js/year-transition-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "data, year",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "mieter",
+      "wohnungen",
+      "kostenarten",
+      "vorauszahlungen",
+      "umlageInputs",
+      "Zählerdaten",
+      "jahresArchiv"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchiveActions",
+      "NKProBillingWorkflow",
+      "NKProCostActions",
+      "Zählermodule"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/year-transition-actions.js",
+    "targetFunction": "numericEndValuesWereManuallyTouchedForYear",
+    "targetLine": 314,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "clearAutofilledMeterEndValuesForNewBilling",
+    "baselineFile": "js/app.js",
+    "baselineLine": 5083,
+    "category": "Jahreswechsel",
+    "productiveCallers": [
+      "js/year-transition-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "data = current(",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "mieter",
+      "wohnungen",
+      "kostenarten",
+      "vorauszahlungen",
+      "umlageInputs",
+      "Zählerdaten",
+      "jahresArchiv"
+    ],
+    "writeStateAreas": [
+      "Jahreswerte",
+      "Periode",
+      "Vorauszahlungen",
+      "Zähler-Anfang/Ende",
+      "meta"
+    ],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchiveActions",
+      "NKProBillingWorkflow",
+      "NKProCostActions",
+      "Zählermodule"
+    ],
+    "validation": "vor Mutation/innerhalb Transaktion",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "höchstens zentraler Einzelcommit",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/year-transition-actions.js",
+    "targetFunction": "clearAutofilledMeterEndValues",
+    "targetLine": 319,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "resetAnnualValuesForNextYear",
+    "baselineFile": "js/app.js",
+    "baselineLine": 5130,
+    "category": "Jahreswechsel",
+    "productiveCallers": [
+      "js/year-transition-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "data, nextYear, startIso, endIso",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "mieter",
+      "wohnungen",
+      "kostenarten",
+      "vorauszahlungen",
+      "umlageInputs",
+      "Zählerdaten",
+      "jahresArchiv"
+    ],
+    "writeStateAreas": [
+      "Jahreswerte",
+      "Periode",
+      "Vorauszahlungen",
+      "Zähler-Anfang/Ende",
+      "meta"
+    ],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchiveActions",
+      "NKProBillingWorkflow",
+      "NKProCostActions",
+      "Zählermodule"
+    ],
+    "validation": "vor Mutation/innerhalb Transaktion",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "höchstens zentraler Einzelcommit",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/year-transition-actions.js",
+    "targetFunction": "resetAnnualValues",
+    "targetLine": 374,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "yearExistsInRecords",
+    "baselineFile": "js/app.js",
+    "baselineLine": 4076,
+    "category": "Jahreswechsel",
+    "productiveCallers": [
+      "js/year-transition-actions.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "data, year",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "meta",
+      "mieter",
+      "wohnungen",
+      "kostenarten",
+      "vorauszahlungen",
+      "umlageInputs",
+      "Zählerdaten",
+      "jahresArchiv"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchiveActions",
+      "NKProBillingWorkflow",
+      "NKProCostActions",
+      "Zählermodule"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/year-transition-actions.js",
+    "targetFunction": "yearExistsInRecords",
+    "targetLine": 435,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "archiveAndPrepareNextYear",
+    "baselineFile": "js/app.js",
+    "baselineLine": 5208,
+    "category": "Jahreswechsel",
+    "productiveCallers": [
+      "NKProApplicationActions.yearTransition",
+      "Startseiten-UI",
+      "Archiv-/Snapshotkoordination"
+    ],
+    "testCallers": [
+      "tests/ap10-orchestration.spec.js",
+      "tests/ap10-archive-year-quality-diagnostics.test.cjs"
+    ],
+    "dynamicCallers": [
+      "klassischer globaler Skriptkontext vor AP10"
+    ],
+    "inputs": "options = {}",
+    "returns": "strukturiertes Aktionsergebnis",
+    "readStateAreas": [
+      "meta",
+      "mieter",
+      "wohnungen",
+      "kostenarten",
+      "vorauszahlungen",
+      "umlageInputs",
+      "Zählerdaten",
+      "jahresArchiv"
+    ],
+    "writeStateAreas": [
+      "Jahreswerte",
+      "Periode",
+      "Vorauszahlungen",
+      "Zähler-Anfang/Ende",
+      "meta"
+    ],
+    "domDependencies": "keine",
+    "storageDependencies": "keine direkte; Commit nur über NKProStateAccess",
+    "domainModules": [
+      "NKProArchiveActions",
+      "NKProBillingWorkflow",
+      "NKProCostActions",
+      "Zählermodule"
+    ],
+    "validation": "vor Mutation/innerhalb Transaktion",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "höchstens zentraler Einzelcommit",
+    "archiveSnapshotImpact": "Archiv/Snapshot nur über bestehende Fachmodule",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/year-transition-actions.js",
+    "targetFunction": "prepareNextYear",
+    "targetLine": 479,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "duplicateValues",
+    "baselineFile": "js/app.js",
+    "baselineLine": 2091,
+    "category": "Qualität",
+    "productiveCallers": [
+      "js/quality-assurance.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "values",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "vollständiger Arbeitszustand, ausschließlich isolierte Kopie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine",
+    "domainModules": [
+      "vorhandene Fachvalidierungen",
+      "NKProArchiveActions"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "keine Erzeugung oder Änderung",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/quality-assurance.js",
+    "targetFunction": "duplicateValues",
+    "targetLine": 28,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "tenantQualityLabel",
+    "baselineFile": "js/app.js",
+    "baselineLine": 2105,
+    "category": "Qualität",
+    "productiveCallers": [
+      "js/quality-assurance.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "m",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "vollständiger Arbeitszustand, ausschließlich isolierte Kopie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine",
+    "domainModules": [
+      "vorhandene Fachvalidierungen",
+      "NKProArchiveActions"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "keine Erzeugung oder Änderung",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/quality-assurance.js",
+    "targetFunction": "tenantQualityLabel",
+    "targetLine": 38,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "activeTenantByUnitMap",
+    "baselineFile": "js/app.js",
+    "baselineLine": 2119,
+    "category": "Qualität",
+    "productiveCallers": [
+      "js/quality-assurance.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "vollständiger Arbeitszustand, ausschließlich isolierte Kopie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine",
+    "domainModules": [
+      "vorhandene Fachvalidierungen",
+      "NKProArchiveActions"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "keine Erzeugung oder Änderung",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/quality-assurance.js",
+    "targetFunction": "activeTenantByUnitMap",
+    "targetLine": 42,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "missingBriefFieldsForTenant",
+    "baselineFile": "js/app.js",
+    "baselineLine": 2129,
+    "category": "Qualität",
+    "productiveCallers": [
+      "js/quality-assurance.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "tenant",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "vollständiger Arbeitszustand, ausschließlich isolierte Kopie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine",
+    "domainModules": [
+      "vorhandene Fachvalidierungen",
+      "NKProArchiveActions"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "keine Erzeugung oder Änderung",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/quality-assurance.js",
+    "targetFunction": "missingBriefFieldsForTenant",
+    "targetLine": 52,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "tenantPeriodInterval",
+    "baselineFile": "js/app.js",
+    "baselineLine": 2140,
+    "category": "Qualität",
+    "productiveCallers": [
+      "js/quality-assurance.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "m",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "vollständiger Arbeitszustand, ausschließlich isolierte Kopie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine",
+    "domainModules": [
+      "vorhandene Fachvalidierungen",
+      "NKProArchiveActions"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "keine Erzeugung oder Änderung",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/quality-assurance.js",
+    "targetFunction": "tenantPeriodInterval",
+    "targetLine": 62,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "intervalDaysInclusive",
+    "baselineFile": "js/app.js",
+    "baselineLine": 2151,
+    "category": "Qualität",
+    "productiveCallers": [
+      "js/quality-assurance.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "interval",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "vollständiger Arbeitszustand, ausschließlich isolierte Kopie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine",
+    "domainModules": [
+      "vorhandene Fachvalidierungen",
+      "NKProArchiveActions"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "keine Erzeugung oder Änderung",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/quality-assurance.js",
+    "targetFunction": "intervalDaysInclusive",
+    "targetLine": 73,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "expectedTenantDaysInCurrentPeriod",
+    "baselineFile": "js/app.js",
+    "baselineLine": 2156,
+    "category": "Qualität",
+    "productiveCallers": [
+      "js/quality-assurance.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "m",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "vollständiger Arbeitszustand, ausschließlich isolierte Kopie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine",
+    "domainModules": [
+      "vorhandene Fachvalidierungen",
+      "NKProArchiveActions"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "keine Erzeugung oder Änderung",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/quality-assurance.js",
+    "targetFunction": "expectedTenantDaysInCurrentPeriod",
+    "targetLine": 78,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "tenantIntervalsOverlap",
+    "baselineFile": "js/app.js",
+    "baselineLine": 2160,
+    "category": "Qualität",
+    "productiveCallers": [
+      "js/quality-assurance.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "a, b",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "vollständiger Arbeitszustand, ausschließlich isolierte Kopie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine",
+    "domainModules": [
+      "vorhandene Fachvalidierungen",
+      "NKProArchiveActions"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "keine Erzeugung oder Änderung",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/quality-assurance.js",
+    "targetFunction": "tenantIntervalsOverlap",
+    "targetLine": 82,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "tenantIntervalLabel",
+    "baselineFile": "js/app.js",
+    "baselineLine": 2166,
+    "category": "Qualität",
+    "productiveCallers": [
+      "js/quality-assurance.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "m",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "vollständiger Arbeitszustand, ausschließlich isolierte Kopie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine",
+    "domainModules": [
+      "vorhandene Fachvalidierungen",
+      "NKProArchiveActions"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "keine Erzeugung oder Änderung",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/quality-assurance.js",
+    "targetFunction": "tenantIntervalLabel",
+    "targetLine": 88,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "billableRowsByUnit",
+    "baselineFile": "js/app.js",
+    "baselineLine": 2172,
+    "category": "Qualität",
+    "productiveCallers": [
+      "js/quality-assurance.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "rows",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "vollständiger Arbeitszustand, ausschließlich isolierte Kopie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine",
+    "domainModules": [
+      "vorhandene Fachvalidierungen",
+      "NKProArchiveActions"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "keine Erzeugung oder Änderung",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/quality-assurance.js",
+    "targetFunction": "billableRowsByUnit",
+    "targetLine": 94,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "tenantRowsHaveOverlappingIntervals",
+    "baselineFile": "js/app.js",
+    "baselineLine": 2183,
+    "category": "Qualität",
+    "productiveCallers": [
+      "js/quality-assurance.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "rows",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "vollständiger Arbeitszustand, ausschließlich isolierte Kopie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine",
+    "domainModules": [
+      "vorhandene Fachvalidierungen",
+      "NKProArchiveActions"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "keine Erzeugung oder Änderung",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/quality-assurance.js",
+    "targetFunction": "tenantRowsHaveOverlappingIntervals",
+    "targetLine": 105,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "specialCaseWatchReport",
+    "baselineFile": "js/app.js",
+    "baselineLine": 2199,
+    "category": "Qualität",
+    "productiveCallers": [
+      "Qualitäts-Cockpit",
+      "Workflow-Dashboard",
+      "Dokument-Preflight"
+    ],
+    "testCallers": [
+      "tests/ap10-orchestration.spec.js",
+      "tests/ap10-archive-year-quality-diagnostics.test.cjs"
+    ],
+    "dynamicCallers": [
+      "klassischer globaler Skriptkontext vor AP10"
+    ],
+    "inputs": "",
+    "returns": "strukturiertes Aktionsergebnis",
+    "readStateAreas": [
+      "vollständiger Arbeitszustand, ausschließlich isolierte Kopie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine",
+    "domainModules": [
+      "vorhandene Fachvalidierungen",
+      "NKProArchiveActions"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "keine Erzeugung oder Änderung",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/quality-assurance.js",
+    "targetFunction": "specialCases",
+    "targetLine": 413,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "collectQualityChecks",
+    "baselineFile": "js/app.js",
+    "baselineLine": 2477,
+    "category": "Qualität",
+    "productiveCallers": [
+      "Qualitäts-Cockpit",
+      "Workflow-Dashboard",
+      "Dokument-Preflight"
+    ],
+    "testCallers": [
+      "tests/ap10-orchestration.spec.js",
+      "tests/ap10-archive-year-quality-diagnostics.test.cjs"
+    ],
+    "dynamicCallers": [
+      "klassischer globaler Skriptkontext vor AP10"
+    ],
+    "inputs": "options",
+    "returns": "strukturiertes Aktionsergebnis",
+    "readStateAreas": [
+      "vollständiger Arbeitszustand, ausschließlich isolierte Kopie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine",
+    "domainModules": [
+      "vorhandene Fachvalidierungen",
+      "NKProArchiveActions"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "keine Erzeugung oder Änderung",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/quality-assurance.js",
+    "targetFunction": "inspect",
+    "targetLine": 409,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "finalBillingReadiness",
+    "baselineFile": "js/app.js",
+    "baselineLine": 2303,
+    "category": "Qualität",
+    "productiveCallers": [
+      "Qualitäts-Cockpit",
+      "Workflow-Dashboard",
+      "Dokument-Preflight"
+    ],
+    "testCallers": [
+      "tests/ap10-orchestration.spec.js",
+      "tests/ap10-archive-year-quality-diagnostics.test.cjs"
+    ],
+    "dynamicCallers": [
+      "klassischer globaler Skriptkontext vor AP10"
+    ],
+    "inputs": "options",
+    "returns": "strukturiertes Aktionsergebnis",
+    "readStateAreas": [
+      "vollständiger Arbeitszustand, ausschließlich isolierte Kopie"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine",
+    "domainModules": [
+      "vorhandene Fachvalidierungen",
+      "NKProArchiveActions"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "keine Erzeugung oder Änderung",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/quality-assurance.js",
+    "targetFunction": "finalBillingReadiness",
+    "targetLine": 417,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "auditApproxEqual",
+    "baselineFile": "js/app.js",
+    "baselineLine": 6940,
+    "category": "Diagnose",
+    "productiveCallers": [
+      "js/diagnostics.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "actual, expected, tolerance = 0.02",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "isolierte Zustandskopie, Laufzeit-/DOM-Struktur lesend"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine",
+    "domainModules": [
+      "NKProQualityAssurance",
+      "NKProArchiveActions",
+      "NKProYearTransitionActions"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "keine Erzeugung oder Änderung",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/diagnostics.js",
+    "targetFunction": "auditApproxEqual",
+    "targetLine": 60,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "auditBaseState",
+    "baselineFile": "js/app.js",
+    "baselineLine": 6944,
+    "category": "Diagnose",
+    "productiveCallers": [
+      "js/diagnostics.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "isolierte Zustandskopie, Laufzeit-/DOM-Struktur lesend"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine",
+    "domainModules": [
+      "NKProQualityAssurance",
+      "NKProArchiveActions",
+      "NKProYearTransitionActions"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "keine Erzeugung oder Änderung",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/diagnostics.js",
+    "targetFunction": "auditBaseState",
+    "targetLine": 64,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "auditBriefState",
+    "baselineFile": "js/app.js",
+    "baselineLine": 6968,
+    "category": "Diagnose",
+    "productiveCallers": [
+      "js/diagnostics.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "isolierte Zustandskopie, Laufzeit-/DOM-Struktur lesend"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine",
+    "domainModules": [
+      "NKProQualityAssurance",
+      "NKProArchiveActions",
+      "NKProYearTransitionActions"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "keine Erzeugung oder Änderung",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/diagnostics.js",
+    "targetFunction": "auditBriefState",
+    "targetLine": 88,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "withAuditState",
+    "baselineFile": "js/app.js",
+    "baselineLine": 7007,
+    "category": "Diagnose",
+    "productiveCallers": [
+      "js/diagnostics.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "tempState, fn",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "isolierte Zustandskopie, Laufzeit-/DOM-Struktur lesend"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine",
+    "domainModules": [
+      "NKProQualityAssurance",
+      "NKProArchiveActions",
+      "NKProYearTransitionActions"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "keine Erzeugung oder Änderung",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/diagnostics.js",
+    "targetFunction": "withAuditState",
+    "targetLine": 127,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "releaseAuditReport",
+    "baselineFile": "js/app.js",
+    "baselineLine": 7023,
+    "category": "Diagnose",
+    "productiveCallers": [
+      "Release-Audit-UI",
+      "App-Selbsttest",
+      "automatisierte Browsertests"
+    ],
+    "testCallers": [
+      "tests/ap10-orchestration.spec.js",
+      "tests/ap10-archive-year-quality-diagnostics.test.cjs"
+    ],
+    "dynamicCallers": [
+      "klassischer globaler Skriptkontext vor AP10"
+    ],
+    "inputs": "",
+    "returns": "strukturiertes Aktionsergebnis",
+    "readStateAreas": [
+      "isolierte Zustandskopie, Laufzeit-/DOM-Struktur lesend"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "lesende DOM-Strukturprüfung",
+    "storageDependencies": "keine",
+    "domainModules": [
+      "NKProQualityAssurance",
+      "NKProArchiveActions",
+      "NKProYearTransitionActions"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "keine Erzeugung oder Änderung",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/diagnostics.js",
+    "targetFunction": "releaseAuditReport",
+    "targetLine": 143,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "releaseAuditReportText",
+    "baselineFile": "js/app.js",
+    "baselineLine": 7452,
+    "category": "Diagnose",
+    "productiveCallers": [
+      "Release-Audit-UI",
+      "App-Selbsttest",
+      "automatisierte Browsertests"
+    ],
+    "testCallers": [
+      "tests/ap10-orchestration.spec.js",
+      "tests/ap10-archive-year-quality-diagnostics.test.cjs"
+    ],
+    "dynamicCallers": [
+      "klassischer globaler Skriptkontext vor AP10"
+    ],
+    "inputs": "",
+    "returns": "strukturiertes Aktionsergebnis",
+    "readStateAreas": [
+      "isolierte Zustandskopie, Laufzeit-/DOM-Struktur lesend"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine",
+    "domainModules": [
+      "NKProQualityAssurance",
+      "NKProArchiveActions",
+      "NKProYearTransitionActions"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "keine Erzeugung oder Änderung",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/diagnostics.js",
+    "targetFunction": "releaseAuditReportText",
+    "targetLine": 569,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "appSelfTestReport",
+    "baselineFile": "js/app.js",
+    "baselineLine": 7490,
+    "category": "Diagnose",
+    "productiveCallers": [
+      "Release-Audit-UI",
+      "App-Selbsttest",
+      "automatisierte Browsertests"
+    ],
+    "testCallers": [
+      "tests/ap10-orchestration.spec.js",
+      "tests/ap10-archive-year-quality-diagnostics.test.cjs"
+    ],
+    "dynamicCallers": [
+      "klassischer globaler Skriptkontext vor AP10"
+    ],
+    "inputs": "",
+    "returns": "strukturiertes Aktionsergebnis",
+    "readStateAreas": [
+      "isolierte Zustandskopie, Laufzeit-/DOM-Struktur lesend"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "lesende DOM-Strukturprüfung",
+    "storageDependencies": "keine",
+    "domainModules": [
+      "NKProQualityAssurance",
+      "NKProArchiveActions",
+      "NKProYearTransitionActions"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "keine Erzeugung oder Änderung",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/diagnostics.js",
+    "targetFunction": "appSelfTestReport",
+    "targetLine": 580,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "appSelfTestSummary",
+    "baselineFile": "js/app.js",
+    "baselineLine": 7802,
+    "category": "Diagnose",
+    "productiveCallers": [
+      "Release-Audit-UI",
+      "App-Selbsttest",
+      "automatisierte Browsertests"
+    ],
+    "testCallers": [
+      "tests/ap10-orchestration.spec.js",
+      "tests/ap10-archive-year-quality-diagnostics.test.cjs"
+    ],
+    "dynamicCallers": [
+      "klassischer globaler Skriptkontext vor AP10"
+    ],
+    "inputs": "rows",
+    "returns": "strukturiertes Aktionsergebnis",
+    "readStateAreas": [
+      "isolierte Zustandskopie, Laufzeit-/DOM-Struktur lesend"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine",
+    "domainModules": [
+      "NKProQualityAssurance",
+      "NKProArchiveActions",
+      "NKProYearTransitionActions"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "keine Erzeugung oder Änderung",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/diagnostics.js",
+    "targetFunction": "appSelfTestSummary",
+    "targetLine": 891,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "stableStringify",
+    "baselineFile": "js/app.js",
+    "baselineLine": 7488,
+    "category": "Diagnose",
+    "productiveCallers": [
+      "js/diagnostics.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "value",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "isolierte Zustandskopie, Laufzeit-/DOM-Struktur lesend"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine",
+    "domainModules": [
+      "NKProQualityAssurance",
+      "NKProArchiveActions",
+      "NKProYearTransitionActions"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "keine Erzeugung oder Änderung",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/diagnostics.js",
+    "targetFunction": "stableStringify",
+    "targetLine": 43,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  },
+  {
+    "name": "formatDiagnosticBytes",
+    "baselineFile": "js/app.js",
+    "baselineLine": 4444,
+    "category": "Diagnose",
+    "productiveCallers": [
+      "js/diagnostics.js intern"
+    ],
+    "testCallers": [
+      "AP10-Modul-/Regressionstests"
+    ],
+    "dynamicCallers": [],
+    "inputs": "bytes",
+    "returns": "fachlicher Wert/strukturierte Prüfdaten",
+    "readStateAreas": [
+      "isolierte Zustandskopie, Laufzeit-/DOM-Struktur lesend"
+    ],
+    "writeStateAreas": [],
+    "domDependencies": "keine",
+    "storageDependencies": "keine",
+    "domainModules": [
+      "NKProQualityAssurance",
+      "NKProArchiveActions",
+      "NKProYearTransitionActions"
+    ],
+    "validation": "strukturiert lesend",
+    "rendering": "kein Rendering im Zielmodul",
+    "persistence": "keine",
+    "archiveSnapshotImpact": "keine Erzeugung oder Änderung",
+    "decision": "physisch extrahiert",
+    "targetModule": "js/diagnostics.js",
+    "targetFunction": "formatBytes",
+    "targetLine": 35,
+    "compatibilityNeed": "keine AP10-Weiterleitung; Aufrufer direkt umgestellt",
+    "physicalImplementationRemoved": true
+  }
+]

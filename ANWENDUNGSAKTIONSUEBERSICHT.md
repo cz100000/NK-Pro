@@ -1,3 +1,21 @@
+# NK-Pro – Anwendungsaktionsübersicht V99.4.11
+
+Neu registriert sind die Domänen `archive`, `yearTransition` und `quality`.
+
+| Domäne | Aktion | direktes Ziel |
+|---|---|---|
+| archive | `currentYear` | `NKProArchiveActions.archiveCurrent` |
+| archive | `reopenForRework` | `NKProArchiveActions.reopenForRework` |
+| archive | `deleteAt` | `NKProArchiveActions.deleteAt` |
+| archive | `importItems` | `NKProArchiveActions.importItems` |
+| yearTransition | `createBilling` | `NKProYearTransitionActions.createBilling` |
+| yearTransition | `prepareNextYear` | `NKProYearTransitionActions.prepareNextYear` |
+| quality | `inspect` | `NKProQualityAssurance.inspect` |
+| quality | `specialCases` | `NKProQualityAssurance.specialCases` |
+| quality | `finalBillingReadiness` | `NKProQualityAssurance.finalBillingReadiness` |
+
+`diagnostics` bleibt bewusst keine schreibende Anwendungsaktionsdomäne; die UI ruft die lesende Modul-API direkt auf.
+
 # NK-Pro – Anwendungsaktionsübersicht V99.4.10
 
 ## Aktionsregister

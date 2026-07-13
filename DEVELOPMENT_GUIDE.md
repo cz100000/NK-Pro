@@ -1,3 +1,8 @@
+<!-- AP10-CURRENT -->
+# Entwicklungshinweise V99.4.11
+
+Archiv- und Jahreswechselaktionen werden als DOM- und speicherfreie Transaktionen in den zuständigen AP10-Modulen umgesetzt und über `NKProApplicationActions` gebunden. Qualitäts- und Diagnoseprüfungen sind reine Leseoperationen auf isolierten Zustandskopien. Fachlogik, Persistenz, Rendering, Dialoge und Navigation dürfen nicht in Kompatibilitätsweiterleitungen oder Prüfmodule zurückwandern.
+
 <!-- AP9-CURRENT -->
 # Entwicklungshinweise V99.4.10
 
