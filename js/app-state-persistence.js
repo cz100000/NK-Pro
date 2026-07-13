@@ -374,11 +374,14 @@ function restorePreMigrationBackup() {
     const checkpoint = createRestoreCheckpoint("Checkpoint vor Wiederherstellung von " + result.envelope.metadata.backupId);
     const restoredRaw = NK_PRO_MODULES.backupRecovery.restoreBackupEnvelope(result.envelope, backupRecoveryModuleOptions({ validateData:(data) => validateMigrationData(data, { phase:"beforeMigration" }) }));
     replaceApplicationState(normalizeLoadedData(restoredRaw));
+    if (typeof resetTransientUiState === "function") resetTransientUiState({ resetPageState:true });
+    billingContextOpen = false;
     if (!state.meta) state.meta = {};
     state.meta.restoreCheckpointCreatedAt = checkpoint.metadata.createdAt;
     state.meta.restoreCheckpointBackupId = checkpoint.metadata.backupId;
     const saved = withFinalizationWriteBypass(() => saveData());
     renderAll();
+    switchToTab("landing");
     alert(saved ? "Vor-Migrationssicherung wurde validiert, auf den aktuellen Stand migriert und wiederhergestellt." : "Daten wurden wiederhergestellt, konnten aber nicht dauerhaft gespeichert werden.");
   } catch (error) {
     alert("Restore fehlgeschlagen. Der aktuelle Arbeitsstand blieb erhalten.\n\n" + errorMessage(error));
@@ -395,8 +398,11 @@ function rollbackLastRestore() {
   try {
     const restored = NK_PRO_MODULES.backupRecovery.restoreBackupEnvelope(result.envelope, backupRecoveryModuleOptions({ validateData:(data) => validateMigrationData(data, { phase:"restoreCurrent" }) }));
     replaceApplicationState(normalizeLoadedData(restored));
+    if (typeof resetTransientUiState === "function") resetTransientUiState({ resetPageState:true });
+    billingContextOpen = false;
     const saved = withFinalizationWriteBypass(() => saveData());
     renderAll();
+    switchToTab("landing");
     alert(saved ? "Der letzte Restore wurde zurückgenommen." : "Rollback wurde geladen, konnte aber nicht dauerhaft gespeichert werden.");
   } catch (error) {
     alert("Rollback fehlgeschlagen. Der aktuelle Arbeitsstand blieb erhalten.\n\n" + errorMessage(error));

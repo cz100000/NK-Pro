@@ -21,9 +21,10 @@ module.exports = defineConfig({
   outputDir: "./test-results/artifacts",
   timeout: 45_000,
   expect: { timeout: 8_000 },
-  fullyParallel: true,
-  workers: 4,
+  fullyParallel: false,
+  workers: 1,
   retries: 0,
+  forbidOnly: true,
   reporter: [
     ["list"],
     ["json", { outputFile: "test-results/playwright-results.json" }],
@@ -43,7 +44,8 @@ module.exports = defineConfig({
     { name:"ap11-navigation", testMatch:"ap11-navigation.spec.js" },
     { name:"ap12-orchestration", testMatch:"ap12-orchestration.spec.js" },
     { name:"ap13-letter-layout", testMatch:"ap13-letter-layout.spec.js" },
-    { name:"ap14-ui-navigation", testMatch:"ap14-ui-navigation.spec.js" }
+    { name:"ap14-ui-navigation", testMatch:"ap14-ui-navigation.spec.js" },
+    { name:"ap15-integration-release", testMatch:"ap15-integration-release.spec.js" }
   ],
   use: {
     baseURL: "http://127.0.0.1:4173",

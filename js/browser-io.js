@@ -103,7 +103,10 @@ function resetData() {
     notifyStorageProblem("Der lokale Speicher konnte beim Zurücksetzen nicht geleert werden.", e);
   }
   replaceApplicationState(normalizeLegacyData(clone(SEED)));
+  if (typeof resetTransientUiState === "function") resetTransientUiState({ resetPageState:true });
+  billingContextOpen = false;
   commitStateChange({ reason:"Benutzereingabe" });
+  switchToTab("landing");
 }
 
 async function importJsonFile(ev) {
@@ -145,7 +148,10 @@ async function importJsonFile(ev) {
     ensurePreMigrationBackup(parsed, { reason:"Migration eines importierten JSON-Datenstands", sourceStorageKey:file.name || "external-json" });
     if (importedBackupEnvelope) createRestoreCheckpoint("Checkpoint vor Restore aus externer Sicherung " + importedBackupEnvelope.metadata.backupId);
     replaceApplicationState(nextState);
+    if (typeof resetTransientUiState === "function") resetTransientUiState({ resetPageState:true });
+    billingContextOpen = false;
     const saved = commitStateChange({ reason:importedBackupEnvelope ? "Restore aus externer Sicherung" : "Benutzereingabe" });
+    switchToTab("landing");
     alert(saved
       ? (importedBackupEnvelope ? "Sicherung wurde validiert, auf den aktuellen Stand migriert und wiederhergestellt." : "Daten wurden importiert und gespeichert.")
       : "Daten wurden geladen, konnten aber nicht im Browser-Speicher gespeichert werden. Bitte sofort eine JSON-Sicherung herunterladen.");

@@ -1,19 +1,15 @@
-# NK-Pro – UI-Architektur V99.4.17
+# NK-Pro – UI-Architektur V99.4.18
 
-```text
-DOM-Ereignis → NKProUiEvents → NKProUiController → NKProUiBindings
-             → Anwendungsaktion/Fachdienst → Commit → Renderer
-```
+## Verbindliches visuelles System
 
-13 Controller, 99 Aktionskennungen und fünf Ereignistypen bleiben verbindlich. `app.js` registriert Controller und Ereignisdelegation jeweils einmal, enthält aber keine UI-Implementierung. Alle 46 Renderer bleiben schreib-, persistenz-, navigations- und dialognebenwirkungsfrei.
+Die normale Anwendungsoberfläche verwendet zentral `"Segoe UI", Arial, sans-serif`. Navigation, Kopfbereich, Hauptarbeitsfläche, Karten, Tabellen, Filter, Buttons und Statusfarben folgen weiterhin dem AP14-System. Briefvorschau, Druck und Dokumentausgabe sind davon isoliert und verwenden Arial.
 
-## AP14-UI-System
+## Navigation und Kontext
 
-- App-Schrift: `"Segoe UI", Arial, sans-serif`.
-- Technische Protokolle: Monospace.
-- Briefvorschau, Druck und PDF: isoliertes AP13-Dokumentmodell mit Arial.
-- Zentrale Farbtokens: dunkles Navigationsblau, heller Arbeitsbereich, blaue Aktion/Fokusfarbe, ruhige Grau-/Blautöne für Flächen und Rahmen.
-- Semantische Erfolgs-, Warn- und Fehlerfarben bleiben eigenständig.
-- Der bestehende Kopfbereich enthält Hilfe und Menü; es gibt keine neue Hauptbereich-Tab-Leiste.
+Startseiten-Kacheln und linke Navigation öffnen dieselben fachlichen Ziele. `Projekt vorbereiten → Zähler` bleibt der statische DUMMY; `Nebenkosten abrechnen → Verbräuche erfassen` bleibt produktiv.
 
-Die Hauptnavigation besitzt weiterhin vier Gruppen und nun 17 fachliche Ziele. `wasser` gehört ausschließlich zum objektbezogenen Zählerinventar-DUMMY. `verbraeuche` gehört ausschließlich zum Abrechnungsworkflow und rendert die bestehende Verbrauchserfassung. Beide Ziele teilen keine produktive Seitenstruktur und keine Speicherung.
+AP15 ergänzt eine zentrale Bereinigung rein transienter UI-Zustände an Kontextgrenzen. Geschlossen werden Dialoge, Kopfmenüs und nichtfachliche Kosten-Auswahlzustände. Persistierte Fach- und Abrechnungsdaten bleiben unverändert.
+
+## Responsivität
+
+Die bestehende AP14-Struktur für normale, schmale und niedrige Fenster bleibt unverändert. AP15 führt keine Hauptbereich-Tabs, keine neue Navigation und kein neues allgemeines UI-Konzept ein.

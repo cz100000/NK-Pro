@@ -1,0 +1,28 @@
+{
+  "version": "1",
+  "release": "99.4.18",
+  "required": [
+    "productive HTML, CSS and JavaScript",
+    "used images, icons and PWA resources",
+    "migration, import, export and restore logic",
+    "current tests and test configuration",
+    "current release, architecture and hand-off documentation",
+    "package.json and package-lock.json"
+  ],
+  "excluded": [
+    "node_modules",
+    "embedded release archives",
+    "browser profiles and caches",
+    "generated test reports",
+    "historical screenshots and control outputs",
+    "obsolete work orders and hand-off copies",
+    "temporary, backup and log files"
+  ],
+  "retainedExceptions": [
+    {
+      "path": "AP9_BASELINE_INVENTORY.json",
+      "reason": "Direct current-test dependency of tests/ap9-core-orchestration.test.cjs."
+    }
+  ],
+  "automaticDeletion": false
+}

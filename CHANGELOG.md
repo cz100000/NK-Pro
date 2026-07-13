@@ -1,5 +1,15 @@
 # Änderungsprotokoll
 
+## V99.4.18 – AP15-Gesamtintegration, Releasehärtung und schlanke Arbeitsbasis (13.07.2026)
+
+- Gesamtbedienfluss, Navigation, Persistenz, Migration, Archiv, Sicherung, Restore und Ausgabe regressionsgeprüft.
+- Transiente Dialog-, Kopfmenü- und Kosten-Auswahlzustände an Kontextgrenzen zentral bereinigt.
+- Import, Restore und Rollback auf einen sauberen Startzustand vereinheitlicht.
+- Service Worker auf NK-Pro-begrenzte Cachepflege, Same-Origin-GET und erfolgreiche Antworten gehärtet.
+- Seriellen reproduzierbaren Browser-Freigabepfad und AP15-Gesamtintegrationstests ergänzt.
+- Arbeits-ZIP nach Referenzprüfung um historische und generierte Artefakte entschlackt.
+- Version, Manifest, Cache, Paketmetadaten und Dokumentation auf V99.4.18 vereinheitlicht.
+
 ## V99.4.17 – AP14-Navigationsbereinigung und visuelles UI-System (13.07.2026)
 
 - normale App-Oberfläche zentral auf `"Segoe UI", Arial, sans-serif` und ein konsistentes Blau-/Grausystem umgestellt; Brief/Druck/PDF bleiben Arial-isoliert,

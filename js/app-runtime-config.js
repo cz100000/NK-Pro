@@ -45,8 +45,8 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.17";
-const APP_VERSION_NAME = "AP14-Navigationsbereinigung und visuelles UI-System";
+const APP_VERSION = "V99.4.18";
+const APP_VERSION_NAME = "AP15-Gesamtintegration, Releasehärtung und schlanke Arbeitsbasis";
 const APP_RELEASE_DATE = "2026-07-13";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
@@ -112,6 +112,8 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
+  "V99.4.18 härtet den vollständigen Bedien-, Speicher-, Restore- und Offlineablauf, bereinigt transiente UI-Zustände bei Kontextwechseln und definiert eine reproduzierbare schlanke Releasebasis.",
+  "Der Service Worker entfernt ausschließlich veraltete NK-Pro-Caches, speichert nur erfolgreiche Same-Origin-Antworten und liefert die App-Shell im Offlinebetrieb ressourcengerecht aus.",
   "V99.4.17 setzt AP14 mit Segoe UI, einem appweiten Blau-/Grausystem, modernisiertem Kopfbereich sowie der fachlichen Trennung von Zählerinventar und Verbrauchserfassung um.",
   "Projekt vorbereiten → Zähler ist ein klar gekennzeichneter, nicht persistenter Clickdummy; die produktive Erfassung liegt vollständig unter Nebenkosten abrechnen → Verbräuche erfassen.",
   "V99.4.17 beachtet den Schalter für die Vorauszahlungsanpassung verbindlich und kennzeichnet zweiseitige Briefe auf Seite 1 mit einem Fortsetzungshinweis.",

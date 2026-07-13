@@ -1,4 +1,4 @@
-# NK-Pro – Abhängigkeitsübersicht V99.4.17
+# NK-Pro – Abhängigkeitsübersicht V99.4.18
 
 AP14 ergänzt keine externe Laufzeitabhängigkeit. Icons bleiben lokales SVG-Markup, die Schriftfamilien sind Systemschriften und der Zähler-DUMMY nutzt vorhandene Tabellenwerkzeuge.
 

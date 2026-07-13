@@ -1,4 +1,4 @@
-# NK-Pro – Verantwortlichkeitsmatrix V99.4.17
+# NK-Pro – Verantwortlichkeitsmatrix V99.4.18
 
 | Verantwortung | Eigentümer | Nicht zuständig |
 |---|---|---|

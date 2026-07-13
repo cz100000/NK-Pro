@@ -174,7 +174,20 @@ function initializeNavigationMode() {
   else switchToTab("landing");
 }
 
+function resetTransientUiState(options = {}) {
+  if (typeof closeCreateBillingModal === "function") closeCreateBillingModal();
+  if (typeof closeDeleteBillingModal === "function") closeDeleteBillingModal();
+  if (typeof closeCostSelectionDialog === "function") closeCostSelectionDialog();
+  if (typeof closeCostPriceEditor === "function") closeCostPriceEditor();
+  document.querySelectorAll(".workspace-header-panel").forEach(panel => { panel.hidden = true; });
+  document.querySelectorAll("[data-header-panel-target]").forEach(trigger => trigger.setAttribute("aria-expanded", "false"));
+  document.body.classList.remove("cost-dialog-open", "sidebar-open");
+  if (options.resetPageState && typeof resetCostUiState === "function") resetCostUiState();
+}
+
 function switchToTab(tabId) {
+  const contextBoundary = ["landing", "start", "archiv"].includes(tabId);
+  resetTransientUiState({ resetPageState:contextBoundary });
   setTimeout(() => { const target=document.getElementById(tabId); closeAllTabAccordions(target); }, 0);
   const previousTab = document.querySelector('.tab.active');
   if (previousTab) closeAllTabAccordions(previousTab);

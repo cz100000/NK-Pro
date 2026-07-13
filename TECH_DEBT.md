@@ -1,4 +1,4 @@
-# NK-Pro – Technische Restpunkte V99.4.17
+# NK-Pro – Technische Restpunkte V99.4.18
 
 ## In AP14 bewusst verbleibend
 

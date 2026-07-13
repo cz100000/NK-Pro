@@ -1,24 +1,15 @@
-# NK-Pro – Anwendungsstart V99.4.17
+# NK-Pro – Anwendungsstart V99.4.18
 
-AP14 verändert die deterministische Startreihenfolge nicht. Die Kopfbereichssteuerung wird zusammen mit der vorhandenen Navigation initialisiert; es gibt keinen zusätzlichen Startpfad und keine neue Abhängigkeit.
+Die Anwendung startet weiterhin deterministisch aus `index.html`. Alle produktiven Skripte werden mit `defer` in dokumentierter Reihenfolge geladen; `js/app.js` bleibt der schlanke Orchestrierungseinstieg und `js/service-worker-register.js` registriert abschließend die PWA.
 
-| Nr. | Startschritt |
-|---|---|
-| 1 | Kernmodule konfigurieren |
-| 2 | Arbeitszustand laden |
-| 3 | Zustandszugriff konfigurieren |
-| 4 | Anwendungsaktionen konfigurieren |
-| 5 | Navigation konfigurieren |
-| 6 | UI-Controller registrieren |
-| 7 | UI-Ereignisse registrieren |
-| 8 | Kompatibilität registrieren |
-| 9 | Arbeitsstand vorbereiten |
-| 10 | Erste Darstellung |
-| 11 | Navigation einschließlich Hilfe/Menü initialisieren |
-| 12 | Arbeitsbereiche schließen |
-| 13 | Seitenköpfe aktualisieren |
-| 14 | Übersichtskarten aktualisieren |
-| 15 | Strukturprüfung |
-| 16 | UI-Architekturprüfung |
+AP15 fügt keinen zweiten Startpfad und keine externe Produktionsabhängigkeit hinzu. Der initiale Seitenzustand ist die Arbeitsweiche. Import, Restore und Rollback kehren nach erfolgreichem Abschluss ebenfalls in einen bereinigten Startzustand zurück.
 
-`app-bootstrap.js` protokolliert die Schritte und verhindert Doppelstarts. Der Zustand wird vor zustandsabhängigen Modulen kontrolliert erzeugt. `app.js` bildet nur die letzte Startfehlergrenze.
+Für eine reproduzierbare lokale Prüfung:
+
+```bash
+npm ci
+npx playwright install chromium
+npm run release:check
+```
+
+Die Prüfung ist aus einer frisch entpackten Arbeits-ZIP ohne mitgeliefertes `node_modules` ausführbar.

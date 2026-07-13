@@ -19,7 +19,7 @@ test("Start, Version, Seitenstruktur und interne Audits sind fehlerfrei", async 
   const runtime = attachRuntimeGuards(page);
   await openFreshApp(page);
 
-  await expect(page).toHaveTitle("NK-Pro V99.4.17 – AP14-Navigationsbereinigung und visuelles UI-System");
+  await expect(page).toHaveTitle("NK-Pro V99.4.18 – AP15-Gesamtintegration, Releasehärtung und schlanke Arbeitsbasis");
   const result = await page.evaluate(() => {
     const release = window.NKProDiagnostics.releaseAuditReport();
     const selfReport = window.NKProDiagnostics.appSelfTestReport();
@@ -43,8 +43,8 @@ test("Start, Version, Seitenstruktur und interne Audits sind fehlerfrei", async 
     };
   });
 
-  expect(result.version).toBe("V99.4.17");
-  expect(result.versionName).toBe("AP14-Navigationsbereinigung und visuelles UI-System");
+  expect(result.version).toBe("V99.4.18");
+  expect(result.versionName).toBe("AP15-Gesamtintegration, Releasehärtung und schlanke Arbeitsbasis");
   expect(result.schema).toBe(5);
   expect(result.activeTab).toBe("landing");
   expect(result.structure.allPassed).toBe(true);
@@ -185,14 +185,14 @@ test("Archiv ist eigenständig erreichbar und öffnet die Nur-Ansicht", async ({
 test("Manifest und PWA-Version stimmen mit der Anwendung überein", async () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(root, "manifest.webmanifest"), "utf8"));
   const worker = fs.readFileSync(path.join(root, "service-worker.js"), "utf8");
-  expect(manifest.version).toBe("99.4.17");
-  expect(manifest.name).toContain("V99.4.17");
-  expect(worker).toContain('const CACHE_NAME = "nk-pro-v99-4-17-ap14";');
+  expect(manifest.version).toBe("99.4.18");
+  expect(manifest.name).toContain("V99.4.18");
+  expect(worker).toContain('const CACHE_NAME = "nk-pro-v99-4-18-ap15";');
   expect(worker).toContain('"./index.html"');
   expect(worker).toContain('"./manifest.webmanifest"');
 });
 
-test("V99.4.17 lädt produktive Styles und Skripte ausschließlich aus separaten Dateien", async ({ page, request }) => {
+test("V99.4.18 lädt produktive Styles und Skripte ausschließlich aus separaten Dateien", async ({ page, request }) => {
   const response = await request.get("/index.html");
   expect(response.ok()).toBeTruthy();
   const html = await response.text();

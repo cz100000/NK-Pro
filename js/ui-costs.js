@@ -158,6 +158,16 @@ function closeCostSelectionDialog() {
   document.body.classList.remove("cost-dialog-open");
 }
 
+function resetCostUiState() {
+  costPageSize = 25;
+  costShowAllRows = false;
+  selectedCostRows = new Set();
+  const search = document.getElementById("costSelectionSearch");
+  if (search) search.value = "";
+  closeCostSelectionDialog();
+  updateCostSelectionUi();
+}
+
 function activateCostFromDialog(index) {
   const cost = state.kostenarten[index];
   if (!cost || cost.inNK === "Ja") return;

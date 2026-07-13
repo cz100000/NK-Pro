@@ -1,11 +1,11 @@
 {
-  "appVersion": "99.4.17",
-  "displayVersion": "V99.4.17",
-  "versionName": "AP14-Navigationsbereinigung und visuelles UI-System",
+  "appVersion": "99.4.18",
+  "displayVersion": "V99.4.18",
+  "versionName": "AP15-Gesamtintegration, Releasehärtung und schlanke Arbeitsbasis",
   "schemaVersion": 5,
   "dataLayerContractVersion": 1,
   "snapshotScope": "billingSnapshot",
-  "basedOn": "99.4.17-AP13",
+  "basedOn": "99.4.17-AP14",
   "releaseDate": "2026-07-13",
   "runtime": [
     "HTML",
@@ -33,5 +33,8 @@
   "documentLayoutVersion": 4,
   "uiVisualSystemVersion": 1,
   "meterInventoryDummyVersion": 1,
-  "pwaCacheName": "nk-pro-v99-4-17-ap14"
+  "pwaCacheName": "nk-pro-v99-4-18-ap15",
+  "releaseHardeningVersion": 1,
+  "releaseContentPolicyVersion": 1,
+  "transientUiResetVersion": 1
 }

@@ -1,33 +1,37 @@
-# NK-Pro – Teststrategie V99.4.17
+# NK-Pro – Teststrategie V99.4.18
 
-## Standardlauf
+## Reproduzierbarer Freigabepfad
 
 ```bash
 npm ci
-npm run test:syntax
-npm run test:fixtures
-npm run test:metering
-npm run test:architecture
-npm run test:release
-CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:browser -- --workers=4
+npx playwright install chromium
+npm run release:check
 ```
 
-## AP14
+Die Browserprojekte laufen bewusst seriell (`workers: 1`, `fullyParallel: false`). Dadurch bleiben Migration-, Restore-, Service-Worker- und Gesamtabläufe auch in ressourcenbegrenzten Umgebungen reproduzierbar.
+
+## Prüfebenen
+
+- JavaScript-Syntax und statische Vertragsprüfungen
+- Fixture-, Daten-, Migrations-, Persistenz-, Archiv-, Sicherungs- und Restoreprüfungen
+- Fachtests der Verbrauchs- und Zählerdomäne
+- Architektur- und Zustandszugriffsprüfungen
+- AP13-Brief-/Druckregression
+- AP14-Navigation, Typografie und Responsivität
+- AP15-Gesamtintegration und transiente Zustandsbereinigung
+- Service-Worker-, Cache- und Offlineprüfungen
+- Releasekonsistenz, SHA-256-Dateiinventar und ZIP-Inhaltsprüfung
+
+## AP15-spezifische Tests
+
+`tests/ap15-integration-release.test.cjs` prüft Version, Härtungsmarker, Dokumentation, Inhaltskontrolle und seriellen Testpfad. `tests/ap15-integration-release.spec.js` prüft den Bedienfluss, Kontextwechsel, sämtliche produktiven Abrechnungsschritte, Jahreswechsel, Zähler-DUMMY und produktive Verbrauchserfassung. `tests/service-worker.spec.js` prüft Cachegrenzen, Installation, Aktivierung, Online- und Offlineverhalten.
+
+Maschinenlesbare Ergebnisse stehen in `AP15_TEST_RESULTS.json`; Einzelheiten in `AP15_PRUEFBERICHT.md`.
+
+Alternativ kann ein bereits installierter Chromium-Browser ohne lokalen Pfad im Projekt über die Laufzeitvariable eingebunden werden:
 
 ```bash
-CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:ap14
+CHROMIUM_EXECUTABLE_PATH=<Pfad-zum-Chromium> npm run release:check
 ```
 
-AP14 prüft statisch und im Browser:
-
-- 17 fachliche Navigationsziele und die neue Reihenfolge,
-- zustandsneutralen Zählerinventar-DUMMY,
-- vollständige produktive Verbrauchserfassung unter `verbraeuche`,
-- korrekte aktive Navigationszustände,
-- identische Startseiten- und Navigationsicons,
-- Segoe-UI-Appschrift und unveränderte Arial-Briefdarstellung,
-- Hilfe-/Menüfunktionen im bestehenden Kopfbereich,
-- keine zusätzliche Hauptbereich-Tab-Leiste,
-- kleinere Fenstergrößen, PWA-App-Shell und fehlerfreie Browserkonsole.
-
-AP13-Dokumenttests bleiben Bestandteil des vollständigen Testlaufs. Maschinenlesbare Ergebnisse: `AP14_TEST_RESULTS.json`. Ausführlicher Bericht: `AP14_PRUEFBERICHT.md`.
+Der optionale reale Loopback-PWA-Test wird mit `NKPRO_RUN_REAL_PWA_TEST=1` aktiviert. Die reguläre Freigabe prüft die Service-Worker-Ereignisse, Cachegrenzen und Offlineantworten deterministisch ohne diese Umgebungsabhängigkeit.

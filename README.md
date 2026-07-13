@@ -1,51 +1,56 @@
-# NK-Pro V99.4.17 – Navigationsbereinigung und visuelles UI-System
+# NK-Pro V99.4.18 – Gesamtintegration, Releasehärtung und schlanke Arbeitsbasis
 
-NK-Pro ist eine lokale, frameworkfreie HTML/CSS/JavaScript-PWA zur Erstellung, Prüfung, Archivierung und Ausgabe von Nebenkostenabrechnungen. AP14 vereinheitlicht die normale Anwendungsoberfläche, trennt Zählerinventar und Verbrauchserfassung fachlich und erhält das AP13-Brief- und Drucksystem unverändert.
+NK-Pro ist eine lokale, frameworkfreie HTML/CSS/JavaScript-PWA zur Erstellung, Prüfung, Archivierung und Ausgabe von Nebenkostenabrechnungen. AP15 prüft den bestehenden Gesamtprozess, behebt Integrations- und Zustandsreste, härtet PWA- und Offlineverhalten und definiert eine bereinigte Arbeits-ZIP. Es werden keine neuen größeren Fachfunktionen eingeführt.
 
 ## Verbindlicher Stand
 
-| Merkmal | Stand |
+| Merkmal | Wert |
 |---|---|
-| App-Version | V99.4.17 |
-| Technische Grundlage | Abschlussstand AP13, ebenfalls V99.4.17 |
-| Versionsname | AP14-Navigationsbereinigung und visuelles UI-System |
-| Datenschema / Datenebenenvertrag | 5 / 1, unverändert |
-| Objektstandard / Abrechnungssnapshot | 1 / 2, unverändert |
-| Zählerstandards | 1, unverändert |
-| Navigation | vier Gruppen, 17 fachliche Ziele und eigener Start-Link |
-| App-Typografie | `"Segoe UI", Arial, sans-serif` |
-| Brief-/Drucktypografie | Arial; vom App-System getrennt |
-| PWA-Cache | `nk-pro-v99-4-17-ap14` |
-| Technik | statisches HTML, CSS und JavaScript; kein Framework, TypeScript oder Buildsystem |
+| App-Version | V99.4.18 |
+| Basis | Abschlussstand AP14 V99.4.17 |
+| Versionsname | AP15-Gesamtintegration, Releasehärtung und schlanke Arbeitsbasis |
+| Datenschema | 5 |
+| Datenebenenvertrag | 1 |
+| Abrechnungssnapshot | 2 |
+| Dokumentlayout | 4 |
+| UI-System | 1 |
+| PWA-Cache | `nk-pro-v99-4-18-ap15` |
 
-## AP14-Kernergebnis
+## AP15-Kernergebnis
 
-- dunkle Navigation, heller Arbeitsbereich und Blau als appweite Akzentfarbe,
-- einheitliche Buttons, Links, Felder, Fokuszustände, Karten, Tabellen und Filterflächen,
-- bestehender Kopfbereich mit sichtbaren Funktionen **Hilfe** und **Menü** samt lokalen SVG-Icons,
-- `Projekt vorbereiten → Zähler` als deutlich gekennzeichneter, rein statischer Zählerinventar-DUMMY,
-- vollständige bisherige Verbrauchserfassung unter `Nebenkosten abrechnen → Verbräuche erfassen`, direkt nach `Manuelle & externe Werte`,
-- identische SVG-Motive für Startseitenkacheln und korrespondierende Navigationsgruppen,
-- keine neuen Hauptbereich-Tabs, keine neue Persistenz und keine Änderung an Brief, Druck oder PDF.
+- Der Bedienfluss von Startseite, Objektvorbereitung, Abrechnungsübersicht und produktiven Abrechnungsschritten ist integriert geprüft.
+- Kontextwechsel schließen offene Dialoge, Kopfmenüs und nichtfachliche Kosten-Auswahlzustände zentral.
+- Import, Restore und Rollback kehren in einen bereinigten Startzustand zurück.
+- Der Service Worker begrenzt Cachebereinigung auf NK-Pro-Caches, cached nur erfolgreiche Same-Origin-Antworten und besitzt einen belastbaren Offline-Navigationsfallback.
+- Die Browser-Freigabeprüfung läuft seriell und dadurch aus einer frisch entpackten ZIP reproduzierbar.
+- Historische Berichte, Kontrollausgaben, Screenshots und Übergabeartefakte wurden nach Referenzprüfung aus der Arbeitsbasis entfernt.
+- Der statische Zählerbereich bleibt DUMMY; die Verbrauchserfassung bleibt produktiv.
+- Das AP13-Brief-/Druckmodell und das AP14-UI-System bleiben fachlich und gestalterisch unverändert.
 
-## Start und Tests
+## Start
 
-`index.html` in Chromium öffnen. PWA-Installation und Service Worker benötigen HTTPS oder einen lokalen Webserver.
+Die Anwendung kann über einen lokalen statischen Webserver gestartet werden. Für Entwicklung und Tests:
 
 ```bash
 npm ci
-npm run test:syntax
-npm run test:fixtures
-npm run test:metering
-npm run test:architecture
-npm run test:release
-CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:browser -- --workers=4
+npx playwright install chromium
+npm test
 ```
 
-AP14 gezielt prüfen:
+Die vollständige Freigabeprüfung einschließlich ZIP-Inhaltskontrolle:
 
 ```bash
-CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:ap14
+npm run release:check
 ```
 
-Technische Details: `AP14_NAVIGATIONSBEREINIGUNG_UND_VISUELLES_UI_SYSTEM.md`. Prüfergebnisse: `AP14_PRUEFBERICHT.md` und `AP14_TEST_RESULTS.json`.
+`node_modules`, Testreports und Browserprofile gehören nicht in die Arbeits-ZIP.
+
+## Verbindliche Dokumente
+
+- `AP15_GESAMTINTEGRATION_RELEASEHAERTUNG_UND_SCHLANKE_ARBEITSBASIS.md`
+- `AP15_PRUEFBERICHT.md`
+- `AP15_TEST_RESULTS.json`
+- `AP15_ZIP_INHALTSPRUEFUNG.md`
+- `AP15_UEBERGABEREGEL.md`
+- `NK-PRO-PROJEKTSTAND.md`
+- `TESTING.md`

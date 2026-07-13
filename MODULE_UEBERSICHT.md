@@ -1,16 +1,15 @@
-# NK-Pro – Modulübersicht V99.4.17
+# NK-Pro – Modulübersicht V99.4.18
 
-| Modulgruppe | Dateien / Verantwortung |
-|---|---|
-| Start/Orchestrierung | `app.js`, `app-bootstrap.js`, `app-runtime-config.js`: Start, Verdrahtung und Moduslisten. |
-| Zustand/Persistenz | `state-access.js`, `app-state-persistence.js`, `persistence.js`, `migration.js`, `backup-recovery.js`. |
-| UI-Infrastruktur | `ui-events.js`, `ui-controller.js`, `ui-bindings.js`, `navigation.js`, `modal-events.js`, `ui-preferences.js`. |
-| Seitensteuerung | `ui-navigation-pages.js`, `ui-page-controller.js`: Start-/Abrechnungsmodus, Seitenziele und Übersichtskarten. |
-| Verbrauchsdarstellung | `ui-metering.js`: bestehende produktive Verbrauchserfassung unter `verbraeuche`. |
-| Zählerinventar-DUMMY | statisches Markup in `index.html`, ausschließlich Ansicht und Tabellenfilter. |
-| Dokumente | `document-data.js`, `document-renderer.js`, `ui-documents.js`: unverändertes AP13-Briefmodell. |
-| Export/Browser-I/O | `export-service.js`, `browser-io.js`. |
-| Laufzeitdiagnose | `runtime-diagnostics.js`. |
-| PWA | `service-worker.js`: App-Shell und Offlinecache `nk-pro-v99-4-17-ap14`. |
+Die modulare Struktur aus AP6 bis AP12 bleibt verbindlich. AP13 stellt das gemeinsame Brief-/Druckmodell bereit, AP14 das visuelle UI-System. AP15 ergänzt keine neue Fachschicht.
 
-AP14 ergänzt kein Fachmodul und keine Abhängigkeit. Die AP12-Modulgrenzen und das AP13-Dokumentmodell bleiben verbindlich.
+## AP15-relevante Verantwortlichkeiten
+
+- `js/ui-navigation-pages.js`: Navigation, Seitenkontext und zentraler Reset transienter UI-Zustände
+- `js/ui-costs.js`: ausschließlich kostenbezogene UI-Auswahl-, Such-, Paging- und Dialogzustände
+- `js/browser-io.js`: Import/Export sowie dokumentbezogene Browserausgabe
+- `js/app-state-persistence.js`: Sicherung, Restore, Rollback und Recovery-Orchestrierung
+- `service-worker.js`: App-Shell, Offline-Navigation und versionsgebundene NK-Pro-Cachepflege
+- `tools/check-release-contents.cjs`: kontrollierbare Inhaltsprüfung ohne automatische Löschung
+- `tools/check-release-consistency.cjs`: Versions-, Ressourcen-, Architektur-, Dokumentations- und Prüfsummenfreigabe
+
+Produktive Modulgrenzen, Datenverträge und globale Kompatibilitätsoberflächen werden durch AP15 nicht erweitert.

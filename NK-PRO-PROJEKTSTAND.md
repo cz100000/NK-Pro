@@ -1,15 +1,28 @@
-# NK-Pro – Projektstand V99.4.17
+# NK-Pro – Projektstand V99.4.18
 
-**Versionsname:** AP14-Navigationsbereinigung und visuelles UI-System  
-**Basis:** Abschlussstand AP13 V99.4.17  
-**Datum:** 13. Juli 2026
+**Versionsname:** AP15-Gesamtintegration, Releasehärtung und schlanke Arbeitsbasis  
+**Basis:** vollständiger Abschlussstand AP14 V99.4.17  
+**Abschlussbezeichnung:** Änderungen umgesetzt – NK-Pro V99.4.18
 
-AP14 ist umgesetzt. Die normale Anwendungsoberfläche verwendet zentral `"Segoe UI", Arial, sans-serif`, das dunkle Navigationssystem bleibt visueller Anker und der helle Arbeitsbereich nutzt ein konsistentes Blau-/Grausystem. Briefvorschau, Druck und PDF bleiben vollständig im AP13-Dokumentmodell und weiterhin in Arial.
+## Verbindlicher technischer Stand
 
-Die Navigation enthält nun 17 fachliche Ziele. `Projekt vorbereiten → Zähler` ist ein reiner, deutlich gekennzeichneter Zählerinventar-Clickdummy mit statischen Kacheln und Tabellenwerten. Die bestehende produktive Verbrauchserfassung wurde ohne Funktions- oder Datenverlust nach `Nebenkosten abrechnen → Verbräuche erfassen` verschoben und direkt unter `Manuelle & externe Werte` eingeordnet.
+- Statische lokale Browseranwendung und PWA aus HTML, CSS und JavaScript
+- kein React, kein TypeScript, kein Buildsystem
+- Datenschema 5 und Datenebenenvertrag 1 unverändert
+- Objektstandard 1, Abrechnungssnapshot 2 und Dokumentlayout 4 unverändert
+- normales UI mit `"Segoe UI", Arial, sans-serif`
+- Briefvorschau, Druck und Dokumentausgabe weiterhin in Arial
+- PWA-Cache `nk-pro-v99-4-18-ap15`
 
-Der bestehende Kopfbereich besitzt rechts die Funktionen Hilfe und Menü mit lokalen SVG-Icons und Textbezeichnungen. Die beiden Startseitenkacheln verwenden exakt die SVG-Motive der zugehörigen Navigationsgruppen. Es wurden keine neuen Hauptbereich-Reiter, keine Zählerpersistenz, keine neuen Verbrauchsberechnungen und keine externen Abhängigkeiten eingeführt.
+## AP15-Abschluss
 
-Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Abrechnungssnapshot 2, Zählerstandards 1 und Dokumentlayoutversion 4 bleiben unverändert.
+Der reale Bedien- und Abrechnungsablauf wurde zusammenhängend geprüft. Verbliebene transiente Dialog-, Kopfmenü- und Kosten-Auswahlzustände werden an Kontextgrenzen zentral bereinigt. Import, Restore und Rollback führen in einen klaren Startzustand zurück. Der Service Worker löscht nur alte NK-Pro-Caches, beschränkt Laufzeitcaching auf erfolgreiche Same-Origin-Antworten und liefert Navigation offline aus dem App-Shell-Cache.
 
-**Bekannte Einschränkung:** Das Zählerinventar ist absichtlich nur ein statischer DUMMY. Reale Geräte- und Druckertests bleiben außerhalb der automatisierten Browserprüfung.
+Die Arbeitsbasis wurde nach Referenz- und Nutzungsprüfung entschlackt. Produktiver Code, Ressourcen, Datenverträge, Migrationen, Import/Export, Restore, aktuelle Tests und verbindliche Dokumentation bleiben enthalten. Historische Nachweise und generierte Kontrollartefakte gehören nicht mehr in die technische Arbeits-ZIP.
+
+## Fachliche Abgrenzung
+
+- `Projekt vorbereiten → Zähler` bleibt ausschließlich ein statischer DUMMY.
+- `Nebenkosten abrechnen → Verbräuche erfassen` bleibt die produktive Erfassung.
+- AP15 führt keine neue Zählerverwaltung, Berechnungsart oder Hauptnavigation ein.
+- Das AP13-Briefsystem und das AP14-UI-System wurden nur regressionsgeprüft.
