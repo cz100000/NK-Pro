@@ -1,4 +1,4 @@
-# NK-Pro – UI-Architektur V99.4.15
+# NK-Pro – UI-Architektur V99.4.16
 
 
 Die Briefvorschau ist weiterhin Teil des Dokument-Controllers, zeigt aber nun ein vollständiges unverändertes A4-Dokument mit rein visueller Ganzseitenskalierung.

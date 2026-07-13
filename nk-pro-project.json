@@ -1,11 +1,11 @@
 {
-  "appVersion": "99.4.15",
-  "displayVersion": "V99.4.15",
-  "versionName": "Brieflayout, Druckbild und Vorschaukonsistenz",
+  "appVersion": "99.4.16",
+  "displayVersion": "V99.4.16",
+  "versionName": "AP13-Layoutkorrekturen und Vorschauangleichung",
   "schemaVersion": 5,
   "dataLayerContractVersion": 1,
   "snapshotScope": "billingSnapshot",
-  "basedOn": "99.4.14",
+  "basedOn": "99.4.15",
   "releaseDate": "2026-07-13",
   "runtime": [
     "HTML",
@@ -30,5 +30,5 @@
   "appOrchestrationVersion": 1,
   "stateOwnershipVersion": 1,
   "runtimeDiagnosticsVersion": 1,
-  "documentLayoutVersion": 2
+  "documentLayoutVersion": 3
 }

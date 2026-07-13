@@ -3108,7 +3108,7 @@
       .sidebar-billing-context__details > div { grid-template-columns:82px minmax(0,1fr); }
     }
 
-/* V99.4.15 - AP13: gemeinsame DIN-A4-Vorschau fuer Vorschau, Druck und PDF */
+/* V99.4.16 - AP13: isolierte, druckidentische DIN-A4-Vorschau */
 .letter-preview-wrap {
   min-width:0;
   max-height:none;
@@ -3116,36 +3116,17 @@
   padding:20px;
   background:#eef2f5;
 }
-#briefPreview.letter-page {
-  width:100%;
-  max-width:none;
+#briefPreview.brief-preview-host {
+  display:block;
+  min-width:0;
   min-height:0;
-  margin:0;
+  margin:0 auto;
   padding:0;
   border:0;
   background:transparent;
   box-shadow:none;
   overflow:visible;
 }
-#briefPreview > style { display:none; }
-#briefPreview .nk-letter-document {
-  width:210mm;
-  margin:0 auto;
-  zoom:var(--nk-letter-preview-scale, 1);
-}
-#briefPreview .nk-letter-document .letter-sheet {
-  width:210mm;
-  height:297mm;
-  min-height:297mm;
-  max-width:none;
-  margin:0 auto 6mm;
-  padding:0;
-  border:0;
-  box-shadow:0 16px 40px rgba(16,24,40,.18);
-  overflow:hidden;
-}
-#briefPreview .nk-letter-document .letter-title,
-#briefPreview .nk-letter-document .supplement-title { display:block; }
 
 @media print {
   body.document-print-window .print-guide { display:none !important; }
@@ -3183,5 +3164,8 @@
     box-shadow:none !important;
     overflow:visible !important;
   }
-  body:not(.document-print-window) #briefPreview .nk-letter-document { zoom:1 !important; margin:0 !important; }
+  body:not(.document-print-window) #briefPreview {
+    height:auto !important;
+    --nk-letter-preview-scale:1 !important;
+  }
 }

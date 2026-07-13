@@ -16,7 +16,7 @@ assert(!renderer.includes("Abrechnungsergebnis</h"), "Separate Box Abrechnungser
 assert(ui.includes("Zahlungstext bei Guthaben"), "Separates Guthaben-Textfeld fehlt.");
 assert(ui.includes("Hinweis zum Dauerauftrag"), "Textfeld für Dauerauftrag fehlt.");
 assert(ui.includes("Optionaler Abschlusstext vor der Grußformel"), "Abschlusstextfeld fehlt.");
-assert(css.includes("--nk-letter-preview-scale"), "Skalierte vollständige DIN-A4-Vorschau fehlt.");
+assert(ui.includes('attachShadow({ mode:"open" })') && ui.includes("briefPreviewSourceHtml"), "Isolierte druckidentische Vorschau fehlt.");
 assert(css.includes("#briefe .letter-settings"), "Bedienfelder werden beim Direktdruck nicht zuverlässig ausgeblendet.");
 assert(renderer.includes("AP13_RESULT_GREEN_BG"), "Grüne Guthabenkennzeichnung fehlt.");
 assert(renderer.includes("margin-bottom:6mm"), "Reduzierter Abstand zwischen Detailtabelle und Hinweisbox fehlt.");
@@ -26,5 +26,11 @@ assert(!renderer.includes("Diese Folgeseite enthält ausschließlich"), "Überfl
 assert(renderer.includes("payment-notice{padding:3mm;border-left:.6mm solid"), "Blauer Akzentstrich am Zahlungshinweis fehlt.");
 assert(ui.includes("mit offenen Abrechnungen verrechnet"), "Neuer Guthabentext fehlt.");
 assert(ui.includes("Auf Basis Ihres individuellen Verbrauchs"), "Neuer Text zur Nebenkostenvorauszahlung fehlt.");
+
+assert(renderer.includes("border-top:.25mm solid ${AP13_LINE}"), "Obere Begrenzung der Infobox fehlt.");
+assert(renderer.includes("font-size:13pt") && renderer.includes("top:96mm"), "Betreffgroesse oder -position ist nicht korrigiert.");
+assert(renderer.includes('label === "Verteilung nur auf aktive Wohneinheiten" ? "Wohneinheiten"'), "Kurzbezeichnung Wohneinheiten fehlt.");
+assert(renderer.includes('<td class="money center">'), "Gesamtkostenspalte ist nicht zentriert.");
+assert(renderer.includes("supplement-end{margin-top:8mm}"), "Abstand vor Abschlussblock auf Seite 2 ist nicht reduziert.");
 
 console.log("AP13-Strukturprüfung abgeschlossen: gemeinsames DIN-A4-Dokumentmodell, kontrollierte Seitenlogik und vollständige Textfelder sind vorhanden.");

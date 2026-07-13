@@ -1,12 +1,12 @@
 # AP13 – Test- und Prüfbericht
 
-**Version:** V99.4.15  
+**Version:** V99.4.16  
 **Datum:** 13. Juli 2026  
 **Gesamtergebnis:** bestanden, mit einer transparenten externen Druckereinschränkung
 
-## Nachprüfung der V99.4.15-Korrekturen
+## Nachprüfung der V99.4.16-Korrekturen
 
-Alle zwölf abgestimmten Korrekturen wurden in statischen und browsergestützten Prüfungen abgesichert. Zusätzlich wurden die ein- und zweiseitigen Kontrollausgaben neu erzeugt, als PNG gerendert und visuell auf Zentrierung, Abstände, Spaltenbreiten, Farbzustände und Seite-2-Aufbau geprüft.
+Die acht zusätzlich abgestimmten Korrekturpunkte 13 bis 20 wurden in statischen und browsergestützten Prüfungen abgesichert. Zusätzlich wurden die ein- und zweiseitigen Kontrollausgaben neu erzeugt, als PNG gerendert und visuell auf Zentrierung, Abstände, Spaltenbreiten, Farbzustände und Seite-2-Aufbau geprüft.
 
 ## Automatisierte AP13-Prüfungen
 
@@ -52,13 +52,13 @@ Die ein- und zweiseitigen Kontrollausgaben wurden als PDF erzeugt, erneut gerend
 
 - Briefkopf, Trennlinie und Informationsblock,
 - Anschriftenfenster und Rücksendezeile,
-- Titel-, Anrede- und Textabstände,
+- obere Begrenzung der Informationsbox sowie Titel-, Anrede- und Textabstände,
 - Ergebnisleiste,
-- Tabellenbreiten, Spaltenreihenfolge, Linien und Summenzeile,
+- Tabellenbreiten, Spaltenreihenfolge, Linien, zentrierte Gesamtkostenspalte und Summenzeile,
 - Hinweisbox und Zahlungstext,
 - wiederholter Kopf auf Seite 2,
 - Vorauszahlungsanpassung,
-- Abschlussblock, Anlagenhinweis und Fußzeilen.
+- isolierte, druckidentische Vorschau sowie Abschlussblock, Anlagenhinweis und Fußzeilen.
 
 Erkennbare strukturelle Abweichungen aus dem Altstand wurden beseitigt. Inhalte und Beträge der Kontrollausgaben stammen aus den NK-Pro-Testdaten und müssen deshalb nicht den Musterwerten der Referenz-PDFs entsprechen.
 

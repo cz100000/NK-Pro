@@ -36,12 +36,13 @@ test("AP13-Standardbrief nutzt eine gemeinsame DIN-A4-Struktur mit neun Spalten"
   await expect(preview.locator(".supplement-section")).toHaveCount(0);
 
   const layout = await preview.evaluate(node => {
-    const sheet = node.querySelector(".letter-sheet");
-    const main = node.querySelector(".letter-main-content");
-    const footer = node.querySelector(".letter-footer");
-    const headerCells = [...node.querySelectorAll(".abrechnung-table thead th")];
-    const bodyCells = [...node.querySelectorAll(".abrechnung-table tbody tr:not(.table-total-row) td")];
-    const styleText = node.querySelector("style[data-nk-letter-styles]").textContent;
+    const root = node.shadowRoot || node;
+    const sheet = root.querySelector(".letter-sheet");
+    const main = root.querySelector(".letter-main-content");
+    const footer = root.querySelector(".letter-footer");
+    const headerCells = [...root.querySelectorAll(".abrechnung-table thead th")];
+    const bodyCells = [...root.querySelectorAll(".abrechnung-table tbody tr:not(.table-total-row) td")];
+    const styleText = root.querySelector("style[data-nk-letter-styles]").textContent;
     return {
       sheetRatio: sheet.getBoundingClientRect().width / sheet.getBoundingClientRect().height,
       noVerticalOverflow: main.scrollHeight <= main.clientHeight + 1,
@@ -51,12 +52,21 @@ test("AP13-Standardbrief nutzt eine gemeinsame DIN-A4-Struktur mit neun Spalten"
       sharedStyle: styleText,
       sheetWidth: getComputedStyle(sheet).width,
       sheetHeight: getComputedStyle(sheet).height,
-      paymentFont: getComputedStyle(node.querySelector(".payment-text")).fontSize,
-      proseFont: getComputedStyle(node.querySelector(".letter-intro")).fontSize,
-      headerTextAlign: getComputedStyle(node.querySelector(".letter-header")).textAlign,
-      priceTextAlign: getComputedStyle(node.querySelector(".abrechnung-table tbody tr td:nth-child(5)")).textAlign,
-      balanceWidth: getComputedStyle(node.querySelector(".abrechnung-table col.col-balance")).width,
-      finalSumFits: (() => { const cell = node.querySelector(".table-total-row td:last-child"); return cell.scrollWidth <= cell.clientWidth + 1; })()
+      paymentFont: getComputedStyle(root.querySelector(".payment-text")).fontSize,
+      proseFont: getComputedStyle(root.querySelector(".letter-intro")).fontSize,
+      headerTextAlign: getComputedStyle(root.querySelector(".letter-header")).textAlign,
+      priceTextAlign: getComputedStyle(root.querySelector(".abrechnung-table tbody tr td:nth-child(5)")).textAlign,
+      totalTextAlign: getComputedStyle(root.querySelector(".abrechnung-table tbody tr td:nth-child(2)")).textAlign,
+      distributionText: root.querySelector(".abrechnung-table tbody tr:nth-child(3) td:nth-child(3)").textContent.trim(),
+      infoTopBorder: getComputedStyle(root.querySelector(".letter-info tr:first-child th")).borderTopWidth,
+      titleFontSize: getComputedStyle(root.querySelector(".letter-title")).fontSize,
+      titleTop: root.querySelector(".letter-title").getBoundingClientRect().top,
+      addressBottom: root.querySelector(".letter-address-window").getBoundingClientRect().bottom,
+      subjectSalutationGap: root.querySelector(".letter-salutation").getBoundingClientRect().top - root.querySelector(".letter-title").getBoundingClientRect().bottom,
+      resultBeforeGap: root.querySelector(".result-strip").getBoundingClientRect().top - root.querySelector(".letter-intro").getBoundingClientRect().bottom,
+      resultAfterGap: root.querySelector(".detail-heading").getBoundingClientRect().top - root.querySelector(".result-strip").getBoundingClientRect().bottom,
+      balanceWidth: getComputedStyle(root.querySelector(".abrechnung-table col.col-balance")).width,
+      finalSumFits: (() => { const cell = root.querySelector(".table-total-row td:last-child"); return cell.scrollWidth <= cell.clientWidth + 1; })()
     };
   });
 
@@ -71,21 +81,33 @@ test("AP13-Standardbrief nutzt eine gemeinsame DIN-A4-Struktur mit neun Spalten"
   expect(layout.paymentFont).toBe(layout.proseFont);
   expect(layout.headerTextAlign).toBe("center");
   expect(layout.priceTextAlign).toBe("center");
+  expect(layout.totalTextAlign).toBe("center");
+  expect(layout.distributionText).toBe("Wohneinheiten");
+  expect(parseFloat(layout.infoTopBorder)).toBeGreaterThan(0);
+  expect(parseFloat(layout.titleFontSize)).toBeCloseTo(13 * 96 / 72, 1);
+  expect(layout.titleTop).toBeGreaterThan(layout.addressBottom);
+  expect(layout.subjectSalutationGap).toBeGreaterThan(0);
+  expect(layout.subjectSalutationGap).toBeLessThan(30);
+  expect(Math.abs(layout.resultBeforeGap - layout.resultAfterGap)).toBeLessThan(2);
   expect(layout.finalSumFits).toBe(true);
 
   const parity = await page.evaluate(() => {
     const preview = document.getElementById("briefPreview");
-    const style = preview.querySelector("style[data-nk-letter-styles]").textContent;
-    const printHtml = printWindowHtml("Kontrolle", preview.innerHTML, "AP13");
+    const root = preview.shadowRoot || preview;
+    const sourceHtml = String(preview.__nkBriefHtml || "");
+    const style = root.querySelector("style[data-nk-letter-styles]").textContent;
+    const printHtml = printWindowHtml("Kontrolle", sourceHtml, "AP13");
     return {
       sameStyleIncluded: printHtml.includes(style),
       hasPrintGuideSuppression: printHtml.includes("@media print{.print-guide{display:none!important}}"),
-      controlsInsideDocument: !!preview.querySelector("button,input,textarea,select")
+      controlsInsideDocument: !!root.querySelector("button,input,textarea,select"),
+      isolatedPreview: !!preview.shadowRoot && !preview.classList.contains("letter-page")
     };
   });
   expect(parity.sameStyleIncluded).toBe(true);
   expect(parity.hasPrintGuideSuppression).toBe(true);
   expect(parity.controlsInsideDocument).toBe(false);
+  expect(parity.isolatedPreview).toBe(true);
   runtime.assertClean();
 });
 
@@ -154,9 +176,10 @@ test("AP13-Vorauszahlungsanpassung nutzt Seite 2 und dieselbe blaue Tabellenvisu
   await expect(preview.locator(".signature-name")).toHaveCount(1);
 
   const visualLanguage = await preview.evaluate(node => {
-    const mainHead = node.querySelector(".abrechnung-table thead th");
-    const prepayHead = node.querySelector(".prepay-table thead th");
-    const table = node.querySelector(".prepay-table");
+    const root = node.shadowRoot || node;
+    const mainHead = root.querySelector(".abrechnung-table thead th");
+    const prepayHead = root.querySelector(".prepay-table thead th");
+    const table = root.querySelector(".prepay-table");
     return {
       sameHeaderColor: getComputedStyle(mainHead).backgroundColor === getComputedStyle(prepayHead).backgroundColor,
       tableWidth: table.getBoundingClientRect().width,
@@ -164,11 +187,12 @@ test("AP13-Vorauszahlungsanpassung nutzt Seite 2 und dieselbe blaue Tabellenvisu
       noOverflow: table.scrollWidth <= table.clientWidth + 1,
       oldAmountAlign: getComputedStyle(table.querySelector("tbody tr td:nth-child(3)")).textAlign,
       changeAlign: getComputedStyle(table.querySelector("tbody tr td:nth-child(5)")).textAlign,
-      paymentBorder: getComputedStyle(node.querySelector(".payment-notice")).borderLeftWidth,
-      infoBottom: node.querySelector(".letter-supplement-sheet .letter-info").getBoundingClientRect().bottom,
-      sectionTop: node.querySelector(".letter-supplement-sheet .supplement-sections").getBoundingClientRect().top,
-      closingGap: node.querySelector(".closing-greeting").getBoundingClientRect().top - node.querySelector(".supplement-closing-text").getBoundingClientRect().bottom,
-      introText: node.querySelector(".prepayment-intro").textContent
+      paymentBorder: getComputedStyle(root.querySelector(".payment-notice")).borderLeftWidth,
+      infoBottom: root.querySelector(".letter-supplement-sheet .letter-info").getBoundingClientRect().bottom,
+      sectionTop: root.querySelector(".letter-supplement-sheet .supplement-sections").getBoundingClientRect().top,
+      boxToClosingGap: root.querySelector(".supplement-closing-text").getBoundingClientRect().top - root.querySelector(".payment-notice").getBoundingClientRect().bottom,
+      closingGap: root.querySelector(".closing-greeting").getBoundingClientRect().top - root.querySelector(".supplement-closing-text").getBoundingClientRect().bottom,
+      introText: root.querySelector(".prepayment-intro").textContent
     };
   });
   expect(visualLanguage.sameHeaderColor).toBe(true);
@@ -178,6 +202,8 @@ test("AP13-Vorauszahlungsanpassung nutzt Seite 2 und dieselbe blaue Tabellenvisu
   expect(visualLanguage.changeAlign).toBe("center");
   expect(parseFloat(visualLanguage.paymentBorder)).toBeGreaterThan(0);
   expect(visualLanguage.sectionTop).toBeGreaterThan(visualLanguage.infoBottom);
+  expect(visualLanguage.boxToClosingGap).toBeGreaterThan(0);
+  expect(visualLanguage.boxToClosingGap).toBeLessThan(70);
   expect(visualLanguage.closingGap).toBeGreaterThan(0);
   expect(visualLanguage.closingGap).toBeLessThan(70);
   expect(visualLanguage.introText).toContain("Auf Basis Ihres individuellen Verbrauchs");
@@ -261,12 +287,13 @@ test("AP13 hält lange Empfängerdaten, Zusatztexte und die skalierte Vorschau i
   });
 
   const metrics = await page.locator("#briefPreview").evaluate(node => {
+    const root = node.shadowRoot || node;
     const wrap = node.closest(".letter-preview-wrap");
-    const sheets = [...node.querySelectorAll(".letter-sheet")];
-    const address = node.querySelector(".letter-address-window");
+    const sheets = [...root.querySelectorAll(".letter-sheet")];
+    const address = root.querySelector(".letter-address-window");
     return {
       pages: sheets.length,
-      previewWidth: node.querySelector(".nk-letter-document").getBoundingClientRect().width,
+      previewWidth: root.querySelector(".nk-letter-document").getBoundingClientRect().width,
       wrapInnerWidth: wrap.clientWidth - 40,
       ratios: sheets.map(sheet => sheet.getBoundingClientRect().width / sheet.getBoundingClientRect().height),
       overflows: sheets.map(sheet => {
@@ -274,7 +301,7 @@ test("AP13 hält lange Empfängerdaten, Zusatztexte und die skalierte Vorschau i
         return content.scrollHeight > content.clientHeight + 1;
       }),
       addressOverflow: address.scrollHeight > address.clientHeight + 1,
-      salutation: node.querySelector(".letter-salutation").textContent
+      salutation: root.querySelector(".letter-salutation").textContent
     };
   });
 

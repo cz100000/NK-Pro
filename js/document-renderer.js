@@ -56,17 +56,18 @@
 .nk-letter-document .letter-contact{margin-top:1.1mm;color:${AP13_MUTED};font-size:8pt;line-height:1.05;white-space:nowrap}
 .nk-letter-document .letter-info{position:absolute;top:22mm;right:19mm;width:74mm;border-collapse:collapse;border-spacing:0;table-layout:fixed;margin:0;font-size:7.5pt;line-height:1.15}
 .nk-letter-document .letter-info th,.nk-letter-document .letter-info td{height:5.2mm;border:0;border-bottom:.25mm solid ${AP13_LINE};padding:1.15mm 1.8mm;vertical-align:middle}
+.nk-letter-document .letter-info tr:first-child th,.nk-letter-document .letter-info tr:first-child td{border-top:.25mm solid ${AP13_LINE}}
 .nk-letter-document .letter-info th{width:39mm;background:${AP13_LIGHT};color:#4D5F6E;text-align:left;font-size:7pt;font-weight:700}
 .nk-letter-document .letter-info td{text-align:right;color:${AP13_TEXT};font-size:7.5pt;white-space:nowrap}
 .nk-letter-document .letter-address-window{position:absolute;top:51mm;left:19mm;width:99mm;height:42mm;overflow:hidden}
 .nk-letter-document .letter-return-address{height:5mm;border-bottom:.25mm solid ${AP13_LINE};color:${AP13_MUTED};font-size:7pt;line-height:4.2mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .nk-letter-document .letter-address{padding-top:1.7mm;color:${AP13_TEXT};font-size:9pt;line-height:1.22;white-space:normal}
-.nk-letter-document .letter-main-content{position:absolute;top:83mm;left:19mm;right:19mm;bottom:20mm;display:flex;min-height:0;flex-direction:column;padding:0}
-.nk-letter-document .letter-title{display:block;margin:0 0 12.5mm;color:${AP13_DARK_BLUE};font-size:17pt;line-height:1.05;font-weight:700;letter-spacing:-.15pt}
+.nk-letter-document .letter-main-content{position:absolute;top:96mm;left:19mm;right:19mm;bottom:20mm;display:flex;min-height:0;flex-direction:column;padding:0}
+.nk-letter-document .letter-title{display:block;margin:0 0 6.25mm;color:${AP13_DARK_BLUE};font-size:13pt;line-height:1.08;font-weight:700;letter-spacing:-.08pt}
 .nk-letter-document .letter-salutation{margin:0 0 8mm;font-size:10pt;line-height:1.2}
-.nk-letter-document .letter-intro{margin:0 0 8mm;font-size:10pt;line-height:1.32}
+.nk-letter-document .letter-intro{margin:0 0 6mm;font-size:10pt;line-height:1.32}
 .nk-letter-document .letter-intro strong{font-weight:700}
-.nk-letter-document .result-strip{display:grid;grid-template-columns:repeat(3,1fr);height:18mm;margin:0 0 11mm;border-top:.3mm solid ${AP13_LINE};border-bottom:.3mm solid ${AP13_LINE}}
+.nk-letter-document .result-strip{display:grid;grid-template-columns:repeat(3,1fr);height:18mm;margin:0 0 6mm;border-top:.3mm solid ${AP13_LINE};border-bottom:.3mm solid ${AP13_LINE}}
 .nk-letter-document .result-cell{display:flex;align-items:center;justify-content:center;flex-direction:column;min-width:0;background:${AP13_LIGHT};border-right:.25mm solid #fff;text-align:center;padding:2mm}
 .nk-letter-document .result-cell:last-child{border-right:0}
 .nk-letter-document .result-cell--final.is-due{background:${AP13_RESULT_RED_BG}}
@@ -141,8 +142,8 @@
 .nk-letter-document .payment-notice{padding:3mm;border-left:.6mm solid ${AP13_BLUE};background:${AP13_LIGHT};color:#4D5F6E;font-size:8pt;line-height:1.25}
 .nk-letter-document .payment-notice-title{display:block;margin-bottom:.7mm;color:${AP13_DARK_BLUE};font-size:8pt;font-weight:700}
 .nk-letter-document .supplement-closing-text{margin:0 0 8mm;font-size:9pt;line-height:1.3}
-.nk-letter-document .supplement-end{margin-top:auto}
-.nk-letter-document .supplement-end .document-end{margin-top:0;padding-top:6mm}
+.nk-letter-document .supplement-end{margin-top:8mm}
+.nk-letter-document .supplement-end .document-end{margin-top:0;padding-top:3.5mm}
 .nk-letter-document table,.nk-letter-document tr,.nk-letter-document .document-end,.nk-letter-document .letter-footer{page-break-inside:avoid;break-inside:avoid}
 @media print{html,body{width:210mm;margin:0!important;padding:0!important;background:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.nk-letter-document{margin:0!important}.nk-letter-document .letter-sheet{margin:0!important;border:0!important;box-shadow:none!important}}
 `;
@@ -264,7 +265,8 @@
 
   function distributionLabel(row) {
     if (isManualExternalCostDefinition(row)) return row.id === "K006" ? "gem. Techem" : "Einzelabrechnung";
-    return String(row.schluessel || row.berechnungsart || "–").replace("Wohneinheiten", "Wohneinheiten");
+    const label = String(row.schluessel || row.berechnungsart || "–");
+    return label === "Verteilung nur auf aktive Wohneinheiten" ? "Wohneinheiten" : label;
   }
 
   function unitSuffix(row) {
@@ -308,7 +310,7 @@
       const balance = num(row.anteil) - prepayment;
       return '<tr>' +
         '<td class="cell-cost">' + escapeHtml(tableCostLabel(row)) + '</td>' +
-        '<td class="money">' + fmtMoney(row.gesamtbetrag) + '</td>' +
+        '<td class="money center">' + fmtMoney(row.gesamtbetrag) + '</td>' +
         '<td class="center">' + escapeHtml(distributionLabel(row)) + '</td>' +
         '<td class="center">' + (manualExternal ? "siehe Anlage" : escapeHtml(unitsText(row.basisTotal, suffix))) + '</td>' +
         '<td class="money center">' + (manualExternal ? "siehe Anlage" : escapeHtml(priceText(row))) + '</td>' +

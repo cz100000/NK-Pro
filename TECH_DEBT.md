@@ -1,4 +1,4 @@
-# NK-Pro – Technische Restpunkte V99.4.15
+# NK-Pro – Technische Restpunkte V99.4.16
 
 
 AP13 beseitigt die parallelen Vorschau-/Drucklayouts. Verbleibend ist nur die externe Abhängigkeit von den Einstellungen des konkreten Browser-Druckdialogs beziehungsweise Druckertreibers.

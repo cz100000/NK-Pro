@@ -1,4 +1,4 @@
-# NK-Pro – Modulübersicht V99.4.15
+# NK-Pro – Modulübersicht V99.4.16
 
 | Modulgruppe | Dateien / Verantwortung |
 |---|---|
@@ -11,6 +11,6 @@
 | Dokumentdarstellung | `document-renderer.js`: gemeinsames DIN-A4-HTML/CSS, Ein-/Zweiseitenlogik, Tabellen und Abschluss. |
 | Export/Browser-I/O | `export-service.js`, `browser-io.js`: Datei-, Zwischenablage-, Druckfenster- und PDF-nahe Browserabläufe. |
 | Laufzeitdiagnose | `runtime-diagnostics.js`: gekapselte, schreibgeschützte Diagnoseschnittstelle. |
-| PWA | `service-worker.js`: App-Shell und Offlinecache `nk-pro-v99-4-15`. |
+| PWA | `service-worker.js`: App-Shell und Offlinecache `nk-pro-v99-4-16`. |
 
 Die AP12-Modulgrenzen bleiben verbindlich. AP13 ersetzt keine Fachmodule, sondern vereinheitlicht ausschließlich das Dokumentlayout und seine Ausgabekanäle.

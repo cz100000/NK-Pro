@@ -14,10 +14,12 @@ async function documentHtml(page, settings) {
     Object.assign(state.briefSettings, values);
     renderBrief();
     const preview = document.getElementById("briefPreview");
+    const root = preview.shadowRoot || preview;
+    const sourceHtml = String(preview.__nkBriefHtml || "");
     return {
-      html: printWindowHtml("Nebenkostenabrechnung", preview.innerHTML, "AP13-Kontrollausgabe"),
-      pages: Number(preview.querySelector(".nk-letter-document").dataset.documentPages || 0),
-      metrics: [...preview.querySelectorAll(".letter-sheet")].map(sheet => {
+      html: printWindowHtml("Nebenkostenabrechnung", sourceHtml, "AP13-Kontrollausgabe"),
+      pages: Number(root.querySelector(".nk-letter-document").dataset.documentPages || 0),
+      metrics: [...root.querySelectorAll(".letter-sheet")].map(sheet => {
         const content = sheet.querySelector(".letter-main-content,.supplement-content");
         const footer = sheet.querySelector(".letter-footer");
         return {

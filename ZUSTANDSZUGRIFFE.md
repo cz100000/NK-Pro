@@ -1,4 +1,4 @@
-# NK-Pro – Zustandszugriffe V99.4.15
+# NK-Pro – Zustandszugriffe V99.4.16
 
 
 AP13 ergänzt ausschließlich kompatible Brieftexteinstellungen. Berechnungs- und Root-State-Eigentum bleiben unverändert; der Renderer schreibt nicht in den Anwendungszustand.

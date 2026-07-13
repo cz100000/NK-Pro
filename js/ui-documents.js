@@ -377,6 +377,29 @@ function costSectionRows(...args) { return NK_PRO_MODULES.documentRenderer.costS
 
 
 function buildBriefHtml(...args) { return NK_PRO_MODULES.documentRenderer.buildBriefHtml(...args); }
+
+function briefPreviewSourceHtml(preview) {
+  return String(preview && preview.__nkBriefHtml || "");
+}
+
+function briefPreviewRoot(preview) {
+  return preview && preview.shadowRoot ? preview.shadowRoot : preview;
+}
+
+function mountBriefPreview(preview, html) {
+  if (!preview) return;
+  preview.__nkBriefHtml = String(html || "");
+  preview.replaceChildren();
+  const root = preview.shadowRoot || preview.attachShadow({ mode:"open" });
+  root.innerHTML = '<div class="nk-letter-preview-canvas">' + preview.__nkBriefHtml + '</div>' +
+    '<style data-nk-letter-preview-shell>' +
+    ':host{display:block;position:relative;margin:0 auto;overflow:visible;--nk-letter-preview-scale:1}' +
+    '.nk-letter-preview-canvas{width:210mm;transform:scale(var(--nk-letter-preview-scale,1));transform-origin:top left}' +
+    '.nk-letter-preview-canvas>.nk-letter-document{margin:0}' +
+    '.nk-letter-document .letter-sheet{box-shadow:0 16px 40px rgba(16,24,40,.18)}' +
+    '</style>';
+}
+
 function renderBrief() {
   const settingsEl = document.getElementById("briefSettings");
   const textsEl = document.getElementById("briefTexts");
@@ -437,7 +460,7 @@ function renderBrief() {
   previewEl.dataset.hasBrief = selected && !briefValidation.errors.length ? "true" : "false";
   previewEl.dataset.validationErrors = String(briefValidation.errors.length);
   previewEl.dataset.validationWarnings = String(briefValidation.warnings.length);
-  previewEl.innerHTML = buildBriefHtml(calc, selected);
+  mountBriefPreview(previewEl, buildBriefHtml(calc, selected));
   requestAnimationFrame(applyBriefPreviewScale);
   if (!previewEl.__nkAp13ResizeObserver && typeof ResizeObserver !== "undefined") {
     previewEl.__nkAp13ResizeObserver = new ResizeObserver(applyBriefPreviewScale);
@@ -450,10 +473,18 @@ function applyBriefPreviewScale() {
   const preview = document.getElementById("briefPreview");
   const wrap = preview && preview.closest(".letter-preview-wrap");
   if (!preview || !wrap) return;
-  const a4WidthPx = 210 * 96 / 25.4;
+  const root = briefPreviewRoot(preview);
+  const documentNode = root && root.querySelector(".nk-letter-document");
+  const pageCount = Math.max(1, Number(documentNode && documentNode.dataset.documentPages || 1));
+  const pxPerMm = 96 / 25.4;
+  const a4WidthPx = 210 * pxPerMm;
+  const a4HeightPx = 297 * pxPerMm;
+  const pageGapPx = 6 * pxPerMm;
   const availableWidth = Math.max(180, wrap.clientWidth - 40);
   const scale = Math.min(1, Math.max(0.25, availableWidth / a4WidthPx));
   preview.style.setProperty("--nk-letter-preview-scale", String(scale));
+  preview.style.width = (a4WidthPx * scale) + "px";
+  preview.style.height = ((pageCount * a4HeightPx + Math.max(0, pageCount - 1) * pageGapPx) * scale) + "px";
 }
 function currentBriefPreviewOrWarn() {
   const preview = document.getElementById("briefPreview");
@@ -461,7 +492,7 @@ function currentBriefPreviewOrWarn() {
     alert("Die Briefvorschau wurde nicht gefunden. Bitte den Tab Abrechnungsbriefe neu öffnen.");
     return null;
   }
-  const text = plainLetterTextFromHtml(preview.innerHTML).trim();
+  const text = plainLetterTextFromHtml(briefPreviewSourceHtml(preview)).trim();
   if (preview.dataset.hasBrief !== "true" || !text) {
     alert("Es ist kein Brief verfügbar. Bitte prüfe, ob mindestens ein Empfänger vorhanden ist und eine Nebenkostenumlage berechnet werden kann.");
     switchToTab("briefe");
@@ -474,7 +505,7 @@ function printCurrentBrief() {
   const preview = currentBriefPreviewOrWarn();
   if (!preview) return;
   if (!confirmBriefAction("Druck/PDF des Briefs")) return;
-  openPrintWindow("Nebenkostenabrechnungsbrief", preview.innerHTML, "aktueller Brief", true);
+  openPrintWindow("Nebenkostenabrechnungsbrief", briefPreviewSourceHtml(preview), "aktueller Brief", true);
 }
 function fallbackCopyText(text) {
   const textarea = document.createElement("textarea");
@@ -497,7 +528,7 @@ function copyCurrentBriefText() {
   const preview = currentBriefPreviewOrWarn();
   if (!preview) return;
   if (!confirmBriefAction("Brieftext kopieren")) return;
-  const text = plainLetterTextFromHtml(preview.innerHTML).trim();
+  const text = plainLetterTextFromHtml(briefPreviewSourceHtml(preview)).trim();
   if (!text) {
     alert("Es ist kein Brieftext zum Kopieren vorhanden.");
     return;

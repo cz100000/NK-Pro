@@ -1,6 +1,6 @@
 # AP13 – Brieflayout, Druckbild und Vorschaukonsistenz
 
-**Version:** V99.4.15  
+**Version:** V99.4.16  
 **Basis:** V99.4.13  
 **Datum:** 13. Juli 2026
 
