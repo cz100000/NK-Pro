@@ -534,3 +534,10 @@ Die detaillierte frühere Historie bleibt in der Anwendung und im Versionsverlau
 - Atomaren Zustandsaktionspfad mit Rollback in `NKProStateAccess` ergänzt.
 - PWA-App-Shell, Tests, Dokumentation und Release-Metadaten aktualisiert.
 - Datenschema, Datenebenenvertrag, Objektstandard, Snapshot- und Berechnungsergebnisse unverändert beibehalten.
+
+## AP16 Korrekturstand – Mockup-nahe Seitenstruktur
+
+- Die freigegebenen Mockups werden nun als strukturelles Zielbild umgesetzt, nicht nur als optische Referenz.
+- Generische Vier-Karten-Übersichten wurden durch individuelle KPI-Karten, Prüfstatus, nächsten Arbeitsschritt und kompakte Direktaktionen ersetzt.
+- Seitenkopf, Arbeitsbereiche, Tabellencontainer, Abstände und responsive Anordnung wurden deutlich stärker modernisiert.
+- Fach-, Daten-, Berechnungs-, Brief- und Drucklogik bleiben unverändert.

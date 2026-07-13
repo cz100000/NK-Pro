@@ -3678,3 +3678,161 @@ body:not(.document-print-window) table thead th { background:#f5f8fb; color:#344
 body:not(.document-print-window) button:focus-visible,body:not(.document-print-window) a:focus-visible,body:not(.document-print-window) summary:focus-visible { outline:3px solid rgba(24,119,242,.3); outline-offset:2px; }
 @media (max-width:1100px){ body:not(.document-print-window) .overview-grid{grid-template-columns:repeat(2,minmax(0,1fr));} }
 @media (max-width:680px){ body:not(.document-print-window) .overview-grid{grid-template-columns:1fr;} body:not(.document-print-window) .page-header{padding:18px;} body:not(.document-print-window) .overview-card{min-height:0;} }
+
+/* AP16 Korrekturstand: strukturelles Dashboard entsprechend der freigegebenen Mockups */
+body:not(.document-print-window) .app-page {
+  max-width: 1540px;
+  padding: 26px 28px 44px;
+}
+body:not(.document-print-window) .page-header {
+  background: transparent;
+  box-shadow: none;
+  border: 0;
+  border-radius: 0;
+  padding: 4px 2px 18px;
+  margin-bottom: 4px;
+}
+body:not(.document-print-window) .page-header__title {
+  font-size: 30px;
+  line-height: 1.15;
+  color: #10233f;
+}
+body:not(.document-print-window) .page-header__kicker {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .045em;
+  text-transform: uppercase;
+  color: #47749f;
+}
+body:not(.document-print-window) .overview-grid.overview-dashboard {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 16px;
+  margin: 6px 0 24px;
+}
+body:not(.document-print-window) .overview-dashboard .overview-card {
+  min-height: 0;
+  padding: 18px 20px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(28,55,82,.055);
+  background: linear-gradient(180deg,#fff 0%,#fbfdff 100%);
+}
+body:not(.document-print-window) .overview-card--metric {
+  position: relative;
+  min-height: 142px !important;
+  overflow: hidden;
+}
+body:not(.document-print-window) .overview-card--metric::after {
+  content:"";
+  position:absolute;
+  left:0;right:0;bottom:0;height:3px;
+  background:currentColor;
+  opacity:.72;
+}
+body:not(.document-print-window) .overview-card__metric-label {
+  font-size: 13px;
+  font-weight: 700;
+  color:#4a5b70;
+}
+body:not(.document-print-window) .overview-card__metric-value {
+  display:block;
+  margin: 5px 0 6px 43px;
+  font-size: 29px;
+  line-height:1.05;
+  letter-spacing:-.025em;
+  color:#10233f;
+}
+body:not(.document-print-window) .overview-card__metric-hint {
+  display:block;
+  margin-left:43px;
+  font-size:12px;
+  color:#6b7787;
+}
+body:not(.document-print-window) .overview-card--status {
+  grid-column: span 2;
+  min-height: 168px !important;
+}
+body:not(.document-print-window) .overview-card--workflow {
+  grid-column: span 1;
+  min-height: 168px !important;
+}
+body:not(.document-print-window) .overview-card--actions {
+  grid-column: span 1;
+  min-height: 168px !important;
+}
+body:not(.document-print-window) .overview-card__status-lead {
+  margin:0 0 10px;
+  font-size:15px;
+  font-weight:700;
+  color:#26384e;
+}
+body:not(.document-print-window) .overview-card__workflow-text {
+  color:#4d5c70;
+  line-height:1.55;
+  margin-bottom:16px;
+}
+body:not(.document-print-window) .overview-card--actions .quick-actions {
+  display:grid;
+  grid-template-columns:1fr;
+  gap:8px;
+}
+body:not(.document-print-window) .overview-card--actions .quick-actions button,
+body:not(.document-print-window) .overview-card__actions--workflow button {
+  width:100%;
+  justify-content:flex-start;
+  min-height:38px;
+}
+body:not(.document-print-window) .page-sections {
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:14px;
+}
+body:not(.document-print-window) .page-section {
+  border:1px solid #dbe5ef;
+  border-radius:12px;
+  background:#fff;
+  box-shadow:0 5px 16px rgba(28,55,82,.045);
+  overflow:hidden;
+}
+body:not(.document-print-window) .page-section[open] {
+  box-shadow:0 9px 24px rgba(28,55,82,.075);
+}
+body:not(.document-print-window) .page-section__summary {
+  min-height:58px;
+  padding:0 18px;
+  background:#fbfcfe;
+}
+body:not(.document-print-window) .page-section[open] > .page-section__summary {
+  background:#f3f7fb;
+  border-bottom:1px solid #dce6f0;
+}
+body:not(.document-print-window) .page-section__body {
+  padding:22px;
+}
+body:not(.document-print-window) .app-page .table-wrap,
+body:not(.document-print-window) .app-page .responsive-table,
+body:not(.document-print-window) .app-page .table-container {
+  border-radius:10px;
+  border:1px solid #dbe5ef;
+  box-shadow:none;
+}
+body:not(.document-print-window) .app-page table thead th {
+  background:#f3f7fb;
+  color:#31445a;
+  font-size:12px;
+  letter-spacing:.025em;
+}
+@media (max-width:1180px){
+  body:not(.document-print-window) .overview-grid.overview-dashboard{grid-template-columns:repeat(2,minmax(0,1fr));}
+  body:not(.document-print-window) .overview-card--status,
+  body:not(.document-print-window) .overview-card--workflow,
+  body:not(.document-print-window) .overview-card--actions{grid-column:span 1;}
+}
+@media (max-width:700px){
+  body:not(.document-print-window) .app-page{padding:18px 14px 32px;}
+  body:not(.document-print-window) .overview-grid.overview-dashboard{grid-template-columns:1fr;gap:12px;}
+  body:not(.document-print-window) .overview-card--status,
+  body:not(.document-print-window) .overview-card--workflow,
+  body:not(.document-print-window) .overview-card--actions{grid-column:span 1;}
+  body:not(.document-print-window) .page-header__title{font-size:25px;}
+}

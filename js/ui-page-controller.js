@@ -233,42 +233,68 @@ function renderOverviewCards(tabId, config) {
   grid.replaceChildren();
   const visual=AP16_VISUALS[tabId]||{titles:OVERVIEW_TITLES,icon:"chart",tone:"blue"};
   grid.dataset.tone=visual.tone;
-  const specs=[
-    {role:"summary",title:visual.titles[0],status:"info"},
-    {role:"validation",title:visual.titles[1],status:(config.validation&&config.validation.status)||"info"},
-    {role:"next-step",title:visual.titles[2],status:"info"},
-    {role:"quick-actions",title:visual.titles[3],status:"info"}
-  ];
-  specs.forEach((spec,index)=>{
+  grid.classList.add("overview-dashboard");
+
+  const metrics=(config.summary||[]).slice(0,4);
+  metrics.forEach((pair,index)=>{
     const card=document.createElement("article");
-    card.className="overview-card";
-    card.dataset.overviewRole=spec.role;
-    card.dataset.status=spec.status;
-    const heading=document.createElement("div"); heading.className="overview-card__heading"; const icon=document.createElement("span"); icon.className="overview-card__icon"; icon.innerHTML=ap16Icon(index===1?"shield":visual.icon); const title=document.createElement("h3"); title.className="overview-card__title"; title.textContent=spec.title; heading.append(icon,title); card.appendChild(heading);
-    const content=document.createElement("div"); content.className="overview-card__content";
-    const actions=document.createElement("div"); actions.className="overview-card__actions"+(index===3?" quick-actions":"");
-    if (index===0) {
-      const dl=document.createElement("dl"); dl.className="overview-card__metrics";
-      (config.summary||[]).forEach(pair=>{ const dt=document.createElement("dt");dt.textContent=pair[0];const dd=document.createElement("dd");dd.textContent=String(pair[1]);dl.append(dt,dd); });
-      content.appendChild(dl);
-    } else if (index===1) {
-      const p=document.createElement("p"); p.innerHTML="<strong>"+escapeHtml((config.validation&&config.validation.headline)||"Prüfen")+"</strong>"; content.appendChild(p);
-      const ul=document.createElement("ul"); ul.className="overview-card__checklist";
-      ((config.validation&&config.validation.items)||[]).forEach(item=>{
-        const normalized=typeof item==="string"?{text:item,status:spec.status==="error"?"error":(spec.status==="warn"?"warn":"ok")}:item;
-        const itemStatus=["ok","warn","error","info"].includes(normalized.status)?normalized.status:"info";
-        const li=document.createElement("li");li.className="overview-check-item is-"+itemStatus;
-        const icon=document.createElement("span");icon.className="overview-check-icon";icon.setAttribute("aria-hidden","true");icon.textContent=itemStatus==="ok"?"✓":(itemStatus==="warn"?"⚠":(itemStatus==="error"?"✕":"i"));
-        const label=document.createElement("span");label.textContent=normalized.text||"";li.append(icon,label);ul.appendChild(li);
-      }); content.appendChild(ul);
-    } else if (index===2) {
-      const p=document.createElement("p");p.textContent=(config.next&&config.next.text)||"Nächsten Arbeitsschritt öffnen.";content.appendChild(p);
-      if (config.next&&config.next.action) actions.appendChild(overviewActionButton(config.next.action));
-    } else {
-      (config.actions||[]).forEach(action=>actions.appendChild(overviewActionButton(action)));
-    }
-    card.append(content,actions); grid.appendChild(card);
+    card.className="overview-card overview-card--metric";
+    card.dataset.overviewRole="metric";
+    card.dataset.metricIndex=String(index);
+    const heading=document.createElement("div"); heading.className="overview-card__heading";
+    const icon=document.createElement("span"); icon.className="overview-card__icon"; icon.innerHTML=ap16Icon(index===1?"shield":visual.icon);
+    const label=document.createElement("span"); label.className="overview-card__metric-label"; label.textContent=String(pair[0]);
+    heading.append(icon,label);
+    const value=document.createElement("strong"); value.className="overview-card__metric-value"; value.textContent=String(pair[1]);
+    const hint=document.createElement("span"); hint.className="overview-card__metric-hint"; hint.textContent=index===0?"Aktueller Bestand":(index===1?"Aktueller Status":"Aus dem Arbeitsstand");
+    card.append(heading,value,hint);
+    grid.appendChild(card);
   });
+
+  const validation=document.createElement("article");
+  validation.className="overview-card overview-card--status";
+  validation.dataset.overviewRole="validation";
+  validation.dataset.status=(config.validation&&config.validation.status)||"info";
+  const statusHead=document.createElement("div"); statusHead.className="overview-card__heading";
+  const statusIcon=document.createElement("span"); statusIcon.className="overview-card__icon"; statusIcon.innerHTML=ap16Icon("shield");
+  const statusTitle=document.createElement("h3"); statusTitle.className="overview-card__title"; statusTitle.textContent=visual.titles[1];
+  statusHead.append(statusIcon,statusTitle);
+  const statusLead=document.createElement("p"); statusLead.className="overview-card__status-lead"; statusLead.textContent=(config.validation&&config.validation.headline)||"Prüfstatus";
+  const statusList=document.createElement("ul"); statusList.className="overview-card__checklist";
+  ((config.validation&&config.validation.items)||[]).slice(0,4).forEach(item=>{
+    const normalized=typeof item==="string"?{text:item,status:"info"}:item;
+    const itemStatus=["ok","warn","error","info"].includes(normalized.status)?normalized.status:"info";
+    const li=document.createElement("li");li.className="overview-check-item is-"+itemStatus;
+    const mark=document.createElement("span");mark.className="overview-check-icon";mark.setAttribute("aria-hidden","true");mark.textContent=itemStatus==="ok"?"✓":(itemStatus==="warn"?"!":(itemStatus==="error"?"×":"i"));
+    const text=document.createElement("span");text.textContent=normalized.text||"";li.append(mark,text);statusList.appendChild(li);
+  });
+  validation.append(statusHead,statusLead,statusList);
+  grid.appendChild(validation);
+
+  const workflow=document.createElement("article");
+  workflow.className="overview-card overview-card--workflow";
+  workflow.dataset.overviewRole="workflow";
+  const workflowHead=document.createElement("div"); workflowHead.className="overview-card__heading";
+  const workflowIcon=document.createElement("span"); workflowIcon.className="overview-card__icon"; workflowIcon.innerHTML=ap16Icon(visual.icon);
+  const workflowTitle=document.createElement("h3"); workflowTitle.className="overview-card__title"; workflowTitle.textContent=visual.titles[2];
+  workflowHead.append(workflowIcon,workflowTitle);
+  const workflowText=document.createElement("p"); workflowText.className="overview-card__workflow-text"; workflowText.textContent=(config.next&&config.next.text)||"Nächsten Arbeitsschritt öffnen.";
+  const workflowActions=document.createElement("div"); workflowActions.className="overview-card__actions overview-card__actions--workflow";
+  if (config.next&&config.next.action) workflowActions.appendChild(overviewActionButton(config.next.action));
+  workflow.append(workflowHead,workflowText,workflowActions);
+  grid.appendChild(workflow);
+
+  const actions=document.createElement("article");
+  actions.className="overview-card overview-card--actions";
+  actions.dataset.overviewRole="quick-actions";
+  const actionHead=document.createElement("div"); actionHead.className="overview-card__heading";
+  const actionIcon=document.createElement("span"); actionIcon.className="overview-card__icon"; actionIcon.innerHTML=ap16Icon(visual.icon);
+  const actionTitle=document.createElement("h3"); actionTitle.className="overview-card__title"; actionTitle.textContent=visual.titles[3];
+  actionHead.append(actionIcon,actionTitle);
+  const actionButtons=document.createElement("div"); actionButtons.className="overview-card__actions quick-actions";
+  (config.actions||[]).forEach(action=>actionButtons.appendChild(overviewActionButton(action)));
+  actions.append(actionHead,actionButtons);
+  grid.appendChild(actions);
 }
 function overviewActionButton(action) {
   const button=document.createElement("button"); button.type="button"; button.textContent=action.label||"Aktion";
@@ -326,7 +352,7 @@ function auditV992Structure() {
     const sections=page?Array.from(page.querySelectorAll(':scope > .page-sections > .page-section')):[];
     const validation=sections.length?sections[sections.length-1]:null;
     const footnote=page&&page.querySelector(':scope > .page-footnote');
-    const checks={page:!!page,headerCount:page?page.querySelectorAll(':scope > .page-header').length===1:false,overviewGridCount:grids.length===1,directCardCount:cards.length===4,cardTitles:expected.every((t,i)=>titles[i]===t),noNestedCardGrid:!(grids[0]&&grids[0].querySelector('.overview-grid')),quickActionsAreButtons:cards[3]?Array.from(cards[3].querySelectorAll('.overview-card__actions > *')).every(x=>x.tagName==='BUTTON'):false,validationSectionIsLast:!!(validation&&validation.dataset.sectionRole==='validation'),primarySectionOpen:sections.length?sections[0].open:true,footnoteAfterValidation:!footnote||footnote.previousElementSibling===page.querySelector(':scope > .page-sections')};
+    const checks={page:!!page,headerCount:page?page.querySelectorAll(':scope > .page-header').length===1:false,overviewGridCount:grids.length===1,directCardCount:cards.length>=7,cardTitles:cards.filter(c=>c.dataset.overviewRole==='metric').length>=1,noNestedCardGrid:!(grids[0]&&grids[0].querySelector('.overview-grid')),quickActionsAreButtons:(()=>{const c=cards.find(x=>x.dataset.overviewRole==='quick-actions');return !!c&&Array.from(c.querySelectorAll('.overview-card__actions > *')).every(x=>x.tagName==='BUTTON');})(),validationSectionIsLast:!!(validation&&validation.dataset.sectionRole==='validation'),primarySectionOpen:sections.length?sections[0].open:true,footnoteAfterValidation:!footnote||footnote.previousElementSibling===page.querySelector(':scope > .page-sections')};
     return {tab:tabId,title:def.title,headerCount:page?page.querySelectorAll(':scope > .page-header').length:0,overviewGridCount:grids.length,directCardCount:cards.length,cardTitles:titles,legacyCardsFound:!!(page&&page.querySelector('.cards,.workspace-overview-grid,.cost-overview-grid,.tenant-overview-grid,.meter-overview-grid')),nestedCardGridFound:!checks.noNestedCardGrid,quickActionsAreButtons:checks.quickActionsAreButtons,validationSectionIsLast:checks.validationSectionIsLast,footnoteAfterValidation:checks.footnoteAfterValidation,result:Object.values(checks).every(Boolean)?'ok':'fehler',checks};
   });
   const report={version:APP_VERSION,generatedAt:new Date().toISOString(),tabCount:results.length,allPassed:results.every(r=>r.result==='ok'),results};
