@@ -1,3 +1,8 @@
+<!-- AP9-CURRENT -->
+# Abhängigkeitsübersicht V99.4.10
+
+`ui-bindings` → `application-actions` → (`master-data-actions` | `cost-actions` | `billing-workflow`) → `state-access` → zentraler Commit. Die Orchestrierungsmodule erhalten Fachhelfer ausschließlich über `configure()`. `billing-calculation`, `billing-snapshot`, Objekt- und Zählermodule bleiben fachliche Quellen; Persistenz und DOM sind keine Abhängigkeiten der neuen Module.
+
 # Abhängigkeitsübersicht V99.4.9
 
 ## AP7-Hauptrichtung

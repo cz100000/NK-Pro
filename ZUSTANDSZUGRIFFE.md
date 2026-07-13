@@ -1,3 +1,8 @@
+<!-- AP9-CURRENT -->
+# Zustandszugriffe V99.4.10
+
+`state` bleibt der einzige veränderliche Arbeitszustand. AP9 reduziert direkte Pfadreferenzen in `app.js` von 640 auf 503 und direkte Schreibstellen von 246 auf 195. Neue Anwendungsaktionen verwenden `NKProStateAccess.transact()` mit Rollback und höchstens einem Commit. Root-Ersetzung aus einem Aktionsresultat ist nur noch explizit über `replaceStateResult:true` möglich.
+
 # Zustandszugriffe – V99.4.9
 
 ## Verbindlicher Zustand

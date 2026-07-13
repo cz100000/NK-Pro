@@ -54,7 +54,9 @@
     const before = typeof structuredClone === "function" ? structuredClone(configured.getState()) : JSON.parse(JSON.stringify(configured.getState()));
     try {
       const result = mutator(configured.getState());
-      if (result && result !== configured.getState()) configured.replaceState(result, Object.assign({}, options, { commit:false, render:false }));
+      if (options.replaceStateResult === true && result && result !== configured.getState()) {
+        configured.replaceState(result, Object.assign({}, options, { commit:false, render:false }));
+      }
       if (options.validate && typeof options.validate === "function") {
         const report = options.validate(configured.getState());
         if (report === false || (report && report.ok === false)) throw new Error((report && report.message) || "State-Validierung fehlgeschlagen.");

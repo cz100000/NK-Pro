@@ -20,6 +20,9 @@ const NK_PRO_MODULES = (() => {
     uiPreferences:globalThis.NKProUiPreferences,
     stateAccess:globalThis.NKProStateAccess,
     applicationActions:globalThis.NKProApplicationActions,
+    masterDataActions:globalThis.NKProMasterDataActions,
+    costActions:globalThis.NKProCostActions,
+    billingWorkflow:globalThis.NKProBillingWorkflow,
     uiController:globalThis.NKProUiController,
     uiBindings:globalThis.NKProUiBindings,
     uiEvents:globalThis.NKProUiEvents,
@@ -34,8 +37,8 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.9";
-const APP_VERSION_NAME = "Modularisierte Anwendungsaktionen und fachliche Orchestrierung";
+const APP_VERSION = "V99.4.10";
+const APP_VERSION_NAME = "Physisch extrahierte Kernorchestrierung";
 const APP_RELEASE_DATE = "2026-07-13";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
@@ -101,6 +104,8 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
+  "V99.4.10 extrahiert Stammdaten-, Kosten- und Abrechnungsorchestrierung physisch aus app.js in drei kontrollierte Anwendungsmodule.",
+  "UI-Aktionen rufen die neuen Module direkt auf; Zustandsänderungen laufen atomar über NKProStateAccess und den zentralen Commitpfad.",
   "V99.4.9 bindet die bestehende Oberfläche über zentrale Ereignisdelegation und fachlich benannte UI-Controller an die modularisierten Dienste an.",
   "Alle statischen und dynamisch erzeugten Inline-Handler wurden entfernt; Zähler-, Abrechnungs-, Dokument-, Export-, Persistenz- und Recovery-Aktionen laufen über definierte Controllerpfade.",
   "Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Zählerstandard 1 und Abrechnungssnapshot 2 bleiben unverändert.",
@@ -274,6 +279,7 @@ const UNIT_ID_ALIASES = {
   w06:"W006.DG-R", dgr:"W006.DG-R", dgrechts:"W006.DG-R"
 };
 
+configureCoreOrchestrationModules();
 let state = loadInitialState();
 let archiveReturnState = null;
 const START_NAV_TABS = ["landing","objekt","mieterverwaltung","wohnungsverwaltung","start","archiv","sicherung"];
@@ -328,8 +334,8 @@ function migrationModuleOptions(overrides = {}) {
       ensureUnitIdentityData,
       ensureTenantIdentityFields,
       canonicalUnitIdFor,
-      ensureStammdatenData,
-      normalizeMasterUnitRows,
+      ensureStammdatenData:NK_PRO_MODULES.masterDataActions.ensureStammdatenData,
+      normalizeMasterUnitRows:NK_PRO_MODULES.masterDataActions.normalizeMasterUnitRows,
       num
     },
     ...overrides
@@ -911,16 +917,6 @@ function renderBackupStatus() {
 }
 
 
-function currentBillingFinalizationKey() {
-  const meta = state && state.meta || {};
-  return String(meta.abrechnungsjahr || currentAbrechnungsjahr() || "") + "|" + String(meta.abrechnungsbeginn || "") + "|" + String(meta.abrechnungsende || "");
-}
-
-function isCurrentBillingFinalized() {
-  const meta = state && state.meta || {};
-  return !!(meta.currentBillingFinalized && meta.currentBillingFinalizationKey === currentBillingFinalizationKey());
-}
-
 let finalizationWriteBypass = false;
 let statePreparationInProgress = false;
 let statePreparationCount = 0;
@@ -930,20 +926,12 @@ function withFinalizationWriteBypass(fn) {
   try { return fn(); } finally { finalizationWriteBypass = old; }
 }
 
-function currentBillingFinalizationReport() {
-  const finalized = isCurrentBillingFinalized();
-  const meta = state && state.meta || {};
-  const report = collectQualityChecks({ scope:"currentBilling" });
-  const readiness = finalBillingReadiness(report);
-  return { finalized, meta, report, readiness };
-}
-
 function renderFinalizationStatus() {
   const el = document.getElementById("finalizationStatusBox");
   const billingContext = currentAppMode() === "billing" && !isArchiveViewer();
   if (!el) { document.body.classList.remove("billing-finalized"); return; }
   if (!billingContext) { el.innerHTML = ""; document.body.classList.remove("billing-finalized"); return; }
-  const info = currentBillingFinalizationReport();
+  const info = NK_PRO_MODULES.billingWorkflow.currentBillingFinalizationReport();
   document.body.classList.toggle("billing-finalized", !!info.finalized);
   const meta = info.meta || {};
   const finalizedAt = info.finalized && meta.currentBillingFinalizedAt ? new Date(meta.currentBillingFinalizedAt).toLocaleString("de-DE") : "Nicht finalisiert";
@@ -960,59 +948,11 @@ function renderFinalizationStatus() {
     '</div></div>';
 }
 
-function finalizeCurrentBilling() {
-  if (isArchiveViewer()) return alert("Archivansichten sind bereits schreibgeschützt.");
-  if (!hasActiveCurrentBilling()) return alert("Es ist keine aktuelle Abrechnung in Bearbeitung. Neue Abrechnungen werden ausschließlich über „+ Neue Abrechnung“ angelegt.");
-  if (isCurrentBillingFinalized()) return alert("Diese Abrechnung ist bereits finalisiert.");
-  const info = currentBillingFinalizationReport();
-  if (info.readiness.errors.length) {
-    alert("Finalisierung nicht möglich. Es gibt noch blockierende Fehler im finalen Abrechnungscheck.");
-    switchToTab("qualitaet");
-    return;
-  }
-  const warnText = info.readiness.warnings.length ? "\n\nEs gibt noch " + info.readiness.warnings.length + " fachliche Prüfpunkte. Finalisiere nur, wenn du diese bewusst geprüft hast." : "";
-  if (!confirm("Abrechnung " + currentAbrechnungsjahr() + " finalisieren?\n\nDanach werden Eingaben geschützt und Änderungen nicht mehr gespeichert, bis die Finalisierung bewusst aufgehoben wird." + warnText)) return;
-  if (!state.meta) state.meta = {};
-  state.meta.currentBillingFinalized = true;
-  state.meta.currentBillingFinalizationKey = currentBillingFinalizationKey();
-  state.meta.currentBillingFinalizedAt = new Date().toISOString();
-  state.meta.currentBillingFinalizedWithAppVersion = APP_VERSION;
-  state.meta.currentBillingFinalizationSummary = {
-    year: currentAbrechnungsjahr(),
-    period: periodLabelShort(),
-    errors: info.readiness.errors.length,
-    warnings: info.readiness.warnings.length,
-    hints: info.readiness.hints.length
-  };
-  withFinalizationWriteBypass(() => saveData());
-  renderAll();
-  alert("Abrechnung wurde finalisiert. Eingaben sind jetzt geschützt.");
-}
 
-function unlockCurrentBilling() {
-  if (isArchiveViewer()) return alert("Archivansichten können nicht entsperrt werden.");
-  if (!hasActiveCurrentBilling()) return alert("Es ist keine aktuelle Abrechnung in Bearbeitung. Zur Wiederbearbeitung bitte einen Archivdatensatz öffnen.");
-  if (!isCurrentBillingFinalized()) return alert("Diese Abrechnung ist nicht finalisiert.");
-  const code = "ENTSPERREN";
-  const entered = prompt("Finalisierung aufheben?\n\nGib zur Bestätigung " + code + " ein. Danach können Daten wieder verändert werden.");
-  if (String(entered || "").trim().toUpperCase() !== code) return alert("Finalisierung wurde nicht aufgehoben.");
-  if (!state.meta) state.meta = {};
-  state.meta.currentBillingFinalized = false;
-  state.meta.currentBillingUnlockedAt = new Date().toISOString();
-  state.meta.currentBillingUnlockedWithAppVersion = APP_VERSION;
-  withFinalizationWriteBypass(() => saveData());
-  renderAll();
-  alert("Finalisierung wurde aufgehoben. Die Abrechnung ist wieder bearbeitbar.");
-}
 
-function clearCurrentBillingFinalization() {
-  if (!state.meta) state.meta = {};
-  state.meta.currentBillingFinalized = false;
-  delete state.meta.currentBillingFinalizationKey;
-  delete state.meta.currentBillingFinalizedAt;
-  delete state.meta.currentBillingFinalizedWithAppVersion;
-  delete state.meta.currentBillingFinalizationSummary;
-}
+
+
+
 
 function exportSnapshot() {
   const snapshot = clone(state);
@@ -1040,9 +980,6 @@ function exportSnapshot() {
   return snapshot;
 }
 
-function exportCurrentBillingSnapshot() {
-  return createYearSnapshot();
-}
 
 function backupFileName(prefix, data) {
   const meta = data && data.meta || {};
@@ -1212,7 +1149,7 @@ function normalizeLegacyData(data, options = {}) {
   if (Array.isArray(data.kostenarten)) {
     data.kostenarten.forEach(k => {
       if (k.umlageschluessel === "Wohneinheiten inkl. Leerstand") k.umlageschluessel = "Verteilung nur auf aktive Wohneinheiten";
-      normalizeCostSettings(k);
+      NK_PRO_MODULES.costActions.normalizeCostSettings(k);
     });
   }
   if (Array.isArray(data.wohnungen)) {
@@ -1245,7 +1182,7 @@ function normalizeLegacyData(data, options = {}) {
   }
   ensureUnifiedBillingFields(data, { includeArchives:false });
   migrateDataSchema(data, { includeArchives:false });
-  if (!snapshotMode) ensureStammdatenData(data);
+  if (!snapshotMode) NK_PRO_MODULES.masterDataActions.ensureStammdatenData(data);
   if (!data.objektStandard || typeof data.objektStandard !== "object") normalizeObjectStandard(data, { legacySnapshot:snapshotMode });
   const meteringMigration = migrateMeteringData(data, { legacySnapshot:snapshotMode });
   if (meteringMigration.status === "failed") throw meteringMigration.error;
@@ -1435,7 +1372,7 @@ function saveData(options = {}) {
     renderActionFeedback();
     return false;
   }
-  if (typeof isCurrentBillingFinalized === "function" && isCurrentBillingFinalized() && !finalizationWriteBypass) {
+  if (NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized() && !finalizationWriteBypass) {
     setActionMessage("Abrechnung ist finalisiert. Änderungen wurden nicht gespeichert. Zum Bearbeiten zuerst Finalisierung aufheben.", "warn");
     renderActionFeedback();
     return false;
@@ -1505,20 +1442,9 @@ function statusClass(status) {
   return "err";
 }
 
-function normalizeCostSettings(row) {
-  if (!row) return row;
-  if (!COST_EXCLUSION_OPTIONS.includes(row.ausschlussBehandlung)) row.ausschlussBehandlung = COST_EXCLUSION_FULL;
-  row.umlageschluessel = normalizeManualUmlageValue(row.umlageschluessel);
-  const hadNoConsumptionField = row.gesamtverbrauch === undefined || row.gesamtverbrauch === null;
-  if (hadNoConsumptionField) row.gesamtverbrauch = "";
-  row.preisProEinheitManuell = row.preisProEinheitManuell === true || (hadNoConsumptionField && num(row.preisProEinheit) > 0);
-  if (row.umlageschluessel === "Verbrauch") applyAutoPriceIfNeeded(row, false);
-  return row;
-}
-
 function ensureCostSettings(data = state) {
   if (!data || !Array.isArray(data.kostenarten)) return;
-  data.kostenarten.forEach(k => normalizeCostSettings(k));
+  data.kostenarten.forEach(k => NK_PRO_MODULES.costActions.normalizeCostSettings(k));
 }
 
 function costExclusionHandling(...args) { return NK_PRO_MODULES.billingCalculation.costExclusionHandling(...args); }
@@ -1527,31 +1453,12 @@ function costFullyRedistributes(...args) { return NK_PRO_MODULES.billingCalculat
 
 function normalizeManualUmlageValue(...args) { return NK_PRO_MODULES.billingCalculation.normalizeManualUmlageValue(...args); }
 
-function autoPriceForCost(row) {
-  const total = num(row && row.gesamtbetrag);
-  const consumption = num(row && row.gesamtverbrauch);
-  if (total > 0 && consumption > 0) return Math.round((total / consumption) * 10000) / 10000;
-  return "";
-}
-
-function isManualPriceOverride(row) {
-  return row && row.preisProEinheitManuell === true;
-}
-
-function applyAutoPriceIfNeeded(row, force = false) {
-  if (!row) return row;
-  const autoPrice = autoPriceForCost(row);
-  if (force) row.preisProEinheitManuell = false;
-  if (!isManualPriceOverride(row) && autoPrice !== "") row.preisProEinheit = autoPrice;
-  return row;
-}
-
 function resetCostUnitPriceToAuto(index) {
   const row = state.kostenarten[index];
   if (!row) return;
   row.preisProEinheitManuell = false;
-  applyAutoPriceIfNeeded(row, true);
-  row.status = kostenStatus(row);
+  NK_PRO_MODULES.costActions.applyAutoPriceIfNeeded(row, true);
+  row.status = NK_PRO_MODULES.costActions.kostenStatus(row);
   commitStateChange({ reason:"Benutzereingabe" });
 }
 
@@ -1571,14 +1478,8 @@ function costGroupLabel(k) {
   if (/betrieb/i.test(area)) return "Betriebskosten";
   return "Sonstige / freie Kostenarten";
 }
-function configureFreeCost(index, name, group) {
-  const k=state.kostenarten[index]; if (!k) return;
-  const clean=String(name||"").trim();
-  if (!clean) { alert("Bitte eine Bezeichnung für die eigene Kostenart eingeben."); return; }
-  k.kostenart=clean; k.fachgruppe=COST_GROUP_OPTIONS.includes(group)?group:"Sonstige / freie Kostenarten"; k.bereich=k.fachgruppe; k.inNK="Ja";
-  commitStateChange({reason:"Benutzereingabe",tabId:"einstellungen"});
-  renderCostSelectionPanel();
-}
+
+
 
 function renderCostSelectionPanel() {
   const el = document.getElementById("costSelectionPanel");
@@ -1613,10 +1514,10 @@ function renderCostSelectionPanel() {
 let activeCostPriceEditorIndex = null;
 
 function priceCellHtml(k, index) {
-  const autoPrice = autoPriceForCost(k);
+  const autoPrice = NK_PRO_MODULES.costActions.autoPriceForCost(k);
   const price = num(k.preisProEinheit);
   const unit = costUnitLabel(k) || "Einheit";
-  const mode = isManualPriceOverride(k) ? "manuell" : "automatisch";
+  const mode = NK_PRO_MODULES.costActions.isManualPriceOverride(k) ? "manuell" : "automatisch";
   const value = price > 0 ? fmtMoney(price) + " / " + escapeHtml(unit) : "–";
   const title = autoPrice !== ""
     ? "Automatischer Preis: " + fmtMoney(autoPrice) + " · aktuell " + mode
@@ -1631,7 +1532,7 @@ function openCostPriceEditor(index) {
   const modal = document.getElementById("costPriceModal");
   if (!row || !modal) return;
   activeCostPriceEditorIndex = index;
-  const autoPrice = autoPriceForCost(row);
+  const autoPrice = NK_PRO_MODULES.costActions.autoPriceForCost(row);
   document.getElementById("costPriceDialogTitle").textContent = "Einheitspreis bearbeiten";
   document.getElementById("costPriceDialogCostName").textContent = row.kostenart || row.id || "Kostenart";
   document.getElementById("costPriceDialogInput").value = row.preisProEinheit ?? "";
@@ -1652,7 +1553,7 @@ function closeCostPriceEditor() {
 function saveCostPriceFromDialog() {
   if (activeCostPriceEditorIndex === null) return;
   const input = document.getElementById("costPriceDialogInput");
-  setCostSetting(activeCostPriceEditorIndex, "preisProEinheit", input ? input.value : "");
+  NK_PRO_MODULES.costActions.setSetting(activeCostPriceEditorIndex, "preisProEinheit", input ? input.value : "");
   closeCostPriceEditor();
 }
 
@@ -1662,46 +1563,30 @@ function resetCostPriceFromDialog() {
   closeCostPriceEditor();
 }
 
-function kostenStatus(row) {
-  normalizeCostSettings(row);
-  if (!row.kostenart) return "";
-  if (!row.inNK || !row.vorauszahlung) return "Eingabe fehlt";
-  if (row.inNK === "Nein" && row.vorauszahlung === "Ja") return "Vorauszahlung ohne NK-Zuordnung";
-  if (row.inNK === "Nein") return "Nicht Bestandteil der NK-Abrechnung";
-  if (num(row.gesamtbetrag) <= 0) return "Gesamtbetrag fehlt";
-  if (row.berechnungsart === "Automatisch") {
-    if (!row.umlageschluessel || row.umlageschluessel === "Entfällt" || row.umlageschluessel === UMLAGE_MANUAL) return "Umlageschlüssel fehlt";
-    if (row.umlageschluessel === "Verbrauch" && num(row.preisProEinheit) <= 0) return "Preis je Verbrauchseinheit fehlt";
-    return "Vollständig";
-  }
-  if (row.berechnungsart === "Manuell je Mieter") return row.umlageschluessel === UMLAGE_MANUAL ? "Vollständig" : "Manuelle Eingabe auswählen";
-  return "Berechnungsart fehlt";
-}
-
 function recalculateAll() {
-  state.kostenarten.forEach(row => row.status = kostenStatus(row));
+  state.kostenarten.forEach(row => row.status = NK_PRO_MODULES.costActions.kostenStatus(row));
   state.mieter.forEach(row => { row.kaltSoll = num(row.kaltSoll); row.kaltErhalten = num(row.kaltErhalten); row.nkVoraus = num(row.nkVoraus); row.einnahmen = num(row.kaltErhalten) + num(row.nkVoraus); });
   commitStateChange({ reason:"Benutzereingabe" });
 }
 
 function setNested(collection, index, key, value, type="text") {
   if (collection === "kostenarten" && ["inNK","vorauszahlung","gesamtbetrag","gesamtverbrauch","preisProEinheit","ausschlussBehandlung"].includes(key)) {
-    setCostSetting(index, key, value);
+    NK_PRO_MODULES.costActions.setSetting(index, key, value);
     return;
   }
   if (type === "number") value = num(value);
   state[collection][index][key] = value;
   if (collection === "kostenarten" && key !== "status") {
-    normalizeCostSettings(state[collection][index]);
-    state[collection][index].status = kostenStatus(state[collection][index]);
-    syncKostenartenMieterUmlage();
+    NK_PRO_MODULES.costActions.normalizeCostSettings(state[collection][index]);
+    state[collection][index].status = NK_PRO_MODULES.costActions.kostenStatus(state[collection][index]);
+    NK_PRO_MODULES.costActions.syncKostenartenMieterUmlage();
   }
   if (collection === "wohnungen") ensureUnitIdentityFields(state[collection][index]);
   if (collection === "mieter") { const row = state[collection][index]; row.einnahmen = num(row.kaltErhalten) + num(row.nkVoraus); ensureTenantIdentityFields(row); }
   commitStateChange({ reason:"Benutzereingabe" });
 }
 
-function editDisabledAttr() { return (typeof isCurrentBillingFinalized === "function" && isCurrentBillingFinalized()) ? ' disabled title="Finalisierte Abrechnung: zuerst Finalisierung aufheben"' : ''; }
+function editDisabledAttr() { return (NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized()) ? ' disabled title="Finalisierte Abrechnung: zuerst Finalisierung aufheben"' : ''; }
 
 function uiActionAttributes(action, args = [], eventType = "click", options = {}) { return NK_PRO_MODULES.uiEvents.attributes(action, args, eventType, options); }
 function legacyUiActionAttributes(expression, eventType = "change") { return NK_PRO_MODULES.uiEvents.legacyAttributes(expression, eventType); }
@@ -1883,56 +1768,12 @@ function unitSelectHtml(value, onChange) {
 }
 
 function masterUnitSelectHtml(value, onChange) {
-  return unitSelectHtmlFromRows(value, masterUnits(), onChange);
+  return unitSelectHtmlFromRows(value, NK_PRO_MODULES.masterDataActions.masterUnits(), onChange);
 }
 
 function ensureTenantContactData() {
   if (!Array.isArray(state.mieter)) return;
   state.mieter.forEach(m => { ensureTenantContactFields(m); ensureTenantIdentityFields(m); });
-}
-
-function normalizeMasterUnitRows(rows) {
-  const source = Array.isArray(rows) ? rows : [];
-  const seen = new Set();
-  return source.map((w, index) => {
-    const row = clone(w || {});
-    ensureUnitIdentityFields(row);
-    if (!row.id) row.id = generatedUnitIdForLabel(row.bezeichnung || row.lage || "Wohnung", index);
-    delete row.status;
-    if (row.bemerkung === undefined || row.bemerkung === null) row.bemerkung = "";
-    return row;
-  }).filter(row => {
-    const id = String(row.id || "");
-    if (!id) return true;
-    if (seen.has(id)) return false;
-    seen.add(id);
-    return true;
-  }).sort((a,b) => String(a.id || "").localeCompare(String(b.id || ""), "de"));
-}
-
-function normalizeBillingUnitRows(masterRows, existingRows) {
-  const statusById = new Map((Array.isArray(existingRows) ? existingRows : []).map(w => [String(w && w.id || ""), String(w && w.status || "aktiv")]));
-  return normalizeMasterUnitRows(masterRows).map(w => ({...w, status:statusById.get(String(w.id || "")) || "aktiv"}));
-}
-
-function setBillingUnitStatus(index, value) {
-  if (!Array.isArray(state.wohnungen) || !state.wohnungen[index]) return;
-  state.wohnungen[index].status = value === "inaktiv" ? "inaktiv" : "aktiv";
-  commitStateChange({ reason:"Benutzereingabe", tabId:"mieter" });
-}
-
-function normalizeMasterTenantRows(rows) {
-  const source = Array.isArray(rows) ? rows : [];
-  return source.filter(m => hasTenantData(m)).map(m => {
-    const row = clone(m || {});
-    if (row.status === "archiviert" || row.status === "Archiv") row.status = "Archiviert";
-    if (row.status === "OK") row.status = row.auszug ? "NK offen" : "Aktiv";
-    if (row.archivedAt === undefined || row.archivedAt === null) row.archivedAt = "";
-    ensureTenantContactFields(row);
-    ensureTenantIdentityFields(row);
-    if (row.wohnung) row.wohnung = canonicalUnitIdFor(row.wohnung) || row.wohnung;
-    return row;
-  });
 }
 
 function comparableTenantName(value) {
@@ -1947,7 +1788,7 @@ function comparableTenantName(value) {
 function applyKnownMasterTenantEntryDates(data, options = {}) {
   if (!data || !data.meta || (data.meta && data.meta.archiveViewer)) return false;
   if (data.meta.masterTenantEntryDateFix === MASTER_TENANT_ENTRY_DATE_FIX_ID) return false;
-  ensureStammdatenData(data);
+  NK_PRO_MODULES.masterDataActions.ensureStammdatenData(data);
   let changed = false;
   const targets = MASTER_TENANT_ENTRY_DATES.map(item => ({
     ...item,
@@ -1969,383 +1810,6 @@ function applyKnownMasterTenantEntryDates(data, options = {}) {
   return changed;
 }
 
-function ensureStammdatenData(data) {
-  if (!data || typeof data !== "object") return data;
-  if (!data.stammdaten || typeof data.stammdaten !== "object" || Array.isArray(data.stammdaten)) data.stammdaten = {};
-  if (!Array.isArray(data.stammdaten.wohnungen) || !data.stammdaten.wohnungen.length) {
-    data.stammdaten.wohnungen = clone(Array.isArray(data.wohnungen) ? data.wohnungen : []);
-  }
-  if (!Array.isArray(data.stammdaten.mieter) || !data.stammdaten.mieter.length) {
-    data.stammdaten.mieter = clone(Array.isArray(data.mieter) ? data.mieter.filter(m => hasTenantData(m)) : []);
-  }
-  data.stammdaten.wohnungen = normalizeMasterUnitRows(data.stammdaten.wohnungen);
-  data.stammdaten.mieter = normalizeMasterTenantRows(data.stammdaten.mieter);
-  return data;
-}
-
-function masterData() {
-  ensureStammdatenData(state);
-  return state.stammdaten;
-}
-
-function masterUnits() {
-  return masterData().wohnungen;
-}
-
-function masterTenants() {
-  return masterData().mieter;
-}
-
-function masterTenantCount() {
-  return masterTenants().filter(m => m && m.name && !isArchivedTenant(m)).length;
-}
-
-function masterVisibleTenantRows() {
-  return masterTenants()
-    .map((m,i) => ({...m, originalIndex:i}))
-    .filter(m => hasTenantData(m) && !isArchivedTenant(m));
-}
-
-function masterArchivedTenantRows() {
-  return masterTenants()
-    .map((m,i) => ({...m, originalIndex:i}))
-    .filter(m => hasTenantData(m) && isArchivedTenant(m));
-}
-
-function nextMasterMietId() {
-  const maxNum = masterTenants().reduce((max,m) => {
-    const match = String(m.id || "").match(/^M(\d+)$/);
-    return match ? Math.max(max, Number(match[1])) : max;
-  }, 0);
-  return "M" + String(maxNum + 1).padStart(3, "0");
-}
-
-function setMasterNested(collection, index, key, value, type="text") {
-  const master = masterData();
-  if (!Array.isArray(master[collection]) || !master[collection][index]) return;
-  if (type === "number") value = num(value);
-  master[collection][index][key] = value;
-  if (collection === "wohnungen") master[collection] = normalizeMasterUnitRows(master[collection]);
-  if (collection === "mieter") master[collection] = normalizeMasterTenantRows(master[collection]);
-  commitStateChange({ reason:"Benutzereingabe" });
-}
-
-function addMasterMietverhaeltnis() {
-  const master = masterData();
-  const newRow = {
-    id: nextMasterMietId(),
-    wohnung:"",
-    name:"",
-    einzug:"",
-    auszug:"",
-    kaltSoll:0,
-    kaltErhalten:0,
-    nkVoraus:0,
-    einnahmen:0,
-    aktiveTage:365,
-    wohnflaeche:0,
-    bemerkung:"",
-    status:"Aktiv",
-    personen:1,
-    personentage:365,
-    geschlecht:"Frau/Herr",
-    standardanrede:"Automatisch",
-    strasse:"Am Rauhen Biehl 5",
-    plz:"55774",
-    ort:"Baumholder",
-    telefon:"",
-    email:"",
-    abrechnungRolle:"Mieter",
-    wasserWeitereVorauszahlung:0,
-    vorjahresKorrektur:0,
-    archivedAt:""
-  };
-  master.mieter.push(newRow);
-  commitStateChange({ reason:"Benutzereingabe" });
-}
-
-function archiveMasterMietverhaeltnis(index) {
-  const row = masterTenants()[index];
-  if (!row || !hasTenantData(row)) return;
-  if (!confirm("Dieses Mietverhältnis im zentralen Bestand archivieren? Es wird dann nicht mehr automatisch in neue Abrechnungen übernommen.")) return;
-  row.status = "Archiviert";
-  row.archivedAt = todayIso();
-  commitStateChange({ reason:"Benutzereingabe" });
-}
-
-function restoreMasterMietverhaeltnis(index) {
-  const row = masterTenants()[index];
-  if (!row) return;
-  row.status = row.auszug ? "NK offen" : "Aktiv";
-  row.archivedAt = "";
-  commitStateChange({ reason:"Benutzereingabe" });
-}
-
-function tenantBillingCopyFromMaster(masterTenant, periodDays) {
-  const row = clone(masterTenant || {});
-  ensureTenantContactFields(row);
-  ensureTenantIdentityFields(row);
-  const activeDays = tenantActiveDaysInCurrentPeriod(row) || periodDays;
-  row.kaltSoll = num(row.kaltSoll);
-  row.kaltErhalten = 0;
-  row.nkVoraus = 0;
-  row.vorjahresKorrektur = 0;
-  row.wasserWeitereVorauszahlung = 0;
-  row.einnahmen = 0;
-  row.aktiveTage = activeDays;
-  row.personen = num(row.personen) || 1;
-  row.personentage = num(row.personen) * activeDays;
-  row.archivedAt = row.archivedAt || "";
-  row.status = tenantOpenStatus(row) || row.status || "";
-  return row;
-}
-
-function applyStammdatenToCurrentBilling() {
-  const periodDays = periodDaysExact();
-  state.wohnungen = normalizeBillingUnitRows(masterUnits(), state.wohnungen);
-  state.mieter = masterTenants()
-    .filter(m => tenantRelevantForCurrentBilling(m))
-    .map(m => tenantBillingCopyFromMaster(m, periodDays));
-}
-
-const BILLING_VALUE_FIELDS_TO_KEEP = [
-  "kaltSoll",
-  "kaltErhalten",
-  "nkVoraus",
-  "einnahmen",
-  "wasserWeitereVorauszahlung",
-  "vorjahresKorrektur",
-  "vzChangeHeizung",
-  "vzChangeWasser",
-  "vzChangeAbfall",
-  "vzChangeAntenne"
-];
-
-function tenantBillingCopyFromMasterKeepValues(masterTenant, existingTenant, periodDays) {
-  const row = clone(masterTenant || {});
-  ensureTenantContactFields(row);
-  ensureTenantIdentityFields(row);
-  if (existingTenant) {
-    BILLING_VALUE_FIELDS_TO_KEEP.forEach(key => {
-      if (existingTenant[key] !== undefined) row[key] = existingTenant[key];
-    });
-  }
-  row.kaltSoll = num(row.kaltSoll);
-  row.kaltErhalten = num(row.kaltErhalten);
-  row.nkVoraus = num(row.nkVoraus);
-  row.vorjahresKorrektur = num(row.vorjahresKorrektur);
-  row.wasserWeitereVorauszahlung = num(row.wasserWeitereVorauszahlung);
-  row.einnahmen = num(row.kaltErhalten) + num(row.nkVoraus);
-  row.aktiveTage = tenantActiveDaysInCurrentPeriod(row) || (existingTenant ? normalizeActiveDayValue(existingTenant.aktiveTage) : 0) || periodDays;
-  row.personen = num(row.personen) || (existingTenant ? num(existingTenant.personen) : 0) || 1;
-  row.personentage = num(row.personen) * normalizeActiveDayValue(row.aktiveTage);
-  row.archivedAt = row.archivedAt || "";
-  row.status = tenantOpenStatus(row) || row.status || "";
-  return row;
-}
-
-function captureTenantIndexedValuesById(rows, valuesKey) {
-  const tenantIds = (Array.isArray(state.mieter) ? state.mieter : []).map(m => String(m && m.id || ""));
-  const captured = {};
-  (Array.isArray(rows) ? rows : []).forEach(row => {
-    const rowId = String(row && (row.kostenId || row.id) || "");
-    if (!rowId || !Array.isArray(row[valuesKey])) return;
-    captured[rowId] = {};
-    tenantIds.forEach((tenantId, index) => {
-      if (tenantId) captured[rowId][tenantId] = num(row[valuesKey][index]);
-    });
-  });
-  return captured;
-}
-
-function restoreTenantIndexedValuesById(rows, valuesKey, captured) {
-  const tenantIds = (Array.isArray(state.mieter) ? state.mieter : []).map(m => String(m && m.id || ""));
-  (Array.isArray(rows) ? rows : []).forEach(row => {
-    const rowId = String(row && (row.kostenId || row.id) || "");
-    const byTenant = rowId ? captured[rowId] : null;
-    if (!byTenant || !Array.isArray(row[valuesKey])) return;
-    tenantIds.forEach((tenantId, index) => {
-      if (tenantId && Object.prototype.hasOwnProperty.call(byTenant, tenantId)) row[valuesKey][index] = byTenant[tenantId];
-    });
-    if (valuesKey === "werte") row.summe = row[valuesKey].reduce((a,b) => a + num(b), 0);
-  });
-}
-
-function captureUmlageInputsByTenantId() {
-  const tenantIds = (Array.isArray(state.mieter) ? state.mieter : []).map(m => String(m && m.id || ""));
-  const captured = {};
-  Object.keys(state.umlageInputs || {}).forEach(costId => {
-    const input = state.umlageInputs[costId];
-    if (!input || !Array.isArray(input.values)) return;
-    captured[costId] = {};
-    tenantIds.forEach((tenantId, index) => {
-      if (tenantId) captured[costId][tenantId] = num(input.values[index]);
-    });
-  });
-  return captured;
-}
-
-function restoreUmlageInputsByTenantId(captured) {
-  const tenantIds = (Array.isArray(state.mieter) ? state.mieter : []).map(m => String(m && m.id || ""));
-  Object.keys(state.umlageInputs || {}).forEach(costId => {
-    const input = state.umlageInputs[costId];
-    const byTenant = captured[costId];
-    if (!input || !Array.isArray(input.values) || !byTenant) return;
-    tenantIds.forEach((tenantId, index) => {
-      if (tenantId && Object.prototype.hasOwnProperty.call(byTenant, tenantId)) input.values[index] = byTenant[tenantId];
-    });
-  });
-}
-
-function meterSnapshotRowScore(row, generic = false) {
-  if (!row) return -1;
-  const endDate = String(generic ? row.endDate : (row.kwEndDate || row.wwEndDate || ""));
-  const startDate = String(generic ? row.startDate : (row.kwStartDate || row.wwStartDate || ""));
-  const date = endDate || startDate;
-  const serial = isoDateSerial(date);
-  const hasEnd = generic ? hasEnteredMeterValue(row.end) : (hasEnteredMeterValue(row.kwEnd) || hasEnteredMeterValue(row.wwEnd));
-  return (hasEnd ? 100000000 : 0) + (serial === null ? 0 : serial);
-}
-
-function captureMeterReadingsSnapshot(data = state) {
-  const tenants = Array.isArray(data && data.mieter) ? data.mieter : [];
-  const snapshot = { water:{ byTenant:{}, byUnit:{}, unitScores:{} }, generic:{} };
-  const waterRows = data && data.waterMeters && Array.isArray(data.waterMeters.readings) ? data.waterMeters.readings : [];
-  tenants.forEach((tenant,index) => {
-    const row = waterRows[index];
-    if (!row) return;
-    const tenantId = String(tenant && tenant.id || "");
-    const unitId = String(tenant && tenant.wohnung || "");
-    if (tenantId) snapshot.water.byTenant[tenantId] = clone(row);
-    if (unitId) {
-      const score = meterSnapshotRowScore(row, false);
-      if (snapshot.water.unitScores[unitId] === undefined || score >= snapshot.water.unitScores[unitId]) {
-        snapshot.water.byUnit[unitId] = clone(row);
-        snapshot.water.unitScores[unitId] = score;
-      }
-    }
-  });
-  const genericSource = data && data.meterReadings && data.meterReadings.readings && typeof data.meterReadings.readings === "object" ? data.meterReadings.readings : {};
-  Object.keys(genericSource).forEach(costId => {
-    const snap = snapshot.generic[costId] = { byTenant:{}, byUnit:{}, unitScores:{} };
-    const rows = Array.isArray(genericSource[costId]) ? genericSource[costId] : [];
-    tenants.forEach((tenant,index) => {
-      const row = rows[index];
-      if (!row) return;
-      const tenantId = String(tenant && tenant.id || "");
-      const unitId = String(tenant && tenant.wohnung || "");
-      if (tenantId) snap.byTenant[tenantId] = clone(row);
-      if (unitId) {
-        const score = meterSnapshotRowScore(row, true);
-        if (snap.unitScores[unitId] === undefined || score >= snap.unitScores[unitId]) {
-          snap.byUnit[unitId] = clone(row);
-          snap.unitScores[unitId] = score;
-        }
-      }
-    });
-  });
-  return snapshot;
-}
-
-function meterSnapshotRowForTenant(snap, tenant) {
-  if (!snap || !tenant) return null;
-  const tenantId = String(tenant.id || "");
-  const unitId = String(tenant.wohnung || "");
-  return (tenantId && snap.byTenant && snap.byTenant[tenantId]) || (unitId && snap.byUnit && snap.byUnit[unitId]) || null;
-}
-
-function restoreMeterReadingsAfterTenantSync(snapshot) {
-  ensureWaterMeterData();
-  const count = Math.max(20, state.mieter.length);
-  const waterRows = Array(count).fill(null).map(() => ({}));
-  state.mieter.forEach((tenant,index) => {
-    const source = meterSnapshotRowForTenant(snapshot && snapshot.water, tenant);
-    if (source) waterRows[index] = clone(source);
-  });
-  state.waterMeters.readings = waterRows;
-  if (!state.meterReadings) state.meterReadings = { readings:{} };
-  if (!state.meterReadings.readings) state.meterReadings.readings = {};
-  const costIds = new Set(Object.keys((snapshot && snapshot.generic) || {}).concat(Object.keys(state.meterReadings.readings || {})));
-  costIds.forEach(costId => {
-    const rows = Array(count).fill(null).map(() => ({}));
-    state.mieter.forEach((tenant,index) => {
-      const source = meterSnapshotRowForTenant(snapshot && snapshot.generic && snapshot.generic[costId], tenant);
-      if (source) rows[index] = clone(source);
-    });
-    state.meterReadings.readings[costId] = rows;
-  });
-}
-
-function mergeStammdatenIntoCurrentBilling() {
-  const periodDays = periodDaysExact();
-  const existingById = new Map((Array.isArray(state.mieter) ? state.mieter : []).map(m => [String(m.id || ""), m]));
-  const vorauszahlungenByTenant = captureTenantIndexedValuesById(state.vorauszahlungen, "werte");
-  const umlageInputsByTenant = captureUmlageInputsByTenantId();
-  const meterSnapshot = captureMeterReadingsSnapshot(state);
-  state.wohnungen = normalizeBillingUnitRows(masterUnits(), state.wohnungen);
-  state.mieter = masterTenants()
-    .filter(m => tenantRelevantForCurrentBilling(m))
-    .map(m => tenantBillingCopyFromMasterKeepValues(m, existingById.get(String(m.id || "")), periodDays));
-  syncVorauszahlungen();
-  restoreTenantIndexedValuesById(state.vorauszahlungen, "werte", vorauszahlungenByTenant);
-  syncUmlageInputs();
-  restoreUmlageInputsByTenantId(umlageInputsByTenant);
-  restoreMeterReadingsAfterTenantSync(meterSnapshot);
-  syncKostenartenMieterUmlage();
-  applyWaterMetersToUmlage();
-  updateTenantPrepaymentTotals();
-}
-
-function stammdatenComparableUnit(w) {
-  return {
-    id:String(w && w.id || ""),
-    bezeichnung:String(w && w.bezeichnung || ""),
-    lage:String(w && w.lage || ""),
-    wohnflaeche:num(w && w.wohnflaeche),
-    zimmer:String(w && w.zimmer || ""),
-    bemerkung:String(w && w.bemerkung || "")
-  };
-}
-
-function stammdatenComparableTenant(m) {
-  return {
-    id:String(m && m.id || ""),
-    wohnung:String(m && m.wohnung || ""),
-    name:String(m && m.name || ""),
-    rolle:String(m && m.abrechnungRolle || ""),
-    geschlecht:String(m && m.geschlecht || ""),
-    standardanrede:String(m && m.standardanrede || ""),
-    strasse:String(m && m.strasse || ""),
-    plz:String(m && m.plz || ""),
-    ort:String(m && m.ort || ""),
-    telefon:String(m && m.telefon || ""),
-    email:String(m && m.email || ""),
-    einzug:String(m && m.einzug || ""),
-    auszug:String(m && m.auszug || ""),
-    aktiveTage:tenantActiveDaysInCurrentPeriod(m) || normalizeActiveDayValue(m && m.aktiveTage),
-    personen:num(m && m.personen),
-    status:tenantOpenStatus(m) || String(m && m.status || "")
-  };
-}
-
-function stammdatenBillingDiff() {
-  const masterUnitData = masterUnits().map(stammdatenComparableUnit);
-  const billingUnitData = (Array.isArray(state.wohnungen) ? state.wohnungen : []).map(stammdatenComparableUnit);
-  const masterTenantData = masterTenants().filter(m => tenantRelevantForCurrentBilling(m)).map(stammdatenComparableTenant);
-  const billingTenantData = (Array.isArray(state.mieter) ? state.mieter : []).filter(m => tenantRelevantForCurrentBilling(m)).map(stammdatenComparableTenant);
-  const sameUnits = JSON.stringify(masterUnitData) === JSON.stringify(billingUnitData);
-  const sameTenants = JSON.stringify(masterTenantData) === JSON.stringify(billingTenantData);
-  return {
-    same:sameUnits && sameTenants,
-    sameUnits,
-    sameTenants,
-    masterUnits:masterUnitData.length,
-    billingUnits:billingUnitData.length,
-    masterTenants:masterTenantData.length,
-    billingTenants:billingTenantData.length
-  };
-}
-
 function renderBillingStammdatenStatus() {
   const el = document.getElementById("billingStammdatenStatus");
   if (!el) return;
@@ -2353,25 +1817,15 @@ function renderBillingStammdatenStatus() {
     el.innerHTML = '<strong>Archivansicht:</strong> Diese Abrechnung bleibt ein eingefrorener Stand. Der zentrale Bestand wird hier nicht in alte Abrechnungen übernommen.';
     return;
   }
-  const diff = stammdatenBillingDiff();
+  const diff = NK_PRO_MODULES.masterDataActions.stammdatenBillingDiff();
   const applied = state.meta && state.meta.stammdatenAppliedAt ? " Letzte Übernahme: " + dateDe(state.meta.stammdatenAppliedAt) + "." : "";
   el.innerHTML = diff.same
     ? '<strong>Synchron:</strong> Die Abrechnungskopie entspricht dem zentralen Mieter- und Wohnungsbestand.' + applied
     : '<strong>Nicht synchron:</strong> Zentraler Bestand ' + diff.masterTenants + ' Mietverhältnisse / ' + diff.masterUnits + ' Wohnungen, Abrechnungskopie ' + diff.billingTenants + ' Mietverhältnisse / ' + diff.billingUnits + ' Wohnungen. Nutze den Button, wenn dieser Bestand die aktuelle Abrechnung überschreiben soll.' + applied;
 }
 
-function applyStammdatenToCurrentBillingFromButton() {
-  if (isArchiveViewer()) {
-    alert("Diese Archivansicht ist schreibgeschützt. Alte Abrechnungen werden nicht aus dem zentralen Bestand aktualisiert.");
-    return;
-  }
-  if (!confirm("Den zentralen Mieter- und Wohnungsbestand jetzt in die aktuelle Abrechnung " + currentAbrechnungsjahr() + " übernehmen?\n\nWohnungen und Mietverhältnisse werden anhand der Stammdaten aktualisiert. Bereits erfasste Kaltmieten, erhaltene Zahlungen und Vorauszahlungs-/Korrekturwerte bleiben bei gleicher Mieter-ID erhalten.")) return;
-  mergeStammdatenIntoCurrentBilling();
-  state.meta.stammdatenAppliedAt = todayIso();
-  state.meta.stammdatenAppliedForYear = currentAbrechnungsjahr();
-  commitStateChange({ reason:"Benutzereingabe" });
-  alert("Der zentrale Bestand wurde in die aktuelle Abrechnung übernommen.");
-}
+
+
 
 
 function ensureZimmermannTenantForLegacyData(data) {
@@ -2583,7 +2037,7 @@ function addMietverhaeltnis() {
   };
   if (blankIndex >= 0) state.mieter[blankIndex] = newRow;
   else state.mieter.push(newRow);
-  syncVorauszahlungen();
+  NK_PRO_MODULES.costActions.syncVorauszahlungen();
   commitStateChange({ reason:"Benutzereingabe" });
 }
 
@@ -3025,8 +2479,8 @@ function collectQualityChecks(options = {}) {
   ensureYearData();
   ensureUnitIdentityData(state);
   ensureTenantContactData();
-  syncVorauszahlungen();
-  syncKostenartenMieterUmlage();
+  NK_PRO_MODULES.costActions.syncVorauszahlungen();
+  NK_PRO_MODULES.costActions.syncKostenartenMieterUmlage();
   syncUmlageInputs();
   applyWaterMetersToUmlage();
 
@@ -3041,7 +2495,7 @@ function collectQualityChecks(options = {}) {
   const activeCosts = state.kostenarten.filter(k => k.kostenart && k.inNK === "Ja");
   const archiveItems = Array.isArray(state.jahresArchiv) ? state.jahresArchiv : [];
   const storageInfo = currentStorageUsage();
-  if (isCurrentBillingFinalized()) add("OK", "Finalisierung", "Abrechnung finalisiert", "Finalisiert am " + (state.meta && state.meta.currentBillingFinalizedAt ? new Date(state.meta.currentBillingFinalizedAt).toLocaleString("de-DE") : "unbekannt"));
+  if (NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized()) add("OK", "Finalisierung", "Abrechnung finalisiert", "Finalisiert am " + (state.meta && state.meta.currentBillingFinalizedAt ? new Date(state.meta.currentBillingFinalizedAt).toLocaleString("de-DE") : "unbekannt"));
 
   activeCosts.forEach(k => {
     if (num(k.gesamtbetrag) === 0) add("Prüfen", "Kostenarten", "Aktive Kostenart mit Betrag 0", (k.id || "") + " " + (k.kostenart || ""));
@@ -3172,7 +2626,7 @@ function collectQualityChecks(options = {}) {
   if (!start || !end || start > end) add("Fehler", "Abrechnungsperiode", "Abrechnungszeitraum ist ungültig", start + " bis " + end);
 
   state.kostenarten.forEach(k => {
-    const status = kostenStatus(k);
+    const status = NK_PRO_MODULES.costActions.kostenStatus(k);
     if (k.kostenart && !["Vollständig","Nicht Bestandteil der NK-Abrechnung"].includes(status)) {
       add("Prüfen", "Kostenart", (k.id || "") + " · " + k.kostenart, status);
     }
@@ -3444,7 +2898,7 @@ function renderDashboard() {
   const saldoMieter = tenantShares - nk - korrekturen;
 
   const offeneKosten = state.kostenarten
-    .map(k => ({ ...k, calcStatus: kostenStatus(k) }))
+    .map(k => ({ ...k, calcStatus: NK_PRO_MODULES.costActions.kostenStatus(k) }))
     .filter(k => k.kostenart && !["Vollständig","Nicht Bestandteil der NK-Abrechnung"].includes(k.calcStatus));
 
   const offeneMieter = sichtbareMieter.filter(m => !m.wohnung || !m.name || !m.einzug || num(m.aktiveTage) <= 0 || num(m.personen) <= 0);
@@ -3464,88 +2918,12 @@ function renderDashboard() {
 
   document.getElementById("activeCostsTable").innerHTML =
     '<thead><tr><th>Kostenart</th><th>Umlageschlüssel</th><th>Gesamtbetrag</th><th>Status</th></tr></thead><tbody>' +
-    (aktiveKosten.length ? aktiveKosten.map(k => '<tr><td>' + escapeHtml(k.kostenart) + '</td><td>' + escapeHtml(k.umlageschluessel) + '</td><td>' + fmtMoney(k.gesamtbetrag) + '</td><td><span class="status ' + statusClass(kostenStatus(k)) + '">' + escapeHtml(kostenStatus(k)) + '</span></td></tr>').join("") : '<tr><td colspan="4">Keine aktiven Kostenarten.</td></tr>') +
+    (aktiveKosten.length ? aktiveKosten.map(k => '<tr><td>' + escapeHtml(k.kostenart) + '</td><td>' + escapeHtml(k.umlageschluessel) + '</td><td>' + fmtMoney(k.gesamtbetrag) + '</td><td><span class="status ' + statusClass(NK_PRO_MODULES.costActions.kostenStatus(k)) + '">' + escapeHtml(NK_PRO_MODULES.costActions.kostenStatus(k)) + '</span></td></tr>').join("") : '<tr><td colspan="4">Keine aktiven Kostenarten.</td></tr>') +
     '</tbody>';
   renderWorkflowDashboard();
 }
 
 function activePrepaymentCostIds(...args) { return NK_PRO_MODULES.billingCalculation.activePrepaymentCostIds(...args); }
-
-function syncVorauszahlungen() {
-  const tenantCount = Math.max(20, state.mieter.length);
-  state.kostenarten.forEach(k => {
-    if (!k || !k.id || !k.kostenart) return;
-    let row = state.vorauszahlungen.find(v => v.kostenId === k.id);
-    if (!row) {
-      row = { kostenId:k.id, kostenart:k.kostenart, aktiv:k.vorauszahlung || "Nein", summe:0, werte:Array(tenantCount).fill(0) };
-      state.vorauszahlungen.push(row);
-    }
-    row.kostenart = k.kostenart;
-    row.aktiv = k.vorauszahlung === "Ja" ? "Ja" : "Nein";
-    if (!Array.isArray(row.werte)) row.werte = [];
-    while (row.werte.length < tenantCount) row.werte.push(0);
-    row.summe = row.werte.reduce((a,b) => a + num(b), 0);
-  });
-}
-
-function setCostSetting(index, key, value) {
-  const row = state.kostenarten[index];
-  if (!row) return;
-
-  if (key === "gesamtbetrag" || key === "gesamtverbrauch" || key === "preisProEinheit") value = value === "" ? "" : num(value);
-  if (key === "preisProEinheit") row.preisProEinheitManuell = true;
-  row[key] = value;
-  normalizeCostSettings(row);
-  if (key === "gesamtbetrag" || key === "gesamtverbrauch") applyAutoPriceIfNeeded(row, false);
-
-  if (key === "inNK" && value === "Nein") {
-    row.vorauszahlung = "Nein";
-    row.berechnungsart = "Entfällt";
-    row.umlageschluessel = "Entfällt";
-  }
-
-  if (key === "inNK" && value === "Ja" && row.berechnungsart === "Entfällt") {
-    row.berechnungsart = "Automatisch";
-    row.umlageschluessel = row.umlageschluessel && row.umlageschluessel !== "Entfällt" ? row.umlageschluessel : "Wohnfläche";
-  }
-
-  if (key === "vorauszahlung" && value === "Ja" && row.inNK !== "Ja") {
-    row.inNK = "Ja";
-    if (row.berechnungsart === "Entfällt") row.berechnungsart = "Automatisch";
-    if (row.umlageschluessel === "Entfällt") row.umlageschluessel = "Wohnfläche";
-  }
-
-  row.status = kostenStatus(row);
-  syncVorauszahlungen();
-  syncKostenartenMieterUmlage();
-  commitStateChange({ reason:"Benutzereingabe" });
-}
-
-function activateDefaultPrepayments() {
-  const defaults = new Set(["K002","K006","K009"]);
-  state.kostenarten.forEach(k => {
-    if (defaults.has(k.id)) {
-      k.inNK = "Ja";
-      k.vorauszahlung = "Ja";
-      if (k.id === "K006") {
-        k.berechnungsart = "Manuell je Mieter";
-        k.umlageschluessel = UMLAGE_MANUAL;
-      } else {
-        k.berechnungsart = "Automatisch";
-        if (!k.umlageschluessel || k.umlageschluessel === "Entfällt" || k.umlageschluessel === UMLAGE_MANUAL) k.umlageschluessel = "Wohnfläche";
-      }
-      k.status = kostenStatus(k);
-    }
-  });
-  syncVorauszahlungen();
-  commitStateChange({ reason:"Benutzereingabe" });
-}
-
-function deactivateAllPrepayments() {
-  state.kostenarten.forEach(k => { k.vorauszahlung = "Nein"; k.status = kostenStatus(k); });
-  syncVorauszahlungen();
-  commitStateChange({ reason:"Benutzereingabe" });
-}
 
 function activeCostRowsForMatrix() {
   return (Array.isArray(state.kostenarten) ? state.kostenarten : []).filter(k => k && k.id && k.kostenart && k.inNK === "Ja");
@@ -3553,46 +2931,10 @@ function activeCostRowsForMatrix() {
 
 function tenantIdForUmlage(...args) { return NK_PRO_MODULES.billingCalculation.tenantIdForUmlage(...args); }
 
-function syncKostenartenMieterUmlage() {
-  if (!state.kostenartenMieterUmlage || typeof state.kostenartenMieterUmlage !== "object" || Array.isArray(state.kostenartenMieterUmlage)) state.kostenartenMieterUmlage = {};
-  const tenants = tenantRowsWithIndex();
-  const tenantIds = tenants.map(tenantIdForUmlage).filter(Boolean);
-  const tenantIdSet = new Set(tenantIds);
-  const activeCosts = activeCostRowsForMatrix();
-  const activeCostIds = new Set(activeCosts.map(k => String(k.id || "")));
-
-  Object.keys(state.kostenartenMieterUmlage).forEach(costId => {
-    if (!activeCostIds.has(costId)) delete state.kostenartenMieterUmlage[costId];
-  });
-
-  activeCosts.forEach(k => {
-    const costId = String(k.id || "");
-    if (!state.kostenartenMieterUmlage[costId] || typeof state.kostenartenMieterUmlage[costId] !== "object" || Array.isArray(state.kostenartenMieterUmlage[costId])) {
-      state.kostenartenMieterUmlage[costId] = {};
-    }
-    const row = state.kostenartenMieterUmlage[costId];
-    Object.keys(row).forEach(tenantId => {
-      if (!tenantIdSet.has(tenantId)) delete row[tenantId];
-    });
-    tenantIds.forEach(tenantId => {
-      if (row[tenantId] === undefined || row[tenantId] === null) row[tenantId] = true;
-      else row[tenantId] = row[tenantId] !== false && row[tenantId] !== "Nein";
-    });
-  });
-}
-
 function isCostAllowedForTenant(...args) { return NK_PRO_MODULES.billingCalculation.isCostAllowedForTenant(...args); }
 
-function setCostTenantAllowed(costId, tenantId, value) {
-  syncKostenartenMieterUmlage();
-  const cid = String(costId || "");
-  const tid = String(tenantId || "");
-  if (!cid || !tid) return;
-  if (!state.kostenartenMieterUmlage[cid]) state.kostenartenMieterUmlage[cid] = {};
-  state.kostenartenMieterUmlage[cid][tid] = value === true || value === "true" || value === "Ja";
-  updateTenantPrepaymentTotals();
-  commitStateChange({ reason:"Benutzereingabe" });
-}
+
+
 
 function costTenantToggleHtml(costId, tenantId, allowed) {
   return '<label class="tenant-toggle"><input type="checkbox" ' + (allowed ? "checked" : "") +
@@ -3603,7 +2945,7 @@ function costTenantToggleHtml(costId, tenantId, allowed) {
 function renderKostenMieterUmlageMatrix() {
   const el = document.getElementById("kostenMieterUmlageTable");
   if (!el) return;
-  syncKostenartenMieterUmlage();
+  NK_PRO_MODULES.costActions.syncKostenartenMieterUmlage();
   const tenants = tenantRowsWithIndex();
   const costs = activeCostRowsForMatrix();
   const tenantHeads = tenants.map(t => tenantHeaderHtml(t)).join("");
@@ -3618,7 +2960,7 @@ function renderKostenMieterUmlageMatrix() {
       const tenantId = tenantIdForUmlage(t);
       return '<td class="toggle-cell-wrap">' + costTenantToggleHtml(k.id, tenantId, isCostAllowedForTenant(k.id, t)) + '</td>';
     }).join("");
-    return '<tr><td>' + escapeHtml(k.id) + '</td><td>' + escapeHtml(k.kostenart) + '</td><td>' + escapeHtml(kostenStatus(k)) + '</td><td>' + escapeHtml(costExclusionHandling(k)) + '</td>' + tenantCells + '</tr>';
+    return '<tr><td>' + escapeHtml(k.id) + '</td><td>' + escapeHtml(k.kostenart) + '</td><td>' + escapeHtml(NK_PRO_MODULES.costActions.kostenStatus(k)) + '</td><td>' + escapeHtml(costExclusionHandling(k)) + '</td>' + tenantCells + '</tr>';
   }).join("");
 
   el.innerHTML = '<thead><tr><th>Kosten-ID</th><th>Kostenart</th><th>Status</th><th>Ausschluss-Behandlung</th>' + tenantHeads + '</tr></thead><tbody>' + rows + '</tbody>';
@@ -3741,7 +3083,7 @@ function closeCostSelectionDialog() {
 function activateCostFromDialog(index) {
   const cost = state.kostenarten[index];
   if (!cost || cost.inNK === "Ja") return;
-  setCostSetting(index, "inNK", "Ja");
+  NK_PRO_MODULES.costActions.setSetting(index, "inNK", "Ja");
   closeCostSelectionDialog();
   window.setTimeout(() => {
     const editSection = document.getElementById("costEditSection");
@@ -3830,7 +3172,7 @@ function costDisplayGroup(cost) {
 }
 
 function costIsComplete(cost) {
-  return kostenStatus(cost) === "Vollständig";
+  return NK_PRO_MODULES.costActions.kostenStatus(cost) === "Vollständig";
 }
 
 function renderCostMockupOverview(activeCosts) {
@@ -4008,14 +3350,8 @@ function renderWohnungen() {
     '<div class="tenant-control-item"><span>Datenstatus</span><strong>' + (units.length && visibleRows.length ? "Vorhanden" : "Prüfen") + '</strong></div>';
 }
 
-function setPrepaymentValue(rowIndex, tenantIndex, value) {
-  const row = state.vorauszahlungen && state.vorauszahlungen[Number(rowIndex)];
-  if (!row || !Array.isArray(row.werte)) return;
-  row.werte[Number(tenantIndex)] = num(value);
-  row.summe = row.werte.reduce((sum, entry) => sum + num(entry), 0);
-  updateTenantPrepaymentTotals();
-  commitStateChange({ reason:"Benutzereingabe" });
-}
+
+
 
 function renderEinnahmen() {
   const einnahmenEl = document.getElementById("einnahmenTable");
@@ -4047,7 +3383,7 @@ function renderEinnahmen() {
     : '<tr><td colspan="9">Keine aktuellen oder NK-offenen Mietverhältnisse vorhanden.</td></tr>';
   einnahmenEl.innerHTML = '<thead><tr><th>Mieter-ID</th><th>Wohnungs-ID</th><th>Mietername</th><th>Kaltmiete Soll/Jahr</th><th>Kaltmiete erhalten</th><th>NK-Vorauszahlungen automatisch</th><th>Einmalige Korrektur / Gutschrift</th><th>Einnahmen gesamt</th><th>Abrechnungsstatus</th></tr></thead><tbody>' + incomeRows + '</tbody>';
 
-  syncVorauszahlungen();
+  NK_PRO_MODULES.costActions.syncVorauszahlungen();
   ensurePrepaymentCarryForwardIfNeeded();
   renderPrepaymentCarryForwardNotice();
   const activeIds = new Set(activePrepaymentCostIds());
@@ -4091,7 +3427,7 @@ function renderKosten() {
     '<td class="editable">' + inputHtml(k.gesamtverbrauch, "setNested('kostenarten'," + i + ",'gesamtverbrauch',this.value,'number')", "number") + '</td>' +
     '<td class="editable">' + inputHtml(k.preisProEinheit, "setNested('kostenarten'," + i + ",'preisProEinheit',this.value,'number')", "money") + '</td>' +
     '<td class="editable">' + inputHtml(k.bemerkung, "setNested('kostenarten'," + i + ",'bemerkung',this.value)") + '</td>' +
-    '<td><span class="status ' + statusClass(kostenStatus(k)) + '">' + escapeHtml(kostenStatus(k)) + '</span></td></tr>').join("");
+    '<td><span class="status ' + statusClass(NK_PRO_MODULES.costActions.kostenStatus(k)) + '">' + escapeHtml(NK_PRO_MODULES.costActions.kostenStatus(k)) + '</span></td></tr>').join("");
   document.getElementById("kostenTable").innerHTML = '<thead><tr><th>Kosten-ID</th><th>Kostenart</th><th>Kostenbereich</th><th>In NK?</th><th>Als Vorauszahlung?</th><th>Berechnungsart</th><th>Umlageschlüssel</th><th>Ausschluss-Behandlung</th><th>Gesamtbetrag</th><th>Gesamtverbrauch</th><th>Preis pro Verbrauchseinheit</th><th>Bemerkung</th><th>Status</th></tr></thead><tbody>' + rows + '</tbody>';
 }
 
@@ -4138,26 +3474,11 @@ function periodYearFromDate(value) {
   return m ? m[1] : "";
 }
 
-function setAbrechnungsjahr(value) {
-  ensureYearData();
-  const year = String(value || "").trim() || currentAbrechnungsjahr();
-  state.meta.abrechnungsjahr = year;
-  state.meta.abrechnungsbeginn = year + "-01-01";
-  state.meta.abrechnungsende = year + "-12-31";
-  if (state.briefSettings) state.briefSettings.abrechnungsjahr = year;
-  commitStateChange({ reason:"Benutzereingabe" });
-}
 
-function setAbrechnungsperiode(key, value) {
-  ensureYearData();
-  state.meta[key] = value;
-  const startYear = periodYearFromDate(state.meta.abrechnungsbeginn);
-  const endYear = periodYearFromDate(state.meta.abrechnungsende);
-  if (startYear && startYear === endYear) state.meta.abrechnungsjahr = startYear;
-  else if (endYear) state.meta.abrechnungsjahr = endYear;
-  if (state.briefSettings) state.briefSettings.abrechnungsjahr = state.meta.abrechnungsjahr;
-  commitStateChange({ reason:"Benutzereingabe" });
-}
+
+
+
+
 
 function periodDaysExact() {
   const start = new Date(periodStart() + "T00:00:00");
@@ -4599,7 +3920,7 @@ function currentBillingSaldoStartText() {
 }
 
 function currentBillingStatusHtml() {
-  if (isCurrentBillingFinalized()) return '<span class="status ok">Finalisiert</span>';
+  if (NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized()) return '<span class="status ok">Finalisiert</span>';
   return '<span class="status warn">In Bearbeitung</span>';
 }
 
@@ -4640,7 +3961,7 @@ function closeCurrentBillingAfterArchive(snapshot) {
   state.meta.currentBillingClosedAfterArchive = true;
   state.meta.currentBillingArchivedAt = new Date().toISOString();
   state.meta.currentBillingArchivedWithAppVersion = APP_VERSION;
-  state.meta.currentBillingArchivedPeriodId = snapshot && snapshot.periodId ? snapshot.periodId : archivePeriodId(snapshot || createYearSnapshot());
+  state.meta.currentBillingArchivedPeriodId = snapshot && snapshot.periodId ? snapshot.periodId : archivePeriodId(snapshot || NK_PRO_MODULES.billingWorkflow.createSnapshot());
   state.meta.currentBillingArchivedHinweis = "Diese Abrechnung wurde über die Startseite archiviert. Es wurde keine Folgeabrechnung automatisch angelegt.";
   delete state.meta.currentBillingCreatedByUser;
   delete state.meta.currentBillingExplicitlyCreated;
@@ -4692,7 +4013,7 @@ function setBillingContextOpen(open) {
 }
 
 function currentBillingActionsHtml() {
-  if (isCurrentBillingFinalized()) {
+  if (NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized()) {
     return '<button class="secondary compact-action" data-ui-action="billing.openCurrent">Ansehen</button> ' +
       '<button class="warn compact-action" data-ui-action="billing.unlock">Wiederbearbeitung öffnen</button> ' +
       '<button class="secondary compact-action" data-ui-action="archive.currentYear">Archiv aktualisieren</button>';
@@ -4705,7 +4026,7 @@ function currentBillingActionsHtml() {
 function currentBillingRecordRowHtml() {
   const showCurrent = hasActiveCurrentBilling();
   if (!showCurrent) return "";
-  const finalized = isCurrentBillingFinalized();
+  const finalized = NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized();
   const currentSource = finalized ? "Aktueller Arbeitsstand · geschützt" : "Aktueller Arbeitsstand";
   return '<tr class="current-record-row">' +
     '<td>' + escapeHtml(currentAbrechnungsjahr()) + '</td>' +
@@ -4877,7 +4198,7 @@ function createNewBillingFromModal() {
     : "Es wird eine neue Abrechnung " + newYear + " angelegt. Es wird kein automatisch vorbereiteter Arbeitsstand archiviert. Fortfahren?";
   if (!confirmRiskyDataAction("Neue Abrechnung anlegen", confirmText)) return;
 
-  if (hasCurrent && !upsertYearArchive(createYearSnapshot())) return;
+  if (hasCurrent && !upsertYearArchive(NK_PRO_MODULES.billingWorkflow.createSnapshot())) return;
   resetAnnualValuesForNextYear(newYear, start, end);
   state.meta.abrechnungsjahr = newYear;
   state.meta.abrechnungsbeginn = start;
@@ -4888,7 +4209,7 @@ function createNewBillingFromModal() {
     ? "Die neue Abrechnung " + newYear + " wurde aus dem vorherigen Bearbeitungsstand vorbereitet. Der vorherige Stand wurde als eigener Datensatz gesichert."
     : "Die neue Abrechnung " + newYear + " wurde bewusst über den Startseiten-Button angelegt. Ein automatisch vorbereiteter Seed-Arbeitsstand wurde nicht archiviert.";
   markCurrentBillingCreatedByUser();
-  clearCurrentBillingFinalization();
+  NK_PRO_MODULES.billingWorkflow.clearCurrentBillingFinalization();
 
   saveData();
   closeCreateBillingModal();
@@ -5021,11 +4342,11 @@ function renderStartTenantManagement() {
   const tableEl = document.getElementById("startTenantTable");
   const archiveEl = document.getElementById("startTenantArchiveTable");
   if (!tableEl || !archiveEl) return;
-  masterData();
+  NK_PRO_MODULES.masterDataActions.masterData();
   const genderOptions = ["Frau/Herr","Frau","Herr","Firma/Divers"];
   const salutationOptions = ["Automatisch","Sehr geehrte Frau [Nachname],","Sehr geehrter Herr [Nachname],","Sehr geehrte(r) Mieter/in,","Sehr geehrte Damen und Herren,","Guten Tag,"];
   const roleOptions = ["Mieter","Eigentümer/Privat"];
-  const visibleRows = masterVisibleTenantRows();
+  const visibleRows = NK_PRO_MODULES.masterDataActions.masterVisibleTenantRows();
   const rows = visibleRows.length ? visibleRows.map(m =>
     '<tr><td>' + tenantIdCellHtml(m) + '</td>' +
     '<td class="editable">' + masterUnitSelectHtml(m.wohnung, "setMasterNested('mieter'," + m.originalIndex + ",'wohnung',this.value)") + '</td>' +
@@ -5044,7 +4365,7 @@ function renderStartTenantManagement() {
     '<td><button class="warn"' + uiActionAttributes("object.archiveMasterTenancy", [m.originalIndex]) + '>Archivieren</button></td></tr>'
   ).join("") : '<tr><td colspan="15">Keine aktuellen Mietverhältnisse vorhanden. Über „+ Neues Mietverhältnis“ kannst du einen Datensatz anlegen.</td></tr>';
   tableEl.innerHTML = '<thead><tr><th>Mieter-ID</th><th>Wohnungs-ID</th><th>Mietername</th><th>Einzug</th><th>Auszug</th><th>Rolle</th><th>Geschlecht</th><th>Standardanrede Brief</th><th>Straße</th><th>PLZ</th><th>Ort</th><th>Telefon</th><th>E-Mail</th><th>Status</th><th>Aktion</th></tr></thead><tbody>' + rows + '</tbody>';
-  const archivedRows = masterArchivedTenantRows();
+  const archivedRows = NK_PRO_MODULES.masterDataActions.masterArchivedTenantRows();
   const arows = archivedRows.length ? archivedRows.map(m =>
     '<tr><td>' + tenantIdCellHtml(m) + '</td><td>' + unitRefCellHtml(m.wohnung) + '</td><td>' + escapeHtml(m.name || "") + '</td><td>' + escapeHtml(m.einzug || "") + '</td><td>' + escapeHtml(m.auszug || "") + '</td><td>' + escapeHtml(m.geschlecht || "") + '</td><td>' + escapeHtml(m.strasse || "") + '</td><td>' + escapeHtml((m.plz || "") + " " + (m.ort || "")) + '</td><td>' + escapeHtml(m.archivedAt || "") + '</td><td><button' + uiActionAttributes("object.restoreMasterTenancy", [m.originalIndex]) + '>Reaktivieren</button></td></tr>'
   ).join("") : '<tr><td colspan="10">Noch keine archivierten Mietverhältnisse.</td></tr>';
@@ -5054,7 +4375,7 @@ function renderStartTenantManagement() {
 function renderStartUnitManagement() {
   const tableEl = document.getElementById("startUnitTable");
   if (!tableEl) return;
-  const units = masterUnits();
+  const units = NK_PRO_MODULES.masterDataActions.masterUnits();
   const rows = units.map((w,i) =>
     '<tr><td>' + unitIdCellHtml(w) + '</td>' +
     '<td class="editable">' + inputHtml(w.bezeichnung, "setMasterNested('wohnungen'," + i + ",'bezeichnung',this.value)") + '</td>' +
@@ -5114,7 +4435,7 @@ function developerDiagnosticsData() {
       year: currentAbrechnungsjahr(),
       period: periodLabelShort(),
       active: hasActiveCurrentBilling(),
-      finalized: isCurrentBillingFinalized(),
+      finalized: NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized(),
       archiveCount: Array.isArray(state.jahresArchiv) ? state.jahresArchiv.length : 0
     }
   };
@@ -5224,7 +4545,7 @@ function createArchiveViewerHtml(item) {
   viewerState.jahresArchiv = [];
   viewerState.waterMeterHistory = clone(state.waterMeterHistory || DEFAULT_WATER_METER_HISTORY);
   ensureWaterMeterHistory(viewerState);
-  ensureStammdatenData(viewerState);
+  NK_PRO_MODULES.masterDataActions.ensureStammdatenData(viewerState);
 
   let viewerHtml = APP_HTML_TEMPLATE || ("<!DOCTYPE html>\n" + document.documentElement.outerHTML);
   const seedJson = JSON.stringify(viewerState).replace(/</g, "\\u003c");
@@ -5251,7 +4572,7 @@ function archiveStateFromItem(item) {
   viewerState.jahresArchiv = [];
   viewerState.waterMeterHistory = clone(state.waterMeterHistory || DEFAULT_WATER_METER_HISTORY);
   ensureWaterMeterHistory(viewerState);
-  ensureStammdatenData(viewerState);
+  NK_PRO_MODULES.masterDataActions.ensureStammdatenData(viewerState);
   return viewerState;
 }
 
@@ -5375,12 +4696,12 @@ function reopenArchiveYearForRework(index) {
   restored.stammdaten = preservedMasterData;
   restored.waterMeterHistory = preservedHistory;
   restored.jahresArchiv = preservedArchive;
-  ensureStammdatenData(restored);
+  NK_PRO_MODULES.masterDataActions.ensureStammdatenData(restored);
   ensureWaterMeterHistory(restored);
-  if (typeof clearCurrentBillingFinalization === "function") {
+  if (typeof NK_PRO_MODULES.billingWorkflow.clearCurrentBillingFinalization === "function") {
     const oldState = state;
     state = restored;
-    clearCurrentBillingFinalization();
+    NK_PRO_MODULES.billingWorkflow.clearCurrentBillingFinalization();
     state = oldState;
   }
   state = restored;
@@ -5400,56 +4721,6 @@ function yearNumber(value) {
   return Number.isFinite(n) ? n : new Date().getFullYear();
 }
 
-function createYearSnapshot() {
-  ensureYearData();
-  syncVorauszahlungen();
-  syncUmlageInputs();
-  applyWaterMetersToUmlage();
-  updateTenantPrepaymentTotals();
-  synchronizeMeteringData(state);
-  normalizeObjectStandard(state);
-
-  const calc = calculateUmlage();
-  const year = currentAbrechnungsjahr();
-  const visibleRows = visibleTenantRows();
-  const billableRows = visibleRows.filter(m => isBillableTenant(m));
-  const privateRows = visibleRows.filter(m => isPrivateTenant(m));
-  const prepayments = calc.tenantResults.reduce((sum, row) => sum + num(row.prepayments), 0);
-  const tenantShares = calc.tenantResults.reduce((sum, row) => sum + num(row.costShare), 0);
-  const corrections = calc.tenantResults.reduce((sum, row) => sum + num(row.correction), 0);
-  const kostenNK = state.kostenarten.filter(k => k.kostenart && k.inNK === "Ja").reduce((sum, row) => sum + num(row.gesamtbetrag), 0);
-  const summary = {
-    mietverhaeltnisse:billableRows.length,
-    datensaetzeUmlagebasis:visibleRows.length,
-    eigentuemerPrivatDatensaetze:privateRows.length,
-    kostenNK,
-    vorauszahlungen:prepayments,
-    mieterKostenanteile:tenantShares,
-    korrekturen:corrections,
-    saldo:tenantShares - prepayments - corrections
-  };
-  const readiness = validateBillingReadiness(state);
-  const periodId = String(year) + "|" + periodStart() + "|" + periodEnd() + "|Tool-Abrechnung";
-  return NK_PRO_MODULES.billingSnapshot.createBillingSnapshot(state, billingSnapshotModuleOptions({
-    validation:readiness,
-    calculation:calc,
-    summary,
-    envelopeFields:{
-      year,
-      periodId,
-      archivedAt:new Date().toISOString(),
-      meta:Object.assign(snapshotMetaFrom(state.meta || {}), {
-        exportScope:"currentBillingOnly",
-        exportScopeLabel:"Unveränderlicher Abrechnungssnapshot der aktuellen Abrechnung",
-        exportedAt:new Date().toISOString(),
-        exportedWithAppVersion:APP_VERSION
-      }),
-      snapshotScope:ARCHIVE_SNAPSHOT_SCOPE,
-      snapshotBoundaryVersion:DATA_LAYER_CONTRACT_VERSION,
-      schemaVersion:DATA_SCHEMA_VERSION
-    }
-  }));
-}
 
 function upsertYearArchive(snapshot) {
   ensureYearData();
@@ -5488,7 +4759,7 @@ function archiveCurrentYearOnly() {
   }
   const year = currentAbrechnungsjahr();
   if (!confirmRiskyDataAction("Abrechnungsjahr archivieren", "Abrechnungsjahr " + year + " jetzt im Archiv speichern? Ein vorhandener Archivstand für dieses Jahr wird ersetzt. Es wird keine neue Folgeabrechnung angelegt.")) return;
-  const snapshot = createYearSnapshot();
+  const snapshot = NK_PRO_MODULES.billingWorkflow.createSnapshot();
   if (!upsertYearArchive(snapshot)) return;
   closeCurrentBillingAfterArchive(snapshot);
   withFinalizationWriteBypass(() => saveData());
@@ -5631,7 +4902,7 @@ function findPreviousTenantIndexForCarryForward(previousTenants, currentTenant) 
 }
 
 function activePrepaymentMatrixHasValues() {
-  syncVorauszahlungen();
+  NK_PRO_MODULES.costActions.syncVorauszahlungen();
   const visibleRows = billableTenantRows();
   const activeIds = new Set(activePrepaymentCostIds());
   return state.vorauszahlungen
@@ -5653,7 +4924,7 @@ function effectivePrepaymentIsoFromPreviousData(previousData) {
 }
 
 function carryForwardPrepaymentsFromPreviousYear() {
-  syncVorauszahlungen();
+  NK_PRO_MODULES.costActions.syncVorauszahlungen();
   const info = { sourceYear:"", copied:0, adjusted:0, warnings:[], details:[] };
   const source = previousYearArchiveDataForCurrentBilling();
   if (!source || !source.data) {
@@ -5705,13 +4976,13 @@ function carryForwardPrepaymentsFromPreviousYear() {
   info.appliedForYear = currentAbrechnungsjahr();
   info.appliedAt = new Date().toISOString();
   state.meta.prepaymentCarryForward = info;
-  updateTenantPrepaymentTotals();
+  NK_PRO_MODULES.costActions.updateTenantPrepaymentTotals();
   return info;
 }
 
 function ensurePrepaymentCarryForwardIfNeeded() {
   if (!state.meta) state.meta = {};
-  syncVorauszahlungen();
+  NK_PRO_MODULES.costActions.syncVorauszahlungen();
   const alreadyApplied = state.meta.prepaymentCarryForward && state.meta.prepaymentCarryForward.appliedForYear === currentAbrechnungsjahr() && num(state.meta.prepaymentCarryForward.copied) > 0;
   if (alreadyApplied || activePrepaymentMatrixHasValues()) return state.meta.prepaymentCarryForward || null;
   const source = previousYearArchiveDataForCurrentBilling();
@@ -5741,14 +5012,14 @@ function renderPrepaymentCarryForwardNotice() {
 
 function carryMeterEndToStart(snapshot = null) {
   ensureWaterMeterData();
-  const sourceSnapshot = snapshot || captureMeterReadingsSnapshot(state);
+  const sourceSnapshot = snapshot || NK_PRO_MODULES.masterDataActions.captureMeterReadingsSnapshot(state);
   const startDate = periodStart() || (String(currentAbrechnungsjahr()) + "-01-01");
   const endDate = periodEnd() || (String(currentAbrechnungsjahr()) + "-12-31");
   const warnings = [];
   const count = Math.max(20, state.mieter.length);
   state.waterMeters.readings = Array(count).fill(null).map(() => ({}));
   state.mieter.forEach((tenant,index) => {
-    const source = meterSnapshotRowForTenant(sourceSnapshot.water, tenant) || {};
+    const source = NK_PRO_MODULES.masterDataActions.meterSnapshotRowForTenant(sourceSnapshot.water, tenant) || {};
     const label = (tenant.wohnung || tenant.id || ("Datensatz " + (index + 1)));
     if (!hasEnteredMeterValue(source.kwEnd)) warnings.push("Kaltwasser-Endstand fehlt bei " + label);
     if (!hasEnteredMeterValue(source.wwEnd)) warnings.push("Warmwasser-Endstand fehlt bei " + label);
@@ -5765,7 +5036,7 @@ function carryMeterEndToStart(snapshot = null) {
   costIds.forEach(costId => {
     const rows = Array(count).fill(null).map(() => ({}));
     state.mieter.forEach((tenant,index) => {
-      const source = meterSnapshotRowForTenant(sourceSnapshot.generic && sourceSnapshot.generic[costId], tenant) || {};
+      const source = NK_PRO_MODULES.masterDataActions.meterSnapshotRowForTenant(sourceSnapshot.generic && sourceSnapshot.generic[costId], tenant) || {};
       const label = (tenant.wohnung || tenant.id || ("Datensatz " + (index + 1)));
       if (!hasEnteredMeterValue(source.end)) warnings.push("Endstand fehlt bei " + costId + " / " + label);
       rows[index] = { start:hasEnteredMeterValue(source.end) ? num(source.end) : (hasEnteredMeterValue(source.start) ? num(source.start) : ""), startDate, end:"", endDate, bemerkung:"" };
@@ -5857,7 +5128,7 @@ function clearAutofilledMeterEndValuesForNewBilling(data = state, options = {}) 
 }
 
 function resetAnnualValuesForNextYear(nextYear, startIso, endIso) {
-  const previousMeterSnapshot = captureMeterReadingsSnapshot(state);
+  const previousMeterSnapshot = NK_PRO_MODULES.masterDataActions.captureMeterReadingsSnapshot(state);
   state.meta.abrechnungsjahr = String(nextYear);
   state.meta.abrechnungsbeginn = startIso || (String(nextYear) + "-01-01");
   state.meta.abrechnungsende = endIso || (String(nextYear) + "-12-31");
@@ -5866,13 +5137,13 @@ function resetAnnualValuesForNextYear(nextYear, startIso, endIso) {
     state.briefSettings.briefdatum = todayIso();
     state.briefSettings.zahlungsziel = addDaysIso(todayIso(), 14);
   }
-  applyStammdatenToCurrentBilling();
+  NK_PRO_MODULES.masterDataActions.applyStammdatenToCurrentBilling();
 
   state.kostenarten.forEach(k => {
     if (k.kostenart && k.inNK === "Ja") {
       k.gesamtbetrag = 0;
       if (k.umlageschluessel === "Verbrauch") k.preisProEinheit = "";
-      k.status = kostenStatus(k);
+      k.status = NK_PRO_MODULES.costActions.kostenStatus(k);
     }
   });
 
@@ -5926,12 +5197,12 @@ function resetAnnualValuesForNextYear(nextYear, startIso, endIso) {
     state.meta.meterCarryForwardAppliedForYear = currentAbrechnungsjahr();
     state.meta.meterEndValuesClearedForYear = currentAbrechnungsjahr();
   }
-  syncVorauszahlungen();
+  NK_PRO_MODULES.costActions.syncVorauszahlungen();
   carryForwardPrepaymentsFromPreviousYear();
   syncUmlageInputs();
-  syncKostenartenMieterUmlage();
+  NK_PRO_MODULES.costActions.syncKostenartenMieterUmlage();
   applyWaterMetersToUmlage();
-  updateTenantPrepaymentTotals();
+  NK_PRO_MODULES.costActions.updateTenantPrepaymentTotals();
 }
 
 function archiveAndPrepareNextYear() {
@@ -5943,7 +5214,7 @@ function archiveAndPrepareNextYear() {
   const nextYear = yearNumber(year) + 1;
   if (!confirmRiskyDataAction("Jahreswechsel vorbereiten", "Abrechnungsjahr " + year + " archivieren und das Tool für " + nextYear + " vorbereiten?\\n\\nDabei werden Jahreswerte zurückgesetzt, Zähler-Endstände als neue Anfangsstände übernommen und neue Zähler-Endwerte leer gelassen.")) return;
 
-  if (!upsertYearArchive(createYearSnapshot())) return;
+  if (!upsertYearArchive(NK_PRO_MODULES.billingWorkflow.createSnapshot())) return;
   resetAnnualValuesForNextYear(nextYear);
   commitStateChange({ reason:"Benutzereingabe" });
   alert("Jahreswechsel abgeschlossen. Archiviert: " + year + ". Neues Abrechnungsjahr: " + nextYear + ".");
@@ -6820,7 +6091,7 @@ function archivedWaterHistoryByUnit() {
     if (!data) return;
     const year = String(item.year || (data.meta && data.meta.abrechnungsjahr) || "");
     if (!year) return;
-    const snapshot = captureMeterReadingsSnapshot(data);
+    const snapshot = NK_PRO_MODULES.masterDataActions.captureMeterReadingsSnapshot(data);
     Object.keys(snapshot.water.byUnit || {}).forEach(unitId => {
       const r = snapshot.water.byUnit[unitId] || {};
       if (!map[unitId]) map[unitId] = {};
@@ -6986,66 +6257,20 @@ const MANUAL_INPUT_MODES = ["Zählerstände","Verbrauchsmenge","Direkter Eurobet
 function inferManualInputMode(...args) { return NK_PRO_MODULES.billingCalculation.inferManualInputMode(...args); }
 function defaultManualInputMode(...args) { return NK_PRO_MODULES.billingCalculation.defaultManualInputMode(...args); }
 function manualInputModeForCost(...args) { return NK_PRO_MODULES.billingCalculation.manualInputModeForCost(...args); }
-function syncUmlageInputs() {
-  if (!state.umlageInputs) state.umlageInputs = {};
-  const tenantCount = Math.max(20, state.mieter.length);
-  state.kostenarten.forEach(k => {
-    if (!k || !k.id) return;
-    const needsInput = k.inNK === "Ja" && (k.umlageschluessel === "Verbrauch" || k.umlageschluessel === UMLAGE_MANUAL || k.berechnungsart === "Manuell je Mieter" || !!state.umlageInputs[k.id]);
-    if (needsInput && !state.umlageInputs[k.id]) {
-      const defaults = DEFAULT_UMLAGE_INPUTS[k.id] || [];
-      const values = Array(tenantCount).fill(0);
-      defaults.forEach((v,i) => { if (i < values.length) values[i] = v; });
-      state.umlageInputs[k.id] = { kostenId:k.id, kostenart:k.kostenart, art:k.umlageschluessel, mode:defaultManualInputMode(k), values };
-    }
-    if (state.umlageInputs[k.id]) {
-      const input=state.umlageInputs[k.id];
-      input.kostenart = k.kostenart;
-      if (!MANUAL_INPUT_MODES.includes(input.mode)) input.mode=inferManualInputMode(k, input, state);
-      input.art = input.mode;
-      if (!Array.isArray(input.values)) input.values = [];
-      while (input.values.length < tenantCount) input.values.push(0);
-    }
-  });
-}
-function setManualInputMode(costId, mode) {
-  syncUmlageInputs();
-  const k=state.kostenarten.find(row=>row.id===costId); const input=state.umlageInputs[costId];
-  if (!k || !input || !MANUAL_INPUT_MODES.includes(mode)) return;
-  const hasValues=input.values.some(v=>Math.abs(num(v))>0.000001);
-  if (hasValues && input.mode!==mode && !confirm("Für diese Kostenart sind bereits Werte vorhanden. Die Werte bleiben erhalten, werden aber künftig als „"+mode+"“ interpretiert. Fortfahren?")) return renderManualExternalValues();
-  input.mode=mode; input.art=mode;
-  if (mode==="Zählerstände" || mode==="Verbrauchsmenge") { k.umlageschluessel="Verbrauch"; k.berechnungsart="Automatisch"; }
-  else { k.umlageschluessel=UMLAGE_MANUAL; k.berechnungsart="Manuell je Mieter"; }
-  applyWaterMetersToUmlage();
-  commitStateChange({reason:"Benutzereingabe",tabId:"manuellewerte"});
-}
-function setManualExternalValue(costId,index,value) {
-  syncUmlageInputs(); const input=state.umlageInputs[costId]; if (!input) return;
-  input.values[index]=num(value); commitStateChange({reason:"Benutzereingabe",tabId:"manuellewerte"});
-}
-function resetUmlageInputs() {
-  if (!confirm("Manuelle Verbrauchsmengen und externe Einzelbeträge wirklich zurücksetzen? Zählerstände bleiben erhalten.")) return;
-  Object.keys(state.umlageInputs||{}).forEach(costId=>{ const input=state.umlageInputs[costId]; if (input && input.mode!=="Zählerstände") input.values=input.values.map(()=>0); });
-  applyWaterMetersToUmlage();
-  commitStateChange({ reason:"Benutzereingabe",tabId:"manuellewerte" });
-}
+function syncUmlageInputs() { return NK_PRO_MODULES.billingWorkflow.syncUmlageInputs(); }
+
+
+
+
+
+
+
 
 function rawVorauszahlungByCostAndTenant(...args) { return NK_PRO_MODULES.billingCalculation.rawVorauszahlungByCostAndTenant(...args); }
 
 function vorauszahlungByCostAndTenant(...args) { return NK_PRO_MODULES.billingCalculation.vorauszahlungByCostAndTenant(...args); }
 
 function totalVorauszahlungForTenant(...args) { return NK_PRO_MODULES.billingCalculation.totalVorauszahlungForTenant(...args); }
-
-function updateTenantPrepaymentTotals() {
-  syncVorauszahlungen();
-  syncKostenartenMieterUmlage();
-  state.mieter.forEach((m,i) => {
-    m.nkVoraus = totalVorauszahlungForTenant(i);
-    m.einnahmen = num(m.kaltErhalten) + num(m.nkVoraus);
-  });
-}
-
 
 function allocationDistributionStatus(...args) { return NK_PRO_MODULES.billingCalculation.allocationDistributionStatus(...args); }
 
@@ -7181,53 +6406,14 @@ function dateDe(value) {
 
 
 // ===== Bereich: Vorauszahlungsanpassung V51 =====
-function defaultPrepaymentAdjustmentSettings() {
-  const nextYear = String(yearNumber(currentAbrechnungsjahr()) + 1);
-  return {
-    effectiveFrom:"01.01." + nextYear,
-    safetyBufferPercent:0,
-    roundingMode:"Auf 5 € runden",
-    minimumMonthlyChange:1,
-    annualizePartialTenants:"Ja",
-    changePolicy:"Erhöhungen und Senkungen",
-    letterPrintMode:"Nicht drucken"
-  };
-}
+function defaultPrepaymentAdjustmentSettings() { return NK_PRO_MODULES.billingWorkflow.defaultPrepaymentAdjustmentSettings(); }
 
-function ensurePrepaymentAdjustmentSettings() {
-  if (!state.prepaymentAdjustmentSettings) state.prepaymentAdjustmentSettings = {};
-  const defaults = defaultPrepaymentAdjustmentSettings();
-  Object.keys(defaults).forEach(key => {
-    if (state.prepaymentAdjustmentSettings[key] === undefined || state.prepaymentAdjustmentSettings[key] === null || state.prepaymentAdjustmentSettings[key] === "") {
-      state.prepaymentAdjustmentSettings[key] = defaults[key];
-    }
-  });
-  ensureBriefSettings();
-  if (state.briefSettings && state.briefSettings.vorauszahlungPrintMode) {
-    state.prepaymentAdjustmentSettings.letterPrintMode = state.briefSettings.vorauszahlungPrintMode;
-  }
-  if (state.briefSettings && state.briefSettings.vorauszahlungAb) {
-    state.prepaymentAdjustmentSettings.effectiveFrom = state.briefSettings.vorauszahlungAb;
-  }
-  return state.prepaymentAdjustmentSettings;
-}
 
-function setPrepaymentAdjustmentSetting(key, value) {
-  const s = ensurePrepaymentAdjustmentSettings();
-  if (["safetyBufferPercent","minimumMonthlyChange"].includes(key)) value = num(value);
-  s[key] = value;
-  if (key === "effectiveFrom") {
-    ensureBriefSettings();
-    state.briefSettings.vorauszahlungAb = value;
-  }
-  if (key === "letterPrintMode") {
-    ensureBriefSettings();
-    state.briefSettings.vorauszahlungPrintMode = value;
-    state.briefSettings.showVorauszahlungPage = value === "Nicht drucken" ? "Nein" : "Ja";
-    state.briefSettings.useCalculatedPrepaymentAdjustments = value === "Berechnete Werte drucken" ? "Ja" : "Nein";
-  }
-  commitStateChange({ reason:"Vorauszahlungsanpassung", tabId:"vorauszahlungsanpassung", includeCommon:false, includeNavigation:false });
-}
+function ensurePrepaymentAdjustmentSettings() { return NK_PRO_MODULES.billingWorkflow.ensurePrepaymentAdjustmentSettings(); }
+
+
+
+
 
 function prepaymentRoundingStep(...args) { return NK_PRO_MODULES.billingCalculation.prepaymentRoundingStep(...args); }
 
@@ -7896,7 +7082,7 @@ function releaseAuditReport() {
     markCurrentBillingCreatedByUser();
     const beforeYear = currentAbrechnungsjahr();
     const beforeArchiveCount = state.jahresArchiv.length;
-    const snapshot = createYearSnapshot();
+    const snapshot = NK_PRO_MODULES.billingWorkflow.createSnapshot();
     if (!upsertYearArchive(snapshot)) throw new Error("Archiv-Snapshot konnte im Audit nicht gespeichert werden");
     closeCurrentBillingAfterArchive(snapshot);
     if (hasActiveCurrentBilling()) throw new Error("Archivierte Bearbeitung bleibt als aktive Abrechnung sichtbar");
@@ -7905,7 +7091,7 @@ function releaseAuditReport() {
     const html = buildBillingRecordsTableHtml();
     if (html.includes("current-record-row")) throw new Error("Starttabelle zeigt nach Archivierung noch einen aktuellen Arbeitsstand");
     const srcOpen = openCurrentBilling.toString();
-    const srcFinalize = finalizeCurrentBilling.toString();
+    const srcFinalize = NK_PRO_MODULES.billingWorkflow.finalize.toString();
     const srcArchive = archiveCurrentYearOnly.toString();
     if (srcOpen.includes("resetAnnualValuesForNextYear") || srcFinalize.includes("resetAnnualValuesForNextYear") || srcArchive.includes("resetAnnualValuesForNextYear")) throw new Error("Startseitenaktion enthält Jahreswechsel-/Neuanlage-Logik");
     return "Archivieren schließt die Bearbeitung und zeigt nur den Archivdatensatz; keine Folgeabrechnung";
@@ -7913,7 +7099,7 @@ function releaseAuditReport() {
 
   runCheck("V77/V79", "Vorjahreswerte und Zähler-Endwerte leer", () => withAuditState(clone(SEED), () => {
     markCurrentBillingCreatedByUser();
-    syncVorauszahlungen();
+    NK_PRO_MODULES.costActions.syncVorauszahlungen();
     resetAnnualValuesForNextYear("2025", "2025-01-01", "2025-12-31");
     let info = state.meta && state.meta.prepaymentCarryForward;
     if (!info || num(info.copied) <= 0) throw new Error("NK-Vorauszahlungen wurden nicht aus dem Vorjahr übernommen");
@@ -8129,7 +7315,7 @@ function releaseAuditReport() {
   runCheck("Berechnung", "Individuelle Umlagefähigkeit", () => withAuditState(auditBaseState(), () => {
     state.kostenarten = [{ id:"K901", kostenart:"Nur Mieter 1", inNK:"Ja", vorauszahlung:"Ja", berechnungsart:"Manuell je Mieter", umlageschluessel:UMLAGE_MANUAL, gesamtbetrag:120, preisProEinheit:"", ausschlussBehandlung:COST_EXCLUSION_OWNER }];
     state.umlageInputs = { K901:{ kostenId:"K901", kostenart:"Nur Mieter 1", art:UMLAGE_MANUAL, values:[120,0,0] } };
-    syncKostenartenMieterUmlage();
+    NK_PRO_MODULES.costActions.syncKostenartenMieterUmlage();
     state.kostenartenMieterUmlage.K901.T2 = false;
     const calc = calculateUmlage();
     const rowsT1 = briefCostRows(calc, calc.tenantResults[0].tenant);
@@ -8153,7 +7339,7 @@ function releaseAuditReport() {
 
   runCheck("Export", "Gesamt- und Einzelabrechnung getrennt", () => withAuditState(auditBriefState(), () => {
     const full = exportSnapshot();
-    const current = exportCurrentBillingSnapshot();
+    const current = NK_PRO_MODULES.billingWorkflow.createSnapshot();
     if (!Array.isArray(full.jahresArchiv)) throw new Error("Gesamtexport enthält kein Jahresarchiv");
     if (Object.prototype.hasOwnProperty.call(state, "stammdaten") && !Object.prototype.hasOwnProperty.call(full, "stammdaten")) throw new Error("Gesamtexport verliert Objekt-Stammdaten");
     if (Object.prototype.hasOwnProperty.call(state, "waterMeterHistory") && !Object.prototype.hasOwnProperty.call(full, "waterMeterHistory")) throw new Error("Gesamtexport verliert globale Zählerhistorie");
@@ -8438,14 +7624,19 @@ function appSelfTestReport() {
 
   runCheck("Stabilität", "V91-Safe-Cleanup", () => {
     const requiredDynamicFunctions = [
-      "resetData", "setWaterMeterSetting", "setWaterMeterValue", "setGenericMeterValue",
-      "setManualInputMode", "setManualExternalValue", "resetUmlageInputs", "setPrepaymentAdjustmentSetting", "setBriefSetting",
+      "resetData", "setWaterMeterSetting", "setWaterMeterValue", "setGenericMeterValue", "setBriefSetting",
       "printCurrentBrief", "copyCurrentBriefText"
     ];
     const missing = requiredDynamicFunctions.filter(name => typeof globalThis[name] !== "function");
     if (missing.length) throw new Error("Dynamische Bedienfunktionen fehlen: " + missing.join(", "));
+    const requiredActions = [
+      ["object","setMasterNested"], ["cost","setSetting"], ["billing","setManualInputMode"],
+      ["billing","resetAllocationInputs"], ["billing","setPrepaymentAdjustmentSetting"]
+    ];
+    const missingActions = requiredActions.filter(([domain, action]) => !NK_PRO_MODULES.applicationActions.has(domain, action));
+    if (missingActions.length) throw new Error("Extrahierte Anwendungsaktionen fehlen: " + missingActions.map(item => item.join(".")).join(", "));
     if (typeof getBriefTenantAddress !== "function" || typeof validateBriefResult !== "function") throw new Error("Aktive Briefpfade fehlen");
-    return "Ungenutzte Altpfade entfernt; dynamische Bedien- und Briefpfade vorhanden";
+    return "Ungenutzte Altpfade entfernt; extrahierte Bedienaktionen und Briefpfade vorhanden";
   });
 
   runCheck("Stabilität", "Alle Hauptansichten renderbar", () => {
@@ -8500,17 +7691,17 @@ function appSelfTestReport() {
   });
 
   runCheck("Finalisierung", "Schreibschutz-Funktionen", () => withAuditState(auditBaseState(), () => {
-    if (isCurrentBillingFinalized()) throw new Error("Audit-Basis darf nicht finalisiert starten");
+    if (NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized()) throw new Error("Audit-Basis darf nicht finalisiert starten");
     state.meta.currentBillingFinalized = true;
-    state.meta.currentBillingFinalizationKey = currentBillingFinalizationKey();
+    state.meta.currentBillingFinalizationKey = NK_PRO_MODULES.billingWorkflow.currentBillingFinalizationKey();
     state.meta.currentBillingFinalizedAt = "2026-07-10T00:00:00.000Z";
-    if (!isCurrentBillingFinalized()) throw new Error("Finalisierung wird nicht erkannt");
-    clearCurrentBillingFinalization();
-    if (isCurrentBillingFinalized()) throw new Error("Finalisierung wurde nicht entfernt");
+    if (!NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized()) throw new Error("Finalisierung wird nicht erkannt");
+    NK_PRO_MODULES.billingWorkflow.clearCurrentBillingFinalization();
+    if (NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized()) throw new Error("Finalisierung wurde nicht entfernt");
     return "Finalisieren/Entsperren-Status OK";
   }));
 
-  runCheck("Navigation", "Native UI-Anbindung V99.4.9", () => {
+  runCheck("Navigation", "Physische Kernorchestrierung V99.4.10", () => {
     const nav = document.querySelector(".workflow-nav");
     if (!nav) throw new Error("Workflow-Navigation fehlt");
     const groups = Array.from(nav.querySelectorAll(":scope > .nav-group")).map(group => group.dataset.navGroupSection);
@@ -8559,7 +7750,7 @@ function appSelfTestReport() {
     const source = commitStateChange.toString() + renderCurrentView.toString();
     if (!source.includes("tabIds") || !source.includes("includeCommon")) throw new Error("Gezielte Renderoptionen fehlen");
     if (!setBriefSetting.toString().includes('tabId:"briefe"')) throw new Error("Brief-Einstellungen nutzen keinen lokalen Renderpfad");
-    if (!setPrepaymentAdjustmentSetting.toString().includes('tabId:"vorauszahlungsanpassung"')) throw new Error("Vorauszahlungsanpassung nutzt keinen lokalen Renderpfad");
+    if (!NK_PRO_MODULES.billingWorkflow.describe().actions.includes("setPrepaymentAdjustmentSetting")) throw new Error("Vorauszahlungsanpassung ist nicht im Workflowmodul registriert");
     return "Lokale Renderpfade aktiv; Voll-Render bleibt für weitreichende Vorgänge erhalten";
   });
 
@@ -8649,13 +7840,13 @@ function prepareStateForPersistence(reason = "manual") {
       ["Kostenarten-Voreinstellungen", () => ensureCostSettings()],
       ["Einzugsdaten Stammdaten", () => applyKnownMasterTenantEntryDates(state, {save:false})],
       ["Miettage", () => normalizeTenantActiveDays()],
-      ["Vorauszahlungen", () => syncVorauszahlungen()],
-      ["Kosten-Mieter-Umlage", () => syncKostenartenMieterUmlage()],
-      ["Mieter-Vorauszahlungen", () => updateTenantPrepaymentTotals()],
+      ["Vorauszahlungen", () => NK_PRO_MODULES.costActions.syncVorauszahlungen()],
+      ["Kosten-Mieter-Umlage", () => NK_PRO_MODULES.costActions.syncKostenartenMieterUmlage()],
+      ["Mieter-Vorauszahlungen", () => NK_PRO_MODULES.costActions.updateTenantPrepaymentTotals()],
       ["Umlage-Eingaben", () => syncUmlageInputs()],
       ["Zählerstammdaten und Messperioden", () => synchronizeMeteringData(state)],
       ["Wasserzähler", () => applyWaterMetersToUmlage()],
-      ["Kostenstatus", () => state.kostenarten.forEach(k => k.status = kostenStatus(k))],
+      ["Kostenstatus", () => state.kostenarten.forEach(k => k.status = NK_PRO_MODULES.costActions.kostenStatus(k))],
       ["Datenebenen und Snapshot-Grenzen", () => enforceWorkingStateDataContract(state)]
     ];
     steps.forEach(step => runRenderStep("Datenaufbereitung: " + step[0], step[1]));
@@ -8754,7 +7945,7 @@ function overviewCoreStats() {
   const archivedTenants=safeOverviewCall(()=>archivedTenantRows(), []);
   const costs=Array.isArray(state && state.kostenarten) ? state.kostenarten.filter(k=>k && k.kostenart) : [];
   const activeCosts=costs.filter(k=>k.inNK === "Ja");
-  const completeCosts=activeCosts.filter(k=>safeOverviewCall(()=>kostenStatus(k),"") === "Vollständig");
+  const completeCosts=activeCosts.filter(k=>safeOverviewCall(()=>NK_PRO_MODULES.costActions.kostenStatus(k),"") === "Vollständig");
   const income=tenants.reduce((a,m)=>{a.rent+=num(m.kaltErhalten);a.prepayments+=num(m.nkVoraus);a.corrections+=num(m.vorjahresKorrektur);return a;},{rent:0,prepayments:0,corrections:0});
   const calc=safeOverviewCall(()=>calculateUmlage(),null);
   const totals=calc ? safeOverviewCall(()=>umlageTotals(calc),null) : null;
@@ -8781,7 +7972,7 @@ function overviewCoreStats() {
     return values.length;
   },0);
   return {units,activeUnits,tenants,archivedTenants,costs,activeCosts,completeCosts,income,calc,totals,quality,issues,errors,checks,meters,electricityDummyMeters,objectStandard,objectValidation,billingReadiness,archives,
-    year:safeOverviewCall(()=>currentAbrechnungsjahr(),"–"), finalized:safeOverviewCall(()=>isCurrentBillingFinalized(),false)};
+    year:safeOverviewCall(()=>currentAbrechnungsjahr(),"–"), finalized:safeOverviewCall(()=>NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized(),false)};
 }
 function overviewStatus(stats) {
   if (stats.errors.length) return {status:"error",headline:stats.errors.length+" Fehler",items:[{text:"Fehler vor der Ausgabe beheben",status:"error"},{text:stats.checks.length+" zusätzliche Prüfpunkte",status:stats.checks.length?"warn":"ok"}]};
@@ -8809,7 +8000,7 @@ function buildOverviewData(tabId) {
     archiv:{summary:[["Archivierte Abrechnungen",s.archives],["Aktuelle Abrechnung",hasActiveCurrentBilling()?s.year:"Keine"],["Datenbestand","Lokal"],["Schema",DATA_SCHEMA_VERSION]],validation:{status:"ok",headline:"Archiv getrennt erreichbar",items:[{text:"Historische Datensätze bleiben unverändert",status:"ok"},{text:"Öffnen erfolgt schreibgeschützt",status:"ok"}]},next:next("Archivierte Abrechnung auswählen und in der Nur-Ansicht prüfen.","archiveRecordsSection"),actions:[open("Archiv öffnen","archiveRecordsSection",true),{label:"Archiv herunterladen",action:"archive.downloadFull",args:[]},go("Abrechnungsübersicht","start")]},
     mieterverwaltung:{summary:[["Mietverhältnisse",s.tenants.length],["Archiviert",s.archivedTenants.length],["Wohnungen",s.units.length],["Abrechnungsjahr",s.year]],validation:commonValidation,next:next("Mieterstammdaten und archivierte Mietverhältnisse vollständig prüfen.","masterTenantSection"),actions:[open("Mietverhältnisse öffnen","masterTenantSection",true),open("Archiv öffnen","masterTenantArchiveSection"),save]},
     wohnungsverwaltung:{summary:[["Wohnungen gesamt",s.units.length],["Aktiv",s.activeUnits.length],["Inaktiv",Math.max(0,s.units.length-s.activeUnits.length)],["Wohnfläche aktiv",s.activeUnits.reduce((a,w)=>a+num(w.wohnflaeche),0).toLocaleString("de-DE")+" m²"]],validation:commonValidation,next:next("Wohnungsbestand und Flächenangaben kontrollieren.","masterUnitSection"),actions:[open("Wohnungsbestand öffnen","masterUnitSection",true),go("Mieterverwaltung","mieterverwaltung"),save]},
-    sicherung:{summary:[["Version",APP_VERSION],["Archivstände",s.archives],["Betriebsart","Offline · lokal"],["Abrechnungsjahr",s.year]],validation:{status:"ok",headline:"Sicherung verfügbar",items:[{text:"Lokale Gesamtsicherung vorhanden",status:"ok"},{text:"Neuer PWA-Cache für V99.4.9",status:"ok"}]},next:next("Vollständige JSON-Sicherung erstellen und Versionsinformationen prüfen.","backupMainSection"),actions:[open("Gesamtsicherung öffnen","backupMainSection",true),open("Version anzeigen","backupVersionSection"),save]},
+    sicherung:{summary:[["Version",APP_VERSION],["Archivstände",s.archives],["Betriebsart","Offline · lokal"],["Abrechnungsjahr",s.year]],validation:{status:"ok",headline:"Sicherung verfügbar",items:[{text:"Lokale Gesamtsicherung vorhanden",status:"ok"},{text:"Neuer PWA-Cache für V99.4.10",status:"ok"}]},next:next("Vollständige JSON-Sicherung erstellen und Versionsinformationen prüfen.","backupMainSection"),actions:[open("Gesamtsicherung öffnen","backupMainSection",true),open("Version anzeigen","backupVersionSection"),save]},
     mieter:{summary:[["Wohnungen gesamt",s.units.length],["Wohnungen aktiv",s.activeUnits.length],["Mietverhältnisse",s.tenants.length],["Archivierte Mieter",s.archivedTenants.length]],validation:commonValidation,next:next("Bestand und Abrechnung in der Prüfbox abgleichen; danach Kostenarten bearbeiten.","tenantControlSection"),actions:[open("Prüfung öffnen","tenantControlSection",true),open("Mietverhältnisse öffnen","tenantRelationsSection"),go("Kostenarten öffnen","einstellungen")]},
     einstellungen:{summary:[["Kostenarten",s.costs.length],["Aktiv in NK",s.activeCosts.length],["Vollständig",s.completeCosts.length],["Gesamtkosten",overviewMoney(s.activeCosts.reduce((a,k)=>a+num(k.gesamtbetrag),0))]],validation:{status:s.completeCosts.length===s.activeCosts.length?"ok":"warn",headline:s.completeCosts.length+" von "+s.activeCosts.length+" vollständig",items:[{text:"Umlageschlüssel und Beträge prüfen",status:s.completeCosts.length===s.activeCosts.length?"ok":"warn"},{text:"Umlage wird automatisch berechnet",status:"ok"}]},next:next("Fehlende Beträge und Umlageschlüssel vervollständigen.","costEditSection"),actions:[open("Kostenarten bearbeiten","costEditSection",true),()=>{}].filter(Boolean)},
     einnahmen:{summary:[["Kaltmiete erhalten",overviewMoney(s.income.rent)],["NK-Vorauszahlungen",overviewMoney(s.income.prepayments)],["Korrekturen",overviewMoney(s.income.corrections)],["Mietverhältnisse",s.tenants.length]],validation:commonValidation,next:next("Kaltmieten und Vorauszahlungen vollständig prüfen; danach Zählerstände erfassen.","incomeRentSection"),actions:[open("Kaltmiete öffnen","incomeRentSection",true),open("Vorauszahlungen öffnen","incomePrepaymentSection"),go("Zählerstände","wasser")]},
@@ -8887,7 +8078,7 @@ function pageHeaderPeriodLabel() {
 }
 function updateAllPageHeaders() {
   const archived=safeOverviewCall(()=>isArchiveViewer(),false);
-  const finalized=safeOverviewCall(()=>isCurrentBillingFinalized(),false);
+  const finalized=safeOverviewCall(()=>NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized(),false);
   const hasBilling=safeOverviewCall(()=>archived||hasActiveCurrentBilling(),archived);
   const period=hasBilling?safeOverviewCall(()=>pageHeaderPeriodLabel(),"–"):"–";
   Object.entries(TAB_DEFINITIONS).forEach(([tabId,def])=>{
@@ -8959,7 +8150,7 @@ function renderAll(options = {}) {
       renderAllOverviewCards();
       auditV992Structure();
     } catch(uiError) {
-      if (typeof console !== "undefined" && console.error) console.error("V99.4.9-Darstellung konnte nicht aktualisiert werden", uiError);
+      if (typeof console !== "undefined" && console.error) console.error("V99.4.10-Darstellung konnte nicht aktualisiert werden", uiError);
     }
     if (renderQueued) {
       renderQueued = false;
@@ -8970,28 +8161,98 @@ function renderAll(options = {}) {
 
 function showLandingPage() { billingContextOpen = false; return switchToTab("landing"); }
 function openCostTenantDetails() { const section = document.getElementById("costTenantSection"); if (!section) return; section.open = true; try { section.scrollIntoView({ behavior:"smooth" }); } catch(error) { section.scrollIntoView(); } }
+function configureCoreOrchestrationModules() {
+  NK_PRO_MODULES.masterDataActions.configure({
+    stateAccess:NK_PRO_MODULES.stateAccess,
+    clone, num, ensureUnitIdentityFields, generatedUnitIdForLabel, hasTenantData, ensureTenantContactFields,
+    ensureTenantIdentityFields, canonicalUnitIdFor, isArchivedTenant, tenantActiveDaysInCurrentPeriod,
+    tenantOpenStatus, normalizeActiveDayValue, periodDaysExact, tenantRelevantForCurrentBilling,
+    syncVorauszahlungen:NK_PRO_MODULES.costActions.syncVorauszahlungen, syncUmlageInputs:NK_PRO_MODULES.billingWorkflow.syncUmlageInputs, ensureWaterMeterData, syncKostenartenMieterUmlage:NK_PRO_MODULES.costActions.syncKostenartenMieterUmlage,
+    applyWaterMetersToUmlage, updateTenantPrepaymentTotals:NK_PRO_MODULES.costActions.updateTenantPrepaymentTotals, isoDateSerial, hasEnteredMeterValue,
+    todayIso, currentYear:() => currentAbrechnungsjahr(), isArchiveViewer
+  });
+  NK_PRO_MODULES.costActions.configure({
+    stateAccess:NK_PRO_MODULES.stateAccess,
+    num, normalizeManualUmlageValue, tenantRowsWithIndex, tenantIdForUmlage, activeCostRowsForMatrix,
+    totalVorauszahlungForTenant, getCostGroupOptions:() => COST_GROUP_OPTIONS,
+    costExclusionOptions:COST_EXCLUSION_OPTIONS, costExclusionFull:COST_EXCLUSION_FULL,
+    umlageManual:UMLAGE_MANUAL
+  });
+  NK_PRO_MODULES.billingWorkflow.configure({
+    stateAccess:NK_PRO_MODULES.stateAccess,
+    appVersion:APP_VERSION, umlageManual:UMLAGE_MANUAL, num,
+    currentYear:() => currentAbrechnungsjahr(), periodLabelShort, periodYearFromDate,
+    collectQualityChecks, finalBillingReadiness, isArchiveViewer, hasActiveCurrentBilling,
+    getManualInputModes:() => MANUAL_INPUT_MODES, getDefaultUmlageInputs:() => DEFAULT_UMLAGE_INPUTS,
+    inferManualInputMode, defaultManualInputMode, applyWaterMetersToUmlage,
+    updateTenantPrepaymentTotals:NK_PRO_MODULES.costActions.updateTenantPrepaymentTotals, defaultBriefSettings,
+    ensureYearData, syncVorauszahlungen:NK_PRO_MODULES.costActions.syncVorauszahlungen,
+    synchronizeMeteringData, normalizeObjectStandard, calculateUmlage:NK_PRO_MODULES.billingCalculation.calculateUmlage, visibleTenantRows,
+    isBillableTenant:NK_PRO_MODULES.billingCalculation.isBillableTenant, isPrivateTenant:NK_PRO_MODULES.billingCalculation.isPrivateTenant, validateBillingReadiness, periodStart, periodEnd,
+    billingSnapshot:NK_PRO_MODULES.billingSnapshot, billingSnapshotModuleOptions, snapshotMetaFrom,
+    archiveSnapshotScope:ARCHIVE_SNAPSHOT_SCOPE, dataLayerContractVersion:DATA_LAYER_CONTRACT_VERSION,
+    dataSchemaVersion:DATA_SCHEMA_VERSION
+  });
+  return Object.freeze({
+    masterData:NK_PRO_MODULES.masterDataActions.describe(),
+    cost:NK_PRO_MODULES.costActions.describe(),
+    billing:NK_PRO_MODULES.billingWorkflow.describe()
+  });
+}
 function configureStateAccess() {
-  return NK_PRO_MODULES.stateAccess.configure({ getState:() => state, replaceState:nextState => { state = nextState; return state; }, commit:options => commitStateChange({ reason:options.reason || "UI-Controller", tabId:options.tabId }) });
+  return NK_PRO_MODULES.stateAccess.configure({
+    getState:() => state,
+    replaceState:nextState => { state = nextState; return state; },
+    commit:options => {
+      const commitOptions = { ...options, reason:options.reason || "UI-Controller" };
+      return options.allowFinalizationWrite
+        ? withFinalizationWriteBypass(() => commitStateChange(commitOptions))
+        : commitStateChange(commitOptions);
+    }
+  });
 }
 function configureApplicationActions() {
   return NK_PRO_MODULES.applicationActions.configure({
     application:{ save:saveData, reset:resetData },
     state:{ setNested },
-    object:{ addMasterTenancy:addMasterMietverhaeltnis, applyMasterDataToBilling:applyStammdatenToCurrentBillingFromButton, archiveMasterTenancy:archiveMasterMietverhaeltnis, restoreMasterTenancy:restoreMasterMietverhaeltnis, setBillingUnitStatus, setMasterNested },
-    cost:{ setSetting:setCostSetting, configureFree:configureFreeCost, setTenantAllowed:setCostTenantAllowed, activateDefaultPrepayments, deactivateAllPrepayments },
-    billing:{ finalize:finalizeCurrentBilling, unlock:unlockCurrentBilling, setYear:setAbrechnungsjahr, setPeriod:setAbrechnungsperiode, resetAllocationInputs:resetUmlageInputs, setManualInputMode, setManualExternalValue, setPrepaymentValue, setPrepaymentAdjustmentSetting },
+    object:{
+      addMasterTenancy:NK_PRO_MODULES.masterDataActions.addMasterTenancy,
+      applyMasterDataToBilling:NK_PRO_MODULES.masterDataActions.applyMasterDataToBilling,
+      archiveMasterTenancy:NK_PRO_MODULES.masterDataActions.archiveMasterTenancy,
+      restoreMasterTenancy:NK_PRO_MODULES.masterDataActions.restoreMasterTenancy,
+      setBillingUnitStatus:NK_PRO_MODULES.masterDataActions.setBillingUnitStatus,
+      setMasterNested:NK_PRO_MODULES.masterDataActions.setMasterNested
+    },
+    cost:{
+      setSetting:NK_PRO_MODULES.costActions.setSetting,
+      configureFree:NK_PRO_MODULES.costActions.configureFree,
+      setTenantAllowed:NK_PRO_MODULES.costActions.setTenantAllowed,
+      activateDefaultPrepayments:NK_PRO_MODULES.costActions.activateDefaultPrepayments,
+      deactivateAllPrepayments:NK_PRO_MODULES.costActions.deactivateAllPrepayments
+    },
+    billing:{
+      finalize:NK_PRO_MODULES.billingWorkflow.finalize,
+      unlock:NK_PRO_MODULES.billingWorkflow.unlock,
+      setYear:NK_PRO_MODULES.billingWorkflow.setYear,
+      setPeriod:NK_PRO_MODULES.billingWorkflow.setPeriod,
+      resetAllocationInputs:NK_PRO_MODULES.billingWorkflow.resetAllocationInputs,
+      setManualInputMode:NK_PRO_MODULES.billingWorkflow.setManualInputMode,
+      setManualExternalValue:NK_PRO_MODULES.billingWorkflow.setManualExternalValue,
+      setPrepaymentValue:NK_PRO_MODULES.billingWorkflow.setPrepaymentValue,
+      setPrepaymentAdjustmentSetting:NK_PRO_MODULES.billingWorkflow.setPrepaymentAdjustmentSetting
+    },
     meter:{ setWaterValue:setWaterMeterValue, setGenericValue:setGenericMeterValue, setWaterSetting:setWaterMeterSetting }
   });
 }
 function configureNavigationModule() {
-  return NK_PRO_MODULES.navigation.configure({ currentYear:() => currentAbrechnungsjahr(), objectLabel:() => currentObjectLabel(), isArchiveViewer:() => isArchiveViewer(), hasActiveBilling:() => hasActiveCurrentBilling(), isFinalized:() => isCurrentBillingFinalized(), isContextOpen:() => isBillingContextOpen(), tabTitle:tabId => TAB_DEFINITIONS[tabId] ? TAB_DEFINITIONS[tabId].title : "NK-Pro", updatePageHeaders:() => updateAllPageHeaders(), renderOverview:tabId => renderOverviewForTab(tabId) });
+  return NK_PRO_MODULES.navigation.configure({ currentYear:() => currentAbrechnungsjahr(), objectLabel:() => currentObjectLabel(), isArchiveViewer:() => isArchiveViewer(), hasActiveBilling:() => hasActiveCurrentBilling(), isFinalized:() => NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized(), isContextOpen:() => isBillingContextOpen(), tabTitle:tabId => TAB_DEFINITIONS[tabId] ? TAB_DEFINITIONS[tabId].title : "NK-Pro", updatePageHeaders:() => updateAllPageHeaders(), renderOverview:tabId => renderOverviewForTab(tabId) });
 }
 function registerUiControllers() { return NK_PRO_MODULES.uiBindings.register({ modules:{ exportService:NK_PRO_MODULES.exportService, applicationActions:NK_PRO_MODULES.applicationActions } }); }
 function startUiEvents() {
   return NK_PRO_MODULES.uiEvents.start({ root:document, onError(error, context) { setActionMessage("UI-Aktion fehlgeschlagen: " + errorMessage(error), "err"); renderActionFeedback(); if (typeof console !== "undefined" && console.error) console.error("NK-Pro UI-Controllerfehler", context, error); } });
 }
 function updateUiArchitectureAudit() {
-  const report = Object.freeze({ controllers:NK_PRO_MODULES.uiController.describe(), events:NK_PRO_MODULES.uiEvents.describe(), stateAccess:NK_PRO_MODULES.stateAccess.describe(), applicationActions:NK_PRO_MODULES.applicationActions.describe(), navigation:NK_PRO_MODULES.navigation.describe(), compatibility:NK_PRO_MODULES.compatibility.describe() });
+  const report = Object.freeze({ controllers:NK_PRO_MODULES.uiController.describe(), events:NK_PRO_MODULES.uiEvents.describe(), stateAccess:NK_PRO_MODULES.stateAccess.describe(), applicationActions:NK_PRO_MODULES.applicationActions.describe(), masterDataActions:NK_PRO_MODULES.masterDataActions.describe(), costActions:NK_PRO_MODULES.costActions.describe(), billingWorkflow:NK_PRO_MODULES.billingWorkflow.describe(), navigation:NK_PRO_MODULES.navigation.describe(), compatibility:NK_PRO_MODULES.compatibility.describe() });
   window.__NKPRO_UI_ARCHITECTURE__ = report; return report;
 }
 

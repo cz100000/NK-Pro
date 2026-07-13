@@ -1,3 +1,8 @@
+<!-- AP9-CURRENT -->
+# Entwicklungshinweise V99.4.10
+
+Neue fachliche UI-Aktionen sind als DOM-freie Operation in einem zuständigen Anwendungsmodul zu implementieren, über `application-actions.js` zu registrieren und in `ui-bindings.js` zu präsentieren. Direkte Speicherung, Rendering, Dialoge oder Navigation sind in Anwendungsmodulen unzulässig. Schreibaktionen verwenden `NKProStateAccess.transact()` und höchstens einen zentralen Commit.
+
 # NK-Pro – Entwicklungsleitfaden
 
 **Aktueller Umsetzungsstand:** V99.4.9, Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Zählerstandard 1, Snapshot 2, Architektur 2

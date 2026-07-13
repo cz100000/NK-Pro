@@ -1,36 +1,31 @@
 # NK-Pro – Roadmap
 
-**Basis:** V99.4.9 vom 12. Juli 2026
+**Basis:** V99.4.10 vom 13. Juli 2026
 
 ## Abgeschlossen
 
-- V99.4.1: kompakte ChatGPT-Arbeitsbasis und Referenzdatenstruktur.
-- V99.4.2: verbindliche Datenebenen und Snapshot-Grenzen.
-- V99.4.3: Modularisierung von Persistenz, Migration und Archiv.
-- V99.4.4: Migrations-, Sicherungs-, Restore- und Rollback-Fundament.
-- V99.4.5: Objektstandard 1 und unveränderlicher Abrechnungssnapshot.
-- V99.4.6: getrennte Zählerstammdaten, Messwerte, Perioden, Zuordnungen, Wechsel und Snapshot 2.
-- V99.4.7: Abrechnungsberechnung, Dokumentdaten, Rendering, Export, Tabellenhilfen, Start und Kompatibilität modularisiert.
-- V99.4.9: native UI-Anbindung mit zentraler Ereignisdelegation, 13 Controllern, 99 Aktionen und kontrolliertem Zustandszugriff.
+- V99.4.1–V99.4.5: Arbeitsbasis, Datenebenen, Persistenz/Migration/Recovery, Objektstandard und Snapshotfundament.
+- V99.4.6: Zählerstammdaten, Messwerte, Perioden, Zuordnungen und Wechsel.
+- V99.4.7: Berechnung, Dokumentdaten, Rendering, Export, Tabellenhilfen, Start und Kompatibilität modularisiert.
+- V99.4.8/V99.4.9: native UI-Anbindung, zentrale Ereignisdelegation, 13 Controller, 99 Aktionen und Anwendungsschicht.
+- V99.4.10 / AP9: 32 Kernimplementierungen physisch ausgelagert, 28 Übergangsweiterleitungen entfernt, atomare Anwendungsaktionen und der direkte Snapshotpfad etabliert.
 
-## Nächstes Arbeitspaket – AP8
+## AP10 – nächstes Arbeitspaket
 
-- Stammdaten-, Kosten- und Workflow-Orchestrierung aus `app.js` weiter trennen,
-- interne direkte `state`-Schreibzugriffe schrittweise durch Anwendungsaktionen ersetzen,
-- verbleibende klassische Top-Level-Funktionen in explizite Module überführen,
-- AP6-Kompatibilitätswrapper nur dort abbauen, wo keine internen oder Testabhängigkeiten mehr bestehen,
-- jede Extraktion mit Referenz-, UI-, Restore-, Snapshot- und Exportregression absichern.
+- allgemeine Archiv- und Jahreswechselorchestrierung physisch aus `app.js` extrahieren,
+- Qualitäts- und Diagnoseorchestrierung trennen,
+- verbleibende direkte Zustandsmutationen dieser Bereiche über kontrollierte Aktionen führen,
+- weitere AP6-Kompatibilitätswrapper nur nach vollständiger Abhängigkeitsprüfung abbauen,
+- Referenz-, Restore-, Snapshot-, Dokument-, Export-, Browser- und PWA-Regression fortführen.
 
-## Spätere Arbeitspakete
+## AP11 – verbindlich reserviert
 
-- Archiv-/Jahreswechsel-Orchestrierung weiter trennen,
-- Qualitäts- und Diagnosefunktionen ausgliedern,
-- globale Kompatibilitätsschicht schrittweise verkleinern,
-- AP11: verbindliches Navigationsdesign, Icons, Farben, Typografie, Abstände und Responsivität umsetzen,
-- allgemeine Bedienbarkeit und Optik erst auf der stabilisierten Architektur verbessern.
+- Navigationsstruktur und visuelles Grundsystem nach dem festgelegten Referenzbild,
+- Icons, Farben, Typografie, Hintergründe, Abstände, Gruppenlogik, Zustände und Responsivität,
+- keine Vermischung mit AP10-Architekturarbeiten.
 
-## Nach V99.4.9
+## Danach
 
-- Die Anwendungsschicht ist als kontrollierte Eintrittsgrenze vorhanden.
-- AP9 kann verbleibende Orchestrierungsgruppen schrittweise physisch aus `app.js` extrahieren.
-- AP11 bleibt unverändert für Navigationsstruktur und visuelles Grundsystem reserviert.
+- verbleibende Renderer-/Dokument-UI-Orchestrierung weiter trennen,
+- globale Kompatibilität schrittweise reduzieren,
+- Bedienbarkeit und visuelle Konsistenz auf der stabilisierten Architektur ausbauen.

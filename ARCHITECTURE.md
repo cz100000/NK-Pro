@@ -1,3 +1,8 @@
+<!-- AP9-CURRENT -->
+# Architekturstand V99.4.10
+
+Die Anwendungsschicht besteht aus `application-actions.js` als Aktionsregister, drei DOM-/speicherfreien Orchestrierungsmodulen und `state-access.js` als atomarer Einzelzustandsgrenze. UI-Dialoge und Navigation bleiben in `ui-bindings.js`; Persistenz bleibt in `persistence.js`; Berechnung bleibt in `billing-calculation.js`; Snapshots bleiben in `billing-snapshot.js`. Details: `AP9_DATENFLUSS_UND_COMMIT.md`.
+
 # NK-Pro – Architektur
 
 **Ist-Stand:** V99.4.9  

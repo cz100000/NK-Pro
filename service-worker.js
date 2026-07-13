@@ -1,4 +1,4 @@
-const CACHE_NAME = "nk-pro-v99-4-9";
+const CACHE_NAME = "nk-pro-v99-4-10";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -7,6 +7,9 @@ const APP_SHELL = [
   "./js/ui-preferences.js",
   "./js/state-access.js",
   "./js/application-actions.js",
+  "./js/master-data-actions.js",
+  "./js/cost-actions.js",
+  "./js/billing-workflow.js",
   "./js/ui-controller.js",
   "./js/ui-bindings.js",
   "./js/ui-events.js",

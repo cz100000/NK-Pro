@@ -1,5 +1,19 @@
 # Changelog
 
+## V99.4.10 – Physisch extrahierte Kernorchestrierung (13. Juli 2026)
+
+- 32 implementierungstragende Stammdaten-, Kosten- und Billing-/Snapshot-Funktionen physisch aus `app.js` in drei Anwendungsmodule verschoben.
+- 28 nach vollständiger Aufrufumstellung überflüssige Übergangsweiterleitungen entfernt.
+- `app.js` von 9.026 auf 8.287 Zeilen und von 539.972 auf 510.210 Byte reduziert.
+- Top-Level-Funktionsdeklarationen netto von 655 auf 596 reduziert.
+- direkte `state`-Pfadreferenzen von 640 auf 503 und Schreibstellen von 246 auf 195 reduziert.
+- `master-data-actions.js`, `cost-actions.js` und `billing-workflow.js` als DOM-/speicherfreie, eingefrorene Modulschnittstellen eingeführt.
+- Bestätigung, Prompt, Meldung und Navigation vollständig an die UI-Bindingschicht zurückgegeben.
+- `NKProStateAccess.transact()` gegen versehentliche Root-Ersetzung durch normale Aktionsresultate gehärtet.
+- 13 Controller und 99 Aktionskennungen unverändert erhalten.
+- 41/41 Browserfälle, sechs Referenzfälle, Syntax-, Fixture-, Zähler-, Architektur-, Release- und PWA-Prüfungen bestanden.
+- Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Zählerstandards 1 und Snapshot 2 unverändert.
+
 ## V99.4.9 – Modularisierte Anwendungsaktionen und fachliche Orchestrierung (12. Juli 2026)
 
 - 130 statische und dynamisch erzeugte Inline-Handler vollständig entfernt,

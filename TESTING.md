@@ -1,3 +1,8 @@
+<!-- AP9-CURRENT -->
+# Teststand V99.4.10
+
+Die Releaseprüfung umfasst Syntax, sechs Referenzfixtures, Zählerdomäne, AP6–AP9-Architekturtests und 41 Playwright-Browserfälle. Browserfälle decken Start, UI, Module, Migration/Restore/Rollback, Objektstandard/Snapshot, Persistenz/Backup, sechs Referenzabrechnungen, Dokument/Export und Service Worker ab. System-Chromium 144 wurde erfolgreich verwendet.
+
 # NK-Pro – Testkonzept
 
 **Aktueller Stand:** V99.4.9, Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Zählerstandard 1, Snapshot 2, Architektur 2

@@ -1,3 +1,10 @@
+<!-- AP9-CURRENT -->
+# Globale Schnittstellen – Stand V99.4.10
+
+`app.js` enthält 596 Top-Level-Funktionsdeklarationen, 67 Top-Level-Bindungen, 5 explizite globale Zuweisungen und einen dynamischen globalen Zugriff. AP9 entfernt 60 frühere Top-Level-Funktionen (32 Implementierungen und 28 Weiterleitungen) und ergänzt eine Konfigurationsfunktion. Neu öffentlich geladen werden ausschließlich die eingefrorenen Modulobjekte `NKProMasterDataActions`, `NKProCostActions` und `NKProBillingWorkflow`. Die vollständigen maschinenlesbaren Vorher-/Nachherwerte stehen in `AP9_BASELINE_INVENTORY.json`; die AP9-Funktionen stehen in `AP9_FUNKTIONSINVENTAR.md`.
+
+> Der folgende Abschnitt bleibt als unverändertes Ausgangsinventar von V99.4.9 erhalten. Das vollständige aktuelle Namens-, Positions- und Zustandszugriffsinventar von V99.4.10 steht in `AP9_APP_JS_INVENTORY_AFTER.json`; das entsprechende Ausgangsinventar steht in `AP9_APP_JS_INVENTORY_BEFORE.json`.
+
 # Globale Schnittstellen und Zustände – Inventar V99.4.9
 
 Erzeugt aus dem tatsächlichen Top-Level von `js/app.js`. Klassische Skripte machen Funktionsdeklarationen global erreichbar; `const`/`let` bilden globale lexikalische Bindungen.

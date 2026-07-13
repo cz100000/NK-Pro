@@ -1,3 +1,8 @@
+<!-- AP9-CURRENT -->
+# NK-Pro V99.4.10 – Physisch extrahierte Kernorchestrierung
+
+V99.4.10 extrahiert Stammdaten-, Kosten- und laufende Abrechnungsorchestrierung physisch aus `js/app.js` in `master-data-actions.js`, `cost-actions.js` und `billing-workflow.js`. Die Anwendung bleibt eine statische lokale HTML/CSS/JavaScript-PWA ohne Framework oder Buildsystem. Verbindliche Details: `AP9_PHYSISCHE_KERNORCHESTRIERUNG.md`, `AP9_PRUEFBERICHT.md` und `AP9_EXTRAKTIONSINVENTAR.md`.
+
 # NK-Pro V99.4.9
 
 Lokale, frameworkfreie Browseranwendung zur Erstellung, Prüfung, Archivierung und Ausgabe von Nebenkostenabrechnungen.

@@ -1,3 +1,8 @@
+<!-- AP9-CURRENT -->
+# Modulübersicht V99.4.10
+
+Neu: `master-data-actions.js` (Stammdaten/Übernahme), `cost-actions.js` (Kosten/Vorauszahlungsarten/Freigaben) und `billing-workflow.js` (Periode, Finalisierung, Snapshotkoordination, manuelle Werte, Vorauszahlungen). Alle drei exportieren eine eingefrorene API, verwenden den einzigen Zustand über `NKProStateAccess` und greifen weder auf DOM noch Browser-Speicher zu.
+
 # Modulübersicht NK-Pro V99.4.9
 
 | Modul | Verantwortung | DOM | Fachspeicher | Öffentliche Schnittstelle |

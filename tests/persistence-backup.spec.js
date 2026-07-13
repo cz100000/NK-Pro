@@ -71,7 +71,7 @@ test("Archiv-Snapshots besitzen feste Grenzen und bleiben idempotent", async ({ 
   await openFreshApp(page);
 
   const result = await page.evaluate(() => {
-    const fresh = createYearSnapshot();
+    const fresh = window.NKProBillingWorkflow.createSnapshot();
     const legacy = clone(fresh);
     legacy.data.jahresArchiv = [clone(fresh)];
     legacy.data.stammdaten = clone(state.stammdaten || {});
@@ -161,7 +161,7 @@ test("Aktuelle Abrechnung übersteht JSON-Export-, Validierungs- und Import-Rund
   const before = await stableStateSnapshot(page);
 
   const roundtrip = await page.evaluate(() => {
-    const exported = exportCurrentBillingSnapshot();
+    const exported = window.NKProBillingWorkflow.createSnapshot();
     const json = JSON.stringify(exported);
     const parsed = JSON.parse(json);
     const report = importValidationReport(parsed);

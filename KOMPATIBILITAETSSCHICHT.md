@@ -1,3 +1,8 @@
+<!-- AP9-CURRENT -->
+# Kompatibilitätsschicht V99.4.10
+
+AP9 entfernt 28 nicht mehr benötigte Übergangsweiterleitungen und ergänzt keine neuen Wrapper. Die 112 registrierten AP6-Wrapper in `compatibility.js` bleiben wegen konkreter klassischer globaler Aufrufer und Test-/Diagnosepfade bestehen. Verbleibende Wrapper leiten ausschließlich weiter und enthalten keine Fachlogik.
+
 # Globale Kompatibilitätsschicht V99.4.9
 
 ## Zweck

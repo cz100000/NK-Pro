@@ -5,7 +5,7 @@
   // app.js behält nur kleine globale Kompatibilitätsweiterleitungen.
 
   function costExclusionHandling(k) {
-    normalizeCostSettings(k);
+    global.NKProCostActions.normalizeCostSettings(k);
     return k && k.ausschlussBehandlung ? k.ausschlussBehandlung : COST_EXCLUSION_FULL;
   }
 
@@ -399,8 +399,8 @@
   }
 
   function calculateUmlage() {
-    syncVorauszahlungen();
-    syncKostenartenMieterUmlage();
+    global.NKProCostActions.syncVorauszahlungen();
+    global.NKProCostActions.syncKostenartenMieterUmlage();
     syncUmlageInputs();
     applyWaterMetersToUmlage();
   

@@ -1,3 +1,8 @@
+<!-- AP9-CURRENT -->
+# UI-Architektur V99.4.10
+
+Die UI-Grenze ist jetzt vollständig von der extrahierten Kernorchestrierung getrennt: DOM-Argumentaufbereitung und Dialoge liegen in `ui-bindings.js`, Zustands- und Fachkoordination in den drei Anwendungsmodulen. Eine UI-Aktion kann dadurch nur über den zentralen Transaktions- und Commitpfad speichern und rendern.
+
 # UI-Architektur – aktueller Stand
 
 **Version:** V99.4.9  

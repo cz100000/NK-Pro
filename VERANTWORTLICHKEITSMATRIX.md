@@ -1,3 +1,15 @@
+<!-- AP9-CURRENT -->
+# Verantwortlichkeitsmatrix V99.4.10
+
+| Verantwortung | Primär zuständig | Abgrenzung |
+|---|---|---|
+| Stammdatenaktionen | `master-data-actions.js` | keine DOM-/Speicherzugriffe |
+| Kostenaktionen | `cost-actions.js` | keine parallele Verteilung/Rundung |
+| Abrechnungsworkflow/Snapshotkoordination | `billing-workflow.js` | keine Dokument-/Exportmutation; Snapshot nur über `billing-snapshot.js` |
+| Aktionsrouting | `application-actions.js` | keine Legacy-Implementierung |
+| Transaktion/Rollback | `state-access.js` | keine Fachlogik |
+| Dialoge/Navigation | `ui-bindings.js` | keine Fachmutation |
+
 # Verantwortlichkeitsmatrix V99.4.9
 
 | Verantwortung | Primärmodul | Zulässige Aufrufer | Nicht zulässig |

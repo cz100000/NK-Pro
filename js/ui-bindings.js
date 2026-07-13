@@ -19,6 +19,45 @@
     return context => applicationActions.execute(domain, action, context.args);
   }
 
+  function applicationValue(execution) {
+    return execution && Object.prototype.hasOwnProperty.call(execution, "value") ? execution.value : execution;
+  }
+
+  function presentApplicationResult(handlers, result) {
+    if (!result || typeof result !== "object") return result;
+    if (result.message) requireHandler(handlers, "alert")(result.message);
+    if (result.targetTab) requireHandler(handlers, "switchToTab")(result.targetTab);
+    return result;
+  }
+
+  function presentingAppCall(applicationActions, domain, action, handlers) {
+    if (!applicationActions || typeof applicationActions.execute !== "function") throw new Error("Anwendungsschicht fehlt.");
+    return context => {
+      const execution = applicationActions.execute(domain, action, context.args);
+      presentApplicationResult(handlers, applicationValue(execution));
+      return execution;
+    };
+  }
+
+  function interactiveAppCall(applicationActions, domain, action, handlers) {
+    if (!applicationActions || typeof applicationActions.execute !== "function") throw new Error("Anwendungsschicht fehlt.");
+    return context => {
+      let execution = applicationActions.execute(domain, action, context.args);
+      let result = applicationValue(execution);
+      if (result && result.requiresConfirmation) {
+        if (!requireHandler(handlers, "confirm")(result.confirmationMessage || "Aktion ausführen?")) return execution;
+        execution = applicationActions.execute(domain, action, context.args.concat([{ confirmed:true }]));
+        result = applicationValue(execution);
+      } else if (result && result.requiresPrompt) {
+        const entered = requireHandler(handlers, "prompt")(result.promptMessage || "Bestätigung eingeben:");
+        execution = applicationActions.execute(domain, action, context.args.concat([{ confirmationCode:entered }]));
+        result = applicationValue(execution);
+      }
+      presentApplicationResult(handlers, result);
+      return execution;
+    };
+  }
+
   function registerController(controller, responsibility, actions) {
     return global.NKProUiController.registerController(controller, { responsibility, actions });
   }
@@ -43,20 +82,20 @@
       "state.setNested":appCall(applicationActions, "state", "setNested")
     });
     registerController("object", "Objekt-, Wohnungs- und Mieterstammdaten", {
-      "object.addMasterTenancy":appCall(applicationActions, "object", "addMasterTenancy"), "object.applyMasterDataToBilling":appCall(applicationActions, "object", "applyMasterDataToBilling"),
-      "object.archiveMasterTenancy":appCall(applicationActions, "object", "archiveMasterTenancy"), "object.restoreMasterTenancy":appCall(applicationActions, "object", "restoreMasterTenancy"),
+      "object.addMasterTenancy":appCall(applicationActions, "object", "addMasterTenancy"), "object.applyMasterDataToBilling":interactiveAppCall(applicationActions, "object", "applyMasterDataToBilling", handlers),
+      "object.archiveMasterTenancy":interactiveAppCall(applicationActions, "object", "archiveMasterTenancy", handlers), "object.restoreMasterTenancy":appCall(applicationActions, "object", "restoreMasterTenancy"),
       "object.setBillingUnitStatus":appCall(applicationActions, "object", "setBillingUnitStatus"), "object.setMasterNested":appCall(applicationActions, "object", "setMasterNested")
     });
     registerController("cost", "Kostenerfassung, Auswahl, Detailzuordnung und Preisdialog", {
-      "cost.configureFree":call(handlers, "configureFreeCost"), "cost.setSetting":call(handlers, "setCostSetting"),
+      "cost.configureFree":presentingAppCall(applicationActions, "cost", "configureFree", handlers), "cost.setSetting":appCall(applicationActions, "cost", "setSetting"),
       "cost.openPriceEditor":call(handlers, "openCostPriceEditor"), "cost.closePriceEditor":call(handlers, "closeCostPriceEditor"),
       "cost.savePriceFromDialog":call(handlers, "saveCostPriceFromDialog"), "cost.resetPriceFromDialog":call(handlers, "resetCostPriceFromDialog"),
       "cost.openSelectionDialog":call(handlers, "openCostSelectionDialog"), "cost.closeSelectionDialog":call(handlers, "closeCostSelectionDialog"),
       "cost.renderSelectionDialog":call(handlers, "renderCostSelectionDialog"), "cost.createFreeRow":call(handlers, "createFreeCostRow"),
       "cost.deactivateSelected":call(handlers, "deactivateSelectedCosts"), "cost.openColumnInfo":call(handlers, "openCostColumnInfo"),
       "cost.setPageSize":call(handlers, "setCostPageSize"), "cost.toggleAllRows":call(handlers, "toggleAllCostRows"),
-      "cost.activateDefaultPrepayments":call(handlers, "activateDefaultPrepayments"), "cost.deactivateAllPrepayments":call(handlers, "deactivateAllPrepayments"),
-      "cost.setTenantAllowed":call(handlers, "setCostTenantAllowed"), "cost.activateFromDialog":call(handlers, "activateCostFromDialog"),
+      "cost.activateDefaultPrepayments":appCall(applicationActions, "cost", "activateDefaultPrepayments"), "cost.deactivateAllPrepayments":appCall(applicationActions, "cost", "deactivateAllPrepayments"),
+      "cost.setTenantAllowed":appCall(applicationActions, "cost", "setTenantAllowed"), "cost.activateFromDialog":call(handlers, "activateCostFromDialog"),
       "cost.openTenantDetails":call(handlers, "openCostTenantDetails"), "cost.toggleRowSelection":call(handlers, "toggleCostRowSelection"),
       "cost.toggleAllVisibleRows":call(handlers, "toggleAllVisibleCostRows")
     });
@@ -65,10 +104,10 @@
       "billing.closeCreateModal":call(handlers, "closeCreateBillingModal"), "billing.createFromModal":call(handlers, "createNewBillingFromModal"),
       "billing.openDeleteModal":call(handlers, "openDeleteBillingModal"), "billing.closeDeleteModal":call(handlers, "closeDeleteBillingModal"),
       "billing.confirmDelete":call(handlers, "confirmDeleteBilling"), "billing.handleDeleteKey":context => requireHandler(handlers, "handleDeleteBillingKey")(context.key),
-      "billing.finalize":appCall(applicationActions, "billing", "finalize"), "billing.unlock":appCall(applicationActions, "billing", "unlock"),
+      "billing.finalize":interactiveAppCall(applicationActions, "billing", "finalize", handlers), "billing.unlock":interactiveAppCall(applicationActions, "billing", "unlock", handlers),
       "billing.openLatestYear":call(handlers, "openLatestKnownYear"), "billing.setYear":appCall(applicationActions, "billing", "setYear"),
-      "billing.setPeriod":appCall(applicationActions, "billing", "setPeriod"), "billing.resetAllocationInputs":appCall(applicationActions, "billing", "resetAllocationInputs"),
-      "billing.setManualInputMode":appCall(applicationActions, "billing", "setManualInputMode"), "billing.setManualExternalValue":appCall(applicationActions, "billing", "setManualExternalValue"),
+      "billing.setPeriod":appCall(applicationActions, "billing", "setPeriod"), "billing.resetAllocationInputs":interactiveAppCall(applicationActions, "billing", "resetAllocationInputs", handlers),
+      "billing.setManualInputMode":interactiveAppCall(applicationActions, "billing", "setManualInputMode", handlers), "billing.setManualExternalValue":appCall(applicationActions, "billing", "setManualExternalValue"),
       "billing.setPrepaymentValue":appCall(applicationActions, "billing", "setPrepaymentValue"), "billing.setPrepaymentAdjustmentSetting":appCall(applicationActions, "billing", "setPrepaymentAdjustmentSetting"),
       "billing.showFinalReport":call(handlers, "showFinalBillingReport"), "billing.showAcceptanceProtocol":call(handlers, "showAcceptanceProtocol")
     });

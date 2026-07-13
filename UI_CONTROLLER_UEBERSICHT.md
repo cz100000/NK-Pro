@@ -1,3 +1,8 @@
+<!-- AP9-CURRENT -->
+# UI-Controller V99.4.10
+
+Die 13 Controller und 99 Aktionskennungen bleiben erhalten. Stammdaten-, Kosten- und Billing-Aktionen werden direkt über `NKProApplicationActions` an die neuen Module gebunden. `ui-bindings.js` präsentiert strukturierte Bestätigungs-, Prompt-, Meldungs- und Navigationsresultate; Controller und Ereignisdelegation enthalten keine Fachlogik.
+
 # UI-Controller-Übersicht – V99.4.9
 
 `NKProUiController` registriert 13 Controller mit insgesamt 99 eindeutigen Aktionen. Die Registry kennt weder DOM noch Persistenz und führt ausschließlich die in `NKProUiBindings` hinterlegten Adapter aus.

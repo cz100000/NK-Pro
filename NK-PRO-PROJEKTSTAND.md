@@ -1,3 +1,11 @@
+<!-- AP9-CURRENT -->
+# NK-Pro – Projektstand V99.4.10
+
+**Stand:** 13. Juli 2026  
+**Versionsname:** Physisch extrahierte Kernorchestrierung
+
+AP9 ist abgeschlossen: 32 Implementierungen wurden physisch in drei Anwendungsmodulen ausgelagert, 28 überflüssige Übergangsweiterleitungen entfernt und `app.js` auf 8.287 Zeilen reduziert. Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Zählerstandards 1 und Snapshot 2 bleiben unverändert. Nächstes Paket ist AP10 für Archiv-, Jahreswechsel-, Qualitäts- und Diagnoseorchestrierung; AP11 bleibt für Navigation und visuelles Grundsystem reserviert.
+
 # NK-Pro – verbindlicher Projektstand
 
 **Stand:** 12. Juli 2026  

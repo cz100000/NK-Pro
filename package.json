@@ -1,8 +1,8 @@
 {
-  "name": "nk-pro-v99-4-9",
-  "version": "99.4.9",
+  "name": "nk-pro-v99-4-10",
+  "version": "99.4.10",
   "private": true,
-  "description": "Architektur-, Anwendungsaktions-, Zustands-, Berechnungs-, Dokument-, Export-, Snapshot-, Migrations-, Restore-, PWA- und Browserprüfungen für NK-Pro V99.4.9",
+  "description": "Architektur-, Anwendungsaktions-, Zustands-, Berechnungs-, Dokument-, Export-, Snapshot-, Migrations-, Restore-, PWA- und Browserprüfungen für NK-Pro V99.4.10",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
     "test:fixtures": "node tools/check-fixtures.cjs",
@@ -12,7 +12,7 @@
     "test:report": "playwright show-report",
     "test:release": "node tools/check-release-consistency.cjs",
     "test:metering": "node tests/metering-domain.test.cjs",
-    "test:architecture": "node tests/ap6-modularization.test.cjs && node tests/ap7-ui-integration.test.cjs && node tests/ap8-application-actions.test.cjs"
+    "test:architecture": "node tests/ap6-modularization.test.cjs && node tests/ap7-ui-integration.test.cjs && node tests/ap8-application-actions.test.cjs && node tests/ap9-core-orchestration.test.cjs"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1"

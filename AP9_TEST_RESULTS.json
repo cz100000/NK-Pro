@@ -1,0 +1,62 @@
+{
+  "release": "NK-Pro V99.4.10",
+  "date": "2026-07-13",
+  "syntax": {
+    "status": "passed",
+    "units": 32
+  },
+  "fixtures": {
+    "status": "passed",
+    "cases": 6
+  },
+  "meteringDomain": {
+    "status": "passed"
+  },
+  "architecture": {
+    "status": "passed",
+    "suites": [
+      "AP6 modularization",
+      "AP7 UI integration",
+      "AP8 application actions",
+      "AP9 core orchestration"
+    ]
+  },
+  "browser": {
+    "status": "passed",
+    "total": 41,
+    "browser": "System Chromium 144",
+    "executable": "/usr/bin/chromium",
+    "suites": {
+      "appSmoke": 9,
+      "documentExport": 2,
+      "migrationRestore": 6,
+      "moduleBoundaries": 1,
+      "uiControllerEvents": 2,
+      "objectSnapshot": 9,
+      "persistenceBackup": 5,
+      "referenceCases": 6,
+      "serviceWorker": 1
+    }
+  },
+  "networkBrowserInstall": {
+    "status": "blocked",
+    "reason": "DNS resolution EAI_AGAIN for cdn.playwright.dev",
+    "impact": "none; all browser tests were executed with the installed system Chromium"
+  },
+  "extraction": {
+    "implementationsMoved": 32,
+    "transitionWrappersRemoved": 28,
+    "topLevelFunctionsRemovedGross": 60,
+    "topLevelFunctionsRemaining": 596
+  },
+  "appJs": {
+    "baselineBytes": 539972,
+    "currentBytes": 510210,
+    "baselineLines": 9026,
+    "currentLines": 8287,
+    "baselineStatePathReferences": 640,
+    "currentStatePathReferences": 503,
+    "baselineStateWriteSites": 246,
+    "currentStateWriteSites": 195
+  }
+}

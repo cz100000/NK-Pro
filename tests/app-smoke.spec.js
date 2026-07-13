@@ -19,7 +19,7 @@ test("Start, Version, Seitenstruktur und interne Audits sind fehlerfrei", async 
   const runtime = attachRuntimeGuards(page);
   await openFreshApp(page);
 
-  await expect(page).toHaveTitle("NK-Pro V99.4.9 – Modularisierte Anwendungsaktionen und fachliche Orchestrierung");
+  await expect(page).toHaveTitle("NK-Pro V99.4.10 – Physisch extrahierte Kernorchestrierung");
   const result = await page.evaluate(() => {
     const release = releaseAuditReport();
     const selfRows = appSelfTestReport();
@@ -42,8 +42,8 @@ test("Start, Version, Seitenstruktur und interne Audits sind fehlerfrei", async 
     };
   });
 
-  expect(result.version).toBe("V99.4.9");
-  expect(result.versionName).toBe("Modularisierte Anwendungsaktionen und fachliche Orchestrierung");
+  expect(result.version).toBe("V99.4.10");
+  expect(result.versionName).toBe("Physisch extrahierte Kernorchestrierung");
   expect(result.schema).toBe(5);
   expect(result.activeTab).toBe("landing");
   expect(result.structure.allPassed).toBe(true);
@@ -142,7 +142,7 @@ test("Aktive Abrechnung erscheint nur im geöffneten Arbeitskontext", async ({ p
 
   await page.evaluate(() => {
     state.meta.currentBillingFinalized = true;
-    state.meta.currentBillingFinalizationKey = currentBillingFinalizationKey();
+    state.meta.currentBillingFinalizationKey = window.NKProBillingWorkflow.currentBillingFinalizationKey();
     NKProNavigation.updateWorkflowNavigationContext();
   });
   await expect(page.locator("[data-nav-billing-context]")).toHaveText("Finalisiert");
@@ -184,14 +184,14 @@ test("Archiv ist eigenständig erreichbar und öffnet die Nur-Ansicht", async ({
 test("Manifest und PWA-Version stimmen mit der Anwendung überein", async () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(root, "manifest.webmanifest"), "utf8"));
   const worker = fs.readFileSync(path.join(root, "service-worker.js"), "utf8");
-  expect(manifest.version).toBe("99.4.9");
-  expect(manifest.name).toContain("V99.4.9");
-  expect(worker).toContain('const CACHE_NAME = "nk-pro-v99-4-9";');
+  expect(manifest.version).toBe("99.4.10");
+  expect(manifest.name).toContain("V99.4.10");
+  expect(worker).toContain('const CACHE_NAME = "nk-pro-v99-4-10";');
   expect(worker).toContain('"./index.html"');
   expect(worker).toContain('"./manifest.webmanifest"');
 });
 
-test("V99.4.9 lädt produktive Styles und Skripte ausschließlich aus separaten Dateien", async ({ page, request }) => {
+test("V99.4.10 lädt produktive Styles und Skripte ausschließlich aus separaten Dateien", async ({ page, request }) => {
   const response = await request.get("/index.html");
   expect(response.ok()).toBeTruthy();
   const html = await response.text();

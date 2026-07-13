@@ -1,3 +1,8 @@
+<!-- AP9-CURRENT -->
+# Anwendungsstart V99.4.10
+
+Vor Registrierung der UI-Controller konfiguriert `app.js` zuerst `NKProStateAccess`, danach die drei Kernorchestrierungsmodule und anschließend `NKProApplicationActions`. Die statische Ladefolge in `index.html` und die App-Shell-Reihenfolge im Service Worker enthalten alle neuen Module vor `app.js`.
+
 # Anwendungsstart und Orchestrierung V99.4.9
 
 ## Startdienst

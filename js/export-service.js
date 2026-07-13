@@ -44,7 +44,7 @@
   }
 
   function downloadCurrentBillingJson() {
-    const snapshot = exportCurrentBillingSnapshot();
+    const snapshot = global.NKProBillingWorkflow.createSnapshot();
     const filename = backupFileName("nk-pro-abrechnung", snapshot);
     if (downloadJsonFile(filename, snapshot)) registerBackupEvent("current-json", filename);
   }
@@ -59,7 +59,7 @@
 
   function downloadKostenCsv() {
     const header = ["Kosten-ID","Kostenart","Kostenbereich","In NK","Als Vorauszahlung","Berechnungsart","Umlageschlüssel","Ausschluss-Behandlung","Gesamtbetrag","Gesamtverbrauch","Preis pro Verbrauchseinheit","Preisquelle","Bemerkung","Status"];
-    const rows = state.kostenarten.map(k => [k.id,k.kostenart,k.bereich,k.inNK,k.vorauszahlung,k.berechnungsart,k.umlageschluessel,costExclusionHandling(k),k.gesamtbetrag,k.gesamtverbrauch,k.preisProEinheit,(k.preisProEinheitManuell ? "manuell" : "automatisch"),k.bemerkung,kostenStatus(k)]);
+    const rows = state.kostenarten.map(k => [k.id,k.kostenart,k.bereich,k.inNK,k.vorauszahlung,k.berechnungsart,k.umlageschluessel,costExclusionHandling(k),k.gesamtbetrag,k.gesamtverbrauch,k.preisProEinheit,(k.preisProEinheitManuell ? "manuell" : "automatisch"),k.bemerkung,global.NKProCostActions.kostenStatus(k)]);
     download("nk-pro-kostenarten.csv", toCsv([header, ...rows]), "text/csv;charset=utf-8");
   }
 

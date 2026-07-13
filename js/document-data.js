@@ -50,7 +50,7 @@
     const backup = (typeof backupStatusReport === "function") ? backupStatusReport() : null;
     const special = (typeof specialCaseWatchReport === "function") ? specialCaseWatchReport() : null;
     const brief = (typeof currentBriefPreflightReport === "function") ? currentBriefPreflightReport() : null;
-    const finalization = (typeof currentBillingFinalizationReport === "function") ? currentBillingFinalizationReport() : { finalized:isCurrentBillingFinalized(), meta:state.meta || {}, readiness };
+    const finalization = global.NKProBillingWorkflow.currentBillingFinalizationReport();
     const issues = Array.isArray(quality.issues) ? quality.issues : [];
     const errors = issues.filter(i => i.severity === "Fehler").length;
     const warnings = issues.filter(i => i.severity === "Prüfen").length;

@@ -119,13 +119,13 @@ test("gültiger Snapshot ist eindeutig, unveränderlich, reproduzierbar und gege
       if (cost.umlageschluessel === "Verbrauch") { cost.gesamtbetrag = 0; cost.inNK = "Nein"; }
     });
     normalizeObjectStandard(state);
-    const first = createYearSnapshot();
+    const first = window.NKProBillingWorkflow.createSnapshot();
     const firstValidation = validateBillingSnapshot(first);
     const capturedName = first.data.mieter[0].name;
     state.mieter[0].name = "Nachträglich geändert";
     state.stammdaten.mieter[0].name = "Nachträglich geändert";
     normalizeObjectStandard(state);
-    const second = createYearSnapshot();
+    const second = window.NKProBillingWorkflow.createSnapshot();
     return {
       firstValid:firstValidation.valid,
       frozen:Object.isFrozen(first) && Object.isFrozen(first.data) && Object.isFrozen(first.data.objektStandard),
@@ -163,7 +163,7 @@ test("kritische Fehler verhindern Snapshot-Erstellung strukturiert", async ({ pa
     const validation = validateBillingReadiness(state);
     let message = "";
     let codes = [];
-    try { createYearSnapshot(); } catch (error) {
+    try { window.NKProBillingWorkflow.createSnapshot(); } catch (error) {
       message = error.message;
       codes = error.validation ? error.validation.errors.map(item => item.code) : [];
     }
@@ -184,7 +184,7 @@ test("Snapshot-Integrität erkennt Manipulation und Dummy taucht nie in der Zäh
       if (cost.umlageschluessel === "Verbrauch") { cost.gesamtbetrag = 0; cost.inNK = "Nein"; }
     });
     const dummy = addElectricityDummyMeter({ bezeichnung:"Dummy", zaehlernummer:"D-1" });
-    const snapshot = createYearSnapshot();
+    const snapshot = window.NKProBillingWorkflow.createSnapshot();
     const valid = validateBillingSnapshot(snapshot);
     const tampered = clone(snapshot);
     tampered.summary.saldo = num(tampered.summary.saldo) + 1;
@@ -210,7 +210,7 @@ test("vollständiger Snapshot 1 bleibt unverändert lesbar und wird nicht auf Ve
   await openFreshApp(page);
   const result = await page.evaluate(() => {
     state.kostenarten.forEach(cost => { if (cost.umlageschluessel === "Verbrauch") { cost.gesamtbetrag = 0; cost.inNK = "Nein"; } });
-    const current = createYearSnapshot();
+    const current = window.NKProBillingWorkflow.createSnapshot();
     const legacy = clone(current);
     legacy.snapshotVersion = 1;
     delete legacy.metering;
@@ -266,7 +266,7 @@ test("Abrechnungssnapshot und Stromzähler-Dummy bleiben über Sicherung und Res
       einheit:"kWh",
       standortbeschreibung:"Technikraum"
     });
-    const snapshot = createYearSnapshot();
+    const snapshot = window.NKProBillingWorkflow.createSnapshot();
     state.jahresArchiv = [snapshot];
     const envelope = NKProBackupRecovery.createBackupEnvelope(state, backupRecoveryModuleOptions({
       backupType:"fullBackup",
