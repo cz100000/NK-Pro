@@ -26,7 +26,7 @@ function main(){
   assert(project.appVersion==="99.4.23"&&project.displayVersion==="V99.4.23"&&project.basedOn==="99.4.22-AP19","AP20-Projektmetadaten sind inkonsistent.");
   assert(project.schemaVersion===5&&project.dataLayerContractVersion===1,"Datenschema oder Datenebenenvertrag wurden verändert.");
   assert(project.centralQualityRuleRegistryVersion===1&&project.qualityConfirmationFingerprintVersion===1&&project.systemDiagnosticsSeparationVersion===1,"AP20-Metadaten fehlen.");
-  assert(manifest.version==="99.4.23"&&worker.includes('const CACHE_NAME = "nk-pro-v99-4-23-ap20-corr2";'),"Manifest oder PWA-Cache ist inkonsistent.");
+  assert(manifest.version==="99.4.23"&&worker.includes('const CACHE_NAME = "nk-pro-v99-4-23-ap20-corr3";'),"Manifest oder PWA-Cache ist inkonsistent.");
   assert(worker.includes('"./js/quality-rules.js"'),"Zentrale Regelregistry fehlt im Offline-App-Shell.");
 
   const sandbox={console}; sandbox.globalThis=sandbox; vm.createContext(sandbox); vm.runInContext(rulesSource,sandbox,{filename:"js/quality-rules.js"});

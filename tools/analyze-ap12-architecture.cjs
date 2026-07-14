@@ -121,7 +121,7 @@ report.totals.moduleExports = report.moduleExports.length;
 report.totals.compatibilityWrappers = report.compatibilityWrappers.length;
 
 const html = read("index.html");
-report.scriptOrder = [...html.matchAll(/<script\s+defer(?:="")?\s+src="([^"]+)"><\/script>/g)].map(match => match[1]);
-report.appShell = [...read("service-worker.js").matchAll(/"(\.\/[^"\n]+)"/g)].map(match => match[1]);
+report.scriptOrder = [...html.matchAll(/<script\s+defer(?:="")?\s+src="([^"]+)"><\/script>/g)].map(match => match[1].split("?")[0]);
+report.appShell = [...read("service-worker.js").matchAll(/"(\.\/[^"\n]+)"/g)].map(match => match[1].split("?")[0]);
 
 process.stdout.write(JSON.stringify(report, null, 2) + "\n");

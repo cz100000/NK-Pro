@@ -14,6 +14,10 @@ AP20 ersetzt verteilte und teilweise redundante Prüfoberflächen durch eine zen
 
 Bestätigungen sind einer Abrechnung, Regelinstanz und einem Fingerprint der Eingangsdaten zugeordnet. Relevante Datenänderungen öffnen den Punkt erneut. Blocker sind nicht bestätigbar. Im AP19-Ansichtsmodus bleiben sämtliche Änderungen gesperrt.
 
+## Aktueller Korrekturstand
+
+Korrekturstand 3 verhindert gemischte Browserstände aus altem Service-Worker-Cache und neuen HTML-Dateien. Die kritischen Zählerassets sind versionsgebunden; der Worker aktualisiert sich cachefrei und lädt die App nach Aktivierung einmal neu.
+
 ## Unverändert
 
 Berechnungsformeln, Abrechnungsergebnisse, Arbeitsweiche, AP13-Brieflayout, Druck/PDF/Schwarzweiß, Schema und Datenvertrag wurden nicht fachlich verändert. Der Zählerbereich unter Objektvorbereitung bleibt DUMMY.

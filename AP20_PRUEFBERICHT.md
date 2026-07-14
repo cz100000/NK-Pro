@@ -86,6 +86,19 @@ In einer Umgebung ohne Loopback-Sperre zusätzlich:
 npm run test:browser
 ```
 
+## Korrekturstand 3 – Asset-Aktualisierung und historischer Fehlwert
+
+| Prüfung | Ergebnis |
+|---|---|
+| Build-ID der kritischen Zählerassets | `99.4.23-ap20-corr3` |
+| Service-Worker-Aktualisierung ohne HTTP-Cache | bestanden |
+| einmaliger automatischer Reload nach Workerwechsel | bestanden |
+| Ausgangswert `29774` reproduziert `29.508 m³` | bestanden |
+| Eingabe `297,74` aktualisiert live auf `31,74 m³` | bestanden |
+| Enter ersetzt den Fehlwert durch `297.74` | bestanden |
+| Speicherung und Neustart | bestanden |
+| PWA-Cache | `nk-pro-v99-4-23-ap20-corr3` |
+
 ## Korrekturstand 2 – Live-Zählerberechnung
 
 | Prüfung | Ergebnis |

@@ -38,6 +38,10 @@ Details: `AP20_ZENTRALES_PRUEF_PLAUSIBILITAETS_UND_FREIGABESYSTEM.md`, `AP20_PRU
 
 Die ausgelieferte V99.4.23 enthält die Korrektur für den Datenstart bei einem rückläufigen Zählerstand. Der Datensatz wird geladen und die Auffälligkeit zentral als `NKP-PLAU-005` („Zu prüfen“) dargestellt.
 
+## Korrekturstand 3
+
+Die für Zählerberechnung und Ereignissteuerung maßgeblichen JavaScript-Dateien werden mit einer festen Build-Kennung geladen. Der Service Worker wird ohne HTTP-Cache aktualisiert und aktiviert den neuen Stand mit einem einmaligen automatischen Reload. Dadurch kann keine alte Zählerlogik mit dem aktuellen HTML gemischt ausgeführt werden. Ein zuvor falsch gespeicherter Wert wie `29774` lässt sich durch Eingabe von `297,74` sofort auf `31,74 m³` korrigieren und mit Enter speichern.
+
 ## Korrekturstand 2
 
 Die Zählerstandstabellen berechnen Verbrauch, Zeilensumme und Gesamtsumme nun bereits während der Eingabe. Enter speichert den Wert zuverlässig. Dezimalkomma und Dezimalpunkt werden bei Zählerständen korrekt verarbeitet. Die Live-Vorschau schreibt erst beim bestätigten Commit in den Datensatz.

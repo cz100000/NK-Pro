@@ -13,7 +13,7 @@ let match;
 while ((match = scriptPattern.exec(html))) {
   const srcMatch = match[1].match(/\bsrc\s*=\s*["']([^"']+)["']/i);
   if (srcMatch) {
-    const relative = srcMatch[1].replace(/^\.\//, "");
+    const relative = srcMatch[1].split("?")[0].replace(/^\.\//, "");
     files.push({ label: relative, file: path.join(root, relative) });
   } else if (match[2].trim()) {
     process.stderr.write("FEHLER: Produktives Inline-JavaScript in index.html gefunden.\n");

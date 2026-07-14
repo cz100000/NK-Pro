@@ -20,6 +20,14 @@ Abschluss: **Änderungen umgesetzt – NK-Pro V99.4.23**
 
 Ein rückläufiger Zählerstand ohne dokumentierten Überlauf wird beim Neustart nicht mehr als fataler Speicher- oder Migrationsfehler behandelt. Der Datensatz wird geladen; der Punkt erscheint im zentralen Prüfsystem als „Zu prüfen“.
 
+## Korrekturstand 3
+
+- Kritische Zähler-UI-Assets tragen die Build-Kennung `99.4.23-ap20-corr3`.
+- Service-Worker-Registrierung verwendet `updateViaCache: none` und fordert aktiv eine Aktualisierung an.
+- Nach dem Wechsel auf den neuen Worker erfolgt genau ein automatischer Reload.
+- Ein vorher falsch gespeicherter Wert `29774` wird bei neuer Eingabe `297,74` sofort als `31,74 m³` berechnet und nach Enter als `297.74` gespeichert.
+- PWA-Cache: `nk-pro-v99-4-23-ap20-corr3`.
+
 ## Korrekturstand 2
 
 - Sofortige Verbrauchsberechnung während der Zählerstandseingabe.

@@ -610,3 +610,11 @@ Die detaillierte frühere Historie bleibt in der Anwendung und im Versionsverlau
 - Die Vorschau bleibt vom persistierten Messwert- und Revisionsmodell getrennt.
 - Neue Node- und Chromium-Regression für Live-Berechnung, Commit, Speicherung und Neustart.
 - PWA-Cache auf `nk-pro-v99-4-23-ap20-corr2` angehoben.
+
+## V99.4.23 – AP20 Korrekturstand 3
+
+- Kritische Zähler-UI-Assets mit Build-ID `99.4.23-ap20-corr3` versehen.
+- Service Worker cachefrei aktualisiert und nach Aktivierung einmalig neu geladen.
+- Gemischte Laufzeitstände aus altem Zähler-JavaScript und aktuellem HTML verhindert.
+- Browserregression für `29774 → Eingabe 297,74 → 31,74 m³` ergänzt.
+- PWA-Cache auf `nk-pro-v99-4-23-ap20-corr3` angehoben.

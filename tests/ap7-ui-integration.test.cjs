@@ -52,7 +52,7 @@ function main() {
   assert(actionNames.length === 115 && new Set(actionNames).size === 115, `UI-Aktionsregister ist unvollständig oder doppelt (${actionNames.length}).`);
   ["meter.previewWaterValue", "meter.previewGenericValue", "meter.setWaterValue", "billing.setPrepaymentValue", "document.printCurrentBrief", "export.downloadBillingPackage", "recovery.restorePreMigration"].forEach(action => assert(uiContext.NKProUiController.hasAction(action), `Pflichtaktion fehlt: ${action}`));
 
-  const scripts = [...html.matchAll(/<script\s+defer(?:="")?\s+src="([^"]+)"><\/script>/g)].map(match => match[1]);
+  const scripts = [...html.matchAll(/<script\s+defer(?:="")?\s+src="([^"]+)"><\/script>/g)].map(match => match[1].split("?")[0]);
   const appIndex = scripts.indexOf("./js/app.js");
   ["./js/state-access.js", "./js/ui-controller.js", "./js/ui-bindings.js", "./js/ui-events.js", "./js/navigation.js", "./js/modal-events.js"].forEach(script => {
     assert(scripts.includes(script) && scripts.indexOf(script) < appIndex, `UI-Modul fehlt oder wird zu spät geladen: ${script}`);

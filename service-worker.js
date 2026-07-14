@@ -1,4 +1,5 @@
-const CACHE_NAME = "nk-pro-v99-4-23-ap20-corr2";
+const CACHE_NAME = "nk-pro-v99-4-23-ap20-corr3";
+const BUILD_ID = "99.4.23-ap20-corr3";
 const CACHE_PREFIX = "nk-pro-";
 const APP_SHELL = [
   "./",
@@ -19,7 +20,9 @@ const APP_SHELL = [
   "./js/billing-workflow.js",
   "./js/ui-controller.js",
   "./js/ui-bindings.js",
+  "./js/ui-bindings.js?v=" + BUILD_ID,
   "./js/ui-events.js",
+  "./js/ui-events.js?v=" + BUILD_ID,
   "./js/navigation.js",
   "./js/modal-events.js",
   "./js/persistence.js",
@@ -55,6 +58,7 @@ const APP_SHELL = [
   "./js/ui-archive-pages.js",
   "./js/browser-io.js",
   "./js/ui-metering.js",
+  "./js/ui-metering.js?v=" + BUILD_ID,
   "./js/ui-billing-allocation.js",
   "./js/ui-documents.js",
   "./js/ui-table-actions.js",
@@ -62,6 +66,7 @@ const APP_SHELL = [
   "./js/ui-page-controller.js",
   "./js/app.js",
   "./js/service-worker-register.js",
+  "./js/service-worker-register.js?v=" + BUILD_ID,
   "./icons/icon-16.png",
   "./icons/icon-32.png",
   "./icons/icon-180.png",
@@ -70,6 +75,11 @@ const APP_SHELL = [
   "./icons/icon-maskable-192.png",
   "./icons/icon-maskable-512.png"
 ];
+
+
+self.addEventListener("message", event => {
+  if (event && event.data && event.data.type === "SKIP_WAITING") self.skipWaiting();
+});
 
 self.addEventListener("install", event => {
   event.waitUntil(

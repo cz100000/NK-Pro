@@ -14,7 +14,7 @@ test("Service Worker installiert den V99.4.23-App-Shell, begrenzt Cachebereinigu
       "nk-pro-v99-2-7",
       "nk-pro-v99-4-17-ap14",
       "nk-pro-v99-4-19-ap16",
-      "nk-pro-v99-4-23-ap20-corr2",
+      "nk-pro-v99-4-23-ap20-corr3",
       "fremder-cache"
     ]);
     const cacheEntries = new Map([["http://nkpro.test/index.html", { source:"cached-index" }]]);
@@ -102,7 +102,7 @@ test("Service Worker installiert den V99.4.23-App-Shell, begrenzt Cachebereinigu
   ]));
   expect(result.log.skipWaiting).toBe(1);
   expect(result.log.claimed).toBe(1);
-  expect(result.remaining).toEqual(["fremder-cache", "nk-pro-v99-4-23-ap20-corr2"]);
+  expect(result.remaining).toEqual(["fremder-cache", "nk-pro-v99-4-23-ap20-corr3"]);
   expect(result.log.deleted).toEqual(expect.arrayContaining(["nk-pro-v99-2-7", "nk-pro-v99-4-17-ap14", "nk-pro-v99-4-19-ap16"]));
   expect(result.log.deleted).not.toContain("fremder-cache");
   expect(result.networkOk).toBe(true);

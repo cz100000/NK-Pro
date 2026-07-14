@@ -48,6 +48,15 @@ npm run test:ap20:meter-start-browser
 
 Der Browsertest legt vor dem Start einen gespeicherten Datensatz mit rückläufigem Zählerstand in den Local Storage. Erwartet werden ein vollständiger Start ohne Fallback sowie ein zentraler Prüfpunkt `NKP-PLAU-005` mit Status „Zu prüfen“.
 
+## AP20-Korrekturstand 3 – Asset-Aktualisierungsregression
+
+```text
+node tests/ap20-asset-refresh-regression.test.cjs
+NODE_PATH=<Playwright-Installation>/node_modules node tools/check-ap20-meter-calculation-browser.cjs
+```
+
+Der Browserfall startet gezielt mit dem historisch falsch gespeicherten Wert `29774`, gibt anschließend `297,74` ein und prüft Live-Ergebnis `31,74`, Enter-Commit, Persistenz und Neustart. Zusätzlich werden Build-Parameter, Cachekennung, cachefreie Worker-Aktualisierung, einmaliger Reload und Schleifenschutz statisch geprüft.
+
 ## AP20-Korrekturstand 2 – Zählerberechnungsregression
 
 Statische Zahlen- und Integrationsprüfung:

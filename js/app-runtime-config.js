@@ -114,6 +114,8 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
+  "V99.4.23 Korrekturstand 3 erzwingt die Aktualisierung der Zähler-UI-Assets über versionsgebundene URLs und einen cachefreien Service-Worker-Updatepfad; ein neuer Worker wird einmalig aktiviert und die App danach automatisch neu geladen.",
+  "Ein zuvor falsch gespeicherter Zählerwert kann durch erneute Eingabe mit Dezimalkomma oder Dezimalpunkt sofort sichtbar und per Enter dauerhaft korrigiert werden.",
   "V99.4.19 führt das freigegebene AP16-Kachelsystem mit lokalen Linien-Icons, fachlichen Akzentfarben, klarerer Seitenhierarchie, geöffneten Primärbereichen und bereinigtem globalen Kopf ein.",
   "Der Service Worker entfernt ausschließlich veraltete NK-Pro-Caches, speichert nur erfolgreiche Same-Origin-Antworten und liefert die App-Shell im Offlinebetrieb ressourcengerecht aus.",
   "V99.4.17 setzt AP14 mit Segoe UI, einem appweiten Blau-/Grausystem, modernisiertem Kopfbereich sowie der fachlichen Trennung von Zählerinventar und Verbrauchserfassung um.",

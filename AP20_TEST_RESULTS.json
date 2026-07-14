@@ -2,7 +2,7 @@
   "version": "99.4.23",
   "displayVersion": "V99.4.23",
   "workPackage": "AP20",
-  "status": "passed_with_documented_host_limits_and_correction_2_regression",
+  "status": "passed_with_documented_host_limits_and_correction_3_regression",
   "releaseDate": "2026-07-14",
   "sourceVersion": "99.4.22",
   "sourceWorkPackage": "AP19",
@@ -59,7 +59,8 @@
     "meterStartupRegression": "passed_node_and_chromium",
     "storedDataReload": "passed_without_fallback_or_data_loss",
     "centralMeterPlausibility": "passed_NKP-PLAU-005",
-    "meterCalculationRegression": "passed_node_and_chromium_live_enter_reload"
+    "meterCalculationRegression": "passed_node_and_chromium_live_enter_reload",
+    "assetRefreshRegression": "passed_static_and_chromium_exact_case"
   },
   "knownLimitations": [
     "Produktive Zählerverwaltung bleibt außerhalb AP20 DUMMY.",
@@ -124,10 +125,11 @@
     "meterStartupNodeRegression": 1,
     "meterStartupBrowserRegression": 1,
     "meterCalculationNodeRegression": 1,
-    "meterCalculationBrowserRegression": 1
+    "meterCalculationBrowserRegression": 1,
+    "assetRefreshNodeRegression": 1
   },
-  "correctionBuild": 2,
-  "correctionTitle": "Live-Zählerberechnung und robuste Dezimaleingabe",
+  "correctionBuild": 3,
+  "correctionTitle": "Erzwungene Asset- und Service-Worker-Aktualisierung",
   "correctionRegression": {
     "meterStartupNodeRegression": "passed",
     "meterStartupBrowserRegression": "passed",
@@ -144,7 +146,16 @@
     "meterValueReload": "passed",
     "firstReferenceConsumption": 31.24,
     "secondReferenceConsumption": 11.06,
-    "pwaCache": "nk-pro-v99-4-23-ap20-corr2"
+    "pwaCache": "nk-pro-v99-4-23-ap20-corr3",
+    "assetBuildId": "99.4.23-ap20-corr3",
+    "versionedMeterAssets": "passed",
+    "serviceWorkerUpdateViaCache": "none",
+    "serviceWorkerExplicitUpdate": "passed",
+    "singleReloadAfterControllerChange": "passed",
+    "historicalMalformedValue": 29774,
+    "correctedInput": "297,74",
+    "correctedReferenceConsumption": 31.74,
+    "historicalMalformedValueCorrection": "passed"
   },
   "correctionHistory": [
     {
@@ -156,6 +167,11 @@
       "build": 2,
       "title": "Live-Zählerberechnung und robuste Dezimaleingabe",
       "status": "passed"
+    },
+    {
+      "build": 3,
+      "title": "Erzwungene Asset- und Service-Worker-Aktualisierung",
+      "status": "passed"
     }
   ],
   "correction2FileChanges": {
@@ -163,5 +179,11 @@
     "modified": 24,
     "removed": 0,
     "totalChanged": 29
+  },
+  "correction3FileChanges": {
+    "added": 4,
+    "modified": 17,
+    "removed": 0,
+    "totalChanged": 21
   }
 }

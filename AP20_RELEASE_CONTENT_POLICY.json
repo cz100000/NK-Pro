@@ -38,9 +38,11 @@
     "release consistency",
     "AP20 meter-calculation node regression",
     "AP20 meter-calculation browser regression",
-    "SHA-256 inventory"
+    "SHA-256 inventory",
+    "AP20 asset refresh regression"
   ],
   "notes": [
+    "Korrekturstand 3 erzwingt versionsgebundene Zählerassets, eine cachefreie Service-Worker-Aktualisierung und einen einmaligen automatischen Reload.",
     "Korrekturstand 2 ergänzt die sofortige Verbrauchs- und Summenberechnung während der Zählerstandseingabe, Enter-Commit sowie sichere Dezimalkomma-/Dezimalpunktverarbeitung.",
     "Korrekturstand 1 behandelt rückläufige Zählerstände als fachliche Auffälligkeit statt als fatalen Datenstartfehler.",
     "Zähler-DUMMY bleibt erhalten.",

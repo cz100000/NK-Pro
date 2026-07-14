@@ -24,12 +24,16 @@ AP19 stellt weiterhin die Zustände `closed`, `edit` und `view` bereit. AP20-Bes
 
 ## PWA
 
-Der Service Worker verwendet `nk-pro-v99-4-23-ap20-corr2` und enthält `quality-rules.js` im App-Shell. Same-Origin-, Offline- und Cachehärtung aus AP15 bleiben erhalten.
+Der Service Worker verwendet `nk-pro-v99-4-23-ap20-corr3` und enthält `quality-rules.js` im App-Shell. Same-Origin-, Offline- und Cachehärtung aus AP15 bleiben erhalten.
 
 ## Releasegrenze
 
 Die ZIP enthält produktiven Code, lokale Ressourcen, aktuelle Tests und Projektdokumentation. Installierte Abhängigkeiten, Browserprofile, Testreports und temporäre Dateien werden ausgeschlossen. `SHA256SUMS.txt` deckt jeden enthaltenen Projektbestand ab.
 
+
+## Korrekturstand 3 – Asset- und Service-Worker-Aktualisierung
+
+Die vier für die Zählerinteraktion maßgeblichen Assets `ui-bindings.js`, `ui-events.js`, `ui-metering.js` und `service-worker-register.js` werden mit der Build-ID `99.4.23-ap20-corr3` angefordert. Der Service Worker wird mit `updateViaCache: "none"` registriert, explizit aktualisiert und nach `controllerchange` einmalig neu geladen. Unversionierte Pfade bleiben zusätzlich im App-Shell, damit bestehende Offlineinstallationen kompatibel bleiben.
 
 ## Korrekturstand 2 – Zählereingaben
 

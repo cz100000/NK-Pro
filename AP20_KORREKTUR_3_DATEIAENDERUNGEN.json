@@ -1,0 +1,29 @@
+{
+  "correctionBuild": 3,
+  "title": "Erzwungene Asset- und Service-Worker-Aktualisierung",
+  "added": [
+    "AP20_KORREKTUR_3_ASSETAKTUALISIERUNG.md",
+    "AP20_KORREKTUR_3_DATEIAENDERUNGEN.md",
+    "AP20_KORREKTUR_3_DATEIAENDERUNGEN.json",
+    "tests/ap20-asset-refresh-regression.test.cjs"
+  ],
+  "modified": [
+    "index.html",
+    "service-worker.js",
+    "js/service-worker-register.js",
+    "js/app-runtime-config.js",
+    "tools/check-ap20-meter-calculation-browser.cjs",
+    "tools/check-release-consistency.cjs",
+    "nk-pro-project.json",
+    "AP20_TEST_RESULTS.json",
+    "README.md",
+    "RELEASE_NOTES.md",
+    "ARCHITECTURE.md",
+    "TESTING.md",
+    "AP20_PRUEFBERICHT.md",
+    "NK-PRO-PROJEKTSTAND.md",
+    "AP20_RELEASE_CONTENT_POLICY.json",
+    "package.json"
+  ],
+  "removed": []
+}

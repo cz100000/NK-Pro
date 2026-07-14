@@ -188,7 +188,7 @@ test("Manifest und PWA-Version stimmen mit der Anwendung überein", async () => 
   const worker = fs.readFileSync(path.join(root, "service-worker.js"), "utf8");
   expect(manifest.version).toBe("99.4.23");
   expect(manifest.name).toContain("V99.4.23");
-  expect(worker).toContain('const CACHE_NAME = "nk-pro-v99-4-23-ap20-corr2";');
+  expect(worker).toContain('const CACHE_NAME = "nk-pro-v99-4-23-ap20-corr3";');
   expect(worker).toContain('"./index.html"');
   expect(worker).toContain('"./manifest.webmanifest"');
 });

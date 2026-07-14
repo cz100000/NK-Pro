@@ -44,7 +44,7 @@ for (const binding of [
   "inspect:NK_PRO_MODULES.qualityAssurance.inspect"
 ]) assert(app.includes(binding), `Direkte Anwendungsaktionsbindung fehlt: ${binding}`);
 const expected = ["archive-actions.js","year-transition-actions.js","quality-assurance.js","diagnostics.js"];
-const scripts = [...html.matchAll(/<script\s+defer(?:="")?\s+src="\.\/js\/([^"]+)"><\/script>/g)].map(match => match[1]);
+const scripts = [...html.matchAll(/<script\s+defer(?:="")?\s+src="\.\/js\/([^"]+)"><\/script>/g)].map(match => match[1].split("?")[0]);
 for (const name of expected) {
   assert(scripts.includes(name), `Script fehlt: ${name}`);
   assert(worker.includes(`"./js/${name}"`), `PWA-App-Shell fehlt: ${name}`);
