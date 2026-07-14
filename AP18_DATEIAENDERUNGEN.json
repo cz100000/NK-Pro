@@ -1,0 +1,76 @@
+{
+  "version": "99.4.21",
+  "workPackage": "AP18",
+  "metrics": {
+    "inventoriedActionSurfaces": 230,
+    "unifiedButtonVariants": 8,
+    "interactionStateRuleGroups": 13,
+    "cleanedOrMergedCssRules": 24,
+    "replacedInlineStyles": 2,
+    "cleanedUiJavascriptStructures": 4,
+    "responsiveBreakpoints": 5,
+    "removedAssets": 0,
+    "replacedIcons": 3,
+    "newBrandIconVariants": 9
+  },
+  "productionFiles": [
+    "index.html",
+    "assets/app.css",
+    "js/ui-documents.js",
+    "js/ui-bindings.js",
+    "js/app-runtime-config.js",
+    "manifest.webmanifest",
+    "service-worker.js",
+    "nk-pro-project.json",
+    "package.json",
+    "package-lock.json"
+  ],
+  "newAssets": [
+    "assets/brand/nk-pro-logo.png",
+    "assets/brand/nk-pro-icon-master.png",
+    "assets/brand/nk-pro-mark-64.png",
+    "assets/brand/nk-pro-mark-96.png",
+    "assets/brand/nk-pro-mark-128.png",
+    "icons/icon-16.png",
+    "icons/icon-32.png",
+    "icons/icon-maskable-192.png",
+    "icons/icon-maskable-512.png"
+  ],
+  "replacedAssets": [
+    "icons/icon-180.png",
+    "icons/icon-192.png",
+    "icons/icon-512.png"
+  ],
+  "removedAssets": [],
+  "tests": [
+    "tests/ap18-ui-ux-polish.test.cjs",
+    "tests/ap18-ui-ux-polish.spec.js",
+    "tests/ap7-ui-integration.test.cjs",
+    "tests/ui-controller-events.spec.js",
+    "tests/ap12-orchestration.spec.js",
+    "tests/ap13-letter-layout.test.cjs",
+    "tests/ap13-letter-layout.spec.js",
+    "tests/ap14-ui-navigation.test.cjs",
+    "tests/ap17-area-dashboards.test.cjs",
+    "tools/check-release-consistency.cjs",
+    "tools/check-release-contents.cjs",
+    "playwright.config.cjs"
+  ],
+  "documentation": [
+    "README.md",
+    "RELEASE_NOTES.md",
+    "CHANGELOG.md",
+    "NK-PRO-PROJEKTSTAND.md",
+    "TESTING.md",
+    "ROADMAP.md",
+    "TECH_DEBT.md",
+    "UX_GUIDE.md",
+    "UI_ARCHITEKTUR_AKTUELL.md",
+    "AP18_KORREKTUREN_UI_FEINSCHLIFF_UND_UX_BEREINIGUNG.md",
+    "AP18_PRUEFBERICHT.md",
+    "AP18_TEST_RESULTS.json",
+    "AP18_DATEIAENDERUNGEN.md",
+    "AP18_DATEIAENDERUNGEN.json",
+    "AP18_RELEASE_CONTENT_POLICY.json"
+  ]
+}

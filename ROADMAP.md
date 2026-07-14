@@ -1,4 +1,4 @@
-# NK-Pro – Roadmap ab V99.4.20
+# NK-Pro – Roadmap ab V99.4.21
 
 ## Abgeschlossen
 
@@ -9,11 +9,17 @@
 - AP15: Gesamtintegration, Releasehärtung und schlanke Arbeitsbasis.
 - AP16: Look & Feel, Kachelsystem und mockupnahe UI.
 - AP17: Bereichs-Dashboards, Navigationslogik und UI-Bereinigung.
+- AP18: Korrekturen, UI-Feinschliff, Marken-/PWA-System, Aktionssystem und Briefvorschau-Zoom.
 
 ## Aktueller Stand
 
-V99.4.20 besitzt zwei Bereichsübersichten, eine globale Abrechnungskontextleiste, unabhängig klappbare Navigationsgruppen und bearbeitungsorientierte Unterseiten ohne generische Karten. Datenschema 5, Datenebenenvertrag 1 und AP13-Dokumentlayout 4 bleiben unverändert.
+V99.4.21 besitzt zwei AP17-Bereichsübersichten, eine globale Abrechnungskontextleiste, unabhängig klappbare Navigationsgruppen, ein zentrales Aktionssystem und eine zoombare, druckunabhängige Briefvorschau. Datenschema 5, Datenebenenvertrag 1 und AP13-Dokumentlayout 4 bleiben unverändert.
 
-## Nächste fachliche Kandidaten
+## Kandidaten für AP19 und später
 
-Die dokumentierten Vorschauwerte dürfen erst in einem ausdrücklich definierten Folgepaket durch produktive Logiken für Vollständigkeit, Fortschritt, offene Punkte, Empfehlungen, Workflowstatus und Qualitätsverdichtung ersetzt werden. Der Zählerinventar-DUMMY bleibt bis zu einem gesonderten Fachpaket unverändert.
+- produktive Stammdatenvollständigkeit,
+- produktiver Abrechnungsfortschritt,
+- regelbasierte offene Punkte und Handlungsempfehlungen,
+- reproduzierbarer Status der Workflowstufen,
+- produktive Zählerverwaltung in einem gesonderten Fachpaket,
+- spätere Mehrgebäude-/Mehrprojektfähigkeit nur mit ausdrücklich definiertem Datenpaket.

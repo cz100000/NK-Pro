@@ -1,3 +1,22 @@
+# Changelog
+
+## V99.4.21 – AP18 Korrekturen, UI-Feinschliff und UX-Bereinigung (14.07.2026)
+
+### Geändert
+
+- NK-PRO-Marke, Favicons, iOS-, reguläre und maskierbare PWA-Icons ergänzt.
+- globalen Start-Eintrag dauerhaft sichtbar und klarer gewichtet.
+- acht zentrale Aktionsvarianten und konsistente Hover-, Fokus-, Aktiv- und Deaktivzustände eingeführt.
+- Briefvorschau um Ganze Seite, Seitenbreite, 40–200-Prozent-Zoom und Sitzungsspeicherung ergänzt.
+- Briefwerkzeugleiste in Ansicht, Darstellung und Ausgabe gegliedert.
+- Kontextleiste, Seitenköpfe, Formulare, Dialoge, Tabellen und Responsive-Regeln konsolidiert.
+- 24 CSS-Regeln/Blöcke bereinigt und zwei Inline-Stile ersetzt.
+- PWA-, Laufzeit-, Paket- und Projektversion auf V99.4.21 aktualisiert.
+
+### Unverändert
+
+Datenschema 5, Datenebenenvertrag 1, Objektstandard 1, Abrechnungssnapshot 2, Dokumentlayout 4 sowie sämtliche Fach-, Berechnungs-, Zähler-, Speicher-, Druck-, PDF- und Schwarzweißregeln.
+
 # Änderungsprotokoll
 
 ## V99.4.20 – AP17-Bereichs-Dashboards, Navigationslogik und UI-Bereinigung (14.07.2026)

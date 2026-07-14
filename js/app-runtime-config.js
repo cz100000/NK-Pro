@@ -45,9 +45,9 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.20";
-const APP_VERSION_NAME = "AP17-Bereichs-Dashboards, Navigationslogik und UI-Bereinigung";
-const APP_RELEASE_DATE = "2026-07-13";
+const APP_VERSION = "V99.4.21";
+const APP_VERSION_NAME = "AP18-Korrekturen, UI-Feinschliff und UX-Bereinigung";
+const APP_RELEASE_DATE = "2026-07-14";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
 const ARCHIVE_SNAPSHOT_SCOPE = "billingSnapshot";

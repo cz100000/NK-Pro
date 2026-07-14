@@ -15,18 +15,18 @@ const worker = read("service-worker.js");
 const project = JSON.parse(read("nk-pro-project.json"));
 const packageJson = JSON.parse(read("package.json"));
 
-assert(packageJson.version === "99.4.20" && packageJson.name === "nk-pro-v99-4-20", "AP17-Paketversion ist inkonsistent.");
-assert(project.appVersion === "99.4.20" && project.basedOn === "99.4.19-AP16", "AP17-Projektbasis ist inkonsistent.");
+assert(packageJson.version === "99.4.21" && packageJson.name === "nk-pro-v99-4-21", "AP17-Paketversion ist inkonsistent.");
+assert(project.appVersion === "99.4.21" && project.basedOn === "99.4.20-AP17", "AP17-Projektbasis ist inkonsistent.");
 assert(project.schemaVersion === 5 && project.dataLayerContractVersion === 1, "Datenschema oder Datenebenenvertrag wurde verändert.");
 assert(project.documentLayoutVersion === 4, "AP13-Dokumentlayout wurde verändert.");
-assert(project.navigationDesignSystemVersion === 4 && project.uiVisualSystemVersion === 3, "AP17-UI-Metadaten fehlen.");
+assert(project.navigationDesignSystemVersion === 5 && project.uiVisualSystemVersion === 4, "AP17-UI-Metadaten fehlen.");
 assert(project.areaDashboardVersion === 1 && project.globalBillingContextVersion === 1, "AP17-Dashboard-/Kontextversion fehlt.");
-assert(project.pwaCacheName === "nk-pro-v99-4-20-ap17", "AP17-PWA-Cachemetadaten fehlen.");
+assert(project.pwaCacheName === "nk-pro-v99-4-21-ap18", "AP17-PWA-Cachemetadaten fehlen.");
 
-assert(runtime.includes('const APP_VERSION = "V99.4.20";'), "AP17-Laufzeitversion fehlt.");
-assert(runtime.includes('const APP_VERSION_NAME = "AP17-Bereichs-Dashboards, Navigationslogik und UI-Bereinigung";'), "AP17-Laufzeitname fehlt.");
-assert(html.includes("NK-Pro V99.4.20 – AP17-Bereichs-Dashboards, Navigationslogik und UI-Bereinigung"), "AP17-HTML-Titel fehlt.");
-assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-20-ap17";'), "AP17-Service-Worker-Cache fehlt.");
+assert(runtime.includes('const APP_VERSION = "V99.4.21";'), "AP17-Laufzeitversion fehlt.");
+assert(runtime.includes('const APP_VERSION_NAME = "AP18-Korrekturen, UI-Feinschliff und UX-Bereinigung";'), "AP17-Laufzeitname fehlt.");
+assert(html.includes("NK-Pro V99.4.21 – AP18-Korrekturen, UI-Feinschliff und UX-Bereinigung"), "AP17-HTML-Titel fehlt.");
+assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-21-ap18";'), "AP17-Service-Worker-Cache fehlt.");
 
 const navTabs = [...html.matchAll(/class="tab-btn nav-group-item[^"]*"[^>]*data-tab="([^"]+)"/g)].map(match => match[1]);
 const expectedTabs = ["objektuebersicht","objekt","wohnungsverwaltung","wasser","mieterverwaltung","start","mieter","einnahmen","einstellungen","manuellewerte","verbraeuche","umlage","qualitaet","vorauszahlungsanpassung","briefe","export","archiv","sicherung"];

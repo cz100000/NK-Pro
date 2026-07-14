@@ -6,6 +6,7 @@ const root = path.resolve(__dirname, "..");
 const renderer = fs.readFileSync(path.join(root, "js/document-renderer.js"), "utf8");
 const ui = fs.readFileSync(path.join(root, "js/ui-documents.js"), "utf8");
 const css = fs.readFileSync(path.join(root, "assets/app.css"), "utf8");
+const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
 assert(renderer.includes("data-nk-letter-styles"), "Gemeinsame Dokument-CSS fehlt.");
 assert(renderer.includes('data-document-pages="'), "Explizite Ein-/Zweiseitenangabe fehlt.");
 assert(renderer.includes("<col class=\"col-balance\">"), "Neunspaltige Haupttabelle fehlt.");
@@ -37,7 +38,7 @@ assert(renderer.includes('if (!prepaymentAdjustmentRequired(costRows, tenant)) r
 assert(renderer.includes('class="continuation-hint">Weiter auf Seite 2'), "Fortsetzungshinweis für Seite 1 fehlt.");
 assert(renderer.includes('data-print-mode="') && renderer.includes('is-monochrome'), "Gemeinsamer Schwarzweißmodus für Vorschau und Druck fehlt.");
 assert(renderer.includes("margin:0 0 4.8mm"), "Reduzierter Abstand zwischen Anrede und Einleitung fehlt.");
-assert(ui.includes("Für Schwarzweißdruck optimieren") && ui.includes("schwarzweissOptimiert"), "Schwarzweißschalter fehlt.");
+assert(html.includes("Für Schwarzweißdruck optimieren") && ui.includes("schwarzweissOptimiert"), "Schwarzweißschalter fehlt.");
 assert(css.includes("position:sticky") && css.includes("max-width:1100px"), "Responsive Sticky-Vorschau fehlt.");
 
 console.log("AP13-Strukturprüfung abgeschlossen: gemeinsames DIN-A4-Dokumentmodell, kontrollierte Seitenlogik und vollständige Textfelder sind vorhanden.");

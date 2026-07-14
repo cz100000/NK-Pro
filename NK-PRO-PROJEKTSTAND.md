@@ -1,8 +1,8 @@
-# NK-Pro – Projektstand V99.4.20
+# NK-Pro – Projektstand V99.4.21
 
-**Versionsname:** AP17-Bereichs-Dashboards, Navigationslogik und UI-Bereinigung  
-**Basis:** AP16-Korrekturstand V99.4.19 „Mockupnahe UI“  
-**Abschlussbezeichnung:** Änderungen umgesetzt – NK-Pro V99.4.20
+**Versionsname:** AP18-Korrekturen, UI-Feinschliff und UX-Bereinigung  
+**Basis:** V99.4.20 / AP17  
+**Abschlussbezeichnung:** Änderungen umgesetzt – NK-Pro V99.4.21
 
 ## Verbindlicher technischer Stand
 
@@ -10,19 +10,19 @@
 - kein React, kein TypeScript, kein Buildsystem,
 - Datenschema 5 und Datenebenenvertrag 1 unverändert,
 - Objektstandard 1, Abrechnungssnapshot 2 und Dokumentlayout 4 unverändert,
+- UI-System 4 und Navigationssystem 5,
 - normales UI mit `"Segoe UI", Arial, sans-serif`,
-- Briefvorschau, Druck, PDF und Schwarzweißausgabe weiterhin AP13-isoliert,
-- PWA-Cache `nk-pro-v99-4-20-ap17`.
+- Briefvorschau, Druck, PDF und Schwarzweißausgabe weiterhin durch AP13-Dokumentlayout 4 isoliert,
+- PWA-Cache `nk-pro-v99-4-21-ap18`.
 
-## AP17-Abschluss
+## AP18-Abschluss
 
-Die Arbeitsweiche bleibt unverändert. Hinter „Objekt vorbereiten“ und „Nebenkosten abrechnen“ stehen zwei neue schlanke Substartseiten. Reale Datenpunkte und fiktive Vorschauwerte sind technisch und visuell getrennt. Der frühere Sidebar-Block „Aktive Abrechnung“ wurde durch eine flache globale Kontextleiste ersetzt. Navigationsgruppen lassen sich unabhängig öffnen und schließen; direkte Seitenaufrufe öffnen die zugehörige Gruppe automatisch.
+NK-PRO verwendet nun ein einheitliches lokales Markenmotiv in Navigation, Favicon und PWA. Der globale Start-Eintrag ist dauerhaft sichtbar. Acht zentrale Aktionsvarianten und 13 explizite Zustandsregelgruppen vereinheitlichen Bedienelemente und Tastaturfokus.
 
-Generische Karten wurden auf Bearbeitungsseiten entfernt. Fachliche Status-, Fortschritts- und Workflowinformationen liegen primär auf den beiden Bereichsübersichten. Klappboxen und Abrechnungsnavigation verwenden einheitliche lokale Inline-SVGs.
+Die Briefvorschau startet mit einer vollständig eingepassten DIN-A4-Seite und bietet Seite, Breite und benutzerdefinierten Zoom. Die Werkzeugleiste ist in Ansicht, Darstellung und Ausgabe gegliedert. Der Zoom beeinflusst ausschließlich die Bildschirmdarstellung.
+
+Kontextleiste, Seitenköpfe, Formulare, Dialoge, Tabellen und Responsive-Regeln wurden konsolidiert. Fachlogik, Arbeitsweiche, AP17-Dashboards, Zähler-DUMMY, Datenschema und AP13-Ausgabe blieben unverändert.
 
 ## Fachliche Abgrenzung
 
-- `Objekt vorbereiten → Zähler` bleibt ausschließlich ein statischer DUMMY.
-- Die 15 als Vorschau markierten Dashboardwerte besitzen noch keine produktive Fachlogik.
-- Gebäudekurzcode ARB5 bleibt der verbindliche Einzelobjekt-Kontext.
-- Berechnungs-, Abrechnungs-, Verbrauchs-, Daten-, Brief-, Druck-, PDF- und Schwarzweißlogik wurden nicht verändert.
+Produktive Dashboardwerte, Fortschritt, Empfehlungen, zusätzliche Fachprüfungen, produktive Zählerverwaltung, Mehrgebäude- und Mehrprojektfähigkeit bleiben Folgepaketen vorbehalten.

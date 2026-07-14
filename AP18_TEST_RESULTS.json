@@ -1,0 +1,120 @@
+{
+  "version": "99.4.21",
+  "workPackage": "AP18",
+  "status": "passed",
+  "schema": 5,
+  "dataLayerContract": 1,
+  "documentLayoutVersion": 4,
+  "inventoriedActionSurfaces": 230,
+  "buttonMarkupOccurrences": 166,
+  "otherInteractiveSurfaces": 64,
+  "unifiedButtonVariants": 8,
+  "reworkedInteractionStateRuleGroups": 13,
+  "cleanedOrMergedCssRules": 24,
+  "replacedInlineStyles": 2,
+  "cleanedUiJavascriptStructures": 4,
+  "consolidatedResponsiveBreakpoints": 5,
+  "removedObsoleteAssets": 0,
+  "replacedExistingIconFiles": 3,
+  "newBrandAndIconVariants": 9,
+  "registeredUiActions": 104,
+  "checks": {
+    "javascriptSyntax": {
+      "status": "passed",
+      "units": 51
+    },
+    "fixtures": {
+      "status": "passed",
+      "cases": 6
+    },
+    "meteringDomain": {
+      "status": "passed"
+    },
+    "architectureAndStaticRegression": {
+      "status": "passed",
+      "workPackages": [
+        "AP6",
+        "AP7",
+        "AP8",
+        "AP9",
+        "AP10",
+        "AP11",
+        "AP12",
+        "AP13",
+        "AP14",
+        "AP15",
+        "AP17",
+        "AP18"
+      ]
+    },
+    "browserRegression": {
+      "status": "passed",
+      "testsDiscovered": 87,
+      "passed": 84,
+      "skipped": 3,
+      "failed": 0,
+      "execution": "serial project batches because of host command-runtime limits"
+    },
+    "navigation": {
+      "status": "passed",
+      "mainTargets": 18,
+      "independentGroups": 4
+    },
+    "keyboardAndFocus": {
+      "status": "passed"
+    },
+    "letterPreviewZoom": {
+      "status": "passed",
+      "minimumPercent": 40,
+      "maximumPercent": 200,
+      "stepPercent": 10,
+      "modes": [
+        "page",
+        "width",
+        "custom"
+      ]
+    },
+    "letterPrintPdfMonochromeRegression": {
+      "status": "passed",
+      "tests": 8
+    },
+    "responsive": {
+      "status": "passed",
+      "viewports": [
+        "large desktop",
+        "laptop",
+        "1280 px",
+        "1100 px",
+        "900 px",
+        "680 px",
+        "low-height"
+      ]
+    },
+    "pwaAndOffline": {
+      "status": "passed-with-environment-note",
+      "manifestAndIcons": "passed",
+      "serviceWorkerSemanticTest": "passed",
+      "cacheAndOfflineFallback": "passed",
+      "optionalRealLoopbackOfflineTest": "not assessable: Chromium returned ERR_BLOCKED_BY_ADMINISTRATOR before application load"
+    },
+    "releaseContents": {
+      "status": "passed",
+      "filesChecked": 170,
+      "nodeModulesExcluded": true,
+      "testReportsExcluded": true
+    },
+    "releaseConsistency": {
+      "status": "passed"
+    },
+    "freshZipStart": {
+      "status": "passed",
+      "validation": "fresh extraction, release checks, JavaScript syntax, AP18 static regression and HTTP asset availability"
+    }
+  },
+  "knownLimitations": [
+    "AP17-Vorschauwerte bleiben ohne produktive Fachlogik.",
+    "Das Zählerinventar bleibt DUMMY.",
+    "Der reale PWA-Installations-/Loopback-Offlinetest ist in der Hostumgebung administrativ blockiert; Service-Worker-Semantik, App-Shell und Offline-Fallback sind getestet.",
+    "Druckergebnis außerhalb der kontrollierten Browserregression hängt vom Druckdialog und Druckertreiber ab."
+  ]
+}

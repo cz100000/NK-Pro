@@ -43,8 +43,8 @@ test("AP12-Startfolge, Controller und Ereignisdelegation sind idempotent", async
   ]);
   expect(result.controllerCountBefore).toBe(13);
   expect(result.controllerCountAfter).toBe(13);
-  expect(result.actionCountBefore).toBe(99);
-  expect(result.actionCountAfter).toBe(99);
+  expect(result.actionCountBefore).toBe(104);
+  expect(result.actionCountAfter).toBe(104);
   expect(result.eventBefore).toEqual({ started:true, listenerCount:5, eventTypes:["click", "change", "input", "submit", "keydown"] });
   expect(result.eventAfter).toEqual(result.eventBefore);
   expect(result.registrationRegistered).toBe(true);

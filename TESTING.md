@@ -1,4 +1,4 @@
-# NK-Pro – Teststrategie V99.4.20
+# NK-Pro – Teststrategie V99.4.21
 
 ## Reproduzierbarer Freigabepfad
 
@@ -8,6 +8,12 @@ npx playwright install chromium
 npm run release:check
 ```
 
+Alternativ:
+
+```bash
+CHROMIUM_EXECUTABLE_PATH=<Pfad-zum-Chromium> npm run release:check
+```
+
 Die Browserprojekte laufen seriell (`workers: 1`, `fullyParallel: false`).
 
 ## Prüfebenen
@@ -15,21 +21,21 @@ Die Browserprojekte laufen seriell (`workers: 1`, `fullyParallel: false`).
 - JavaScript-Syntax und statische Vertragsprüfungen,
 - Fixture-, Daten-, Migrations-, Persistenz-, Archiv-, Sicherungs- und Restoreprüfungen,
 - Fachtests der Verbrauchs- und Zählerdomäne,
-- Architektur- und Zustandszugriffsprüfungen,
+- Architektur-, Aktionsregister- und Zustandszugriffsprüfungen,
 - AP13-Brief-/Druck-/PDF-/Schwarzweißregression,
-- AP14-/AP16-UI-Regression,
-- AP15-Gesamtintegration und PWA-Härtung,
-- AP17-Bereichs-Dashboards, Kontextleiste, unabhängige Navigation, Tastatur/Fokus und Responsive-Verhalten,
+- AP14-/AP17-Navigation und UI-Regression,
+- AP18-Marke, Buttonsystem, Start, Fokus, Briefzoom, Werkzeuggruppen und Responsive-Verhalten,
+- Manifest-, Icon-, Service-Worker-, Cache- und Offline-Fallback-Prüfung,
 - Releasekonsistenz, SHA-256-Dateiinventar und ZIP-Inhaltsprüfung.
 
-## AP17-spezifische Tests
+## AP18-spezifische Tests
 
-`tests/ap17-area-dashboards.test.cjs` prüft Version, Datenverträge, zwei Dashboards, 15 Echtwerte, 15 Vorschauwerte, Kartenbereinigung, globale Kontextleiste, Navigationsspeicher v4, SVG-Chevrons und Iconsystem. `tests/ap17-area-dashboards.spec.js` prüft Bedienfluss, Direkteinstiege, unabhängige Gruppen, Tastaturbedienung, aktiven Pfad, Kontextwechsel und schmale/niedrige Fenster.
+`tests/ap18-ui-ux-polish.test.cjs` prüft Version, Datenverträge, Assets, Manifest, App-Shell, zentrale Designvariablen, Aktionsvarianten, Zoomgrenzen, Resize-Logik und kontrollierte CSS-/Inline-Bereinigung.
 
-Maschinenlesbare Ergebnisse stehen in `AP17_TEST_RESULTS.json`; Einzelheiten in `AP17_PRUEFBERICHT.md`.
+`tests/ap18-ui-ux-polish.spec.js` prüft Marke, Start, Navigation, Tastaturfokus, Ganze-Seite-Standard, Plus/Minus, Seitenbreite, Resize, benutzerdefinierten Zoom, Schwarzweißparität, schmale Ansichten sowie Abrufbarkeit aller Manifesticons.
 
-Ein bereits installierter Chromium-Browser kann über folgende Laufzeitvariable eingebunden werden:
+## Ergebnisstand
 
-```bash
-CHROMIUM_EXECUTABLE_PATH=<Pfad-zum-Chromium> npm run release:check
-```
+87 Browserfälle wurden erkannt: 84 bestanden, 3 planmäßig optionale Tests übersprungen, 0 reguläre Fehler. Der erzwungene reale Loopback-PWA-Test ist in der Hostumgebung durch eine Administratorrichtlinie blockiert. Die verpflichtende Service-Worker-Semantik einschließlich Offline-Navigationsfallback ist bestanden.
+
+Maschinenlesbare Ergebnisse stehen in `AP18_TEST_RESULTS.json`; Einzelheiten in `AP18_PRUEFBERICHT.md`.

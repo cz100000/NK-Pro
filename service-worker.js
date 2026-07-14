@@ -1,10 +1,15 @@
-const CACHE_NAME = "nk-pro-v99-4-20-ap17";
+const CACHE_NAME = "nk-pro-v99-4-21-ap18";
 const CACHE_PREFIX = "nk-pro-";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
   "./assets/app.css",
+  "./assets/brand/nk-pro-logo.png",
+  "./assets/brand/nk-pro-icon-master.png",
+  "./assets/brand/nk-pro-mark-64.png",
+  "./assets/brand/nk-pro-mark-96.png",
+  "./assets/brand/nk-pro-mark-128.png",
   "./js/ui-preferences.js",
   "./js/state-access.js",
   "./js/application-actions.js",
@@ -55,9 +60,13 @@ const APP_SHELL = [
   "./js/ui-page-controller.js",
   "./js/app.js",
   "./js/service-worker-register.js",
+  "./icons/icon-16.png",
+  "./icons/icon-32.png",
   "./icons/icon-180.png",
   "./icons/icon-192.png",
-  "./icons/icon-512.png"
+  "./icons/icon-512.png",
+  "./icons/icon-maskable-192.png",
+  "./icons/icon-maskable-512.png"
 ];
 
 self.addEventListener("install", event => {

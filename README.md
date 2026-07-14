@@ -1,34 +1,37 @@
-# NK-Pro V99.4.20 – Bereichs-Dashboards, Navigationslogik und UI-Bereinigung
+# NK-Pro V99.4.21 – Korrekturen, UI-Feinschliff und UX-Bereinigung
 
-NK-Pro ist eine lokale, frameworkfreie HTML/CSS/JavaScript-PWA zur Erstellung, Prüfung, Archivierung und Ausgabe von Nebenkostenabrechnungen. AP17 ergänzt zwei schlanke Bereichs-Dashboards, eine globale Abrechnungskontextleiste, unabhängig klappbare Navigationsgruppen und bereinigte Bearbeitungsseiten.
+NK-Pro ist eine lokale, frameworkfreie HTML/CSS/JavaScript-PWA zur Erstellung, Prüfung, Archivierung und Ausgabe von Nebenkostenabrechnungen. AP18 vereinheitlicht Navigation, Aktionsflächen, Fokuszustände, Markenassets, PWA-Icons und die Bildschirmbedienung der Briefvorschau, ohne Fach- oder Dokumentlogik zu verändern.
 
 ## Verbindlicher Stand
 
 | Merkmal | Wert |
 |---|---|
-| App-Version | V99.4.20 |
-| Basis | AP16-Korrekturstand V99.4.19 „Mockupnahe UI“ |
-| Versionsname | AP17-Bereichs-Dashboards, Navigationslogik und UI-Bereinigung |
+| App-Version | V99.4.21 |
+| Basis | V99.4.20 / AP17 |
+| Versionsname | AP18-Korrekturen, UI-Feinschliff und UX-Bereinigung |
 | Datenschema | 5 |
 | Datenebenenvertrag | 1 |
 | Abrechnungssnapshot | 2 |
 | Dokumentlayout | 4 |
-| UI-System | 3 |
-| Navigation | 4 |
-| PWA-Cache | `nk-pro-v99-4-20-ap17` |
+| UI-System | 4 |
+| Navigation | 5 |
+| PWA-Cache | `nk-pro-v99-4-21-ap18` |
 
-## AP17-Kernergebnis
+## AP18-Kernergebnis
 
-- zwei neue Bereichsübersichten für Objektvorbereitung und Nebenkostenabrechnung,
-- 15 reale Dashboardwerte und 15 klar als Vorschau gekennzeichnete DUMMY-Werte,
-- globale Kontextleiste statt des bisherigen Sidebar-Informationsblocks,
-- vier unabhängig speicherbare Navigationsgruppen mit ARIA- und Tastaturbedienung,
-- 119 entfernte oder umgewandelte generische Karten,
-- elf fachlich vereinheitlichte lokale SVG-Icons im Abrechnungsbereich,
-- kompaktere Inhaltskopfzeilen und responsive Dashboard-/Kontextdarstellung,
-- unveränderte Daten-, Abrechnungs-, Zähler-, Brief-, Druck-, PDF- und Schwarzweißlogik.
+- neues lokales NK-PRO-Logo sowie Favicon-, iOS-, reguläre und maskierbare PWA-Icons,
+- dauerhaft sichtbarer und klar gewichteter globaler Start-Eintrag,
+- acht zentrale Button-/Interaktionsvarianten mit konsistenten Hover-, Fokus-, Aktiv- und Deaktivzuständen,
+- Briefvorschau mit Ganze Seite, Seitenbreite, 40–200 Prozent, 10-Prozent-Schritten und Sitzungsspeicherung,
+- Werkzeugleiste der Briefvorschau in Ansicht, Darstellung und Ausgabe gruppiert,
+- kompaktere Kontextleiste und Seitenköpfe,
+- Responsive-, Dialog-, Tabellen-, Formular- und Fokus-Feinschliff,
+- 24 bereinigte CSS-Regeln/Blöcke und zwei ersetzte Inline-Stile,
+- unveränderte Daten-, Fach-, Abrechnungs-, Zähler-, Brief-, Druck-, PDF- und Schwarzweißlogik.
 
 ## Start und Tests
+
+Die Anwendung kann direkt über `index.html` lokal gestartet werden. Für den reproduzierbaren Testpfad:
 
 ```bash
 npm ci
@@ -36,13 +39,14 @@ npx playwright install chromium
 npm run release:check
 ```
 
-`node_modules`, Testreports und Browserprofile gehören nicht in die Arbeits-ZIP.
+Ein bereits vorhandener Chromium-Browser kann über `CHROMIUM_EXECUTABLE_PATH` verwendet werden. `node_modules`, Testreports, Browserprofile und eingebettete Archive gehören nicht in die Release-ZIP.
 
-## Verbindliche AP17-Dokumente
+## Verbindliche AP18-Dokumente
 
-- `AP17_BEREICHS_DASHBOARDS_NAVIGATIONSLOGIK_UND_UI_BEREINIGUNG.md`
-- `AP17_PRUEFBERICHT.md`
-- `AP17_TEST_RESULTS.json`
-- `AP17_DATEIAENDERUNGEN.md`
-- `AP17_DATEIAENDERUNGEN.json`
+- `AP18_KORREKTUREN_UI_FEINSCHLIFF_UND_UX_BEREINIGUNG.md`
+- `AP18_PRUEFBERICHT.md`
+- `AP18_TEST_RESULTS.json`
+- `AP18_DATEIAENDERUNGEN.md`
+- `AP18_DATEIAENDERUNGEN.json`
+- `AP18_RELEASE_CONTENT_POLICY.json`
 - `NK-PRO-PROJEKTSTAND.md`

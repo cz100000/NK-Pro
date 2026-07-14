@@ -130,7 +130,9 @@
     registerController("document", "Briefdaten, Dokumentrendering und Druckaktionen aus AP6", {
       "document.setBriefSetting":call(handlers, "setBriefSetting"), "document.printCurrentBrief":call(handlers, "printCurrentBrief"),
       "document.showPrintModeCheck":call(handlers, "showPrintModeCheck"), "document.showAllPrintReady":call(handlers, "showAllLettersPrintReady"),
-      "document.copyCurrentBriefText":call(handlers, "copyCurrentBriefText")
+      "document.copyCurrentBriefText":call(handlers, "copyCurrentBriefText"), "document.previewZoomIn":call(handlers, "previewZoomIn"),
+      "document.previewZoomOut":call(handlers, "previewZoomOut"), "document.previewFitPage":call(handlers, "previewFitPage"),
+      "document.previewFitWidth":call(handlers, "previewFitWidth"), "document.refreshBrief":call(handlers, "refreshBrief")
     });
     const exportService = modules.exportService;
     if (!exportService) throw new Error("Exportdienst fehlt für UI-Bindings.");

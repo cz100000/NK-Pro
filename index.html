@@ -4,20 +4,23 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>NK-Pro V99.4.20 – AP17-Bereichs-Dashboards, Navigationslogik und UI-Bereinigung</title>
+<title>NK-Pro V99.4.21 – AP18-Korrekturen, UI-Feinschliff und UX-Bereinigung</title>
 <link href="./assets/app.css" rel="stylesheet"/>
 <meta content="#031d41" name="theme-color"/>
 <meta content="yes" name="apple-mobile-web-app-capable"/>
 <meta content="default" name="apple-mobile-web-app-status-bar-style"/>
 <meta content="NK-Pro" name="apple-mobile-web-app-title"/>
 <link href="./manifest.webmanifest" rel="manifest"/>
-<link href="./icons/icon-180.png" rel="apple-touch-icon"/>
+<link href="./icons/icon-16.png" rel="icon" sizes="16x16" type="image/png"/>
+<link href="./icons/icon-32.png" rel="icon" sizes="32x32" type="image/png"/>
+<link href="./icons/icon-180.png" rel="apple-touch-icon" sizes="180x180"/>
+<link href="./assets/brand/nk-pro-logo.png" rel="preload" as="image"/>
 </head>
 <body>
 <div class="app-shell">
 <aside aria-label="NK-Pro Navigation" class="app-sidebar" id="appSidebar">
 <header class="sidebar-brand">
-<button aria-label="Arbeitsweiche öffnen" class="sidebar-brand-home" data-ui-action="navigation.showLanding" type="button"><span class="sidebar-brand-title">NK-Pro</span><span class="sidebar-brand-subtitle">Nebenkostenabrechnung</span></button>
+<button aria-label="Arbeitsweiche öffnen" class="sidebar-brand-home" data-ui-action="navigation.showLanding" type="button"><img alt="" aria-hidden="true" class="sidebar-brand-mark" height="54" src="./assets/brand/nk-pro-mark-96.png" width="54"/><span class="sidebar-brand-copy"><span class="sidebar-brand-title">NK-PRO</span><span class="sidebar-brand-subtitle">Nebenkostenabrechnung</span></span></button>
 <button aria-label="Navigation einklappen" class="sidebar-brand-collapse" id="sidebarCollapseTop" type="button"><svg aria-hidden="true" class="sidebar-control-svg" fill="none" viewbox="0 0 24 24"><path d="M20 12H5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path><path d="m10 6-6 6 6 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></button>
 </header>
 <div class="sidebar-panel">
@@ -65,7 +68,7 @@
 </section>
 </nav>
 <footer class="sidebar-footer-zone">
-<div class="sidebar-user-status"><span aria-hidden="true" class="nav-item-icon"><svg aria-hidden="true" class="nav-icon-svg" fill="none" viewbox="0 0 24 24"><circle cx="12" cy="7.5" r="3.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M5 21a7 7 0 0 1 14 0" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span><span><small>Lokale Anwendung</small><strong>V99.4.20</strong></span></div>
+<div class="sidebar-user-status"><span aria-hidden="true" class="nav-item-icon"><svg aria-hidden="true" class="nav-icon-svg" fill="none" viewbox="0 0 24 24"><circle cx="12" cy="7.5" r="3.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M5 21a7 7 0 0 1 14 0" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span><span><small>Lokale Anwendung</small><strong>V99.4.21</strong></span></div>
 <button aria-describedby="settingsUnavailableText" aria-disabled="true" class="sidebar-settings-dummy" data-nav-hint="Noch nicht verfügbar" type="button"><span aria-hidden="true" class="nav-item-icon"><svg aria-hidden="true" class="nav-icon-svg" fill="none" viewbox="0 0 24 24"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V2.8h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9A1.7 1.7 0 0 0 21 10h.2v4H21a1.7 1.7 0 0 0-1.6 1z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span><span>Einstellungen</span></button>
 <span class="visually-hidden" id="settingsUnavailableText">Noch nicht verfügbar</span>
 <button aria-label="Navigation einklappen" class="sidebar-bottom-collapse" id="sidebarCollapseBottom" type="button"><svg aria-hidden="true" class="sidebar-control-svg" fill="none" viewbox="0 0 24 24"><path d="M20 12H5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path><path d="m10 6-6 6 6 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg><span>Navigation einklappen</span></button>
@@ -300,15 +303,30 @@
 <div id="briefSettings"></div>
 <h3>Textbausteine</h3>
 <div id="briefTexts"></div>
-<div class="toolbar letter-actions">
-<button class="primary" data-ui-action="document.printCurrentBrief">Aktuellen Brief drucken / PDF</button>
-<button data-ui-action="document.showPrintModeCheck">Druckmodus prüfen</button>
-<button data-ui-action="document.showAllPrintReady">Alle Briefe druckbereit anzeigen</button>
-<button data-ui-action="document.copyCurrentBriefText">Brieftext kopieren</button>
+<div class="toolbar letter-actions" aria-label="Weitere Briefaktionen">
+<button class="ui-button ui-button--secondary" data-ui-action="document.showAllPrintReady" type="button">Alle Briefe druckbereit</button>
+<button class="ui-button ui-button--quiet" data-ui-action="document.copyCurrentBriefText" type="button">Brieftext kopieren</button>
 </div>
 </div>
 <div class="letter-preview-wrap">
-<div class="brief-preview-host" id="briefPreview"></div>
+<div class="brief-preview-toolbar" aria-label="Werkzeugleiste der Briefvorschau">
+<div class="brief-toolbar-group" data-toolbar-group="view"><span class="brief-toolbar-label">Ansicht</span><div class="brief-toolbar-controls">
+<button aria-label="Briefvorschau verkleinern" class="ui-button ui-button--icon ui-button--compact" data-ui-action="document.previewZoomOut" title="Verkleinern" type="button"><span aria-hidden="true">−</span></button>
+<output aria-live="polite" class="brief-zoom-value" id="briefZoomValue">100 %</output>
+<button aria-label="Briefvorschau vergrößern" class="ui-button ui-button--icon ui-button--compact" data-ui-action="document.previewZoomIn" title="Vergrößern" type="button"><span aria-hidden="true">+</span></button>
+<button class="ui-button ui-button--secondary ui-button--compact" data-ui-action="document.previewFitPage" type="button">Ganze Seite</button>
+<button class="ui-button ui-button--secondary ui-button--compact" data-ui-action="document.previewFitWidth" type="button">Seitenbreite</button>
+</div></div>
+<div class="brief-toolbar-group" data-toolbar-group="display"><span class="brief-toolbar-label">Darstellung</span><label class="brief-toolbar-switch"><span>Schwarzweiß</span><input aria-label="Für Schwarzweißdruck optimieren" id="briefMonochromeToolbar" type="checkbox" data-ui-change="document.setBriefSetting" data-ui-args='["schwarzweissOptimiert",{"checkedValues":["Ja","Nein"]}]'/><span aria-hidden="true" class="brief-switch-track"><span class="brief-switch-knob"></span></span></label></div>
+<div class="brief-toolbar-group brief-toolbar-group--output" data-toolbar-group="output"><span class="brief-toolbar-label">Ausgabe</span><div class="brief-toolbar-controls">
+<button class="ui-button ui-button--quiet ui-button--compact" data-ui-action="document.refreshBrief" type="button">Vorschau aktualisieren</button>
+<button class="ui-button ui-button--secondary ui-button--compact" data-ui-action="document.showPrintModeCheck" type="button">Druckmodus prüfen</button>
+<button class="ui-button ui-button--primary ui-button--compact" data-ui-action="document.printCurrentBrief" type="button">Drucken / PDF</button>
+</div></div>
+</div>
+<div class="brief-preview-viewport" id="briefPreviewViewport" tabindex="0" aria-label="Briefvorschau, scrollbar">
+<div class="brief-preview-stage" id="briefPreviewStage"><div class="brief-preview-host" id="briefPreview"></div></div>
+</div>
 </div>
 </div></div></details><details class="page-section" data-section-role="validation" id="lettersValidationSection"><summary class="page-section__summary"><span class="page-section__number">2.</span><span class="page-section__title">Prüfung und Plausibilität</span><span class="page-section__badge">Kontrolle</span><span aria-hidden="true" class="page-section__chevron"><svg aria-hidden="true" class="page-section__chevron-svg" fill="none" viewbox="0 0 24 24"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span></summary><div class="page-section__body"><div class="validation-placeholder">Empfänger, Umlageergebnis und Druckfreigabe werden vor der Ausgabe geprüft.</div></div></details></div></div></section>
 <section class="tab" id="export"><div class="app-page" data-page-tab="export"><header class="page-header" data-page-header="export"><div class="page-header__identity"><p class="page-header__kicker">Sicherung</p><h2 class="page-header__title">Abrechnung exportieren</h2><p class="page-header__description">Abrechnungsdaten sichern und bereitstellen.</p></div><div class="page-header__period"><span class="page-header__period-label">Abrechnungszeitraum</span><strong class="page-header__period-value" data-page-period="">–</strong><span class="readonly-badge" data-page-readonly="" hidden="">Archiviert · schreibgeschützt</span></div><div class="page-header__actions"><span class="page-header__save-status" data-page-save-status="">Gespeichert</span><button class="page-header__save-button" data-page-save="" data-ui-action="application.save" type="button">Speichern</button></div></header><div class="page-sections"><details class="page-section" id="exportActionsSection"><summary class="page-section__summary"><span class="page-section__number">1.</span><span class="page-section__title">Abrechnung sichern und exportieren</span><span class="page-section__badge">Export</span><span aria-hidden="true" class="page-section__chevron"><svg aria-hidden="true" class="page-section__chevron-svg" fill="none" viewbox="0 0 24 24"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span></summary><div class="page-section__body"><div class="hint"><strong>Abrechnungsbezogener Export:</strong> Diese Seite exportiert nur die aktuell geöffnete Abrechnung mit den abrechnungsbezogenen Wohnungen, Mietverhältnissen, Kostenarten, Zählerständen, Umlagewerten, Brieftexten und Prüfwerten. Objekt-Stammdaten, globale Zählerhistorie, Jahresarchiv und andere Abrechnungen werden bewusst nicht mitgesichert. Die vollständige Gesamtsicherung liegt im Tab „Datensicherung &amp; System“.</div><div class="toolbar">

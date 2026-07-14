@@ -1,7 +1,7 @@
 {
-  "name": "NK-Pro V99.4.20",
-  "short_name": "NK-Pro V99.4.20",
-  "description": "Lokale Nebenkostenabrechnung mit Bereichs-Dashboards, unabhängiger Navigationslogik und schlanker Offline-Releasebasis.",
+  "name": "NK-Pro V99.4.21",
+  "short_name": "NK-Pro",
+  "description": "Lokale Nebenkostenabrechnung mit konsistentem UI-System, optimierter Briefvorschau und vollständiger Offline-PWA.",
   "lang": "de-DE",
   "id": "./",
   "start_url": "./",
@@ -9,19 +9,37 @@
   "display": "standalone",
   "background_color": "#f4f6f9",
   "theme_color": "#031d41",
-  "version": "99.4.20",
+  "version": "99.4.21",
   "icons": [
+    {
+      "src": "./icons/icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "./icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "./icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "./icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

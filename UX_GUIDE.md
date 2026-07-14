@@ -2,7 +2,7 @@
 
 **Ziel:** einfacher, stabiler und nachvollziehbarer Arbeitsablauf  
 **Ausgangsversion:** V99.3.0  
-**Aktueller Stand:** V99.4.13  
+**Aktueller Stand:** V99.4.21  
 **Status:** Phase-1-Ziel umgesetzt; Datenmodellziele offen
 
 ## 1. Leitprinzip
@@ -243,3 +243,12 @@ Die Bedienoberfläche bleibt visuell unverändert. Fachliche Zählerfehler werde
 ## Ergänzung V99.4.7
 
 Die sichtbare UI-Struktur und das Design bleiben unverändert. Tabellenfilter und Sortierung liegen technisch in `ui-table-tools.js`; Navigationspräferenzen werden über `ui-preferences.js` gespeichert. Fachliche Berechnung, Dokumentdaten, Brief-HTML und Exporttechnik sind aus dem UI-Controller ausgelagert.
+
+
+## AP18-Ergänzungen
+
+- „Start“ ist als globaler, dauerhaft sichtbarer Rückweg zur Arbeitsweiche hervorgehoben.
+- Aktionsflächen besitzen konsistente Höhen, Zustände und Tastaturfokus ohne Hover-Layoutsprünge.
+- Die Briefvorschau startet mit „Ganze Seite“ und trennt Ansicht, Darstellung und Ausgabe.
+- Benutzerskalierung verändert ausschließlich die Bildschirmansicht, nie Druck oder PDF.
+- Werkzeuggruppen bleiben bei schmalen Fenstern zusammen; vollständige mobile Neuentwicklung ist nicht Teil von AP18.

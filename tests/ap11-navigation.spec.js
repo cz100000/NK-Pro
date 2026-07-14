@@ -39,7 +39,7 @@ test("AP11-Navigation bildet Zielstruktur, Icons und Zustände vollständig ab",
   const iconStyles = await icons.evaluateAll(nodes => nodes.map(node => ({ fill:node.getAttribute("fill"), viewBox:node.getAttribute("viewBox") })));
   expect(iconStyles.every(icon => icon.fill === "none" && icon.viewBox === "0 0 24 24")).toBeTruthy();
 
-  await expect(page.locator(".sidebar-brand-title")).toHaveText("NK-Pro");
+  await expect(page.locator(".sidebar-brand-title")).toHaveText("NK-PRO");
   await expect(page.locator(".sidebar-brand-subtitle")).toHaveText("Nebenkostenabrechnung");
   const start = page.locator(".nav-start-link");
   await expect(start).toHaveText(/Start/);

@@ -387,6 +387,74 @@ function briefPreviewRoot(preview) {
   return preview && preview.shadowRoot ? preview.shadowRoot : preview;
 }
 
+
+const BRIEF_PREVIEW_SESSION_KEY = "nkpro.briefPreview.ap18";
+const BRIEF_PREVIEW_MIN_SCALE = 0.4;
+const BRIEF_PREVIEW_MAX_SCALE = 2;
+const BRIEF_PREVIEW_STEP = 0.1;
+let briefPreviewView = loadBriefPreviewView();
+
+function loadBriefPreviewView() {
+  try {
+    const stored = JSON.parse(sessionStorage.getItem(BRIEF_PREVIEW_SESSION_KEY) || "null");
+    if (stored && stored.mode === "custom" && Number.isFinite(Number(stored.scale))) {
+      return { mode:"custom", scale:Math.min(BRIEF_PREVIEW_MAX_SCALE, Math.max(BRIEF_PREVIEW_MIN_SCALE, Number(stored.scale))) };
+    }
+    if (stored && stored.mode === "width") return { mode:"width", scale:null };
+  } catch (error) {
+    // Ungültige sitzungsbezogene Darstellungswerte werden bewusst ignoriert.
+  }
+  return { mode:"page", scale:null };
+}
+
+function saveBriefPreviewView() {
+  try {
+    sessionStorage.setItem(BRIEF_PREVIEW_SESSION_KEY, JSON.stringify(briefPreviewView));
+  } catch (error) {
+    // Die Vorschau bleibt auch ohne Sitzungsspeicher vollständig bedienbar.
+  }
+}
+
+function setBriefPreviewMode(mode, scale = null) {
+  if (!["page","width","custom"].includes(mode)) return;
+  briefPreviewView = {
+    mode,
+    scale:mode === "custom" ? Math.min(BRIEF_PREVIEW_MAX_SCALE, Math.max(BRIEF_PREVIEW_MIN_SCALE, Number(scale) || 1)) : null
+  };
+  saveBriefPreviewView();
+  applyBriefPreviewScale();
+}
+
+function previewFitPage() { setBriefPreviewMode("page"); }
+function previewFitWidth() { setBriefPreviewMode("width"); }
+function previewZoomIn() { changeBriefPreviewZoom(BRIEF_PREVIEW_STEP); }
+function previewZoomOut() { changeBriefPreviewZoom(-BRIEF_PREVIEW_STEP); }
+function refreshBrief() {
+  renderBrief();
+  requestAnimationFrame(applyBriefPreviewScale);
+}
+function changeBriefPreviewZoom(delta) {
+  const preview = document.getElementById("briefPreview");
+  const current = Number(preview && preview.dataset.previewScale) || Number(briefPreviewView.scale) || 1;
+  setBriefPreviewMode("custom", Math.round((current + delta) * 10) / 10);
+}
+
+function syncBriefPreviewControls(scale, mode) {
+  const value = document.getElementById("briefZoomValue");
+  if (value) value.textContent = Math.round(scale * 100) + " %";
+  document.querySelectorAll('[data-toolbar-group="view"] [data-ui-action]').forEach(button => {
+    const action = button.dataset.uiAction;
+    const active = (mode === "page" && action === "document.previewFitPage") || (mode === "width" && action === "document.previewFitWidth");
+    button.classList.toggle("is-active", active);
+    if (active) button.setAttribute("aria-pressed", "true");
+    else if (action === "document.previewFitPage" || action === "document.previewFitWidth") button.setAttribute("aria-pressed", "false");
+  });
+  const zoomOut = document.querySelector('[data-ui-action="document.previewZoomOut"]');
+  const zoomIn = document.querySelector('[data-ui-action="document.previewZoomIn"]');
+  if (zoomOut) zoomOut.disabled = scale <= BRIEF_PREVIEW_MIN_SCALE + 0.001;
+  if (zoomIn) zoomIn.disabled = scale >= BRIEF_PREVIEW_MAX_SCALE - 0.001;
+}
+
 function mountBriefPreview(preview, html) {
   if (!preview) return;
   preview.__nkBriefHtml = String(html || "");
@@ -435,7 +503,6 @@ function renderBrief() {
     '<label>Telefon</label><input value="' + escapeHtml(s.absenderTelefon) + '" ' + uiActionAttributes("document.setBriefSetting", ["absenderTelefon","$value"], "change") + '>' +
 
     '<label>Bankverbindung</label><input value="' + escapeHtml(s.bankverbindung) + '" ' + uiActionAttributes("document.setBriefSetting", ["bankverbindung","$value"], "change") + '>' +
-    '<label class="brief-print-mode-switch"><span class="brief-print-mode-copy"><strong>Für Schwarzweißdruck optimieren</strong><small>Vorschau, PDF und Ausdruck werden kontrastreich in Graustufen dargestellt.</small></span><input type="checkbox" ' + (s.schwarzweissOptimiert === "Ja" ? 'checked ' : '') + uiActionAttributes("document.setBriefSetting", ["schwarzweissOptimiert",{checkedValues:["Ja","Nein"]}], "change") + ' aria-label="Für Schwarzweißdruck optimieren"><span class="brief-switch-track" aria-hidden="true"><span class="brief-switch-knob"></span></span></label>' +
     '<h3>Vorauszahlungsanpassung</h3>' +
     '<label>Im Brief andrucken?</label>' + selectHtml(s.vorauszahlungPrintMode, ["Nicht drucken","Berechnete Werte drucken","Manuelle Werte drucken"], "setBriefSetting('vorauszahlungPrintMode',this.value)") +
     '<label>Neue Vorauszahlung ab</label><input value="' + escapeHtml(s.vorauszahlungAb) + '" ' + uiActionAttributes("document.setBriefSetting", ["vorauszahlungAb","$value"], "change") + '>' +
@@ -463,18 +530,23 @@ function renderBrief() {
   previewEl.dataset.validationErrors = String(briefValidation.errors.length);
   previewEl.dataset.validationWarnings = String(briefValidation.warnings.length);
   mountBriefPreview(previewEl, buildBriefHtml(calc, selected));
+  const monochromeToggle = document.getElementById("briefMonochromeToolbar");
+  if (monochromeToggle) monochromeToggle.checked = s.schwarzweissOptimiert === "Ja";
   requestAnimationFrame(applyBriefPreviewScale);
-  if (!previewEl.__nkAp13ResizeObserver && typeof ResizeObserver !== "undefined") {
-    previewEl.__nkAp13ResizeObserver = new ResizeObserver(applyBriefPreviewScale);
-    const wrap = previewEl.closest(".letter-preview-wrap");
-    if (wrap) previewEl.__nkAp13ResizeObserver.observe(wrap);
+  if (!previewEl.__nkAp18ResizeObserver && typeof ResizeObserver !== "undefined") {
+    previewEl.__nkAp18ResizeObserver = new ResizeObserver(() => {
+      if (briefPreviewView.mode !== "custom") applyBriefPreviewScale();
+    });
+    const viewport = document.getElementById("briefPreviewViewport");
+    if (viewport) previewEl.__nkAp18ResizeObserver.observe(viewport);
   }
 }
 
 function applyBriefPreviewScale() {
   const preview = document.getElementById("briefPreview");
-  const wrap = preview && preview.closest(".letter-preview-wrap");
-  if (!preview || !wrap) return;
+  const viewport = document.getElementById("briefPreviewViewport");
+  const stage = document.getElementById("briefPreviewStage");
+  if (!preview || !viewport || !stage) return;
   const root = briefPreviewRoot(preview);
   const documentNode = root && root.querySelector(".nk-letter-document");
   const pageCount = Math.max(1, Number(documentNode && documentNode.dataset.documentPages || 1));
@@ -482,11 +554,25 @@ function applyBriefPreviewScale() {
   const a4WidthPx = 210 * pxPerMm;
   const a4HeightPx = 297 * pxPerMm;
   const pageGapPx = 6 * pxPerMm;
-  const availableWidth = Math.max(180, wrap.clientWidth - 40);
-  const scale = Math.min(1, Math.max(0.25, availableWidth / a4WidthPx));
+  const viewportStyle = getComputedStyle(viewport);
+  const horizontalPadding = parseFloat(viewportStyle.paddingLeft || 0) + parseFloat(viewportStyle.paddingRight || 0);
+  const verticalPadding = parseFloat(viewportStyle.paddingTop || 0) + parseFloat(viewportStyle.paddingBottom || 0);
+  const availableWidth = Math.max(180, viewport.clientWidth - horizontalPadding - 2);
+  const availableHeight = Math.max(240, viewport.clientHeight - verticalPadding - 2);
+  let scale;
+  if (briefPreviewView.mode === "width") scale = availableWidth / a4WidthPx;
+  else if (briefPreviewView.mode === "custom") scale = Number(briefPreviewView.scale) || 1;
+  else scale = Math.min(availableWidth / a4WidthPx, availableHeight / a4HeightPx);
+  scale = Math.min(BRIEF_PREVIEW_MAX_SCALE, Math.max(BRIEF_PREVIEW_MIN_SCALE, scale));
+  const totalHeight = pageCount * a4HeightPx + Math.max(0, pageCount - 1) * pageGapPx;
   preview.style.setProperty("--nk-letter-preview-scale", String(scale));
   preview.style.width = (a4WidthPx * scale) + "px";
-  preview.style.height = ((pageCount * a4HeightPx + Math.max(0, pageCount - 1) * pageGapPx) * scale) + "px";
+  preview.style.height = (totalHeight * scale) + "px";
+  preview.dataset.previewScale = String(scale);
+  preview.dataset.previewMode = briefPreviewView.mode;
+  stage.dataset.pageCount = String(pageCount);
+  stage.classList.toggle("is-single-page", pageCount === 1);
+  syncBriefPreviewControls(scale, briefPreviewView.mode);
 }
 function currentBriefPreviewOrWarn() {
   const preview = document.getElementById("briefPreview");
@@ -513,8 +599,7 @@ function fallbackCopyText(text) {
   const textarea = document.createElement("textarea");
   textarea.value = text;
   textarea.setAttribute("readonly", "");
-  textarea.style.position = "fixed";
-  textarea.style.left = "-9999px";
+  textarea.className = "clipboard-fallback-input";
   document.body.appendChild(textarea);
   textarea.select();
   try {

@@ -50,7 +50,7 @@ for (const name of expected) {
   assert(worker.includes(`"./js/${name}"`), `PWA-App-Shell fehlt: ${name}`);
   assert(scripts.indexOf(name) < scripts.indexOf("app.js"), `${name} wird nach app.js geladen`);
 }
-assert(runtimeConfig.includes('const APP_VERSION = "V99.4.20";'));
+assert(runtimeConfig.includes('const APP_VERSION = "V99.4.21";'));
 assert(runtimeConfig.includes("const DATA_SCHEMA_VERSION = 5;"));
 assert(read("nk-pro-project.json").includes('"billingSnapshotVersion": 2'));
 process.stdout.write(`AP10-Orchestrierungsprüfung abgeschlossen: ${removed.length} Implementierungen physisch entfernt, app.js ${metrics.lines} Zeilen/${metrics.bytes} Byte, Archiv/Jahreswechsel atomar und Qualitäts-/Diagnosemodule seiteneffektfrei.\n`);

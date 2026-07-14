@@ -293,7 +293,7 @@ test("AP13-Schwarzweißmodus gilt identisch für Vorschau und Druckquelle", asyn
   await loadFixture(page, "standardfall.json");
   await page.evaluate(() => { switchToTab("briefe"); document.getElementById("lettersEditorSection").open = true; });
   await configureBrief(page, { schwarzweissOptimiert:"Nein", outroText:"", vorauszahlungPrintMode:"Nicht drucken", showVorauszahlungPage:"Nein" });
-  const toggle = page.locator('#briefSettings input[type="checkbox"][aria-label="Für Schwarzweißdruck optimieren"]');
+  const toggle = page.locator('#briefMonochromeToolbar');
   await expect(toggle).toHaveCount(1);
   expect(await toggle.isChecked()).toBe(false);
   await toggle.evaluate(node => { node.checked = true; node.dispatchEvent(new Event("change", { bubbles:true })); });
