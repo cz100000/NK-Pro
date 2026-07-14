@@ -39,3 +39,11 @@ npm run test:browser
 ## Umgebungsgrenzen
 
 Die Prüfumbgebung blockiert serverbasierte Loopback-Navigation mit `ERR_BLOCKED_BY_ADMINISTRATOR`. Der serverlose Desktop-Chromium-Harness ist bestanden. Bei isolierter sehr schmaler Viewport-Ausführung beendet diese Hostumgebung den Chromium-Targetprozess. Responsive Regeln sind statisch geprüft; die Narrow-Viewport-Abnahme ist auf einem normalen Zielsystem zu wiederholen.
+## AP20-Korrekturstand 1 – Zählerstartregression
+
+```text
+npm run test:metering
+npm run test:ap20:meter-start-browser
+```
+
+Der Browsertest legt vor dem Start einen gespeicherten Datensatz mit rückläufigem Zählerstand in den Local Storage. Erwartet werden ein vollständiger Start ohne Fallback sowie ein zentraler Prüfpunkt `NKP-PLAU-005` mit Status „Zu prüfen“.

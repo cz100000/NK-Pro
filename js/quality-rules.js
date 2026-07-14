@@ -56,7 +56,7 @@
     rule("NKP-PLAU-003","Möglicherweise doppelt erfasste Kosten",CATEGORY.PLAUSIBILITY,"costs",{dataSource:"Kostenartbezeichnung und Gesamtbetrag",targetTab:"einstellungen"}),
     rule("NKP-FACH-014","Erforderliche Verbrauchswerte sind vorhanden",CATEGORY.MANDATORY,"consumption",{dataSource:"Verbrauchskosten, umlageInputs und Zählerstände",targetTab:"verbraeuche"}),
     rule("NKP-PLAU-004","Nullverbrauch bei belegter Wohnung",CATEGORY.PLAUSIBILITY,"consumption",{dataSource:"Verbrauchswerte, Belegungstage, Kostenart",targetTab:"verbraeuche"}),
-    rule("NKP-PLAU-005","Zählerendstand liegt unter dem Anfangsstand",CATEGORY.PLAUSIBILITY,"consumption",{dataSource:"waterMeters.readings",targetTab:"verbraeuche",solution:"Eingabe, Zählerwechsel oder Zählerüberlauf prüfen."}),
+    rule("NKP-PLAU-005","Zählerendstand liegt unter dem Anfangsstand",CATEGORY.PLAUSIBILITY,"consumption",{dataSource:"zaehlerDaten.messperioden und waterMeters.readings (Legacy-Fallback)",targetTab:"verbraeuche",solution:"Eingabe, Zählerwechsel oder Zählerüberlauf prüfen."}),
     rule("NKP-PLAU-006","Hausverbrauch und Wohnungsverbräuche sind plausibel",CATEGORY.PLAUSIBILITY,"consumption",{dataSource:"waterMeters.settings.houseWaterTotal und Wohnungsverbräuche",targetTab:"verbraeuche"}),
     rule("NKP-PLAU-007","Verbrauch weicht stark vom Vorjahr ab",CATEGORY.PLAUSIBILITY,"consumption",{dataSource:"Verbrauch je Wohnung/Kostenart und Vorjahressnapshot",targetTab:"verbraeuche",justification:"optional"}),
     rule("NKP-PLAU-008","Auffällig identische Verbrauchswerte",CATEGORY.PLAUSIBILITY,"consumption",{dataSource:"Verbrauchswerte je Wohnung",targetTab:"verbraeuche"}),
@@ -215,6 +215,44 @@
     return {percent:50,min:10};
   }
 
+  function reversedMeterFindings(data) {
+    const container=data&&data.zaehlerDaten&&typeof data.zaehlerDaten==="object"?data.zaehlerDaten:null;
+    const periods=container&&Array.isArray(container.messperioden)?container.messperioden:[];
+    const meters=container&&Array.isArray(container.zaehler)?container.zaehler:[];
+    if(periods.length){
+      const meterById=new Map(meters.map(meter=>[text(meter&&(meter.meterId||meter.zaehlerId||meter.id)),meter]));
+      return periods.map((period,index)=>({period,index,meter:meterById.get(text(period&&(period.zaehlerId||period.meterId)))||null})).filter(item=>{
+        const period=item.period||{};
+        if(period.zaehlerueberlauf===true)return false;
+        const start=Number(period.anfangsstand),end=Number(period.endstand),consumption=Number(period.verbrauch);
+        return (Number.isFinite(start)&&Number.isFinite(end)&&end<start)||(Number.isFinite(consumption)&&consumption<0)||text(period.status)==="invalid";
+      }).map(item=>{
+        const period=item.period||{},meter=item.meter||{};
+        const meterId=text(period.zaehlerId||period.meterId)||String(item.index);
+        const label=[text(meter.bezeichnung||meter.zaehlerTyp||meter.meterType)||"Zähler",text(meter.zaehlernummer),meterId].filter(Boolean).join(" · ");
+        return {
+          entity:{type:"meter",id:meterId,label},
+          details:"Endstand "+formatPlainNumber(period.endstand,3)+" liegt unter dem Anfangsstand "+formatPlainNumber(period.anfangsstand,3)+"; ein gültiger Zählerüberlauf ist nicht dokumentiert.",
+          values:{meterId,periodId:text(period.messperiodeId||period.measurementPeriodId||period.id),start:period.anfangsstand,end:period.endstand,consumption:period.verbrauch,periodStart:period.beginn,periodEnd:period.ende,unit:text(period.einheit),rollover:!!period.zaehlerueberlauf},
+          comparisonValues:{periodStart:period.beginn,periodEnd:period.ende,unit:text(period.einheit)},
+          targetSelector:""
+        };
+      });
+    }
+    const legacy=[];
+    if(data&&data.waterMeters&&Array.isArray(data.waterMeters.readings))data.waterMeters.readings.forEach((row,index)=>{
+      if(!row)return;
+      if((row.kwEnd!==""&&numSafe(row.kwEnd)<numSafe(row.kwStart))||(row.wwEnd!==""&&numSafe(row.wwEnd)<numSafe(row.wwStart)))legacy.push({
+        entity:{type:"meter",id:String(index),label:labelTenant(data.mieter&&data.mieter[index]||{})},
+        details:"Mindestens ein Endstand liegt unter dem Anfangsstand; ein gültiger Zählerüberlauf ist nicht dokumentiert.",
+        values:{kwStart:row.kwStart,kwEnd:row.kwEnd,wwStart:row.wwStart,wwEnd:row.wwEnd},
+        comparisonValues:{source:"waterMeters.readings"},
+        targetSelector:""
+      });
+    });
+    return legacy;
+  }
+
   function evaluateFactual(data) {
     const results=[];
     const start=text(data.meta && data.meta.abrechnungsbeginn), end=text(data.meta && data.meta.abrechnungsende);
@@ -299,8 +337,8 @@
       if(duplicateFindings.length)duplicateFindings.forEach(x=>results.push(result("NKP-PLAU-008",{entity:costEntity(x.cost),details:x.rows.length+" Wohnungen besitzen denselben Wert "+formatPlainNumber(x.value,3)+".",values:{value:x.value,units:x.rows.map(r=>r.wohnung)}},data))); else results.push(passed("NKP-PLAU-008","Keine auffällig identischen Werte in mindestens drei Wohnungen erkannt.",{costs:consumption.length},data));
       results.push(prior ? passed("NKP-HINW-004","Vergleichbarer Vorjahressnapshot wurde gefunden.",{year:prior.meta&&prior.meta.abrechnungsjahr},data) : result("NKP-HINW-004",{details:"Kein geeigneter Vorjahresvergleich möglich.",values:{archiveCount:Array.isArray(data.jahresArchiv)?data.jahresArchiv.length:0}},data));
     }
-    const rollovers=[]; if(data.waterMeters&&Array.isArray(data.waterMeters.readings))data.waterMeters.readings.forEach((row,index)=>{if(!row)return; if((row.kwEnd!==""&&numSafe(row.kwEnd)<numSafe(row.kwStart))||(row.wwEnd!==""&&numSafe(row.wwEnd)<numSafe(row.wwStart)))rollovers.push({row,index,tenant:data.mieter&&data.mieter[index]});});
-    if(rollovers.length)rollovers.forEach(x=>results.push(result("NKP-PLAU-005",{entity:{type:"meter",id:String(x.index),label:labelTenant(x.tenant||{})},details:"Mindestens ein Endstand liegt unter dem Anfangsstand.",values:{kwStart:x.row.kwStart,kwEnd:x.row.kwEnd,wwStart:x.row.wwStart,wwEnd:x.row.wwEnd}},data))); else results.push(passed("NKP-PLAU-005","Keine rückläufigen Wasserzählerstände erkannt.",{checked:data.waterMeters&&data.waterMeters.readings?data.waterMeters.readings.length:0},data));
+    const rollovers=reversedMeterFindings(data);
+    if(rollovers.length)rollovers.forEach(x=>results.push(result("NKP-PLAU-005",x,data))); else results.push(passed("NKP-PLAU-005","Keine rückläufigen Zählerstände ohne dokumentierten Überlauf erkannt.",{checked:data.zaehlerDaten&&Array.isArray(data.zaehlerDaten.messperioden)?data.zaehlerDaten.messperioden.length:(data.waterMeters&&Array.isArray(data.waterMeters.readings)?data.waterMeters.readings.length:0)},data));
     const house=numSafe(data.waterMeters&&data.waterMeters.settings&&data.waterMeters.settings.houseWaterTotal); let sum=0; try{const water=consumption.filter(c=>/wasser/i.test(text(c.kostenart)+" "+text(c.id))); sum=water.reduce((s,c)=>s+ctx.billable.reduce((a,t,i)=>a+costConsumption(data,c,t,t.originalIndex!==undefined?t.originalIndex:i),0),0);}catch(_){}
     if(house<=0)results.push(notApplicable("NKP-PLAU-006","Kein Hausverbrauch als Vergleichswert vorhanden.",data)); else {const delta=house-sum,pct=house?delta/house*100:0;if(Math.abs(delta)>.5&&Math.abs(pct)>5)results.push(result("NKP-PLAU-006",{details:"Haus "+formatPlainNumber(house,3)+", Wohnungen "+formatPlainNumber(sum,3)+" (Abweichung "+pct.toFixed(1)+" %).",values:{house,units:sum,absoluteDelta:delta,percentDelta:pct}},data));else results.push(passed("NKP-PLAU-006","Haus- und Wohnungsverbrauch stimmen innerhalb der Toleranz überein.",{house,units:sum},data));}
     return results;

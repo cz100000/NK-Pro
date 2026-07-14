@@ -40,6 +40,22 @@ Die hochgeladene ZIP wurde als NK-Pro V99.4.22 / AP19 bestätigt. Anwendungsvers
 | Datenschema und Datenvertrag | unverändert, bestanden |
 | bestehende Berechnungs-Fixures | semantisch unverändert |
 
+## Korrekturstand 1 – Datenstart bei rückläufigem Zählerstand
+
+Die nach der Erstfreigabe gemeldete Neustartstörung wurde reproduziert und korrigiert. Ein Zählerendstand unter dem Anfangsstand ohne dokumentierten Überlauf bleibt eine fachliche Auffälligkeit, führt aber nicht mehr zum Abbruch der Dateninitialisierung. Echte strukturelle Zählerfehler bleiben weiterhin startblockierend.
+
+Die Korrektur wurde auf drei Ebenen geprüft:
+
+| Korrekturprüfung | Ergebnis |
+|---|---|
+| Zählerstandard-Migration mit rückläufiger Messperiode | bestanden; Status nicht `failed` |
+| zentrale Regel `NKP-PLAU-005` | bestanden; Status „Zu prüfen“, nicht blockierend, bestätigbar |
+| echter Chromium-Neustart mit vorbefülltem Local Storage | bestanden; kein Fallback, keine Startfehler, Datensatz vollständig geladen |
+| Erhalt der auffälligen Messperiode | bestanden; keine automatische fachliche Korrektur |
+| PWA-Aktualisierung | Cachekennung auf `nk-pro-v99-4-23-ap20-corr1` angehoben |
+
+Datenschema 5, Datenebenenvertrag 1, Abrechnungsformeln und der gespeicherte Datenbestand bleiben unverändert.
+
 ## Abschluss- und Freigabelogik
 
 Die Workflow- und Dokumentmodule verwenden die zentrale Readiness-Auswertung. Offene Blocker verhindern den Abschluss. Ohne Blocker, aber mit offenen Plausibilitäten lautet das Ergebnis „Fachlich zu prüfen“. Erst nach Bearbeitung aller relevanten Auffälligkeiten wird „Abschlussbereit“ ausgegeben. Das Abnahmeprotokoll erhält keine eigene Prüfberechnung.
@@ -60,6 +76,7 @@ npm run test:metering
 npm run test:architecture
 npm run test:contents
 npm run test:ap20:harness
+npm run test:ap20:meter-start-browser
 npm run test:release
 ```
 

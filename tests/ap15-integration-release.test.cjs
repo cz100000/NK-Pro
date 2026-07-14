@@ -22,7 +22,7 @@ assert.equal(project.schemaVersion, 5);
 assert.equal(project.dataLayerContractVersion, 1);
 assert.equal(project.billingSnapshotVersion, 2);
 assert.equal(project.documentLayoutVersion, 4);
-assert.equal(project.pwaCacheName, "nk-pro-v99-4-23-ap20");
+assert.equal(project.pwaCacheName, "nk-pro-v99-4-23-ap20-corr1");
 assert.equal(project.releaseHardeningVersion, 1);
 assert.equal(project.releaseContentPolicyVersion, 1);
 assert.equal(project.transientUiResetVersion, 1);

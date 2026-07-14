@@ -2,6 +2,7 @@
   "use strict";
 
   const METERING_STANDARD_VERSION = 1;
+  const STARTUP_SAFE_VALIDATION_CODES = Object.freeze(new Set(["METER_READING_REVERSED"]));
 
   function cloneWith(options, value) {
     return options && typeof options.clone === "function" ? options.clone(value) : JSON.parse(JSON.stringify(value));
@@ -218,7 +219,9 @@
       const required = requiresMeteringMigration(working);
       synchronizeMeteringData(working, options);
       const validation = validateMeteringData(working, { ...options, billingReadiness:false });
-      if (!validation.valid) throw new Error("Zählerstandard-Nachprüfung fehlgeschlagen: " + validation.errors.map(item => item.message).join(" "));
+      const fatalErrors = validation.errors.filter(item => !STARTUP_SAFE_VALIDATION_CODES.has(item.code));
+      const startupSafeFindings = validation.errors.filter(item => STARTUP_SAFE_VALIDATION_CODES.has(item.code));
+      if (fatalErrors.length) throw new Error("Zählerstandard-Nachprüfung fehlgeschlagen: " + fatalErrors.map(item => item.message).join(" "));
       if (!working.meta || typeof working.meta !== "object") working.meta = {};
       if (required) {
         if (!Array.isArray(working.meta.standardMigrations)) working.meta.standardMigrations = [];
@@ -231,7 +234,7 @@
           note:"Zählerstammdaten, Messwerte, Messperioden, Zuordnungen und Zählerwechsel getrennt."
         });
       }
-      return { status:required ? "migrated" : "not-required", migrated:required, data:working, validation };
+      return { status:required ? "migrated" : "not-required", migrated:required, data:working, validation, startupSafeFindings };
     } catch (error) {
       return { status:"failed", migrated:false, data:source, error };
     }

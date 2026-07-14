@@ -26,7 +26,7 @@ function main(){
   assert(project.appVersion==="99.4.23"&&project.displayVersion==="V99.4.23"&&project.basedOn==="99.4.22-AP19","AP20-Projektmetadaten sind inkonsistent.");
   assert(project.schemaVersion===5&&project.dataLayerContractVersion===1,"Datenschema oder Datenebenenvertrag wurden verändert.");
   assert(project.centralQualityRuleRegistryVersion===1&&project.qualityConfirmationFingerprintVersion===1&&project.systemDiagnosticsSeparationVersion===1,"AP20-Metadaten fehlen.");
-  assert(manifest.version==="99.4.23"&&worker.includes('const CACHE_NAME = "nk-pro-v99-4-23-ap20";'),"Manifest oder PWA-Cache ist inkonsistent.");
+  assert(manifest.version==="99.4.23"&&worker.includes('const CACHE_NAME = "nk-pro-v99-4-23-ap20-corr1";'),"Manifest oder PWA-Cache ist inkonsistent.");
   assert(worker.includes('"./js/quality-rules.js"'),"Zentrale Regelregistry fehlt im Offline-App-Shell.");
 
   const sandbox={console}; sandbox.globalThis=sandbox; vm.createContext(sandbox); vm.runInContext(rulesSource,sandbox,{filename:"js/quality-rules.js"});
@@ -51,6 +51,9 @@ function main(){
   assert(workflow.includes('reason:"open-plausibility"')&&!workflow.includes('Finalisiere nur, wenn du diese bewusst geprüft hast.'),"Offene Plausibilitäten werden beim Abschluss nicht strikt behandelt.");
   assert(documentData.includes('row.status === "Blockiert"')&&documentData.includes('row.status === "Zu prüfen"')&&documentData.includes('return data.readiness.level'),"Abnahmeprotokoll nutzt nicht ausschließlich das zentrale Statusmodell.");
   assert(qualityUi.includes('qualityRuleConfirmationsV2')||rulesSource.includes('qualityRuleConfirmationsV2'),"Fingerabdruckgebundene Bestätigungen fehlen.");
+  assert(rulesSource.includes('zaehlerDaten.messperioden und waterMeters.readings')&&rulesSource.includes('reversedMeterFindings'),"NKP-PLAU-005 wertet die zentrale Messperiodenstruktur nicht aus.");
+  const meterValidation=read("js/meter-validation.js");
+  assert(meterValidation.includes('STARTUP_SAFE_VALIDATION_CODES')&&meterValidation.includes('METER_READING_REVERSED'),"Rückläufige Zählerstände sind beim Datenstart nicht als fachliche Auffälligkeit freigegeben.");
   assert(qualityUi.includes('renderContextualQualitySummaries')&&qualityUi.includes('renderSystemDiagnostics')&&qualityUi.includes('highlightQualityTarget'),"Fachseitenintegration, Systemdiagnose oder Direkteinstieg fehlt.");
   assert(css.includes('.quality-status-cards')&&css.includes('.quality-detail-dialog')&&css.includes('.context-quality-summary')&&css.includes('@media (max-width:620px)'),"AP20-Responsive-/Detailstile fehlen.");
   assert(!qualityUi.includes('const offeneMieter =')&&!qualityUi.includes('offeneKosten.forEach'),"Parallele Dashboard-Prüfberechnung wurde nicht entfernt.");

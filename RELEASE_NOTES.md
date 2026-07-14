@@ -16,3 +16,6 @@
 - Datenschema 5, Datenebenenvertrag 1, Berechnungsergebnisse und AP13-Ausgabelayout unverändert.
 
 Abschluss: **Änderungen umgesetzt – NK-Pro V99.4.23**
+## Korrekturstand 1
+
+Ein rückläufiger Zählerstand ohne dokumentierten Überlauf wird beim Neustart nicht mehr als fataler Speicher- oder Migrationsfehler behandelt. Der Datensatz wird geladen; der Punkt erscheint im zentralen Prüfsystem als „Zu prüfen“.

@@ -24,7 +24,7 @@ AP19 stellt weiterhin die Zustände `closed`, `edit` und `view` bereit. AP20-Bes
 
 ## PWA
 
-Der Service Worker verwendet `nk-pro-v99-4-23-ap20` und enthält `quality-rules.js` im App-Shell. Same-Origin-, Offline- und Cachehärtung aus AP15 bleiben erhalten.
+Der Service Worker verwendet `nk-pro-v99-4-23-ap20-corr1` und enthält `quality-rules.js` im App-Shell. Same-Origin-, Offline- und Cachehärtung aus AP15 bleiben erhalten.
 
 ## Releasegrenze
 

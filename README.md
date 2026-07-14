@@ -34,3 +34,6 @@ npm run test:release
 ```
 
 Details: `AP20_ZENTRALES_PRUEF_PLAUSIBILITAETS_UND_FREIGABESYSTEM.md`, `AP20_PRUEFINVENTAR.md`, `AP20_REGELUEBERSICHT.md` und `AP20_PRUEFBERICHT.md`.
+## Korrekturstand 1
+
+Die ausgelieferte V99.4.23 enthält die Korrektur für den Datenstart bei einem rückläufigen Zählerstand. Der Datensatz wird geladen und die Auffälligkeit zentral als `NKP-PLAU-005` („Zu prüfen“) dargestellt.

@@ -108,6 +108,10 @@ periods.buildMeasurementPeriods(reversed, options());
 const reversedValidation = validation.validateMeteringData(reversed, { ...options(), billingReadiness:true });
 assert.equal(reversedValidation.valid, false);
 assert.ok(reversedValidation.errors.some(row => row.code === "METER_READING_REVERSED"));
+const reversedStartupMigration = validation.migrateMeteringData(reversed, options());
+assert.notEqual(reversedStartupMigration.status, "failed", "Eine fachliche Zählerauffälligkeit darf den Anwendungsstart nicht abbrechen.");
+assert.ok(reversedStartupMigration.startupSafeFindings.some(row => row.code === "METER_READING_REVERSED"));
+assert.equal(reversedStartupMigration.data.zaehlerDaten.messperioden.some(row => Number(row.verbrauch) < 0 || row.status === "invalid"), true);
 
 // 5. Stromzähler-Dummy bleibt samt Messwert erhalten, erzeugt aber keinen abrechenbaren Verbrauch.
 const dummy = master.addElectricityDummyMeter(data, { meterId:"Z-DUMMY", bezeichnung:"Strom Dokumentation", zaehlernummer:"EL-D-1", einheit:"kWh", objektId:"OBJ-1", gebaeudeId:"GEB-1", einheitId:"U1" }, options());

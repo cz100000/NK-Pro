@@ -596,3 +596,8 @@ Die detaillierte frühere Historie bleibt in der Anwendung und im Versionsverlau
 - Generische Vier-Karten-Übersichten wurden durch individuelle KPI-Karten, Prüfstatus, nächsten Arbeitsschritt und kompakte Direktaktionen ersetzt.
 - Seitenkopf, Arbeitsbereiche, Tabellencontainer, Abstände und responsive Anordnung wurden deutlich stärker modernisiert.
 - Fach-, Daten-, Berechnungs-, Brief- und Drucklogik bleiben unverändert.
+## V99.4.23 – AP20 Korrekturstand 1
+
+- Datenstart bricht bei rückläufigem Zählerstand ohne dokumentierten Überlauf nicht mehr ab.
+- NKP-PLAU-005 prüft die zentrale Messperiodenstruktur und zeigt die Auffälligkeit fachlich an.
+- PWA-Cache auf `nk-pro-v99-4-23-ap20-corr1` angehoben.

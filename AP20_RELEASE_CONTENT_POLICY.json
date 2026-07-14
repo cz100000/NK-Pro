@@ -32,12 +32,14 @@
     "fixtures",
     "metering",
     "architecture AP6–AP20",
+    "AP20 meter-start browser regression",
     "strict release contents",
     "AP20 Chromium harness",
     "release consistency",
     "SHA-256 inventory"
   ],
   "notes": [
+    "Korrekturstand 1 behandelt rückläufige Zählerstände als fachliche Auffälligkeit statt als fatalen Datenstartfehler.",
     "Zähler-DUMMY bleibt erhalten.",
     "Keine externen Produktionsabhängigkeiten.",
     "Playwright-Loopback ist in restriktiven Hostumgebungen blockiert; AP20-Harness nutzt vorhandenes Chromium serverlos.",

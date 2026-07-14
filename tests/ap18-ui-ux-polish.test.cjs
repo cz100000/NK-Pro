@@ -69,6 +69,6 @@ for (const resource of [
   "./assets/brand/nk-pro-mark-96.png", "./assets/brand/nk-pro-mark-128.png", "./icons/icon-16.png", "./icons/icon-32.png",
   "./icons/icon-180.png", "./icons/icon-192.png", "./icons/icon-512.png", "./icons/icon-maskable-192.png", "./icons/icon-maskable-512.png"
 ]) assert(worker.includes(`"${resource}"`), `PWA-App-Shell enthält ${resource} nicht.`);
-assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-23-ap20"'), "AP18-Cachebezeichnung fehlt.");
+assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-23-ap20-corr1"'), "AP18-Cachebezeichnung fehlt.");
 
 process.stdout.write("AP18-Strukturprüfung abgeschlossen: Version, Datenverträge, Markenassets, PWA-Icons, zentrales Aktionssystem, Navigation, Briefzoom, Werkzeuggruppen, Fokuszustände und Responsive-Regeln sind konsistent.\n");

@@ -403,7 +403,7 @@
       "title": "Zählerendstand liegt unter dem Anfangsstand",
       "category": "Plausibilitätsprüfung",
       "area": "Verbräuche und Zählerstände",
-      "dataSource": "waterMeters.readings",
+      "dataSource": "zaehlerDaten.messperioden und waterMeters.readings (Legacy-Fallback)",
       "prerequisite": "Für die konkrete Regel erforderliche Daten sind vorhanden.",
       "notApplicable": "Regel wird nicht ausgeführt, wenn ihre fachlichen Voraussetzungen fehlen.",
       "status": "Zu prüfen/Erledigt/Nicht anwendbar",
