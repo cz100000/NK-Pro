@@ -1,15 +1,12 @@
-# NK-Pro – Anwendungsstart V99.4.18
+# Anwendungsstart
 
-Die Anwendung startet weiterhin deterministisch aus `index.html`. Alle produktiven Skripte werden mit `defer` in dokumentierter Reihenfolge geladen; `js/app.js` bleibt der schlanke Orchestrierungseinstieg und `js/service-worker-register.js` registriert abschließend die PWA.
+NK-Pro V99.4.22 startet nach jedem vollständigen Anwendungsstart und Browser-Neuladen ohne geöffneten Abrechnungskontext.
 
-AP15 fügt keinen zweiten Startpfad und keine externe Produktionsabhängigkeit hinzu. Der initiale Seitenzustand ist die Arbeitsweiche. Import, Restore und Rollback kehren nach erfolgreichem Abschluss ebenfalls in einen bereinigten Startzustand zurück.
+1. Die Anwendung lädt und validiert den bestehenden Arbeitsstand.
+2. Datenschema 5 und Datenebenenvertrag 1 werden geprüft.
+3. Transiente UI-Zustände und der aktive Abrechnungskontext werden zurückgesetzt.
+4. Die zentrale Abrechnungsübersicht bleibt erreichbar.
+5. Die zehn Abrechnungs-Unterpunkte bleiben sichtbar, sind jedoch bis zu einem ausdrücklichen Bearbeiten- oder Ansehen-Vorgang deaktiviert.
+6. Der zuletzt verwendete gültige Arbeitsschritt bleibt als reine UI-Präferenz pro Abrechnung erhalten, öffnet aber keine Abrechnung automatisch.
 
-Für eine reproduzierbare lokale Prüfung:
-
-```bash
-npm ci
-npx playwright install chromium
-npm run release:check
-```
-
-Die Prüfung ist aus einer frisch entpackten Arbeits-ZIP ohne mitgeliefertes `node_modules` ausführbar.
+Der isoliert exportierte Archiv-Viewer ist ein gesonderter, ausdrücklich erzeugter Ansichtsdatensatz und startet deshalb in seinem schreibgeschützten Viewer-Modus.

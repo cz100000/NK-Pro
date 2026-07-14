@@ -1,4 +1,4 @@
-const CACHE_NAME = "nk-pro-v99-4-21-ap18";
+const CACHE_NAME = "nk-pro-v99-4-22-ap19";
 const CACHE_PREFIX = "nk-pro-";
 const APP_SHELL = [
   "./",
@@ -11,6 +11,7 @@ const APP_SHELL = [
   "./assets/brand/nk-pro-mark-96.png",
   "./assets/brand/nk-pro-mark-128.png",
   "./js/ui-preferences.js",
+  "./js/billing-context.js",
   "./js/state-access.js",
   "./js/application-actions.js",
   "./js/master-data-actions.js",

@@ -15,18 +15,18 @@ const worker = read("service-worker.js");
 const project = JSON.parse(read("nk-pro-project.json"));
 const packageJson = JSON.parse(read("package.json"));
 
-assert(packageJson.version === "99.4.21" && packageJson.name === "nk-pro-v99-4-21", "AP17-Paketversion ist inkonsistent.");
-assert(project.appVersion === "99.4.21" && project.basedOn === "99.4.20-AP17", "AP17-Projektbasis ist inkonsistent.");
+assert(packageJson.version === "99.4.22" && packageJson.name === "nk-pro-v99-4-22", "Aktuelle Paketversion ist inkonsistent.");
+assert(project.appVersion === "99.4.22" && project.basedOn === "99.4.21-AP18", "Aktuelle Projektbasis ist inkonsistent.");
 assert(project.schemaVersion === 5 && project.dataLayerContractVersion === 1, "Datenschema oder Datenebenenvertrag wurde verändert.");
 assert(project.documentLayoutVersion === 4, "AP13-Dokumentlayout wurde verändert.");
 assert(project.navigationDesignSystemVersion === 5 && project.uiVisualSystemVersion === 4, "AP17-UI-Metadaten fehlen.");
-assert(project.areaDashboardVersion === 1 && project.globalBillingContextVersion === 1, "AP17-Dashboard-/Kontextversion fehlt.");
-assert(project.pwaCacheName === "nk-pro-v99-4-21-ap18", "AP17-PWA-Cachemetadaten fehlen.");
+assert(project.areaDashboardVersion === 2 && project.globalBillingContextVersion === 2 && project.productiveDashboardVersion === 1, "Produktive Dashboard-/Kontextversion fehlt.");
+assert(project.pwaCacheName === "nk-pro-v99-4-22-ap19", "Aktuelle PWA-Cachemetadaten fehlen.");
 
-assert(runtime.includes('const APP_VERSION = "V99.4.21";'), "AP17-Laufzeitversion fehlt.");
-assert(runtime.includes('const APP_VERSION_NAME = "AP18-Korrekturen, UI-Feinschliff und UX-Bereinigung";'), "AP17-Laufzeitname fehlt.");
-assert(html.includes("NK-Pro V99.4.21 – AP18-Korrekturen, UI-Feinschliff und UX-Bereinigung"), "AP17-HTML-Titel fehlt.");
-assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-21-ap18";'), "AP17-Service-Worker-Cache fehlt.");
+assert(runtime.includes('const APP_VERSION = "V99.4.22";'), "Aktuelle Laufzeitversion fehlt.");
+assert(runtime.includes('const APP_VERSION_NAME = "AP19-Produktive Bereichsübersichten und kontrollierter Abrechnungskontext";'), "Aktueller Laufzeitname fehlt.");
+assert(html.includes("NK-Pro V99.4.22 – AP19-Produktive Bereichsübersichten und kontrollierter Abrechnungskontext"), "Aktueller HTML-Titel fehlt.");
+assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-22-ap19";'), "Aktueller Service-Worker-Cache fehlt.");
 
 const navTabs = [...html.matchAll(/class="tab-btn nav-group-item[^"]*"[^>]*data-tab="([^"]+)"/g)].map(match => match[1]);
 const expectedTabs = ["objektuebersicht","objekt","wohnungsverwaltung","wasser","mieterverwaltung","start","mieter","einnahmen","einstellungen","manuellewerte","verbraeuche","umlage","qualitaet","vorauszahlungsanpassung","briefe","export","archiv","sicherung"];
@@ -36,9 +36,9 @@ assert((html.match(/data-area-dashboard=/g) || []).length === 2, "AP17 benötigt
 assert(html.includes('data-area-dashboard="object"') && html.includes('data-area-dashboard="billing"'), "Objekt- oder Abrechnungsdashboard fehlt.");
 assert(!html.includes("overview-grid"), "Generische AP16-Kachelraster sind noch vorhanden.");
 assert(html.includes("Hinweis zu Vorschauwerten") === false, "Dynamische Dashboardhinweise dürfen nicht als statische Dublette vorliegen.");
-assert(controller.includes("dashboard-preview-notice") && controller.includes("fiktiv"), "Kennzeichnung der Vorschauwerte fehlt.");
-assert(controller.includes('querySelectorAll(\'[data-value-kind="real"]\').length===15'), "AP17-Echtwert-Audit ist nicht auf 15 Werte festgelegt.");
-assert(controller.includes('querySelectorAll(\'[data-value-kind="dummy"]\').length===15'), "AP17-DUMMY-Audit ist nicht auf 15 Werte festgelegt.");
+assert(!controller.includes("fiktiv"), "Produktive Dashboards enthalten noch fiktive Vorschauwerte.");
+assert(controller.includes("productiveDashboardValues") && controller.includes('querySelectorAll(\'[data-value-kind="dummy"]\').length===1'), "Produktiv-/DUMMY-Audit ist nicht auf AP19 festgelegt.");
+assert(controller.includes("const rules=[") && controller.includes('{key:"letters"'), "Zentrale produktive Prüfregeln fehlen.");
 assert(controller.includes("billingWorkflowEntries") && controller.includes("length===11"), "Elf Abrechnungsdirekteinstiege werden nicht geprüft.");
 assert(controller.includes("objectDirectEntries") && controller.includes("length===4"), "Vier Objektdirekteinstiege werden nicht geprüft.");
 
@@ -46,7 +46,7 @@ assert(!html.includes("data-nav-billing-context-panel"), "Der alte Navigationsbe
 for (const marker of ["data-global-billing-context", "data-global-billing-object", "data-global-billing-year", "data-global-billing-status"]) {
   assert(html.includes(marker), `Globale Kontextleiste enthält ${marker} nicht.`);
 }
-assert(html.includes('data-ui-args=\'["start"]\'') && html.includes(">Wechseln</button>"), "Kontextwechsel zur Abrechnungsübersicht fehlt.");
+assert(html.includes('data-ui-action="billing.closeContext"') && html.includes(">Abrechnung schließen</button>"), "Kontrolliertes Schließen des Abrechnungskontexts fehlt.");
 
 assert(navigation.includes('const NAV_GROUP_STORAGE_KEY = "nkpro.workflowNavigation.v4";'), "AP17-Navigationsspeicher v4 fehlt.");
 assert(navigation.includes("let openGroups = loadOpenGroups()"), "Unabhängige Navigationszustände fehlen.");
@@ -58,7 +58,7 @@ const sectionChevrons = (html.match(/page-section__chevron-svg/g) || []).length;
 assert(sectionChevrons >= 20, `Zu wenige lokale Klappbox-Chevrons: ${sectionChevrons}.`);
 assert(!html.includes('class="page-section__chevron">▾') && !html.includes('class="page-section__chevron">▶'), "Textpfeile sind noch vorhanden.");
 assert(css.includes(".page-section__chevron-svg") && css.includes("transform:rotate(90deg)"), "SVG-Chevron-Animation fehlt.");
-assert(css.includes(".global-billing-context") && css.includes(".dashboard-preview-notice"), "AP17-Kontext-/Dashboardstil fehlt.");
+assert(css.includes(".global-billing-context") && css.includes(".dashboard-value-card") && css.includes(".billing-context-guidance"), "Kontext-/Dashboardstil fehlt.");
 assert(css.includes("padding:2px 2px 10px"), "Inhaltskopfzeilen wurden nicht ausreichend komprimiert.");
 
 const billingStart = html.indexOf('data-nav-group-section="billing"');
@@ -76,4 +76,4 @@ for (const file of [
   "tests/ap17-area-dashboards.spec.js"
 ]) assert(fs.existsSync(path.join(root, file)), `${file} fehlt.`);
 
-process.stdout.write("AP17-Strukturprüfung abgeschlossen: zwei Bereichs-Dashboards, 15 Echtwerte, 15 DUMMY-Werte, globale Kontextleiste, unabhängige Navigation, bereinigte Kacheln und lokale SVG-Icons sind konsistent.\n");
+process.stdout.write("AP17-/AP19-Dashboardprüfung abgeschlossen: zwei produktive Bereichs-Dashboards, genau ein Zähler-DUMMY, zentrale Prüfregeln, globale Kontextleiste, unabhängige Navigation und lokale SVG-Icons sind konsistent.\n");

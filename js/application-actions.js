@@ -23,6 +23,7 @@
   }
 
   function execute(domain, action, args = []) {
+    if (global.NKProBillingContext) global.NKProBillingContext.allowApplicationAction(domain, action);
     if (!configured) throw new Error("Anwendungsaktionen wurden noch nicht konfiguriert.");
     const group = domains[String(domain || "")];
     const handler = group && group[String(action || "")];

@@ -184,7 +184,7 @@
       return Object.freeze({
         changed:false,
         reason:"no-current-billing",
-        message:"Es ist keine aktuelle Abrechnung in Bearbeitung. Zur Wiederbearbeitung bitte einen Archivdatensatz öffnen."
+        message:"Es ist keine aktuelle Abrechnung in Bearbeitung. Zur Korrektur öffnen Sie einen Archivdatensatz über die Abrechnungsübersicht."
       });
     }
     if (!isCurrentBillingFinalized()) {
@@ -207,7 +207,7 @@
       data.meta.currentBillingUnlockedAt = new Date().toISOString();
       data.meta.currentBillingUnlockedWithAppVersion = d.appVersion;
       return Object.freeze({ changed:true, message:"Finalisierung wurde aufgehoben. Die Abrechnung ist wieder bearbeitbar." });
-    }, { reason:"Wiederbearbeitung", forceAll:true, allowFinalizationWrite:true });
+    }, { reason:"Bearbeitungsmodus öffnen", forceAll:true, allowFinalizationWrite:true });
   }
 
   function clearCurrentBillingFinalization(data = current()) {

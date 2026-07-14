@@ -1,0 +1,44 @@
+{
+  "workPackage": "AP19",
+  "version": "99.4.22",
+  "displayVersion": "V99.4.22",
+  "basedOn": "99.4.21-AP18",
+  "allowedCurrentApArtifacts": [
+    "AP15",
+    "AP17",
+    "AP18",
+    "AP19"
+  ],
+  "excludedDirectories": [
+    "node_modules",
+    "test-results",
+    "playwright-report",
+    "coverage",
+    ".cache",
+    ".playwright"
+  ],
+  "excludedPatterns": [
+    "*.zip",
+    "*.7z",
+    "*.rar",
+    "*.log",
+    "*.tmp",
+    "*.bak",
+    "Kontrollausgabe*.pdf"
+  ],
+  "requiredChecks": [
+    "syntax",
+    "fixtures",
+    "metering",
+    "architecture AP6–AP19",
+    "strict release contents",
+    "AP19 Chromium harness",
+    "release consistency",
+    "SHA-256 inventory"
+  ],
+  "notes": [
+    "Zähler-DUMMY bleibt erhalten.",
+    "Keine externen Produktionsabhängigkeiten.",
+    "Playwright-Loopback kann in restriktiven Hostumgebungen blockiert sein; AP19-Harness nutzt vorhandenes Chromium serverlos."
+  ]
+}

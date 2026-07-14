@@ -27,18 +27,20 @@ test("Arbeitsweiche bleibt unverändert und öffnet beide neuen Bereichsübersic
   await page.locator('[data-ui-action="navigation.enterObjectPreparation"]').click();
   await expect(page.locator("#objektuebersicht")).toHaveClass(/active/);
   await expect(page.locator('[data-area-dashboard="object"] .dashboard-entry')).toHaveCount(4);
-  await expect(page.locator('[data-area-dashboard="object"] .dashboard-preview-notice')).toBeVisible();
+  await expect(page.locator('[data-area-dashboard="object"] .dashboard-preview-notice')).toHaveCount(0);
+  await expect(page.locator('[data-area-dashboard="object"] [data-value-kind="dummy"]')).toHaveCount(1);
 
   await page.locator('.nav-start-link[data-tab="landing"]').click();
   await page.locator('[data-ui-action="navigation.enterBillingOverview"]').click();
   await expect(page.locator("#start")).toHaveClass(/active/);
   await expect(page.locator('[data-area-dashboard="billing"] .workflow-stage')).toHaveCount(11);
-  await expect(page.locator('[data-area-dashboard="billing"] .dashboard-preview-notice')).toBeVisible();
+  await expect(page.locator('[data-area-dashboard="billing"] .dashboard-preview-notice')).toHaveCount(0);
+  await expect(page.locator('[data-area-dashboard="billing"] [data-value-kind="dummy"]')).toHaveCount(0);
 
   const audit = await page.evaluate(() => auditV992Structure());
   expect(audit.allPassed).toBe(true);
-  expect(audit.checks.realValues).toBe(true);
-  expect(audit.checks.dummyValues).toBe(true);
+  expect(audit.checks.productiveDashboardValues).toBe(true);
+  expect(audit.checks.controlledContext).toBe(true);
   runtime.assertClean();
 });
 

@@ -134,7 +134,7 @@ test("Wiederbearbeitung übernimmt die Abrechnung und behält aktuelle Stammdate
     state.waterMeterHistory.snapshotBoundaryTest = "aktuelle Historie";
     const archiveCount = state.jahresArchiv.length;
     const expectedYear = String(state.jahresArchiv[0].year);
-    window.NKProArchiveActions.reopenForRework(0, { confirmed:true, confirmationCode:"WIEDERBEARBEITEN" });
+    window.NKProArchiveActions.reopenForRework(0, { confirmed:true, confirmationCode:"KORREKTUR" });
     return {
       masterMarker: state.stammdaten && state.stammdaten.snapshotBoundaryTest,
       historyMarker: state.waterMeterHistory && state.waterMeterHistory.snapshotBoundaryTest,

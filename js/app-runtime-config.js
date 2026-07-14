@@ -21,6 +21,7 @@ const NK_PRO_MODULES = (() => {
     appBootstrap:globalThis.NKProAppBootstrap,
     compatibility:globalThis.NKProCompatibility,
     uiPreferences:globalThis.NKProUiPreferences,
+    billingContext:globalThis.NKProBillingContext,
     stateAccess:globalThis.NKProStateAccess,
     applicationActions:globalThis.NKProApplicationActions,
     masterDataActions:globalThis.NKProMasterDataActions,
@@ -45,8 +46,8 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.21";
-const APP_VERSION_NAME = "AP18-Korrekturen, UI-Feinschliff und UX-Bereinigung";
+const APP_VERSION = "V99.4.22";
+const APP_VERSION_NAME = "AP19-Produktive Bereichsübersichten und kontrollierter Abrechnungskontext";
 const APP_RELEASE_DATE = "2026-07-14";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
@@ -310,6 +311,6 @@ let archiveReturnState = null;
 const START_NAV_TABS = ["landing","objektuebersicht","objekt","mieterverwaltung","wohnungsverwaltung","wasser","start","archiv","sicherung"];
 const BILLING_NAV_TABS = ["qualitaet","mieter","einstellungen","einnahmen","manuellewerte","verbraeuche","umlage","vorauszahlungsanpassung","briefe","export"];
 let appUiMode = ARCHIVE_VIEW_MODE ? "billing" : "start";
-let billingContextOpen = ARCHIVE_VIEW_MODE;
+let billingContextOpen = false;
 let navigationInitialized = false;
 

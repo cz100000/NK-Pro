@@ -1,28 +1,23 @@
-# NK-Pro – Projektstand V99.4.21
+# NK-Pro – Projektstand
 
-**Versionsname:** AP18-Korrekturen, UI-Feinschliff und UX-Bereinigung  
-**Basis:** V99.4.20 / AP17  
-**Abschlussbezeichnung:** Änderungen umgesetzt – NK-Pro V99.4.21
+## Aktuelle Version
 
-## Verbindlicher technischer Stand
+- Version: **V99.4.22**
+- Arbeitspaket: **AP19**
+- Datenschema: **5**
+- Datenebenenvertrag: **1**
+- Dokumentlayout: **4**
 
-- statische lokale Browseranwendung und PWA aus HTML, CSS und JavaScript,
-- kein React, kein TypeScript, kein Buildsystem,
-- Datenschema 5 und Datenebenenvertrag 1 unverändert,
-- Objektstandard 1, Abrechnungssnapshot 2 und Dokumentlayout 4 unverändert,
-- UI-System 4 und Navigationssystem 5,
-- normales UI mit `"Segoe UI", Arial, sans-serif`,
-- Briefvorschau, Druck, PDF und Schwarzweißausgabe weiterhin durch AP13-Dokumentlayout 4 isoliert,
-- PWA-Cache `nk-pro-v99-4-21-ap18`.
+## Erreichter Stand
 
-## AP18-Abschluss
+AP19 verbindet die produktiven Bereichsübersichten mit einem zentralen, kontrollierten Abrechnungskontext. Normale Starts beginnen ohne geöffnete Abrechnung. Bearbeiten, Ansehen, Schließen und Archivkorrektur sind explizite Vorgänge. Der Ansichtsmodus ist visuell und technisch schreibgeschützt.
 
-NK-PRO verwendet nun ein einheitliches lokales Markenmotiv in Navigation, Favicon und PWA. Der globale Start-Eintrag ist dauerhaft sichtbar. Acht zentrale Aktionsvarianten und 13 explizite Zustandsregelgruppen vereinheitlichen Bedienelemente und Tastaturfokus.
+Die mitgelieferten Projektdaten enthalten eine aktuelle Abrechnung in Bearbeitung und vier archivierte Abrechnungen. Die zentrale Liste zeigt alle fünf Einträge. Dashboardwerte werden aus Einheiten, Mietverhältnissen, Kosten, Verbrauch, Qualitätsprüfung, Berechenbarkeit, Briefen und Archivbestand abgeleitet.
 
-Die Briefvorschau startet mit einer vollständig eingepassten DIN-A4-Seite und bietet Seite, Breite und benutzerdefinierten Zoom. Die Werkzeugleiste ist in Ansicht, Darstellung und Ausgabe gegliedert. Der Zoom beeinflusst ausschließlich die Bildschirmdarstellung.
+## Unverändert
 
-Kontextleiste, Seitenköpfe, Formulare, Dialoge, Tabellen und Responsive-Regeln wurden konsolidiert. Fachlogik, Arbeitsweiche, AP17-Dashboards, Zähler-DUMMY, Datenschema und AP13-Ausgabe blieben unverändert.
+Berechnungsformeln, Abrechnungsergebnisse, Arbeitsweiche, AP13-Brieflayout, Druck/PDF/Schwarzweiß, Schema und Datenvertrag wurden nicht fachlich verändert. Der Zählerbereich unter Objektvorbereitung bleibt DUMMY.
 
-## Fachliche Abgrenzung
+## Nächster Stand
 
-Produktive Dashboardwerte, Fortschritt, Empfehlungen, zusätzliche Fachprüfungen, produktive Zählerverwaltung, Mehrgebäude- und Mehrprojektfähigkeit bleiben Folgepaketen vorbehalten.
+AP20 ist offen und nicht Bestandteil dieses Releases.

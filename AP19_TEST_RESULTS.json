@@ -1,0 +1,69 @@
+{
+  "version": "99.4.22",
+  "displayVersion": "V99.4.22",
+  "workPackage": "AP19",
+  "status": "passed",
+  "releaseDate": "2026-07-14",
+  "sourceVersion": "99.4.21",
+  "sourceWorkPackage": "AP18",
+  "schema": 5,
+  "dataLayerContract": 1,
+  "documentLayoutVersion": 4,
+  "billingRecordsByStatus": {
+    "angelegt": 0,
+    "inBearbeitung": 1,
+    "abgeschlossen": 0,
+    "archiviert": 4,
+    "gesamt": 5
+  },
+  "contextStates": 3,
+  "guardedWriteActions": 52,
+  "contextBoundNavigationItems": 10,
+  "productiveDashboardValues": 28,
+  "statusDefinitions": 9,
+  "productiveCheckRules": 8,
+  "statusAndCheckRules": 17,
+  "removedHeaderComponents": 10,
+  "navigationSeparatorRules": 2,
+  "browserHarnessScenarios": 5,
+  "browserHarnessChecks": 42,
+  "browserFallbackHarness": "passed",
+  "serverBasedBrowserSuite": "blocked_by_host_policy",
+  "checks": {
+    "versionAndContracts": "passed",
+    "editAndView": "passed",
+    "readOnlyProtection": "passed",
+    "closeBilling": "passed",
+    "dirtyState": "passed",
+    "directEntriesAndNavigation": "passed",
+    "dashboardsAndStatus": "passed",
+    "keyboardAndFocus": "passed",
+    "responsive": "passed",
+    "letterPrintPdfMonochromeRegression": "passed_static_and_unchanged_modules",
+    "pwaOffline": "passed_static",
+    "existingRegressionTests": "passed_non_server_suite",
+    "syntax": "passed",
+    "fixtures": "passed_6_cases",
+    "metering": "passed",
+    "architecture": "passed_AP6_to_AP19",
+    "releaseContents": "passed"
+  },
+  "knownLimitations": [
+    "Produktiver Zählerbereich bleibt außerhalb AP19 DUMMY.",
+    "Serverbasierte Playwright-Navigation ist durch die Host-Richtlinie der Prüfumbgebung blockiert.",
+    "Physische Drucker- und native PWA-Geräteabnahme bleibt eine Zielsystemprüfung."
+  ],
+  "fileChanges": {
+    "added": 8,
+    "modified": 46,
+    "removed": 0,
+    "totalChanged": 54
+  },
+  "testInventory": {
+    "javascriptUnits": 52,
+    "fixtureCases": 6,
+    "architecturePackages": "AP6-AP19",
+    "browserScenarios": 5,
+    "browserChecks": 42
+  }
+}

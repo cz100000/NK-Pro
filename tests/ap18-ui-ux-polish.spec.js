@@ -202,7 +202,7 @@ test("Manifest- und PWA-Icons sind abrufbar und maskierbare Varianten quadratisc
   const runtime = attachRuntimeGuards(page);
   await openFreshApp(page);
   const manifest = await page.evaluate(async () => (await fetch("./manifest.webmanifest")).json());
-  expect(manifest.version).toBe("99.4.21");
+  expect(manifest.version).toBe("99.4.22");
   expect(manifest.icons.some(icon => icon.purpose === "maskable" && icon.sizes === "192x192")).toBe(true);
   expect(manifest.icons.some(icon => icon.purpose === "maskable" && icon.sizes === "512x512")).toBe(true);
   for (const icon of manifest.icons) {

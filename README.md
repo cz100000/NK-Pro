@@ -1,52 +1,36 @@
-# NK-Pro V99.4.21 – Korrekturen, UI-Feinschliff und UX-Bereinigung
+# NK-Pro V99.4.22
 
-NK-Pro ist eine lokale, frameworkfreie HTML/CSS/JavaScript-PWA zur Erstellung, Prüfung, Archivierung und Ausgabe von Nebenkostenabrechnungen. AP18 vereinheitlicht Navigation, Aktionsflächen, Fokuszustände, Markenassets, PWA-Icons und die Bildschirmbedienung der Briefvorschau, ohne Fach- oder Dokumentlogik zu verändern.
+NK-Pro ist eine lokale, frameworkfreie PWA zur Vorbereitung und Durchführung von Nebenkostenabrechnungen.
 
-## Verbindlicher Stand
+## Aktueller Stand
 
-| Merkmal | Wert |
-|---|---|
-| App-Version | V99.4.21 |
-| Basis | V99.4.20 / AP17 |
-| Versionsname | AP18-Korrekturen, UI-Feinschliff und UX-Bereinigung |
-| Datenschema | 5 |
-| Datenebenenvertrag | 1 |
-| Abrechnungssnapshot | 2 |
-| Dokumentlayout | 4 |
-| UI-System | 4 |
-| Navigation | 5 |
-| PWA-Cache | `nk-pro-v99-4-21-ap18` |
+**AP19 – Produktive Bereichsübersichten und kontrollierter Abrechnungskontext**
 
-## AP18-Kernergebnis
+- Anwendungsversion: 99.4.22
+- Datenschema: 5
+- Datenebenenvertrag: 1
+- Dokumentlayout: 4
+- Grundlage: V99.4.21 / AP18
 
-- neues lokales NK-PRO-Logo sowie Favicon-, iOS-, reguläre und maskierbare PWA-Icons,
-- dauerhaft sichtbarer und klar gewichteter globaler Start-Eintrag,
-- acht zentrale Button-/Interaktionsvarianten mit konsistenten Hover-, Fokus-, Aktiv- und Deaktivzuständen,
-- Briefvorschau mit Ganze Seite, Seitenbreite, 40–200 Prozent, 10-Prozent-Schritten und Sitzungsspeicherung,
-- Werkzeugleiste der Briefvorschau in Ansicht, Darstellung und Ausgabe gruppiert,
-- kompaktere Kontextleiste und Seitenköpfe,
-- Responsive-, Dialog-, Tabellen-, Formular- und Fokus-Feinschliff,
-- 24 bereinigte CSS-Regeln/Blöcke und zwei ersetzte Inline-Stile,
-- unveränderte Daten-, Fach-, Abrechnungs-, Zähler-, Brief-, Druck-, PDF- und Schwarzweißlogik.
+Nach jedem normalen Start ist keine Abrechnung geöffnet. Abrechnungen werden ausschließlich über „Nebenkosten abrechnen – Übersicht“ ausdrücklich mit **Bearbeiten** oder **Ansehen** geöffnet. Archivierte Abrechnungen besitzen zusätzlich **Zur Korrektur öffnen**.
 
-## Start und Tests
+Die beiden Bereichsübersichten verwenden produktive Werte aus dem aktuellen Projektzustand. Der Zählerbereich unter „Objekt vorbereiten“ bleibt ein gekennzeichneter DUMMY.
 
-Die Anwendung kann direkt über `index.html` lokal gestartet werden. Für den reproduzierbaren Testpfad:
+## Start
 
-```bash
+`index.html` über einen statischen Webserver öffnen. Für die Offline-PWA ist ein sicherer Ursprung erforderlich.
+
+## Prüfung
+
+```text
 npm ci
-npx playwright install chromium
-npm run release:check
+npm run test:syntax
+npm run test:fixtures
+npm run test:metering
+npm run test:architecture
+npm run test:contents
+npm run test:ap19:harness
+npm run test:release
 ```
 
-Ein bereits vorhandener Chromium-Browser kann über `CHROMIUM_EXECUTABLE_PATH` verwendet werden. `node_modules`, Testreports, Browserprofile und eingebettete Archive gehören nicht in die Release-ZIP.
-
-## Verbindliche AP18-Dokumente
-
-- `AP18_KORREKTUREN_UI_FEINSCHLIFF_UND_UX_BEREINIGUNG.md`
-- `AP18_PRUEFBERICHT.md`
-- `AP18_TEST_RESULTS.json`
-- `AP18_DATEIAENDERUNGEN.md`
-- `AP18_DATEIAENDERUNGEN.json`
-- `AP18_RELEASE_CONTENT_POLICY.json`
-- `NK-PRO-PROJEKTSTAND.md`
+Die vollständige AP19-Beschreibung steht in `AP19_PRODUKTIVE_BEREICHSUEBERSICHTEN_UND_KONTROLLIERTER_ABRECHNUNGSKONTEXT.md`.

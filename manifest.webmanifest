@@ -1,7 +1,7 @@
 {
-  "name": "NK-Pro V99.4.21",
+  "name": "NK-Pro V99.4.22",
   "short_name": "NK-Pro",
-  "description": "Lokale Nebenkostenabrechnung mit konsistentem UI-System, optimierter Briefvorschau und vollständiger Offline-PWA.",
+  "description": "Lokale Nebenkostenabrechnung mit produktiven Bereichsübersichten, kontrolliertem Abrechnungskontext und schreibgeschützter Ansicht.",
   "lang": "de-DE",
   "id": "./",
   "start_url": "./",
@@ -9,7 +9,7 @@
   "display": "standalone",
   "background_color": "#f4f6f9",
   "theme_color": "#031d41",
-  "version": "99.4.21",
+  "version": "99.4.22",
   "icons": [
     {
       "src": "./icons/icon-180.png",

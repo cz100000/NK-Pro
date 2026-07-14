@@ -1,8 +1,8 @@
 {
-  "name": "nk-pro-v99-4-21",
-  "version": "99.4.21",
+  "name": "nk-pro-v99-4-22",
+  "version": "99.4.22",
   "private": true,
-  "description": "AP18-Korrekturen, UI-Feinschliff und UX-Bereinigung für NK-Pro V99.4.21",
+  "description": "AP19 – Produktive Bereichsübersichten und kontrollierter Abrechnungskontext für NK-Pro V99.4.22",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
     "test:fixtures": "node tools/check-fixtures.cjs",
@@ -12,7 +12,7 @@
     "test:report": "playwright show-report",
     "test:release": "node tools/check-release-consistency.cjs",
     "test:metering": "node tests/metering-domain.test.cjs",
-    "test:architecture": "node tests/ap6-modularization.test.cjs && node tests/ap7-ui-integration.test.cjs && node tests/ap8-application-actions.test.cjs && node tests/ap9-core-orchestration.test.cjs && node tests/ap10-archive-year-quality-diagnostics.test.cjs && node tests/ap11-navigation.test.cjs && node tests/ap12-app-decoupling.test.cjs && node tests/ap13-letter-layout.test.cjs && node tests/ap14-ui-navigation.test.cjs && node tests/ap15-integration-release.test.cjs && node tests/ap17-area-dashboards.test.cjs && node tests/ap18-ui-ux-polish.test.cjs",
+    "test:architecture": "node tests/ap6-modularization.test.cjs && node tests/ap7-ui-integration.test.cjs && node tests/ap8-application-actions.test.cjs && node tests/ap9-core-orchestration.test.cjs && node tests/ap10-archive-year-quality-diagnostics.test.cjs && node tests/ap11-navigation.test.cjs && node tests/ap12-app-decoupling.test.cjs && node tests/ap13-letter-layout.test.cjs && node tests/ap14-ui-navigation.test.cjs && node tests/ap15-integration-release.test.cjs && node tests/ap17-area-dashboards.test.cjs && node tests/ap18-ui-ux-polish.test.cjs && node tests/ap19-billing-context-dashboards.test.cjs",
     "test:visual": "playwright test --project=ap11-navigation --grep \"Visuelle AP11-Referenzen\" --workers=1",
     "test:ap13": "node tests/ap13-letter-layout.test.cjs && playwright test --project=ap13-letter-layout --workers=1",
     "test:ap14": "node tests/ap14-ui-navigation.test.cjs && playwright test --project=ap14-ui-navigation --workers=1",
@@ -20,7 +20,9 @@
     "test:ap15": "node tests/ap15-integration-release.test.cjs && playwright test --project=ap15-integration-release --workers=1",
     "release:check": "npm run test:syntax && npm run test:fixtures && npm run test:metering && npm run test:architecture && npm run test:contents && npm run test:release && npm run test:browser",
     "test:ap17": "node tests/ap17-area-dashboards.test.cjs && playwright test --project=ap17-area-dashboards --workers=1",
-    "test:ap18": "node tests/ap18-ui-ux-polish.test.cjs && playwright test --project=ap18-ui-ux-polish --workers=1"
+    "test:ap18": "node tests/ap18-ui-ux-polish.test.cjs && playwright test --project=ap18-ui-ux-polish --workers=1",
+    "test:ap19": "node tests/ap19-billing-context-dashboards.test.cjs && playwright test --project=ap19-billing-context-dashboards --workers=1",
+    "test:ap19:harness": "node tools/check-ap19-browser-harness.cjs"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1"

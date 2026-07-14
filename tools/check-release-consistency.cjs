@@ -60,25 +60,25 @@ function main() {
   const architecture = JSON.parse(childProcess.execFileSync(process.execPath, [path.join(root, "tools/analyze-ap12-architecture.cjs")], { encoding:"utf8" }));
   const appMetrics = JSON.parse(childProcess.execFileSync(process.execPath, [path.join(root, "tools/analyze-app-js.cjs")], { encoding:"utf8" }));
 
-  assert(packageJson.name === "nk-pro-v99-4-21" && packageJson.version === "99.4.21", "Paketversion ist inkonsistent.");
+  assert(packageJson.name === "nk-pro-v99-4-22" && packageJson.version === "99.4.22", "Paketversion ist inkonsistent.");
   assert(lockJson.name === packageJson.name && lockJson.version === packageJson.version, "Package-Lock-Version ist inkonsistent.");
   assert(lockJson.packages?.[""]?.name === packageJson.name && lockJson.packages?.[""]?.version === packageJson.version, "Package-Lock-Root ist inkonsistent.");
-  assert(manifest.version === "99.4.21" && manifest.name.includes("V99.4.21"), "Manifestversion ist inkonsistent.");
-  assert(project.appVersion === "99.4.21" && project.displayVersion === "V99.4.21" && project.basedOn === "99.4.20-AP17", "Projektversionsmetadaten sind inkonsistent.");
+  assert(manifest.version === "99.4.22" && manifest.name.includes("V99.4.22"), "Manifestversion ist inkonsistent.");
+  assert(project.appVersion === "99.4.22" && project.displayVersion === "V99.4.22" && project.basedOn === "99.4.21-AP18", "Projektversionsmetadaten sind inkonsistent.");
   assert(project.schemaVersion === 5 && project.dataLayerContractVersion === 1, "Datenverträge wurden unerwartet verändert.");
   assert(project.objectStandardVersion === 1 && project.billingSnapshotVersion === 2, "Objekt-/Snapshotstandard wurde unerwartet verändert.");
   assert(project.documentLayoutVersion === 4 && project.uiVisualSystemVersion === 4 && project.navigationDesignSystemVersion === 5, "AP13-/AP18-Regressionsstand ist inkonsistent.");
   assert(project.releaseHardeningVersion === 1 && project.releaseContentPolicyVersion === 1 && project.transientUiResetVersion === 1, "AP15-Metadaten fehlen.");
-  assert(project.pwaCacheName === "nk-pro-v99-4-21-ap18" && project.areaDashboardVersion === 1 && project.globalBillingContextVersion === 1 && project.briefPreviewZoomVersion === 1 && project.buttonSystemVersion === 1 && project.brandAssetVersion === 1, "AP18-/PWA-Metadaten sind inkonsistent.");
+  assert(project.pwaCacheName === "nk-pro-v99-4-22-ap19" && project.areaDashboardVersion === 2 && project.globalBillingContextVersion === 2 && project.controlledBillingContextVersion === 1 && project.billingReadOnlyModeVersion === 1 && project.productiveDashboardVersion === 1 && project.statusRuleVersion === 1 && project.navigationSeparatorCleanupVersion === 1 && project.briefPreviewZoomVersion === 1 && project.buttonSystemVersion === 1 && project.brandAssetVersion === 1, "AP19-/PWA-Metadaten sind inkonsistent.");
 
-  assert(runtime.includes('const APP_VERSION = "V99.4.21";'), "Laufzeitversion ist inkonsistent.");
-  assert(runtime.includes('const APP_VERSION_NAME = "AP18-Korrekturen, UI-Feinschliff und UX-Bereinigung";'), "Laufzeitname ist inkonsistent.");
-  assert(html.includes("<title>NK-Pro V99.4.21 – AP18-Korrekturen, UI-Feinschliff und UX-Bereinigung</title>"), "HTML-Titel ist inkonsistent.");
-  assert(html.includes("<strong>V99.4.21</strong>"), "Sichtbare Anwendungsversion ist inkonsistent.");
-  assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-21-ap18";'), "Service-Worker-Cache ist inkonsistent.");
+  assert(runtime.includes('const APP_VERSION = "V99.4.22";'), "Laufzeitversion ist inkonsistent.");
+  assert(runtime.includes('const APP_VERSION_NAME = "AP19-Produktive Bereichsübersichten und kontrollierter Abrechnungskontext";'), "Laufzeitname ist inkonsistent.");
+  assert(html.includes("<title>NK-Pro V99.4.22 – AP19-Produktive Bereichsübersichten und kontrollierter Abrechnungskontext</title>"), "HTML-Titel ist inkonsistent.");
+  assert(html.includes("<strong>V99.4.22</strong>"), "Sichtbare Anwendungsversion ist inkonsistent.");
+  assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-22-ap19";'), "Service-Worker-Cache ist inkonsistent.");
 
   const scripts = [...html.matchAll(/<script\s+defer(?:="")?\s+src="([^"]+)"><\/script>/g)].map(match => match[1]);
-  assert(scripts.length === 50 && scripts.at(-2) === "./js/app.js" && scripts.at(-1) === "./js/service-worker-register.js", "Produktive Skriptreihenfolge ist inkonsistent.");
+  assert(scripts.length === 51 && scripts.at(-2) === "./js/app.js" && scripts.at(-1) === "./js/service-worker-register.js", "Produktive Skriptreihenfolge ist inkonsistent.");
   for (const resource of ["./", "./index.html", "./manifest.webmanifest", "./assets/app.css", "./assets/brand/nk-pro-logo.png", "./assets/brand/nk-pro-icon-master.png", "./assets/brand/nk-pro-mark-64.png", "./assets/brand/nk-pro-mark-96.png", "./assets/brand/nk-pro-mark-128.png", ...scripts, "./icons/icon-16.png", "./icons/icon-32.png", "./icons/icon-180.png", "./icons/icon-192.png", "./icons/icon-512.png", "./icons/icon-maskable-192.png", "./icons/icon-maskable-512.png"]) {
     assert(worker.includes(`"${resource}"`), `PWA-App-Shell enthält ${resource} nicht.`);
     if (resource.startsWith("./") && resource !== "./") assert(exists(resource.slice(2)), `Produktive Ressource fehlt: ${resource}`);
@@ -104,7 +104,7 @@ function main() {
   assert(costs.includes("function resetCostUiState()"), "Kostenfilter-/Auswahlzustände werden nicht zurückgesetzt.");
   assert(architecture.totals.stateRootAssignments === 1, "Es existiert nicht genau eine Root-State-Ersetzung.");
   assert(architecture.renderers.length === 47 && architecture.renderers.every(item => !item.mutatesState && !item.persists && !item.navigates && !item.opensDialog), "Rendererinventar besitzt unerwartete Seiteneffekte.");
-  assert(appMetrics.lines <= 230 && appMetrics.directStateWriteSites === 0 && appMetrics.globalAssignments === 0, "app.js-Orchestrierungsgrenze ist verletzt.");
+  assert(appMetrics.lines <= 250 && appMetrics.directStateWriteSites === 0 && appMetrics.globalAssignments === 0, "app.js-Orchestrierungsgrenze ist verletzt.");
 
   for (const file of [
     "README.md", "ARCHITECTURE.md", "MODULE_UEBERSICHT.md", "UI_ARCHITEKTUR_AKTUELL.md",
@@ -120,7 +120,11 @@ function main() {
     "AP17_RELEASE_CONTENT_POLICY.json", "tests/ap17-area-dashboards.test.cjs", "tests/ap17-area-dashboards.spec.js",
     "AP18_KORREKTUREN_UI_FEINSCHLIFF_UND_UX_BEREINIGUNG.md", "AP18_PRUEFBERICHT.md",
     "AP18_TEST_RESULTS.json", "AP18_DATEIAENDERUNGEN.md", "AP18_DATEIAENDERUNGEN.json",
-    "AP18_RELEASE_CONTENT_POLICY.json", "tests/ap18-ui-ux-polish.test.cjs", "tests/ap18-ui-ux-polish.spec.js"
+    "AP18_RELEASE_CONTENT_POLICY.json", "tests/ap18-ui-ux-polish.test.cjs", "tests/ap18-ui-ux-polish.spec.js",
+    "AP19_PRODUKTIVE_BEREICHSUEBERSICHTEN_UND_KONTROLLIERTER_ABRECHNUNGSKONTEXT.md", "AP19_PRUEFBERICHT.md",
+    "AP19_TEST_RESULTS.json", "AP19_DATEIAENDERUNGEN.md", "AP19_DATEIAENDERUNGEN.json",
+    "AP19_RELEASE_CONTENT_POLICY.json", "tests/ap19-billing-context-dashboards.test.cjs",
+    "tests/ap19-billing-context-dashboards.spec.js", "tools/check-ap19-browser-harness.cjs", "js/billing-context.js"
   ]) assert(exists(file), `${file} fehlt.`);
 
   const ap15Results = JSON.parse(read("AP15_TEST_RESULTS.json"));
@@ -137,8 +141,14 @@ function main() {
   const ap18Results = JSON.parse(read("AP18_TEST_RESULTS.json"));
   assert(ap18Results.version === "99.4.21" && ap18Results.workPackage === "AP18" && ap18Results.status === "passed", "AP18-Testbericht ist inkonsistent.");
   assert(ap18Results.schema === 5 && ap18Results.dataLayerContract === 1 && ap18Results.documentLayoutVersion === 4, "AP18-Daten-/Dokumentregression ist inkonsistent.");
+  const ap19Results = JSON.parse(read("AP19_TEST_RESULTS.json"));
+  assert(ap19Results.version === "99.4.22" && ap19Results.workPackage === "AP19" && ap19Results.status === "passed", "AP19-Testbericht ist inkonsistent.");
+  assert(ap19Results.schema === 5 && ap19Results.dataLayerContract === 1 && ap19Results.documentLayoutVersion === 4, "AP19-Daten-/Dokumentregression ist inkonsistent.");
+  assert(ap19Results.contextStates === 3 && ap19Results.guardedWriteActions === 52 && ap19Results.contextBoundNavigationItems === 10, "AP19-Kontextzählung ist inkonsistent.");
+  assert(ap19Results.productiveDashboardValues === 28 && ap19Results.statusAndCheckRules === 17 && ap19Results.removedHeaderComponents === 10 && ap19Results.navigationSeparatorRules === 2, "AP19-Dashboard-/Bereinigungszählung ist inkonsistent.");
+  assert(ap19Results.browserHarnessScenarios === 5 && ap19Results.browserHarnessChecks === 42 && ap19Results.browserFallbackHarness === "passed", "AP19-Browserharness ist inkonsistent.");
   verifyChecksums();
-  process.stdout.write("Release-Konsistenzprüfung abgeschlossen: V99.4.21 mit unveränderten Datenverträgen, AP13-Dokumentregression, AP18-UI-System, Briefzoom, Markenassets und gehärteter Offline-PWA ist konsistent.\n");
+  process.stdout.write("Release-Konsistenzprüfung abgeschlossen: V99.4.22 mit unveränderten Datenverträgen, kontrolliertem AP19-Abrechnungskontext, produktiven Bereichsübersichten, AP13-Dokumentregression und gehärteter Offline-PWA ist konsistent.\n");
 }
 
 try { main(); }

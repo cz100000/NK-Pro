@@ -1,12 +1,11 @@
-# NK-Pro – Technische und fachliche Restpunkte V99.4.21
+# Technische Restpunkte
 
-1. Stammdatenvollständigkeit, Abrechnungsfortschritt, offene Punkte, nächster Schritt, Workflowstatus und Qualitätsverdichtung sind weiterhin bewusst nur Vorschauwerte.
-2. Das Zählerinventar ist ausschließlich ein statischer Clickdummy; Datenhaltung und Fachlogik benötigen ein eigenes Folgepaket.
-3. Der Gebäudekurzcode ARB5 ist ein verbindlicher Einzelobjekt-Kontext; Mehrgebäudelogik existiert nicht.
-4. Reale Druckergebnisse hängen vom Browser-Druckdialog und Druckertreiber ab.
-5. Classic-Script-Kompatibilitätswrapper und globale Modulnamensräume bleiben begründet bestehen.
-6. Eine Umstellung auf native ES-Module oder ein Buildsystem ist nicht Bestandteil von AP18.
-7. Ein tatsächlicher PWA-Installations- und Offline-Neustart auf einem Endgerät muss außerhalb administrativ eingeschränkter Testumgebungen ergänzend geprüft werden.
-8. Vereinzelte historisch gewachsene CSS-Bereiche bleiben bestehen; AP18 entfernt nur eindeutig ersetzte oder leere Regeln und vermeidet eine riskante Komplettumschreibung.
+- „Objekt vorbereiten → Zähler“ ist weiterhin ein nicht produktiver DUMMY.
+- Die Anwendung ist auf einen Projekt-/Gebäudekontext ausgelegt.
+- Die JavaScript-Laufzeit verwendet weiterhin klassische, geordnete Skripte statt eines Buildsystems.
+- Native PWA-Installation, Betriebssystem-Shortcuts und physische Drucker müssen auf Zielgeräten abgenommen werden.
+- Der isolierte Archiv-Viewer besitzt einen expliziten Viewer-Startmodus; der normale Anwendungskontext startet stets geschlossen.
+- Die vollständige serverbasierte Playwright-Suite benötigt eine Umgebung ohne Loopback-Sperre.
+- Eine vollständige mobile Neuentwicklung war nicht Bestandteil von AP19.
 
-AP18 führt keine neue technische Produktionsabhängigkeit und keine Datenschemaänderung ein.
+Die früheren AP17-Vorschauwerte der beiden Bereichsübersichten sind mit AP19 beseitigt.

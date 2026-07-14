@@ -133,16 +133,19 @@ function createArchiveViewerHtml(item) {
 
 
 
-function openArchiveStateInApp(item) {
+function openArchiveStateInApp(item, index) {
   const viewerState = NK_PRO_MODULES.archiveActions.viewerStateFromItem(item);
   if (!archiveReturnState) archiveReturnState = clone(state);
   replaceApplicationState(viewerState);
   pendingStorageWarning = "";
   renderErrors = [];
+  const key = archiveBillingRecordKey(item, Number(index));
+  NK_PRO_MODULES.billingContext.open({ recordKey:key, recordType:"archive", archiveIndex:Number(index), label:periodLabelShort() }, NK_PRO_MODULES.billingContext.MODES.VIEW);
+  document.documentElement.dataset.billingExplicitlyOpened="true";
   renderAll();
   billingContextOpen = true;
-  enterBillingMode("mieter");
-  setActionMessage("Archivansicht geöffnet: " + periodLabelShort());
+  enterBillingMode(validBillingTarget(key));
+  setActionMessage("Archivierte Abrechnung nur zur Ansicht geöffnet: " + periodLabelShort());
   renderActionFeedback();
 }
 function archiveViewerFileName(item) {
@@ -189,6 +192,7 @@ function openArchiveViewerDocument(viewerHtml, item) {
   return false;
 }
 function openArchiveYear(index) {
+  if (NK_PRO_MODULES.billingContext.isOpen() && !prepareBillingContextSwitch()) return;
   ensureYearData();
   const item = state.jahresArchiv[index];
   if (!item) {
@@ -197,7 +201,7 @@ function openArchiveYear(index) {
   }
 
   try {
-    openArchiveStateInApp(item);
+    openArchiveStateInApp(item, index);
   } catch(e) {
     console.warn("Archivansicht konnte nicht vorbereitet werden", e);
     alert("Die Archivansicht konnte nicht vorbereitet werden.\n" + String(e && (e.message || e) || "Unbekannter Fehler"));

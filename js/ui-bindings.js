@@ -107,7 +107,8 @@
       "cost.toggleAllVisibleRows":call(handlers, "toggleAllVisibleCostRows")
     });
     registerController("billing", "Abrechnungslebenszyklus, Erfassungsaktionen und zentrale Ergebnisdarstellung", {
-      "billing.openCurrent":call(handlers, "openCurrentBilling"), "billing.openCreateModal":call(handlers, "openCreateBillingModal"),
+      "billing.openCurrent":call(handlers, "openCurrentBilling"), "billing.openCurrentEdit":call(handlers, "openCurrentBillingForEdit"), "billing.openCurrentView":call(handlers, "openCurrentBillingForView"),
+      "billing.switchToEdit":call(handlers, "switchCurrentBillingToEdit"), "billing.closeContext":call(handlers, "closeBillingContext"), "billing.openCreateModal":call(handlers, "openCreateBillingModal"),
       "billing.closeCreateModal":call(handlers, "closeCreateBillingModal"), "billing.createFromModal":call(handlers, "createNewBillingFromModal"),
       "billing.openDeleteModal":call(handlers, "openDeleteBillingModal"), "billing.closeDeleteModal":call(handlers, "closeDeleteBillingModal"),
       "billing.confirmDelete":call(handlers, "confirmDeleteBilling"), "billing.handleDeleteKey":context => requireHandler(handlers, "handleDeleteBillingKey")(context.key),
@@ -145,7 +146,7 @@
     });
     registerController("archive", "Archivansicht, Wiederbearbeitung und archivspezifische Downloads", {
       "archive.openYear":call(handlers, "openArchiveYear"), "archive.showValidation":call(handlers, "showArchiveValidation"),
-      "archive.downloadYear":call(handlers, "downloadArchiveYear"), "archive.reopenForRework":interactiveAppCall(applicationActions, "archive", "reopenForRework", handlers),
+      "archive.downloadYear":call(handlers, "downloadArchiveYear"), "archive.reopenForRework":call(handlers, "openArchiveForCorrection"),
       "archive.currentYear":interactiveAppCall(applicationActions, "archive", "currentYear", handlers), "archive.downloadFull":call(handlers, "downloadFullArchive"),
       "archive.closeViewer":call(handlers, "closeArchiveViewer")
     });

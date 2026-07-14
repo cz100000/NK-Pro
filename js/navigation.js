@@ -6,7 +6,7 @@
   const NAV_GROUP_STORAGE_KEY = "nkpro.workflowNavigation.v4";
   const LEGACY_NAV_GROUP_STORAGE_KEY = "nkpro.workflowNavigation.v3";
   const GROUP_KEYS = ["group-object", "group-billing", "group-archive", "group-extras"];
-  const BILLING_CONTEXT_TABS = ["mieter","einstellungen","einnahmen","manuellewerte","verbraeuche","umlage","vorauszahlungsanpassung","qualitaet","briefe","export"];
+  const BILLING_CONTEXT_TABS = ["start","mieter","einstellungen","einnahmen","manuellewerte","verbraeuche","umlage","vorauszahlungsanpassung","qualitaet","briefe","export"];
   const TAB_PATHS = {
     objektuebersicht:"group-object", objekt:"group-object", mieterverwaltung:"group-object", wohnungsverwaltung:"group-object", wasser:"group-object",
     start:"group-billing", mieter:"group-billing", einstellungen:"group-billing", einnahmen:"group-billing",
@@ -96,30 +96,54 @@
   function updateWorkflowNavigationContext() {
     const bar = document.querySelector("[data-global-billing-context]");
     const object = document.querySelector("[data-global-billing-object]");
+    const code = document.querySelector("[data-global-billing-code]");
     const year = document.querySelector("[data-global-billing-year]");
     const status = document.querySelector("[data-global-billing-status]");
+    const mode = document.querySelector("[data-global-billing-mode]");
+    const closeAction = document.querySelector("[data-global-billing-close]");
+    const overviewAction = document.querySelector("[data-global-billing-overview]");
     const currentYear = String(valueFromProvider("currentYear", "") || "");
     const objectLabel = valueFromProvider("objectLabel", "Objekt") || "Objekt";
     const archive = !!valueFromProvider("isArchiveViewer", false);
-    const available = archive || !!valueFromProvider("hasActiveBilling", true);
     const finalized = !!valueFromProvider("isFinalized", false);
     const contextOpen = !!valueFromProvider("isContextOpen", false);
+    const contextMode = global.NKProBillingContext ? global.NKProBillingContext.modeLabel() : (contextOpen ? "Bearbeiten" : "Keine Abrechnung geöffnet");
     const active = document.querySelector("section.tab.active");
-    const relevantPage = !!(active && BILLING_CONTEXT_TABS.includes(active.id));
-    if (bar) bar.hidden = !(contextOpen && relevantPage);
-    if (object) object.textContent = objectLabel;
-    if (year) year.textContent = currentYear || "–";
+    const activeId = active && active.id || "";
+    const relevantPage = BILLING_CONTEXT_TABS.includes(activeId);
+    if (bar) {
+      bar.hidden = !relevantPage;
+      bar.classList.toggle("is-empty", !contextOpen);
+      bar.classList.toggle("is-readonly", contextOpen && global.NKProBillingContext && global.NKProBillingContext.isReadOnly());
+    }
+    if (object) object.textContent = contextOpen ? objectLabel : "Keine Abrechnung geöffnet";
+    if (code) code.textContent = contextOpen ? (typeof global.currentObjectShortCode === "function" ? global.currentObjectShortCode() : "–") : "–";
+    if (year) year.textContent = contextOpen ? (currentYear || "–") : "–";
     if (status) {
-      status.classList.remove("is-archive", "is-finalized", "is-working");
-      if (archive) { status.textContent = "Nur Ansicht"; status.classList.add("is-archive"); }
-      else if (finalized) { status.textContent = "Finalisiert"; status.classList.add("is-finalized"); }
+      status.classList.remove("is-archive", "is-finalized", "is-working", "is-none");
+      if (!contextOpen) { status.textContent = "Nicht geöffnet"; status.classList.add("is-none"); }
+      else if (archive) { status.textContent = "Archiviert"; status.classList.add("is-archive"); }
+      else if (finalized) { status.textContent = "Abgeschlossen"; status.classList.add("is-finalized"); }
       else { status.textContent = "In Bearbeitung"; status.classList.add("is-working"); }
     }
+    if (mode) {
+      const readOnly=contextOpen && global.NKProBillingContext && global.NKProBillingContext.isReadOnly();
+      mode.classList.toggle("is-readonly", readOnly);
+      mode.innerHTML=readOnly
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg><span>Nur ansehen</span>'
+        : '<span>'+String(contextMode||"Keine Abrechnung geöffnet").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")+'</span>';
+    }
+    if (closeAction) closeAction.hidden = !contextOpen;
+    if (overviewAction) overviewAction.hidden = contextOpen || activeId === "start";
     document.querySelectorAll('[data-requires-billing="true"]').forEach(function (button) {
-      button.disabled = !available;
-      button.setAttribute("aria-disabled", available ? "false" : "true");
+      button.disabled = false;
+      button.setAttribute("aria-disabled", contextOpen ? "false" : "true");
+      button.classList.toggle("is-context-disabled", !contextOpen);
+      if (!contextOpen) button.setAttribute("title", "Öffnen Sie zuerst eine Abrechnung zur Bearbeitung oder Ansicht.");
+      else button.removeAttribute("title");
     });
   }
+
   function setSidebarCollapsed(collapsed) {
     const mobile = window.matchMedia && window.matchMedia("(max-width: 980px)").matches;
     if (mobile) { document.body.classList.remove("sidebar-open"); return; }

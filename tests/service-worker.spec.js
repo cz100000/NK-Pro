@@ -5,7 +5,7 @@ const path = require("node:path");
 const { test, expect } = require("@playwright/test");
 const { root } = require("./test-helpers.cjs");
 
-test("Service Worker installiert den V99.4.21-App-Shell, begrenzt Cachebereinigung und härtet Offline-Fallbacks", async ({ page }) => {
+test("Service Worker installiert den V99.4.22-App-Shell, begrenzt Cachebereinigung und härtet Offline-Fallbacks", async ({ page }) => {
   const source = fs.readFileSync(path.join(root, "service-worker.js"), "utf8");
   const result = await page.evaluate(async workerSource => {
     const listeners = {};
@@ -14,7 +14,7 @@ test("Service Worker installiert den V99.4.21-App-Shell, begrenzt Cachebereinigu
       "nk-pro-v99-2-7",
       "nk-pro-v99-4-17-ap14",
       "nk-pro-v99-4-19-ap16",
-      "nk-pro-v99-4-21-ap18",
+      "nk-pro-v99-4-22-ap19",
       "fremder-cache"
     ]);
     const cacheEntries = new Map([["http://nkpro.test/index.html", { source:"cached-index" }]]);
@@ -102,7 +102,7 @@ test("Service Worker installiert den V99.4.21-App-Shell, begrenzt Cachebereinigu
   ]));
   expect(result.log.skipWaiting).toBe(1);
   expect(result.log.claimed).toBe(1);
-  expect(result.remaining).toEqual(["fremder-cache", "nk-pro-v99-4-21-ap18"]);
+  expect(result.remaining).toEqual(["fremder-cache", "nk-pro-v99-4-22-ap19"]);
   expect(result.log.deleted).toEqual(expect.arrayContaining(["nk-pro-v99-2-7", "nk-pro-v99-4-17-ap14", "nk-pro-v99-4-19-ap16"]));
   expect(result.log.deleted).not.toContain("fremder-cache");
   expect(result.networkOk).toBe(true);

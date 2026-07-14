@@ -108,8 +108,14 @@
     if (event.type === "keydown" && requiredKey && event.key !== requiredKey) return;
     const action = element.getAttribute(attribute);
     if (!action) return;
+    if (global.NKProBillingContext && !global.NKProBillingContext.allowUiAction(action)) {
+      event.preventDefault();
+      global.alert("Diese Abrechnung ist im Ansichtsmodus geöffnet und kann nicht geändert werden.");
+      return;
+    }
     if (event.type === "click" || event.type === "submit" || element.hasAttribute("data-ui-prevent-default")) event.preventDefault();
     const context = { event, element, value:element.value, checked:!!element.checked, files:element.files || null, key:event.key || "" };
+    if (global.NKProBillingContext && global.NKProBillingContext.isEditing() && global.NKProBillingContext.isWriteAction(action)) global.NKProBillingContext.markDirty(true);
     try {
       const args = parseArgs(element).map(value => resolveArg(value, context));
       global.NKProUiController.dispatch(action, { ...context, args });

@@ -73,11 +73,23 @@ function configureCoreOrchestrationModules() {
     diagnostics:NK_PRO_MODULES.diagnostics.describe()
   });
 }
+
+function configureBillingContextModule() {
+  return NK_PRO_MODULES.billingContext.configure({
+    onChange:() => {
+      billingContextOpen = NK_PRO_MODULES.billingContext.isOpen();
+      if (NK_PRO_MODULES.navigation && typeof NK_PRO_MODULES.navigation.updateWorkflowNavigationContext === "function") NK_PRO_MODULES.navigation.updateWorkflowNavigationContext();
+      if (typeof applyBillingContextToDom === "function") applyBillingContextToDom();
+    }
+  });
+}
+
 function configureStateAccess() {
   return NK_PRO_MODULES.stateAccess.configure({
     getState:() => state,
     replaceState:nextState => replaceApplicationState(nextState),
     commit:options => {
+      if (NK_PRO_MODULES.billingContext.isReadOnly() && !options.allowReadOnlyWrite) NK_PRO_MODULES.billingContext.assertWritable(options.reason || "Schreibaktion");
       const commitOptions = { ...options, reason:options.reason || "UI-Controller" };
       return options.allowFinalizationWrite
         ? withFinalizationWriteBypass(() => commitStateChange(commitOptions))
@@ -202,6 +214,7 @@ function configureCompatibilityRegistry() {
 const STARTUP_RESULT = NK_PRO_MODULES.appBootstrap.start([
   { name:"Kernmodule konfigurieren", run:() => configureCoreOrchestrationModules() },
   { name:"Arbeitszustand laden", run:() => initializeApplicationState() },
+  { name:"Abrechnungskontext konfigurieren", run:() => configureBillingContextModule() },
   { name:"Zustandszugriff konfigurieren", run:() => configureStateAccess() },
   { name:"Anwendungsaktionen konfigurieren", run:() => configureApplicationActions() },
   { name:"Navigation konfigurieren", run:() => configureNavigationModule() },

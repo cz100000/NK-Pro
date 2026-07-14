@@ -117,9 +117,14 @@ function applyExcelWaterReadings2024ToData(data) {
 }
 
 function saveData(options = {}) {
+  if (NK_PRO_MODULES.billingContext && NK_PRO_MODULES.billingContext.isReadOnly()) {
+    setActionMessage("Diese Abrechnung ist im Ansichtsmodus geöffnet und kann nicht geändert werden.", "warn");
+    renderActionFeedback();
+    return false;
+  }
   if (!options.skipPrepare && typeof prepareStateForPersistence === "function") prepareStateForPersistence("save");
   if (typeof isArchiveViewer === "function" && isArchiveViewer()) {
-    setActionMessage("Archivansicht ist schreibgeschützt. Änderungen werden nicht gespeichert.", "warn");
+    setActionMessage("Diese Abrechnung ist im Ansichtsmodus geöffnet und kann nicht geändert werden.", "warn");
     renderActionFeedback();
     return false;
   }
@@ -151,6 +156,7 @@ function saveData(options = {}) {
     state.meta.storageIntegrityProtectedWithAppVersion = protectedState.meta.storageIntegrityProtectedWithAppVersion;
     pendingStorageWarning = "";
     setActionMessage("Gespeichert " + new Date(state.meta.lastSavedAt).toLocaleString("de-DE"));
+    if (NK_PRO_MODULES.billingContext) NK_PRO_MODULES.billingContext.clearDirty();
     renderSystemMessages();
     renderActionFeedback();
     return true;
@@ -167,6 +173,9 @@ function saveData(options = {}) {
 
 function commitStateChange(options = {}) {
   const reason = String(options.reason || "Änderung");
+  if (NK_PRO_MODULES.billingContext && NK_PRO_MODULES.billingContext.isReadOnly() && !options.allowReadOnlyWrite) {
+    NK_PRO_MODULES.billingContext.assertWritable(reason);
+  }
   const render = options.render !== false;
   const forceAll = options.forceAll === true;
   const tabIds = Array.isArray(options.tabIds) ? options.tabIds.filter(Boolean) : (options.tabId ? [options.tabId] : null);

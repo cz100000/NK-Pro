@@ -18,7 +18,7 @@ const worker = read("service-worker.js");
 
 assert(appMetrics.lines < 300 && appMetrics.bytes < 20_000, `app.js ist zu groß: ${appMetrics.lines} Zeilen/${appMetrics.bytes} Byte.`);
 assert.deepEqual(appMetrics.topLevelFunctionNames.map(item => item.name), [
-  "configureCoreOrchestrationModules", "configureStateAccess", "configureApplicationActions",
+  "configureCoreOrchestrationModules", "configureBillingContextModule", "configureStateAccess", "configureApplicationActions",
   "configureNavigationModule", "registerUiControllers", "startUiEvents",
   "updateUiArchitectureAudit", "configureCompatibilityRegistry"
 ]);
@@ -75,9 +75,9 @@ splitModules.forEach(name => {
   assert(scripts.indexOf(name) < appIndex, `Neues Modul wird nicht vor app.js geladen: ${name}`);
   assert(worker.includes(`"./js/${name}"`), `Neues Modul fehlt in der Offline-App-Shell: ${name}`);
 });
-assert(runtimeConfig.includes('const APP_VERSION = "V99.4.21";'));
-assert(runtimeConfig.includes('const APP_VERSION_NAME = "AP18-Korrekturen, UI-Feinschliff und UX-Bereinigung";'));
-assert(html.includes("NK-Pro V99.4.21 – AP18-Korrekturen, UI-Feinschliff und UX-Bereinigung"));
-assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-21-ap18";'));
+assert(runtimeConfig.includes('const APP_VERSION = "V99.4.22";'));
+assert(runtimeConfig.includes('const APP_VERSION_NAME = "AP19-Produktive Bereichsübersichten und kontrollierter Abrechnungskontext";'));
+assert(html.includes("NK-Pro V99.4.22 – AP19-Produktive Bereichsübersichten und kontrollierter Abrechnungskontext"));
+assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-22-ap19";'));
 
 process.stdout.write(`AP12-Architekturprüfung abgeschlossen: app.js ${appMetrics.lines} Zeilen/${appMetrics.bytes} Byte, 1 Zustandsersetzung, ${architecture.renderers.length} seiteneffektfreie Renderer, 37 entfernte Wrapper und keine alten window-Bindungen.\n`);

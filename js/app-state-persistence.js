@@ -678,7 +678,7 @@ function renderFinalizationStatus() {
   const cls = info.finalized ? "locked" : (info.readiness.level === "err" ? "err" : (info.readiness.level === "warn" ? "warn" : "ok"));
   const status = info.finalized ? "Finalisiert / Eingaben geschützt" : "Noch bearbeitbar";
   const actionHtml = info.finalized
-    ? '<button type="button" class="warn" data-ui-action="billing.unlock">Wiederbearbeitung öffnen</button>'
+    ? '<button type="button" class="warn" data-ui-action="billing.unlock">Zur Bearbeitung öffnen</button>'
     : '<button type="button" class="primary" data-ui-action="billing.finalize">Diese Abrechnung finalisieren</button>';
   el.innerHTML = '<div class="finalization-status-box ' + cls + '"><div class="inline-titlebar"><div><strong>Finalisierung dieser Abrechnung</strong><div class="small">' + escapeHtml(status) + ' · ' + escapeHtml(info.readiness.message) + '</div></div><div class="start-action-stack">' + actionHtml + '</div></div>' +
     '<div class="finalization-grid">' +

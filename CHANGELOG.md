@@ -1,3 +1,15 @@
+# Änderungsprotokoll
+
+## V99.4.22 – AP19 – 14.07.2026
+
+- Produktive Bereichsübersichten aus vorhandenen Projekt- und Qualitätsdaten.
+- Zentraler transienter Abrechnungskontext mit geschlossen, Bearbeiten und Nur ansehen.
+- 52 zentral abgesicherte Schreibaktionen und schreibgeschützter Ansichtsmodus.
+- Gemeinsame Abrechnungsliste mit Bearbeiten, Ansehen, Schließen und Zur Korrektur öffnen.
+- Keine automatische Auswahl oder Wiederherstellung nach Neuladen.
+- Zehn redundante Seitenkopfblöcke und doppelte Navigationstrennlinien bereinigt.
+- Datenschema 5, Datenebenenvertrag 1 und AP13-Dokumentlayout unverändert.
+
 # Changelog
 
 ## V99.4.21 – AP18 Korrekturen, UI-Feinschliff und UX-Bereinigung (14.07.2026)

@@ -2,7 +2,7 @@
 
 **Ziel:** einfacher, stabiler und nachvollziehbarer Arbeitsablauf  
 **Ausgangsversion:** V99.3.0  
-**Aktueller Stand:** V99.4.21  
+**Aktueller Stand:** V99.4.22  
 **Status:** Phase-1-Ziel umgesetzt; Datenmodellziele offen
 
 ## 1. Leitprinzip
@@ -252,3 +252,19 @@ Die sichtbare UI-Struktur und das Design bleiben unverändert. Tabellenfilter un
 - Die Briefvorschau startet mit „Ganze Seite“ und trennt Ansicht, Darstellung und Ausgabe.
 - Benutzerskalierung verändert ausschließlich die Bildschirmansicht, nie Druck oder PDF.
 - Werkzeuggruppen bleiben bei schmalen Fenstern zusammen; vollständige mobile Neuentwicklung ist nicht Teil von AP18.
+
+## Ergänzung V99.4.22 / AP19
+
+Der frühere Abschnitt „Aktive Abrechnung“ wird durch einen verbindlichen kontrollierten Abrechnungskontext präzisiert:
+
+- Nach normalem Start und Browser-Neuladen ist keine Abrechnung geöffnet.
+- Die Abrechnungsübersicht ist der einzige verbindliche Einstiegspunkt.
+- Bearbeiten und Ansehen sind getrennte, ausdrückliche Aktionen.
+- Fachlicher Status und Bedienmodus werden in der gelben Kontextleiste getrennt angezeigt.
+- Ohne Kontext sind zehn Abrechnungs-Unterpunkte sichtbar, aber deaktiviert; ein Direkteinstieg darf keine Abrechnung auswählen.
+- Im Modus Nur ansehen sind 52 schreibende Aktionen technisch gesperrt. Lesen, Navigation, Suche, Filter, Sortierung, Briefvorschau, Druck, PDF und nicht verändernde Exporte bleiben verfügbar.
+- Abrechnung schließen beendet ausschließlich den Arbeitskontext und schützt ungespeicherte Änderungen.
+- Archivierte Abrechnungen verwenden Ansehen oder Zur Korrektur öffnen; es wird keine Kopie erzeugt.
+- Die beiden Bereichsübersichten zeigen produktive Mengen- und Statusangaben statt AP17-Vorschauwerten.
+
+Die Statusbegriffe lauten vollständig, offen, Warnung, blockiert, in Bearbeitung, abgeschlossen, archiviert, DUMMY und nicht verfügbar. Sie werden nie ausschließlich über Farbe vermittelt.

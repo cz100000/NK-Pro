@@ -1,0 +1,379 @@
+{
+  "workPackage": "AP19",
+  "sourceVersion": "99.4.21",
+  "targetVersion": "99.4.22",
+  "generatedAt": "2026-07-14",
+  "counts": {
+    "added": 8,
+    "modified": 46,
+    "removed": 0,
+    "totalChanged": 54
+  },
+  "added": [
+    {
+      "path": "AP19_PRODUKTIVE_BEREICHSUEBERSICHTEN_UND_KONTROLLIERTER_ABRECHNUNGSKONTEXT.md",
+      "sha256": "627b4984a9462ac2aea291a100b26c31c020c772f7135bc531ccc5e4c3e460b7",
+      "bytes": 8136
+    },
+    {
+      "path": "AP19_PRUEFBERICHT.md",
+      "sha256": "a36aa4f81e75c596e32de9fcdaea0d58a7a0f6ff94c58bdc8afd98c2e21af96e",
+      "bytes": 2998
+    },
+    {
+      "path": "AP19_RELEASE_CONTENT_POLICY.json",
+      "sha256": "fca8f955d4d0719e0e1ac0fff992cd081abaf3815a3cf8025dadc7a062949a7e",
+      "bytes": 926
+    },
+    {
+      "path": "AP19_TEST_RESULTS.json",
+      "sha256": "42bfa2a1e6e8b5e7b29816a9e28c0ca81750b46fa95b06dfdb5c5fe71ef393c6",
+      "bytes": 1615
+    },
+    {
+      "path": "js/billing-context.js",
+      "sha256": "e329c5384a7f1c95e0b4b831cc19f4521c2021adb0f895137181821409f98956",
+      "bytes": 7858
+    },
+    {
+      "path": "tests/ap19-billing-context-dashboards.spec.js",
+      "sha256": "858b01b0f5fe6df556706dd19b8e8861083c7b2e68008e32e176e06487607c1e",
+      "bytes": 5630
+    },
+    {
+      "path": "tests/ap19-billing-context-dashboards.test.cjs",
+      "sha256": "863257a257614dca0046a48899badfffb1f44fe6603b2f0c4cbdb6b45bc70d24",
+      "bytes": 6223
+    },
+    {
+      "path": "tools/check-ap19-browser-harness.cjs",
+      "sha256": "a2b120c48ec9ec58e8949579950385df19e35ca4df59a19b2ad4fdfdb48bbfa7",
+      "bytes": 11843
+    }
+  ],
+  "modified": [
+    {
+      "path": "ANWENDUNGSSTART.md",
+      "beforeSha256": "4c1ce39949f260851e44e7ccd4d0204c90a1aabcfc32e32541f51af572b184d6",
+      "afterSha256": "6656addef4b03190f11567ff6d09ab618c9ca0f96b702036b703025ddee62c7b",
+      "beforeBytes": 794,
+      "afterBytes": 868
+    },
+    {
+      "path": "CHANGELOG.md",
+      "beforeSha256": "b519227ee5fb10d14d1a33779a02cc01ee8462b170a9538eb9d346638f26fbc3",
+      "afterSha256": "1b33f38ac926f682374cc418487abe0fcde852da437ba42b5bcd9fbbd88e3ca2",
+      "beforeBytes": 39141,
+      "afterBytes": 39770
+    },
+    {
+      "path": "NK-PRO-PROJEKTSTAND.md",
+      "beforeSha256": "59c601b0cf2c8dee99760c73be514a30e6fa3342b37227f625fa06527d4f2c64",
+      "afterSha256": "eb372ccb76328cb7992ad2ea58c1906b8f64044f4c990c2f14d172374c4e5159",
+      "beforeBytes": 1694,
+      "afterBytes": 1118
+    },
+    {
+      "path": "README.md",
+      "beforeSha256": "4a751d75f0877d322cfdc5c3980ed669d69865f69c410b1cf049d0291e499eaa",
+      "afterSha256": "527b2b0cb49c0f9828008054d97d4e859380a3f010be2fa4eedf7b94a74a4ac7",
+      "beforeBytes": 2177,
+      "afterBytes": 1253
+    },
+    {
+      "path": "RELEASE_NOTES.md",
+      "beforeSha256": "1810da1f42bbcdcf94f8660c132345122be9ede0acbd8025cbaa74c996409a54",
+      "afterSha256": "470bf59ec201793a4933f171aea2da520ea0db0065a773314a097f44795f614b",
+      "beforeBytes": 1716,
+      "afterBytes": 836
+    },
+    {
+      "path": "ROADMAP.md",
+      "beforeSha256": "0fd9946f5aaf965bcf637c1c9003b6178db836118c12e965c938006b12ece8f7",
+      "afterSha256": "36483e7a6821a946d9ae6256fb92443bdcc6be0a3df5a14cfa8ce98927354f32",
+      "beforeBytes": 1263,
+      "afterBytes": 618
+    },
+    {
+      "path": "TECH_DEBT.md",
+      "beforeSha256": "ee34bf757412de2c64ca614a557dc9362103d44af36d054a570462537686cb6e",
+      "afterSha256": "96e13464f29a211afe7ea862ee2fc66d69d99b3b6482f170e8d4900919d59335",
+      "beforeBytes": 1186,
+      "afterBytes": 788
+    },
+    {
+      "path": "TESTING.md",
+      "beforeSha256": "18fca4ce9fc0b0dd1e526114792f9a3fd5a74138a1e855832bc97e9dee44ffc3",
+      "afterSha256": "bd4cc7f1f068582a065fd6ee00ca689877d75a2274d9b0067fcac00c492d6682",
+      "beforeBytes": 1847,
+      "afterBytes": 1512
+    },
+    {
+      "path": "UI_ARCHITEKTUR_AKTUELL.md",
+      "beforeSha256": "fec54d7da8bf7582001d5abc67d4d2fc139fe29596fb9455a0e8d9c500aaba99",
+      "afterSha256": "36cecb0f36016a5ac847820df5cdf76c6116b49838e495b506e22dbd8498f6a8",
+      "beforeBytes": 1671,
+      "afterBytes": 1989
+    },
+    {
+      "path": "UX_GUIDE.md",
+      "beforeSha256": "d37a2a34b2e1f3f95cbd274eed272ce1fd8f88c5f6ef63748d507920bf0bced4",
+      "afterSha256": "8e30288baa58246d08f5a90697a936943eb2999b4bac25d96ce77f737edb2fa9",
+      "beforeBytes": 8318,
+      "afterBytes": 9615
+    },
+    {
+      "path": "assets/app.css",
+      "beforeSha256": "3ad66db08ee645ba5024c7f050b991b37f1631efae23b7b7a4e4abbf96fb81d0",
+      "afterSha256": "d94c17a5b4418a46377b808716317e90901612c8a3fa992874b8748cd890c42f",
+      "beforeBytes": 174429,
+      "afterBytes": 181794
+    },
+    {
+      "path": "index.html",
+      "beforeSha256": "3c5fc0147113ee58e0548493b480fe9b2a0791cb6ec63998a2b5fa575aeaf5af",
+      "afterSha256": "bb8f83c1e1457064b74fa47adffd257427d1885ca53c853bec2cb3e02547b813",
+      "beforeBytes": 104183,
+      "afterBytes": 101486
+    },
+    {
+      "path": "js/app-runtime-config.js",
+      "beforeSha256": "f01fb27798f9e0f6ab4c25d25d5107a2ffd9bc904a4551cde54fdbea016b5f29",
+      "afterSha256": "5caf78115fe0a034f3b3d0d62b920a74a5b8d02e6c553793d10ba037e81c746f",
+      "beforeBytes": 32504,
+      "afterBytes": 32566
+    },
+    {
+      "path": "js/app-state-persistence.js",
+      "beforeSha256": "be697bd22102cb28b159baf8fc1b98bdc5ebf3752ffc3605c968e161be1aef35",
+      "afterSha256": "a337f6c2126d4aeb70dcb702523d5c2f9af2561d3d2f275cdc25dd03047868b8",
+      "beforeBytes": 52566,
+      "afterBytes": 52564
+    },
+    {
+      "path": "js/app.js",
+      "beforeSha256": "6fe9969ca2b4fac4f7d766bc7f8052a07f4ce2330f2dc890627e17e78ddf1c4a",
+      "afterSha256": "267421bb896da446ca49a569eef74931ba76997a0963e030ff3515b5928a6c2b",
+      "beforeBytes": 15599,
+      "afterBytes": 16320
+    },
+    {
+      "path": "js/application-actions.js",
+      "beforeSha256": "4f9cb5963a0232f279dbd2004c7a53cfab81d7841f5112e804a11d94114a71a1",
+      "afterSha256": "f707a5e41b351b2de16880406fa0bb41d238875e081405e28f4a7691afa23201",
+      "beforeBytes": 1832,
+      "afterBytes": 1935
+    },
+    {
+      "path": "js/archive-actions.js",
+      "beforeSha256": "63fb83497bb97d5cb6bf7102bfceff577aa82c08c050b6edaea9598944ac3eb8",
+      "afterSha256": "9cba490d96abb5dc4f728967eb6f1c78437b924a4bfaf81c9c84f1d43ebda85e",
+      "beforeBytes": 32973,
+      "afterBytes": 32968
+    },
+    {
+      "path": "js/billing-workflow.js",
+      "beforeSha256": "00aa86daa078cff406032bdda03a08294ac5e87b0513373a89f8da03a44e87f4",
+      "afterSha256": "7191758e1a1b275bb1dbe71e8cfdb964dfd09b3e840301a944b10541a5fffbbf",
+      "beforeBytes": 20682,
+      "afterBytes": 20712
+    },
+    {
+      "path": "js/navigation.js",
+      "beforeSha256": "deb633af6dceba0f68261b7c8351f0eb9bee8669a8341e4fd9cdba68ea16a757",
+      "afterSha256": "e51b2ad3b2547889905ea4806bedd96ef92ab65ffcea226340a041d11ab9f5ed",
+      "beforeBytes": 12085,
+      "afterBytes": 14040
+    },
+    {
+      "path": "js/ui-archive-pages.js",
+      "beforeSha256": "4b8dffa930f710042d77813d04270cf74e03219551773b50945a05a88cdbd01d",
+      "afterSha256": "f33db7c4eb5b017d6ab56d62a05d6dbea122490e216dae7c49a6b42c57b68c02",
+      "beforeBytes": 25703,
+      "afterBytes": 26147
+    },
+    {
+      "path": "js/ui-bindings.js",
+      "beforeSha256": "967fd14cd6635d2987652e7bd712eb8540e72eb8581442f34ebc44a3eb2bb739",
+      "afterSha256": "9a95430116e3328bf75a3167040ed9b401f427fb42bf4d0303c4b9f3eae33d56",
+      "beforeBytes": 13187,
+      "afterBytes": 13430
+    },
+    {
+      "path": "js/ui-events.js",
+      "beforeSha256": "32493fc75894a237e046fb562493cbf8e89eb62bd71bdc4b73f524f47620d961",
+      "afterSha256": "bff3be6e65911b69c3c390b41eba11d7eb386ace67c84f9b915d7ee9e2b3da13",
+      "beforeBytes": 7012,
+      "afterBytes": 7431
+    },
+    {
+      "path": "js/ui-master-data.js",
+      "beforeSha256": "06746c7e8189de0291be1ad730d1c9d8a658464731c35ef3e59682991620866d",
+      "afterSha256": "73a29dfa8cd0fdaeda8c39a9e39a2643e28d6f9ff1bff6f3a4e65cc365677207",
+      "beforeBytes": 39112,
+      "afterBytes": 39628
+    },
+    {
+      "path": "js/ui-navigation-pages.js",
+      "beforeSha256": "65782a965cd546f19ef5029d93b7b9c7a2519f4f22fcffa4053b38b8b6ea1de8",
+      "afterSha256": "21d93ea734a56b3aed9dc1e0d9a959713c2ff4d0b285bc7bc11bf57d547917f4",
+      "beforeBytes": 35383,
+      "afterBytes": 50821
+    },
+    {
+      "path": "js/ui-page-controller.js",
+      "beforeSha256": "379f2cc4ab83e5b1a61ffc05f390e20373074ddbb855128694d20c1ca379aab0",
+      "afterSha256": "17437db7a08903a5511f26e1673499e60e79f8fb94db1e17b084134523b61fa8",
+      "beforeBytes": 25197,
+      "afterBytes": 31520
+    },
+    {
+      "path": "manifest.webmanifest",
+      "beforeSha256": "25b21b8fe7890c5b02544dacbf4aed49f3c71c31ecbedb70c787e077b8e4d696",
+      "afterSha256": "fad6888a1a113378f526d97027e9ec392c6c2276546606cd919a8a8edf8eaaa9",
+      "beforeBytes": 1051,
+      "afterBytes": 1070
+    },
+    {
+      "path": "nk-pro-project.json",
+      "beforeSha256": "eb63227d29d74997042570462d5354a0c26de3a88845bcd6fbc6f217b5948ad2",
+      "afterSha256": "09b045ec43be2c036218470bb62673004c8f17753603c6247cbf4dc2ea1eaa2e",
+      "beforeBytes": 1384,
+      "afterBytes": 1556
+    },
+    {
+      "path": "package-lock.json",
+      "beforeSha256": "0b02beaa62c7831f1e6d88484c93b2189e01c2ba04631d8040042dfc4fbce9c4",
+      "afterSha256": "79cea56bff77006373d77a183a3b7abfdd561a44826f603b7c9f3ad682ccda81",
+      "beforeBytes": 2510,
+      "afterBytes": 2510
+    },
+    {
+      "path": "package.json",
+      "beforeSha256": "711c9ddf7a1e6c53080ad6c6b841786784b2fcc19e1941f4c30968f7d053c8c8",
+      "afterSha256": "37796f3de81aaa6c3b2be3575f441be1296a3f48e758ab2398db0bb1a245d534",
+      "beforeBytes": 2389,
+      "afterBytes": 2686
+    },
+    {
+      "path": "playwright.config.cjs",
+      "beforeSha256": "10ec51fcecf267c3c2b0a3a5ba8223bc5d4c789d738ba838927501bd003e5299",
+      "afterSha256": "5762d652aca3795df53daf8198b7df8a35b2d503569a34d37fe4ed3f243e9be8",
+      "beforeBytes": 2625,
+      "afterBytes": 2726
+    },
+    {
+      "path": "service-worker.js",
+      "beforeSha256": "9529df4eb73fb1f83a94a58b502ab2d96fec41f85f0c0602a3df96bf8609e084",
+      "afterSha256": "5eaa0776faa7f4ae6f7a1ec256ec621e848276bb793d90ddbc6cf1058bd641ad",
+      "beforeBytes": 3197,
+      "afterBytes": 3226
+    },
+    {
+      "path": "tests/ap10-archive-year-quality-diagnostics.test.cjs",
+      "beforeSha256": "99fcdeb9720a33efc30d848751c385c16d29313133322ce80b41a3af75b1cdeb",
+      "afterSha256": "13a7c5e1cb587e5ab936f97e0f4dc4b3cafbbb8be048348fab46fbd007a319ec",
+      "beforeBytes": 6202,
+      "afterBytes": 6202
+    },
+    {
+      "path": "tests/ap11-navigation.test.cjs",
+      "beforeSha256": "1ca3c6f98de72a7e4ed83d8e3252d95b4d18fd6264be508a7a2e63f5d5b5f323",
+      "afterSha256": "426abb14cc77e83631e9bc72eb4cf0f6efd66b3984192fd86e9d3e47856af80a",
+      "beforeBytes": 6103,
+      "afterBytes": 6126
+    },
+    {
+      "path": "tests/ap12-app-decoupling.test.cjs",
+      "beforeSha256": "c98f617eed4a66786c19f2065259f5365ef90a3a0f1d7456b8ae5631d522329c",
+      "afterSha256": "46ea2918a6c0c8376c9ddf49073096840810351263b78e37a56132e68134e374",
+      "beforeBytes": 6301,
+      "afterBytes": 6380
+    },
+    {
+      "path": "tests/ap14-ui-navigation.test.cjs",
+      "beforeSha256": "87e515fbe02149f368d3809a54a3ad7667cb98ec11fc2c1ed397f292c5b05e38",
+      "afterSha256": "a7bb374355f39d90ed83fac9f96b50ddc3dd648b1c25e2689ab17cff2b9a168d",
+      "beforeBytes": 8528,
+      "afterBytes": 8601
+    },
+    {
+      "path": "tests/ap15-integration-release.test.cjs",
+      "beforeSha256": "6bf3714e8bde6e479ee9c2132ba78f18b1a2370044edb3e9bc10cab0884214e9",
+      "afterSha256": "5eae3bbc6a354adb3758f1e0634a385a500b281eeb14e785bdecd135a6600e8b",
+      "beforeBytes": 3807,
+      "afterBytes": 3807
+    },
+    {
+      "path": "tests/ap17-area-dashboards.spec.js",
+      "beforeSha256": "2218f23b3eeeed16e1015ffbbbe5ef748e4124efb85d502c31f7b59c87a1fd5b",
+      "afterSha256": "37f0676b478317b2166bd3f18a4ce3c165274a6fa21e5be562582008db53816b",
+      "beforeBytes": 7388,
+      "afterBytes": 7622
+    },
+    {
+      "path": "tests/ap17-area-dashboards.test.cjs",
+      "beforeSha256": "628521173be878718dff8d2009d912c4848c10faca71cda744adc9e335b5e797",
+      "afterSha256": "899e90c242869b8bef537e2800aea385f56d1e1d0bbb28a2204d28f32d19fa87",
+      "beforeBytes": 6639,
+      "afterBytes": 6855
+    },
+    {
+      "path": "tests/ap18-ui-ux-polish.spec.js",
+      "beforeSha256": "cefee8cac53d859229bc9486d6a3864109b72e3507c11bd05acdfa6d8ffe649d",
+      "afterSha256": "42ec70769dba02ef0a097f0d6e812f9733e36d3519a014c2672b5b774ea1abb4",
+      "beforeBytes": 9689,
+      "afterBytes": 9689
+    },
+    {
+      "path": "tests/ap18-ui-ux-polish.test.cjs",
+      "beforeSha256": "b06dd498ad3bad3c5e4bf18938b3670604d8dfcece672583525d282defdf6731",
+      "afterSha256": "1487e69293ab815239f7b8723190ef1bbf6fb527b5f591a834b33889ed8e2dc8",
+      "beforeBytes": 6725,
+      "afterBytes": 6725
+    },
+    {
+      "path": "tests/ap7-ui-integration.test.cjs",
+      "beforeSha256": "5f63d2a67ceb66fa5a13c828b02147e9687205157fb4fb09208b219011b11ff9",
+      "afterSha256": "69f44be5a890d467ae5e0d94db4b6675200a30757672e871938fb3ad2b2c643e",
+      "beforeBytes": 5107,
+      "afterBytes": 5107
+    },
+    {
+      "path": "tests/app-smoke.spec.js",
+      "beforeSha256": "74777e5016765d89cc0f61f3d1db264a704ea329dceff337e5943d99ccd9ee8b",
+      "afterSha256": "e00c849d2d59a86a0691ffeabccd4dc3eebcbfdef1502d4730625a8d0ee1580c",
+      "beforeBytes": 11789,
+      "afterBytes": 11835
+    },
+    {
+      "path": "tests/persistence-backup.spec.js",
+      "beforeSha256": "66964b906e5d9b7eab13a9599360a6b5c9d1a78cb9ebd89e62d86f1a800d7938",
+      "afterSha256": "e3aa89afa99ac34b470959910931cfc526e0f6cca70927669430a77618fe00a4",
+      "beforeBytes": 8425,
+      "afterBytes": 8418
+    },
+    {
+      "path": "tests/service-worker.spec.js",
+      "beforeSha256": "8c2bc1aeccf71f70cf766bec2d836b79738c82a4723d3adf38fcaf198faaca1a",
+      "afterSha256": "11ec11281b441a6c2d81e003d90a7fe7bb5a5e96fc8c5f1d5d6da2adab53fecf",
+      "beforeBytes": 4857,
+      "afterBytes": 4857
+    },
+    {
+      "path": "tools/check-release-consistency.cjs",
+      "beforeSha256": "5a8376ea97ca16ec78f83bd0f89ab329f018fab1907b5d026c2bd124be92756a",
+      "afterSha256": "fd6f8bea29791338c980fc0840c592393d50d7c3559cc9570de54fa2a0dee024",
+      "beforeBytes": 12347,
+      "afterBytes": 14059
+    },
+    {
+      "path": "tools/check-release-contents.cjs",
+      "beforeSha256": "7992eee298c542bfa1fa5624765cbade011e1011c02f941f260e23fb4f023edf",
+      "afterSha256": "86a66e210f935b799a99c6c73ce1589ba3e16d3ed8b8e36fb2e8586d3d41365b",
+      "beforeBytes": 4941,
+      "afterBytes": 4944
+    }
+  ],
+  "removed": []
+}

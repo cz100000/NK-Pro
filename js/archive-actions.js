@@ -400,7 +400,7 @@
 
   function reopenForRework(index, options = {}) {
     const d = requireDeps();
-    if (d.isArchiveViewer()) return Object.freeze({ changed:false, reason:"archive-viewer", message:"Dieses Fenster zeigt eine archivierte Abrechnung. Wiederbearbeitung ist nur auf der Startseite des ursprünglichen Arbeitsfensters möglich." });
+    if (d.isArchiveViewer()) return Object.freeze({ changed:false, reason:"archive-viewer", message:"Dieses Fenster zeigt eine archivierte Abrechnung. Eine Korrektur kann nur über die Abrechnungsübersicht des ursprünglichen Arbeitsfensters geöffnet werden." });
     const numericIndex = Number(index);
     const item = Array.isArray(current().jahresArchiv) ? current().jahresArchiv[numericIndex] : null;
     if (!item) return Object.freeze({ changed:false, reason:"missing-archive", message:"Diese archivierte Abrechnung wurde nicht gefunden." });
@@ -412,8 +412,8 @@
         confirmationMessage:"Der aktuelle Arbeitsstand wird durch den Archivstand ersetzt: " + label + ". Der Archivdatensatz bleibt im Jahresarchiv erhalten. Vorher sollte eine Gesamt-JSON-Sicherung vorhanden sein."
       });
     }
-    if (String(options.confirmationCode || "").trim().toUpperCase() !== "WIEDERBEARBEITEN") {
-      return Object.freeze({ changed:false, requiresPrompt:true, promptMessage:"Gib zur Bestätigung WIEDERBEARBEITEN ein. Der aktuelle Arbeitsstand wird ersetzt, der Archivdatensatz bleibt erhalten." });
+    if (String(options.confirmationCode || "").trim().toUpperCase() !== "KORREKTUR") {
+      return Object.freeze({ changed:false, requiresPrompt:true, promptMessage:"Gib zur Bestätigung KORREKTUR ein. Der aktuelle Arbeitsstand wird ersetzt, der Archivdatensatz bleibt erhalten." });
     }
     return d.stateAccess.transact(data => {
       const prepared = prepareItem(item);
@@ -446,8 +446,8 @@
       if (typeof d.clearFinalization === "function") d.clearFinalization(restored);
       Object.keys(data).forEach(key => delete data[key]);
       Object.assign(data, restored);
-      return Object.freeze({ changed:true, label, targetTab:"mieter", message:"Archivierte Abrechnung wurde zur Wiederbearbeitung geöffnet: " + label });
-    }, { reason:"Wiederbearbeitung", render:false, allowFinalizationWrite:true });
+      return Object.freeze({ changed:true, label, targetTab:"mieter", message:"Archivierte Abrechnung wurde zur Korrektur geöffnet: " + label });
+    }, { reason:"Archivkorrektur", render:false, allowFinalizationWrite:true });
   }
 
   function buildLegacyArchiveState(entries) {

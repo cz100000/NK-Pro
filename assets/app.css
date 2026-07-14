@@ -4443,3 +4443,134 @@ body:not(.document-print-window) details > summary:focus-visible { border-radius
     background:#fff !important;
   }
 }
+
+/* AP19 – Produktive Übersichten und kontrollierter Abrechnungskontext */
+body:not(.document-print-window) .global-billing-context {
+  grid-template-columns:minmax(230px,1fr) auto auto;
+  gap:12px 20px;
+  min-height:52px;
+  padding:8px 22px;
+  border-top:1px solid #ead184;
+  border-bottom:1px solid #d9ba58;
+  background:#fff8dc;
+  box-shadow:0 2px 7px rgba(91,69,6,.08);
+}
+body:not(.document-print-window) .global-billing-context.is-empty { background:#fffaf0; }
+body:not(.document-print-window) .global-billing-context.is-readonly { background:#fff4c8; }
+.global-billing-context__facts { flex-wrap:wrap; row-gap:5px; }
+.global-billing-context__status.is-none { border-color:#c8b677; background:#fffdf4; color:#665823; }
+.global-billing-context__mode { display:inline-flex; align-items:center; gap:6px; white-space:nowrap; }
+.global-billing-context__mode svg { width:15px; height:15px; display:block; }
+.global-billing-context__mode.is-readonly { color:#674b00; }
+.global-billing-context__actions { display:flex; align-items:center; justify-content:flex-end; gap:7px; flex-wrap:wrap; }
+.global-billing-context__actions button { min-height:32px !important; padding:5px 10px !important; white-space:nowrap; }
+.global-billing-context__overview { border-color:#a98724 !important; color:#684f00 !important; background:#fffdf4 !important; }
+.global-billing-context__close { border-color:#9a7520 !important; color:#593f00 !important; background:#fff !important; }
+
+.billing-context-guidance,
+.billing-readonly-notice {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:4px 0 14px;
+  padding:10px 12px;
+  border:1px solid #ddc36e;
+  border-radius:9px;
+  background:#fff9e5;
+  color:#5b4608;
+}
+.billing-context-guidance { justify-content:flex-start; }
+.billing-context-guidance strong { white-space:nowrap; }
+.billing-context-guidance span { color:#735e22; }
+.billing-readonly-notice { justify-content:flex-start; }
+.billing-readonly-notice__icon { width:28px; height:28px; display:grid; place-items:center; flex:0 0 auto; color:#715500; }
+.billing-readonly-notice__icon svg { width:21px; height:21px; }
+.billing-readonly-notice > span:nth-child(2) { min-width:0; display:grid; gap:2px; }
+.billing-readonly-notice strong { font-size:13px; }
+.billing-readonly-notice small { color:#6f5c21; font-size:12px; }
+.billing-readonly-notice button { margin-left:auto; white-space:nowrap; }
+
+body.billing-readonly-mode section.tab.active :where(input[readonly],textarea[readonly]) {
+  opacity:1;
+  color:#21364e;
+  -webkit-text-fill-color:#21364e;
+  background:#f6f8fa;
+  border-color:#c7d0da;
+  cursor:default;
+  caret-color:transparent;
+}
+body.billing-readonly-mode section.tab.active :where(select:disabled,input:disabled,textarea:disabled) {
+  opacity:1;
+  color:#21364e;
+  -webkit-text-fill-color:#21364e;
+  background:#f6f8fa;
+  border-color:#c7d0da;
+  cursor:default;
+}
+body.billing-readonly-mode section.tab.active input[type="checkbox"]:disabled,
+body.billing-readonly-mode section.tab.active input[type="radio"]:disabled { opacity:.82; }
+body.billing-readonly-mode section.tab.active [contenteditable="true"] { pointer-events:none; user-select:text; }
+
+.app-sidebar .workflow-nav .tab-btn.is-context-disabled,
+.app-sidebar .workflow-nav .tab-btn.is-context-disabled:hover,
+.app-sidebar .workflow-nav .tab-btn.is-context-disabled:focus-visible {
+  color:#7e8a98;
+  background:#f6f8fa;
+  transform:none;
+  box-shadow:none;
+}
+.app-sidebar .workflow-nav .tab-btn.is-context-disabled:hover { cursor:not-allowed; }
+.app-sidebar .workflow-nav .tab-btn.is-context-disabled .nav-item-icon { color:#9aa5b1; }
+.app-sidebar .workflow-nav .tab-btn.is-context-disabled:focus-visible { outline:2px dashed #7f8b98; outline-offset:-3px; }
+
+/* Je Übergang exakt eine Trennlinie: Gruppenlinie statt zusätzlicher letzter Unterpunktlinie. */
+.app-sidebar .workflow-nav .nav-group-children .tab-btn:last-child { border-bottom:0; }
+.app-sidebar .workflow-nav .nav-start-link { border-bottom:0 !important; }
+
+.dashboard-value-badge--data { background:#edf5fd; color:#285f91; }
+.dashboard-value-badge--complete { background:#edf8ef; color:#2f6a39; }
+.dashboard-value-badge--open { background:#eef4fb; color:#315f88; }
+.dashboard-value-badge--warning { background:#fff5dc; color:#775006; }
+.dashboard-value-badge--blocked { background:#fceceb; color:#8b2c25; }
+.dashboard-value-badge--dummy { background:#f1f1f3; color:#5f6470; }
+.workflow-stage--done { border-left-color:#55a365 !important; }
+.workflow-stage--open { border-left-color:#5f93c9 !important; }
+.workflow-stage--warning { border-left-color:#d89a32 !important; }
+.workflow-stage--blocked { border-left-color:#bb5b52 !important; background:#fff9f8 !important; }
+.workflow-stage--done .workflow-stage__status { background:#edf8ef; color:#2d6a37; }
+.workflow-stage--open .workflow-stage__status { background:#edf5fd; color:#265f94; }
+.workflow-stage--warning .workflow-stage__status { background:#fff6df; color:#775006; }
+.workflow-stage--blocked .workflow-stage__status { background:#fceceb; color:#8b2c25; }
+.record-code { display:inline-flex; padding:2px 7px; border:1px solid #bdd0e3; border-radius:999px; background:#f3f8fd; color:#315c82; font-size:11px; font-weight:800; white-space:nowrap; }
+.records-table td { vertical-align:top; }
+.records-table .actions-cell { min-width:245px; }
+.records-table .actions-cell button { margin:1px 2px 3px 0; }
+
+@media (max-width:1100px) {
+  body:not(.document-print-window) .global-billing-context { grid-template-columns:minmax(0,1fr) auto; }
+  .global-billing-context__facts { grid-column:1; grid-row:2; }
+  .global-billing-context__actions { grid-column:2; grid-row:1 / span 2; max-width:230px; }
+}
+@media (max-width:760px) {
+  body:not(.document-print-window) .global-billing-context { grid-template-columns:1fr; gap:7px; padding:9px 12px; }
+  .global-billing-context__facts,.global-billing-context__actions { grid-column:1; grid-row:auto; justify-content:flex-start; }
+  .global-billing-context__actions { max-width:none; }
+  .billing-context-guidance,.billing-readonly-notice { align-items:flex-start; flex-wrap:wrap; }
+  .billing-context-guidance strong { white-space:normal; flex-basis:100%; }
+  .billing-readonly-notice button { margin-left:40px; }
+  .records-table { display:block; min-width:0 !important; width:100%; }
+  .records-table thead { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+  .records-table tbody,.records-table tr,.records-table td { display:block; width:100%; }
+  .records-table tr { margin:0 0 12px; padding:8px 10px; border:1px solid #d8e2ec; border-radius:9px; background:#fff; }
+  .records-table td { display:grid; grid-template-columns:minmax(112px,35%) minmax(0,1fr); gap:9px; padding:6px 0; border:0; border-bottom:1px solid #edf1f5; text-align:left !important; }
+  .records-table td:last-child { border-bottom:0; }
+  .records-table td::before { content:attr(data-label); color:#627184; font-size:11px; font-weight:800; text-transform:uppercase; }
+  .records-table .actions-cell { min-width:0; }
+}
+@media (max-height:650px) {
+  body:not(.document-print-window) .global-billing-context { position:relative; }
+  .billing-readonly-notice { padding-top:8px; padding-bottom:8px; }
+}
+
+/* AP19 – Native Hidden-Semantik für dynamisch gesperrte Aktionen */
+[hidden] { display:none !important; }

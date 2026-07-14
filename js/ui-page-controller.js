@@ -141,91 +141,145 @@ function overviewOpenSection(id) {
 function ap17Icon(name, className="area-dashboard__icon-svg") {
   return '<svg class="'+className+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(AP17_ICON_PATHS[name]||AP17_ICON_PATHS.dashboard)+'</svg>';
 }
+function dashboardCostStatus(cost) {
+  if (!cost || !cost.kostenart || cost.inNK !== "Ja") return "Nicht verfügbar";
+  if (num(cost.gesamtbetrag) <= 0) return "Offen";
+  if (!cost.berechnungsart || cost.berechnungsart === "Entfällt") return "Blockiert";
+  if (!cost.umlageschluessel || cost.umlageschluessel === "Entfällt") return "Blockiert";
+  if (cost.umlageschluessel === "Verbrauch" && num(cost.preisProEinheit) <= 0 && num(cost.gesamtverbrauch) <= 0) return "Blockiert";
+  if (cost.berechnungsart === "Manuell je Mieter" && cost.umlageschluessel !== UMLAGE_MANUAL) return "Warnung";
+  return "Vollständig";
+}
 function dashboardStats() {
   const units=Array.isArray(state && state.wohnungen) ? state.wohnungen.filter(w=>w && w.id) : [];
+  const activeUnits=units.filter(w=>String(w.status||"aktiv").toLowerCase() !== "inaktiv");
   const tenants=safeOverviewCall(()=>billableTenantRows(), Array.isArray(state && state.mieter) ? state.mieter.filter(m=>m && (m.name || m.wohnung)) : []);
   const costs=Array.isArray(state && state.kostenarten) ? state.kostenarten.filter(k=>k && k.kostenart && k.inNK === "Ja") : [];
+  const costRows=costs.map(cost=>({cost,status:dashboardCostStatus(cost)}));
+  const completeCosts=costRows.filter(row=>row.status === "Vollständig");
+  const blockedCosts=costRows.filter(row=>row.status === "Blockiert");
+  const openCosts=costRows.filter(row=>row.status === "Offen" || row.status === "Warnung");
+  const consumptionCosts=costRows.filter(row=>row.cost.umlageschluessel === "Verbrauch");
+  const completeConsumption=consumptionCosts.filter(row=>row.status === "Vollständig");
+  const completeUnits=activeUnits.filter(unit=>String(unit.bezeichnung||unit.lage||"").trim() && num(unit.wohnflaeche)>0 && String(unit.status||"").trim());
+  const completeTenants=tenants.filter(tenant=>String(tenant.name||"").trim() && String(tenant.wohnung||"").trim() && String(tenant.einzug||"").trim());
+  const billableUnitIds=new Set(tenants.map(tenant=>String(tenant.wohnung||"")).filter(Boolean));
+  const billableUnits=activeUnits.filter(unit=>billableUnitIds.has(String(unit.id||"")));
+  const blockedUnits=activeUnits.filter(unit=>!billableUnitIds.has(String(unit.id||"")));
   const prepayments=tenants.reduce((sum,tenant)=>sum+num(tenant.nkVoraus),0);
+  const tenantsWithPrepayment=tenants.filter(tenant=>num(tenant.nkVoraus)>0).length;
   const objectValidation=safeOverviewCall(()=>validateObjectStandard(state),{valid:false,errors:[],warnings:[],infos:[]});
   const quality=safeOverviewCall(()=>NK_PRO_MODULES.qualityAssurance.inspect({scope:"currentBilling"}),null);
   const qualityIssues=quality && Array.isArray(quality.issues) ? quality.issues.filter(issue=>issue && issue.severity !== "OK") : [];
+  const qualityErrors=qualityIssues.filter(issue=>issue.severity === "Fehler");
+  const qualityWarnings=qualityIssues.filter(issue=>issue.severity !== "Fehler");
   const activeBilling=safeOverviewCall(()=>NK_PRO_MODULES.archiveActions.hasActiveCurrentBilling(),false);
   const finalized=safeOverviewCall(()=>NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized(),false);
+  const archives=Array.isArray(state && state.jahresArchiv) ? state.jahresArchiv : [];
+  const lettersGenerated=activeBilling ? safeOverviewCall(()=>briefResultRows().length,0) : 0;
+  const periodValid=/^\d{4}-\d{2}-\d{2}$/.test(String(periodStart())) && /^\d{4}-\d{2}-\d{2}$/.test(String(periodEnd())) && String(periodStart()) <= String(periodEnd());
+  const rules=[
+    {key:"units",label:"Einheiten",complete:activeUnits.length>0 && completeUnits.length===activeUnits.length,blocked:activeUnits.length===0,target:"wohnungsverwaltung"},
+    {key:"tenants",label:"Mieterzuordnungen",complete:tenants.length>0 && completeTenants.length===tenants.length,blocked:tenants.length===0,target:"mieterverwaltung"},
+    {key:"period",label:"Abrechnungszeitraum",complete:periodValid,blocked:!periodValid,target:"einstellungen"},
+    {key:"costs",label:"Kostenarten",complete:costs.length>0 && completeCosts.length===costs.length,blocked:blockedCosts.length>0 || costs.length===0,target:"einstellungen"},
+    {key:"consumption",label:"Verbrauchswerte",complete:consumptionCosts.length===completeConsumption.length,blocked:consumptionCosts.length>completeConsumption.length,target:"verbraeuche"},
+    {key:"allocation",label:"Berechenbare Einheiten",complete:activeUnits.length>0 && blockedUnits.length===0,blocked:blockedUnits.length>0,target:"umlage"},
+    {key:"quality",label:"Qualitätsprüfung",complete:qualityErrors.length===0 && qualityWarnings.length===0,blocked:qualityErrors.length>0,target:"qualitaet"},
+    {key:"letters",label:"Abrechnungsbriefe",complete:tenants.length>0 && lettersGenerated>=tenants.length,blocked:qualityErrors.length>0 || blockedCosts.length>0,target:"briefe"}
+  ];
   return {
-    units, tenants, costs, prepayments, objectValidation, qualityIssues, activeBilling, finalized,
-    objectLabel:safeOverviewCall(()=>currentObjectLabel(),"Objekt"), year:safeOverviewCall(()=>currentAbrechnungsjahr(),"–")
+    units,activeUnits,completeUnits,tenants,completeTenants,costs,costRows,completeCosts,blockedCosts,openCosts,consumptionCosts,completeConsumption,
+    billableUnits,blockedUnits,prepayments,tenantsWithPrepayment,objectValidation,qualityIssues,qualityErrors,qualityWarnings,
+    activeBilling,finalized,archives,lettersGenerated,periodValid,rules,
+    objectLabel:safeOverviewCall(()=>currentObjectLabel(),"Objekt"), objectCode:safeOverviewCall(()=>currentObjectShortCode(),"OBJ"), year:safeOverviewCall(()=>currentAbrechnungsjahr(),"–")
   };
 }
-function valueKindBadge(kind) { return '<span class="dashboard-value-badge dashboard-value-badge--'+kind+'">'+(kind === "dummy" ? "Vorschau" : "Echtwert")+'</span>'; }
-function dashboardValue(label,value,kind="real",hint="",tone="blue") {
+function valueKindBadge(kind) {
+  const labels={data:"Datenwert",complete:"Vollständig",open:"Offen",warning:"Warnung",blocked:"Blockiert",dummy:"DUMMY"};
+  return '<span class="dashboard-value-badge dashboard-value-badge--'+escapeHtml(kind)+'">'+escapeHtml(labels[kind]||"Datenwert")+'</span>';
+}
+function dashboardValue(label,value,kind="data",hint="",tone="blue") {
   return '<article class="dashboard-value-card dashboard-value-card--'+tone+'" data-value-kind="'+kind+'"><div class="dashboard-value-card__top"><span>'+escapeHtml(label)+'</span>'+valueKindBadge(kind)+'</div><strong>'+escapeHtml(String(value))+'</strong>'+(hint?'<small>'+escapeHtml(hint)+'</small>':'')+'</article>';
 }
-function dashboardAction(label,target,icon,meta="") {
-  return '<button class="dashboard-entry" type="button" data-ui-action="navigation.switchTab" data-ui-args="[&quot;'+escapeHtml(target)+'&quot;]"><span class="dashboard-entry__icon">'+ap17Icon(icon)+'</span><span class="dashboard-entry__copy"><strong>'+escapeHtml(label)+'</strong>'+(meta?'<small>'+escapeHtml(meta)+'</small>':'')+'</span><span class="dashboard-entry__arrow" aria-hidden="true">→</span></button>';
+function dashboardAction(label,target,icon,meta="",kind="data") {
+  return '<button class="dashboard-entry" type="button" data-value-kind="'+kind+'" data-ui-action="navigation.switchTab" data-ui-args="[&quot;'+escapeHtml(target)+'&quot;]"><span class="dashboard-entry__icon">'+ap17Icon(icon)+'</span><span class="dashboard-entry__copy"><strong>'+escapeHtml(label)+'</strong>'+(meta?'<small>'+escapeHtml(meta)+'</small>':'')+'</span><span class="dashboard-entry__arrow" aria-hidden="true">→</span></button>';
+}
+function statusTone(status) {
+  return status === "Vollständig" || status === "Abgeschlossen" || status === "Archiviert" ? "done" : (status === "Blockiert" ? "blocked" : (status === "Warnung" ? "warning" : "open"));
 }
 function renderObjectDashboard(root, stats) {
   const validation=stats.objectValidation || {errors:[],warnings:[]};
   const errors=Array.isArray(validation.errors)?validation.errors.length:0;
   const warnings=Array.isArray(validation.warnings)?validation.warnings.length:0;
-  const openCount=errors+warnings;
-  const status=errors ? "Prüfung erforderlich" : (warnings ? "Mit Hinweisen" : "Vorbereitet");
-  const statusTone=errors ? "red" : (warnings ? "orange" : "green");
-  root.innerHTML = '<div class="dashboard-preview-notice"><strong>Hinweis zu Vorschauwerten</strong><span>Mit „Vorschau“ gekennzeichnete Werte sind fiktiv. Die fachliche Logik für Vollständigkeit und Empfehlungen wird in einem späteren Arbeitspaket entwickelt.</span></div>'+
+  const objectStatus=errors ? "Blockiert" : (warnings ? "Warnung" : "Vollständig");
+  const nextRule=stats.rules.find(rule=>!rule.complete) || {label:"Objektvorbereitung",target:"objekt",blocked:false};
+  const nextText=nextRule.blocked ? "Blockierende Angaben prüfen" : "Offene Angaben vervollständigen";
+  root.innerHTML =
     '<div class="dashboard-value-grid">'+
-      dashboardValue("Aktuelles Objekt",stats.objectLabel,"real","Ein Gebäude im vereinfachten Objektmodell","blue")+
-      dashboardValue("Gebäudekurzcode","ARB5","real","Verbindlicher Projektkontext","petrol")+
-      dashboardValue("Wohnungen",stats.units.length,"real","Vorhandene Wohnungsdatensätze","blue")+
-      dashboardValue("Mietverhältnisse",stats.tenants.length,"real","Abrechnungsrelevante Datensätze","violet")+
+      dashboardValue("Aktuelles Objekt",stats.objectLabel,"data","Aus vorhandenen Objekt- und Mieterdaten","blue")+
+      dashboardValue("Gebäudekurzcode",stats.objectCode,"data","Aus Stammdaten abgeleitet","petrol")+
+      dashboardValue("Einheiten vollständig",stats.completeUnits.length+' von '+stats.activeUnits.length,stats.completeUnits.length===stats.activeUnits.length&&stats.activeUnits.length?"complete":"open",stats.activeUnits.length-stats.completeUnits.length+' offene Einheiten',"blue")+
+      dashboardValue("Mieter vollständig",stats.completeTenants.length+' von '+stats.tenants.length,stats.completeTenants.length===stats.tenants.length&&stats.tenants.length?"complete":"open",stats.tenants.length-stats.completeTenants.length+' offene Mietverhältnisse',"violet")+
     '</div>'+
     '<div class="dashboard-summary-grid">'+
-      '<article class="dashboard-status-panel dashboard-status-panel--'+statusTone+'"><div class="dashboard-panel-heading"><span>'+ap17Icon("shield")+'</span><div><h3>Objektstatus</h3>'+valueKindBadge("real")+'</div></div><strong data-value-kind="real">'+escapeHtml(status)+'</strong><p><span data-value-kind="real">'+escapeHtml(String(openCount))+'</span> offene oder unvollständige Angaben aus der vorhandenen Objektprüfung.</p></article>'+
-      '<article class="dashboard-status-panel dashboard-status-panel--blue" data-value-kind="dummy"><div class="dashboard-panel-heading"><span>'+ap17Icon("dashboard")+'</span><div><h3>Stammdatenvollständigkeit</h3>'+valueKindBadge("dummy")+'</div></div><strong>82 %</strong><p>Fiktiver Orientierungswert; Berechnungsregeln sind noch festzulegen.</p></article>'+
-      '<article class="dashboard-next-step" data-value-kind="dummy"><div><span class="dashboard-next-step__label">Nächster sinnvoller Vorbereitungsschritt</span>'+valueKindBadge("dummy")+'<h3>Wohnungsflächen und Zuordnungen prüfen</h3><p>Diese Empfehlung ist eine Vorschau und noch nicht fachlich berechnet.</p></div><button class="primary" data-ui-action="navigation.switchTab" data-ui-args="[&quot;wohnungsverwaltung&quot;]" type="button">Wohnungen öffnen</button></article>'+
+      '<article class="dashboard-status-panel dashboard-status-panel--'+(objectStatus==="Vollständig"?'green':(objectStatus==="Warnung"?'orange':'red'))+'"><div class="dashboard-panel-heading"><span>'+ap17Icon("shield")+'</span><div><h3>Objektstandard</h3>'+valueKindBadge(statusTone(objectStatus)==="done"?"complete":statusTone(objectStatus))+'</div></div><strong>'+escapeHtml(objectStatus)+'</strong><p>'+errors+' blockierende und '+warnings+' warnende Angaben aus der vorhandenen Objektprüfung.</p></article>'+
+      '<article class="dashboard-status-panel dashboard-status-panel--blue"><div class="dashboard-panel-heading"><span>'+ap17Icon("receipt")+'</span><div><h3>Kostenarten und Schlüssel</h3>'+valueKindBadge(stats.completeCosts.length===stats.costs.length&&stats.costs.length?"complete":(stats.blockedCosts.length?"blocked":"open"))+'</div></div><strong>'+stats.completeCosts.length+' von '+stats.costs.length+' vollständig</strong><p>'+stats.blockedCosts.length+' blockiert, '+stats.openCosts.length+' offen oder mit Warnung.</p></article>'+
+      '<article class="dashboard-next-step"><div><span class="dashboard-next-step__label">Nächster nachvollziehbarer Vorbereitungsschritt</span><h3>'+escapeHtml(nextRule.label)+': '+escapeHtml(nextText)+'</h3><p>Der Direkteinstieg basiert auf der ersten noch nicht erfüllten Prüfregel.</p></div><button class="primary" data-ui-action="navigation.switchTab" data-ui-args="[&quot;'+escapeHtml(nextRule.target)+'&quot;]" type="button">Arbeitsbereich öffnen</button></article>'+
     '</div>'+
     '<section class="dashboard-entry-section"><div class="dashboard-section-heading"><div><p class="page-header__kicker">Direkteinstiege</p><h3>Objekt vorbereiten</h3></div><span>4 Arbeitsbereiche</span></div><div class="dashboard-entry-grid dashboard-entry-grid--four">'+
       dashboardAction("Objektdaten","objekt","building","Objektstandard und Zuordnungen")+
-      dashboardAction("Wohnungen","wohnungsverwaltung","home","Bestand und Flächen")+
-      dashboardAction("Mieter","mieterverwaltung","users","Verträge und Kontakte")+
-      dashboardAction("Zähler-DUMMY","wasser","meter","Reiner Clickdummy")+
+      dashboardAction("Wohnungen","wohnungsverwaltung","home",stats.completeUnits.length+' von '+stats.activeUnits.length+' vollständig')+
+      dashboardAction("Mieter","mieterverwaltung","users",stats.completeTenants.length+' von '+stats.tenants.length+' vollständig')+
+      dashboardAction("Zähler-DUMMY","wasser","meter","Reiner Clickdummy ohne Fachlogik","dummy")+
     '</div></section>';
 }
-function workflowStage(label,target,icon,status,statusClass) {
-  return '<button class="workflow-stage workflow-stage--'+statusClass+'" type="button" data-value-kind="dummy" data-ui-action="navigation.switchTab" data-ui-args="[&quot;'+escapeHtml(target)+'&quot;]"><span class="workflow-stage__icon">'+ap17Icon(icon)+'</span><span class="workflow-stage__copy"><strong>'+escapeHtml(label)+'</strong><small>Vorschau-Status</small></span><span class="workflow-stage__status">'+escapeHtml(status)+'</span></button>';
+function workflowStage(label,target,icon,status,detail) {
+  const tone=statusTone(status);
+  return '<button class="workflow-stage workflow-stage--'+tone+'" type="button" data-value-kind="data" data-ui-action="navigation.switchTab" data-ui-args="[&quot;'+escapeHtml(target)+'&quot;]"><span class="workflow-stage__icon">'+ap17Icon(icon)+'</span><span class="workflow-stage__copy"><strong>'+escapeHtml(label)+'</strong><small>'+escapeHtml(detail||"Aus vorhandenen Daten abgeleitet")+'</small></span><span class="workflow-stage__status">'+escapeHtml(status)+'</span></button>';
+}
+function workflowStatus(rule) {
+  if (!rule) return "Nicht verfügbar";
+  if (rule.complete) return "Vollständig";
+  if (rule.blocked) return "Blockiert";
+  return "Offen";
 }
 function renderBillingDashboard(root, stats) {
-  const status=stats.finalized ? "Finalisiert" : (stats.activeBilling ? "In Bearbeitung" : "Noch nicht angelegt");
-  const statusTone=stats.finalized ? "petrol" : (stats.activeBilling ? "green" : "orange");
-  const openIssues=stats.qualityIssues.length;
-  root.innerHTML = '<div class="dashboard-preview-notice"><strong>Hinweis zu Vorschauwerten</strong><span>Fortschritt, empfohlener nächster Schritt und Workflowstatus sind fiktive Vorschauwerte. Produktive Fachlogik wird dadurch nicht vorgetäuscht.</span></div>'+
+  const currentStatus=stats.finalized ? "Abgeschlossen" : (stats.activeBilling ? "In Bearbeitung" : "Nicht verfügbar");
+  const completedRules=stats.rules.filter(rule=>rule.complete).length;
+  const blockedRules=stats.rules.filter(rule=>rule.blocked&&!rule.complete).length;
+  const ruleMap=Object.fromEntries(stats.rules.map(rule=>[rule.key,rule]));
+  const contextNotice=!NK_PRO_MODULES.billingContext.isOpen() ? '<div class="billing-context-guidance" role="status"><strong>Keine Abrechnung geöffnet</strong><span>Öffnen Sie zuerst eine Abrechnung zur Bearbeitung oder Ansicht.</span></div>' : '';
+  root.innerHTML = contextNotice+
     '<div class="dashboard-value-grid dashboard-value-grid--five">'+
-      dashboardValue("Aktuelles Objekt",stats.objectLabel,"real","Aktiver Projektkontext","blue")+
-      dashboardValue("Gebäudekurzcode","ARB5","real","Verbindlicher Objektkurzcode","blue")+
-      dashboardValue("Abrechnungsjahr",stats.year,"real","Aktueller lokaler Arbeitsstand","petrol")+
-      dashboardValue("Bearbeitungsstatus",status,"real",stats.activeBilling?"Abrechnung vorhanden":"Über „Neue Abrechnung“ anlegen",statusTone)+
-      dashboardValue("Abrechnungsfortschritt","64 %","dummy","Fiktiver Orientierungswert","violet")+
+      dashboardValue("Aktuelles Objekt",stats.objectLabel,"data",stats.objectCode,"blue")+
+      dashboardValue("Vorhandene Abrechnungen",(stats.activeBilling?1:0)+stats.archives.length,"data",stats.archives.length+' archiviert',"blue")+
+      dashboardValue("Aktuelles Abrechnungsjahr",stats.activeBilling?stats.year:"–",stats.activeBilling?"data":"open",currentStatus,"petrol")+
+      dashboardValue("Prüfbereiche vollständig",completedRules+' von '+stats.rules.length,completedRules===stats.rules.length?"complete":(blockedRules?"blocked":"open"),blockedRules+' blockiert',blockedRules?"orange":"green")+
+      dashboardValue("Erzeugte Briefe",stats.lettersGenerated,"data",stats.tenants.length+' abrechnungsrelevante Mietverhältnisse',"violet")+
     '</div>'+
     '<div class="billing-fact-strip">'+
-      '<div data-value-kind="real"><span>Wohnungen</span><strong>'+stats.units.length+'</strong>'+valueKindBadge("real")+'</div>'+
-      '<div data-value-kind="real"><span>Mietverhältnisse</span><strong>'+stats.tenants.length+'</strong>'+valueKindBadge("real")+'</div>'+
-      '<div data-value-kind="real"><span>Aktive Kostenarten</span><strong>'+stats.costs.length+'</strong>'+valueKindBadge("real")+'</div>'+
-      '<div data-value-kind="real"><span>NK-Vorauszahlungen</span><strong>'+escapeHtml(overviewMoney(stats.prepayments))+'</strong>'+valueKindBadge("real")+'</div>'+
-      '<div data-value-kind="real"><span>Offene Prüfhinweise</span><strong>'+openIssues+'</strong>'+valueKindBadge("real")+'</div>'+
+      '<div data-value-kind="data"><span>Kosten vollständig</span><strong>'+stats.completeCosts.length+' / '+stats.costs.length+'</strong>'+valueKindBadge(stats.completeCosts.length===stats.costs.length&&stats.costs.length?"complete":"open")+'</div>'+
+      '<div data-value-kind="data"><span>Verbrauch vollständig</span><strong>'+stats.completeConsumption.length+' / '+stats.consumptionCosts.length+'</strong>'+valueKindBadge(stats.completeConsumption.length===stats.consumptionCosts.length?"complete":"blocked")+'</div>'+
+      '<div data-value-kind="data"><span>Berechenbare Einheiten</span><strong>'+stats.billableUnits.length+' / '+stats.activeUnits.length+'</strong>'+valueKindBadge(stats.blockedUnits.length?"blocked":"complete")+'</div>'+
+      '<div data-value-kind="data"><span>NK-Vorauszahlungen</span><strong>'+escapeHtml(overviewMoney(stats.prepayments))+'</strong>'+valueKindBadge(stats.tenantsWithPrepayment===stats.tenants.length&&stats.tenants.length?"complete":"open")+'</div>'+
+      '<div data-value-kind="data"><span>Offene Prüfhinweise</span><strong>'+stats.qualityIssues.length+'</strong>'+valueKindBadge(stats.qualityErrors.length?"blocked":(stats.qualityWarnings.length?"warning":"complete"))+'</div>'+
     '</div>'+
-    '<article class="dashboard-next-step dashboard-next-step--billing" data-value-kind="dummy"><div><span class="dashboard-next-step__label">Nächster sinnvoller Arbeitsschritt</span>'+valueKindBadge("dummy")+'<h3>Kostenarten und Rechnungsbeträge vervollständigen</h3><p>Fiktive Empfehlung; die spätere Logik muss Abhängigkeiten und Blockaden belastbar auswerten.</p></div><button class="primary" data-ui-action="navigation.switchTab" data-ui-args="[&quot;einstellungen&quot;]" type="button">Kosten erfassen</button></article>'+
-    '<section class="dashboard-entry-section"><div class="dashboard-section-heading"><div><p class="page-header__kicker">Abrechnungsprozess</p><h3>Arbeitsschritte und Direkteinstiege</h3></div><span>Vorschau-Workflow</span></div><div class="workflow-stage-grid">'+
-      workflowStage("Mieter & Wohnungen","mieter","users","Erledigt","done")+
-      workflowStage("Miete & Vorauszahlungen","einnahmen","wallet","Erledigt","done")+
-      workflowStage("Kosten erfassen","einstellungen","receipt","Warnung","warning")+
-      workflowStage("Manuelle & externe Werte","manuellewerte","input","Offen","open")+
-      workflowStage("Verbräuche erfassen","verbraeuche","droplet","Blockiert","blocked")+
-      workflowStage("Verteilung","umlage","distribution","Blockiert","blocked")+
-      workflowStage("Prüfung","qualitaet","shield","Warnung","warning")+
-      workflowStage("Neue Vorauszahlungen","vorauszahlungsanpassung","calculator","Offen","open")+
-      workflowStage("Briefe","briefe","mail","Blockiert","blocked")+
-      workflowStage("Export","export","download","Blockiert","blocked")+
-      workflowStage("Archiv","archiv","archive","Offen","open")+
+    '<section class="dashboard-entry-section"><div class="dashboard-section-heading"><div><p class="page-header__kicker">Abrechnungsprozess</p><h3>Produktiver Arbeitsstand und Direkteinstiege</h3></div><span>'+completedRules+' von '+stats.rules.length+' Prüfbereichen vollständig</span></div><div class="workflow-stage-grid">'+
+      workflowStage("Mieter & Wohnungen","mieter","users",workflowStatus(ruleMap.tenants),stats.completeTenants.length+' von '+stats.tenants.length+' Mietverhältnissen vollständig')+
+      workflowStage("Miete & Vorauszahlungen","einnahmen","wallet",stats.tenantsWithPrepayment===stats.tenants.length&&stats.tenants.length?"Vollständig":"Offen",stats.tenantsWithPrepayment+' von '+stats.tenants.length+' mit Vorauszahlung')+
+      workflowStage("Kosten erfassen","einstellungen","receipt",workflowStatus(ruleMap.costs),stats.completeCosts.length+' von '+stats.costs.length+' Kostenarten vollständig')+
+      workflowStage("Manuelle & externe Werte","manuellewerte","input",stats.openCosts.length||stats.blockedCosts.length?"Offen":"Vollständig",stats.openCosts.length+' offene Kostenangaben')+
+      workflowStage("Verbräuche erfassen","verbraeuche","droplet",workflowStatus(ruleMap.consumption),stats.completeConsumption.length+' von '+stats.consumptionCosts.length+' Verbrauchskosten vollständig')+
+      workflowStage("Verteilung","umlage","distribution",workflowStatus(ruleMap.allocation),stats.billableUnits.length+' von '+stats.activeUnits.length+' Einheiten berechenbar')+
+      workflowStage("Prüfung","qualitaet","shield",workflowStatus(ruleMap.quality),stats.qualityErrors.length+' Fehler, '+stats.qualityWarnings.length+' weitere Hinweise')+
+      workflowStage("Neue Vorauszahlungen","vorauszahlungsanpassung","calculator",stats.tenants.length?"Offen":"Nicht verfügbar",stats.tenants.length+' Mietverhältnisse als Grundlage')+
+      workflowStage("Briefe","briefe","mail",workflowStatus(ruleMap.letters),stats.lettersGenerated+' von '+stats.tenants.length+' Briefen erzeugt')+
+      workflowStage("Export","export","download",stats.qualityErrors.length?"Blockiert":"Offen",stats.qualityErrors.length?'Blockierende Qualitätsfehler vorhanden':'Export verändert keine Daten')+
+      workflowStage("Archiv","archiv","archive",stats.archives.length?"Archiviert":"Offen",stats.archives.length+' archivierte Abrechnungen')+
     '</div></section>';
 }
+
 function renderOverviewForTab(tabId) {
   if (!AP17_DASHBOARD_TABS.includes(tabId)) return;
   const root=document.querySelector('[data-area-dashboard="'+(tabId === "start" ? "billing" : "object")+'"]');
@@ -244,58 +298,58 @@ function pageHeaderPeriodLabel() {
   return format(periodStart()) + " – " + format(periodEnd());
 }
 function updateAllPageHeaders() {
-  const archived=safeOverviewCall(()=>isArchiveViewer(),false);
-  const finalized=safeOverviewCall(()=>NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized(),false);
-  const hasBilling=safeOverviewCall(()=>archived||NK_PRO_MODULES.archiveActions.hasActiveCurrentBilling(),archived);
-  const period=hasBilling?safeOverviewCall(()=>pageHeaderPeriodLabel(),"–"):"–";
-  Object.entries(TAB_DEFINITIONS).forEach(([tabId,def])=>{
-    const page=document.querySelector('[data-page-tab="'+tabId+'"]'); if (!page) return;
-    const billingPage=BILLING_NAV_TABS.includes(tabId) || tabId === "start";
-    const value=page.querySelector('[data-page-period]'); if (value && billingPage) value.textContent=period||"–";
+  const context=NK_PRO_MODULES.billingContext.snapshot();
+  const open=NK_PRO_MODULES.billingContext.isOpen();
+  const readOnly=NK_PRO_MODULES.billingContext.isReadOnly();
+  Object.keys(TAB_DEFINITIONS).forEach(tabId=>{
+    const page=document.querySelector('[data-page-tab="'+tabId+'"]');
+    if (!page) return;
+    const billingPage=BILLING_NAV_TABS.includes(tabId);
     const badge=page.querySelector('[data-page-readonly]');
     if (badge) {
-      badge.hidden=!billingPage;
-      if (!billingPage) return;
-      badge.hidden=false;
-      badge.classList.add("billing-status-badge");
-      badge.classList.remove("is-working","is-finalized","is-archived","is-none");
-      if (archived) { badge.textContent="Archiviert · schreibgeschützt"; badge.classList.add("is-archived"); }
-      else if (finalized) { badge.textContent="Finalisiert · schreibgeschützt"; badge.classList.add("is-finalized"); }
-      else if (hasBilling) { badge.textContent="In Bearbeitung · bearbeitbar"; badge.classList.add("is-working"); }
-      else { badge.textContent="Keine Abrechnung geöffnet"; badge.classList.add("is-none"); }
+      badge.hidden=!billingPage||!readOnly;
+      if (billingPage&&readOnly) badge.textContent="Schreibgeschützte Ansicht";
     }
-    const status=page.querySelector('[data-page-save-status]'); if (status) status.textContent=archived?"Archiviert":(finalized?"Finalisiert":"Gespeichert");
-    const saveButton=page.querySelector('[data-page-save]'); if (saveButton) saveButton.disabled=archived||finalized;
+    const status=page.querySelector('[data-page-save-status]');
+    if (status) status.textContent=billingPage?(readOnly?"Schreibgeschützt":(open?"Gespeichert":"Keine Abrechnung geöffnet")):"Gespeichert";
+    const saveButton=page.querySelector('[data-page-save]');
+    if (saveButton&&billingPage) {
+      saveButton.hidden=readOnly||!open;
+      saveButton.disabled=readOnly||!open;
+      saveButton.setAttribute("aria-hidden",saveButton.hidden?"true":"false");
+    }
   });
-  const activeSection=document.querySelector('section.tab.active');
   const globalTitle=document.getElementById('workspaceTitle');
   if (globalTitle) { globalTitle.textContent=''; globalTitle.hidden=true; }
+  if (typeof applyBillingContextToDom==="function") applyBillingContextToDom();
 }
 
 function auditV992Structure() {
   const objectDashboard=document.querySelector('[data-area-dashboard="object"]');
   const billingDashboard=document.querySelector('[data-area-dashboard="billing"]');
-  const workingPages=Array.from(document.querySelectorAll('section.tab')).filter(tab=>!["landing","objektuebersicht","start"].includes(tab.id));
+  const billingPages=BILLING_NAV_TABS.map(tab=>document.querySelector('[data-page-tab="'+tab+'"]')).filter(Boolean);
   const checks={
     objectDashboard:!!objectDashboard,
     billingDashboard:!!billingDashboard,
-    objectDirectEntries:!!objectDashboard && objectDashboard.querySelectorAll('.dashboard-entry').length===4,
-    billingWorkflowEntries:!!billingDashboard && billingDashboard.querySelectorAll('.workflow-stage').length===11,
-    previewNotices:document.querySelectorAll('.dashboard-preview-notice').length===2,
-    realValues:document.querySelectorAll('[data-value-kind="real"]').length===15,
-    dummyValues:document.querySelectorAll('[data-value-kind="dummy"]').length===15,
-    noGenericOverviewGrids:document.querySelectorAll('.overview-grid').length===0,
-    workingPagesWithoutDashboards:workingPages.every(page=>!page.querySelector('.area-dashboard,.overview-grid')),
+    objectDirectEntries:!!objectDashboard&&objectDashboard.querySelectorAll('.dashboard-entry').length===4,
+    billingWorkflowEntries:!!billingDashboard&&billingDashboard.querySelectorAll('.workflow-stage').length===11,
+    productiveDashboardValues:document.querySelectorAll('.dashboard-preview-notice').length===0&&document.querySelectorAll('[data-value-kind="dummy"]').length===1,
+    controlledContext:NK_PRO_MODULES.billingContext.describe().stateCount===3,
+    contextClosedAfterStart:!NK_PRO_MODULES.billingContext.isOpen()||document.documentElement.dataset.billingExplicitlyOpened==="true",
+    billingHeadersWithoutRedundantPeriod:billingPages.every(page=>!page.querySelector('[data-page-period]')),
+    centralBillingTable:!!document.querySelector('#startArchiveTable')&&document.querySelectorAll('#startArchiveTable thead th').length===9,
     contextBar:!!document.querySelector('[data-global-billing-context]'),
     svgSectionChevrons:Array.from(document.querySelectorAll('.page-section__chevron')).every(node=>!!node.querySelector('svg')),
     compactHeaders:Array.from(document.querySelectorAll('.app-page')).every(page=>page.querySelectorAll(':scope > .page-header').length===1)
   };
-  const report={version:APP_VERSION,workPackage:"AP17",generatedAt:new Date().toISOString(),allPassed:Object.values(checks).every(Boolean),checks};
+  const report={version:APP_VERSION,workPackage:"AP19",generatedAt:new Date().toISOString(),allPassed:Object.values(checks).every(Boolean),checks};
   NK_PRO_MODULES.runtimeDiagnostics.setStructureAudit(report);
   document.documentElement.dataset.v992Audit=report.allPassed?'passed':'failed';
   document.documentElement.dataset.ap17Audit=report.allPassed?'passed':'failed';
+  document.documentElement.dataset.ap19Audit=report.allPassed?'passed':'failed';
   return report;
 }
+
 
 function renderAll(options = {}) {
   if (renderInProgress) {
