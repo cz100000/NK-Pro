@@ -26,7 +26,7 @@ function main(){
   assert(project.controlledBillingContextVersion===1&&project.billingReadOnlyModeVersion===1&&project.productiveDashboardVersion===1,"AP19-Funktionsmetadaten fehlen.");
   assert(manifest.version==="99.4.23"&&manifest.name.includes("V99.4.23"),"Manifestversion ist inkonsistent.");
   assert(runtime.includes('const APP_VERSION = "V99.4.23";')&&runtime.includes('billingContext:globalThis.NKProBillingContext'),"AP19-Laufzeitkonfiguration fehlt.");
-  assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-23-ap20-corr1";')&&worker.includes('"./js/billing-context.js"'),"AP19-PWA-App-Shell ist inkonsistent.");
+  assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-23-ap20-corr2";')&&worker.includes('"./js/billing-context.js"'),"AP19-PWA-App-Shell ist inkonsistent.");
 
   assert(html.includes('data-global-billing-mode')&&html.includes('data-global-billing-close')&&html.includes('Abrechnung schließen'),"Kontextleiste ist unvollständig.");
   assert((html.match(/data-requires-billing="true"/g)||[]).length===10,"Abrechnungsnavigation ist nicht vollständig kontextgebunden.");

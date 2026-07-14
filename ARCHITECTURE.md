@@ -24,8 +24,13 @@ AP19 stellt weiterhin die Zustände `closed`, `edit` und `view` bereit. AP20-Bes
 
 ## PWA
 
-Der Service Worker verwendet `nk-pro-v99-4-23-ap20-corr1` und enthält `quality-rules.js` im App-Shell. Same-Origin-, Offline- und Cachehärtung aus AP15 bleiben erhalten.
+Der Service Worker verwendet `nk-pro-v99-4-23-ap20-corr2` und enthält `quality-rules.js` im App-Shell. Same-Origin-, Offline- und Cachehärtung aus AP15 bleiben erhalten.
 
 ## Releasegrenze
 
 Die ZIP enthält produktiven Code, lokale Ressourcen, aktuelle Tests und Projektdokumentation. Installierte Abhängigkeiten, Browserprofile, Testreports und temporäre Dateien werden ausgeschlossen. `SHA256SUMS.txt` deckt jeden enthaltenen Projektbestand ab.
+
+
+## Korrekturstand 2 – Zählereingaben
+
+Die Eingabekomponente trennt jetzt DOM-basierte Live-Vorschau und persistierten Commit. `input` aktualisiert ausschließlich Verbrauch, Status und Summen in der sichtbaren Tabelle. `change` oder Enter delegiert weiterhin an die zentrale Anwendungsaktion und führt erst dann Synchronisierung, Speicherung und Rendering aus. Dadurch entstehen während des Tippens keine zusätzlichen Messwertrevisionen.

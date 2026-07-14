@@ -21,12 +21,12 @@ assert(project.schemaVersion === 5 && project.dataLayerContractVersion === 1, "D
 assert(project.documentLayoutVersion === 4, "AP13-Dokumentlayout wurde verändert.");
 assert(project.navigationDesignSystemVersion === 5 && project.uiVisualSystemVersion === 4, "AP17-UI-Metadaten fehlen.");
 assert(project.areaDashboardVersion === 2 && project.globalBillingContextVersion === 2 && project.productiveDashboardVersion === 1, "Produktive Dashboard-/Kontextversion fehlt.");
-assert(project.pwaCacheName === "nk-pro-v99-4-23-ap20-corr1", "Aktuelle PWA-Cachemetadaten fehlen.");
+assert(project.pwaCacheName === "nk-pro-v99-4-23-ap20-corr2", "Aktuelle PWA-Cachemetadaten fehlen.");
 
 assert(runtime.includes('const APP_VERSION = "V99.4.23";'), "Aktuelle Laufzeitversion fehlt.");
 assert(runtime.includes('const APP_VERSION_NAME = "AP20-Zentrales Prüf-, Plausibilitäts- und Freigabesystem";'), "Aktueller Laufzeitname fehlt.");
 assert(html.includes("NK-Pro V99.4.23 – AP20-Zentrales Prüf-, Plausibilitäts- und Freigabesystem"), "Aktueller HTML-Titel fehlt.");
-assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-23-ap20-corr1";'), "Aktueller Service-Worker-Cache fehlt.");
+assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-23-ap20-corr2";'), "Aktueller Service-Worker-Cache fehlt.");
 
 const navTabs = [...html.matchAll(/class="tab-btn nav-group-item[^"]*"[^>]*data-tab="([^"]+)"/g)].map(match => match[1]);
 const expectedTabs = ["objektuebersicht","objekt","wohnungsverwaltung","wasser","mieterverwaltung","start","mieter","einnahmen","einstellungen","manuellewerte","verbraeuche","umlage","qualitaet","vorauszahlungsanpassung","briefe","export","archiv","sicherung"];

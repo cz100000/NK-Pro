@@ -37,3 +37,7 @@ Details: `AP20_ZENTRALES_PRUEF_PLAUSIBILITAETS_UND_FREIGABESYSTEM.md`, `AP20_PRU
 ## Korrekturstand 1
 
 Die ausgelieferte V99.4.23 enthält die Korrektur für den Datenstart bei einem rückläufigen Zählerstand. Der Datensatz wird geladen und die Auffälligkeit zentral als `NKP-PLAU-005` („Zu prüfen“) dargestellt.
+
+## Korrekturstand 2
+
+Die Zählerstandstabellen berechnen Verbrauch, Zeilensumme und Gesamtsumme nun bereits während der Eingabe. Enter speichert den Wert zuverlässig. Dezimalkomma und Dezimalpunkt werden bei Zählerständen korrekt verarbeitet. Die Live-Vorschau schreibt erst beim bestätigten Commit in den Datensatz.

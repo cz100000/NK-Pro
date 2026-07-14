@@ -84,7 +84,7 @@ const landingBilling = html.match(/<button class="landing-choice"[^>]*data-ui-ac
 assert(svgForButton(objectGroup) && svgForButton(objectGroup) === svgForButton(landingObject), "Objekt-Startkachel verwendet nicht exakt das Navigationsicon.");
 assert(svgForButton(billingGroup) && svgForButton(billingGroup) === svgForButton(landingBilling), "Abrechnungs-Startkachel verwendet nicht exakt das Navigationsicon.");
 
-assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-23-ap20-corr1";'), "PWA-Cache ist nicht V99.4.23.");
+assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-23-ap20-corr2";'), "PWA-Cache ist nicht V99.4.23.");
 assert(!/<link[^>]+(?:fontawesome|material-icons|bootstrap-icons)|https?:\/\/[^"']+\.(?:svg|woff2?)/i.test(html), "AP14 führt eine externe Icon- oder Schriftabhängigkeit ein.");
 for (const file of ["tests/ap14-ui-navigation.test.cjs", "tests/ap14-ui-navigation.spec.js"]) {
   assert(fs.existsSync(path.join(root, file)), `${file} fehlt.`);

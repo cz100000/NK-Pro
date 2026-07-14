@@ -33,7 +33,7 @@
   "documentLayoutVersion": 4,
   "uiVisualSystemVersion": 4,
   "meterInventoryDummyVersion": 1,
-  "pwaCacheName": "nk-pro-v99-4-23-ap20-corr1",
+  "pwaCacheName": "nk-pro-v99-4-23-ap20-corr2",
   "releaseHardeningVersion": 1,
   "releaseContentPolicyVersion": 1,
   "transientUiResetVersion": 1,
@@ -52,5 +52,7 @@
   "centralQualityResultModelVersion": 1,
   "qualityConfirmationFingerprintVersion": 1,
   "systemDiagnosticsSeparationVersion": 1,
-  "priorYearPlausibilityVersion": 1
+  "priorYearPlausibilityVersion": 1,
+  "meterInputLiveCalculationVersion": 1,
+  "meterInputLocaleNumberVersion": 1
 }

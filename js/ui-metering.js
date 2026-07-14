@@ -171,6 +171,98 @@ function waterConsumption(...args) { return NK_PRO_MODULES.billingCalculation.wa
 
 function genericMeterConsumption(...args) { return NK_PRO_MODULES.billingCalculation.genericMeterConsumption(...args); }
 
+function parseMeterNumberInput(value) {
+  if (value === null || value === undefined || String(value).trim() === "") return "";
+  if (typeof value === "number") return Number.isFinite(value) ? value : 0;
+  let source = String(value).trim().replace(/\s+/g, "");
+  const comma = source.lastIndexOf(",");
+  const dot = source.lastIndexOf(".");
+  if (comma >= 0 && dot >= 0) {
+    if (comma > dot) source = source.replace(/\./g, "").replace(",", ".");
+    else source = source.replace(/,/g, "");
+  } else if (comma >= 0) {
+    const parts = source.split(",");
+    source = parts.length > 2 ? parts.slice(0, -1).join("") + "." + parts.at(-1) : source.replace(",", ".");
+  } else if (dot >= 0) {
+    const parts = source.split(".");
+    if (parts.length > 2) source = parts.slice(0, -1).join("") + "." + parts.at(-1);
+  }
+  const parsed = Number(source);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function meterPreviewConsumption(startValue, endValue) {
+  if (endValue === null || endValue === undefined || String(endValue).trim() === "") return 0;
+  const start = parseMeterNumberInput(startValue);
+  const end = parseMeterNumberInput(endValue);
+  if (end === "" || end < Number(start || 0)) return 0;
+  return end - Number(start || 0);
+}
+
+function meterPreviewText(value) {
+  return Number(value || 0).toLocaleString("de-DE", { maximumFractionDigits:3 });
+}
+
+function setMeterPreviewResult(cell, value) {
+  if (!cell) return;
+  const normalized = Number(value || 0);
+  cell.dataset.meterValue = String(normalized);
+  const strong = cell.querySelector("strong");
+  if (strong) strong.textContent = meterPreviewText(normalized);
+  else cell.textContent = meterPreviewText(normalized);
+}
+
+function updateWaterMeterPreview(element) {
+  const row = element && element.closest ? element.closest("tr[data-water-meter-row]") : null;
+  if (!row) return;
+  const valueOf = key => { const input = row.querySelector('[data-water-meter-field="' + key + '"]'); return input ? input.value : ""; };
+  const kw = meterPreviewConsumption(valueOf("kwStart"), valueOf("kwEnd"));
+  const ww = meterPreviewConsumption(valueOf("wwStart"), valueOf("wwEnd"));
+  setMeterPreviewResult(row.querySelector('[data-meter-result="kw"]'), kw);
+  setMeterPreviewResult(row.querySelector('[data-meter-result="ww"]'), ww);
+  setMeterPreviewResult(row.querySelector('[data-meter-result="total"]'), kw + ww);
+
+  const kwHasEnd = String(valueOf("kwEnd")).trim() !== "";
+  const wwHasEnd = String(valueOf("wwEnd")).trim() !== "";
+  const kwInvalid = kwHasEnd && Number(parseMeterNumberInput(valueOf("kwEnd")) || 0) < Number(parseMeterNumberInput(valueOf("kwStart")) || 0);
+  const wwInvalid = wwHasEnd && Number(parseMeterNumberInput(valueOf("wwEnd")) || 0) < Number(parseMeterNumberInput(valueOf("wwStart")) || 0);
+  const status = kwInvalid || wwInvalid ? "Zählerstand prüfen" : (!kwHasEnd && !wwHasEnd ? "Endstand fehlt" : "OK");
+  const statusCell = row.querySelector('[data-meter-result="status"]');
+  if (statusCell) statusCell.innerHTML = '<span class="status ' + statusClass(status) + '">' + escapeHtml(status) + '</span>';
+
+  const table = row.closest("table");
+  if (!table) return;
+  let kwTotal = 0, wwTotal = 0;
+  table.querySelectorAll('tbody tr[data-water-meter-row]').forEach(current => {
+    kwTotal += Number(current.querySelector('[data-meter-result="kw"]')?.dataset.meterValue || 0);
+    wwTotal += Number(current.querySelector('[data-meter-result="ww"]')?.dataset.meterValue || 0);
+  });
+  setMeterPreviewResult(table.querySelector('[data-meter-footer="kw"]'), kwTotal);
+  setMeterPreviewResult(table.querySelector('[data-meter-footer="ww"]'), wwTotal);
+  setMeterPreviewResult(table.querySelector('[data-meter-footer="total"]'), kwTotal + wwTotal);
+}
+
+function updateGenericMeterPreview(element) {
+  const row = element && element.closest ? element.closest("tr[data-generic-meter-row]") : null;
+  if (!row) return;
+  const start = row.querySelector('[data-generic-meter-field="start"]')?.value || "";
+  const end = row.querySelector('[data-generic-meter-field="end"]')?.value || "";
+  const consumption = meterPreviewConsumption(start, end);
+  setMeterPreviewResult(row.querySelector('[data-meter-result="generic"]'), consumption);
+  const hasEnd = String(end).trim() !== "";
+  const invalid = hasEnd && Number(parseMeterNumberInput(end) || 0) < Number(parseMeterNumberInput(start) || 0);
+  const status = invalid ? "Zählerstand prüfen" : (!hasEnd ? "Endstand fehlt" : "OK");
+  const statusCell = row.querySelector('[data-meter-result="status"]');
+  if (statusCell) statusCell.innerHTML = '<span class="status ' + statusClass(status) + '">' + escapeHtml(status) + '</span>';
+  const table = row.closest("table");
+  const totalTarget = table && document.querySelector('[data-generic-meter-total="' + (table.dataset.costId || "") + '"]');
+  if (table && totalTarget) {
+    let total = 0;
+    table.querySelectorAll('tbody tr[data-generic-meter-row]').forEach(current => { total += Number(current.querySelector('[data-meter-result="generic"]')?.dataset.meterValue || 0); });
+    totalTarget.textContent = meterPreviewText(total);
+  }
+}
+
 
 function meterTotalForCostAndTenant(...args) { return NK_PRO_MODULES.billingCalculation.meterTotalForCostAndTenant(...args); }
 
@@ -210,7 +302,7 @@ function applyWaterMetersToUmlage() {
 function setWaterMeterSetting(key, value) {
   ensureWaterMeterData();
   const numericKeys = ["houseWaterTotal","houseMeterStart","houseMeterEnd"];
-  state.waterMeters.settings[key] = numericKeys.includes(key) ? (String(value || "").trim() === "" ? "" : num(value)) : value;
+  state.waterMeters.settings[key] = numericKeys.includes(key) ? parseMeterNumberInput(value) : value;
   state.waterMeters.settings.enabled = "Ja";
   syncUmlageInputs();
   applyWaterMetersToUmlage();
@@ -220,7 +312,7 @@ function setWaterMeterSetting(key, value) {
 function setWaterMeterValue(index, key, value, type="text") {
   ensureWaterMeterData();
   if (!state.waterMeters.readings[index]) state.waterMeters.readings[index] = {};
-  state.waterMeters.readings[index][key] = type === "number" ? (String(value || "").trim() === "" ? "" : num(value)) : value;
+  state.waterMeters.readings[index][key] = type === "number" ? parseMeterNumberInput(value) : value;
   if (["kwEnd","wwEnd"].includes(key)) {
     if (!state.meta) state.meta = {};
     state.meta.meterNumericEndValuesTouchedForYear = currentAbrechnungsjahr();
@@ -237,7 +329,7 @@ function setGenericMeterValue(costId, index, key, value, type="text") {
   ensureWaterMeterData();
   if (!state.meterReadings.readings[costId]) state.meterReadings.readings[costId] = [];
   if (!state.meterReadings.readings[costId][index]) state.meterReadings.readings[costId][index] = {};
-  state.meterReadings.readings[costId][index][key] = type === "number" ? (String(value || "").trim() === "" ? "" : num(value)) : value;
+  state.meterReadings.readings[costId][index][key] = type === "number" ? parseMeterNumberInput(value) : value;
   if (key === "end") {
     if (!state.meta) state.meta = {};
     state.meta.meterNumericEndValuesTouchedForYear = currentAbrechnungsjahr();
@@ -253,13 +345,17 @@ function setGenericMeterValue(costId, index, key, value, type="text") {
 function meterInput(value, index, key, type="number") {
   const cls = type === "number" ? "number" : "";
   const htmlType = type === "date" ? "date" : "text";
-  return '<input type="' + htmlType + '" class="' + cls + '" value="' + escapeHtml(value ?? "") + '"' + uiActionAttributes("meter.setWaterValue", [index,key,"$value",type], "change") + '>';
+  const preview = type === "number" ? uiActionAttributes("meter.previewWaterValue", [], "input") : "";
+  const enterCommit = type === "number" ? uiActionAttributes("meter.setWaterValue", [index,key,"$value",type], "keydown", { key:"Enter", preventDefault:true }) : "";
+  return '<input type="' + htmlType + '" class="' + cls + '" data-water-meter-field="' + escapeHtml(key) + '" value="' + escapeHtml(value ?? "") + '"' + preview + uiActionAttributes("meter.setWaterValue", [index,key,"$value",type], "change") + enterCommit + '>';
 }
 
 function genericMeterInput(costId, value, index, key, type="number") {
   const cls = type === "number" ? "number" : "";
   const htmlType = type === "date" ? "date" : "text";
-  return '<input type="' + htmlType + '" class="' + cls + '" value="' + escapeHtml(value ?? "") + '"' + uiActionAttributes("meter.setGenericValue", [costId,index,key,"$value",type], "change") + '>';
+  const preview = type === "number" ? uiActionAttributes("meter.previewGenericValue", [], "input") : "";
+  const enterCommit = type === "number" ? uiActionAttributes("meter.setGenericValue", [costId,index,key,"$value",type], "keydown", { key:"Enter", preventDefault:true }) : "";
+  return '<input type="' + htmlType + '" class="' + cls + '" data-generic-meter-field="' + escapeHtml(key) + '" value="' + escapeHtml(value ?? "") + '"' + preview + uiActionAttributes("meter.setGenericValue", [costId,index,key,"$value",type], "change") + enterCommit + '>';
 }
 
 function renderWaterCostSection(cost, visibleRows) {
@@ -277,7 +373,7 @@ function renderWaterCostSection(cost, visibleRows) {
     const ww = waterConsumption(r, "ww");
     const total = kw + ww;
     const status = waterMeterRowStatus(r);
-    return '<tr>' +
+    return '<tr data-water-meter-row="' + i + '">' +
       '<td>' + tenantIdCellHtml(t) + '</td>' +
       '<td>' + unitRefCellHtml(t.wohnung) + '</td>' +
       '<td>' + escapeHtml(t.name || "") + '</td>' +
@@ -285,24 +381,24 @@ function renderWaterCostSection(cost, visibleRows) {
       '<td class="editable">' + meterInput(r.kwStartDate, i, "kwStartDate", "date") + '</td>' +
       '<td class="editable">' + meterInput(r.kwEnd, i, "kwEnd", "number") + '</td>' +
       '<td class="editable">' + meterInput(r.kwEndDate, i, "kwEndDate", "date") + '</td>' +
-      '<td class="readonly-cell">' + kw.toLocaleString("de-DE", { maximumFractionDigits:3 }) + '</td>' +
+      '<td class="readonly-cell" data-meter-result="kw" data-meter-value="' + kw + '">' + kw.toLocaleString("de-DE", { maximumFractionDigits:3 }) + '</td>' +
       '<td class="editable">' + meterInput(r.wwStart, i, "wwStart", "number") + '</td>' +
       '<td class="editable">' + meterInput(r.wwStartDate, i, "wwStartDate", "date") + '</td>' +
       '<td class="editable">' + meterInput(r.wwEnd, i, "wwEnd", "number") + '</td>' +
       '<td class="editable">' + meterInput(r.wwEndDate, i, "wwEndDate", "date") + '</td>' +
-      '<td class="readonly-cell">' + ww.toLocaleString("de-DE", { maximumFractionDigits:3 }) + '</td>' +
-      '<td class="readonly-cell">' + total.toLocaleString("de-DE", { maximumFractionDigits:3 }) + '</td>' +
-      '<td><span class="status ' + statusClass(status) + '">' + escapeHtml(status) + '</span></td>' +
+      '<td class="readonly-cell" data-meter-result="ww" data-meter-value="' + ww + '">' + ww.toLocaleString("de-DE", { maximumFractionDigits:3 }) + '</td>' +
+      '<td class="readonly-cell" data-meter-result="total" data-meter-value="' + total + '">' + total.toLocaleString("de-DE", { maximumFractionDigits:3 }) + '</td>' +
+      '<td data-meter-result="status"><span class="status ' + statusClass(status) + '">' + escapeHtml(status) + '</span></td>' +
       '<td class="editable">' + inputHtml(r.bemerkung || "", "setWaterMeterValue(" + i + ",'bemerkung',this.value)") + '</td>' +
     '</tr>';
   }).join("") : '<tr><td colspan="17">Keine aktuellen oder NK-offenen Mietverhältnisse vorhanden.</td></tr>';
 
   const total = totals.kw + totals.ww;
   const footer = '<tfoot><tr class="total-row"><td colspan="7"><strong>Summe Verbrauch</strong></td>' +
-    '<td class="readonly-cell"><strong>' + totals.kw.toLocaleString("de-DE", { maximumFractionDigits:3 }) + '</strong></td>' +
+    '<td class="readonly-cell" data-meter-footer="kw" data-meter-value="' + totals.kw + '"><strong>' + totals.kw.toLocaleString("de-DE", { maximumFractionDigits:3 }) + '</strong></td>' +
     '<td colspan="4">–</td>' +
-    '<td class="readonly-cell"><strong>' + totals.ww.toLocaleString("de-DE", { maximumFractionDigits:3 }) + '</strong></td>' +
-    '<td class="readonly-cell"><strong>' + total.toLocaleString("de-DE", { maximumFractionDigits:3 }) + '</strong></td>' +
+    '<td class="readonly-cell" data-meter-footer="ww" data-meter-value="' + totals.ww + '"><strong>' + totals.ww.toLocaleString("de-DE", { maximumFractionDigits:3 }) + '</strong></td>' +
+    '<td class="readonly-cell" data-meter-footer="total" data-meter-value="' + total + '"><strong>' + total.toLocaleString("de-DE", { maximumFractionDigits:3 }) + '</strong></td>' +
     '<td colspan="2">–</td></tr></tfoot>';
 
   return '<h3>' + escapeHtml(cost.id + " · " + cost.kostenart) + '</h3>' +
@@ -325,7 +421,7 @@ function renderGenericMeterSection(cost, visibleRows) {
     const r = readings[i] || {};
     const consumption = genericMeterConsumption(r);
     const status = genericMeterRowStatus(r);
-    return '<tr>' +
+    return '<tr data-generic-meter-row="' + i + '">' +
       '<td>' + tenantIdCellHtml(t) + '</td>' +
       '<td>' + unitRefCellHtml(t.wohnung) + '</td>' +
       '<td>' + escapeHtml(t.name || "") + '</td>' +
@@ -333,16 +429,16 @@ function renderGenericMeterSection(cost, visibleRows) {
       '<td class="editable">' + genericMeterInput(cost.id, r.startDate, i, "startDate", "date") + '</td>' +
       '<td class="editable">' + genericMeterInput(cost.id, r.end, i, "end", "number") + '</td>' +
       '<td class="editable">' + genericMeterInput(cost.id, r.endDate, i, "endDate", "date") + '</td>' +
-      '<td class="readonly-cell">' + consumption.toLocaleString("de-DE", { maximumFractionDigits:3 }) + '</td>' +
-      '<td><span class="status ' + statusClass(status) + '">' + escapeHtml(status) + '</span></td>' +
+      '<td class="readonly-cell" data-meter-result="generic" data-meter-value="' + consumption + '">' + consumption.toLocaleString("de-DE", { maximumFractionDigits:3 }) + '</td>' +
+      '<td data-meter-result="status"><span class="status ' + statusClass(status) + '">' + escapeHtml(status) + '</span></td>' +
       '<td class="editable">' + genericMeterInput(cost.id, r.bemerkung || "", i, "bemerkung", "text") + '</td>' +
     '</tr>';
   }).join("") : '<tr><td colspan="10">Keine aktuellen oder NK-offenen Mietverhältnisse vorhanden.</td></tr>';
 
   return '<h3>' + escapeHtml(cost.id + " · " + cost.kostenart) + '</h3>' +
-    '<p class="small">Allgemeine Zählerstand-Erfassung. Summe Verbrauch: <strong>' +
-    totalConsumption.toLocaleString("de-DE", { maximumFractionDigits:3 }) + ' Einheiten</strong></p>' +
-    '<div class="table-wrap"><table id="meterTable_' + escapeHtml(cost.id) + '">' +
+    '<p class="small">Allgemeine Zählerstand-Erfassung. Summe Verbrauch: <strong><span data-generic-meter-total="' + escapeHtml(cost.id) + '">' +
+    totalConsumption.toLocaleString("de-DE", { maximumFractionDigits:3 }) + '</span> Einheiten</strong></p>' +
+    '<div class="table-wrap"><table id="meterTable_' + escapeHtml(cost.id) + '" data-cost-id="' + escapeHtml(cost.id) + '">' +
     '<thead><tr><th>Mieter-ID</th><th>Wohnungs-ID</th><th>Mieter</th><th>Anfangsstand</th><th>Datum Anfang</th><th>Endstand</th><th>Datum Ende</th><th>Verbrauch</th><th>Status</th><th>Bemerkung</th></tr></thead>' +
     '<tbody>' + rows + '</tbody></table></div>';
 }

@@ -78,6 +78,6 @@ splitModules.forEach(name => {
 assert(runtimeConfig.includes('const APP_VERSION = "V99.4.23";'));
 assert(runtimeConfig.includes('const APP_VERSION_NAME = "AP20-Zentrales Prüf-, Plausibilitäts- und Freigabesystem";'));
 assert(html.includes("NK-Pro V99.4.23 – AP20-Zentrales Prüf-, Plausibilitäts- und Freigabesystem"));
-assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-23-ap20-corr1";'));
+assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-23-ap20-corr2";'));
 
 process.stdout.write(`AP12-Architekturprüfung abgeschlossen: app.js ${appMetrics.lines} Zeilen/${appMetrics.bytes} Byte, 1 Zustandsersetzung, ${architecture.renderers.length} seiteneffektfreie Renderer, 37 entfernte Wrapper und keine alten window-Bindungen.\n`);

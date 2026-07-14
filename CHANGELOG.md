@@ -601,3 +601,12 @@ Die detaillierte frühere Historie bleibt in der Anwendung und im Versionsverlau
 - Datenstart bricht bei rückläufigem Zählerstand ohne dokumentierten Überlauf nicht mehr ab.
 - NKP-PLAU-005 prüft die zentrale Messperiodenstruktur und zeigt die Auffälligkeit fachlich an.
 - PWA-Cache auf `nk-pro-v99-4-23-ap20-corr1` angehoben.
+
+## V99.4.23 – AP20 Korrekturstand 2
+
+- Zählerverbrauch und Summenzeile aktualisieren sich unmittelbar während der Eingabe.
+- Enter führt einen vollständigen Commit des aktuellen Zählerwerts aus.
+- Zählereingaben unterstützen Dezimalkomma und Dezimalpunkt ohne Fehlinterpretation.
+- Die Vorschau bleibt vom persistierten Messwert- und Revisionsmodell getrennt.
+- Neue Node- und Chromium-Regression für Live-Berechnung, Commit, Speicherung und Neustart.
+- PWA-Cache auf `nk-pro-v99-4-23-ap20-corr2` angehoben.

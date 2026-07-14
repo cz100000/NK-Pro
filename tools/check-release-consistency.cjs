@@ -33,7 +33,7 @@ function verifyChecksums(){
 function main(){
   const pkg=json("package.json"),lock=json("package-lock.json"),manifest=json("manifest.webmanifest"),project=json("nk-pro-project.json");
   const html=read("index.html"),css=read("assets/app.css"),runtime=read("js/app-runtime-config.js"),worker=read("service-worker.js");
-  const rules=read("js/quality-rules.js"),assurance=read("js/quality-assurance.js"),qualityUi=read("js/ui-quality.js"),workflow=read("js/billing-workflow.js"),documentData=read("js/document-data.js"),context=read("js/billing-context.js");
+  const rules=read("js/quality-rules.js"),assurance=read("js/quality-assurance.js"),qualityUi=read("js/ui-quality.js"),workflow=read("js/billing-workflow.js"),documentData=read("js/document-data.js"),context=read("js/billing-context.js"),meteringUi=read("js/ui-metering.js"),uiBindings=read("js/ui-bindings.js");
   const inventory=json("AP20_PRUEFINVENTAR.json"),overview=json("AP20_REGELUEBERSICHT.json"),results=json("AP20_TEST_RESULTS.json");
   const architecture=JSON.parse(childProcess.execFileSync(process.execPath,[path.join(root,"tools/analyze-ap12-architecture.cjs")],{encoding:"utf8"}));
   const appMetrics=JSON.parse(childProcess.execFileSync(process.execPath,[path.join(root,"tools/analyze-app-js.cjs")],{encoding:"utf8"}));
@@ -45,10 +45,11 @@ function main(){
   assert(project.schemaVersion===5&&project.dataLayerContractVersion===1,"Datenverträge wurden verändert.");
   assert(project.documentLayoutVersion===4&&project.controlledBillingContextVersion===1&&project.billingReadOnlyModeVersion===1,"AP13-/AP19-Stand ist inkonsistent.");
   assert(project.centralQualityRuleRegistryVersion===1&&project.centralQualityResultModelVersion===1&&project.qualityConfirmationFingerprintVersion===1&&project.systemDiagnosticsSeparationVersion===1&&project.priorYearPlausibilityVersion===1,"AP20-Metadaten fehlen.");
-  assert(project.pwaCacheName==="nk-pro-v99-4-23-ap20-corr1","PWA-Cachekennung ist inkonsistent.");
+  assert(project.pwaCacheName==="nk-pro-v99-4-23-ap20-corr2","PWA-Cachekennung ist inkonsistent.");
+  assert(project.meterInputLiveCalculationVersion===1&&project.meterInputLocaleNumberVersion===1,"Korrekturstand 2 für Zählereingaben ist nicht dokumentiert.");
   assert(runtime.includes('const APP_VERSION = "V99.4.23";')&&runtime.includes('const APP_VERSION_NAME = "AP20-Zentrales Prüf-, Plausibilitäts- und Freigabesystem";'),"Laufzeitmetadaten sind inkonsistent.");
   assert(html.includes("NK-Pro V99.4.23")&&html.includes("AP20-Zentrales Prüf-, Plausibilitäts- und Freigabesystem"),"HTML-Version ist inkonsistent.");
-  assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-23-ap20-corr1";'),"Service-Worker-Cache ist inkonsistent.");
+  assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-23-ap20-corr2";'),"Service-Worker-Cache ist inkonsistent.");
 
   const scripts=[...html.matchAll(/<script\s+defer(?:="")?\s+src="([^"]+)"><\/script>/g)].map(match=>match[1]);
   assert(scripts.length===52&&scripts.at(-2)==="./js/app.js"&&scripts.at(-1)==="./js/service-worker-register.js","Produktive Skriptreihenfolge ist inkonsistent.");
@@ -66,6 +67,8 @@ function main(){
   assert(rules.includes("qualityRuleConfirmationsV2")&&rules.includes("function consumptionThreshold")&&rules.includes("function saveConfirmation"),"Registry, Schwellen oder Fingerprint-Bestätigungen fehlen.");
   assert(rules.includes("reversedMeterFindings")&&rules.includes("zaehlerDaten.messperioden und waterMeters.readings"),"NKP-PLAU-005 nutzt die zentrale Messperiodenstruktur nicht.");
   assert(read("js/meter-validation.js").includes("STARTUP_SAFE_VALIDATION_CODES")&&read("js/meter-validation.js").includes("METER_READING_REVERSED"),"Die Zählerstartkorrektur fehlt.");
+  assert(meteringUi.includes("function parseMeterNumberInput")&&meteringUi.includes("meter.previewWaterValue")&&meteringUi.includes("data-meter-footer=\"total\"")&&meteringUi.includes("key:\"Enter\""),"Die Live-Zählerberechnung oder robuste Dezimaleingabe fehlt.");
+  assert(uiBindings.includes("meter.previewWaterValue")&&uiBindings.includes("updateWaterMeterPreview")&&uiBindings.includes("meter.previewGenericValue"),"UI-Bindings der Live-Zählerberechnung fehlen.");
   assert(assurance.includes("qualityRules.evaluate")&&assurance.includes("centralReport"),"Qualitätsadapter delegiert nicht zentral.");
   assert(qualityUi.includes("renderContextualQualitySummaries")&&qualityUi.includes("renderSystemDiagnostics")&&qualityUi.includes("highlightQualityTarget"),"Fachseitenintegration oder Systemdiagnose fehlt.");
   assert(context.includes('"quality.confirmIssue"')&&context.includes('"quality.markNotApplicable"'),"AP20-Schreibaktionen sind nicht zentral geschützt.");
@@ -81,20 +84,20 @@ function main(){
   assert(overview.rules.filter(row=>row.blocking).length===19&&overview.rules.filter(row=>row.confirmationAllowed).length===17,"Blockier- oder Bestätigungszählung ist inkonsistent.");
   assert(results.version==="99.4.23"&&results.workPackage==="AP20"&&String(results.status).startsWith("passed"),"AP20-Testbericht ist nicht freigegeben.");
   assert(results.browserHarnessScenarios===5&&results.browserHarnessChecks===48&&results.existingChecksFound===176,"AP20-Testzählung ist inkonsistent.");
-  assert(results.correctionBuild===1&&results.correctionRegression&&results.correctionRegression.browserReloadWithStoredData==="passed"&&results.correctionRegression.startupFallback===false,"AP20-Korrekturregression ist nicht freigegeben.");
+  assert(results.correctionBuild===2&&results.correctionRegression&&results.correctionRegression.browserReloadWithStoredData==="passed"&&results.correctionRegression.startupFallback===false&&results.correctionRegression.liveConsumptionPreview==="passed"&&results.correctionRegression.enterCommit==="passed"&&results.correctionRegression.decimalComma==="passed"&&results.correctionRegression.decimalPoint==="passed"&&results.correctionRegression.meterValueReload==="passed","AP20-Korrekturregression ist nicht freigegeben.");
 
   assert(architecture.totals.stateRootAssignments===1&&architecture.renderers.length===51&&architecture.renderers.every(item=>!item.mutatesState&&!item.persists&&!item.navigates&&!item.opensDialog),"Renderer-/State-Architektur ist inkonsistent.");
   assert(appMetrics.lines<=250&&appMetrics.directStateWriteSites===0&&appMetrics.globalAssignments===0,"app.js-Orchestrierungsgrenze ist verletzt.");
 
   for(const file of [
     "AP20_ZENTRALES_PRUEF_PLAUSIBILITAETS_UND_FREIGABESYSTEM.md","AP20_PRUEFINVENTAR.md","AP20_PRUEFINVENTAR.json","AP20_REGELUEBERSICHT.md","AP20_REGELUEBERSICHT.json","AP20_PRUEFBERICHT.md","AP20_TEST_RESULTS.json","AP20_DATEIAENDERUNGEN.md","AP20_DATEIAENDERUNGEN.json","AP20_RELEASE_CONTENT_POLICY.json",
-    "tests/ap20-central-quality-system.test.cjs","tests/ap20-central-quality-system.spec.js","tests/ap20-meter-start-regression.test.cjs","tools/check-ap20-browser-harness.cjs","tools/check-ap20-meter-start-browser.cjs","AP20_KORREKTUR_1_ZAEHLERSTART.md","AP20_KORREKTUR_1_DATEIAENDERUNGEN.md","AP20_KORREKTUR_1_DATEIAENDERUNGEN.json","js/quality-rules.js"
+    "tests/ap20-central-quality-system.test.cjs","tests/ap20-central-quality-system.spec.js","tests/ap20-meter-start-regression.test.cjs","tests/ap20-meter-calculation-regression.test.cjs","tools/check-ap20-browser-harness.cjs","tools/check-ap20-meter-start-browser.cjs","tools/check-ap20-meter-calculation-browser.cjs","AP20_KORREKTUR_1_ZAEHLERSTART.md","AP20_KORREKTUR_1_DATEIAENDERUNGEN.md","AP20_KORREKTUR_1_DATEIAENDERUNGEN.json","AP20_KORREKTUR_2_ZAEHLERBERECHNUNG.md","AP20_KORREKTUR_2_DATEIAENDERUNGEN.md","AP20_KORREKTUR_2_DATEIAENDERUNGEN.json","js/quality-rules.js"
   ])assert(exists(file),`${file} fehlt.`);
   for(const previous of [["AP15_TEST_RESULTS.json","99.4.18"],["AP17_TEST_RESULTS.json","99.4.20"],["AP18_TEST_RESULTS.json","99.4.21"],["AP19_TEST_RESULTS.json","99.4.22"]])assert(json(previous[0]).version===previous[1],`${previous[0]} wurde historisch verändert.`);
 
   const contentReport=JSON.parse(childProcess.execFileSync(process.execPath,[path.join(root,"tools/check-release-contents.cjs"),"--ignore-node-modules","--strict","--json"],{encoding:"utf8"}));
   assert(contentReport.status==="passed",`Release-Inhaltsprüfung ist nicht bestanden: ${JSON.stringify(contentReport.findings)}`);
   verifyChecksums();
-  process.stdout.write("Release-Konsistenzprüfung abgeschlossen: V99.4.23 mit 176 inventarisierten Prüfstellen, 42 zentralen Regeln, unveränderten Datenverträgen, AP19-Schreibschutz, getrennter Systemdiagnose und AP13-Ausgaberegression ist konsistent.\n");
+  process.stdout.write("Release-Konsistenzprüfung abgeschlossen: V99.4.23 Korrekturstand 2 mit Live-Zählerberechnung, robuster Dezimaleingabe, 176 inventarisierten Prüfstellen, 42 zentralen Regeln und unveränderten Datenverträgen ist konsistent.\n");
 }
 try{main();}catch(error){process.stderr.write(`FEHLER: ${error.message}\n`);process.exit(1);}

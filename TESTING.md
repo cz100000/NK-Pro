@@ -47,3 +47,19 @@ npm run test:ap20:meter-start-browser
 ```
 
 Der Browsertest legt vor dem Start einen gespeicherten Datensatz mit rückläufigem Zählerstand in den Local Storage. Erwartet werden ein vollständiger Start ohne Fallback sowie ein zentraler Prüfpunkt `NKP-PLAU-005` mit Status „Zu prüfen“.
+
+## AP20-Korrekturstand 2 – Zählerberechnungsregression
+
+Statische Zahlen- und Integrationsprüfung:
+
+```bash
+node tests/ap20-meter-calculation-regression.test.cjs
+```
+
+Serverloser Chromium-Test:
+
+```bash
+node tools/check-ap20-meter-calculation-browser.cjs
+```
+
+Geprüft werden Live-Verbrauch und Live-Summe vor dem Fokuswechsel, Enter-Commit, Dezimalkomma, Dezimalpunkt, Local-Storage-Speicherung und korrekte Wiederherstellung nach einem Neustart.

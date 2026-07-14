@@ -1,0 +1,159 @@
+{
+  "workPackage": "AP20-Korrekturstand-2",
+  "version": "99.4.23",
+  "generatedAt": "2026-07-14",
+  "counts": {
+    "added": 5,
+    "modified": 24,
+    "removed": 0,
+    "totalChanged": 29
+  },
+  "added": [
+    {
+      "path": "AP20_KORREKTUR_2_ZAEHLERBERECHNUNG.md",
+      "sha256": "47dac5e6239d8dbe1ab11eb3f5381a6c4ff0289e7bee9c343caa1fe3eb7b1af4",
+      "bytes": 2545
+    },
+    {
+      "path": "tests/ap20-meter-calculation-regression.test.cjs",
+      "sha256": "0a58bc945e7bc37269041641d5288a8edcc10a13e317e91dbcb1e149206d3695",
+      "bytes": 2414
+    },
+    {
+      "path": "tools/check-ap20-meter-calculation-browser.cjs",
+      "sha256": "5047bfb2c1a02ccdb76cf6c46f1d0fea5a2508ee351d5084789ef46570635b1c",
+      "bytes": 7510
+    },
+    {
+      "path": "AP20_KORREKTUR_2_DATEIAENDERUNGEN.json",
+      "selfGenerated": true
+    },
+    {
+      "path": "AP20_KORREKTUR_2_DATEIAENDERUNGEN.md",
+      "selfGenerated": true
+    }
+  ],
+  "modified": [
+    {
+      "path": "AP20_PRUEFBERICHT.md",
+      "sha256": "7766e6b32fd532cbbe29b6f5edbf13d6ab6c9c2ada13883332aaf4a8d200f7a1",
+      "bytes": 4869
+    },
+    {
+      "path": "AP20_RELEASE_CONTENT_POLICY.json",
+      "sha256": "43de6fdde023d2abbd1d02d67afdc88a47c9951e847e33e4a526e74c0556d09a",
+      "bytes": 1501
+    },
+    {
+      "path": "AP20_TEST_RESULTS.json",
+      "sha256": "bb041ff0b37da1d2bb1a6648228ddb01fb7934384b289593bc57ee785406598e",
+      "bytes": 5292
+    },
+    {
+      "path": "ARCHITECTURE.md",
+      "sha256": "3ebd8d6243097f78b821ab330b0f2b7d1476109cc8a58f4b8bbcdccbb72786b2",
+      "bytes": 2640
+    },
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "cdbe2e698cb275b85ac834c0b6a5525ce54ef062410cb96417fd2ae6af829e02",
+      "bytes": 41385
+    },
+    {
+      "path": "README.md",
+      "sha256": "a345623b9e9544eeaf2898b7072d75d7235f6c9664909ccca25e8b7c9a00e168",
+      "bytes": 1953
+    },
+    {
+      "path": "RELEASE_NOTES.md",
+      "sha256": "86ee42c73d95ed43f72acd354a9df2db6e0aede072861afc0284e00687ddaa18",
+      "bytes": 1667
+    },
+    {
+      "path": "TESTING.md",
+      "sha256": "e63126ed308b1533d36f8d204e0e30d1cbe7508b41a2c93b60245d366a1628e7",
+      "bytes": 3103
+    },
+    {
+      "path": "js/ui-bindings.js",
+      "sha256": "41ed7aff084f1127fcd6d0f1aab0a587e8cfb8537d92a9baca469870e975cae8",
+      "bytes": 14008
+    },
+    {
+      "path": "js/ui-metering.js",
+      "sha256": "a12afc7bb6894941dfb49f07555bd08930315f022bd0cea8ab238de516f4a705",
+      "bytes": 41070
+    },
+    {
+      "path": "nk-pro-project.json",
+      "sha256": "b37f2865aa2cfcd81f6adfd6f00e515ac078610370da041a9cf765bb5870a5c6",
+      "bytes": 1834
+    },
+    {
+      "path": "package.json",
+      "sha256": "ce7c68871f1cf545471cd16eb0cef9451828f792c51113198316de4bf4554190",
+      "bytes": 3220
+    },
+    {
+      "path": "service-worker.js",
+      "sha256": "64c91c9395a9727e03ca8253b3e1dd6f79653232968d7343f0cc38e03b48fb72",
+      "bytes": 3259
+    },
+    {
+      "path": "tests/ap12-app-decoupling.test.cjs",
+      "sha256": "f4b0b0df83c06f88a5572638b72636db311d7884c6c82cf97e1180f0ca536191",
+      "bytes": 6354
+    },
+    {
+      "path": "tests/ap14-ui-navigation.test.cjs",
+      "sha256": "fb732d4cabf4b5dc6a0d82fbe251d25e55f8cdf7a756f8f787862f4500aeec00",
+      "bytes": 8559
+    },
+    {
+      "path": "tests/ap15-integration-release.test.cjs",
+      "sha256": "bed95b07282978372b689f97f2c9a6fb2b77093a89a31734c1a18712117a6f27",
+      "bytes": 3813
+    },
+    {
+      "path": "tests/ap17-area-dashboards.test.cjs",
+      "sha256": "252f27348bb6032866f2f00d2f0977291208183958f0e9a79beb63a3505be9d7",
+      "bytes": 6879
+    },
+    {
+      "path": "tests/ap18-ui-ux-polish.test.cjs",
+      "sha256": "3b3be36fd29e1a5cd728bced4789af457776047a8431fc880860ec0f0d239448",
+      "bytes": 6731
+    },
+    {
+      "path": "tests/ap19-billing-context-dashboards.test.cjs",
+      "sha256": "b74630b6895d1fae0b17acdfdc6b12a595f9c22fc206e6b2cccd339ee2da8e7d",
+      "bytes": 6278
+    },
+    {
+      "path": "tests/ap20-central-quality-system.test.cjs",
+      "sha256": "f623065859c45ace5077083215236eff955119729bd6cb0fbea70c4ea6bb6b6a",
+      "bytes": 6015
+    },
+    {
+      "path": "tests/ap7-ui-integration.test.cjs",
+      "sha256": "01278b269fd15cc04f9d77b8173f3bf1e0423a7761f9ad4543af2266b1a7e50f",
+      "bytes": 5163
+    },
+    {
+      "path": "tests/app-smoke.spec.js",
+      "sha256": "71d0f1774ad212451013ad91c1e338e41cb7d3cc0da93a413d53112a5b4f4710",
+      "bytes": 11809
+    },
+    {
+      "path": "tests/service-worker.spec.js",
+      "sha256": "2da7215ff3568cd3c137c6e11f063f7fa19293f85b068e7e2c15c114e3b031aa",
+      "bytes": 4869
+    },
+    {
+      "path": "tools/check-release-consistency.cjs",
+      "sha256": "36a6e11985fafb7be9b4b7edda5f68752c84c674b75bb885d944131dff6c84b4",
+      "bytes": 12649
+    }
+  ],
+  "removed": []
+}

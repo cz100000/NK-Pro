@@ -128,6 +128,8 @@
       "quality.openPageIssues":call(handlers, "openPageQualityIssues")
     });
     registerController("meter", "UI-Adapter auf Zählerstammdaten, Messwerte und Messperioden aus AP5", {
+      "meter.previewWaterValue":context => requireHandler(handlers, "updateWaterMeterPreview")(context.element),
+      "meter.previewGenericValue":context => requireHandler(handlers, "updateGenericMeterPreview")(context.element),
       "meter.setWaterValue":appCall(applicationActions, "meter", "setWaterValue"), "meter.setGenericValue":appCall(applicationActions, "meter", "setGenericValue"),
       "meter.setWaterSetting":appCall(applicationActions, "meter", "setWaterSetting")
     });

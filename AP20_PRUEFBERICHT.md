@@ -85,3 +85,17 @@ In einer Umgebung ohne Loopback-Sperre zusätzlich:
 ```text
 npm run test:browser
 ```
+
+## Korrekturstand 2 – Live-Zählerberechnung
+
+| Prüfung | Ergebnis |
+|---|---|
+| Verbrauch während der Eingabe | bestanden |
+| Summenzeile während der Eingabe | bestanden |
+| Enter-Commit | bestanden |
+| Dezimalkomma `297,24` | bestanden; 31,24 m³ |
+| Dezimalpunkt `128.06` | bestanden; 11,06 m³ |
+| Vorschau ohne vorzeitige Persistenz | bestanden |
+| Speicherung und Browserneustart | bestanden |
+| Datenschema / Datenebenenvertrag | unverändert 5 / 1 |
+| PWA-Aktualisierung | Cachekennung `nk-pro-v99-4-23-ap20-corr2` |

@@ -36,9 +36,12 @@
     "strict release contents",
     "AP20 Chromium harness",
     "release consistency",
+    "AP20 meter-calculation node regression",
+    "AP20 meter-calculation browser regression",
     "SHA-256 inventory"
   ],
   "notes": [
+    "Korrekturstand 2 ergänzt die sofortige Verbrauchs- und Summenberechnung während der Zählerstandseingabe, Enter-Commit sowie sichere Dezimalkomma-/Dezimalpunktverarbeitung.",
     "Korrekturstand 1 behandelt rückläufige Zählerstände als fachliche Auffälligkeit statt als fatalen Datenstartfehler.",
     "Zähler-DUMMY bleibt erhalten.",
     "Keine externen Produktionsabhängigkeiten.",

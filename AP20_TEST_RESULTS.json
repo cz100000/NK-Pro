@@ -2,7 +2,7 @@
   "version": "99.4.23",
   "displayVersion": "V99.4.23",
   "workPackage": "AP20",
-  "status": "passed_with_documented_host_limits_and_correction_regression",
+  "status": "passed_with_documented_host_limits_and_correction_2_regression",
   "releaseDate": "2026-07-14",
   "sourceVersion": "99.4.22",
   "sourceWorkPackage": "AP19",
@@ -58,7 +58,8 @@
     "architecture": "passed_AP6_to_AP20",
     "meterStartupRegression": "passed_node_and_chromium",
     "storedDataReload": "passed_without_fallback_or_data_loss",
-    "centralMeterPlausibility": "passed_NKP-PLAU-005"
+    "centralMeterPlausibility": "passed_NKP-PLAU-005",
+    "meterCalculationRegression": "passed_node_and_chromium_live_enter_reload"
   },
   "knownLimitations": [
     "Produktive Zählerverwaltung bleibt außerhalb AP20 DUMMY.",
@@ -121,18 +122,46 @@
     "browserScenarios": 5,
     "browserChecks": 48,
     "meterStartupNodeRegression": 1,
-    "meterStartupBrowserRegression": 1
+    "meterStartupBrowserRegression": 1,
+    "meterCalculationNodeRegression": 1,
+    "meterCalculationBrowserRegression": 1
   },
-  "correctionBuild": 1,
-  "correctionTitle": "Datenstart bei rückläufigem Zählerstand",
+  "correctionBuild": 2,
+  "correctionTitle": "Live-Zählerberechnung und robuste Dezimaleingabe",
   "correctionRegression": {
-    "nodeMeteringMigration": "passed",
-    "centralRuleRuntime": "passed",
+    "meterStartupNodeRegression": "passed",
+    "meterStartupBrowserRegression": "passed",
     "browserReloadWithStoredData": "passed",
     "startupFallback": false,
     "startupErrors": 0,
     "centralRuleId": "NKP-PLAU-005",
     "centralStatus": "Zu prüfen",
-    "pwaCache": "nk-pro-v99-4-23-ap20-corr1"
+    "liveConsumptionPreview": "passed",
+    "liveTotalsPreview": "passed",
+    "enterCommit": "passed",
+    "decimalComma": "passed",
+    "decimalPoint": "passed",
+    "meterValueReload": "passed",
+    "firstReferenceConsumption": 31.24,
+    "secondReferenceConsumption": 11.06,
+    "pwaCache": "nk-pro-v99-4-23-ap20-corr2"
+  },
+  "correctionHistory": [
+    {
+      "build": 1,
+      "title": "Datenstart bei rückläufigem Zählerstand",
+      "status": "passed"
+    },
+    {
+      "build": 2,
+      "title": "Live-Zählerberechnung und robuste Dezimaleingabe",
+      "status": "passed"
+    }
+  ],
+  "correction2FileChanges": {
+    "added": 5,
+    "modified": 24,
+    "removed": 0,
+    "totalChanged": 29
   }
 }
