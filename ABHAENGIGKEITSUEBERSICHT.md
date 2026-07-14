@@ -1,11 +1,20 @@
-# NK-Pro – Abhängigkeitsübersicht V99.4.18
+# NK-Pro – Abhängigkeitsübersicht V99.4.23
 
-AP14 ergänzt keine externe Laufzeitabhängigkeit. Icons bleiben lokales SVG-Markup, die Schriftfamilien sind Systemschriften und der Zähler-DUMMY nutzt vorhandene Tabellenwerkzeuge.
+AP20 ergänzt keine externe Produktionsabhängigkeit. Die zentrale Prüfarchitektur folgt dem bestehenden geordneten Skriptmodell.
 
 ```text
+Fachdaten/Berechnung/Snapshot
+        ↓
+quality-rules (Registry + einheitliche Ergebnisse)
+        ↓
+quality-assurance (Kompatibilitätsadapter)
+        ├─ ui-quality (Cockpit, Fachseiten, Systemdiagnose)
+        ├─ ui-page-controller (Dashboardstatus)
+        ├─ billing-workflow (Abschlussbereitschaft)
+        └─ document-data (Abnahmeprotokoll)
+
 DOM → ui-events → ui-controller → ui-bindings → Actions/Fachdienste → State/Commit
-Navigation → ui-navigation-pages → ui-page-controller → spezialisierte Renderer
 Dokumentdaten → Dokumentrenderer → browser-io/export-service
 ```
 
-Fachmodule greifen nicht auf DOM, Dialoge oder Browser-Speicher zu. `index.html` und `service-worker.js` enthalten dieselbe vollständige App-Shell.
+Bestätigungen werden additiv im bestehenden State gespeichert. `quality-rules.js` greift nicht direkt auf DOM, Browser-Speicher oder Dialoge zu. `index.html` und `service-worker.js` enthalten dieselbe vollständige App-Shell einschließlich der Registry.

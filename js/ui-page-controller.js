@@ -170,23 +170,26 @@ function dashboardStats() {
   const tenantsWithPrepayment=tenants.filter(tenant=>num(tenant.nkVoraus)>0).length;
   const objectValidation=safeOverviewCall(()=>validateObjectStandard(state),{valid:false,errors:[],warnings:[],infos:[]});
   const quality=safeOverviewCall(()=>NK_PRO_MODULES.qualityAssurance.inspect({scope:"currentBilling"}),null);
-  const qualityIssues=quality && Array.isArray(quality.issues) ? quality.issues.filter(issue=>issue && issue.severity !== "OK") : [];
-  const qualityErrors=qualityIssues.filter(issue=>issue.severity === "Fehler");
-  const qualityWarnings=qualityIssues.filter(issue=>issue.severity !== "Fehler");
+  const centralResults=quality && Array.isArray(quality.results) ? quality.results : [];
+  const qualityIssues=centralResults.filter(row=>["Blockiert","Zu prüfen","Hinweis"].includes(row.status));
+  const qualityErrors=centralResults.filter(row=>row.status === "Blockiert");
+  const qualityWarnings=centralResults.filter(row=>row.status === "Zu prüfen" || row.status === "Hinweis");
+  const centralGroup=id=>quality && Array.isArray(quality.groups) ? quality.groups.find(group=>group.id===id) : null;
+  const groupRule=(key,label,id,target)=>{const group=centralGroup(id)||{counts:{blocked:0,review:0,hints:0},results:[]};const counts=group.counts||{};return {key,label,complete:!counts.blocked&&!counts.review,blocked:counts.blocked>0,target,groupId:id};};
   const activeBilling=safeOverviewCall(()=>NK_PRO_MODULES.archiveActions.hasActiveCurrentBilling(),false);
   const finalized=safeOverviewCall(()=>NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized(),false);
   const archives=Array.isArray(state && state.jahresArchiv) ? state.jahresArchiv : [];
   const lettersGenerated=activeBilling ? safeOverviewCall(()=>briefResultRows().length,0) : 0;
   const periodValid=/^\d{4}-\d{2}-\d{2}$/.test(String(periodStart())) && /^\d{4}-\d{2}-\d{2}$/.test(String(periodEnd())) && String(periodStart()) <= String(periodEnd());
   const rules=[
-    {key:"units",label:"Einheiten",complete:activeUnits.length>0 && completeUnits.length===activeUnits.length,blocked:activeUnits.length===0,target:"wohnungsverwaltung"},
-    {key:"tenants",label:"Mieterzuordnungen",complete:tenants.length>0 && completeTenants.length===tenants.length,blocked:tenants.length===0,target:"mieterverwaltung"},
-    {key:"period",label:"Abrechnungszeitraum",complete:periodValid,blocked:!periodValid,target:"einstellungen"},
-    {key:"costs",label:"Kostenarten",complete:costs.length>0 && completeCosts.length===costs.length,blocked:blockedCosts.length>0 || costs.length===0,target:"einstellungen"},
-    {key:"consumption",label:"Verbrauchswerte",complete:consumptionCosts.length===completeConsumption.length,blocked:consumptionCosts.length>completeConsumption.length,target:"verbraeuche"},
-    {key:"allocation",label:"Berechenbare Einheiten",complete:activeUnits.length>0 && blockedUnits.length===0,blocked:blockedUnits.length>0,target:"umlage"},
-    {key:"quality",label:"Qualitätsprüfung",complete:qualityErrors.length===0 && qualityWarnings.length===0,blocked:qualityErrors.length>0,target:"qualitaet"},
-    {key:"letters",label:"Abrechnungsbriefe",complete:tenants.length>0 && lettersGenerated>=tenants.length,blocked:qualityErrors.length>0 || blockedCosts.length>0,target:"briefe"}
+    groupRule("units","Objekt und Zeitraum","object-period","einstellungen"),
+    groupRule("tenants","Wohnungen und Mietverhältnisse","units-tenancies","mieterverwaltung"),
+    groupRule("period","Vorauszahlungen und Korrekturen","prepayments","einnahmen"),
+    groupRule("costs","Kosten und Kostenarten","costs","einstellungen"),
+    groupRule("consumption","Verbräuche und Zählerstände","consumption","verbraeuche"),
+    groupRule("allocation","Umlage und Summen","allocation","umlage"),
+    groupRule("quality","Abschluss","completion","qualitaet"),
+    groupRule("letters","Briefe und Ausgabe","letters","briefe")
   ];
   return {
     units,activeUnits,completeUnits,tenants,completeTenants,costs,costRows,completeCosts,blockedCosts,openCosts,consumptionCosts,completeConsumption,
@@ -342,7 +345,7 @@ function auditV992Structure() {
     svgSectionChevrons:Array.from(document.querySelectorAll('.page-section__chevron')).every(node=>!!node.querySelector('svg')),
     compactHeaders:Array.from(document.querySelectorAll('.app-page')).every(page=>page.querySelectorAll(':scope > .page-header').length===1)
   };
-  const report={version:APP_VERSION,workPackage:"AP19",generatedAt:new Date().toISOString(),allPassed:Object.values(checks).every(Boolean),checks};
+  const report={version:APP_VERSION,workPackage:"AP20",generatedAt:new Date().toISOString(),allPassed:Object.values(checks).every(Boolean),checks};
   NK_PRO_MODULES.runtimeDiagnostics.setStructureAudit(report);
   document.documentElement.dataset.v992Audit=report.allPassed?'passed':'failed';
   document.documentElement.dataset.ap17Audit=report.allPassed?'passed':'failed';
@@ -373,6 +376,9 @@ function renderAll(options = {}) {
     try {
       updateAllPageHeaders();
       renderAllOverviewCards();
+      const centralQuality = safeOverviewCall(()=>NK_PRO_MODULES.qualityAssurance.inspect({scope:"currentBilling",includeTechnical:true}), null);
+      if (centralQuality && NK_PRO_MODULES.billingContext.isOpen() && typeof renderContextualQualitySummaries === "function") renderContextualQualitySummaries(centralQuality);
+      if (centralQuality && typeof renderSystemDiagnostics === "function") renderSystemDiagnostics(centralQuality);
       auditV992Structure();
     } catch(uiError) {
       if (typeof console !== "undefined" && console.error) console.error(APP_VERSION + "-Darstellung konnte nicht aktualisiert werden", uiError);

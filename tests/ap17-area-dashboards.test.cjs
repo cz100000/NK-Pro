@@ -15,18 +15,18 @@ const worker = read("service-worker.js");
 const project = JSON.parse(read("nk-pro-project.json"));
 const packageJson = JSON.parse(read("package.json"));
 
-assert(packageJson.version === "99.4.22" && packageJson.name === "nk-pro-v99-4-22", "Aktuelle Paketversion ist inkonsistent.");
-assert(project.appVersion === "99.4.22" && project.basedOn === "99.4.21-AP18", "Aktuelle Projektbasis ist inkonsistent.");
+assert(packageJson.version === "99.4.23" && packageJson.name === "nk-pro-v99-4-23", "Aktuelle Paketversion ist inkonsistent.");
+assert(project.appVersion === "99.4.23" && project.basedOn === "99.4.22-AP19", "Aktuelle Projektbasis ist inkonsistent.");
 assert(project.schemaVersion === 5 && project.dataLayerContractVersion === 1, "Datenschema oder Datenebenenvertrag wurde verändert.");
 assert(project.documentLayoutVersion === 4, "AP13-Dokumentlayout wurde verändert.");
 assert(project.navigationDesignSystemVersion === 5 && project.uiVisualSystemVersion === 4, "AP17-UI-Metadaten fehlen.");
 assert(project.areaDashboardVersion === 2 && project.globalBillingContextVersion === 2 && project.productiveDashboardVersion === 1, "Produktive Dashboard-/Kontextversion fehlt.");
-assert(project.pwaCacheName === "nk-pro-v99-4-22-ap19", "Aktuelle PWA-Cachemetadaten fehlen.");
+assert(project.pwaCacheName === "nk-pro-v99-4-23-ap20", "Aktuelle PWA-Cachemetadaten fehlen.");
 
-assert(runtime.includes('const APP_VERSION = "V99.4.22";'), "Aktuelle Laufzeitversion fehlt.");
-assert(runtime.includes('const APP_VERSION_NAME = "AP19-Produktive Bereichsübersichten und kontrollierter Abrechnungskontext";'), "Aktueller Laufzeitname fehlt.");
-assert(html.includes("NK-Pro V99.4.22 – AP19-Produktive Bereichsübersichten und kontrollierter Abrechnungskontext"), "Aktueller HTML-Titel fehlt.");
-assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-22-ap19";'), "Aktueller Service-Worker-Cache fehlt.");
+assert(runtime.includes('const APP_VERSION = "V99.4.23";'), "Aktuelle Laufzeitversion fehlt.");
+assert(runtime.includes('const APP_VERSION_NAME = "AP20-Zentrales Prüf-, Plausibilitäts- und Freigabesystem";'), "Aktueller Laufzeitname fehlt.");
+assert(html.includes("NK-Pro V99.4.23 – AP20-Zentrales Prüf-, Plausibilitäts- und Freigabesystem"), "Aktueller HTML-Titel fehlt.");
+assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-23-ap20";'), "Aktueller Service-Worker-Cache fehlt.");
 
 const navTabs = [...html.matchAll(/class="tab-btn nav-group-item[^"]*"[^>]*data-tab="([^"]+)"/g)].map(match => match[1]);
 const expectedTabs = ["objektuebersicht","objekt","wohnungsverwaltung","wasser","mieterverwaltung","start","mieter","einnahmen","einstellungen","manuellewerte","verbraeuche","umlage","qualitaet","vorauszahlungsanpassung","briefe","export","archiv","sicherung"];
@@ -38,7 +38,7 @@ assert(!html.includes("overview-grid"), "Generische AP16-Kachelraster sind noch 
 assert(html.includes("Hinweis zu Vorschauwerten") === false, "Dynamische Dashboardhinweise dürfen nicht als statische Dublette vorliegen.");
 assert(!controller.includes("fiktiv"), "Produktive Dashboards enthalten noch fiktive Vorschauwerte.");
 assert(controller.includes("productiveDashboardValues") && controller.includes('querySelectorAll(\'[data-value-kind="dummy"]\').length===1'), "Produktiv-/DUMMY-Audit ist nicht auf AP19 festgelegt.");
-assert(controller.includes("const rules=[") && controller.includes('{key:"letters"'), "Zentrale produktive Prüfregeln fehlen.");
+assert(controller.includes("const rules=[") && controller.includes('groupRule("letters"') && controller.includes("centralGroup"), "Zentrale produktive Prüfregeln fehlen.");
 assert(controller.includes("billingWorkflowEntries") && controller.includes("length===11"), "Elf Abrechnungsdirekteinstiege werden nicht geprüft.");
 assert(controller.includes("objectDirectEntries") && controller.includes("length===4"), "Vier Objektdirekteinstiege werden nicht geprüft.");
 

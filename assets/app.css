@@ -4574,3 +4574,75 @@ body.billing-readonly-mode section.tab.active [contenteditable="true"] { pointer
 
 /* AP19 – Native Hidden-Semantik für dynamisch gesperrte Aktionen */
 [hidden] { display:none !important; }
+
+/* AP20 – Zentrales Prüf-, Plausibilitäts- und Freigabesystem */
+.quality-status-cards { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin:14px 0; }
+.quality-status-card { min-height:116px; border:1px solid #cdd9e4; border-left:5px solid #6c8298; border-radius:10px; background:#fff; padding:13px 14px; text-align:left; display:flex; flex-direction:column; align-items:flex-start; gap:4px; box-shadow:var(--shadow-sm); }
+.quality-status-card strong { font-size:28px; line-height:1; color:#173b5a; }
+.quality-status-card small { color:#5b6877; line-height:1.35; }
+.quality-status-card--err { border-left-color:#b94e46; }
+.quality-status-card--warn { border-left-color:#d39a31; }
+.quality-status-card--info { border-left-color:#4d83b3; }
+.quality-status-card--ok { border-left-color:#4e9660; }
+.quality-status-card.is-active { outline:3px solid rgba(42,98,154,.24); outline-offset:1px; }
+.quality-status-card:focus-visible { outline:3px solid #1d65a6; outline-offset:2px; }
+.quality-area-list { display:grid; gap:11px; }
+.quality-area-card { border:1px solid #d6e0e9; border-radius:10px; background:#fff; overflow:hidden; box-shadow:var(--shadow-sm); }
+.quality-area-card > summary { list-style:none; cursor:pointer; display:grid; grid-template-columns:38px minmax(0,1fr) auto; gap:11px; align-items:center; padding:13px 15px; }
+.quality-area-card > summary::-webkit-details-marker { display:none; }
+.quality-area-card > summary:focus-visible { outline:3px solid #1d65a6; outline-offset:-3px; }
+.quality-area-card__order { display:inline-grid; place-items:center; width:30px; height:30px; border-radius:50%; background:#eaf2f9; color:#214d75; font-weight:800; }
+.quality-area-card__title { display:flex; flex-direction:column; gap:3px; min-width:0; }
+.quality-area-card__title small { color:#647285; font-weight:500; }
+.quality-area-card__body { border-top:1px solid #e5ebf1; padding:12px 14px 15px; }
+.quality-detail-dialog { width:min(900px,calc(100vw - 32px)); max-height:calc(100vh - 32px); border:0; border-radius:12px; padding:0; box-shadow:0 24px 70px rgba(10,31,54,.28); }
+.quality-detail-dialog::backdrop { background:rgba(5,22,40,.52); }
+.quality-detail-dialog__shell { display:flex; flex-direction:column; max-height:calc(100vh - 32px); }
+.quality-detail-dialog__header { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; padding:18px 20px 13px; border-bottom:1px solid #dde5ec; }
+.quality-detail-dialog__header h2 { margin:2px 0 0; }
+.quality-detail-dialog__content { overflow:auto; padding:17px 20px; }
+.quality-detail-dialog__actions { display:flex; justify-content:flex-end; gap:8px; flex-wrap:wrap; padding:13px 20px 17px; border-top:1px solid #dde5ec; }
+.quality-detail-status { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:14px; }
+.quality-detail-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px 18px; margin:0 0 18px; }
+.quality-detail-grid > div,.quality-value-list > div { border-bottom:1px solid #e8edf2; padding:7px 0; }
+.quality-detail-grid dt,.quality-value-list dt { color:#667487; font-size:12px; font-weight:800; text-transform:uppercase; }
+.quality-detail-grid dd,.quality-value-list dd { margin:2px 0 0; overflow-wrap:anywhere; }
+.quality-value-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 18px; margin:0; }
+.context-quality-summary { border:1px solid #cfdae5; border-left:5px solid #67829b; border-radius:9px; padding:12px 14px; display:flex; justify-content:space-between; align-items:center; gap:12px; background:#fff; }
+.context-quality-summary.err { border-left-color:#b94e46; background:#fff8f7; }
+.context-quality-summary.warn { border-left-color:#d39a31; background:#fffaf0; }
+.context-quality-summary.info { border-left-color:#4d83b3; background:#f7fbff; }
+.context-quality-summary.ok { border-left-color:#4e9660; background:#f7fcf8; }
+.context-quality-summary p { margin:3px 0 0; }
+.context-quality-list { list-style:none; margin:10px 0 0; padding:0; display:grid; gap:7px; }
+.context-quality-list li { display:flex; align-items:center; gap:9px; border-bottom:1px solid #e8edf2; padding:6px 0; }
+.context-quality-list .link-button { text-align:left; }
+.system-diagnostics-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:11px; margin:12px 0; }
+.system-diagnostic-card { border:1px solid #d7e0e9; border-radius:9px; padding:12px 14px; background:#fff; }
+.system-diagnostic-card > div { display:flex; align-items:center; gap:9px; }
+.system-diagnostic-card p { margin:8px 0; }
+.system-diagnostic-card small { color:#667487; overflow-wrap:anywhere; }
+.quality-target-highlight { scroll-margin:120px; }
+body.billing-readonly-mode .quality-detail-dialog__actions [data-ui-action="quality.confirmIssue"],
+body.billing-readonly-mode .quality-detail-dialog__actions [data-ui-action="quality.markNotApplicable"],
+body.billing-readonly-mode .quality-detail-dialog__actions [data-ui-action="quality.reopenIssue"] { display:none; }
+
+@media (max-width:900px) {
+  .quality-status-cards { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .system-diagnostics-grid { grid-template-columns:1fr; }
+}
+@media (max-width:620px) {
+  .quality-status-cards { grid-template-columns:1fr; }
+  .quality-status-card { min-height:0; }
+  .quality-area-card > summary { grid-template-columns:34px minmax(0,1fr); }
+  .quality-area-card > summary > .status { grid-column:2; justify-self:start; }
+  .quality-detail-grid,.quality-value-list { grid-template-columns:1fr; }
+  .context-quality-summary { align-items:flex-start; flex-direction:column; }
+  .quality-detail-dialog { width:calc(100vw - 12px); max-height:calc(100vh - 12px); }
+  .quality-detail-dialog__shell { max-height:calc(100vh - 12px); }
+}
+@media (max-height:620px) {
+  .quality-detail-dialog__header { padding-top:10px; padding-bottom:9px; }
+  .quality-detail-dialog__content { padding-top:10px; padding-bottom:10px; }
+  .quality-detail-dialog__actions { padding-top:9px; padding-bottom:10px; }
+}

@@ -23,23 +23,20 @@
   }
 
   function finalBillingReadiness(report) {
+    const results = report && Array.isArray(report.results) ? report.results : [];
     const issues = report && Array.isArray(report.issues) ? report.issues : [];
-    const errors = issues.filter(i => i.severity === "Fehler");
-    const warnings = issues.filter(i => i.severity === "Prüfen");
-    const hints = issues.filter(i => i.severity === "Hinweis");
-    let level = "ok";
-    let label = "Final prüfbar";
-    let message = "Keine blockierenden Fehler gefunden. Hinweise trotzdem vor Versand durchsehen.";
-    if (errors.length) {
-      level = "err";
-      label = "Nicht abrechnungsreif";
-      message = "Es gibt blockierende Fehler. Bitte zuerst beheben, dann erneut prüfen.";
-    } else if (warnings.length) {
-      level = "warn";
-      label = "Mit Prüfpunkten";
-      message = "Keine technischen Blocker, aber fachliche Prüfpunkte offen. Vor Versand bewusst entscheiden.";
-    }
-    return { level, label, message, errors, warnings, hints };
+    const errors = results.length ? results.filter(row => row.status === "Blockiert") : issues.filter(row => row.severity === "Fehler");
+    const warnings = results.length ? results.filter(row => row.status === "Zu prüfen") : issues.filter(row => row.severity === "Prüfen");
+    const hints = results.length ? results.filter(row => row.status === "Hinweis") : issues.filter(row => row.severity === "Hinweis");
+    const central = report && report.readiness;
+    if (central) return { level:central.level, label:central.label, message:central.message, errors, warnings, hints };
+    const level = errors.length ? "err" : (warnings.length ? "warn" : "ok");
+    return {
+      level,
+      label:level === "err" ? "Nicht abschließbar" : (level === "warn" ? "Fachlich zu prüfen" : "Abschlussbereit"),
+      message:level === "err" ? "Die Abrechnung kann noch nicht abgeschlossen werden." : (level === "warn" ? "Keine blockierenden Fehler. Es bestehen noch unbestätigte Plausibilitätsauffälligkeiten." : "Die Abrechnung ist abschlussbereit."),
+      errors, warnings, hints
+    };
   }
 
   function acceptanceProtocolData() {
@@ -51,26 +48,23 @@
     const special = global.NKProQualityAssurance ? global.NKProQualityAssurance.specialCases() : null;
     const brief = (typeof currentBriefPreflightReport === "function") ? currentBriefPreflightReport() : null;
     const finalization = global.NKProBillingWorkflow.currentBillingFinalizationReport();
-    const issues = Array.isArray(quality.issues) ? quality.issues : [];
-    const errors = issues.filter(i => i.severity === "Fehler").length;
-    const warnings = issues.filter(i => i.severity === "Prüfen").length;
-    const hints = issues.filter(i => i.severity === "Hinweis").length;
-    return { quality, readiness, calc, totals, backup, special, brief, finalization, counts:{ errors, warnings, hints } };
+    const counts = {
+      errors:readiness.errors.length,
+      warnings:readiness.warnings.length,
+      hints:readiness.hints.length,
+      done:quality && quality.counts ? quality.counts.done : 0,
+      notApplicable:quality && quality.counts ? quality.counts.notApplicable : 0
+    };
+    return { quality, readiness, calc, totals, backup, special, brief, finalization, counts };
   }
 
   function acceptanceLevel(data) {
-    if (!data) return "warn";
-    if (data.counts && data.counts.errors) return "err";
-    if (data.readiness && data.readiness.level === "err") return "err";
-    if (data.brief && data.brief.level === "err") return "err";
-    if (data.backup && data.backup.level === "err") return "err";
-    if (data.special && data.special.level === "err") return "err";
-    if ((data.counts && data.counts.warnings) || (data.readiness && data.readiness.level === "warn") || (data.brief && data.brief.level === "warn") || (data.backup && data.backup.level === "warn") || (data.special && data.special.level === "warn")) return "warn";
-    return "ok";
+    if (!data || !data.readiness) return "warn";
+    return data.readiness.level === "err" ? "err" : (data.readiness.level === "warn" ? "warn" : "ok");
   }
 
   function acceptanceLabel(level) {
-    return level === "err" ? "Nicht abnahmebereit" : (level === "warn" ? "Abnahme mit Prüfpunkten" : "Abnahmebereit");
+    return level === "err" ? "Nicht abschließbar" : (level === "warn" ? "Fachlich zu prüfen" : "Abschlussbereit");
   }
 
   function validateBriefResult(calc, result) {

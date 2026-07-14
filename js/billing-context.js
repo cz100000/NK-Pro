@@ -16,7 +16,7 @@
     "document.setBriefSetting","document.refreshBrief",
     "archive.reopenForRework","archive.currentYear","archive.deleteAt","archive.importItems",
     "yearTransition.createBilling","yearTransition.prepareNextYear",
-    "quality.acknowledgeIssue","quality.reopenIssue",
+    "quality.acknowledgeIssue","quality.reopenIssue","quality.confirmIssue","quality.markNotApplicable",
     "recovery.importLegacy","recovery.importJson","recovery.restorePreMigration","recovery.rollbackLastRestore"
   ]);
   const WRITE_ACTION_SET = new Set(WRITE_ACTIONS);

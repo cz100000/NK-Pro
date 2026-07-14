@@ -143,15 +143,21 @@
         message:"Finalisierung nicht möglich. Es gibt noch blockierende Fehler im finalen Abrechnungscheck."
       });
     }
-    const warningText = info.readiness.warnings.length
-      ? "\n\nEs gibt noch " + info.readiness.warnings.length + " fachliche Prüfpunkte. Finalisiere nur, wenn du diese bewusst geprüft hast."
-      : "";
+    if (info.readiness.warnings.length) {
+      return Object.freeze({
+        changed:false,
+        reason:"open-plausibility",
+        warningCount:info.readiness.warnings.length,
+        targetTab:"qualitaet",
+        message:"Keine blockierenden Fehler. Es bestehen noch unbestätigte Plausibilitätsauffälligkeiten. Bitte bearbeiten oder fachlich bestätigen."
+      });
+    }
     const year = d.currentYear();
     if (options.confirmed !== true) {
       return Object.freeze({
         changed:false,
         requiresConfirmation:true,
-        confirmationMessage:"Abrechnung " + year + " finalisieren?\n\nDanach werden Eingaben geschützt und Änderungen nicht mehr gespeichert, bis die Finalisierung bewusst aufgehoben wird." + warningText
+        confirmationMessage:"Abrechnung " + year + " finalisieren?\n\nAlle zentralen Pflichtprüfungen sind bestanden und alle relevanten Auffälligkeiten wurden bearbeitet. Danach werden Eingaben geschützt, bis die Finalisierung bewusst aufgehoben wird."
       });
     }
     return d.stateAccess.transact(data => {

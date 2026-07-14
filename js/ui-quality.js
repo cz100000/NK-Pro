@@ -235,234 +235,280 @@ function showFinalBillingReport() {
 
 
 
-function qualityAreaTab(area) {
-  const text = String(area || "").toLocaleLowerCase("de-DE");
-  if (text.includes("kosten")) return "einstellungen";
-  if (text.includes("brief")) return "briefe";
-  if (text.includes("archiv")) return "start";
-  if (text.includes("mieter") || text.includes("wohnung") || text.includes("stamm")) return "mieter";
-  if (text.includes("vorauszahlungsanpassung")) return "vorauszahlungsanpassung";
-  if (text.includes("voraus") || text.includes("einnah")) return "einnahmen";
-  if (text.includes("umlage") || text.includes("summe") || text.includes("saldo") || text.includes("berechnung")) return "umlage";
-  if (text.includes("zähler") || text.includes("wasser")) return "wasser";
-  if (text.includes("speicher") || text.includes("import") || text.includes("datenmodell") || text.includes("backup")) return "sicherung";
-  return "qualitaet";
+let qualityCurrentFilter = "open";
+let qualityLastReport = null;
+
+function qualityStatusClass(status) {
+  if (status === "Blockiert" || status === "Technischer Fehler") return "err";
+  if (status === "Zu prüfen") return "warn";
+  if (status === "Hinweis") return "info";
+  if (status === "Nicht anwendbar") return "neutral";
+  return "ok";
 }
 
-function qualityItemKey(item) {
-  return [currentAbrechnungsjahr(), periodStart(), periodEnd(), item && item.severity, item && item.area, item && item.point, item && item.detail].map(v => String(v || "")).join("|");
+function qualityProcessingLabel(row) {
+  return row && row.processingState ? row.processingState : "noch offen";
 }
 
-function qualityAckStore(create = false) {
-  const existing = state && state.meta && state.meta.qualityAcknowledgements;
-  if (existing && typeof existing === "object") return existing;
-  if (!create) return Object.freeze({});
-  if (!state.meta) state.meta = {};
-  state.meta.qualityAcknowledgements = {};
-  return state.meta.qualityAcknowledgements;
+function qualityReport(force = false) {
+  if (!qualityLastReport || force) qualityLastReport = NK_PRO_MODULES.qualityAssurance.inspect({ scope:"currentBilling", includeTechnical:true });
+  return qualityLastReport;
 }
 
-function qualityAckFor(item) {
-  return qualityAckStore()[qualityItemKey(item)] || null;
+function qualityResultById(instanceId, force = false) {
+  const report = qualityReport(force);
+  return report.results.find(row => row.instanceId === instanceId) || report.technicalResults.find(row => row.instanceId === instanceId) || null;
 }
 
-function qualityAckLabel(item) {
-  if (!item) return "";
-  if (item.severity === "Hinweis") return "Gelesen";
-  if (item.severity === "Prüfen") return "Geprüft / akzeptiert";
-  return "";
+function qualityEncoded(value) { return encodeURIComponent(String(value || "")); }
+function qualityIsReadOnly() { return !!(globalThis.NKProBillingContext && NKProBillingContext.isReadOnly()); }
+
+function qualityActionButton(label, action, args, cls = "") {
+  const disabled = qualityIsReadOnly() && ["quality.confirmIssue","quality.markNotApplicable","quality.reopenIssue"].includes(action);
+  return '<button type="button" class="compact-action ' + escapeHtml(cls) + '"' + uiActionAttributes(action, args || []) + (disabled ? ' disabled aria-disabled="true" title="Im Ansichtsmodus nicht verfügbar"' : '') + '>' + escapeHtml(label) + '</button>';
 }
 
-function acknowledgeQualityIssue(encodedKey, mode) {
-  const key = decodeURIComponent(encodedKey || "");
-  if (!key) return;
-  const store = qualityAckStore(true);
-  store[key] = { mode: mode || "ack", at: new Date().toISOString(), appVersion: APP_VERSION, year: currentAbrechnungsjahr() };
-  commitStateChange({ reason:"Qualitätsbestätigung", tabId:"qualitaet", includeCommon:false, includeNavigation:false, finalizationBypass:true });
-}
-
-function reopenQualityIssue(encodedKey) {
-  const key = decodeURIComponent(encodedKey || "");
-  if (!key) return;
-  const store = qualityAckStore(true);
-  delete store[key];
-  commitStateChange({ reason:"Qualitätsbestätigung zurückgenommen", tabId:"qualitaet", includeCommon:false, includeNavigation:false, finalizationBypass:true });
-}
-
-function qualityIssueSearchText(item) {
-  return [item && item.area, item && item.point, item && item.detail].map(v => String(v || "").trim()).filter(Boolean).join(" ").toLocaleLowerCase("de-DE");
-}
-
-function highlightQualityTarget(tab, itemText) {
-  const section = document.getElementById(tab);
-  if (!section) return;
-  const needleParts = String(itemText || "").toLocaleLowerCase("de-DE").split(/\s+·\s+|\s+/).filter(Boolean).slice(0, 4);
-  let target = null;
-  const rows = Array.from(section.querySelectorAll("tbody tr"));
-  for (const row of rows) {
-    const text = row.textContent.toLocaleLowerCase("de-DE");
-    if (!needleParts.length || needleParts.some(part => part.length > 2 && text.includes(part))) { target = row; break; }
-  }
-  if (!target) target = section.querySelector("table, .hint, .quality-summary, .card, input, select, textarea, button");
-  if (!target) return;
-  try { target.scrollIntoView({ behavior:"smooth", block:"center" }); } catch(e) { target.scrollIntoView(); }
-  target.classList.add("quality-target-highlight");
-  setTimeout(() => target.classList.remove("quality-target-highlight"), 3800);
-}
-
-function jumpToQualityIssue(tab, encodedText) {
-  const targetTab = tab || "qualitaet";
-  switchToTab(targetTab);
-  setTimeout(() => highlightQualityTarget(targetTab, decodeURIComponent(encodedText || "")), 120);
-}
-
-function jumpToFirstOpenQualityIssue() {
-  const report = NK_PRO_MODULES.qualityAssurance.inspect({ scope:"currentBilling" });
-  const open = report.issues.filter(i => i.severity !== "OK" && !qualityAckFor(i));
-  const first = open.find(i => i.severity === "Fehler") || open.find(i => i.severity === "Prüfen") || open[0];
-  if (!first) return alert("Keine offenen Prüfpunkte vorhanden.");
-  const tab = qualityAreaTab(first.area);
-  jumpToQualityIssue(tab, encodeURIComponent(qualityIssueSearchText(first)));
-}
-
-function showOnlyQualityErrors() {
-  switchToTab("qualitaet");
-  renderQuality("errors");
-}
-
-function qualityIssueActionHtml(item, acknowledged) {
-  if (!item || item.severity === "OK") return "";
-  const tab = qualityAreaTab(item.area);
-  const text = encodeURIComponent(qualityIssueSearchText(item));
-  const key = encodeURIComponent(qualityItemKey(item));
-  const actions = ['<button class="secondary compact-action"' + uiActionAttributes("quality.jumpToIssue", [tab,text]) + '>Zur Stelle springen</button>'];
-  if (item.severity !== "Fehler") {
-    if (acknowledged) actions.push('<button class="compact-action"' + uiActionAttributes("quality.reopenIssue", [key]) + '>Wieder öffnen</button>');
-    else actions.push('<button class="compact-action"' + uiActionAttributes("quality.acknowledgeIssue", [key,item.severity === "Hinweis" ? "gelesen" : "geprüft"]) + '>' + escapeHtml(qualityAckLabel(item)) + '</button>');
-  }
+function qualityItemActions(row) {
+  const actions = [qualityActionButton("Details", "quality.openDetail", [qualityEncoded(row.instanceId)], "secondary")];
+  if (row.targetTab) actions.push(qualityActionButton("Zur Ursache", "quality.jumpToIssue", [row.targetTab, qualityEncoded(row.instanceId)], "secondary"));
+  if (row.confirmation) actions.push(qualityActionButton("Bestätigung zurücknehmen", "quality.reopenIssue", [qualityEncoded(row.instanceId)]));
+  else if (!row.blocking && row.confirmAllowed && row.status === "Zu prüfen") {
+    actions.push(qualityActionButton("Als geprüft bestätigen", "quality.confirmIssue", [qualityEncoded(row.instanceId)]));
+    if (row.allowNotApplicable) actions.push(qualityActionButton("Nicht anwendbar", "quality.markNotApplicable", [qualityEncoded(row.instanceId)]));
+  } else if (!row.blocking && row.confirmAllowed && row.status === "Hinweis") actions.push(qualityActionButton("Als gelesen markieren", "quality.confirmIssue", [qualityEncoded(row.instanceId), "read"]));
   return actions.join(" ");
 }
 
-function qualityTaskRowHtml(item, acknowledged) {
-  const cls = acknowledged ? "quality-task-row acknowledged" : "quality-task-row";
-  const ack = acknowledged ? '<div class="small">' + escapeHtml(acknowledged.mode === "gelesen" ? "gelesen" : "geprüft") + ' am ' + escapeHtml(new Date(acknowledged.at).toLocaleString("de-DE")) + '</div>' : "";
-  return '<tr class="' + cls + '"><td><span class="status ' + qualitySeverityClass(item.severity) + '">' + escapeHtml(item.severity) + '</span>' + ack + '</td><td>' + escapeHtml(item.area) + '</td><td>' + escapeHtml(item.point) + '</td><td class="quality-task-detail">' + escapeHtml(item.detail || "") + '</td><td class="actions-cell">' + qualityIssueActionHtml(item, acknowledged) + '</td></tr>';
+function qualityValueTable(row) {
+  const entries = Object.entries(row.values || {});
+  const comparisons = Object.entries(row.comparisonValues || {});
+  const all = entries.concat(comparisons.map(([key,value]) => ["Vergleich: " + key,value]));
+  if (!all.length) return '<p class="small">Keine zusätzlichen Einzelwerte.</p>';
+  return '<dl class="quality-value-list">' + all.map(([key,value]) => '<div><dt>' + escapeHtml(key) + '</dt><dd>' + escapeHtml(Array.isArray(value) ? value.join(", ") : String(value == null ? "–" : value)) + '</dd></div>').join("") + '</dl>';
+}
+
+function openQualityDetail(encodedId) {
+  const row = qualityResultById(decodeURIComponent(encodedId || ""), true);
+  if (!row) return alert("Der Prüfpunkt ist nicht mehr vorhanden. Die Prüfung wurde aktualisiert.");
+  const dialog = document.getElementById("qualityDetailDialog");
+  const title = document.getElementById("qualityDetailTitle");
+  const content = document.getElementById("qualityDetailContent");
+  const actions = document.getElementById("qualityDetailActions");
+  if (!dialog || !content || !title || !actions) return;
+  title.textContent = row.title;
+  content.innerHTML = '<div class="quality-detail-status"><span class="status ' + qualityStatusClass(row.status) + '">' + escapeHtml(row.status) + '</span><span>' + escapeHtml(qualityProcessingLabel(row)) + '</span></div>' +
+    '<dl class="quality-detail-grid"><div><dt>Regel-ID</dt><dd>' + escapeHtml(row.ruleId) + '</dd></div><div><dt>Kategorie</dt><dd>' + escapeHtml(row.category) + '</dd></div><div><dt>Prüfbereich</dt><dd>' + escapeHtml(row.groupLabel) + '</dd></div><div><dt>Betroffene Entität</dt><dd>' + escapeHtml(row.entityLabel) + '</dd></div><div><dt>Datenquelle</dt><dd>' + escapeHtml(row.dataSource) + '</dd></div><div><dt>Auswirkung</dt><dd>' + escapeHtml(row.blocking ? "Verhindert den Abschluss" : "Keine automatische Sperrwirkung") + '</dd></div><div><dt>Ausführungszeitpunkt</dt><dd>' + escapeHtml(row.executionTime) + '</dd></div><div><dt>Regelversion</dt><dd>' + escapeHtml(String(row.ruleVersion)) + '</dd></div></dl>' +
+    '<section><h3>Ergebnis</h3><p>' + escapeHtml(row.details || row.resultText || "Kein zusätzlicher Detailtext.") + '</p></section>' +
+    '<section><h3>Verwendete Werte</h3>' + qualityValueTable(row) + '</section>' +
+    '<section><h3>Handlungsempfehlung</h3><p>' + escapeHtml(row.solution || "Daten prüfen.") + '</p></section>' +
+    (row.confirmation ? '<section><h3>Bestätigung</h3><p>' + escapeHtml(row.confirmation.mode === "not-applicable" ? "Als nicht anwendbar bestätigt" : (row.confirmation.mode === "read" ? "Gelesen" : "Geprüft und bestätigt")) + ' am ' + escapeHtml(new Date(row.confirmation.at).toLocaleString("de-DE")) + (row.confirmation.reason ? '<br>Begründung: ' + escapeHtml(row.confirmation.reason) : '') + '</p></section>' : '');
+  actions.innerHTML = qualityItemActions(row) + '<button type="submit" class="ui-button ui-button--secondary">Schließen</button>';
+  if (typeof dialog.showModal === "function") dialog.showModal(); else dialog.setAttribute("open", "");
+}
+
+function assertQualityWritable() {
+  if (globalThis.NKProBillingContext) NKProBillingContext.assertWritable("Prüfbestätigung");
+}
+
+function saveQualityConfirmation(encodedId, mode) {
+  assertQualityWritable();
+  const id = decodeURIComponent(encodedId || "");
+  const row = qualityResultById(id, true);
+  if (!row) return alert("Der Prüfpunkt ist nicht mehr vorhanden.");
+  let reason = "";
+  const actualMode = mode || (row.status === "Hinweis" ? "read" : "confirmed");
+  if (actualMode === "confirmed") {
+    const entered = prompt("Optionale fachliche Begründung für „" + row.title + "“:", "");
+    if (entered === null) return;
+    reason = entered;
+  }
+  NKProQualityRules.saveConfirmation(state, row, actualMode, reason);
+  commitStateChange({ reason:"Prüfpunkt bestätigt", tabId:"qualitaet", includeCommon:false, includeNavigation:false, finalizationBypass:true });
+  qualityLastReport = null;
+  renderQuality(qualityCurrentFilter);
+}
+
+function markQualityNotApplicable(encodedId) {
+  assertQualityWritable();
+  const id = decodeURIComponent(encodedId || "");
+  const row = qualityResultById(id, true);
+  if (!row) return alert("Der Prüfpunkt ist nicht mehr vorhanden.");
+  const reason = prompt("Warum ist diese Regel in der konkreten Abrechnung nicht anwendbar?", "");
+  if (reason === null) return;
+  if (!String(reason).trim()) return alert("Für „Nicht anwendbar“ ist eine Begründung erforderlich.");
+  NKProQualityRules.saveConfirmation(state, row, "not-applicable", reason);
+  commitStateChange({ reason:"Prüfpunkt als nicht anwendbar bestätigt", tabId:"qualitaet", includeCommon:false, includeNavigation:false, finalizationBypass:true });
+  qualityLastReport = null;
+  renderQuality(qualityCurrentFilter);
+}
+
+function reopenQualityIssue(encodedId) {
+  assertQualityWritable();
+  const row = qualityResultById(decodeURIComponent(encodedId || ""), true);
+  if (!row) return;
+  NKProQualityRules.removeConfirmation(state, row);
+  commitStateChange({ reason:"Prüfbestätigung zurückgenommen", tabId:"qualitaet", includeCommon:false, includeNavigation:false, finalizationBypass:true });
+  qualityLastReport = null;
+  renderQuality(qualityCurrentFilter);
+}
+
+function acknowledgeQualityIssue(encodedId, mode) { return saveQualityConfirmation(encodedId, mode); }
+
+function highlightQualityTarget(tab, row) {
+  const section = document.getElementById(tab);
+  if (!section) return;
+  let target = row && row.targetSelector ? section.querySelector(row.targetSelector) : null;
+  if (!target && row) {
+    const tokens = [row.entityId,row.entityLabel,row.title].join(" ").toLocaleLowerCase("de-DE").split(/\s+|·/).filter(token => token.length > 2).slice(0,6);
+    target = Array.from(section.querySelectorAll("tbody tr, .card, .page-section, label, input, select, textarea")).find(node => tokens.some(token => node.textContent.toLocaleLowerCase("de-DE").includes(token))) || null;
+  }
+  if (!target) target = section.querySelector(".page-section, table, input, select, textarea, button");
+  if (!target) return;
+  const details = target.closest("details");
+  if (details) details.open = true;
+  try { target.scrollIntoView({ behavior:"smooth", block:"center" }); } catch(error) { target.scrollIntoView(); }
+  target.classList.add("quality-target-highlight");
+  if (typeof target.focus === "function" && target.matches("input,select,textarea,button,[tabindex]")) target.focus({preventScroll:true});
+  setTimeout(() => target.classList.remove("quality-target-highlight"), 3800);
+}
+
+function jumpToQualityIssue(tab, encodedId) {
+  const row = qualityResultById(decodeURIComponent(encodedId || ""), true);
+  const targetTab = tab || row && row.targetTab || "qualitaet";
+  switchToTab(targetTab);
+  setTimeout(() => highlightQualityTarget(targetTab, row), 120);
+}
+
+function jumpToFirstOpenQualityIssue() {
+  const report = qualityReport(true);
+  const first = report.results.find(row => row.status === "Blockiert") || report.results.find(row => row.status === "Zu prüfen") || report.results.find(row => row.status === "Hinweis");
+  if (!first) return alert("Keine offenen Prüfpunkte vorhanden.");
+  jumpToQualityIssue(first.targetTab, qualityEncoded(first.instanceId));
+}
+
+function showOnlyQualityErrors() { switchToTab("qualitaet"); renderQuality("blocked"); }
+
+function qualitySetFilter(mode) { renderQuality(mode || "open"); }
+
+function qualityFilterRows(rows, mode) {
+  if (mode === "blocked") return rows.filter(row => row.status === "Blockiert");
+  if (mode === "review") return rows.filter(row => row.status === "Zu prüfen");
+  if (mode === "hints") return rows.filter(row => row.status === "Hinweis");
+  if (mode === "done") return rows.filter(row => row.status === "Erledigt" || row.status === "Nicht anwendbar");
+  if (mode === "all") return rows;
+  return rows.filter(row => ["Blockiert","Zu prüfen","Hinweis"].includes(row.status));
+}
+
+function qualityResultRowHtml(row) {
+  return '<tr class="quality-task-row ' + (row.status === "Erledigt" ? "acknowledged" : "") + '"><td><span class="status ' + qualityStatusClass(row.status) + '">' + escapeHtml(row.status) + '</span><div class="small">' + escapeHtml(qualityProcessingLabel(row)) + '</div></td><td><strong>' + escapeHtml(row.title) + '</strong><div class="small">' + escapeHtml(row.ruleId) + ' · ' + escapeHtml(row.entityLabel) + '</div></td><td class="quality-task-detail">' + escapeHtml(row.details || row.notApplicableReason || "–") + '</td><td class="actions-cell">' + qualityItemActions(row) + '</td></tr>';
+}
+
+function qualityGroupHtml(group, filterMode) {
+  const rows = qualityFilterRows(group.results, filterMode);
+  const counts = group.counts;
+  const status = counts.blocked ? "Blockiert" : (counts.review ? "Zu prüfen" : (counts.hints ? "Hinweis" : "Erledigt"));
+  return '<details class="quality-area-card"' + (rows.length && ["blocked","review","hints"].includes(filterMode) ? ' open' : '') + '><summary><span class="quality-area-card__order">' + group.order + '</span><span class="quality-area-card__title"><strong>' + escapeHtml(group.label) + '</strong><small>' + counts.blocked + ' blockiert · ' + counts.review + ' zu prüfen · ' + counts.hints + ' Hinweise · ' + counts.done + ' erledigt</small></span><span class="status ' + qualityStatusClass(status) + '">' + escapeHtml(status) + '</span></summary><div class="quality-area-card__body">' + (rows.length ? '<div class="table-wrap dashboard-table"><table><thead><tr><th>Status</th><th>Prüfpunkt</th><th>Ergebnis</th><th>Aktion</th></tr></thead><tbody>' + rows.map(qualityResultRowHtml).join("") + '</tbody></table></div>' : '<div class="quality-empty-state">Keine Punkte für den gewählten Filter.</div>') + '</div></details>';
+}
+
+function renderQualityStatusCards(report) {
+  const el = document.getElementById("qualityStatusCards");
+  if (!el) return;
+  const cards = [
+    ["Blockiert",report.counts.blocked,"blocked","Verhindert den Abschluss"],
+    ["Zu prüfen",report.counts.review,"review","Fachlich bewerten und bestätigen"],
+    ["Hinweise",report.counts.hints,"hints","Sonderfälle und Informationen"],
+    ["Erledigt",report.counts.done,"done","Bestanden, behoben oder bestätigt"]
+  ];
+  el.innerHTML = cards.map(([label,count,filter,hint]) => '<button type="button" class="quality-status-card quality-status-card--' + qualityStatusClass(label === "Hinweise" ? "Hinweis" : label) + (qualityCurrentFilter === filter ? ' is-active' : '') + '"' + uiActionAttributes("quality.setFilter",[filter]) + '><span>' + escapeHtml(label) + '</span><strong>' + count + '</strong><small>' + escapeHtml(hint) + '</small></button>').join("");
+}
+
+function renderQualityRegistry() {
+  const el = document.getElementById("qualityRuleRegistryTable");
+  if (!el) return;
+  const rows = NKProQualityRules.REGISTRY.map(rule => '<tr><td><code>' + escapeHtml(rule.id) + '</code></td><td>' + escapeHtml(rule.title) + '</td><td>' + escapeHtml(rule.category) + '</td><td>' + escapeHtml((NKProQualityRules.GROUPS.find(g=>g.id===rule.group)||{}).label||rule.group) + '</td><td>' + escapeHtml(rule.dataSource) + '</td><td>' + escapeHtml(rule.blocking ? "Ja" : "Nein") + '</td><td>' + escapeHtml(rule.confirmAllowed ? "Ja" : "Nein") + '</td><td>' + escapeHtml(rule.targetTab) + '</td></tr>').join("");
+  el.innerHTML = '<thead><tr><th>Regel-ID</th><th>Titel</th><th>Kategorie</th><th>Bereich</th><th>Datenquelle</th><th>Blockiert</th><th>Bestätigbar</th><th>Zielseite</th></tr></thead><tbody>' + rows + '</tbody>';
 }
 
 function renderQuality(filterMode) {
+  qualityCurrentFilter = filterMode || qualityCurrentFilter || "open";
+  qualityLastReport = null;
+  const report = qualityReport(true);
   const summaryEl = document.getElementById("qualitySummary");
-  const nextEl = document.getElementById("qualityNextActions");
   const filterEl = document.getElementById("qualityFilterBar");
-  const issuesEl = document.getElementById("qualityIssuesTable");
-  const acknowledgedEl = document.getElementById("qualityAcknowledgedTable");
   const groupedEl = document.getElementById("qualityGroupedChecks");
+  const acknowledgedEl = document.getElementById("qualityAcknowledgedTable");
   const sumsEl = document.getElementById("qualitySumsTable");
-  if (!summaryEl || !issuesEl || !sumsEl) return;
-
-  const report = NK_PRO_MODULES.qualityAssurance.inspect({ scope:"currentBilling" });
-  const readiness = NK_PRO_MODULES.qualityAssurance.finalBillingReadiness(report);
-  const allRelevant = report.issues.filter(i => i.severity !== "OK");
-  const errors = allRelevant.filter(i => i.severity === "Fehler");
-  const checks = allRelevant.filter(i => i.severity === "Prüfen");
-  const hints = allRelevant.filter(i => i.severity === "Hinweis");
-  const open = allRelevant.filter(i => !qualityAckFor(i));
-  const acknowledged = allRelevant.filter(i => !!qualityAckFor(i));
-  const openErrors = open.filter(i => i.severity === "Fehler");
-  const openChecks = open.filter(i => i.severity === "Prüfen");
-  const openHints = open.filter(i => i.severity === "Hinweis");
-  const overall = openErrors.length ? "Fehler" : (openChecks.length ? "Prüfen" : (openHints.length ? "Hinweis" : "OK"));
-  const cls = openErrors.length ? "err" : (openChecks.length ? "warn" : "ok");
-  const title = openErrors.length ? "Abrechnung noch nicht freigabebereit" : (openChecks.length ? "Abrechnung mit Prüfpunkten" : (openHints.length ? "Abrechnung mit Hinweisen" : "Keine offenen Qualitätsaufgaben"));
-  const msg = openErrors.length ? "Bitte zuerst die Fehler beheben. Fehler können nicht weggeklickt werden." : (openChecks.length ? "Bitte Prüfpunkte fachlich kontrollieren und danach als geprüft markieren." : (openHints.length ? "Hinweise lesen und bei Bedarf als gelesen markieren." : "Du kannst jetzt Abnahmeprotokoll, Briefdruck oder Finalisierung vorbereiten."));
-  summaryEl.innerHTML = '<div class="quality-cockpit-hero ' + cls + '"><div><h3>' + escapeHtml(title) + '</h3><div class="small">' + escapeHtml(msg) + '</div><div style="margin-top:8px"><span class="period-badge">' + openErrors.length + ' Fehler · ' + openChecks.length + ' Prüfpunkte · ' + openHints.length + ' Hinweise offen</span></div></div><div class="quality-cockpit-actions"><button class="primary" data-ui-action="quality.jumpFirstOpen">Zum ersten offenen Punkt</button><button class="secondary" data-ui-action="quality.render">Prüfung erneut ausführen</button><button data-ui-action="billing.showAcceptanceProtocol">Abnahmeprotokoll</button>' + (openErrors.length ? '<button class="warn" data-ui-action="quality.showOnlyErrors">Nur Fehler anzeigen</button>' : '<button class="primary" data-ui-action="billing.finalize">Finalisieren</button>') + '</div></div>';
-
-  if (nextEl) {
-    const coverageAreas = new Set(report.issues.map(item => item.area).filter(Boolean));
-    const nextRows = open.slice().sort((a,b) => ({"Fehler":0,"Prüfen":1,"Hinweis":2}[a.severity] ?? 9) - ({"Fehler":0,"Prüfen":1,"Hinweis":2}[b.severity] ?? 9)).slice(0, 3);
-    nextEl.innerHTML = '<div class="quality-panel quality-coverage"><h3>Prüfumfang der gesamten Abrechnung</h3><div class="small">' + report.issues.length + ' Regeln in ' + coverageAreas.size + ' Bereichen · Stammdaten, Kostenarten, Einnahmen, Zählerstände, Umlage, Vorauszahlungen, Briefe, Export und System.</div></div>' + (nextRows.length ? '<div class="quality-panel"><h3>Was jetzt zu tun ist</h3><ol>' + nextRows.map(i => '<li><strong>' + escapeHtml(i.area) + ':</strong> ' + escapeHtml(i.point) + (i.detail ? ' <span class="small">' + escapeHtml(i.detail) + '</span>' : '') + ' ' + qualityIssueActionHtml(i, null) + '</li>').join('') + '</ol></div>' : '<div class="quality-empty-state"><strong>Keine offenen Aufgaben.</strong><div class="small">Gelesene/geprüfte Hinweise findest du im eingeklappten Bereich darunter. Technische Tests stehen unten.</div></div>');
-  }
-
-  if (typeof renderOverviewForTab === "function") renderOverviewForTab("qualitaet");
-
-  if (filterEl) {
-    filterEl.innerHTML = '<button class="secondary" data-ui-action="quality.render">Alle offenen</button><button data-ui-action="quality.render" data-ui-args="[&quot;errors&quot;]">Nur Fehler</button><button data-ui-action="quality.render" data-ui-args="[&quot;checks&quot;]">Nur Prüfpunkte</button><button data-ui-action="quality.render" data-ui-args="[&quot;hints&quot;]">Nur Hinweise</button>';
-  }
-  let visibleOpen = open;
-  if (filterMode === "errors") visibleOpen = openErrors;
-  if (filterMode === "checks") visibleOpen = openChecks;
-  if (filterMode === "hints") visibleOpen = openHints;
-  const rows = visibleOpen.length ? visibleOpen.map(item => qualityTaskRowHtml(item, null)).join("") : '<tr><td colspan="5">Keine offenen Punkte in dieser Ansicht.</td></tr>';
-  issuesEl.innerHTML = '<thead><tr><th>Status</th><th>Bereich</th><th>Prüfpunkt</th><th>Details</th><th>Aktion</th></tr></thead><tbody>' + rows + '</tbody>';
-
+  if (!summaryEl || !groupedEl) return;
+  renderQualityStatusCards(report);
+  const ready = report.readiness.level === "ok";
+  const action = report.counts.blocked ? qualityActionButton("Zum ersten blockierenden Punkt","quality.jumpFirstOpen",[],"primary") : (report.counts.review ? qualityActionButton("Offene Plausibilitäten anzeigen","quality.setFilter",["review"],"primary") : '<button class="primary" data-ui-action="billing.finalize" type="button"' + (qualityIsReadOnly() ? ' disabled aria-disabled="true"' : '') + '>Abrechnung abschließen</button>');
+  summaryEl.innerHTML = '<div class="quality-cockpit-hero ' + escapeHtml(report.readiness.level) + '"><div><h3>' + escapeHtml(report.readiness.label) + '</h3><p>' + escapeHtml(report.readiness.message) + '</p><div class="small">' + report.results.length + ' konkrete Ergebnisse aus ' + NKProQualityRules.REGISTRY.filter(r=>r.category!==NKProQualityRules.CATEGORY.TECHNICAL).length + ' zentralen fachlichen Regeln.</div></div><div class="quality-cockpit-actions">' + action + '<button class="secondary" data-ui-action="quality.render" type="button">Erneut prüfen</button><button data-ui-action="billing.showAcceptanceProtocol" type="button">Abnahmeprotokoll</button></div></div>';
+  if (filterEl) filterEl.innerHTML = [["open","Offen"],["blocked","Blockiert"],["review","Zu prüfen"],["hints","Hinweise"],["done","Erledigt / nicht anwendbar"],["all","Alle"]].map(([key,label])=>'<button type="button" class="' + (qualityCurrentFilter===key?'primary':'secondary') + '"' + uiActionAttributes("quality.setFilter",[key]) + '>' + escapeHtml(label) + '</button>').join("");
+  groupedEl.innerHTML = report.groups.map(group => qualityGroupHtml(group, qualityCurrentFilter)).join("");
   if (acknowledgedEl) {
-    acknowledgedEl.innerHTML = '<thead><tr><th>Status</th><th>Bereich</th><th>Prüfpunkt</th><th>Details</th><th>Aktion</th></tr></thead><tbody>' + (acknowledged.length ? acknowledged.map(item => qualityTaskRowHtml(item, qualityAckFor(item))).join("") : '<tr><td colspan="5">Noch nichts als gelesen/geprüft markiert.</td></tr>') + '</tbody>';
+    const completed = report.results.filter(row => (row.confirmation || row.status === "Nicht anwendbar") && !row.passed);
+    acknowledgedEl.innerHTML = '<thead><tr><th>Status</th><th>Prüfpunkt</th><th>Nachweis</th><th>Aktion</th></tr></thead><tbody>' + (completed.length ? completed.map(row=>'<tr><td><span class="status ' + qualityStatusClass(row.status) + '">' + escapeHtml(row.status) + '</span></td><td>' + escapeHtml(row.title) + '<div class="small">' + escapeHtml(row.ruleId) + '</div></td><td>' + escapeHtml(qualityProcessingLabel(row)) + (row.confirmation&&row.confirmation.reason?'<div class="small">'+escapeHtml(row.confirmation.reason)+'</div>':'') + '</td><td>' + qualityItemActions(row) + '</td></tr>').join("") : '<tr><td colspan="4">Noch keine bestätigten oder als nicht anwendbar bewerteten Punkte.</td></tr>') + '</tbody>';
   }
-
-  if (groupedEl) {
-    const groups = {};
-    open.forEach(item => { const key = item.area || "Sonstiges"; if (!groups[key]) groups[key] = []; groups[key].push(item); });
-    const groupHtml = Object.keys(groups).sort().map(area => '<details><summary>' + escapeHtml(area) + ' · ' + groups[area].length + ' offen</summary><div class="table-wrap dashboard-table"><table><thead><tr><th>Status</th><th>Prüfpunkt</th><th>Details</th><th>Aktion</th></tr></thead><tbody>' + groups[area].map(item => '<tr><td><span class="status ' + qualitySeverityClass(item.severity) + '">' + escapeHtml(item.severity) + '</span></td><td>' + escapeHtml(item.point) + '</td><td class="quality-task-detail">' + escapeHtml(item.detail || "") + '</td><td class="actions-cell">' + qualityIssueActionHtml(item, null) + '</td></tr>').join("") + '</tbody></table></div></details>').join("");
-    groupedEl.innerHTML = '<div class="quality-panel"><h3>Prüfbereiche</h3>' + (groupHtml || '<div class="small">Keine offenen Prüfpunkte nach Bereichen.</div>') + '</div>';
+  if (sumsEl) {
+    let totals={}; try { totals=umlageTotals(calculateUmlage()); } catch(error) { totals={}; }
+    const values=[["Aktive umlagefähige Kosten",totals.totalCosts],["Auf Mieter umgelegt",totals.billableShare],["Eigentümer-/Privatanteil",totals.privateShare],["Offener Restanteil",totals.ownerShare],["Vorauszahlungen",totals.prepayments],["Korrekturen",totals.corrections],["Summendifferenz",totals.allocationDelta],["Saldo Mieter gesamt",totals.balance]];
+    sumsEl.innerHTML='<thead><tr><th>Wert</th><th>Betrag</th></tr></thead><tbody>'+values.map(([label,value])=>'<tr><td>'+escapeHtml(label)+'</td><td class="money">'+escapeHtml(fmtMoney(value||0))+'</td></tr>').join('')+'</tbody>';
   }
-
-  const sumRows = [
-    ["Aktive umlagefähige Kosten", fmtMoney(report.sums.totalCosts), "Summe der Kostenarten mit In NK = Ja"],
-    ["Verteilung auf alle Datensätze", fmtMoney(report.sums.allTenantShare), "Mieter plus Eigentümer/Privat"],
-    ["Anteil echte Mieter", fmtMoney(report.sums.billableShare), "Basis für Nachzahlung/Guthaben"],
-    ["Eigentümer/Privatanteil", fmtMoney(report.sums.privateShare), "Nicht als Mieterbrief"],
-    ["Nicht auf Mieter umgelegt", fmtMoney(report.sums.ownerShare), "Restbetrag aus Verteilung"],
-    ["Geleistete Vorauszahlungen", fmtMoney(report.sums.prepayments), "Aus Vorauszahlungsmatrix"],
-    ["Einmalige Korrekturen", fmtMoney(report.sums.corrections), "Korrekturen/Gutschriften"],
-    ["Summendifferenz", fmtMoney(report.sums.allocationDelta), "Aktive Kosten minus Verteilung"],
-    ["Saldo Mieter gesamt", fmtMoney(report.sums.balance), "Kostenanteil minus Vorauszahlungen minus Korrekturen"]
-  ].map(r => '<tr><td>' + escapeHtml(r[0]) + '</td><td class="money">' + escapeHtml(r[1]) + '</td><td>' + escapeHtml(r[2]) + '</td></tr>').join("");
-  sumsEl.innerHTML = '<thead><tr><th>Wert</th><th>Betrag</th><th>Hinweis</th></tr></thead><tbody>' + sumRows + '</tbody>';
-  if (typeof renderAcceptanceProtocolSummary === "function") renderAcceptanceProtocolSummary();
-  if (typeof renderReleaseAuditSummary === "function") renderReleaseAuditSummary();
+  renderQualityRegistry();
+  renderAcceptanceProtocolSummary();
+  renderContextualQualitySummaries(report);
+  renderSystemDiagnostics(report);
+  if (qualityIsReadOnly()) document.querySelectorAll('[data-ui-action="quality.confirmIssue"],[data-ui-action="quality.markNotApplicable"],[data-ui-action="quality.reopenIssue"]').forEach(button => { button.disabled = true; button.setAttribute("aria-disabled", "true"); button.title = "Im Ansichtsmodus nicht verfügbar"; });
+  if (typeof renderOverviewForTab === "function") renderOverviewForTab("qualitaet");
 }
+
+function contextualRowsForTab(report, tabId) {
+  const aliases={mieter:["mieter","mieterverwaltung","wohnungsverwaltung"],einstellungen:["einstellungen"],einnahmen:["einnahmen","vorauszahlungsanpassung"],verbraeuche:["verbraeuche","wasser"],wasser:["verbraeuche","wasser"],umlage:["umlage","manuellewerte"],briefe:["briefe"],export:["briefe","export"],objekt:["wohnungsverwaltung","mieterverwaltung","einstellungen"]};
+  const targets=aliases[tabId]||[tabId];
+  return report.results.filter(row=>targets.includes(row.targetTab)&&["Blockiert","Zu prüfen","Hinweis"].includes(row.status));
+}
+
+function renderContextualQualitySummaries(existingReport) {
+  const report=existingReport||qualityReport();
+  document.querySelectorAll('[data-section-role="validation"]').forEach(section=>{
+    const tab=section.closest('section.tab'); if(!tab||tab.id==="qualitaet")return;
+    const body=section.querySelector('.page-section__body'); if(!body)return;
+    const rows=contextualRowsForTab(report,tab.id),blocked=rows.filter(r=>r.status==="Blockiert").length,review=rows.filter(r=>r.status==="Zu prüfen").length,hints=rows.filter(r=>r.status==="Hinweis").length;
+    body.innerHTML='<div class="context-quality-summary '+(blocked?'err':review?'warn':hints?'info':'ok')+'"><div><strong>Auf dieser Seite: '+blocked+' blockiert · '+review+' zu prüfen · '+hints+' Hinweise</strong><p class="small">Die Werte stammen aus der zentralen AP20-Regelregistry.</p></div><button type="button" class="secondary"'+uiActionAttributes("quality.openPageIssues",[tab.id])+'>Details anzeigen</button></div>'+(rows.length?'<ul class="context-quality-list">'+rows.slice(0,4).map(row=>'<li><span class="status '+qualityStatusClass(row.status)+'">'+escapeHtml(row.status)+'</span><button type="button" class="link-button"'+uiActionAttributes("quality.openDetail",[qualityEncoded(row.instanceId)])+'>'+escapeHtml(row.title)+'</button></li>').join('')+'</ul>':'');
+  });
+}
+
+function openPageQualityIssues(tabId) {
+  switchToTab("qualitaet");
+  qualityCurrentFilter="all";
+  renderQuality("all");
+  setTimeout(()=>{const groups=Array.from(document.querySelectorAll('.quality-area-card'));const report=qualityReport();const ids=new Set(contextualRowsForTab(report,tabId).map(r=>r.group));groups.forEach((node,index)=>{const group=report.groups[index];if(group&&ids.has(group.id))node.open=true;});},100);
+}
+
+function renderSystemDiagnostics(existingReport) {
+  const el=document.getElementById("systemDiagnosticsSummary"); if(!el)return;
+  const report=existingReport||qualityReport();
+  el.innerHTML='<div class="system-diagnostics-grid">'+report.technicalResults.map(row=>'<article class="system-diagnostic-card"><div><span class="status '+qualityStatusClass(row.status)+'">'+escapeHtml(row.status)+'</span><strong>'+escapeHtml(row.title)+'</strong></div><p>'+escapeHtml(row.details||row.resultText)+'</p><small>'+escapeHtml(row.ruleId)+' · '+escapeHtml(row.dataSource)+'</small></article>').join('')+'</div>';
+  if(typeof renderReleaseAuditSummary==="function")renderReleaseAuditSummary();
+}
+
 function renderDashboard() {
-  const wohnungenGesamt = state.wohnungen.filter(w => w.id).length;
-  const wohnungenAktiv = state.wohnungen.filter(w => w.id && w.status === "aktiv").length;
-  const sichtbareMieter = billableTenantRows();
-  const privateMieter = privateTenantRows();
-  const archivierteMieter = archivedTenantRows();
-  const aktuelleMieter = sichtbareMieter.filter(m => !m.auszug).length;
-  const nkOffeneMieter = sichtbareMieter.filter(m => !!m.auszug).length;
-
-  const kalt = sichtbareMieter.reduce((s,m) => s + num(m.kaltErhalten), 0);
-  const nk = sichtbareMieter.reduce((s,m) => s + num(m.nkVoraus), 0);
-  const einnahmen = kalt + nk;
-
-  const aktiveKosten = state.kostenarten.filter(k => k.kostenart && k.inNK === "Ja");
-  const kostenNK = aktiveKosten.reduce((s,k) => s + num(k.gesamtbetrag), 0);
-
-  const calc = calculateUmlage();
-  const tenantShares = calc.tenantResults.reduce((s,r) => s + num(r.costShare), 0);
-  const korrekturen = sichtbareMieter.reduce((s,m) => s + num(m.vorjahresKorrektur), 0);
-  const saldoMieter = tenantShares - nk - korrekturen;
-
-  const offeneKosten = state.kostenarten
-    .map(k => ({ ...k, calcStatus: NK_PRO_MODULES.costActions.kostenStatus(k) }))
-    .filter(k => k.kostenart && !["Vollständig","Nicht Bestandteil der NK-Abrechnung"].includes(k.calcStatus));
-
-  const offeneMieter = sichtbareMieter.filter(m => !m.wohnung || !m.name || !m.einzug || num(m.aktiveTage) <= 0 || num(m.personen) <= 0);
-  const offene = offeneKosten.length + offeneMieter.length;
+  const aktiveKosten = (Array.isArray(state.kostenarten) ? state.kostenarten : []).filter(k => k && k.kostenart && k.inNK === "Ja");
+  const report = qualityReport(true);
+  const issueRows = report.results.filter(row => ["Blockiert","Zu prüfen","Hinweis"].includes(row.status));
 
   if (typeof renderOverviewForTab === "function") renderOverviewForTab("dashboard");
 
-  const issueRows = [];
-  offeneKosten.forEach(k => issueRows.push({ bereich:"Kostenart", punkt:k.id + " · " + k.kostenart, status:k.calcStatus }));
-  offeneMieter.forEach(m => issueRows.push({ bereich:"Mietverhältnis", punkt:(tenantDisplayId(m) || "") + " · " + (m.name || "Name fehlt"), status:"Stammdaten prüfen" }));
-
-  document.getElementById("issuesTable").innerHTML =
-    '<thead><tr><th>Bereich</th><th>Punkt</th><th>Status</th></tr></thead><tbody>' +
-    (issueRows.length ? issueRows.map(r => '<tr><td>' + escapeHtml(r.bereich) + '</td><td>' + escapeHtml(r.punkt) + '</td><td><span class="status ' + statusClass(r.status) + '">' + escapeHtml(r.status) + '</span></td></tr>').join("") : '<tr><td colspan="3">Keine offenen Punkte.</td></tr>') +
+  const issuesTable = document.getElementById("issuesTable");
+  if (issuesTable) issuesTable.innerHTML =
+    '<thead><tr><th>Bereich</th><th>Prüfpunkt</th><th>Status</th></tr></thead><tbody>' +
+    (issueRows.length ? issueRows.slice(0,12).map(row => '<tr><td>' + escapeHtml(row.groupLabel) + '</td><td><button type="button" class="link-button"' + uiActionAttributes("quality.openDetail", [qualityEncoded(row.instanceId)]) + '>' + escapeHtml(row.title) + '</button></td><td><span class="status ' + qualityStatusClass(row.status) + '">' + escapeHtml(row.status) + '</span></td></tr>').join("") : '<tr><td colspan="3">Keine offenen zentralen Prüfpunkte.</td></tr>') +
     '</tbody>';
 
-  document.getElementById("activeCostsTable").innerHTML =
+  const activeCostsTable = document.getElementById("activeCostsTable");
+  if (activeCostsTable) activeCostsTable.innerHTML =
     '<thead><tr><th>Kostenart</th><th>Umlageschlüssel</th><th>Gesamtbetrag</th><th>Status</th></tr></thead><tbody>' +
     (aktiveKosten.length ? aktiveKosten.map(k => '<tr><td>' + escapeHtml(k.kostenart) + '</td><td>' + escapeHtml(k.umlageschluessel) + '</td><td>' + fmtMoney(k.gesamtbetrag) + '</td><td><span class="status ' + statusClass(NK_PRO_MODULES.costActions.kostenStatus(k)) + '">' + escapeHtml(NK_PRO_MODULES.costActions.kostenStatus(k)) + '</span></td></tr>').join("") : '<tr><td colspan="4">Keine aktiven Kostenarten.</td></tr>') +
     '</tbody>';
   renderWorkflowDashboard();
 }
-

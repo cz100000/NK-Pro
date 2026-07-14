@@ -1,30 +1,23 @@
-# NK-Pro – UI-Architektur V99.4.22
+# NK-Pro – UI-Architektur V99.4.23
 
 ## Visuelles System
 
-Die Anwendungsoberfläche verwendet zentral `"Segoe UI", Arial, sans-serif`. Das AP18-System für Steuerungshöhen, Abstände, Rundungen, Rahmen, Fokus, Übergänge, Icons und Buttons bleibt verbindlich. Briefvorschau, Druck und PDF bleiben durch AP13 isoliert und verwenden Arial.
+Die App verwendet zentral `"Segoe UI", Arial, sans-serif`; Briefvorschau, Druck und PDF bleiben durch AP13 isoliert und verwenden Arial. Das AP18-System für Steuerungshöhen, Abstände, Rundungen, Rahmen, Fokus, Übergänge, Icons und Buttons bleibt verbindlich.
 
 ## Navigation und Abrechnungskontext
 
-Der globale Start-Eintrag steht oberhalb der vier unabhängig klappbaren Fachgruppen. Chevron-Bedienung und Navigation sind getrennt.
+Der AP19-Kontext besitzt weiterhin `closed`, `edit` und `view`. Zehn Abrechnungs-Unterpunkte sind ohne geöffneten Kontext sichtbar, aber nicht aufrufbar. Die gelbe Kontextleiste bleibt die zentrale Status- und Modusanzeige.
 
-AP19 ergänzt `NKProBillingContext` als zentrale transiente UI-/Anwendungsgrenze. Die Zustände sind `closed`, `edit` und `view`. Zehn Abrechnungs-Unterpunkte besitzen `data-requires-billing="true"`; ohne Kontext bleiben sie sichtbar und lesbar, sind aber mit `aria-disabled` und Ereignisschutz nicht aufrufbar.
+## AP20-Prüfoberflächen
 
-Die gelbe Kontextleiste zeigt je nach Zustand:
+`quality-rules.js` erzeugt das zentrale Ergebnis. `ui-quality.js` rendert vier Statuskarten, acht Bereichsgruppen, Statusfilter, Detaildialog, Bestätigungsnachweise, Regelübersicht, kontextbezogene Fachseitenhinweise und Systemdiagnose. Dashboard und Dokumentmodule lesen dieselben Ergebnisse.
 
-- keine Abrechnung geöffnet,
-- Objekt, Kurzcode, Jahr und fachlichen Status,
-- getrennten Bedienmodus Bearbeiten oder Nur ansehen,
-- Abrechnung schließen und gegebenenfalls Zur Bearbeitung öffnen.
+15 vorhandene Validierungsbereiche erhalten kompakte Seitensummen. 36 fachliche Regelinstanzen besitzen Zielseiten. Direkteinstiege öffnen den fachlichen Bereich, scrollen zum Ziel und setzen Fokus beziehungsweise zeitliche Hervorhebung. Technische Regeln erscheinen ausschließlich in der Systemdiagnose.
 
 ## Schreibschutz
 
-52 schreibende Aktionskennungen sind in einem zentralen Register erfasst. UI-Ereignisse, Anwendungsmodule, State-Commit und Tastaturkürzel prüfen den Kontext. Der Ansichtsmodus ist daher nicht nur über CSS oder deaktivierte Felder abgesichert.
+54 schreibende Aktionskennungen sind zentral abgesichert; darunter AP20-Bestätigen und Nicht-anwendbar. Der Ansichtsmodus sperrt UI, Ereignisdelegation und direkte Aufrufe. Lesen, Filtern, Aufklappen, Vorschau, Druck und Export bleiben möglich.
 
-## Bereichsübersichten
+## Barrierefreiheit und Responsivität
 
-`ui-page-controller.js` leitet die produktiven Angaben aus dem bestehenden State und der Qualitätsdiagnose ab. Die Abrechnungsübersicht verbindet Dashboard, Workflow-Direkteinstiege und eine gemeinsame Liste für aktuelle und archivierte Abrechnungen. Direkteinstiege öffnen keine Abrechnung automatisch.
-
-## Responsivität
-
-Die AP18-Breakpoints bleiben bestehen. AP19 ergänzt eine responsive Abrechnungsliste, umbrechende Kontextaktionen und kompakte Schreibschutzhinweise. Unter 760 Pixeln werden Tabellenzeilen als beschriftete Datensätze dargestellt. Der Zählerbereich bleibt als einziger DUMMY gekennzeichnet.
+Status werden mit Text statt nur Farbe kommuniziert. Fokuszustände sind sichtbar. Aufklappgruppen und Dialoge besitzen nachvollziehbare Beschriftungen. AP20 ergänzt Breakpoints bei 900 und 620 Pixeln sowie Regeln für geringe Höhe, Kartenstapel, Aktionsumbruch und kontrollierte Langtexte. Eine vollständige mobile Neuentwicklung bleibt außerhalb AP20.

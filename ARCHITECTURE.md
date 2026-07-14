@@ -1,27 +1,31 @@
-# NK-Pro – Architektur V99.4.18
+# NK-Pro – Architektur V99.4.23
 
 ## Schichten und Einstieg
 
-`index.html` lädt das zentrale Stylesheet, die produktiven JavaScript-Module in deterministischer Reihenfolge, `js/app.js` als schlanken Anwendungsstart und danach die Service-Worker-Registrierung. Fachzustand, Persistenz, Migration, Archiv, Anwendungsaktionen, UI-Controller und Dokumentdarstellung bleiben modular getrennt.
-
-## Zustands- und Bedienfluss
-
-`js/ui-navigation-pages.js` steuert Seitenwechsel und zentrale Kontextgrenzen. AP15 ergänzt `resetTransientUiState()`. Die Funktion schließt offene Dialoge und Kopfbereichspanels, korrigiert ARIA-Zustände und stößt den fachlich neutralen Kosten-UI-Reset an. `js/ui-costs.js` setzt ausschließlich Such-, Auswahl-, Paging- und Dialogzustände der Kostenoberfläche zurück.
-
-Import, Restore und Rollback verwenden denselben bereinigten Rückkehrpfad zur Startseite. Fachzustände und Datenbestände werden dadurch nicht verworfen.
+`index.html` lädt Stylesheet und produktive JavaScript-Module deterministisch. `quality-rules.js` wird vor `quality-assurance.js` geladen; `app.js` bleibt schlanker Anwendungsstart. Service-Worker-Registrierung folgt zuletzt.
 
 ## Daten und Persistenz
 
-Datenschema 5, Datenebenenvertrag 1, Objektstandard 1 und Abrechnungssnapshot 2 bleiben unverändert. Migration, Sicherung, Restore, Rollback, Recovery, Archivierung und Import/Export behalten ihre vorhandenen Module und Kompatibilitätsgrenzen.
+Datenschema 5, Datenebenenvertrag 1, Objektstandard 1 und Abrechnungssnapshot 2 bleiben unverändert. Bestätigungen werden als additive Metadaten `qualityRuleConfirmationsV2` gespeichert. Ihre Gültigkeit wird durch einen Fingerprint der regelrelevanten Werte geprüft.
+
+## Zentrale Prüfarchitektur
+
+Die Registry definiert 42 Regeln in vier Kategorien und acht fachlichen Gruppen. Eine Auswertung erzeugt einheitliche Ergebnisobjekte, Gruppen, Statussummen und Abschlussbereitschaft. Dashboard, Fachseiten, Cockpit, Workflow und Abnahmeprotokoll verwenden dieselbe Quelle. Technische Ergebnisse werden getrennt als Systemdiagnose gerendert.
+
+`quality-assurance.js` bleibt als Kompatibilitätsadapter für bestehende Aufrufer erhalten. Es existiert keine zweite fachliche Prüfberechnung für Abschluss oder Dashboard.
+
+## UI und Kontext
+
+AP19 stellt weiterhin die Zustände `closed`, `edit` und `view` bereit. AP20-Bestätigungen sind schreibende Aktionen und damit im Ansichtsmodus auf UI-, Ereignis- und Anwendungsebene blockiert. Direkteinstiege navigieren kontrolliert zur betroffenen Seite und Entität.
 
 ## Dokumentmodell
 
-`document-data.js`, `document-renderer.js`, `ui-documents.js` und `browser-io.js` bilden weiterhin das gemeinsame DIN-A4-Modell. Vorschau, Druck und Dokumentausgabe verwenden dieselbe `.nk-letter-document`-Struktur und Arial. AP15 ändert das AP13-Layout nicht.
+`document-data.js`, `document-renderer.js`, `ui-documents.js` und `browser-io.js` bilden weiterhin das gemeinsame DIN-A4-Modell. Vorschau, Druck, PDF und Schwarzweiß verwenden unverändert das AP13-Layout. Nur die Abschluss-/Abnahmeinformationen lesen nun die zentrale Prüfbereitschaft.
 
 ## PWA
 
-Der Service Worker verwendet `nk-pro-v99-4-18-ap15`. Die Aktivierung entfernt ausschließlich ältere Caches mit dem Prefix `nk-pro-`. Laufzeitcaching gilt nur für erfolgreiche Same-Origin-GET-Antworten. Navigationsanfragen erhalten offline `index.html`; fehlende sonstige Ressourcen werden nicht fälschlich als HTML beantwortet.
+Der Service Worker verwendet `nk-pro-v99-4-23-ap20` und enthält `quality-rules.js` im App-Shell. Same-Origin-, Offline- und Cachehärtung aus AP15 bleiben erhalten.
 
 ## Releasegrenze
 
-Die technische Arbeits-ZIP enthält produktiven Code, tatsächlich verwendete Ressourcen, aktuelle Tests und aktuelle Dokumentation. Historische Screenshots, Kontrollausgaben, alte AP-Berichte, Browserprofile, installierte Abhängigkeiten und generierte Reports liegen außerhalb dieser Grenze.
+Die ZIP enthält produktiven Code, lokale Ressourcen, aktuelle Tests und Projektdokumentation. Installierte Abhängigkeiten, Browserprofile, Testreports und temporäre Dateien werden ausgeschlossen. `SHA256SUMS.txt` deckt jeden enthaltenen Projektbestand ab.

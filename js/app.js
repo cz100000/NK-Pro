@@ -33,7 +33,7 @@ function configureCoreOrchestrationModules() {
   });
   NK_PRO_MODULES.qualityAssurance.configure({
     stateAccess:NK_PRO_MODULES.stateAccess, clone, withIsolatedState,
-    archiveActions:NK_PRO_MODULES.archiveActions, documentData:NK_PRO_MODULES.documentData
+    archiveActions:NK_PRO_MODULES.archiveActions, documentData:NK_PRO_MODULES.documentData, qualityRules:NK_PRO_MODULES.qualityRules
   });
   NK_PRO_MODULES.billingWorkflow.configure({
     stateAccess:NK_PRO_MODULES.stateAccess,

@@ -1,5 +1,18 @@
 # Änderungsprotokoll
 
+## V99.4.23 – AP20 – 14.07.2026
+
+- 176 vorhandene Prüfstellen vollständig inventarisiert und bewertet.
+- 42 zentrale Regel-IDs in vier Kategorien und acht fachlichen Bereichen eingeführt.
+- zentrales Prüfungscockpit, Fachseitenzusammenfassungen, Detaildialog und 36 Direkteinstiege umgesetzt.
+- redundante Fachprüfungen zusammengeführt und technische Prüfungen in die Systemdiagnose verschoben.
+- Vorjahres- und Vergleichsprüfungen mit fachartspezifischen Schwellen ergänzt.
+- Bestätigungen, Begründungen, Nicht-anwendbar-Entscheidungen und Fingerprint-Ungültigwerden umgesetzt.
+- Abschlussprüfung und Abnahmeprotokoll auf dieselbe Ergebnisquelle umgestellt.
+- AP19-Ansichtsmodus, Datenschema 5, Datenvertrag 1, Berechnungen und AP13-Ausgabe unverändert erhalten.
+
+# Änderungsprotokoll
+
 ## V99.4.22 – AP19 – 14.07.2026
 
 - Produktive Bereichsübersichten aus vorhandenen Projekt- und Qualitätsdaten.

@@ -1,0 +1,121 @@
+{
+  "version": "99.4.23",
+  "displayVersion": "V99.4.23",
+  "workPackage": "AP20",
+  "status": "passed_with_documented_host_limits",
+  "releaseDate": "2026-07-14",
+  "sourceVersion": "99.4.22",
+  "sourceWorkPackage": "AP19",
+  "schema": 5,
+  "dataLayerContract": 1,
+  "documentLayoutVersion": 4,
+  "existingChecksFound": 176,
+  "inventoryDecisions": {
+    "unchanged": 0,
+    "reworked": 8,
+    "merged": 26,
+    "conditional": 8,
+    "hintOrSpecialCase": 6,
+    "movedToSystemDiagnostics": 80,
+    "regressionOnly": 47,
+    "removed": 1
+  },
+  "centralRuleIds": 42,
+  "mandatoryRules": 19,
+  "plausibilityRules": 11,
+  "hintAndSpecialRules": 6,
+  "technicalSystemRules": 6,
+  "blockingRules": 19,
+  "confirmableRules": 17,
+  "priorYearAndComparisonRules": 6,
+  "productiveContextualPageAreas": 15,
+  "productiveDirectRuleEntries": 36,
+  "browserHarnessScenarios": 5,
+  "browserHarnessChecks": 48,
+  "browserFallbackHarness": "passed",
+  "serverBasedBrowserSuite": "blocked_by_host_policy",
+  "narrowViewportChromium": "target_crashed_in_host_environment",
+  "checks": {
+    "versionAndContracts": "passed",
+    "inventoryAndAssessment": "passed",
+    "centralRegistry": "passed",
+    "centralCockpit": "passed",
+    "pageIntegration": "passed",
+    "plausibilityAndPriorYear": "passed_supported_data_only",
+    "confirmationAndJustification": "passed",
+    "confirmationInvalidation": "passed",
+    "completionAndRelease": "passed_static_and_browser_core",
+    "systemDiagnostics": "passed",
+    "readOnlyProtection": "passed_ui_and_direct_call",
+    "keyboardAndFocus": "passed_static_and_desktop_browser",
+    "responsive": "passed_static_target_system_narrow_view_pending",
+    "letterPrintPdfMonochromeRegression": "passed_static_unchanged_modules",
+    "pwaOffline": "passed_static",
+    "existingRegressionTests": "passed_non_server_suite",
+    "syntax": "passed_53_units",
+    "fixtures": "passed_6_cases",
+    "metering": "passed",
+    "architecture": "passed_AP6_to_AP20"
+  },
+  "knownLimitations": [
+    "Produktive Zählerverwaltung bleibt außerhalb AP20 DUMMY.",
+    "Serverbasierte Playwright-Navigation ist durch die Host-Richtlinie der Prüfumbgebung blockiert.",
+    "Chromium beendet in dieser Hostumgebung den Targetprozess bei der isolierten sehr schmalen Viewport-Prüfung; Zielsystemabnahme bleibt erforderlich.",
+    "Physische Drucker-, native PDF- und PWA-Geräteabnahme bleibt eine Zielsystemprüfung."
+  ],
+  "notImplementedRuleIdeas": [
+    "Verbrauch je Person und Tag ohne zeitlich belastbare Personendaten",
+    "allgemeine Erkennung geänderter Messmethoden oder Einheiten in unstrukturierten Altdaten",
+    "Wetter- und Gebäudetypnormierung",
+    "KI- oder probabilistische Anomalieentscheidung",
+    "pauschale identische Schwellen für alle Verbrauchsarten"
+  ],
+  "thresholds": {
+    "electricity": {
+      "percent": 35,
+      "minimumUnits": 100
+    },
+    "gasHeat": {
+      "percent": 40,
+      "minimumUnits": 300
+    },
+    "water": {
+      "percent": 50,
+      "minimumUnits": 10
+    },
+    "otherConsumption": {
+      "percent": 50,
+      "minimumUnits": 10
+    },
+    "costPriorYear": {
+      "percent": 30,
+      "minimumEuro": 100
+    },
+    "houseVsUnits": {
+      "percent": 5,
+      "minimumUnits": 0.5
+    },
+    "identicalConsumption": {
+      "minimumUnits": 3
+    },
+    "highBillingResult": {
+      "minimumEuro": 1000,
+      "minimumRatio": 0.75,
+      "minimumBasisEuro": 500
+    },
+    "sumToleranceEuro": 0.02
+  },
+  "fileChanges": {
+    "added": 14,
+    "modified": 45,
+    "removed": 0,
+    "totalChanged": 59
+  },
+  "testInventory": {
+    "javascriptUnits": 53,
+    "fixtureCases": 6,
+    "architecturePackages": "AP6-AP20",
+    "browserScenarios": 5,
+    "browserChecks": 48
+  }
+}

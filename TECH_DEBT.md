@@ -1,11 +1,13 @@
 # Technische Restpunkte
 
-- „Objekt vorbereiten → Zähler“ ist weiterhin ein nicht produktiver DUMMY.
-- Die Anwendung ist auf einen Projekt-/Gebäudekontext ausgelegt.
-- Die JavaScript-Laufzeit verwendet weiterhin klassische, geordnete Skripte statt eines Buildsystems.
-- Native PWA-Installation, Betriebssystem-Shortcuts und physische Drucker müssen auf Zielgeräten abgenommen werden.
-- Der isolierte Archiv-Viewer besitzt einen expliziten Viewer-Startmodus; der normale Anwendungskontext startet stets geschlossen.
+- „Objekt vorbereiten → Zähler“ bleibt ein nicht produktiver DUMMY.
+- Die Anwendung ist weiterhin auf einen Projekt-/Gebäudekontext ausgelegt.
+- Die JavaScript-Laufzeit verwendet geordnete Skripte statt eines Buildsystems.
+- Native PWA-Installation, Betriebssystem-Shortcuts, physische Drucker und native PDF-Ausgabe müssen auf Zielgeräten abgenommen werden.
 - Die vollständige serverbasierte Playwright-Suite benötigt eine Umgebung ohne Loopback-Sperre.
-- Eine vollständige mobile Neuentwicklung war nicht Bestandteil von AP19.
+- Die Hostumgebung beendet Chromium bei der isolierten sehr schmalen Viewport-Prüfung; Zielsystemabnahme bleibt offen.
+- Erweiterte Verbrauch-je-Person-/Wetter-/Gebäudetypvergleiche benötigen zusätzliche belastbare Datenmodelle und wurden nicht simuliert.
+- Unstrukturierte historische Daten erlauben keine allgemeingültige Erkennung geänderter Messmethoden oder Einheiten.
+- Eine vollständige mobile Neuentwicklung war nicht Bestandteil von AP20.
 
-Die früheren AP17-Vorschauwerte der beiden Bereichsübersichten sind mit AP19 beseitigt.
+Die fachlichen Prüfungsergebnisse sind zentralisiert; technische Regressionen und Nutzerprüfungen bleiben bewusst getrennt.

@@ -49,7 +49,7 @@ function main() {
   const definitions = uiContext.NKProUiController.describe();
   const actionNames = definitions.flatMap(definition => definition.actionNames);
   assert(definitions.length === 13, `Erwartet wurden 13 Controller, gefunden ${definitions.length}.`);
-  assert(actionNames.length === 108 && new Set(actionNames).size === 108, `UI-Aktionsregister ist unvollständig oder doppelt (${actionNames.length}).`);
+  assert(actionNames.length === 113 && new Set(actionNames).size === 113, `UI-Aktionsregister ist unvollständig oder doppelt (${actionNames.length}).`);
   ["meter.setWaterValue", "billing.setPrepaymentValue", "document.printCurrentBrief", "export.downloadBillingPackage", "recovery.restorePreMigration"].forEach(action => assert(uiContext.NKProUiController.hasAction(action), `Pflichtaktion fehlt: ${action}`));
 
   const scripts = [...html.matchAll(/<script\s+defer(?:="")?\s+src="([^"]+)"><\/script>/g)].map(match => match[1]);

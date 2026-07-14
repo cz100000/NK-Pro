@@ -2,17 +2,17 @@
 
 ## Aktuelle Version
 
-- Version: **V99.4.22**
-- Arbeitspaket: **AP19**
+- Version: **V99.4.23**
+- Arbeitspaket: **AP20**
 - Datenschema: **5**
 - Datenebenenvertrag: **1**
 - Dokumentlayout: **4**
 
 ## Erreichter Stand
 
-AP19 verbindet die produktiven Bereichsübersichten mit einem zentralen, kontrollierten Abrechnungskontext. Normale Starts beginnen ohne geöffnete Abrechnung. Bearbeiten, Ansehen, Schließen und Archivkorrektur sind explizite Vorgänge. Der Ansichtsmodus ist visuell und technisch schreibgeschützt.
+AP20 ersetzt verteilte und teilweise redundante Prüfoberflächen durch eine zentrale Regel- und Ergebnisarchitektur. 42 Regeln werden in acht fachlichen Prüfbereichen ausgewertet. Das Cockpit, kontextbezogene Fachseitenhinweise, Abschlussbereitschaft und Abnahmeprotokoll verwenden dieselbe Quelle. Technische Selbsttests und Releasekontrollen sind in der Systemdiagnose getrennt.
 
-Die mitgelieferten Projektdaten enthalten eine aktuelle Abrechnung in Bearbeitung und vier archivierte Abrechnungen. Die zentrale Liste zeigt alle fünf Einträge. Dashboardwerte werden aus Einheiten, Mietverhältnissen, Kosten, Verbrauch, Qualitätsprüfung, Berechenbarkeit, Briefen und Archivbestand abgeleitet.
+Bestätigungen sind einer Abrechnung, Regelinstanz und einem Fingerprint der Eingangsdaten zugeordnet. Relevante Datenänderungen öffnen den Punkt erneut. Blocker sind nicht bestätigbar. Im AP19-Ansichtsmodus bleiben sämtliche Änderungen gesperrt.
 
 ## Unverändert
 
@@ -20,4 +20,4 @@ Berechnungsformeln, Abrechnungsergebnisse, Arbeitsweiche, AP13-Brieflayout, Druc
 
 ## Nächster Stand
 
-AP20 ist offen und nicht Bestandteil dieses Releases.
+AP21 ist offen und nicht Bestandteil dieses Releases.

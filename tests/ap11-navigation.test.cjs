@@ -65,7 +65,7 @@ assert(navigation.includes('home.classList.toggle("active", landing)'), "Arbeits
 assert(!/\b(localStorage|indexedDB|caches)\b/.test(navigation), "Navigationsrenderer greift direkt auf Browser-Speicher zu.");
 assert(!/\bstate\s*[.[]/.test(navigation), "Navigationsmodul greift direkt auf Fachzustand zu.");
 
-assert(runtimeConfig.includes('const APP_VERSION = "V99.4.22";'), "Laufzeitversion ist nicht V99.4.22.");
-assert(runtimeConfig.includes('const APP_VERSION_NAME = "AP19-Produktive Bereichsübersichten und kontrollierter Abrechnungskontext";'), "Versionsname ist inkonsistent.");
+assert(runtimeConfig.includes('const APP_VERSION = "V99.4.23";'), "Laufzeitversion ist nicht V99.4.23.");
+assert(runtimeConfig.includes('const APP_VERSION_NAME = "AP20-Zentrales Prüf-, Plausibilitäts- und Freigabesystem";'), "Versionsname ist inkonsistent.");
 
 process.stdout.write("AP11-Navigationsprüfung abgeschlossen: Start plus 4 Gruppen, 18 fachliche Ziele und 11 gleichrangige Abrechnungsschritte in freigegebener Ablaufreihenfolge sind konsistent.\n");

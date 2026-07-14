@@ -16,8 +16,8 @@ const manifest = JSON.parse(read("manifest.webmanifest"));
 const project = JSON.parse(read("nk-pro-project.json"));
 const packageJson = JSON.parse(read("package.json"));
 
-assert(packageJson.version === "99.4.22" && packageJson.name === "nk-pro-v99-4-22", "AP18-Paketversion ist inkonsistent.");
-assert(project.appVersion === "99.4.22" && project.displayVersion === "V99.4.22" && project.basedOn === "99.4.21-AP18", "AP18-Projektmetadaten sind inkonsistent.");
+assert(packageJson.version === "99.4.23" && packageJson.name === "nk-pro-v99-4-23", "AP18-Paketversion ist inkonsistent.");
+assert(project.appVersion === "99.4.23" && project.displayVersion === "V99.4.23" && project.basedOn === "99.4.22-AP19", "AP18-Projektmetadaten sind inkonsistent.");
 assert(project.schemaVersion === 5 && project.dataLayerContractVersion === 1, "Datenschema oder Datenebenenvertrag wurde verändert.");
 assert(project.documentLayoutVersion === 4, "AP13-Dokumentlayout wurde verändert.");
 assert(project.uiVisualSystemVersion === 4 && project.navigationDesignSystemVersion === 5, "AP18-UI-/Navigationssystemversion fehlt.");
@@ -30,7 +30,7 @@ for (const asset of [
   "icons/icon-maskable-192.png", "icons/icon-maskable-512.png"
 ]) assert(exists(asset), `Marken-/PWA-Asset fehlt: ${asset}`);
 
-assert(manifest.version === "99.4.22" && manifest.short_name === "NK-Pro", "AP18-Manifestversion ist inkonsistent.");
+assert(manifest.version === "99.4.23" && manifest.short_name === "NK-Pro", "AP18-Manifestversion ist inkonsistent.");
 const iconPurposes = manifest.icons.map(icon => icon.purpose || "any");
 assert(iconPurposes.includes("any") && iconPurposes.includes("maskable"), "Manifest enthält keine getrennten any-/maskable-Icons.");
 assert(manifest.icons.some(icon => icon.src.includes("icon-maskable-192.png") && icon.purpose === "maskable"), "Maskierbares 192px-Icon fehlt.");
@@ -69,6 +69,6 @@ for (const resource of [
   "./assets/brand/nk-pro-mark-96.png", "./assets/brand/nk-pro-mark-128.png", "./icons/icon-16.png", "./icons/icon-32.png",
   "./icons/icon-180.png", "./icons/icon-192.png", "./icons/icon-512.png", "./icons/icon-maskable-192.png", "./icons/icon-maskable-512.png"
 ]) assert(worker.includes(`"${resource}"`), `PWA-App-Shell enthält ${resource} nicht.`);
-assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-22-ap19"'), "AP18-Cachebezeichnung fehlt.");
+assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-23-ap20"'), "AP18-Cachebezeichnung fehlt.");
 
 process.stdout.write("AP18-Strukturprüfung abgeschlossen: Version, Datenverträge, Markenassets, PWA-Icons, zentrales Aktionssystem, Navigation, Briefzoom, Werkzeuggruppen, Fokuszustände und Responsive-Regeln sind konsistent.\n");

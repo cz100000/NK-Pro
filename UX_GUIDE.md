@@ -2,7 +2,7 @@
 
 **Ziel:** einfacher, stabiler und nachvollziehbarer Arbeitsablauf  
 **Ausgangsversion:** V99.3.0  
-**Aktueller Stand:** V99.4.22  
+**Aktueller Stand:** V99.4.23  
 **Status:** Phase-1-Ziel umgesetzt; Datenmodellziele offen
 
 ## 1. Leitprinzip
@@ -51,7 +51,7 @@ Die Landingpage ist nur eine Arbeitsweiche. Sie ersetzt nicht die Navigation. Be
   Kosten erfassen
   Manuelle & externe Werte
   Verteilung
-  Prüfung
+  Abrechnung prüfen
   Neue Vorauszahlungen
   Briefe
   Export
@@ -253,7 +253,7 @@ Die sichtbare UI-Struktur und das Design bleiben unverändert. Tabellenfilter un
 - Benutzerskalierung verändert ausschließlich die Bildschirmansicht, nie Druck oder PDF.
 - Werkzeuggruppen bleiben bei schmalen Fenstern zusammen; vollständige mobile Neuentwicklung ist nicht Teil von AP18.
 
-## Ergänzung V99.4.22 / AP19
+## Ergänzung V99.4.23 / AP19
 
 Der frühere Abschnitt „Aktive Abrechnung“ wird durch einen verbindlichen kontrollierten Abrechnungskontext präzisiert:
 
@@ -268,3 +268,13 @@ Der frühere Abschnitt „Aktive Abrechnung“ wird durch einen verbindlichen ko
 - Die beiden Bereichsübersichten zeigen produktive Mengen- und Statusangaben statt AP17-Vorschauwerten.
 
 Die Statusbegriffe lauten vollständig, offen, Warnung, blockiert, in Bearbeitung, abgeschlossen, archiviert, DUMMY und nicht verfügbar. Sie werden nie ausschließlich über Farbe vermittelt.
+
+## 7. AP20 – Prüfen und Freigeben
+
+- Das zentrale Cockpit gliedert Prüfungen in acht fachliche Bereiche.
+- Blocker, Plausibilitäten, Hinweise und technische Probleme werden begrifflich und visuell getrennt.
+- Fachseiten zeigen nur die dort betroffenen Punkte.
+- „Zur Ursache“ führt direkt zur betroffenen Seite und Entität.
+- Bestätigt ist nicht gleich behoben. Datenänderungen können eine Bestätigung ungültig machen.
+- Im Ansichtsmodus sind sämtliche Prüfentscheidungen gesperrt.
+- Technische Selbsttests gehören in die Systemdiagnose, nicht in die fachliche Aufgabenliste.

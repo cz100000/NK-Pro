@@ -20,13 +20,13 @@ function main(){
   const css=read("assets/app.css");
   const worker=read("service-worker.js");
 
-  assert(pkg.name==="nk-pro-v99-4-22"&&pkg.version==="99.4.22","AP19-Paketversion ist inkonsistent.");
-  assert(project.appVersion==="99.4.22"&&project.displayVersion==="V99.4.22"&&project.basedOn==="99.4.21-AP18","AP19-Projektmetadaten sind inkonsistent.");
+  assert(pkg.name==="nk-pro-v99-4-23"&&pkg.version==="99.4.23","AP19-Paketversion ist inkonsistent.");
+  assert(project.appVersion==="99.4.23"&&project.displayVersion==="V99.4.23"&&project.basedOn==="99.4.22-AP19","AP19-Projektmetadaten sind inkonsistent.");
   assert(project.schemaVersion===5&&project.dataLayerContractVersion===1,"Datenverträge wurden verändert.");
   assert(project.controlledBillingContextVersion===1&&project.billingReadOnlyModeVersion===1&&project.productiveDashboardVersion===1,"AP19-Funktionsmetadaten fehlen.");
-  assert(manifest.version==="99.4.22"&&manifest.name.includes("V99.4.22"),"Manifestversion ist inkonsistent.");
-  assert(runtime.includes('const APP_VERSION = "V99.4.22";')&&runtime.includes('billingContext:globalThis.NKProBillingContext'),"AP19-Laufzeitkonfiguration fehlt.");
-  assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-22-ap19";')&&worker.includes('"./js/billing-context.js"'),"AP19-PWA-App-Shell ist inkonsistent.");
+  assert(manifest.version==="99.4.23"&&manifest.name.includes("V99.4.23"),"Manifestversion ist inkonsistent.");
+  assert(runtime.includes('const APP_VERSION = "V99.4.23";')&&runtime.includes('billingContext:globalThis.NKProBillingContext'),"AP19-Laufzeitkonfiguration fehlt.");
+  assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-23-ap20";')&&worker.includes('"./js/billing-context.js"'),"AP19-PWA-App-Shell ist inkonsistent.");
 
   assert(html.includes('data-global-billing-mode')&&html.includes('data-global-billing-close')&&html.includes('Abrechnung schließen'),"Kontextleiste ist unvollständig.");
   assert((html.match(/data-requires-billing="true"/g)||[]).length===10,"Abrechnungsnavigation ist nicht vollständig kontextgebunden.");
@@ -44,7 +44,7 @@ function main(){
 
   assert(!dashboards.includes('Hinweis zu Vorschauwerten')&&!dashboards.includes('Fiktiver Orientierungswert')&&!dashboards.includes('64 %')&&!dashboards.includes('82 %'),"AP17-Vorschauwerte sind noch produktiv enthalten.");
   assert(dashboards.includes('completeUnits.length')&&dashboards.includes('completeCosts.length')&&dashboards.includes('completeConsumption.length')&&dashboards.includes('lettersGenerated'),"Produktive Dashboarddaten sind unvollständig.");
-  assert(dashboards.includes('rules=[')&&dashboards.includes('key:"quality"')&&dashboards.includes('key:"letters"'),"Zentrale Prüfregeln fehlen.");
+  assert(dashboards.includes('rules=[')&&dashboards.includes('groupRule("quality"')&&dashboards.includes('groupRule("letters"')&&dashboards.includes('centralGroup'),"Zentrale Prüfregeln fehlen.");
   assert(css.includes('.billing-readonly-notice')&&css.includes('body.billing-readonly-mode')&&css.includes('.records-table td::before'),"Schreibschutz- oder Responsive-Stile fehlen.");
   assert(css.includes('.nav-group-children .tab-btn:last-child { border-bottom:0; }'),"Navigationstrennlinien wurden nicht bereinigt.");
 

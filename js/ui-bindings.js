@@ -119,10 +119,13 @@
       "billing.setPrepaymentValue":appCall(applicationActions, "billing", "setPrepaymentValue"), "billing.setPrepaymentAdjustmentSetting":appCall(applicationActions, "billing", "setPrepaymentAdjustmentSetting"),
       "billing.showFinalReport":call(handlers, "showFinalBillingReport"), "billing.showAcceptanceProtocol":call(handlers, "showAcceptanceProtocol")
     });
-    registerController("quality", "Prüfinteraktion ohne eigene Abrechnungsberechnung", {
+    registerController("quality", "Zentrale Prüfinteraktion ohne parallele Abrechnungsberechnung", {
       "quality.jumpToIssue":call(handlers, "jumpToQualityIssue"), "quality.reopenIssue":call(handlers, "reopenQualityIssue"),
       "quality.acknowledgeIssue":call(handlers, "acknowledgeQualityIssue"), "quality.jumpFirstOpen":call(handlers, "jumpToFirstOpenQualityIssue"),
-      "quality.showOnlyErrors":call(handlers, "showOnlyQualityErrors"), "quality.render":call(handlers, "renderQuality")
+      "quality.showOnlyErrors":call(handlers, "showOnlyQualityErrors"), "quality.render":call(handlers, "renderQuality"),
+      "quality.setFilter":call(handlers, "qualitySetFilter"), "quality.openDetail":call(handlers, "openQualityDetail"),
+      "quality.confirmIssue":call(handlers, "saveQualityConfirmation"), "quality.markNotApplicable":call(handlers, "markQualityNotApplicable"),
+      "quality.openPageIssues":call(handlers, "openPageQualityIssues")
     });
     registerController("meter", "UI-Adapter auf Zählerstammdaten, Messwerte und Messperioden aus AP5", {
       "meter.setWaterValue":appCall(applicationActions, "meter", "setWaterValue"), "meter.setGenericValue":appCall(applicationActions, "meter", "setGenericValue"),

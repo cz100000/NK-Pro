@@ -29,6 +29,7 @@ const NK_PRO_MODULES = (() => {
     billingWorkflow:globalThis.NKProBillingWorkflow,
     archiveActions:globalThis.NKProArchiveActions,
     yearTransitionActions:globalThis.NKProYearTransitionActions,
+    qualityRules:globalThis.NKProQualityRules,
     qualityAssurance:globalThis.NKProQualityAssurance,
     diagnostics:globalThis.NKProDiagnostics,
     uiController:globalThis.NKProUiController,
@@ -46,8 +47,8 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.22";
-const APP_VERSION_NAME = "AP19-Produktive Bereichsübersichten und kontrollierter Abrechnungskontext";
+const APP_VERSION = "V99.4.23";
+const APP_VERSION_NAME = "AP20-Zentrales Prüf-, Plausibilitäts- und Freigabesystem";
 const APP_RELEASE_DATE = "2026-07-14";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;

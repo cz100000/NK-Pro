@@ -1,4 +1,4 @@
-# Testanleitung – NK-Pro V99.4.22
+# Testanleitung – NK-Pro V99.4.23
 
 ## Automatisierte Prüfungen
 
@@ -9,11 +9,11 @@ npm run test:fixtures
 npm run test:metering
 npm run test:architecture
 npm run test:contents
-npm run test:ap19:harness
+npm run test:ap20:harness
 npm run test:release
 ```
 
-`test:architecture` umfasst die statischen und fachlichen Regressionen AP6 bis AP19. Der AP19-Chromium-Harness prüft fünf reale Browserabläufe mit 42 Einzelprüfungen ohne Netzwerkserver.
+`test:architecture` umfasst AP6 bis AP20. Der AP20-Chromium-Harness prüft fünf reale Browserabläufe mit 48 Einzelprüfungen ohne Netzwerkserver, darunter Cockpit, Detaildialog, Systemdiagnose, Ansichtsmodus, direkte Schreibsperre, Bestätigungsfingerprint und Blockerschutz.
 
 In einer Umgebung ohne Loopback-Sperre zusätzlich:
 
@@ -23,17 +23,19 @@ npm run test:browser
 
 ## Manuelle Kernabnahme
 
-1. Neu laden: Kontextleiste meldet „Keine Abrechnung geöffnet“.
-2. Abrechnungs-Unterpunkte sind sichtbar, aber deaktiviert.
-3. Über die Übersicht aktuelle Abrechnung mit Bearbeiten öffnen.
-4. Schließen und anschließend mit Ansehen öffnen.
-5. Schreibschutzkennzeichnung, ausgeblendete Aktionen und Strg/Cmd+S prüfen.
-6. Archiv ansehen, schließen und „Zur Korrektur öffnen“ mit Bestätigung prüfen.
-7. Dirty-State erzeugen und Schließen abbrechen/bestätigen.
-8. Dashboardwerte, Direkteinstiege, 640-px-Darstellung und Tastaturfokus prüfen.
-9. Briefvorschau, Schwarzweiß, Druck und PDF gegen AP13 prüfen.
-10. Offline-Start nach einmaligem Online-Laden prüfen.
+1. Anwendung neu laden; keine Abrechnung darf automatisch geöffnet sein.
+2. Abrechnung ausdrücklich mit Bearbeiten öffnen und „Abrechnung prüfen“ aufrufen.
+3. Vier Statuskarten, acht Prüfbereiche, Filter, Aufklappgruppen und Regelübersicht prüfen.
+4. Einen Plausibilitätsbefund bestätigen, Begründung prüfen, Bestätigung zurücknehmen.
+5. Relevanten Eingangswert ändern und prüfen, dass die alte Bestätigung nicht mehr gilt.
+6. Einen Blocker öffnen; Bestätigung darf nicht angeboten oder technisch akzeptiert werden.
+7. „Zur Ursache“ auf mehreren Fachseiten prüfen; Ziel soll fokussiert oder hervorgehoben werden.
+8. Abrechnung im Ansichtsmodus öffnen; Bestätigen, Nicht anwendbar und Zurücknehmen müssen gesperrt sein.
+9. Systemdiagnose unter Datensicherung & System prüfen; technische Meldungen dürfen nicht im fachlichen Cockpit erscheinen.
+10. Abschlussaussagen „Nicht abschließbar“, „Fachlich zu prüfen“ und „Abschlussbereit“ gegen die zentralen Ergebnisse prüfen.
+11. Desktop, Laptop, schmale Fenster, geringe Höhe, Tablet und sehr schmale Ansicht kontrollieren.
+12. Briefvorschau, Schwarzweiß, Druck und PDF gegen AP13 prüfen; Offline-Start nach einmaligem Online-Laden prüfen.
 
-## Umgebungsgrenze
+## Umgebungsgrenzen
 
-Die verwendete Prüfumbgebung blockiert die serverbasierte Navigation zu lokalen Loopback-Adressen mit `ERR_BLOCKED_BY_ADMINISTRATOR`. Der serverlose Chromium-Harness ist bestanden. Die statischen AP13-, PWA- und Releaseprüfungen bleiben vollständig aktiv.
+Die Prüfumbgebung blockiert serverbasierte Loopback-Navigation mit `ERR_BLOCKED_BY_ADMINISTRATOR`. Der serverlose Desktop-Chromium-Harness ist bestanden. Bei isolierter sehr schmaler Viewport-Ausführung beendet diese Hostumgebung den Chromium-Targetprozess. Responsive Regeln sind statisch geprüft; die Narrow-Viewport-Abnahme ist auf einem normalen Zielsystem zu wiederholen.

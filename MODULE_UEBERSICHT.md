@@ -1,15 +1,16 @@
-# NK-Pro – Modulübersicht V99.4.18
+# NK-Pro – Modulübersicht V99.4.23
 
-Die modulare Struktur aus AP6 bis AP12 bleibt verbindlich. AP13 stellt das gemeinsame Brief-/Druckmodell bereit, AP14 das visuelle UI-System. AP15 ergänzt keine neue Fachschicht.
+Die modulare Struktur aus AP6 bis AP19 bleibt verbindlich. AP20 ergänzt eine zentrale Prüfregel- und Ergebnisquelle ohne externe Laufzeitabhängigkeit.
 
-## AP15-relevante Verantwortlichkeiten
+## AP20-relevante Verantwortlichkeiten
 
-- `js/ui-navigation-pages.js`: Navigation, Seitenkontext und zentraler Reset transienter UI-Zustände
-- `js/ui-costs.js`: ausschließlich kostenbezogene UI-Auswahl-, Such-, Paging- und Dialogzustände
-- `js/browser-io.js`: Import/Export sowie dokumentbezogene Browserausgabe
-- `js/app-state-persistence.js`: Sicherung, Restore, Rollback und Recovery-Orchestrierung
-- `service-worker.js`: App-Shell, Offline-Navigation und versionsgebundene NK-Pro-Cachepflege
-- `tools/check-release-contents.cjs`: kontrollierbare Inhaltsprüfung ohne automatische Löschung
-- `tools/check-release-consistency.cjs`: Versions-, Ressourcen-, Architektur-, Dokumentations- und Prüfsummenfreigabe
+- `js/quality-rules.js`: zentrale Registry, Regelauswertung, Statusmodell, Readiness, Bestätigungsfingerprints
+- `js/quality-assurance.js`: kompatibler Adapter für bestehende Aufrufer; keine zweite fachliche Prüfberechnung
+- `js/ui-quality.js`: Prüfungscockpit, Detaildialog, Fachseitenzusammenfassungen, Direkteinstiege, Systemdiagnose
+- `js/billing-workflow.js`: Finalisierung ausschließlich auf Basis der zentralen Readiness
+- `js/document-data.js`: Abnahmeprotokoll und Abschlussaussage aus denselben Ergebnissen
+- `js/billing-context.js`: technische Schreibsperre für AP20-Bestätigungsaktionen im Ansichtsmodus
+- `js/ui-page-controller.js`: Dashboardstatus aus zentralen Prüfgruppen
+- `tools/check-ap20-browser-harness.cjs`: serverlose reale Chromium-Kernprüfung
 
-Produktive Modulgrenzen, Datenverträge und globale Kompatibilitätsoberflächen werden durch AP15 nicht erweitert.
+Datenschema, Datenebenenvertrag, Berechnungsmodule, AP13-Dokumentrenderer und produktive Zählergrenzen werden durch AP20 nicht verändert.

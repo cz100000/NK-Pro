@@ -1,0 +1,46 @@
+{
+  "workPackage": "AP20",
+  "version": "99.4.23",
+  "displayVersion": "V99.4.23",
+  "basedOn": "99.4.22-AP19",
+  "allowedCurrentApArtifacts": [
+    "AP15",
+    "AP17",
+    "AP18",
+    "AP19",
+    "AP20"
+  ],
+  "excludedDirectories": [
+    "node_modules",
+    "test-results",
+    "playwright-report",
+    "coverage",
+    ".cache",
+    ".playwright"
+  ],
+  "excludedPatterns": [
+    "*.zip",
+    "*.7z",
+    "*.rar",
+    "*.log",
+    "*.tmp",
+    "*.bak",
+    "Kontrollausgabe*.pdf"
+  ],
+  "requiredChecks": [
+    "syntax",
+    "fixtures",
+    "metering",
+    "architecture AP6–AP20",
+    "strict release contents",
+    "AP20 Chromium harness",
+    "release consistency",
+    "SHA-256 inventory"
+  ],
+  "notes": [
+    "Zähler-DUMMY bleibt erhalten.",
+    "Keine externen Produktionsabhängigkeiten.",
+    "Playwright-Loopback ist in restriktiven Hostumgebungen blockiert; AP20-Harness nutzt vorhandenes Chromium serverlos.",
+    "Sehr schmale Chromium-Viewport-Abnahme ist wegen Target-Crash der Hostumgebung auf dem Zielsystem zu wiederholen."
+  ]
+}
