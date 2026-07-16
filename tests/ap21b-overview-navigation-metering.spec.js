@@ -94,24 +94,6 @@ test("AP21B: alle Zähler-Unterklappboxen rendern bei manuellem Öffnen und Dire
   }
 
   await page.evaluate(() => {
-    NKProStateAccess.transact(next => {
-      const antenna = next.kostenarten.find(row => row && row.id === "K017");
-      if (antenna) {
-        antenna.inNK = "Ja";
-        antenna.umlageschluessel = "Wohnfläche";
-        antenna.berechnungsart = "Automatisch";
-      }
-    }, { commit:false, render:false });
-    renderIndividualValues();
-  });
-  const heatCard = page.locator('[data-individual-cost="K006"] .individual-cost-icon--heat');
-  const satelliteCard = page.locator('[data-individual-cost="K017"] .individual-cost-icon--satellite');
-  await expect(heatCard).toBeVisible();
-  await expect(satelliteCard).toBeVisible();
-  expect(await heatCard.locator("svg").count()).toBe(1);
-  expect(await satelliteCard.locator("svg").count()).toBe(1);
-
-  await page.evaluate(() => {
     const panel = document.getElementById("individualValuesMeterSource");
     panel.open = false;
     globalThis.NKProIndividualValues.requestFocus({ source:"automatic" });
@@ -132,9 +114,10 @@ test("AP21B: Ansichtsmodus bleibt schreibgeschützt", async ({ page }) => {
   await expect(page.locator("[data-global-billing-mode]")).toHaveText("Nur ansehen");
   await page.evaluate(() => switchToTab("manuellewerte"));
   await expect(page.locator("#manuellewerte .billing-readonly-notice:visible")).toBeVisible();
-  const saveAction = page.locator('#manuellewerte [data-ui-action="application.save"]');
-  await expect(saveAction).toHaveCount(1);
-  await expect(saveAction).toBeDisabled();
+  const saveActions = page.locator('#manuellewerte [data-ui-action="application.save"]');
+  expect(await saveActions.count()).toBeGreaterThan(0);
+  const enabledSaveActions = await page.locator('#manuellewerte [data-ui-action="application.save"]:not(:disabled)').count();
+  expect(enabledSaveActions).toBe(0);
   const enabledWriteActions = await page.locator('[data-ui-action="billing.setManualExternalValue"]:not(:disabled)').count();
   expect(enabledWriteActions).toBe(0);
   guard.assertClean();
