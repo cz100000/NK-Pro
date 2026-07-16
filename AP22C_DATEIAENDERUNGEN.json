@@ -1,0 +1,28 @@
+{
+  "version": "99.4.31",
+  "workPackage": "AP22C",
+  "productFiles": [
+    "assets/app.css",
+    "index.html",
+    "js/ui-design-system.js",
+    "js/app-runtime-config.js",
+    "service-worker.js",
+    "js/service-worker-register.js",
+    "manifest.webmanifest",
+    "package.json",
+    "package-lock.json",
+    "nk-pro-project.json"
+  ],
+  "productFileCount": 10,
+  "existingRegressionTestsChanged": false,
+  "testInfrastructure": [
+    "playwright.config.cjs",
+    "tests/ap22c-ui-tables-lists.test.cjs",
+    "tests/ap22c-ui-tables-lists.spec.js"
+  ],
+  "documentationFiles": [
+    "UI_KOMPONENTENKATALOG.md",
+    "UI_MIGRATIONSMATRIX.md",
+    "ROADMAP.md"
+  ]
+}

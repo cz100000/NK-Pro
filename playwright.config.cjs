@@ -54,7 +54,8 @@ module.exports = defineConfig({
     { name:"ap21b1-navigation", testMatch:"ap21b1-navigation.spec.js" },
     { name:"ap21b2-navigation-centralization", testMatch:"ap21b2-navigation-centralization.spec.js" },
     { name:"ap22a-ui-library-foundation", testMatch:"ap22a-ui-library-foundation.spec.js" },
-    { name:"ap22b-ui-base-components", testMatch:"ap22b-ui-base-components.spec.js" }
+    { name:"ap22b-ui-base-components", testMatch:"ap22b-ui-base-components.spec.js" },
+    { name:"ap22c-ui-tables-lists", testMatch:"ap22c-ui-tables-lists.spec.js" }
   ],
   use: {
     baseURL: "http://127.0.0.1:4173",

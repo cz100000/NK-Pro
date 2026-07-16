@@ -1,0 +1,69 @@
+{
+  "version": "99.4.31",
+  "workPackage": "AP22C",
+  "status": "passed",
+  "checks": [
+    {
+      "name": "JavaScript syntax",
+      "status": "passed",
+      "units": 55
+    },
+    {
+      "name": "Reference fixture semantics",
+      "status": "passed",
+      "cases": 6
+    },
+    {
+      "name": "Metering regressions",
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "name": "Architecture and navigation structure",
+      "status": "passed",
+      "tests": 7
+    },
+    {
+      "name": "AP21C compatibility",
+      "status": "passed",
+      "tests": 1
+    },
+    {
+      "name": "AP22C structure and release metadata",
+      "status": "passed",
+      "tests": 1
+    },
+    {
+      "name": "AP22C Chromium",
+      "status": "passed",
+      "tests": 1
+    },
+    {
+      "name": "Targeted document, reference, letter and navigation Chromium regressions",
+      "status": "passed",
+      "tests": 19
+    },
+    {
+      "name": "Release contents",
+      "status": "passed",
+      "files": 278
+    },
+    {
+      "name": "SHA-256 release inventory",
+      "status": "passed",
+      "files": 277
+    },
+    {
+      "name": "Fresh ZIP extraction and release check",
+      "status": "passed",
+      "tests": "complete AP22C release gate"
+    }
+  ],
+  "historicalTests": {
+    "app-smoke.spec.js": "not-a-release-gate; contains hard-coded V99.4.24 and pre-AP21B2 navigation expectations"
+  },
+  "existingRegressionTestsChanged": false,
+  "productFileCount": 10,
+  "releaseZip": "NK-Pro_V99_4_31_AP22C_UI_Bibliothek_Tabellen_und_Listen.zip",
+  "freshExtractionVerified": true
+}
