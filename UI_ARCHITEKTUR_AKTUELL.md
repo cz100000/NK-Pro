@@ -1,3 +1,7 @@
+# UI-Architektur V99.4.24 / AP21A
+
+Die gemeinsame Seite `manuellewerte` wird durch `js/ui-individual-values.js` gerendert; der historische Schlüssel `verbraeuche` bleibt als kompatible Weiterleitung bestehen.
+
 # NK-Pro – UI-Architektur V99.4.23
 
 ## Visuelles System

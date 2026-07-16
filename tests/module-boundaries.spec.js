@@ -17,7 +17,7 @@ test("Fach-, Technik-, Start- und Kompatibilitätsmodule sind vor app.js geladen
       "export-service.js", "ui-table-tools.js", "app-bootstrap.js", "compatibility.js", "default-seed.js",
       "runtime-diagnostics.js", "app-runtime-config.js", "app-state-persistence.js", "ui-master-data.js",
       "ui-quality.js", "ui-costs.js", "ui-navigation-pages.js", "ui-archive-pages.js", "browser-io.js",
-      "ui-metering.js", "ui-billing-allocation.js", "ui-documents.js", "ui-table-actions.js",
+      "ui-metering.js", "ui-billing-allocation.js", "ui-individual-values.js", "ui-documents.js", "ui-table-actions.js",
       "ui-diagnostics.js", "ui-page-controller.js", "app.js"
     ];
     const order = names.map(name => scripts.indexOf(name));
@@ -85,7 +85,7 @@ test("Fach-, Technik-, Start- und Kompatibilitätsmodule sind vor app.js geladen
   expect(Object.values(result.frozen).every(Boolean)).toBe(true);
   expect(result.order.every(index => index >= 0)).toBe(true);
   expect(result.order).toEqual([...result.order].sort((a, b) => a - b));
-  expect(result.startup).toEqual({ ok:true, completed:16 });
+  expect(result.startup).toEqual({ ok:true, completed:17 });
   expect(result.removedGlobals).toBe(true);
   expect(result.registered).toEqual([
     ["billingCalculation", 30],

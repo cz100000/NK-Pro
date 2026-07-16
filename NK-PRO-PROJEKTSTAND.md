@@ -1,3 +1,7 @@
+# Projektstand V99.4.24 / AP21A
+
+AP21A ist abgeschlossen. AP21 wird anschließend mit der fachlichen Einzelprüfung der verbleibenden Regeln fortgesetzt.
+
 # NK-Pro – Projektstand
 
 ## Aktuelle Version

@@ -1,3 +1,20 @@
+# V99.4.24 – AP21A (2026-07-16)
+
+- Navigation und Terminologie konsolidiert.
+- Werteseiten zu „Individuelle Werte“ zusammengeführt.
+- Globales UI-, Abstands-, Status- und Schreibschutzsystem vereinheitlicht.
+- 102 Browserregressionen: 99 bestanden, 3 optionale Tests übersprungen.
+
+## AP21 Arbeitsstand 1 – 16.07.2026
+
+- NKP-FACH-001 nach Einzelprüfung und Nutzerfreigabe korrigiert.
+- Strenge ISO-Kalenderprüfung für Abrechnungsbeginn und -ende ergänzt.
+- Konsistenz zwischen Abrechnungsjahr und Endjahr der Periode ergänzt.
+- Neuer bearbeitbarer beziehungsweise schreibgeschützter Periodenbereich auf der Abrechnungsübersicht.
+- Direkteinstieg der Regel auf den tatsächlichen Bearbeitungsort umgestellt.
+- AP21-Regressionsprüfung ergänzt; Architekturinventare auf 116 UI-Aktionen und 52 Renderer fortgeschrieben.
+- NKP-FACH-002 fachlich und technisch analysiert; Umsetzung noch nicht freigegeben.
+
 # Änderungsprotokoll
 
 ## V99.4.23 – AP20 – 14.07.2026

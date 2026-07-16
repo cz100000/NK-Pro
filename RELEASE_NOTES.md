@@ -1,3 +1,7 @@
+# Release V99.4.24 – AP21A
+
+Navigation, gemeinsame Seite „Individuelle Werte“, globales UI-Konsistenzpaket und vereinheitlichter Ansichtsmodus. Datenschema 5 und NKP-FACH-001 bleiben unverändert; NKP-FACH-002 ist nicht umgesetzt.
+
 # Release Notes – NK-Pro V99.4.23
 
 ## AP20

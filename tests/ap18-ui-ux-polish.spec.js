@@ -6,6 +6,7 @@ const { attachRuntimeGuards, openFreshApp, loadFixture } = require("./test-helpe
 async function openLetterPreview(page) {
   await loadFixture(page, "standardfall.json");
   await page.evaluate(() => {
+    openCurrentBillingForEdit();
     switchToTab("briefe");
     renderBrief();
   });
@@ -73,16 +74,16 @@ test("Navigationsgruppen bleiben unabhängig klappbar und öffnen aktive Direkte
   const runtime = attachRuntimeGuards(page);
   await openFreshApp(page);
   const objectToggle = page.locator('[data-nav-toggle="group-object"]');
-  const archiveToggle = page.locator('[data-nav-toggle="group-archive"]');
+  const billingToggle = page.locator('[data-nav-toggle="group-billing"]');
 
-  await archiveToggle.focus();
+  await billingToggle.focus();
   await page.keyboard.press("Enter");
-  await expect(archiveToggle).toHaveAttribute("aria-expanded", "true");
+  await expect(billingToggle).toHaveAttribute("aria-expanded", "true");
   await expect(objectToggle).toHaveAttribute("aria-expanded", "true");
 
   await objectToggle.click();
   await expect(objectToggle).toHaveAttribute("aria-expanded", "false");
-  await expect(archiveToggle).toHaveAttribute("aria-expanded", "true");
+  await expect(billingToggle).toHaveAttribute("aria-expanded", "true");
 
   await page.evaluate(() => switchToTab("objekt"));
   await expect(objectToggle).toHaveAttribute("aria-expanded", "true");
@@ -202,7 +203,7 @@ test("Manifest- und PWA-Icons sind abrufbar und maskierbare Varianten quadratisc
   const runtime = attachRuntimeGuards(page);
   await openFreshApp(page);
   const manifest = await page.evaluate(async () => (await fetch("./manifest.webmanifest")).json());
-  expect(manifest.version).toBe("99.4.23");
+  expect(manifest.version).toBe("99.4.24");
   expect(manifest.icons.some(icon => icon.purpose === "maskable" && icon.sizes === "192x192")).toBe(true);
   expect(manifest.icons.some(icon => icon.purpose === "maskable" && icon.sizes === "512x512")).toBe(true);
   for (const icon of manifest.icons) {

@@ -19,7 +19,7 @@ test("Start, Version, Seitenstruktur und interne Audits sind fehlerfrei", async 
   const runtime = attachRuntimeGuards(page);
   await openFreshApp(page);
 
-  await expect(page).toHaveTitle("NK-Pro V99.4.23 – AP20-Zentrales Prüf-, Plausibilitäts- und Freigabesystem");
+  await expect(page).toHaveTitle("NK-Pro V99.4.24 – AP21A UI-Konsolidierung, Navigation und individuelle Werte");
   const result = await page.evaluate(() => {
     const release = window.NKProDiagnostics.releaseAuditReport();
     const selfReport = window.NKProDiagnostics.appSelfTestReport();
@@ -37,6 +37,8 @@ test("Start, Version, Seitenstruktur und interne Audits sind fehlerfrei", async 
       structure: auditV992Structure(),
       release: release.summary,
       self: selfSummary,
+      selfTechnicalErrors:selfRows.filter(row => row.severity === "Fehler" && row.area !== "Qualität").length,
+      selfQualityFindings:selfRows.filter(row => row.area === "Qualität" && row.severity !== "OK").length,
       renderErrors: JSON.parse(JSON.stringify(renderErrors || [])),
       landingChoices: document.querySelectorAll("#landing .landing-choice").length,
       contextHidden: document.querySelector("[data-global-billing-context]")?.hidden,
@@ -44,17 +46,18 @@ test("Start, Version, Seitenstruktur und interne Audits sind fehlerfrei", async 
     };
   });
 
-  expect(result.version).toBe("V99.4.23");
-  expect(result.versionName).toBe("AP20-Zentrales Prüf-, Plausibilitäts- und Freigabesystem");
+  expect(result.version).toBe("V99.4.24");
+  expect(result.versionName).toBe("AP21A-UI-Konsolidierung, Navigation und individuelle Werte");
   expect(result.schema).toBe(5);
   expect(result.activeTab).toBe("landing");
   expect(result.structure.allPassed).toBe(true);
-  expect(result.navCount).toBe(18);
+  expect(result.navCount).toBe(17);
   expect(result.release.errors).toBe(0);
   expect(result.release.warnings).toBe(0);
   expect(result.release.ok).toBeGreaterThanOrEqual(28);
-  expect(result.self.errors).toBe(0);
-  expect(result.self.ok).toBeGreaterThanOrEqual(30);
+  expect(result.selfTechnicalErrors).toBe(0);
+  expect(result.selfQualityFindings).toBeGreaterThanOrEqual(1);
+  expect(result.self.ok).toBeGreaterThanOrEqual(28);
   expect(result.renderErrors).toEqual([]);
   expect(result.landingChoices).toBe(2);
   expect(result.contextHidden).toBe(true);
@@ -85,18 +88,19 @@ test("Accordion-Navigation ist logisch gruppiert und per Tastatur bedienbar", as
   await openFreshApp(page);
 
   const groupLabels = await page.locator(".workflow-nav > .nav-group .nav-group-label").allTextContents();
-  expect(groupLabels.map(label => label.trim())).toEqual(["Objekt vorbereiten", "Nebenkosten abrechnen", "Archiv", "Extras"]);
+  expect(groupLabels.map(label => label.trim())).toEqual(["Objekt vorbereiten", "Nebenkosten abrechnen", "Extras"]);
 
   const toggles = page.locator(".nav-group-toggle[data-nav-toggle]");
-  await expect(toggles).toHaveCount(4);
+  await expect(toggles).toHaveCount(3);
   await expect(toggles.nth(0)).toHaveAttribute("aria-expanded", "true");
   await expect(toggles.nth(1)).toHaveAttribute("aria-expanded", "false");
 
-  await toggles.nth(2).focus();
+  await toggles.nth(1).focus();
   await page.keyboard.press("Enter");
-  await expect(toggles.nth(2)).toHaveAttribute("aria-expanded", "true");
+  await expect(toggles.nth(1)).toHaveAttribute("aria-expanded", "true");
   await expect(toggles.nth(0)).toHaveAttribute("aria-expanded", "true");
-  await expect(page.locator("#nav-group-archive")).toBeVisible();
+  await expect(page.locator("#nav-group-billing")).toBeVisible();
+  await expect(page.locator("#nav-group-billing .nav-archive-entry")).toBeVisible();
   await expect(page.locator("#nav-group-object")).toBeVisible();
 
   const expandedCount = await toggles.evaluateAll(nodes => nodes.filter(node => node.getAttribute("aria-expanded") === "true").length);
@@ -117,7 +121,8 @@ test("Jeder Navigationspunkt öffnet genau seinen Tab", async ({ page }) => {
   }
 
   await createActiveBilling(page);
-  const billingTabs = ["mieter", "einstellungen", "einnahmen", "manuellewerte", "verbraeuche", "umlage", "vorauszahlungsanpassung", "qualitaet", "briefe", "export"];
+  await page.evaluate(() => openCurrentBillingForEdit());
+  const billingTabs = ["mieter", "einstellungen", "einnahmen", "manuellewerte", "umlage", "vorauszahlungsanpassung", "qualitaet", "briefe", "export"];
   for (const tabId of billingTabs) {
     await page.evaluate(id => switchToTab(id), tabId);
     await expect(page.locator(`#${tabId}`)).toHaveClass(/active/);
@@ -135,7 +140,8 @@ test("Aktive Abrechnung erscheint nur im geöffneten Arbeitskontext", async ({ p
   await expect(panel).toBeHidden();
 
   await createActiveBilling(page);
-  await expect(panel).toBeHidden();
+  await expect(panel).toBeVisible();
+  await expect(page.locator("[data-global-billing-mode]")).toContainText("Keine Abrechnung geöffnet");
   await page.evaluate(() => openCurrentBilling());
   await expect(panel).toBeVisible();
   await expect(page.locator("[data-global-billing-status]")).toHaveText("In Bearbeitung");
@@ -147,20 +153,22 @@ test("Aktive Abrechnung erscheint nur im geöffneten Arbeitskontext", async ({ p
     state.meta.currentBillingFinalizationKey = window.NKProBillingWorkflow.currentBillingFinalizationKey();
     NKProNavigation.updateWorkflowNavigationContext();
   });
-  await expect(page.locator("[data-global-billing-status]")).toHaveText("Finalisiert");
+  await expect(page.locator("[data-global-billing-status]")).toHaveText("Abgeschlossen");
 
   await page.evaluate(() => {
     state.meta.archiveViewer = true;
     setBillingContextOpen(true);
     NKProNavigation.updateWorkflowNavigationContext();
   });
-  await expect(page.locator("[data-global-billing-status]")).toHaveText("Nur Ansicht");
+  await expect(page.locator("[data-global-billing-status]")).toHaveText("Archiviert");
 
   await page.evaluate(() => {
     state.meta.archiveViewer = false;
     switchToTab("start");
   });
-  await expect(panel).toBeHidden();
+  await expect(panel).toBeVisible();
+  await expect(page.locator("[data-global-billing-status]")).toHaveText("Abgeschlossen");
+  await expect(page.locator("[data-global-billing-object]")).not.toHaveText("");
   runtime.assertClean();
 });
 
@@ -174,26 +182,29 @@ test("Archiv ist eigenständig erreichbar und öffnet die Nur-Ansicht", async ({
   await page.evaluate(() => openArchiveYear(0));
   await expect(page.locator("#mieter")).toHaveClass(/active/);
   await expect(page.locator("[data-global-billing-context]")).toBeVisible();
-  await expect(page.locator("[data-global-billing-status]")).toHaveText("Nur Ansicht");
+  await expect(page.locator("[data-global-billing-status]")).toHaveText("Archiviert");
+  await expect(page.locator("[data-global-billing-mode]")).toContainText("Nur ansehen");
   expect(await page.evaluate(() => isArchiveViewer())).toBe(true);
 
   await page.evaluate(() => closeArchiveViewer());
   await expect(page.locator("#archiv")).toHaveClass(/active/);
-  await expect(page.locator("[data-global-billing-context]")).toBeHidden();
+  await expect(page.locator("[data-global-billing-context]")).toBeVisible();
+  await expect(page.locator("[data-global-billing-object]")).not.toHaveText("");
+  await expect(page.locator("[data-global-billing-mode]")).toContainText("Nur ansehen");
   runtime.assertClean();
 });
 
 test("Manifest und PWA-Version stimmen mit der Anwendung überein", async () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(root, "manifest.webmanifest"), "utf8"));
   const worker = fs.readFileSync(path.join(root, "service-worker.js"), "utf8");
-  expect(manifest.version).toBe("99.4.23");
-  expect(manifest.name).toContain("V99.4.23");
-  expect(worker).toContain('const CACHE_NAME = "nk-pro-v99-4-23-ap20-corr3";');
+  expect(manifest.version).toBe("99.4.24");
+  expect(manifest.name).toContain("V99.4.24");
+  expect(worker).toContain('const CACHE_NAME = "nk-pro-v99-4-24-ap21a";');
   expect(worker).toContain('"./index.html"');
   expect(worker).toContain('"./manifest.webmanifest"');
 });
 
-test("V99.4.23 lädt produktive Styles und Skripte ausschließlich aus separaten Dateien", async ({ page, request }) => {
+test("V99.4.24 lädt produktive Styles und Skripte ausschließlich aus separaten Dateien", async ({ page, request }) => {
   const response = await request.get("/index.html");
   expect(response.ok()).toBeTruthy();
   const html = await response.text();
@@ -208,7 +219,7 @@ test("V99.4.23 lädt produktive Styles und Skripte ausschließlich aus separaten
     scripts: [...document.scripts].map(script => script.src || "")
   }));
   expect(loaded.styles.some(resource => resource.includes("assets/app.css"))).toBeTruthy();
-  for (const expected of ["js/ui-preferences.js", "js/navigation.js", "js/modal-events.js", "js/persistence.js", "js/migration.js", "js/backup-recovery.js", "js/meter-master.js", "js/meter-readings.js", "js/meter-periods.js", "js/meter-validation.js", "js/object-standard.js", "js/billing-snapshot.js", "js/archive.js", "js/archive-actions.js", "js/year-transition-actions.js", "js/quality-assurance.js", "js/diagnostics.js", "js/billing-calculation.js", "js/document-data.js", "js/document-renderer.js", "js/export-service.js", "js/ui-table-tools.js", "js/app-bootstrap.js", "js/compatibility.js", "js/default-seed.js", "js/runtime-diagnostics.js", "js/app-runtime-config.js", "js/app-state-persistence.js", "js/ui-master-data.js", "js/ui-quality.js", "js/ui-costs.js", "js/ui-navigation-pages.js", "js/ui-archive-pages.js", "js/browser-io.js", "js/ui-metering.js", "js/ui-billing-allocation.js", "js/ui-documents.js", "js/ui-table-actions.js", "js/ui-diagnostics.js", "js/ui-page-controller.js", "js/app.js", "js/service-worker-register.js"]) {
+  for (const expected of ["js/ui-preferences.js", "js/navigation.js", "js/modal-events.js", "js/persistence.js", "js/migration.js", "js/backup-recovery.js", "js/meter-master.js", "js/meter-readings.js", "js/meter-periods.js", "js/meter-validation.js", "js/object-standard.js", "js/billing-snapshot.js", "js/archive.js", "js/archive-actions.js", "js/year-transition-actions.js", "js/quality-assurance.js", "js/diagnostics.js", "js/billing-calculation.js", "js/document-data.js", "js/document-renderer.js", "js/export-service.js", "js/ui-table-tools.js", "js/app-bootstrap.js", "js/compatibility.js", "js/default-seed.js", "js/runtime-diagnostics.js", "js/app-runtime-config.js", "js/app-state-persistence.js", "js/ui-master-data.js", "js/ui-quality.js", "js/ui-costs.js", "js/ui-navigation-pages.js", "js/ui-archive-pages.js", "js/browser-io.js", "js/ui-metering.js", "js/ui-billing-allocation.js", "js/ui-individual-values.js", "js/ui-documents.js", "js/ui-table-actions.js", "js/ui-diagnostics.js", "js/ui-page-controller.js", "js/app.js", "js/service-worker-register.js"]) {
     expect(loaded.scripts.some(resource => resource.includes(expected))).toBeTruthy();
   }
 });
@@ -219,12 +230,15 @@ test("Navigation ist entschlackt und K002 bleibt ausschließlich bei den Zähler
   expect(await page.locator('[data-tab="dashboard"]').count()).toBe(0);
   expect(await page.locator("#dashboard").count()).toBe(0);
   const groupOrder = await page.locator(".workflow-nav > section").evaluateAll(nodes => nodes.map(node => node.dataset.navGroupSection));
-  expect(groupOrder).toEqual(["object", "billing", "archive", "extras"]);
+  expect(groupOrder).toEqual(["object", "billing", "extras"]);
   await createActiveBilling(page);
-  await page.evaluate(() => enterBillingMode("manuellewerte"));
-  await expect(page.locator("#manualExternalValuesTable tbody")).not.toContainText("K002");
+  await page.evaluate(() => { openCurrentBillingForEdit(); enterBillingMode("manuellewerte"); });
+  const k002 = page.locator('[data-individual-cost="K002"]');
+  await expect(k002).toHaveAttribute("data-individual-source", "automatic");
+  await expect(k002.locator("input:not([type=search]), select, textarea")).toHaveCount(0);
   await page.evaluate(() => switchToTab("verbraeuche"));
-  await expect(page.locator("#verbraeuche")).toHaveClass(/active/);
+  await expect(page.locator("#manuellewerte")).toHaveClass(/active/);
+  await expect(page.locator('.tab-btn[data-tab="manuellewerte"]')).toHaveClass(/active/);
   const mode = await page.evaluate(() => manualInputModeForCost(state.kostenarten.find(k => k.id === "K002")));
   expect(mode).toBe("Zählerstände");
   runtime.assertClean();

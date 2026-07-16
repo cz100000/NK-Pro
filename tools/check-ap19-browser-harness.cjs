@@ -56,7 +56,7 @@ async function bootPage(browser, options = {}) {
   }, { local:storageSeedFrom(options.localEntries), session:storageSeedFrom(options.sessionEntries) });
 
   for (const relative of scriptSources) {
-    const source = fs.readFileSync(path.join(root, relative.replace(/^\.\//, "")), "utf8");
+    const source = fs.readFileSync(path.join(root, relative.split("?")[0].replace(/^\.\//, "")), "utf8");
     await page.addScriptTag({ content:`//# sourceURL=${relative}\n${source}` });
   }
   await page.waitForTimeout(80);

@@ -25,7 +25,7 @@ test("UI-Controller und zentrale Ereignisdelegation sind vollständig und einmal
   expect(result.before).toMatchObject({ started:true, listenerCount:5 });
   expect(result.after).toMatchObject({ started:true, listenerCount:5 });
   expect(result.controllerCount).toBe(13);
-  expect(result.actionCount).toBe(104);
+  expect(result.actionCount).toBe(116);
   expect(result.duplicateCount).toBe(0);
   expect(result.inlineCount).toBe(0);
   expect(result.legacyActionCount).toBe(0);

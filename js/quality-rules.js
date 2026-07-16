@@ -35,7 +35,7 @@
   }
 
   const REGISTRY = Object.freeze([
-    rule("NKP-FACH-001","Abrechnungszeitraum ist gültig",CATEGORY.MANDATORY,"object-period",{dataSource:"meta.abrechnungsbeginn, meta.abrechnungsende",targetTab:"einstellungen",solution:"Beginn und Ende des Abrechnungszeitraums korrigieren."}),
+    rule("NKP-FACH-001","Abrechnungszeitraum ist gültig",CATEGORY.MANDATORY,"object-period",{dataSource:"meta.abrechnungsjahr, meta.abrechnungsbeginn, meta.abrechnungsende",targetTab:"start",targetSelector:"#billingPeriodSettings",solution:"Beginn und Ende als echte Kalenderdaten erfassen und das Abrechnungsjahr mit dem Endjahr der Periode abgleichen."}),
     rule("NKP-FACH-002","Mindestens eine aktive Wohnung ist vorhanden",CATEGORY.MANDATORY,"object-period",{dataSource:"wohnungen",targetTab:"wohnungsverwaltung"}),
     rule("NKP-FACH-003","Mindestens ein abrechenbares Mietverhältnis ist vorhanden",CATEGORY.MANDATORY,"units-tenancies",{dataSource:"mieter, Abrechnungszeitraum",targetTab:"mieterverwaltung"}),
     rule("NKP-FACH-004","Mietername ist vorhanden",CATEGORY.MANDATORY,"units-tenancies",{dataSource:"mieter.name",targetTab:"mieterverwaltung",solution:"Den Namen im betroffenen Mietverhältnis ergänzen."}),
@@ -171,6 +171,18 @@
   function tenantEntity(row) { return { type:"tenant", id:text(row && row.id) || String(row && row.originalIndex || ""), label:labelTenant(row) }; }
   function unitEntity(row) { return { type:"unit", id:text(row && row.id), label:(typeof unitDisplayId === "function" ? unitDisplayId(row) : text(row && row.id)) }; }
   function costEntity(cost) { return { type:"cost", id:text(cost && cost.id), label:[text(cost && cost.id),text(cost && cost.kostenart)].filter(Boolean).join(" · ") }; }
+  function strictIsoDate(value) {
+    const normalized = text(value);
+    const match = normalized.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (!match) return { valid:false, reason:normalized ? "format" : "missing", value:normalized, serial:null, year:"" };
+    const year=Number(match[1]), month=Number(match[2]), day=Number(match[3]);
+    const serial=Date.UTC(year,month-1,day);
+    const parsed=new Date(serial);
+    if (parsed.getUTCFullYear()!==year || parsed.getUTCMonth()!==month-1 || parsed.getUTCDate()!==day) {
+      return { valid:false, reason:"calendar", value:normalized, serial:null, year:match[1] };
+    }
+    return { valid:true, reason:"", value:normalized, serial, year:match[1] };
+  }
   function periodSerial(value) { const n = Date.parse(value); return Number.isFinite(n) ? n : null; }
   function periodDays(start, end) { const a=periodSerial(start), b=periodSerial(end); return a !== null && b !== null && b >= a ? Math.round((b-a)/86400000)+1 : 0; }
   function tenantInterval(row, start, end) {
@@ -255,9 +267,16 @@
 
   function evaluateFactual(data) {
     const results=[];
-    const start=text(data.meta && data.meta.abrechnungsbeginn), end=text(data.meta && data.meta.abrechnungsende);
-    const startSerial=periodSerial(start), endSerial=periodSerial(end), fullDays=periodDays(start,end);
-    if (!start || !end || startSerial===null || endSerial===null || endSerial<startSerial) results.push(result("NKP-FACH-001",{details:"Zeitraum "+(start||"–")+" bis "+(end||"–")+" ist ungültig.",values:{start,end}},data)); else results.push(passed("NKP-FACH-001","Zeitraum "+start+" bis "+end+" ist gültig.",{start,end},data));
+    const billingYear=text(data.meta && data.meta.abrechnungsjahr), start=text(data.meta && data.meta.abrechnungsbeginn), end=text(data.meta && data.meta.abrechnungsende);
+    const strictStart=strictIsoDate(start), strictEnd=strictIsoDate(end);
+    const startSerial=strictStart.serial, endSerial=strictEnd.serial, fullDays=strictStart.valid&&strictEnd.valid&&strictEnd.serial>=strictStart.serial?Math.round((strictEnd.serial-strictStart.serial)/86400000)+1:0;
+    const periodErrors=[];
+    if (!strictStart.valid) periodErrors.push(strictStart.reason==="missing" ? "Beginn fehlt." : (strictStart.reason==="format" ? "Beginn muss im Format YYYY-MM-DD vorliegen." : "Beginn ist kein existierendes Kalenderdatum."));
+    if (!strictEnd.valid) periodErrors.push(strictEnd.reason==="missing" ? "Ende fehlt." : (strictEnd.reason==="format" ? "Ende muss im Format YYYY-MM-DD vorliegen." : "Ende ist kein existierendes Kalenderdatum."));
+    if (strictStart.valid && strictEnd.valid && strictEnd.serial < strictStart.serial) periodErrors.push("Das Ende liegt vor dem Beginn.");
+    if (strictEnd.valid && billingYear !== strictEnd.year) periodErrors.push("Das Abrechnungsjahr "+(billingYear||"–")+" entspricht nicht dem Endjahr "+strictEnd.year+" der Periode.");
+    const periodValues={billingYear,start,end,startYear:strictStart.year,endYear:strictEnd.year,durationDays:strictStart.valid&&strictEnd.valid&&strictEnd.serial>=strictStart.serial?Math.round((strictEnd.serial-strictStart.serial)/86400000)+1:0,errorTypes:periodErrors.slice()};
+    if (periodErrors.length) results.push(result("NKP-FACH-001",{details:periodErrors.join(" "),values:periodValues},data)); else results.push(passed("NKP-FACH-001","Zeitraum "+start+" bis "+end+" ist gültig; Abrechnungsjahr "+billingYear+" entspricht dem Endjahr.",periodValues,data));
     const units=(Array.isArray(data.wohnungen)?data.wohnungen:[]).filter(row=>row&&text(row.id));
     const activeUnits=units.filter(row=>text(row.status).toLowerCase()!=="inaktiv");
     results.push(activeUnits.length ? passed("NKP-FACH-002",activeUnits.length+" aktive Wohnungen vorhanden.",{count:activeUnits.length},data) : result("NKP-FACH-002",{details:"Keine aktive Wohnung vorhanden.",values:{count:0}},data));

@@ -3,6 +3,17 @@
 const { test, expect } = require("@playwright/test");
 const { attachRuntimeGuards, openFreshApp, loadFixture } = require("./test-helpers.cjs");
 
+
+async function openBriefPage(page, { openEditor = false } = {}) {
+  await page.evaluate(({ openEditor }) => {
+    openCurrentBillingForEdit();
+    switchToTab("briefe");
+    renderBrief();
+    const section = document.getElementById("lettersEditorSection");
+    if (section && openEditor) section.open = true;
+  }, { openEditor });
+}
+
 async function configureBrief(page, values) {
   await page.evaluate(settings => {
     ensureBriefSettings();
@@ -15,7 +26,7 @@ test("AP13-Standardbrief nutzt eine gemeinsame DIN-A4-Struktur mit neun Spalten"
   const runtime = attachRuntimeGuards(page);
   await openFreshApp(page);
   await loadFixture(page, "standardfall.json");
-  await page.evaluate(() => switchToTab("briefe"));
+  await openBriefPage(page);
   await configureBrief(page, {
     outroText: "",
     vorauszahlungPrintMode: "Nicht drucken",
@@ -115,7 +126,7 @@ test("AP13 erzeugt Seite 2 nur für Zusatzinhalt und setzt den Abschluss genau e
   const runtime = attachRuntimeGuards(page);
   await openFreshApp(page);
   await loadFixture(page, "standardfall.json");
-  await page.evaluate(() => switchToTab("briefe"));
+  await openBriefPage(page);
 
   await configureBrief(page, {
     outroText: "Dieser zusätzliche fallbezogene Hinweis wird ausschließlich auf der zweiten Seite ausgegeben.",
@@ -154,7 +165,7 @@ test("AP13-Vorauszahlungsanpassung nutzt Seite 2 und dieselbe blaue Tabellenvisu
   const runtime = attachRuntimeGuards(page);
   await openFreshApp(page);
   await loadFixture(page, "standardfall.json");
-  await page.evaluate(() => switchToTab("briefe"));
+  await openBriefPage(page);
   await configureBrief(page, {
     outroText: "",
     vorauszahlungPrintMode: "Manuelle Werte drucken",
@@ -262,7 +273,7 @@ test("AP13-Schalter unterdrückt die Vorauszahlungsanpassung vollständig", asyn
   const runtime = attachRuntimeGuards(page);
   await openFreshApp(page);
   await loadFixture(page, "standardfall.json");
-  await page.evaluate(() => { switchToTab("briefe"); document.getElementById("lettersEditorSection").open = true; });
+  await openBriefPage(page, { openEditor:true });
   await configureBrief(page, {
     outroText: "Ein Zusatzhinweis hält die zweite Seite unabhängig von der Vorauszahlungsanpassung offen.",
     vorauszahlungPrintMode: "Manuelle Werte drucken",
@@ -291,7 +302,7 @@ test("AP13-Schwarzweißmodus gilt identisch für Vorschau und Druckquelle", asyn
   const runtime = attachRuntimeGuards(page);
   await openFreshApp(page);
   await loadFixture(page, "standardfall.json");
-  await page.evaluate(() => { switchToTab("briefe"); document.getElementById("lettersEditorSection").open = true; });
+  await openBriefPage(page, { openEditor:true });
   await configureBrief(page, { schwarzweissOptimiert:"Nein", outroText:"", vorauszahlungPrintMode:"Nicht drucken", showVorauszahlungPage:"Nein" });
   const toggle = page.locator('#briefMonochromeToolbar');
   await expect(toggle).toHaveCount(1);
@@ -329,7 +340,8 @@ test("AP13-Vorschau bleibt auf breiten Ansichten beim Scrollen sichtbar", async 
   await page.setViewportSize({ width:1440, height:760 });
   await openFreshApp(page);
   await loadFixture(page, "alle-eingabequellen.json");
-  await page.evaluate(() => { switchToTab("briefe"); window.scrollTo(0, 0); });
+  await openBriefPage(page);
+  await page.evaluate(() => window.scrollTo(0, 0));
   await page.waitForTimeout(120);
   await page.locator("#lettersEditorSection").evaluate(node => { node.open = true; });
   await expect(page.locator("#lettersEditorSection")).toHaveAttribute("open", "");
@@ -358,7 +370,7 @@ test("AP13 hält lange Empfängerdaten, Zusatztexte und die skalierte Vorschau i
   await page.setViewportSize({ width: 760, height: 1000 });
   await openFreshApp(page);
   await loadFixture(page, "alle-eingabequellen.json");
-  await page.evaluate(() => switchToTab("briefe"));
+  await openBriefPage(page);
   await page.evaluate(() => {
     const tenant = state.mieter[0];
     tenant.name = "Cynthia Alexandra Melzig-Schneider von Baumholder";

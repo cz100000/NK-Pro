@@ -34,7 +34,7 @@ test("AP12-Startfolge, Controller und Ereignisdelegation sind idempotent", async
 
   expect(result.startup.ok).toBe(true);
   expect(result.startup.completed).toEqual([
-    "Kernmodule konfigurieren", "Arbeitszustand laden", "Zustandszugriff konfigurieren",
+    "Kernmodule konfigurieren", "Arbeitszustand laden", "Abrechnungskontext konfigurieren", "Zustandszugriff konfigurieren",
     "Anwendungsaktionen konfigurieren", "Navigation konfigurieren", "UI-Controller registrieren",
     "UI-Ereignisse registrieren", "Kompatibilität registrieren", "Arbeitsstand vorbereiten",
     "Erste Darstellung", "Navigation initialisieren", "Arbeitsbereiche schließen",
@@ -43,8 +43,8 @@ test("AP12-Startfolge, Controller und Ereignisdelegation sind idempotent", async
   ]);
   expect(result.controllerCountBefore).toBe(13);
   expect(result.controllerCountAfter).toBe(13);
-  expect(result.actionCountBefore).toBe(104);
-  expect(result.actionCountAfter).toBe(104);
+  expect(result.actionCountBefore).toBe(116);
+  expect(result.actionCountAfter).toBe(116);
   expect(result.eventBefore).toEqual({ started:true, listenerCount:5, eventTypes:["click", "change", "input", "submit", "keydown"] });
   expect(result.eventAfter).toEqual(result.eventBefore);
   expect(result.registrationRegistered).toBe(true);

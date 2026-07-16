@@ -1,3 +1,7 @@
+# NK-Pro V99.4.24
+
+Aktueller Stand: AP21A – UI-Konsolidierung, Navigationsvereinfachung und individuelle Werte. Details: `AP21A_UI_KONSOLIDIERUNG_NAVIGATION_INDIVIDUELLE_WERTE.md`.
+
 # NK-Pro V99.4.23
 
 NK-Pro ist eine lokale, frameworkfreie PWA zur Vorbereitung und Durchführung von Nebenkostenabrechnungen.

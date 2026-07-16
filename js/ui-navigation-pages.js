@@ -67,7 +67,7 @@ function renderPeriodInfo() {
   const label = contextOpen ? (archive ? "Archivierte Nebenkostenabrechnung" : "Geöffnete Nebenkostenabrechnung") : "Keine Abrechnung geöffnet";
   const detail = contextOpen ? (archive && state.meta && state.meta.archivedAt ? "archiviert am " + dateDe(state.meta.archivedAt) : mode) : "Öffnen Sie eine Abrechnung über die Übersicht.";
   const actions = contextOpen ? '<button class="secondary" type="button" data-ui-action="billing.closeContext">Abrechnung schließen</button>' : '<button type="button" data-ui-action="navigation.switchTab" data-ui-args="[&quot;start&quot;]">Zur Abrechnungsübersicht</button>';
-  const html = '<div class="period-banner"><div class="period-main"><span class="period-kicker">' + escapeHtml(label) + '</span><span class="period-title">' + (contextOpen ? escapeHtml(periodLabelShort()) : "–") + '</span><span class="small">' + escapeHtml(detail) + '</span></div><div class="period-actions"><span class="period-badge">' + (contextOpen ? 'Jahr ' + escapeHtml(currentAbrechnungsjahr()) : 'Kein Arbeitskontext') + '</span>' + (NK_PRO_MODULES.billingContext.isReadOnly() ? '<span class="readonly-badge">Schreibgeschützte Ansicht</span>' : '') + actions + '</div></div>';
+  const html = '<div class="period-banner"><div class="period-main"><span class="period-kicker">' + escapeHtml(label) + '</span><span class="period-title">' + (contextOpen ? escapeHtml(periodLabelShort()) : "–") + '</span><span class="small">' + escapeHtml(detail) + '</span></div><div class="period-actions"><span class="period-badge">' + (contextOpen ? 'Jahr ' + escapeHtml(currentAbrechnungsjahr()) : 'Kein Arbeitskontext') + '</span>' + actions + '</div></div>';
   document.querySelectorAll(".period-info").forEach(el => { el.innerHTML = html; });
 }
 
@@ -210,6 +210,11 @@ function resetTransientUiState(options = {}) {
 }
 
 function switchToTab(tabId) {
+  const legacyTarget = String(tabId || "");
+  if (legacyTarget === "verbraeuche") {
+    if (globalThis.NKProIndividualValues) globalThis.NKProIndividualValues.requestFocus({ source:"automatic" });
+    tabId = "manuellewerte";
+  }
   if (BILLING_NAV_TABS.includes(tabId) && !NK_PRO_MODULES.billingContext.isOpen()) {
     const message = "Öffnen Sie zuerst eine Abrechnung zur Bearbeitung oder Ansicht.";
     setActionMessage(message, "warn");
@@ -528,7 +533,7 @@ function applyBillingContextToDom() {
         notice = document.createElement("div");
         notice.className = "billing-readonly-notice";
         notice.setAttribute("role", "status");
-        notice.innerHTML = '<span class="billing-readonly-notice__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10" width="14" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg></span><span><strong>Schreibgeschützte Ansicht</strong><small>Diese Abrechnung wurde nur zur Ansicht geöffnet. Änderungen sind nicht möglich.</small></span>' + (!isArchiveViewer() ? '<button type="button" class="secondary" data-ui-action="billing.switchToEdit">Zur Bearbeitung öffnen</button>' : '');
+        notice.innerHTML = '<span class="billing-readonly-notice__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10" width="14" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg></span><span><strong>Diese Abrechnung ist schreibgeschützt.</strong><small>Änderungen sind erst nach dem Öffnen zur Bearbeitung möglich.</small></span>' + (!isArchiveViewer() ? '<button type="button" class="secondary" data-ui-action="billing.switchToEdit">Zur Bearbeitung öffnen</button>' : '');
         const header = page.querySelector('.page-header');
         if (header) header.insertAdjacentElement("afterend", notice); else page.prepend(notice);
       }
@@ -878,7 +883,40 @@ function renderWorkflowDashboard() {
   el.innerHTML = '<div class="workflow-dashboard ' + cls + '"><div class="workflow-dashboard-head"><div><h3>Arbeitsstand dieser Abrechnung</h3><div class="small">Vorhandene Qualitätsprüfungen kompakt zusammengefasst · keine zusätzliche Berechnungslogik.</div></div><div><span class="status ' + cls + '">' + escapeHtml(readiness.label) + '</span><div class="small" style="margin-top:4px;text-align:right">' + openCount + ' offene Hinweise/Prüfpunkte</div></div></div><div class="workflow-status-grid">' + cards + '</div><div class="toolbar" style="margin-bottom:0"><button type="button" class="primary" data-ui-action="navigation.switchTab" data-ui-args="[&quot;qualitaet&quot;]">Qualitätsprüfung öffnen</button></div></div>';
 }
 
+function renderBillingPeriodSettings() {
+  const section = document.getElementById("billingPeriodSection");
+  const el = document.getElementById("billingPeriodSettings");
+  if (!section || !el) return;
+  const open = NK_PRO_MODULES.billingContext.isOpen();
+  section.hidden = !open;
+  if (!open) { el.innerHTML = ""; return; }
+  const editable = NK_PRO_MODULES.billingContext.isEditing() && !isArchiveViewer();
+  const readOnlyLabel = editable ? "Bearbeitbar" : "Nur ansehen";
+  const year = String(currentAbrechnungsjahr() || "");
+  const start = String(periodStart() || "");
+  const end = String(periodEnd() || "");
+  const endYear = periodYearFromDate(end);
+  const yearMismatch = !!endYear && year !== endYear;
+  const disabled = editable ? "" : " disabled";
+  const mismatchAction = yearMismatch && editable
+    ? '<button class="secondary" type="button" data-ui-action="billing.syncPeriodYear">Abrechnungsjahr '+escapeHtml(endYear)+' übernehmen</button>'
+    : "";
+  const statusClass = yearMismatch ? "warn" : "ok";
+  const statusText = yearMismatch ? "Abrechnungsjahr und Endjahr weichen ab" : "Abrechnungsjahr entspricht dem Endjahr";
+  el.innerHTML = '<div class="start-box billing-period-settings-card">' +
+    '<div class="inline-titlebar"><div><h3>Zeitraum der geöffneten Abrechnung</h3><p class="small">Teilperioden und jahresübergreifende Zeiträume sind zulässig. Das Abrechnungsjahr entspricht dem Jahr des Enddatums.</p></div><span class="status '+statusClass+'">'+escapeHtml(readOnlyLabel)+'</span></div>' +
+    '<div class="split billing-period-settings-grid">' +
+      '<label class="small"><strong>Abrechnungsjahr</strong><br><input value="'+escapeHtml(year)+'" readonly aria-describedby="billingPeriodYearHint"></label>' +
+      '<label class="small"><strong>Beginn</strong><br><input type="date" value="'+escapeHtml(start)+'"'+disabled+uiActionAttributes("billing.setPeriod", ["abrechnungsbeginn","$value"], "change")+'></label>' +
+      '<label class="small"><strong>Ende</strong><br><input type="date" value="'+escapeHtml(end)+'"'+disabled+uiActionAttributes("billing.setPeriod", ["abrechnungsende","$value"], "change")+'></label>' +
+    '</div>' +
+    '<div id="billingPeriodYearHint" class="hint"><strong>Prüfstatus:</strong> <span class="status '+statusClass+'">'+escapeHtml(statusText)+'</span>' + (yearMismatch ? ' · Eingetragen: '+escapeHtml(year)+'; Endjahr: '+escapeHtml(endYear)+'.' : '') + '</div>' +
+    (mismatchAction ? '<div class="toolbar">'+mismatchAction+'</div>' : '') +
+  '</div>';
+}
+
 function renderStart() {
+  renderBillingPeriodSettings();
   const recordsSection = document.getElementById("startRecordsSection");
   if (recordsSection) recordsSection.open = true;
   const actionsEl = document.getElementById("startArchiveActions");

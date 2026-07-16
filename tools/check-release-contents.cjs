@@ -53,7 +53,7 @@ function walk(directory, relative = "") {
     if (/\.(log|trace)$/i.test(lower)) addFinding("log", rel, "Log- oder Trace-Datei.");
     if (/Kontrollausgabe.*\.pdf$/i.test(entry.name)) addFinding("generated-control-output", rel, "Generierte Kontrollausgabe.");
     if (stat.size > 5 * 1024 * 1024) addWarning("large-file", rel, `Unerwartet große Datei: ${stat.size} Byte.`);
-    if (/^AP\d+_/i.test(entry.name) && !/^AP(?:15|17|18|19|20)_/i.test(entry.name) && rel !== "AP9_BASELINE_INVENTORY.json") {
+    if (/^AP\d+_/i.test(entry.name) && !/^AP(?:15|17|18|19|20|21)_/i.test(entry.name) && rel !== "AP9_BASELINE_INVENTORY.json") {
       addFinding("historical-ap-artifact", rel, "Historisches AP-Artefakt außerhalb der freigegebenen Release-Dokumentation.");
     }
   }

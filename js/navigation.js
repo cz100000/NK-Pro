@@ -5,14 +5,14 @@
   if (!preferences) throw new Error("NK-Pro UI-Einstellungsspeicher fehlt.");
   const NAV_GROUP_STORAGE_KEY = "nkpro.workflowNavigation.v4";
   const LEGACY_NAV_GROUP_STORAGE_KEY = "nkpro.workflowNavigation.v3";
-  const GROUP_KEYS = ["group-object", "group-billing", "group-archive", "group-extras"];
-  const BILLING_CONTEXT_TABS = ["start","mieter","einstellungen","einnahmen","manuellewerte","verbraeuche","umlage","vorauszahlungsanpassung","qualitaet","briefe","export"];
+  const GROUP_KEYS = ["group-object", "group-billing", "group-extras"];
+  const BILLING_CONTEXT_TABS = ["start","mieter","einnahmen","einstellungen","manuellewerte","umlage","qualitaet","vorauszahlungsanpassung","briefe","export","archiv"];
   const TAB_PATHS = {
     objektuebersicht:"group-object", objekt:"group-object", mieterverwaltung:"group-object", wohnungsverwaltung:"group-object", wasser:"group-object",
     start:"group-billing", mieter:"group-billing", einstellungen:"group-billing", einnahmen:"group-billing",
     manuellewerte:"group-billing", verbraeuche:"group-billing", umlage:"group-billing",
     vorauszahlungsanpassung:"group-billing", qualitaet:"group-billing", briefe:"group-billing", export:"group-billing",
-    archiv:"group-archive", sicherung:"group-extras"
+    archiv:"group-billing", sicherung:"group-extras"
   };
   let openGroups = loadOpenGroups();
   let initialized = false;

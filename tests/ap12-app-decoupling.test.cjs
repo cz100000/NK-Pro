@@ -34,7 +34,7 @@ assert(stateOwner.includes("function replaceApplicationState(nextState)"), "Zent
 assert.equal(architecture.totals.stateRootAssignments, 1, "Es existieren mehrere direkte Ersetzungen des Anwendungszustands.");
 assert.deepEqual(architecture.stateRootAssignments.map(item => `${item.file}:${item.function}`), ["js/app-state-persistence.js:replaceApplicationState"]);
 
-assert.equal(architecture.renderers.length, 51, "Rendererinventar ist unvollständig.");
+assert.equal(architecture.renderers.length, 53, "Rendererinventar ist unvollständig.");
 assert.equal(architecture.renderers.filter(item => item.mutatesState || item.persists || item.navigates || item.opensDialog).length, 0, "Renderer besitzen fachliche Seiteneffekte.");
 
 const oldGlobals = ["__V992_AUDIT__", "__NKPRO_UI_ARCHITECTURE__", "__NKPRO_STARTUP__", "__NKPRO_COMPATIBILITY__"];
@@ -65,7 +65,7 @@ assert.equal([...compatibilityBlock.matchAll(/"([A-Za-z_$][\w$]*)"/g)].length, 7
 const splitModules = [
   "runtime-diagnostics.js", "app-runtime-config.js", "app-state-persistence.js", "ui-master-data.js",
   "ui-quality.js", "ui-costs.js", "ui-navigation-pages.js", "ui-archive-pages.js", "browser-io.js",
-  "ui-metering.js", "ui-billing-allocation.js", "ui-documents.js", "ui-table-actions.js",
+  "ui-metering.js", "ui-billing-allocation.js", "ui-individual-values.js", "ui-documents.js", "ui-table-actions.js",
   "ui-diagnostics.js", "ui-page-controller.js"
 ];
 const scripts = architecture.scriptOrder.map(item => item.replace("./js/", ""));
@@ -75,9 +75,9 @@ splitModules.forEach(name => {
   assert(scripts.indexOf(name) < appIndex, `Neues Modul wird nicht vor app.js geladen: ${name}`);
   assert(worker.includes(`"./js/${name}"`), `Neues Modul fehlt in der Offline-App-Shell: ${name}`);
 });
-assert(runtimeConfig.includes('const APP_VERSION = "V99.4.23";'));
-assert(runtimeConfig.includes('const APP_VERSION_NAME = "AP20-Zentrales Prüf-, Plausibilitäts- und Freigabesystem";'));
-assert(html.includes("NK-Pro V99.4.23 – AP20-Zentrales Prüf-, Plausibilitäts- und Freigabesystem"));
-assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-23-ap20-corr3";'));
+assert(runtimeConfig.includes('const APP_VERSION = "V99.4.24";'));
+assert(runtimeConfig.includes('const APP_VERSION_NAME = "AP21A-UI-Konsolidierung, Navigation und individuelle Werte";'));
+assert(html.includes("NK-Pro V99.4.24 – AP21A UI-Konsolidierung, Navigation und individuelle Werte"));
+assert(worker.includes('const CACHE_NAME = "nk-pro-v99-4-24-ap21a";'));
 
 process.stdout.write(`AP12-Architekturprüfung abgeschlossen: app.js ${appMetrics.lines} Zeilen/${appMetrics.bytes} Byte, 1 Zustandsersetzung, ${architecture.renderers.length} seiteneffektfreie Renderer, 37 entfernte Wrapper und keine alten window-Bindungen.\n`);

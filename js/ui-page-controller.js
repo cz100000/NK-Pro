@@ -105,21 +105,21 @@ const AP17_ICON_PATHS = Object.freeze({
 const TAB_DEFINITIONS = {
   objektuebersicht:{title:"Objekt vorbereiten – Übersicht",kicker:"Objekt vorbereiten",firstSection:null,nextTab:"objekt",renderContent:null},
   objekt:{title:"Objektdaten",kicker:"Objekt vorbereiten",firstSection:"objectPreparationSection",nextTab:"wohnungsverwaltung",renderContent:null},
-  start:{title:"Nebenkosten abrechnen – Übersicht",kicker:"Nebenkosten abrechnen",firstSection:"startRecordsSection",nextTab:"mieter",renderContent:()=>renderStart()},
+  start:{title:"Nebenkostenabrechnung – Übersicht",kicker:"Nebenkosten abrechnen",firstSection:"startRecordsSection",nextTab:"mieter",renderContent:()=>renderStart()},
   archiv:{title:"Abrechnungsarchiv",kicker:"Archiv",firstSection:"archiveRecordsSection",nextTab:"start",renderContent:()=>renderArchive()},
   mieterverwaltung:{title:"Mieterverwaltung",kicker:"Objekt vorbereiten",firstSection:"masterTenantSection",nextTab:"wohnungsverwaltung",renderContent:()=>renderStartTenantManagement()},
   wohnungsverwaltung:{title:"Wohnungsverwaltung",kicker:"Objekt vorbereiten",firstSection:"masterUnitSection",nextTab:"mieterverwaltung",renderContent:()=>renderStartUnitManagement()},
   sicherung:{title:"Datensicherung & System",kicker:"Extras",firstSection:"backupMainSection",nextTab:"landing",renderContent:()=>renderSicherung()},
-  mieter:{title:"Mieter & Wohnungen",kicker:"Abrechnungsstammdaten",firstSection:"tenantUnitsSection",nextTab:"einstellungen",renderContent:()=>renderWohnungen()},
-  einstellungen:{title:"Kostenarten & Einstellungen",kicker:"Abrechnungseinstellungen",firstSection:"costEditSection",nextTab:"einnahmen",renderContent:()=>renderEinstellungen()},
-  einnahmen:{title:"Kaltmiete & NK-Vorauszahlungen",kicker:"Einnahmen",firstSection:"incomeRentSection",nextTab:"manuellewerte",renderContent:()=>renderEinnahmen()},
+  mieter:{title:"Mietverhältnisse prüfen und bearbeiten",kicker:"Nebenkosten abrechnen",firstSection:"tenantUnitsSection",nextTab:"einnahmen",renderContent:()=>renderWohnungen()},
+  einstellungen:{title:"Gesamtkosten erfassen",kicker:"Nebenkosten abrechnen",firstSection:"costEditSection",nextTab:"manuellewerte",renderContent:()=>renderEinstellungen()},
+  einnahmen:{title:"Vorauszahlungen erfassen",kicker:"Nebenkosten abrechnen",firstSection:"incomePrepaymentSection",nextTab:"einstellungen",renderContent:()=>renderEinnahmen()},
   wasser:{title:"Zähler",kicker:"Objekt vorbereiten",firstSection:"meterInventoryDummyValidationSection",nextTab:"mieterverwaltung",renderContent:null},
-  manuellewerte:{title:"Manuelle & externe Werte",kicker:"Eingaben",firstSection:"manualValuesSection",nextTab:"verbraeuche",renderContent:()=>renderManualExternalValues()},
-  verbraeuche:{title:"Verbräuche erfassen",kicker:"Verbrauchserfassung",firstSection:"meterHouseSection",nextTab:"umlage",renderContent:()=>renderWaterMeters()},
-  umlage:{title:"Nebenkostenumlage",kicker:"Berechnung",firstSection:"allocationTenantResultSection",nextTab:"vorauszahlungsanpassung",renderContent:()=>renderUmlage()},
-  vorauszahlungsanpassung:{title:"Vorauszahlungsanpassung",kicker:"Planung",firstSection:"prepaymentRulesSection",nextTab:"qualitaet",renderContent:()=>renderPrepaymentAdjustment()},
-  qualitaet:{title:"Qualitätsprüfung",kicker:"Kontrolle",firstSection:"qualityOverviewSection",nextTab:"briefe",renderContent:()=>renderQuality()},
-  briefe:{title:"Abrechnungsbriefe",kicker:"Ausgabe",firstSection:"lettersEditorSection",nextTab:"export",renderContent:()=>renderBrief()},
+  manuellewerte:{title:"Individuelle Werte und Verbräuche erfassen",kicker:"Nebenkosten abrechnen",firstSection:null,nextTab:"umlage",renderContent:()=>renderIndividualValues()},
+  verbraeuche:{title:"Individuelle Werte und Verbräuche erfassen",kicker:"Nebenkosten abrechnen",firstSection:null,nextTab:"umlage",renderContent:()=>renderIndividualValues()},
+  umlage:{title:"Ergebnis der Abrechnung",kicker:"Nebenkosten abrechnen",firstSection:"allocationTenantResultSection",nextTab:"qualitaet",renderContent:()=>renderUmlage()},
+  vorauszahlungsanpassung:{title:"Vorauszahlungen für das Folgejahr anpassen",kicker:"Nebenkosten abrechnen",firstSection:"prepaymentRulesSection",nextTab:"briefe",renderContent:()=>renderPrepaymentAdjustment()},
+  qualitaet:{title:"Abrechnung prüfen und freigeben",kicker:"Nebenkosten abrechnen",firstSection:"qualityOverviewSection",nextTab:"vorauszahlungsanpassung",renderContent:()=>renderQuality()},
+  briefe:{title:"Abrechnungsbriefe erstellen",kicker:"Nebenkosten abrechnen",firstSection:"lettersEditorSection",nextTab:"export",renderContent:()=>renderBrief()},
   export:{title:"Abrechnung exportieren",kicker:"Sicherung",firstSection:"exportActionsSection",nextTab:"qualitaet",renderContent:null}
 };
 
@@ -186,7 +186,7 @@ function dashboardStats() {
     groupRule("tenants","Wohnungen und Mietverhältnisse","units-tenancies","mieterverwaltung"),
     groupRule("period","Vorauszahlungen und Korrekturen","prepayments","einnahmen"),
     groupRule("costs","Kosten und Kostenarten","costs","einstellungen"),
-    groupRule("consumption","Verbräuche und Zählerstände","consumption","verbraeuche"),
+    groupRule("consumption","Individuelle Werte und Verbräuche","consumption","manuellewerte"),
     groupRule("allocation","Umlage und Summen","allocation","umlage"),
     groupRule("quality","Abschluss","completion","qualitaet"),
     groupRule("letters","Briefe und Ausgabe","letters","briefe")
@@ -254,14 +254,7 @@ function renderBillingDashboard(root, stats) {
   const ruleMap=Object.fromEntries(stats.rules.map(rule=>[rule.key,rule]));
   const contextNotice=!NK_PRO_MODULES.billingContext.isOpen() ? '<div class="billing-context-guidance" role="status"><strong>Keine Abrechnung geöffnet</strong><span>Öffnen Sie zuerst eine Abrechnung zur Bearbeitung oder Ansicht.</span></div>' : '';
   root.innerHTML = contextNotice+
-    '<div class="dashboard-value-grid dashboard-value-grid--five">'+
-      dashboardValue("Aktuelles Objekt",stats.objectLabel,"data",stats.objectCode,"blue")+
-      dashboardValue("Vorhandene Abrechnungen",(stats.activeBilling?1:0)+stats.archives.length,"data",stats.archives.length+' archiviert',"blue")+
-      dashboardValue("Aktuelles Abrechnungsjahr",stats.activeBilling?stats.year:"–",stats.activeBilling?"data":"open",currentStatus,"petrol")+
-      dashboardValue("Prüfbereiche vollständig",completedRules+' von '+stats.rules.length,completedRules===stats.rules.length?"complete":(blockedRules?"blocked":"open"),blockedRules+' blockiert',blockedRules?"orange":"green")+
-      dashboardValue("Erzeugte Briefe",stats.lettersGenerated,"data",stats.tenants.length+' abrechnungsrelevante Mietverhältnisse',"violet")+
-    '</div>'+
-    '<div class="billing-fact-strip">'+
+    '<div class="billing-fact-strip billing-fact-strip--compact" aria-label="Produktiver Arbeitsstand">'+
       '<div data-value-kind="data"><span>Kosten vollständig</span><strong>'+stats.completeCosts.length+' / '+stats.costs.length+'</strong>'+valueKindBadge(stats.completeCosts.length===stats.costs.length&&stats.costs.length?"complete":"open")+'</div>'+
       '<div data-value-kind="data"><span>Verbrauch vollständig</span><strong>'+stats.completeConsumption.length+' / '+stats.consumptionCosts.length+'</strong>'+valueKindBadge(stats.completeConsumption.length===stats.consumptionCosts.length?"complete":"blocked")+'</div>'+
       '<div data-value-kind="data"><span>Berechenbare Einheiten</span><strong>'+stats.billableUnits.length+' / '+stats.activeUnits.length+'</strong>'+valueKindBadge(stats.blockedUnits.length?"blocked":"complete")+'</div>'+
@@ -269,14 +262,13 @@ function renderBillingDashboard(root, stats) {
       '<div data-value-kind="data"><span>Offene Prüfhinweise</span><strong>'+stats.qualityIssues.length+'</strong>'+valueKindBadge(stats.qualityErrors.length?"blocked":(stats.qualityWarnings.length?"warning":"complete"))+'</div>'+
     '</div>'+
     '<section class="dashboard-entry-section"><div class="dashboard-section-heading"><div><p class="page-header__kicker">Abrechnungsprozess</p><h3>Produktiver Arbeitsstand und Direkteinstiege</h3></div><span>'+completedRules+' von '+stats.rules.length+' Prüfbereichen vollständig</span></div><div class="workflow-stage-grid">'+
-      workflowStage("Mieter & Wohnungen","mieter","users",workflowStatus(ruleMap.tenants),stats.completeTenants.length+' von '+stats.tenants.length+' Mietverhältnissen vollständig')+
-      workflowStage("Miete & Vorauszahlungen","einnahmen","wallet",stats.tenantsWithPrepayment===stats.tenants.length&&stats.tenants.length?"Vollständig":"Offen",stats.tenantsWithPrepayment+' von '+stats.tenants.length+' mit Vorauszahlung')+
-      workflowStage("Kosten erfassen","einstellungen","receipt",workflowStatus(ruleMap.costs),stats.completeCosts.length+' von '+stats.costs.length+' Kostenarten vollständig')+
-      workflowStage("Manuelle & externe Werte","manuellewerte","input",stats.openCosts.length||stats.blockedCosts.length?"Offen":"Vollständig",stats.openCosts.length+' offene Kostenangaben')+
-      workflowStage("Verbräuche erfassen","verbraeuche","droplet",workflowStatus(ruleMap.consumption),stats.completeConsumption.length+' von '+stats.consumptionCosts.length+' Verbrauchskosten vollständig')+
-      workflowStage("Verteilung","umlage","distribution",workflowStatus(ruleMap.allocation),stats.billableUnits.length+' von '+stats.activeUnits.length+' Einheiten berechenbar')+
+      workflowStage("Mietverhältnisse","mieter","users",workflowStatus(ruleMap.tenants),stats.completeTenants.length+' von '+stats.tenants.length+' Mietverhältnissen vollständig')+
+      workflowStage("Vorauszahlungen","einnahmen","wallet",stats.tenantsWithPrepayment===stats.tenants.length&&stats.tenants.length?"Vollständig":"Offen",stats.tenantsWithPrepayment+' von '+stats.tenants.length+' mit Vorauszahlung')+
+      workflowStage("Gesamtkosten","einstellungen","receipt",workflowStatus(ruleMap.costs),stats.completeCosts.length+' von '+stats.costs.length+' Kostenarten vollständig')+
+      workflowStage("Individuelle Werte","manuellewerte","input",workflowStatus(ruleMap.consumption),stats.completeConsumption.length+' von '+stats.consumptionCosts.length+' Verbrauchskosten vollständig')+
+      workflowStage("Abrechnungsergebnis","umlage","distribution",workflowStatus(ruleMap.allocation),stats.billableUnits.length+' von '+stats.activeUnits.length+' Einheiten berechenbar')+
       workflowStage("Prüfung","qualitaet","shield",workflowStatus(ruleMap.quality),stats.qualityErrors.length+' Fehler, '+stats.qualityWarnings.length+' weitere Hinweise')+
-      workflowStage("Neue Vorauszahlungen","vorauszahlungsanpassung","calculator",stats.tenants.length?"Offen":"Nicht verfügbar",stats.tenants.length+' Mietverhältnisse als Grundlage')+
+      workflowStage("Vorauszahlungsanpassung","vorauszahlungsanpassung","calculator",stats.tenants.length?"Offen":"Nicht verfügbar",stats.tenants.length+' Mietverhältnisse als Grundlage')+
       workflowStage("Briefe","briefe","mail",workflowStatus(ruleMap.letters),stats.lettersGenerated+' von '+stats.tenants.length+' Briefen erzeugt')+
       workflowStage("Export","export","download",stats.qualityErrors.length?"Blockiert":"Offen",stats.qualityErrors.length?'Blockierende Qualitätsfehler vorhanden':'Export verändert keine Daten')+
       workflowStage("Archiv","archiv","archive",stats.archives.length?"Archiviert":"Offen",stats.archives.length+' archivierte Abrechnungen')+
@@ -308,13 +300,8 @@ function updateAllPageHeaders() {
     const page=document.querySelector('[data-page-tab="'+tabId+'"]');
     if (!page) return;
     const billingPage=BILLING_NAV_TABS.includes(tabId);
-    const badge=page.querySelector('[data-page-readonly]');
-    if (badge) {
-      badge.hidden=!billingPage||!readOnly;
-      if (billingPage&&readOnly) badge.textContent="Schreibgeschützte Ansicht";
-    }
     const status=page.querySelector('[data-page-save-status]');
-    if (status) status.textContent=billingPage?(readOnly?"Schreibgeschützt":(open?"Gespeichert":"Keine Abrechnung geöffnet")):"Gespeichert";
+    if (status) status.textContent=billingPage?(open?"Gespeichert":"Keine Abrechnung geöffnet"):"Gespeichert";
     const saveButton=page.querySelector('[data-page-save]');
     if (saveButton&&billingPage) {
       saveButton.hidden=readOnly||!open;
@@ -335,17 +322,17 @@ function auditV992Structure() {
     objectDashboard:!!objectDashboard,
     billingDashboard:!!billingDashboard,
     objectDirectEntries:!!objectDashboard&&objectDashboard.querySelectorAll('.dashboard-entry').length===4,
-    billingWorkflowEntries:!!billingDashboard&&billingDashboard.querySelectorAll('.workflow-stage').length===11,
+    billingWorkflowEntries:!!billingDashboard&&billingDashboard.querySelectorAll('.workflow-stage').length===10,
     productiveDashboardValues:document.querySelectorAll('.dashboard-preview-notice').length===0&&document.querySelectorAll('[data-value-kind="dummy"]').length===1,
     controlledContext:NK_PRO_MODULES.billingContext.describe().stateCount===3,
     contextClosedAfterStart:!NK_PRO_MODULES.billingContext.isOpen()||document.documentElement.dataset.billingExplicitlyOpened==="true",
     billingHeadersWithoutRedundantPeriod:billingPages.every(page=>!page.querySelector('[data-page-period]')),
-    centralBillingTable:!!document.querySelector('#startArchiveTable')&&document.querySelectorAll('#startArchiveTable thead th').length===9,
+    centralBillingTable:!!document.querySelector('#startArchiveTable')&&typeof buildBillingRecordsTableHtml==='function'&&(buildBillingRecordsTableHtml().match(/<th(?:\s|>)/g)||[]).length===9,
     contextBar:!!document.querySelector('[data-global-billing-context]'),
     svgSectionChevrons:Array.from(document.querySelectorAll('.page-section__chevron')).every(node=>!!node.querySelector('svg')),
     compactHeaders:Array.from(document.querySelectorAll('.app-page')).every(page=>page.querySelectorAll(':scope > .page-header').length===1)
   };
-  const report={version:APP_VERSION,workPackage:"AP20",generatedAt:new Date().toISOString(),allPassed:Object.values(checks).every(Boolean),checks};
+  const report={version:APP_VERSION,workPackage:"AP21A",generatedAt:new Date().toISOString(),allPassed:Object.values(checks).every(Boolean),checks};
   NK_PRO_MODULES.runtimeDiagnostics.setStructureAudit(report);
   document.documentElement.dataset.v992Audit=report.allPassed?'passed':'failed';
   document.documentElement.dataset.ap17Audit=report.allPassed?'passed':'failed';

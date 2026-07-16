@@ -1,0 +1,37 @@
+{
+  "version": "99.4.24",
+  "displayVersion": "V99.4.24",
+  "workPackage": "AP21A",
+  "date": "2026-07-16",
+  "status": "passed",
+  "staticStages": {
+    "javascriptSyntax": "passed",
+    "fixtures": "passed",
+    "meteringRegression": "passed",
+    "architectureAndContracts": "passed",
+    "releaseContents": "passed",
+    "releaseConsistency": "passed",
+    "javascriptUnits": 54,
+    "referenceCases": 6
+  },
+  "browser": {
+    "runner": "Playwright 1.61.1 / Chromium",
+    "total": 102,
+    "passed": 99,
+    "skipped": 3,
+    "failed": 0,
+    "skips": [
+      "optionale AP11-Bildreferenzerfassung",
+      "optionale AP14-Bildreferenzerfassung",
+      "optionaler realer PWA-Offline-Gerätetest"
+    ],
+    "ap21aScenarios": 5,
+    "ap21aPassed": 5
+  },
+  "contracts": {
+    "schemaVersion": 5,
+    "dataLayerContractVersion": 1,
+    "nkpFach001": "preserved",
+    "nkpFach002": "not implemented"
+  }
+}

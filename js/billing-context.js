@@ -6,12 +6,12 @@
 
   const MODES = Object.freeze({ CLOSED:"closed", EDIT:"edit", VIEW:"view" });
   const LAST_STEP_STORAGE_KEY = "nkpro.billingLastSteps.v1";
-  const VALID_STEPS = Object.freeze(["mieter","einstellungen","einnahmen","manuellewerte","verbraeuche","umlage","vorauszahlungsanpassung","qualitaet","briefe","export"]);
+  const VALID_STEPS = Object.freeze(["mieter","einnahmen","einstellungen","manuellewerte","umlage","qualitaet","vorauszahlungsanpassung","briefe","export"]);
   const WRITE_ACTIONS = Object.freeze([
     "application.save","application.reset","state.setNested",
     "object.addMasterTenancy","object.applyMasterDataToBilling","object.archiveMasterTenancy","object.restoreMasterTenancy","object.setBillingUnitStatus","object.setMasterNested",
     "cost.configureFree","cost.setSetting","cost.openPriceEditor","cost.savePriceFromDialog","cost.resetPriceFromDialog","cost.openSelectionDialog","cost.createFreeRow","cost.deactivateSelected","cost.toggleAllRows","cost.toggleRowSelection","cost.toggleAllVisibleRows","cost.activateDefaultPrepayments","cost.deactivateAllPrepayments","cost.setTenantAllowed","cost.activateFromDialog",
-    "billing.createFromModal","billing.confirmDelete","billing.finalize","billing.unlock","billing.setYear","billing.setPeriod","billing.resetAllocationInputs","billing.setManualInputMode","billing.setManualExternalValue","billing.setPrepaymentValue","billing.setPrepaymentAdjustmentSetting",
+    "billing.createFromModal","billing.confirmDelete","billing.finalize","billing.unlock","billing.setYear","billing.setPeriod","billing.syncPeriodYear","billing.resetAllocationInputs","billing.setManualInputMode","billing.setManualExternalValue","billing.setIndividualValuesImport","billing.resetIndividualValues","billing.setPrepaymentValue","billing.setPrepaymentAdjustmentSetting",
     "meter.setWaterValue","meter.setGenericValue","meter.setWaterSetting",
     "document.setBriefSetting","document.refreshBrief",
     "archive.reopenForRework","archive.currentYear","archive.deleteAt","archive.importItems",
@@ -94,12 +94,13 @@
   }
 
   function lastStep(recordKey = context.recordKey) {
-    const value = readLastSteps()[String(recordKey || "")];
+    const stored = readLastSteps()[String(recordKey || "")];
+    const value = stored === "verbraeuche" ? "manuellewerte" : stored;
     return VALID_STEPS.includes(value) ? value : "";
   }
 
   function rememberStep(tabId, recordKey = context.recordKey) {
-    const step = String(tabId || "");
+    const step = String(tabId || "") === "verbraeuche" ? "manuellewerte" : String(tabId || "");
     const key = String(recordKey || "");
     if (!key || !VALID_STEPS.includes(step)) return false;
     const values = readLastSteps();

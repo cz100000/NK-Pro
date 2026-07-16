@@ -1,3 +1,7 @@
+# Teststand V99.4.24 / AP21A
+
+Finaler Lauf: Syntax, Fixtures, Zählerregression, Architektur, Release-Inhalt und 102 Playwright-/Chromium-Szenarien. Siehe `AP21A_PRUEFBERICHT.md`.
+
 # Testanleitung – NK-Pro V99.4.23
 
 ## Automatisierte Prüfungen

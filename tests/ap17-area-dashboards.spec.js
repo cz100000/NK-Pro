@@ -12,8 +12,8 @@ async function activateBillingContext(page) {
     state.meta = state.meta || {};
     state.meta.currentBillingCreatedByUser = true;
     state.meta.currentBillingCreatedAt = state.meta.currentBillingCreatedAt || new Date().toISOString();
-    setBillingContextOpen(true);
     renderAll({ forceAll:true, reason:"ap17-active-billing" });
+    openCurrentBillingForEdit();
     switchToTab("mieter");
   });
 }
@@ -33,7 +33,7 @@ test("Arbeitsweiche bleibt unverändert und öffnet beide neuen Bereichsübersic
   await page.locator('.nav-start-link[data-tab="landing"]').click();
   await page.locator('[data-ui-action="navigation.enterBillingOverview"]').click();
   await expect(page.locator("#start")).toHaveClass(/active/);
-  await expect(page.locator('[data-area-dashboard="billing"] .workflow-stage')).toHaveCount(11);
+  await expect(page.locator('[data-area-dashboard="billing"] .workflow-stage')).toHaveCount(10);
   await expect(page.locator('[data-area-dashboard="billing"] .dashboard-preview-notice')).toHaveCount(0);
   await expect(page.locator('[data-area-dashboard="billing"] [data-value-kind="dummy"]')).toHaveCount(0);
 
@@ -62,7 +62,7 @@ test("Navigationsgruppen bleiben unabhängig geöffnet und speichern ihren Zusta
   await openFreshApp(page);
   const objectToggle = page.locator('[data-nav-toggle="group-object"]');
   const billingToggle = page.locator('[data-nav-toggle="group-billing"]');
-  const archiveToggle = page.locator('[data-nav-toggle="group-archive"]');
+  const extrasToggle = page.locator('[data-nav-toggle="group-extras"]');
 
   await expect(objectToggle).toHaveAttribute("aria-expanded", "true");
   await billingToggle.focus();
@@ -70,13 +70,13 @@ test("Navigationsgruppen bleiben unabhängig geöffnet und speichern ihren Zusta
   await expect(billingToggle).toHaveAttribute("aria-expanded", "true");
   await expect(objectToggle).toHaveAttribute("aria-expanded", "true");
 
-  await archiveToggle.click();
-  await expect(archiveToggle).toHaveAttribute("aria-expanded", "true");
+  await extrasToggle.click();
+  await expect(extrasToggle).toHaveAttribute("aria-expanded", "true");
   await expect(billingToggle).toHaveAttribute("aria-expanded", "true");
   await expect(objectToggle).toHaveAttribute("aria-expanded", "true");
 
   const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("nkpro.workflowNavigation.v4")));
-  expect(saved).toEqual(expect.arrayContaining(["group-object","group-billing","group-archive"]));
+  expect(saved).toEqual(expect.arrayContaining(["group-object","group-billing","group-extras"]));
 
   await objectToggle.click();
   await expect(objectToggle).toHaveAttribute("aria-expanded", "false");
@@ -86,20 +86,23 @@ test("Navigationsgruppen bleiben unabhängig geöffnet und speichern ihren Zusta
   runtime.assertClean();
 });
 
-test("Globale Kontextleiste ersetzt den alten Sidebar-Kontext und wechselt zur Übersicht", async ({ page }) => {
+test("Globale Kontextleiste ersetzt den alten Sidebar-Kontext und schließt zur Übersicht", async ({ page }) => {
   const runtime = attachRuntimeGuards(page);
   await activateBillingContext(page);
   await expect(page.locator("[data-nav-billing-context-panel]")).toHaveCount(0);
   const bar = page.locator("[data-global-billing-context]");
   await expect(bar).toBeVisible();
   await expect(bar.locator("[data-global-billing-object]")).not.toHaveText("");
-  await expect(bar).toContainText("ARB5");
+  const billingCode = await page.evaluate(() => String(currentObjectShortCode()));
+  await expect(bar.locator("[data-global-billing-code]")).toHaveText(billingCode);
   await expect(bar.locator("[data-global-billing-year]")).not.toHaveText("–");
-  await expect(bar.locator("[data-global-billing-status]")).toHaveText(/In Bearbeitung|Finalisiert|Nur Ansicht/);
+  await expect(bar.locator("[data-global-billing-status]")).toHaveText(/In Bearbeitung|Abgeschlossen|Archiviert/);
 
-  await bar.getByRole("button", { name:"Wechseln" }).click();
+  await bar.locator("[data-global-billing-close]").click();
   await expect(page.locator("#start")).toHaveClass(/active/);
-  await expect(bar).toBeHidden();
+  await expect(bar).toBeVisible();
+  await expect(bar.locator("[data-global-billing-object]")).toHaveText("Keine Abrechnung geöffnet");
+  await expect(bar.locator("[data-global-billing-mode]")).toHaveText("Keine Abrechnung geöffnet");
   runtime.assertClean();
 });
 
@@ -132,8 +135,8 @@ test("Dashboards und Kontextleiste bleiben bei schmalen und niedrigen Fenstern o
     state.meta = state.meta || {};
     state.meta.currentBillingCreatedByUser = true;
     state.meta.currentBillingCreatedAt = state.meta.currentBillingCreatedAt || new Date().toISOString();
-    setBillingContextOpen(true);
     renderAll({ forceAll:true, reason:"ap17-responsive-context" });
+    openCurrentBillingForEdit();
     switchToTab("mieter");
   });
   const contextMetrics = await page.evaluate(() => {

@@ -13,6 +13,7 @@ async function createActiveBilling(page, target = "start") {
     state.meta.currentBillingCreatedByUser = true;
     state.meta.currentBillingCreatedAt = state.meta.currentBillingCreatedAt || new Date().toISOString();
     renderAll({ forceAll:true, reason:"ap14-active-billing" });
+    if (tabId !== "start") openCurrentBillingForEdit();
     switchToTab(tabId);
   }, target);
 }
@@ -44,24 +45,24 @@ test("Zähler öffnet ausschließlich den zustandsneutralen DUMMY", async ({ pag
   runtime.assertClean();
 });
 
-test("Verbräuche erfassen enthält vollständig die bestehende produktive Verbrauchserfassung", async ({ page }) => {
+test("Individuelle Werte bindet die zentrale Verbrauchsquelle in der gemeinsamen Seite ein", async ({ page }) => {
   const runtime = attachRuntimeGuards(page);
   await openFreshApp(page);
-  await createActiveBilling(page, "verbraeuche");
+  await createActiveBilling(page, "manuellewerte");
 
-  await expect(page.locator("#verbraeuche")).toHaveClass(/active/);
-  await expect(page.locator('.tab-btn[data-tab="verbraeuche"]')).toHaveClass(/active/);
-  await expect(page.locator('.tab-btn[data-tab="verbraeuche"]')).toHaveAttribute("aria-current", "page");
+  await expect(page.locator("#manuellewerte")).toHaveClass(/active/);
+  await expect(page.locator('.tab-btn[data-tab="manuellewerte"]')).toHaveClass(/active/);
+  await expect(page.locator('.tab-btn[data-tab="manuellewerte"]')).toHaveAttribute("aria-current", "page");
   await expect(page.locator('[data-nav-toggle="group-billing"]')).toHaveAttribute("aria-expanded", "true");
-  await expect(page.locator("#verbraeuche .page-header__title")).toHaveText("Verbräuche erfassen");
-  await expect(page.locator("#verbraeuche #waterMeterSettings")).toHaveCount(1);
-  await expect(page.locator("#verbraeuche #meterCurrentSections")).toHaveCount(1);
-  await expect(page.locator("#verbraeuche #meterConsumptionControl")).toHaveCount(1);
-  await expect(page.locator("#verbraeuche #meterControlSummary")).toHaveCount(1);
-  await expect(page.locator("#verbraeuche .dummy-badge")).toHaveCount(0);
+  await expect(page.locator("#manuellewerte .page-header__title")).toHaveText("Individuelle Werte und Verbräuche erfassen");
+  await expect(page.locator("#individualValuesList .individual-cost-card")).not.toHaveCount(0);
+  const waterCard = page.locator('[data-individual-cost="K002"]');
+  await expect(waterCard).toHaveAttribute("data-individual-source", "automatic");
+  await expect(waterCard).toContainText("Zähler");
+  await expect(page.locator("#manuellewerte .dummy-badge")).toHaveCount(0);
   await expect(page.locator('#nav-group-billing > .nav-group-item .nav-item-label')).toHaveText([
-    "Abrechnungsübersicht", "Mieter & Wohnungen", "Miete & Vorauszahlungen", "Kosten erfassen", "Manuelle & externe Werte",
-    "Verbräuche erfassen", "Verteilung", "Prüfung", "Neue Vorauszahlungen", "Briefe", "Export"
+    "Übersicht", "Mietverhältnisse", "Vorauszahlungen", "Gesamtkosten", "Individuelle Werte",
+    "Abrechnungsergebnis", "Prüfung", "Vorauszahlungsanpassung", "Briefe", "Export", "Archiv"
   ]);
   runtime.assertClean();
 });
@@ -78,7 +79,7 @@ test("App-Typografie und AP13-Brieftypografie bleiben sauber getrennt", async ({
   expect(appFonts.button).toContain("Segoe UI");
 
   await loadFixture(page, "standardfall.json");
-  await page.evaluate(() => switchToTab("briefe"));
+  await page.evaluate(() => { openCurrentBillingForEdit(); switchToTab("briefe"); });
   const letterFont = await page.locator("#briefPreview").evaluate(node => {
     const rootNode = node.shadowRoot || node;
     return getComputedStyle(rootNode.querySelector(".nk-letter-document")).fontFamily;
@@ -168,8 +169,8 @@ test("AP14-Referenzbilder werden bei angeforderter Erfassung erzeugt", async ({ 
 
   await page.locator('.tab-btn[data-tab="wasser"]').click();
   await page.screenshot({ path:path.join(output, "zaehler-dummy-1366x768.png"), fullPage:false });
-  await createActiveBilling(page, "verbraeuche");
-  await page.screenshot({ path:path.join(output, "verbraeuche-erfassen-1366x768.png"), fullPage:false });
+  await createActiveBilling(page, "manuellewerte");
+  await page.screenshot({ path:path.join(output, "individuelle-werte-1366x768.png"), fullPage:false });
   await page.evaluate(() => switchToTab("landing"));
   await page.locator("#workspaceHelpButton").click();
   await page.screenshot({ path:path.join(output, "start-und-hilfe-1366x768.png"), fullPage:false });

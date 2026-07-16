@@ -45,7 +45,7 @@ async function loadApplication(page, initialRaw = null) {
   await page.setContent(applicationHtml(), { waitUntil:"domcontentloaded" });
   await installStorage(page, initialRaw);
   for (const relative of scriptSources) {
-    const source = fs.readFileSync(path.join(root, relative.replace(/^\.\//, "")), "utf8");
+    const source = fs.readFileSync(path.join(root, relative.split("?")[0].replace(/^\.\//, "")), "utf8");
     await page.addScriptTag({ content:`//# sourceURL=${relative}\n${source}` });
   }
   await page.waitForTimeout(160);
@@ -78,19 +78,28 @@ async function main() {
     await loadApplication(page);
     await openMeterTable(page);
 
+    await page.evaluate(() => {
+      state.waterMeters.readings[0].kwEnd = 29774;
+      renderAll();
+      const section = document.querySelector("#meterEntrySection");
+      if (section) section.open = true;
+    });
+    await page.waitForTimeout(40);
+
     let row = page.locator("#waterMeterTable tbody tr").first();
+    assert.equal((await row.locator('[data-meter-result="kw"]').innerText()).trim(), "29.508", "Vorbereiteter historischer Fehlwert wird nicht reproduziert.");
     const kwEnd = row.locator('input[data-water-meter-field="kwEnd"]');
     const initialFooter = await page.locator('[data-meter-footer="kw"]').innerText();
-    await kwEnd.fill("297,24");
-    assert.equal((await row.locator('[data-meter-result="kw"]').innerText()).trim(), "31,24", "Live-Verbrauch wird vor Fokuswechsel nicht aktualisiert.");
+    await kwEnd.fill("297,74");
+    assert.equal((await row.locator('[data-meter-result="kw"]').innerText()).trim(), "31,74", "Live-Verbrauch korrigiert den zuvor falsch gespeicherten Wert nicht sofort.");
     assert.notEqual((await page.locator('[data-meter-footer="kw"]').innerText()).trim(), initialFooter.trim(), "Live-Summe wird nicht aktualisiert.");
-    assert.equal(await page.evaluate(() => state.waterMeters.readings[0].kwEnd), "", "Live-Vorschau darf den gespeicherten Zustand vor Commit nicht verändern.");
+    assert.equal(await page.evaluate(() => state.waterMeters.readings[0].kwEnd), 29774, "Live-Vorschau darf den gespeicherten Zustand vor Commit nicht verändern.");
 
     await kwEnd.press("Enter");
     await page.waitForTimeout(160);
-    assert.equal(await page.evaluate(() => state.waterMeters.readings[0].kwEnd), 297.24, "Enter speichert Dezimalkomma nicht korrekt.");
+    assert.equal(await page.evaluate(() => state.waterMeters.readings[0].kwEnd), 297.74, "Enter ersetzt den zuvor falsch gespeicherten Wert nicht korrekt.");
     row = page.locator("#waterMeterTable tbody tr").first();
-    assert.equal((await row.locator('[data-meter-result="kw"]').innerText()).trim(), "31,24", "Verbrauch nach Enter-Commit ist falsch.");
+    assert.equal((await row.locator('[data-meter-result="kw"]').innerText()).trim(), "31,74", "Verbrauch nach Enter-Commit ist falsch.");
 
     const secondRow = page.locator("#waterMeterTable tbody tr").nth(1);
     const secondEnd = secondRow.locator('input[data-water-meter-field="kwEnd"]');
@@ -101,7 +110,7 @@ async function main() {
     assert.equal(await page.evaluate(() => state.waterMeters.readings[1].kwEnd), 128.06, "Dezimalpunkt wird beim Commit falsch gespeichert.");
 
     const storedRaw = await page.evaluate(key => localStorage.getItem(key), storageKey);
-    assert.ok(storedRaw && storedRaw.includes("297.24") && storedRaw.includes("128.06"), "Gespeicherter Datensatz enthält die bestätigten Werte nicht.");
+    assert.ok(storedRaw && storedRaw.includes("297.74") && storedRaw.includes("128.06"), "Gespeicherter Datensatz enthält die bestätigten Werte nicht.");
     assert.equal(pageErrors.length, 0, pageErrors.join(" | "));
     await page.close();
 
@@ -112,9 +121,9 @@ async function main() {
     await loadApplication(reloadPage, storedRaw);
     await openMeterTable(reloadPage);
     const reloadedRows = reloadPage.locator("#waterMeterTable tbody tr");
-    assert.equal(await reloadPage.evaluate(() => state.waterMeters.readings[0].kwEnd), 297.24, "Wert mit Dezimalkomma geht beim Neustart verloren.");
+    assert.equal(await reloadPage.evaluate(() => state.waterMeters.readings[0].kwEnd), 297.74, "Korrigierter Wert mit Dezimalkomma geht beim Neustart verloren.");
     assert.equal(await reloadPage.evaluate(() => state.waterMeters.readings[1].kwEnd), 128.06, "Wert mit Dezimalpunkt geht beim Neustart verloren.");
-    assert.equal((await reloadedRows.nth(0).locator('[data-meter-result="kw"]').innerText()).trim(), "31,24", "Neustart-Verbrauch der ersten Zeile ist falsch.");
+    assert.equal((await reloadedRows.nth(0).locator('[data-meter-result="kw"]').innerText()).trim(), "31,74", "Neustart-Verbrauch der ersten Zeile ist falsch.");
     assert.equal((await reloadedRows.nth(1).locator('[data-meter-result="kw"]').innerText()).trim(), "11,06", "Neustart-Verbrauch der zweiten Zeile ist falsch.");
     assert.equal(reloadErrors.length, 0, reloadErrors.join(" | "));
 
@@ -125,7 +134,8 @@ async function main() {
       decimalComma:true,
       decimalPoint:true,
       persistedReload:true,
-      firstConsumption:31.24,
+      firstConsumption:31.74,
+      correctedHistoricalValue:true,
       secondConsumption:11.06,
       chromium:executablePath
     }, null, 2) + "\n");

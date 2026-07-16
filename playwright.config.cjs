@@ -49,7 +49,8 @@ module.exports = defineConfig({
     { name:"ap17-area-dashboards", testMatch:"ap17-area-dashboards.spec.js" },
     { name:"ap18-ui-ux-polish", testMatch:"ap18-ui-ux-polish.spec.js" },
     { name:"ap19-billing-context-dashboards", testMatch:"ap19-billing-context-dashboards.spec.js" },
-    { name:"ap20-central-quality-system", testMatch:"ap20-central-quality-system.spec.js" }
+    { name:"ap20-central-quality-system", testMatch:"ap20-central-quality-system.spec.js" },
+    { name:"ap21a-ui-consolidation", testMatch:"ap21a-ui-consolidation.spec.js" }
   ],
   use: {
     baseURL: "http://127.0.0.1:4173",

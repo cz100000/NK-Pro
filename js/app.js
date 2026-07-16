@@ -121,6 +121,7 @@ function configureApplicationActions() {
       unlock:NK_PRO_MODULES.billingWorkflow.unlock,
       setYear:NK_PRO_MODULES.billingWorkflow.setYear,
       setPeriod:NK_PRO_MODULES.billingWorkflow.setPeriod,
+      syncPeriodYear:NK_PRO_MODULES.billingWorkflow.syncPeriodYear,
       resetAllocationInputs:NK_PRO_MODULES.billingWorkflow.resetAllocationInputs,
       setManualInputMode:NK_PRO_MODULES.billingWorkflow.setManualInputMode,
       setManualExternalValue:NK_PRO_MODULES.billingWorkflow.setManualExternalValue,

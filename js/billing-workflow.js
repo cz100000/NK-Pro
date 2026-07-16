@@ -253,6 +253,19 @@
     }, { reason:"Benutzereingabe", forceAll:true });
   }
 
+  function syncPeriodYear() {
+    const d = requireDeps();
+    return d.stateAccess.transact(data => {
+      if (!data.meta) data.meta = {};
+      const endYear = d.periodYearFromDate(data.meta.abrechnungsende);
+      if (!endYear) return Object.freeze({ changed:false, message:"Das Enddatum enthält kein verwendbares Jahr." });
+      const previousYear = String(data.meta.abrechnungsjahr || "");
+      data.meta.abrechnungsjahr = endYear;
+      if (data.briefSettings) data.briefSettings.abrechnungsjahr = endYear;
+      return Object.freeze({ changed:previousYear !== endYear, year:endYear, message:"Abrechnungsjahr wurde aus dem Enddatum übernommen." });
+    }, { reason:"Abrechnungsjahr mit Enddatum abgeglichen", forceAll:true });
+  }
+
   function syncUmlageInputs(data = current()) {
     const d = requireDeps();
     if (!data.umlageInputs) data.umlageInputs = {};
@@ -335,6 +348,49 @@
       input.values[numericIndex] = d.num(value);
       return Object.freeze({ changed:true, costId, index:numericIndex });
     }, { reason:"Benutzereingabe", tabId:"manuellewerte" });
+  }
+
+  function setIndividualValuesImport(costId, values, metadata = {}) {
+    const d = requireDeps();
+    const normalizedValues = Array.isArray(values) ? values.map(value => d.num(value)) : [];
+    return d.stateAccess.transact(data => {
+      syncUmlageInputs(data);
+      const input = data.umlageInputs && data.umlageInputs[costId];
+      if (!input) return Object.freeze({ changed:false, reason:"missing-input" });
+      while (input.values.length < normalizedValues.length) input.values.push(0);
+      normalizedValues.forEach((value,index) => { input.values[index] = value; });
+      input.importSource = String(metadata.source || input.importSource || "");
+      input.importedAt = String(metadata.importedAt || new Date().toISOString());
+      input.importFormat = String(metadata.format || "Zuordnung nach Mietverhältnis/Wohnung");
+      input.importErrors = Array.isArray(metadata.errors) ? metadata.errors.slice(0,100) : [];
+      input.mode = metadata.mode === "Externe Einzelabrechnung" ? "Externe Einzelabrechnung" : (input.mode || "Externe Einzelabrechnung");
+      input.art = input.mode;
+      const cost = Array.isArray(data.kostenarten) ? data.kostenarten.find(row => row && row.id === costId) : null;
+      if (cost && input.mode === "Externe Einzelabrechnung") {
+        cost.umlageschluessel = d.umlageManual;
+        cost.berechnungsart = "Manuell je Mieter";
+      }
+      return Object.freeze({ changed:true, costId, imported:normalizedValues.length, errorCount:input.importErrors.length });
+    }, { reason:"Externe Einzelwerte importiert", tabId:"manuellewerte" });
+  }
+
+  function resetIndividualValues(costId, options = {}) {
+    const d = requireDeps();
+    if (options.confirmed !== true) {
+      return Object.freeze({ changed:false, requiresConfirmation:true, confirmationMessage:"Individuelle Werte dieser Kostenart wirklich zurücksetzen? Zentrale Zählerdaten werden nicht gelöscht." });
+    }
+    return d.stateAccess.transact(data => {
+      syncUmlageInputs(data);
+      const input = data.umlageInputs && data.umlageInputs[costId];
+      if (!input) return Object.freeze({ changed:false, reason:"missing-input" });
+      if (input.mode === "Zählerstände") return Object.freeze({ changed:false, reason:"central-meter-source", message:"Automatische Zählerwerte werden an der zentralen Zählerquelle korrigiert." });
+      input.values = input.values.map(() => 0);
+      input.importSource = "";
+      input.importedAt = "";
+      input.importFormat = "";
+      input.importErrors = [];
+      return Object.freeze({ changed:true, costId });
+    }, { reason:"Individuelle Werte zurückgesetzt", tabId:"manuellewerte" });
   }
 
   function resetAllocationInputs(options = {}) {
@@ -435,10 +491,11 @@
     return Object.freeze({
       configured:!!deps,
       responsibility:"Laufender Abrechnungsstatus, Periode, manuelle Werte und Vorauszahlungen",
-      actionCount:10,
+      actionCount:13,
       actions:Object.freeze([
-        "createSnapshot", "finalize", "unlock", "setYear", "setPeriod", "resetAllocationInputs",
-        "setManualInputMode", "setManualExternalValue", "setPrepaymentValue", "setPrepaymentAdjustmentSetting"
+        "createSnapshot", "finalize", "unlock", "setYear", "setPeriod", "syncPeriodYear", "resetAllocationInputs",
+        "setManualInputMode", "setManualExternalValue", "setIndividualValuesImport", "resetIndividualValues",
+        "setPrepaymentValue", "setPrepaymentAdjustmentSetting"
       ])
     });
   }
@@ -455,9 +512,12 @@
     clearCurrentBillingFinalization,
     setYear,
     setPeriod,
+    syncPeriodYear,
     syncUmlageInputs,
     setManualInputMode,
     setManualExternalValue,
+    setIndividualValuesImport,
+    resetIndividualValues,
     resetAllocationInputs,
     setPrepaymentValue,
     defaultPrepaymentAdjustmentSettings,

@@ -34,6 +34,7 @@ test("Kontextwechsel schließen Dialoge, Kopfmenüs und nichtfachliche Auswahlzu
   const runtime = attachRuntimeGuards(page);
   await activateCurrentBilling(page);
   await page.evaluate(() => {
+    openCurrentBillingForEdit();
     switchToTab("einstellungen");
     selectedCostRows.add(0);
     costShowAllRows = true;
@@ -70,7 +71,7 @@ test("Aktive Abrechnung bleibt über sämtliche produktiven Arbeitsschritte erre
   await activateCurrentBilling(page);
   await page.locator("#startRecordsSection > summary").click();
   await page.getByRole("button", { name:"Bearbeiten", exact:true }).click();
-  const tabs = ["mieter","einnahmen","einstellungen","manuellewerte","verbraeuche","umlage","qualitaet","vorauszahlungsanpassung","briefe","export"];
+  const tabs = ["mieter","einnahmen","einstellungen","manuellewerte","umlage","qualitaet","vorauszahlungsanpassung","briefe","export"];
   for (const tab of tabs) {
     await page.locator(`.tab-btn[data-tab="${tab}"]`).click();
     await expect(page.locator(`#${tab}`)).toHaveClass(/active/);
@@ -138,11 +139,14 @@ test("Zähler-DUMMY bleibt bei Gesamtintegration zustandsneutral und Verbrauchse
     return entries;
   };
   expect(withoutNavigationPreference(afterStorage)).toEqual(withoutNavigationPreference(beforeStorage));
-  await page.evaluate(() => switchToTab("verbraeuche"));
-  await expect(page.locator("#verbraeuche #waterMeterSettings")).toHaveCount(1);
-  await expect(page.locator("#verbraeuche #meterCurrentSections")).toHaveCount(1);
-  await expect(page.locator("#verbraeuche #meterConsumptionControl")).toHaveCount(1);
-  await expect(page.locator("#verbraeuche .dummy-badge")).toHaveCount(0);
+  await page.evaluate(() => {
+    openCurrentBillingForEdit();
+    switchToTab("manuellewerte");
+  });
+  await expect(page.locator("#manuellewerte")).toHaveClass(/active/);
+  await expect(page.locator('[data-individual-cost="K002"]')).toHaveAttribute("data-individual-source", "automatic");
+  await expect(page.locator('[data-individual-cost="K002"]')).toContainText("Zähler");
+  await expect(page.locator("#manuellewerte .dummy-badge")).toHaveCount(0);
   runtime.assertClean();
 });
 
@@ -159,7 +163,7 @@ test("App-Shell wird durch den realen Service Worker kontrolliert und startet of
   await page.waitForFunction(() => Boolean(navigator.serviceWorker.controller));
   await context.setOffline(true);
   await page.reload({ waitUntil:"domcontentloaded" });
-  await expect(page).toHaveTitle(/NK-Pro V99\.4\.20/);
+  await expect(page).toHaveTitle(/NK-Pro V99\.4\.24/);
   await expect(page.locator("#landing")).toHaveClass(/active/);
   await context.setOffline(false);
   runtime.assertClean();

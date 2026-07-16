@@ -114,7 +114,7 @@
       "billing.confirmDelete":call(handlers, "confirmDeleteBilling"), "billing.handleDeleteKey":context => requireHandler(handlers, "handleDeleteBillingKey")(context.key),
       "billing.finalize":interactiveAppCall(applicationActions, "billing", "finalize", handlers), "billing.unlock":interactiveAppCall(applicationActions, "billing", "unlock", handlers),
       "billing.openLatestYear":call(handlers, "openLatestKnownYear"), "billing.setYear":appCall(applicationActions, "billing", "setYear"),
-      "billing.setPeriod":appCall(applicationActions, "billing", "setPeriod"), "billing.resetAllocationInputs":interactiveAppCall(applicationActions, "billing", "resetAllocationInputs", handlers),
+      "billing.setPeriod":appCall(applicationActions, "billing", "setPeriod"), "billing.syncPeriodYear":appCall(applicationActions, "billing", "syncPeriodYear"), "billing.resetAllocationInputs":interactiveAppCall(applicationActions, "billing", "resetAllocationInputs", handlers),
       "billing.setManualInputMode":interactiveAppCall(applicationActions, "billing", "setManualInputMode", handlers), "billing.setManualExternalValue":appCall(applicationActions, "billing", "setManualExternalValue"),
       "billing.setPrepaymentValue":appCall(applicationActions, "billing", "setPrepaymentValue"), "billing.setPrepaymentAdjustmentSetting":appCall(applicationActions, "billing", "setPrepaymentAdjustmentSetting"),
       "billing.showFinalReport":call(handlers, "showFinalBillingReport"), "billing.showAcceptanceProtocol":call(handlers, "showAcceptanceProtocol")

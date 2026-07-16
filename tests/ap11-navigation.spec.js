@@ -13,6 +13,7 @@ async function createActiveBilling(page, target = "objekt") {
     state.meta.currentBillingCreatedByUser = true;
     state.meta.currentBillingCreatedAt = state.meta.currentBillingCreatedAt || new Date().toISOString();
     renderAll({ forceAll:true, reason:"ap11-navigation-test" });
+    if (BILLING_NAV_TABS.includes(tabId)) openCurrentBillingForEdit();
     switchToTab(tabId);
   }, target);
 }
@@ -22,17 +23,17 @@ test("AP11-Navigation bildet Zielstruktur, Icons und Zustände vollständig ab",
   await openFreshApp(page);
 
   await expect(page.locator("nav.workflow-nav")).toHaveCount(1);
-  await expect(page.locator(".workflow-nav > .nav-group")).toHaveCount(4);
-  await expect(page.locator(".workflow-nav .tab-btn[data-tab]")).toHaveCount(19);
+  await expect(page.locator(".workflow-nav > .nav-group")).toHaveCount(3);
+  await expect(page.locator(".workflow-nav .tab-btn[data-tab]")).toHaveCount(18);
   const uniqueTabs = await page.locator(".workflow-nav .tab-btn[data-tab]").evaluateAll(nodes => [...new Set(nodes.map(node => node.dataset.tab))]);
-  expect(uniqueTabs).toHaveLength(19);
+  expect(uniqueTabs).toHaveLength(18);
 
   const objectLabels = await page.locator('#nav-group-object > .nav-group-item .nav-item-label').allTextContents();
   expect(objectLabels.map(value => value.trim())).toEqual(["Übersicht", "Objektdaten", "Wohnungen", "Zähler", "Mieter"]);
   const billingLabels = await page.locator('#nav-group-billing > .nav-group-item .nav-item-label').allTextContents();
-  expect(billingLabels.map(value => value.trim())).toEqual(["Abrechnungsübersicht", "Mieter & Wohnungen", "Miete & Vorauszahlungen", "Kosten erfassen", "Manuelle & externe Werte", "Verbräuche erfassen", "Verteilung", "Prüfung", "Neue Vorauszahlungen", "Briefe", "Export"]);
+  expect(billingLabels.map(value => value.trim())).toEqual(["Übersicht", "Mietverhältnisse", "Vorauszahlungen", "Gesamtkosten", "Individuelle Werte", "Abrechnungsergebnis", "Prüfung", "Vorauszahlungsanpassung", "Briefe", "Export", "Archiv"]);
   await expect(page.locator("#nav-group-billing .nav-subsection")).toHaveCount(0);
-  await expect(page.locator("#nav-group-billing .nav-group-item--secondary")).toHaveCount(0);
+  await expect(page.locator("#nav-group-billing .nav-archive-entry")).toHaveCount(1);
 
   const icons = page.locator("#appSidebar .nav-icon-svg");
   expect(await icons.count()).toBeGreaterThanOrEqual(22);
@@ -125,12 +126,12 @@ test("Tastatur, geringe Höhe und schmale Fenster bleiben vollständig bedienbar
   await openFreshApp(page);
   await createActiveBilling(page, "einstellungen");
 
-  const archiveToggle = page.locator('[data-nav-toggle="group-archive"]');
-  await archiveToggle.focus();
+  const extrasToggle = page.locator('[data-nav-toggle="group-extras"]');
+  await extrasToggle.focus();
   await page.keyboard.press("Enter");
-  await expect(archiveToggle).toHaveAttribute("aria-expanded", "true");
-  await expect(page.locator("#nav-group-archive")).toBeVisible();
-  const focusStyle = await archiveToggle.evaluate(node => getComputedStyle(node).outlineStyle);
+  await expect(extrasToggle).toHaveAttribute("aria-expanded", "true");
+  await expect(page.locator("#nav-group-extras")).toBeVisible();
+  const focusStyle = await extrasToggle.evaluate(node => getComputedStyle(node).outlineStyle);
   expect(focusStyle).not.toBe("none");
 
   await page.evaluate(() => NKProNavigation.setGroupExpanded("group-billing", true));

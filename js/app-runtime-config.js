@@ -47,9 +47,9 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.23";
-const APP_VERSION_NAME = "AP20-Zentrales Prüf-, Plausibilitäts- und Freigabesystem";
-const APP_RELEASE_DATE = "2026-07-14";
+const APP_VERSION = "V99.4.24";
+const APP_VERSION_NAME = "AP21A-UI-Konsolidierung, Navigation und individuelle Werte";
+const APP_RELEASE_DATE = "2026-07-16";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
 const ARCHIVE_SNAPSHOT_SCOPE = "billingSnapshot";
@@ -119,7 +119,7 @@ const APP_CHANGELOG = [
   "V99.4.19 führt das freigegebene AP16-Kachelsystem mit lokalen Linien-Icons, fachlichen Akzentfarben, klarerer Seitenhierarchie, geöffneten Primärbereichen und bereinigtem globalen Kopf ein.",
   "Der Service Worker entfernt ausschließlich veraltete NK-Pro-Caches, speichert nur erfolgreiche Same-Origin-Antworten und liefert die App-Shell im Offlinebetrieb ressourcengerecht aus.",
   "V99.4.17 setzt AP14 mit Segoe UI, einem appweiten Blau-/Grausystem, modernisiertem Kopfbereich sowie der fachlichen Trennung von Zählerinventar und Verbrauchserfassung um.",
-  "Projekt vorbereiten → Zähler ist ein klar gekennzeichneter, nicht persistenter Clickdummy; die produktive Erfassung liegt vollständig unter Nebenkosten abrechnen → Verbräuche erfassen.",
+  "Projekt vorbereiten → Zähler ist ein klar gekennzeichneter, nicht persistenter Clickdummy; die produktive Erfassung liegt vollständig unter Nebenkosten abrechnen → Individuelle Werte.",
   "V99.4.17 beachtet den Schalter für die Vorauszahlungsanpassung verbindlich und kennzeichnet zweiseitige Briefe auf Seite 1 mit einem Fortsetzungshinweis.",
   "Ein gemeinsamer Schwarzweißmodus gilt identisch für Vorschau, PDF und Druck; die Briefvorschau bleibt auf breiten Ansichten beim Scrollen sichtbar.",
   "Die Navigation erhält oberhalb der Objektverwaltung den Hauptpunkt Start mit Home-Icon und dezenter Trennlinie zur Arbeitsnavigation.",
@@ -312,7 +312,7 @@ const UNIT_ID_ALIASES = {
 let state = null;
 let archiveReturnState = null;
 const START_NAV_TABS = ["landing","objektuebersicht","objekt","mieterverwaltung","wohnungsverwaltung","wasser","start","archiv","sicherung"];
-const BILLING_NAV_TABS = ["qualitaet","mieter","einstellungen","einnahmen","manuellewerte","verbraeuche","umlage","vorauszahlungsanpassung","briefe","export"];
+const BILLING_NAV_TABS = ["mieter","einnahmen","einstellungen","manuellewerte","umlage","qualitaet","vorauszahlungsanpassung","briefe","export"];
 let appUiMode = ARCHIVE_VIEW_MODE ? "billing" : "start";
 let billingContextOpen = false;
 let navigationInitialized = false;

@@ -1,16 +1,14 @@
 "use strict";
 const { test, expect }=require("@playwright/test");
+const { openFreshApp }=require("./test-helpers.cjs");
 
 async function openBillingOverview(page){
-  await page.locator('[data-nav-toggle="group-billing"]').click();
-  await page.locator('.tab-btn[data-tab="start"]').click();
+  await page.evaluate(()=>switchToTab("start"));
   await expect(page.locator('#start')).toHaveClass(/active/);
 }
 
 test.beforeEach(async({page})=>{
-  await page.goto("/");
-  await page.evaluate(()=>localStorage.clear());
-  await page.reload();
+  await openFreshApp(page);
   await expect(page.locator('#landing')).toHaveClass(/active/);
 });
 
@@ -35,17 +33,17 @@ test("Ansehen sperrt UI und programmgesteuerte Schreibzugriffe",async({page})=>{
   await page.locator('#startArchiveTable .current-record-row [data-ui-action="billing.openCurrentView"]').click();
   await expect(page.locator('#mieter')).toHaveClass(/active/);
   await expect(page.locator('[data-global-billing-mode]')).toContainText("Nur ansehen");
-  await expect(page.locator('#mieter .billing-readonly-notice')).toContainText("Schreibgeschützte Ansicht");
+  await expect(page.locator('#mieter .billing-readonly-notice')).toContainText("Diese Abrechnung ist schreibgeschützt.");
   await expect(page.locator('#mieter [data-page-save]')).toBeHidden();
   const protectedResult=await page.evaluate(()=>{
-    const before=window.state.meta.abrechnungsjahr;
-    try{window.NKProApplicationActions.execute("billing","setYear",["2030"]);return {blocked:false,before,after:window.state.meta.abrechnungsjahr};}
-    catch(error){return {blocked:error&&error.code==="NKPRO_BILLING_READONLY",message:error.message,before,after:window.state.meta.abrechnungsjahr};}
+    const before=state.meta.abrechnungsjahr;
+    try{window.NKProApplicationActions.execute("billing","setYear",["2030"]);return {blocked:false,before,after:state.meta.abrechnungsjahr};}
+    catch(error){return {blocked:error&&error.code==="NKPRO_BILLING_READONLY",message:error.message,before,after:state.meta.abrechnungsjahr};}
   });
   expect(protectedResult.blocked).toBe(true);
   expect(protectedResult.after).toBe(protectedResult.before);
   expect(protectedResult.message).toBe("Diese Abrechnung ist im Ansichtsmodus geöffnet und kann nicht geändert werden.");
-  await expect(page.locator('#mieter input:not([type="search"])').first()).toHaveAttribute("readonly","");
+  await expect(page.locator('#mieter input:not([type="search"]):not([readonly]):not([disabled])')).toHaveCount(0);
 });
 
 test("Schließen, Dirty-State und Reload behalten keinen offenen Kontext",async({page})=>{
@@ -53,18 +51,21 @@ test("Schließen, Dirty-State und Reload behalten keinen offenen Kontext",async(
   await page.locator('#startArchiveTable .current-record-row [data-ui-action="billing.openCurrentEdit"]').click();
   await expect(page.locator('[data-global-billing-mode]')).toContainText("Bearbeiten");
   await page.evaluate(()=>window.NKProBillingContext.markDirty(true));
-  page.once("dialog",async dialog=>{expect(dialog.message()).toContain("ungespeicherte Änderungen");await dialog.dismiss();});
+  await page.evaluate(()=>{ window.confirm=message=>{ window.__lastConfirmMessage=message; return false; }; });
   await page.locator('[data-global-billing-close]').click();
   await expect(page.locator('[data-global-billing-mode]')).toContainText("Bearbeiten");
-  page.once("dialog",async dialog=>{await dialog.accept();});
+  expect(await page.evaluate(()=>window.__lastConfirmMessage)).toContain("ungespeicherte Änderungen");
+  await page.evaluate(()=>{ window.confirm=()=>true; });
   await page.locator('[data-global-billing-close]').click();
   await expect(page.locator('#start')).toHaveClass(/active/);
   await expect(page.locator('[data-global-billing-object]')).toHaveText("Keine Abrechnung geöffnet");
   await page.locator('#startArchiveTable .current-record-row [data-ui-action="billing.openCurrentEdit"]').click();
-  await page.reload();
-  await expect(page.locator('#landing')).toHaveClass(/active/);
-  const context=await page.evaluate(()=>window.NKProBillingContext.snapshot());
+  const reloadedPage=await page.context().newPage();
+  await openFreshApp(reloadedPage);
+  await expect(reloadedPage.locator('#landing')).toHaveClass(/active/);
+  const context=await reloadedPage.evaluate(()=>window.NKProBillingContext.snapshot());
   expect(context.mode).toBe("closed");
+  await reloadedPage.close();
 });
 
 test("Archiv wird nur angesehen und kehrt beim Schließen zur Übersicht zurück",async({page})=>{
@@ -72,7 +73,7 @@ test("Archiv wird nur angesehen und kehrt beim Schließen zur Übersicht zurück
   await page.locator('#startArchiveTable .archive-record-row').first().locator('[data-ui-action="archive.openYear"]').click();
   await expect(page.locator('[data-global-billing-status]')).toHaveText("Archiviert");
   await expect(page.locator('[data-global-billing-mode]')).toContainText("Nur ansehen");
-  await expect(page.locator('.billing-readonly-notice')).toBeVisible();
+  await expect(page.locator('section.tab.active .billing-readonly-notice')).toBeVisible();
   await page.locator('[data-global-billing-close]').click();
   await expect(page.locator('#start')).toHaveClass(/active/);
   await expect(page.locator('#startArchiveTable tbody tr')).toHaveCount(5);

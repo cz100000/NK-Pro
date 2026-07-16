@@ -1,3 +1,8 @@
+# Modulerweiterung V99.4.24 / AP21A
+
+- `js/ui-individual-values.js`: ausschließlich Rendering und UI-Aufbereitung der gemeinsamen Werteseite.
+- Fach- und Persistenzzugriffe verbleiben in den bestehenden Domänen- und Aktionsmodulen.
+
 # NK-Pro – Modulübersicht V99.4.23
 
 Die modulare Struktur aus AP6 bis AP19 bleibt verbindlich. AP20 ergänzt eine zentrale Prüfregel- und Ergebnisquelle ohne externe Laufzeitabhängigkeit.

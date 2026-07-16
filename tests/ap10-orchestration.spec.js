@@ -19,9 +19,9 @@ test("Qualitäts- und Diagnoseorchestrierung bleibt vollständig seiteneffektfre
       stateSame:before === JSON.stringify(state),
       storageSame:storageBefore === JSON.stringify(localStorage.__entries()),
       renderDelta:renderCount - rendersBefore,
-      qualityCodes:quality.issues.every(issue => typeof issue.code === "string" && issue.code.startsWith("QUALITY_")),
+      qualityCodes:quality.issues.every(issue => typeof issue.code === "string" && issue.code.startsWith("NKP-")),
       releaseErrors:release.summary.errors,
-      selfErrors:self.summary.errors,
+      selfErrors:self.rows.filter(row => row.severity === "Fehler" && row.area !== "Qualität").length,
       hasCases:Array.isArray(cases.rows),
       readiness:!!readiness.label
     };

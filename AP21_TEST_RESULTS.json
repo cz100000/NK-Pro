@@ -1,0 +1,53 @@
+{
+  "version": "99.4.23",
+  "displayVersion": "V99.4.23",
+  "workPackage": "AP21",
+  "workingState": 1,
+  "date": "2026-07-16",
+  "baseline": "AP20 Korrekturstand 3",
+  "implementedRule": "NKP-FACH-001",
+  "status": "passed-with-browser-environment-restriction",
+  "tests": {
+    "javascriptSyntax": {
+      "status": "passed",
+      "units": 53
+    },
+    "referenceFixtures": {
+      "status": "passed",
+      "cases": 6
+    },
+    "meteringRegressions": {
+      "status": "passed"
+    },
+    "architecture": {
+      "status": "passed",
+      "range": "AP6–AP21"
+    },
+    "ap21RuleRegression": {
+      "status": "passed",
+      "file": "tests/ap21-rule-audit.test.cjs"
+    },
+    "releaseContents": {
+      "status": "passed"
+    },
+    "releaseConsistency": {
+      "status": "passed"
+    },
+    "checksums": {
+      "status": "passed"
+    },
+    "chromiumProcessLaunch": {
+      "status": "passed",
+      "executable": "system Chromium"
+    },
+    "appBrowserRun": {
+      "status": "blocked-by-host-policy",
+      "reason": "ERR_BLOCKED_BY_ADMINISTRATOR for http://nkpro.test, loopback/local server and file navigation; setContent has an opaque origin and cannot provide the required localStorage context.",
+      "classification": "environment restriction, not application test failure"
+    }
+  },
+  "nextRule": {
+    "ruleId": "NKP-FACH-002",
+    "status": "analyzed; implementation decision pending"
+  }
+}

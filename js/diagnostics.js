@@ -525,15 +525,16 @@
   
     runCheck("Sonderfälle", "Sonderfall-Wächter", () => withAuditState(auditBaseState(), () => {
       state.wohnungen.push({ id:"WL", bezeichnung:"Leerstand", lage:"DG", wohnflaeche:40, status:"aktiv" });
-      state.mieter[0].auszug = "2025-06-30";
+      const auditYear = String((state.meta && state.meta.abrechnungsjahr) || new Date().getFullYear());
+      state.mieter[0].auszug = auditYear + "-06-30";
       state.mieter[0].aktiveTage = 181;
-      state.mieter[1].einzug = "2025-07-01";
+      state.mieter[1].einzug = auditYear + "-07-01";
       state.mieter[1].aktiveTage = 184;
       const report = specialCaseWatchReport();
       if (!report || !Array.isArray(report.rows)) throw new Error("Sonderfall-Bericht fehlt");
-      if (!report.rows.some(r => r.type === "Unterjährig")) throw new Error("Unterjähriger Fall wird nicht erkannt");
-      if (!report.rows.some(r => r.type === "Leerstand")) throw new Error("Leerstand wird nicht erkannt");
-      if (!report.rows.some(r => r.type === "Eigentümer/Privat")) throw new Error("Eigentümer-/Privatrolle wird nicht erkannt");
+      if (!report.rows.some(r => /Unterjährig|Mieterwechsel/i.test(r.type))) throw new Error("Unterjähriger Fall wird nicht erkannt");
+      if (!report.rows.some(r => /Leerstand/i.test(r.type))) throw new Error("Leerstand wird nicht erkannt");
+      if (!report.rows.some(r => /Eigentümer|Privat/i.test(r.type))) throw new Error("Eigentümer-/Privatrolle wird nicht erkannt");
       const badgeHtml = specialCaseBadgesForTenant(state.mieter[0]);
       if (!badgeHtml.includes("unterjährig")) throw new Error("Sonderfall-Badge fehlt");
       return "Unterjährig, Leerstand und Eigentümer/Privat erkannt · " + report.rows.length + " Meldungen";
@@ -795,7 +796,7 @@
       const nav = document.querySelector(".workflow-nav");
       if (!nav) throw new Error("Workflow-Navigation fehlt");
       const groups = Array.from(nav.querySelectorAll(":scope > .nav-group")).map(group => group.dataset.navGroupSection);
-      if (groups.join("|") !== "object|billing|archive|extras") throw new Error("Navigationsgruppen sind unvollständig oder falsch sortiert");
+      if (groups.join("|") !== "object|billing|extras") throw new Error("Navigationsgruppen sind unvollständig oder falsch sortiert");
       const expanded = Array.from(nav.querySelectorAll('.nav-group-toggle[aria-expanded="true"]'));
       if (expanded.length !== 1) throw new Error("Es muss genau eine Navigationsgruppe geöffnet sein");
       const tabIds = Array.from(nav.querySelectorAll(".tab-btn[data-tab]")).map(button => button.dataset.tab);
@@ -811,7 +812,7 @@
       if (!settings || settings.getAttribute("aria-disabled") !== "true" || settings.dataset.uiAction) throw new Error("Einstellungen-Dummy ist nicht korrekt deaktiviert");
       if (settings.dataset.navHint !== "Noch nicht verfügbar") throw new Error("Einstellungen-Hinweis fehlt");
       if (document.querySelectorAll(".workflow-nav").length !== 1) throw new Error("Parallele Navigation erkannt");
-      return "Start plus 4 Accordion-Gruppen, 17 fachliche Navigationsziele, lokales SVG-System, Einstellungen-Dummy und genau 2 Landingpage-Einstiege";
+      return "Start plus 3 Accordion-Gruppen, 18 Navigationsziele einschließlich getrenntem Archiv-Eintrag, lokales SVG-System, Einstellungen-Dummy und genau 2 Landingpage-Einstiege";
     });
   
     runCheck("Startseite", "Sicherungstab und Entschlackung", () => {
@@ -839,8 +840,8 @@
       if (start && start.querySelector("#finalizationStatusBox")) throw new Error("Finalisierungsblock steht noch auf der Startseite");
       if (!quality || !quality.querySelector("#finalizationStatusBox")) throw new Error("Finalisierungsblock fehlt in der Qualitätsprüfung");
       const html = buildBillingRecordsTableHtml();
-      if (!html.includes("Finalisieren") || !html.includes("Archivieren")) throw new Error("Startseitenaktionen für aktuelle Abrechnung fehlen");
-      if (!html.includes("Wiederbearbeiten")) throw new Error("Archivierte Abrechnungen haben keine Wiederbearbeiten-Aktion");
+      if (!html.includes("Abschließen") || !html.includes("Archivieren")) throw new Error("Startseitenaktionen für aktuelle Abrechnung fehlen");
+      if (!html.includes("Zur Korrektur öffnen")) throw new Error("Archivierte Abrechnungen haben keine Korrekturaktion");
       return "Finalisierung im Abrechnungskontext; Startseite zeigt nur Status/Aktionen je Abrechnung";
     });
   

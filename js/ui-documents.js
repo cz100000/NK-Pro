@@ -488,7 +488,7 @@ function renderBrief() {
 
   settingsEl.innerHTML =
     '<label>Mieter auswählen</label><select ' + uiActionAttributes("document.setBriefSetting", ["tenantId","$value"], "change") + '>' + tenantOptions + '</select>' +
-    '<div class="hint"><strong>Empfängeradresse und Anrede</strong> werden im Tab „Mieter & Wohnungen“ beim jeweiligen Mietverhältnis gepflegt.</div>' +
+    '<div class="hint"><strong>Empfängeradresse und Anrede</strong> werden im Tab „Mietverhältnisse“ beim jeweiligen Mietverhältnis gepflegt.</div>' +
     briefPreflightBoxHtml(briefPreflight) +
     printHardeningBoxHtml(printHardeningReport(calc, selected)) +
     briefSettlementSummaryHtml(selected) +
