@@ -81,3 +81,6 @@ Die produktive Oberfläche verwendet eine einheitliche äußere Seitenschale mit
 
 Die gelbe Abrechnungskontextleiste bleibt kompakt und zeigt ausschließlich Objekt, vollständigen Abrechnungszeitraum, Status und bestehende fachlich zulässige Kontextaktionen. Eine Modusangabe ist für sämtliche Zustände ausgeschlossen. Der Nur-ansehen-Zustand wird über die größere handlungsorientierte Schreibschutz-Notice und eingeschränkte Bedienmöglichkeiten vermittelt.
 
+## AP22F1B – Bereinigte Seitenköpfe
+
+Seitenköpfe konzentrieren sich auf Kontext, eindeutigen Haupttitel, kurze Beschreibung und höchstens eine fachlich passende führende Aktion. Sie enthalten keine statische Behauptung `Gespeichert` und keine redundanten lokalen Metadaten, wenn dieselbe Information bereits global oder im Fachinhalt vermittelt wird. Archiv, Datensicherung und Export besitzen keine allgemeine Speicheraktion im Kopf; ihre fachlich benannten Aktionen verbleiben im Inhalt.

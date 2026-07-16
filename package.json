@@ -1,8 +1,8 @@
 {
-  "name": "nk-pro-v99-4-34",
-  "version": "99.4.34",
+  "name": "nk-pro-v99-4-35",
+  "version": "99.4.35",
   "private": true,
-  "description": "AP22F1A – technisches globales Schalenfundament mit zentraler Seitenschale, H1-Seitenköpfen und Kontextleiste ohne Modusangabe",
+  "description": "AP22F1B – bereinigte zentrale Seitenköpfe ohne statische Speicherstatus, fachfremde Kopfaktionen oder redundante Metablöcke",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
     "test:fixtures": "node tools/check-fixtures.cjs",
@@ -10,7 +10,7 @@
     "test:browser": "playwright test",
     "test": "npm run test:syntax && npm run test:fixtures && npm run test:metering && npm run test:architecture && npm run test:contents && npm run test:release && npm run test:browser",
     "test:report": "playwright show-report",
-    "test:release": "node tests/ap22e-ui-design-contract.test.cjs",
+    "test:release": "npm run test:ap22f1b:static",
     "test:metering": "node tests/metering-domain.test.cjs && node tests/ap20-meter-start-regression.test.cjs && node tests/ap20-meter-calculation-regression.test.cjs && node tests/ap20-asset-refresh-regression.test.cjs",
     "test:architecture": "node tests/ap6-modularization.test.cjs && node tests/ap7-ui-integration.test.cjs && node tests/ap8-application-actions.test.cjs && node tests/ap9-core-orchestration.test.cjs && node tests/ap10-archive-year-quality-diagnostics.test.cjs && node tests/ap11-navigation.test.cjs && node tests/ap12-app-decoupling.test.cjs && node tests/ap13-letter-layout.test.cjs && node tests/ap14-ui-navigation.test.cjs && node tests/ap15-integration-release.test.cjs && node tests/ap17-area-dashboards.test.cjs && node tests/ap18-ui-ux-polish.test.cjs && node tests/ap19-billing-context-dashboards.test.cjs && node tests/ap20-central-quality-system.test.cjs && node tests/ap21-rule-audit.test.cjs && node tests/ap21a-ui-consolidation.test.cjs && node tests/ap21b1-navigation.test.cjs",
     "test:visual": "playwright test --project=ap11-navigation --grep \"Visuelle AP11-Referenzen\" --workers=1",
@@ -18,7 +18,7 @@
     "test:ap14": "node tests/ap14-ui-navigation.test.cjs && playwright test --project=ap14-ui-navigation --workers=1",
     "test:contents": "node tests/ap22e-ui-design-contract.test.cjs",
     "test:ap15": "node tests/ap15-integration-release.test.cjs && playwright test --project=ap15-integration-release --workers=1",
-    "release:check": "npm run test:syntax && npm run test:fixtures && npm run test:ap22f1a:static && npm run test:metering:ap21b1 && npm run test:architecture:ap21b2 && npm run test:ap21c",
+    "release:check": "npm run test:syntax && npm run test:fixtures && npm run test:ap22f1a:protected && npm run test:ap22f1b:static && npm run test:metering:ap21b1 && npm run test:architecture:ap21b2 && npm run test:ap21c",
     "test:ap17": "node tests/ap17-area-dashboards.test.cjs && playwright test --project=ap17-area-dashboards --workers=1",
     "test:ap18": "node tests/ap18-ui-ux-polish.test.cjs && playwright test --project=ap18-ui-ux-polish --workers=1",
     "test:ap19": "node tests/ap19-billing-context-dashboards.test.cjs && playwright test --project=ap19-billing-context-dashboards --workers=1",
@@ -48,7 +48,11 @@
     "test:ap22e:static": "node tests/ap22e-ui-design-contract.test.cjs",
     "test:ap22f1a:static": "node tests/ap22f1a-global-shell.test.cjs && node tests/ap22f1a-page-header-matrix.test.cjs && node tests/ap22f1a-protected-areas.test.cjs",
     "test:ap22f1a:browser": "playwright test tests/ap22f1a-global-shell.spec.js --workers=1",
-    "test:ap22f1a": "npm run test:ap22f1a:static && npm run test:ap22f1a:browser"
+    "test:ap22f1a": "npm run test:ap22f1a:static && npm run test:ap22f1a:browser",
+    "test:ap22f1b:static": "node tests/ap22f1b-page-header-cleanup.test.cjs && node tests/ap22f1b-action-redundancy.test.cjs && node tests/ap22f1b-protected-areas.test.cjs",
+    "test:ap22f1b:browser": "playwright test --project=ap22f1b-page-header-cleanup --workers=1",
+    "test:ap22f1b": "npm run test:ap22f1b:static && npm run test:ap22f1b:browser",
+    "test:ap22f1a:protected": "node tests/ap22f1a-protected-areas.test.cjs"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1"

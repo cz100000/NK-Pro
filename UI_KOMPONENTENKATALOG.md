@@ -33,3 +33,7 @@ Eine Variante wird nach fachlicher Aufgabe und Zustand gewählt. Seitenname, per
 ## Geschützte Bereiche
 
 Brief-, Druck-, PDF- und Dokumentausgaben sind keine App-UI-Komponenten dieses Katalogs. Die Navigation ist als Bestandskomponente dokumentiert, darf aber ohne gesonderte Freigabe nicht umgestaltet werden.
+
+## AP22F1B – Produktiver Seitenkopfstand
+
+Der zentrale Seitenkopf besitzt ab V99.4.35 zwei produktive Aktionsvarianten: Datenseite mit genau einer führenden `application.save`-Aktion und Fachseite ohne allgemeine Speicheraktion. Die frühere statische Statusvariante `[data-page-save-status]` ist entfallen. Lokale `.page-header__period`-Blöcke auf Objekt, Archiv, Mieterverwaltung, Wohnungsverwaltung, Datensicherung und Zähler sind entfernt; daraus entsteht keine neue Komponentensonderform.

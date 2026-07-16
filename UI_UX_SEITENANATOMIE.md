@@ -84,3 +84,10 @@ Dialoge werden nur für fokussierte Entscheidungen oder geschützte Aktionen ver
 - zusätzliche kleine Schreibschutzplakette im Seitenkopf.
 
 Doppelte Titel, redundante Statusangaben und unnötige Informationswiederholungen werden in späteren Migrationspaketen konkret benannt und nur nach Freigabe entfernt oder zusammengeführt.
+
+## AP22F1B – Varianten des Seitenkopfs
+
+- **Bearbeitbare Datenseite:** Identität plus genau eine führende Kopfaktion `Speichern`, sofern fachlich erforderlich.
+- **Fachseite mit eigenen Inhaltsaktionen:** Identität ohne allgemeine Kopfaktion; Archiv-, Sicherungs- und Exportaktionen stehen fachlich benannt im Inhalt.
+- **Schreibgeschützte Datenseite:** derselbe Seitenkopf, zentral ausgeblendete Speicheraktion und unveränderte große Schreibschutz-Notice mit `Zur Bearbeitung öffnen`.
+- **Nicht zulässig:** statischer Speicherstatus, redundanter lokaler Perioden-/Bestandsblock oder mehrere konkurrierende Speicherwege.

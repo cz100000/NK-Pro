@@ -1,3 +1,16 @@
+# V99.4.35 – AP22F1B Seitenkopf- und Redundanzbereinigung (2026-07-17)
+
+- alle 14 statischen Angaben `Gespeichert` aus produktiven Seitenköpfen entfernt,
+- statische Save-Status-Aktualisierung aus `js/ui-page-controller.js` entfernt,
+- sechs lokale `.page-header__period`-Blöcke entfernt,
+- allgemeine Kopfaktion `Speichern` auf Archiv, Datensicherung und Export entfernt,
+- auf „Individuelle Werte“ den Kopfbutton als einzigen führenden Speicherweg belassen,
+- fachliche Inhaltsaktionen, Reset, Import, Eingaben, Berechnungen und Quellen unverändert erhalten,
+- Referenzbibliothek und UI-/UX-Vertragsdokumente aktualisiert,
+- vier separate AP22F1B-Testdateien ergänzt,
+- Navigation, Kontextleiste, Zeitraum, Schreibschutz, Speichersemantik, Fachmodule und Dokumentausgabe hashgeschützt,
+- Release- und PWA-Kennungen auf V99.4.35 aktualisiert.
+
 # V99.4.34 – AP22F1A Globales Schalenfundament (2026-07-17)
 
 - globale Kopf-/Werkzeugleiste von einem konkurrierenden Seitentitel bereinigt,

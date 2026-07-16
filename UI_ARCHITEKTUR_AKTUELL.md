@@ -53,3 +53,9 @@ Die nicht produktive Referenzbibliothek liegt vollständig isoliert unter `ui-re
 Die Navigation aus V99.4.32 ist eine geschützte Bestandskomponente. Die im Styleguide dargestellte Navigation ist ausgeschlossen. Produktive HTML-, CSS-, JavaScript-, Manifest- und Service-Worker-Dateien bleiben in AP22E hash-identisch.
 
 Spätere UI-Arbeitspakete beginnen zwingend mit Bestandsanalyse, Redundanzvorschlag, Zielkomponentenzuordnung, Mockup, Datei-Positivliste, Abnahmekriterien, Testkonzept, Schutzliste und Nutzerfreigabe. Erst danach erfolgt eine vollständige Bereichsmigration einschließlich kontrollierter Legacy-Bereinigung.
+
+# V99.4.35 – AP22F1B Seitenkopf- und Redundanzbereinigung
+
+Die Seitenkopfstruktur bleibt statisch in `index.html` und wird durch `js/ui-page-controller.js` ausschließlich hinsichtlich Sichtbarkeit zulässiger Kopf-Speicheraktionen gesteuert. Der Controller erzeugt oder behauptet keinen Speicherstatus. Die tatsächliche Speichersemantik verbleibt vollständig bei `application.save`/`saveData()` und der Persistenzschicht.
+
+`js/ui-individual-values.js` rendert keine allgemeine Speicheraktion mehr in Kostenartenkarten. Archiv, Datensicherung und Export besitzen ausschließlich ihre vorhandenen fachlichen Inhaltsaktionen. Navigation, Abrechnungskontext, Zeitraum- und Schreibschutzlogik sind architektonisch unverändert.

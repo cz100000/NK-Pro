@@ -48,9 +48,9 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.34";
-const APP_VERSION_NAME = "AP22F1A-Globales-Schalenfundament";
-const APP_RELEASE_DATE = "2026-07-16";
+const APP_VERSION = "V99.4.35";
+const APP_VERSION_NAME = "AP22F1B-Seitenkopf-und-Redundanzbereinigung";
+const APP_RELEASE_DATE = "2026-07-17";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
 const ARCHIVE_SNAPSHOT_SCOPE = "billingSnapshot";
@@ -115,6 +115,7 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
+  "V99.4.35 entfernt statische Speicherbehauptungen und lokale Metablöcke aus zentralen Seitenköpfen, reduziert allgemeine Kopf-Speicheraktionen auf fachlich passende Datenseiten und belässt auf Individuelle Werte genau einen führenden Speicherweg; Fachlogik, Persistenz und Dokumentausgabe bleiben unverändert.",
   "V99.4.34 führt das globale Schalenfundament mit zentraler Seitenschale, eindeutigen H1-Seitenköpfen und einer Abrechnungskontextleiste ohne Modusangabe ein; Navigation, Fachlogik und Dokumentausgabe bleiben unverändert.",
   "V99.4.32 vereinheitlicht fünf produktive Dialoge und zentrale Inhaltszustände einschließlich Fokusführung, Fokusfalle, Fokusrückgabe, Escape-/Hintergrundregeln und geschützter destruktiver Aktionen; Fachlogik und Dokumentausgabe bleiben unverändert.",
   "V99.4.31 migriert produktive Tabellen, Listen und tabellenbezogene Werkzeugleisten auf die zentrale nk-ui-Bibliothek; Druck- und Briefdarstellungen bleiben ausdrücklich unverändert.",

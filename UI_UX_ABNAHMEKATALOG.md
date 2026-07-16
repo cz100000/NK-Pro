@@ -99,3 +99,13 @@ Eine Seite ist nur migriert, wenn alle anwendbaren Punkte mit **bestanden**, **n
 | Visuell geprüft | Referenz- und Responsive-Abgleich bestanden. |
 | Legacy bereinigt | Lokale Altvarianten im Bereich entfernt. |
 | Abgeschlossen | Alle anwendbaren Kriterien und Regression bestanden. |
+
+## AP22F1B – Seitenkopf- und Redundanzabnahme
+
+- [x] In produktiven Seitenköpfen existiert kein `[data-page-save-status]`.
+- [x] Auf den sechs freigegebenen Seiten existiert kein `.page-header__period`.
+- [x] Exakt elf freigegebene Datenseiten besitzen je einen Kopfbutton `Speichern`.
+- [x] `archiv`, `sicherung` und `export` besitzen keinen allgemeinen Kopfbutton `Speichern`.
+- [x] `manuellewerte` besitzt genau einen führenden Speicherweg; Reset, Import und Eingaben bleiben erhalten.
+- [x] Schreibschutz-Notice, `Zur Bearbeitung öffnen`, Kontextleiste und Zeitraumsektion bleiben unverändert.
+- [x] Sechs Ziel-Viewports weisen keinen unbeabsichtigten Dokument-Overflow auf; Fokus und Aktionsstapelung bleiben sichtbar.

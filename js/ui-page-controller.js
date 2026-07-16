@@ -334,8 +334,6 @@ function updateAllPageHeaders() {
     const page=document.querySelector('[data-page-tab="'+tabId+'"]');
     if (!page) return;
     const billingPage=BILLING_NAV_TABS.includes(tabId);
-    const status=page.querySelector('[data-page-save-status]');
-    if (status) status.textContent=billingPage?(open?"Gespeichert":"Keine Abrechnung geöffnet"):"Gespeichert";
     const saveButton=page.querySelector('[data-page-save]');
     if (saveButton&&billingPage) {
       saveButton.hidden=readOnly||!open;

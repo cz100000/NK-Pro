@@ -1,3 +1,17 @@
+# Teststand V99.4.35 / AP22F1B
+
+Neue separate Prüfungen:
+
+```text
+npm run test:ap22f1b:static
+npm run test:ap22f1b:browser
+npm run release:check
+```
+
+Die statischen Tests prüfen die 18-Seiten-Matrix, die elf zulässigen Kopf-Speicheraktionen, die entfernten Status-/Metablöcke, die Aktionsredundanz auf `manuellewerte` und die Schutz-Hashes. Der Chromium-Test prüft sechs Viewports sowie Nur-ansehen, Fokus, Aktionsstapelung und Overflow.
+
+`release:check` verwendet die weiterhin gültigen AP22F1A-Schutzprüfungen und die aktuellen AP22F1B-Tests. Historische Tests mit fest verdrahteten früheren AP-, Versions-, Navigations- oder Modusannahmen bleiben unverändert und sind in `AP22F1B_PRUEFBERICHT.md` dokumentiert.
+
 # AP21C-Prüfstand V99.4.28
 
 Neue separate Tests: `tests/ap21c-individual-values.test.cjs` und `tests/ap21c-individual-values.spec.js`. Bestehende Regressionstests wurden nicht verändert.

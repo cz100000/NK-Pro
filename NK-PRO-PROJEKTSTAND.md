@@ -1,3 +1,11 @@
+# Projektstand V99.4.35 – AP22F1B Seitenkopf- und Redundanzbereinigung
+
+AP22F1B ist technisch abgeschlossen. Alle statischen Speicherstatus in produktiven Seitenköpfen, sechs freigegebene lokale Kopf-Metablöcke sowie die fachfremden allgemeinen Kopf-Speicheraktionen auf Archiv, Datensicherung und Export sind entfernt. Auf „Individuelle Werte“ besteht genau ein führender Speicherweg im Seitenkopf.
+
+Die zentrale Seitenschale aus AP22F1A bleibt erhalten. Navigation, Abrechnungskontext, Zeitraumsektion, Schreibschutz, Fachlogik, Berechnungen, Datenmodell, Persistenz, Migration, Backup/Restore, Archiv, Import/Export, Prüfregeln, Brief, Druck und PDF sind geschützt unverändert. Datenschema 5 und Datenebenenvertrag 1 bleiben bestehen.
+
+Ein nächstes produktives UI-Paket wird erst nach gesonderter Bestandsanalyse, Planung und Freigabe festgelegt. Die geschützte Zeitraumsektion auf `start` ist kein Restpunkt von AP22F1B.
+
 # Projektstand V99.4.34 – AP22F1A Globales Schalenfundament
 
 AP22F1A ist technisch abgeschlossen. Die globale Kopf-/Werkzeugleiste, die gelbe Abrechnungskontextleiste, die äußere Seitenschale und die Seitenköpfe sind zentralisiert. Alle 18 sichtbaren Ansichten besitzen genau eine `nk-ui-page-shell`, einen `nk-ui-page-header` und ein sichtbares `h1`.

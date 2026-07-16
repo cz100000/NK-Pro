@@ -36,3 +36,16 @@ Jede Zeile wird in einem späteren Paket zuerst als konkreter Vorschlag mit betr
 ## AP22F1A-Querschnittsstatus
 
 Unabhängig vom weiterhin offenen Inhaltsmigrationsstatus jeder Tabellenzeile sind seit AP22F1A alle 18 sichtbaren Ansichten hinsichtlich äußerer Seitenschale, zentralem Seitenkopf, eindeutiger H1-Semantik und globalem Responsive-Grundlayout migriert. Karten, Tabellen, Formulare, Dialoge, Klappboxen, lokale Metablöcke und Save-Aktionen bleiben in den jeweiligen Zeilen offen.
+
+## AP22F1B-Querschnittsstatus
+
+| Bereich | AP22F1B-Status |
+|---|---|
+| Alle 18 sichtbaren Ansichten | statische Kopf-Speicherstatus vollständig entfernt |
+| `objekt`, `mieterverwaltung`, `wohnungsverwaltung`, `qualitaet`, `einstellungen`, `mieter`, `einnahmen`, `manuellewerte`, `umlage`, `vorauszahlungsanpassung`, `briefe` | genau eine zulässige Kopf-Speicheraktion |
+| `archiv`, `sicherung`, `export` | allgemeine Kopf-Speicheraktion entfernt; fachliche Inhaltsaktionen erhalten |
+| `objekt`, `archiv`, `mieterverwaltung`, `wohnungsverwaltung`, `sicherung`, `wasser` | lokaler Kopf-Metablock entfernt |
+| `manuellewerte` | wiederholte Karten-Speicheraktion entfernt; ein führender Speicherweg |
+| `start`/`#billingPeriodSection` | geschützt und ausdrücklich nicht migriert |
+
+Der Inhaltsmigrationsstatus für Karten, Tabellen, Formulare, Dialoge und Klappboxen bleibt durch AP22F1B unverändert.

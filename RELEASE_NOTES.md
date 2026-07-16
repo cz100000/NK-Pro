@@ -1,3 +1,11 @@
+# Release V99.4.35 – AP22F1B Seitenkopf- und Redundanzbereinigung
+
+AP22F1B bereinigt ausschließlich Redundanzen in den bereits zentralisierten Seitenköpfen. Dauerhafte statische Angaben `Gespeichert` entfallen vollständig. Die sechs freigegebenen lokalen Kopf-Metablöcke wurden ohne Ersatz entfernt. Archiv, Datensicherung und Export verwenden keine allgemeine Kopfaktion `Speichern` mehr, sondern ausschließlich ihre vorhandenen fachlich benannten Inhaltsaktionen.
+
+Auf „Individuelle Werte“ ist der Speicherbutton im Seitenkopf der einzige führende Speicherweg; wiederholte Karten-Speicheraktionen sind entfernt. Reset, Import, Eingabefelder, Datenquellen, Summenabgleich, Filter, Zählerfunktionen und Berechnungen bleiben unverändert.
+
+Nicht verändert wurden Navigation, gelbe Abrechnungskontextleiste, Zeitraumsektion, Schreibschutz-Notice und `Zur Bearbeitung öffnen`, Save-/Dirty-State-Semantik, Fachlogik, Datenschema 5, Persistenz, Migration, Backup/Restore, Archiv, Import/Export, Prüfregeln, Brief, Druck und PDF.
+
 # Release V99.4.34 – AP22F1A Globales Schalenfundament
 
 AP22F1A setzt ausschließlich die globale äußere UI-Schale um. Jede der 18 sichtbaren produktiven Ansichten besitzt nun genau eine zentrale Seitenschale, einen zentralen Seitenkopf und einen sichtbaren Haupttitel als `h1`. Die Inhaltsbreiten sind zentral als `narrow` 760 px, `default` 1180 px und `wide` 1440 px definiert; die Seiteninnenabstände betragen 32 px, unter 1280 px 24 px und unter 620 px 16 px.

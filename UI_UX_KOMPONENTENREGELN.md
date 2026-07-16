@@ -255,3 +255,7 @@ Sichtbarer 3-px-Fokusring mit Offset, keine Layoutsprünge. Logische DOM- und Fo
 - **Niedrige Höhe:** unter 700 px; Dialog- und Inhaltsbereiche kontrolliert scrollbar.
 
 Komponenten dürfen keine unbeabsichtigte horizontale Gesamtseiten-Scrollleiste erzeugen.
+
+## AP22F1B – Status- und Aktionsplatzierung
+
+`nk-ui-page-header` zeigt keinen statischen Save-Status. Erfolg und Fehler einer tatsächlichen Speicheraktion werden über die bestehende zeitbezogene Rückmeldung vermittelt. `application.save` darf je sichtbarer Datenseite höchstens einmal als führende Kopfaktion vorkommen. Karten oder Formularabschnitte wiederholen diese allgemeine Aktion nicht. Fachaktionen wie Sichern, Importieren, Exportieren, Drucken, Archivieren oder Zurücksetzen behalten ihre fachliche Benennung und ihren fachlichen Inhaltsort.

@@ -1,7 +1,7 @@
 # NK-Pro – Verbindlicher UI-/UX-Designvertrag
 
-**Vertragsstand:** AP22F1A / V99.4.34  
-**Technische Produktbasis:** V99.4.34 / AP22F1A  
+**Vertragsstand:** AP22F1B / V99.4.35  
+**Technische Produktbasis:** V99.4.35 / AP22F1B  
 **Geltung:** alle späteren produktiven UI-Arbeitspakete
 
 ## 1. Zweck und Geltungsbereich
@@ -115,3 +115,9 @@ Visuelle Vereinfachung darf keine Fachinformation, Aktion, Prüfung, Datenquelle
 11. erst danach technische Umsetzung
 
 Die Migration erfolgt hybrid: zentrale Komponenten werden vervollständigt; anschließend werden zusammengehörige Seitenbereiche vollständig migriert, lokale Altstile entfernt, visuell und funktional abgeschlossen und erst danach der nächste Bereich begonnen.
+
+## 13. AP22F1B – Seitenkopf- und Aktionsregel
+
+Produktive Seitenköpfe dürfen keinen statischen Speicherzustand behaupten. Eine Speicherinformation wird nur als zeitbezogene Rückmeldung nach einer tatsächlichen Aktion ausgegeben. Lokale Kopf-Metablöcke sind nur zulässig, wenn sie eine eigenständige, nicht bereits global dargestellte und freigegebene Funktion besitzen.
+
+Eine allgemeine Kopfaktion `Speichern` ist nur auf bearbeitbaren Datenseiten zulässig und dort höchstens einmal als führender Speicherweg. Fachseiten für Archiv, Datensicherung oder Export verwenden ausschließlich fachlich benannte Inhaltsaktionen. Die Sichtbarkeits- und Schreibschutzsteuerung der zulässigen Kopfaktionen bleibt zentral.
