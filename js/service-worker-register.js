@@ -1,7 +1,7 @@
 (function() {
   "use strict";
 
-  const BUILD_ID = "99.4.23-ap20-corr3";
+  const BUILD_ID = "99.4.30-ap22b";
   const RELOAD_KEY = "nkpro_service_worker_reload_" + BUILD_ID;
 
   if (!("serviceWorker" in navigator) || location.protocol === "file:") return;

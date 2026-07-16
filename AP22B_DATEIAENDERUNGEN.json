@@ -1,0 +1,23 @@
+{
+  "version": "99.4.30",
+  "workPackage": "AP22B",
+  "productFiles": [
+    "assets/app.css",
+    "index.html",
+    "js/ui-design-system.js",
+    "js/app-runtime-config.js",
+    "service-worker.js",
+    "js/service-worker-register.js",
+    "manifest.webmanifest",
+    "package.json",
+    "package-lock.json",
+    "nk-pro-project.json"
+  ],
+  "productFileCount": 10,
+  "existingRegressionTestsChanged": false,
+  "testInfrastructure": [
+    "playwright.config.cjs",
+    "tests/ap22b-ui-base-components.test.cjs",
+    "tests/ap22b-ui-base-components.spec.js"
+  ]
+}

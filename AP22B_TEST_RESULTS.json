@@ -1,0 +1,37 @@
+{
+  "version": "99.4.30",
+  "workPackage": "AP22B",
+  "status": "passed",
+  "syntax": {
+    "status": "passed",
+    "javascriptUnits": 55
+  },
+  "fixtures": {
+    "status": "passed",
+    "referenceCases": 6
+  },
+  "metering": {
+    "status": "passed",
+    "tests": 3
+  },
+  "architecture": {
+    "status": "passed",
+    "tests": 7
+  },
+  "ap21cCompatibility": "passed",
+  "staticAp22b": "passed",
+  "browserAp22b": {
+    "status": "passed",
+    "tests": 1,
+    "chromium": "/usr/bin/chromium"
+  },
+  "releaseContents": {
+    "status": "passed",
+    "filesChecked": 268
+  },
+  "existingRegressionTestsChanged": false,
+  "productFileCount": 10,
+  "releaseReopen": "passed",
+  "releaseStart": "passed",
+  "checksumVerification": "passed"
+}

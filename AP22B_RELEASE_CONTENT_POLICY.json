@@ -1,0 +1,11 @@
+{
+  "version": "99.4.30",
+  "workPackage": "AP22B",
+  "exclude": [
+    "node_modules",
+    "test-results",
+    "playwright-report",
+    ".git"
+  ],
+  "temporaryArtifactsAllowedInRelease": false
+}
