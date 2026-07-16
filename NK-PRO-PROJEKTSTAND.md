@@ -1,6 +1,12 @@
-# Projektstand V99.4.24 / AP21A
+# Projektstand V99.4.28 – AP21C
 
-AP21A ist abgeschlossen. AP21 wird anschließend mit der fachlichen Einzelprüfung der verbleibenden Regeln fortgesetzt.
+AP21C ist abgeschlossen. Die Seite „Individuelle Werte“ wurde visuell und strukturell konsolidiert; Navigation, Datenlogik und Persistenz blieben unverändert. Nächstes Paket: AP21D.
+
+# Projektstand V99.4.26 / AP21B1
+
+AP21B1 ist abgeschlossen. Die linke Navigation wurde als eigenständiges, klar abgegrenztes Paket umgesetzt. Sichtbar sind drei Hauptbereiche: „Projekt vorbereiten“, „Nebenkosten abrechnen“ und „Archiv“. Die Arbeitsweiche bleibt über Logo und Zurück-Button erreichbar; entfernte sichtbare Arbeitsschritte bleiben über ihre bestehenden Seitenschlüssel und Direkteinstiege kompatibel.
+
+Betroffene Produktdateien: zehn. Nicht betroffen sind Fachlogik, Speicher-/Dirty-State, Persistenz, Migration, Snapshot, Archivfachlogik, Briefe, Druck und Export. Nächster geplanter Stand: AP21B2.
 
 # NK-Pro – Projektstand
 
@@ -29,3 +35,6 @@ Berechnungsformeln, Abrechnungsergebnisse, Arbeitsweiche, AP13-Brieflayout, Druc
 ## Nächster Stand
 
 AP21 ist offen und nicht Bestandteil dieses Releases.
+
+## V99.4.29 – AP22A UI-Bibliothek
+AP22A führt den zentralen Namensraum `nk-ui-*`, kanonische `--nk-ui-*`-Design-Tokens, eine JavaScript-Metadaten-Schnittstelle sowie Katalog und Migrationsmatrix ein. Bestehende Fachseiten und Altvarianten bleiben unverändert; die kontrollierte Migration folgt in separaten AP22-Paketen.

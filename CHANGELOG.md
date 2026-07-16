@@ -1,3 +1,23 @@
+# V99.4.28 – AP21C Individuelle Werte (2026-07-16)
+
+- Seite „Individuelle Werte“ in klar getrennte Status-, Filter- und Kostenarten-Arbeitsbereiche gegliedert.
+- Ergebnisanzahl des aktiven Filters ergänzt.
+- Kostenarten-Klappboxen, zentrale Zählerquelle, Direkteinstiege und Schreibschutz unverändert erhalten.
+- Responsive-Darstellung und sichtbarer Tastaturfokus konsolidiert.
+- Fachlogik, Berechnungen, Persistenz, Navigation und bestehende Regressionstests unverändert.
+
+# V99.4.26 – AP21B1 Navigation (2026-07-16)
+
+- linke Navigation nach der verbindlichen Referenz auf 256 px Desktopbreite umgestellt,
+- sichtbaren zusätzlichen Start-Menüpunkt entfernt; Arbeitsweiche bleibt über Logo und runden Zurück-Button erreichbar,
+- Reihenfolge auf vier Schritte unter „Projekt vorbereiten“ und acht Schritte unter „Nebenkosten abrechnen“ reduziert,
+- „Prüfung & Freigabe“ unmittelbar vor „Briefe“ einsortiert,
+- „Archiv“ als eigenen Hauptbereich mit „Archivübersicht“ ausgeführt,
+- aktive, Hover- und Tastaturfokus-Zustände sowie unabhängige Klappbereiche und Responsive-Overlay abgesichert,
+- bestehende Seitenschlüssel und Direkteinstiege für Objektübersicht, Vorauszahlungsanpassung, Export und Sicherung kompatibel erhalten,
+- interne Navigationsdiagnose und neue separate AP21B1-Struktur-/Chromium-Tests ergänzt,
+- Datenschema 5, Datenebenenvertrag 1, Fachlogik, Persistenz, Archivlogik, Briefe, Druck und Export unverändert gelassen.
+
 # V99.4.24 – AP21A (2026-07-16)
 
 - Navigation und Terminologie konsolidiert.
@@ -635,3 +655,6 @@ Die detaillierte frühere Historie bleibt in der Anwendung und im Versionsverlau
 - Gemischte Laufzeitstände aus altem Zähler-JavaScript und aktuellem HTML verhindert.
 - Browserregression für `29774 → Eingabe 297,74 → 31,74 m³` ergänzt.
 - PWA-Cache auf `nk-pro-v99-4-23-ap20-corr3` angehoben.
+
+## V99.4.29 – AP22A UI-Bibliothek
+AP22A führt den zentralen Namensraum `nk-ui-*`, kanonische `--nk-ui-*`-Design-Tokens, eine JavaScript-Metadaten-Schnittstelle sowie Katalog und Migrationsmatrix ein. Bestehende Fachseiten und Altvarianten bleiben unverändert; die kontrollierte Migration folgt in separaten AP22-Paketen.

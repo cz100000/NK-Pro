@@ -1,6 +1,12 @@
-# NK-Pro V99.4.24
+# NK-Pro V99.4.28 – AP21C Individuelle Werte
 
-Aktueller Stand: AP21A – UI-Konsolidierung, Navigationsvereinfachung und individuelle Werte. Details: `AP21A_UI_KONSOLIDIERUNG_NAVIGATION_INDIVIDUELLE_WERTE.md`.
+Aktueller Release mit konsolidierter Arbeitsoberfläche für individuelle Werte. Datenschema 5 und Datenebenenvertrag 1 bleiben unverändert.
+
+# NK-Pro V99.4.26
+
+Aktueller Stand: **AP21B1 – Navigation**. Die linke Navigation folgt der freigegebenen Referenz mit 256 px Desktopbreite, eigener Archivgruppe und Startzugang ausschließlich über Logo beziehungsweise Zurück-Button. Datenschema 5 und Datenebenenvertrag 1 sind unverändert.
+
+Für die AP21B1-Abnahme: `npm run test:ap21b1`. Die vollständige Releaseprüfung wird über `npm run release:check` ausgeführt.
 
 # NK-Pro V99.4.23
 
@@ -49,3 +55,6 @@ Die für Zählerberechnung und Ereignissteuerung maßgeblichen JavaScript-Dateie
 ## Korrekturstand 2
 
 Die Zählerstandstabellen berechnen Verbrauch, Zeilensumme und Gesamtsumme nun bereits während der Eingabe. Enter speichert den Wert zuverlässig. Dezimalkomma und Dezimalpunkt werden bei Zählerständen korrekt verarbeitet. Die Live-Vorschau schreibt erst beim bestätigten Commit in den Datensatz.
+
+## V99.4.29 – AP22A UI-Bibliothek
+AP22A führt den zentralen Namensraum `nk-ui-*`, kanonische `--nk-ui-*`-Design-Tokens, eine JavaScript-Metadaten-Schnittstelle sowie Katalog und Migrationsmatrix ein. Bestehende Fachseiten und Altvarianten bleiben unverändert; die kontrollierte Migration folgt in separaten AP22-Paketen.

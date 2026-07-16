@@ -1,0 +1,52 @@
+{
+  "version": "99.4.28",
+  "workPackage": "AP21C",
+  "productFileCount": 9,
+  "files": [
+    {
+      "file": "index.html",
+      "type": "Produkt",
+      "reason": "Arbeitsbereiche, Überschriften und Ergebnisanzeige der Seite Individuelle Werte"
+    },
+    {
+      "file": "assets/app.css",
+      "type": "Produkt",
+      "reason": "Seitenbezogenes Layout, Responsive-Regeln und Fokuszustände"
+    },
+    {
+      "file": "js/ui-individual-values.js",
+      "type": "Produkt",
+      "reason": "Dynamische Ergebnisanzahl und konsolidierte Darstellung"
+    },
+    {
+      "file": "js/app-runtime-config.js",
+      "type": "Produkt",
+      "reason": "Releaseversion V99.4.28/AP21C"
+    },
+    {
+      "file": "service-worker.js",
+      "type": "Produkt",
+      "reason": "Releasecache V99.4.28"
+    },
+    {
+      "file": "manifest.webmanifest",
+      "type": "Produkt",
+      "reason": "PWA-Version V99.4.28"
+    },
+    {
+      "file": "package.json",
+      "type": "Produkt",
+      "reason": "Paketmetadaten und AP21C-Prüfskript"
+    },
+    {
+      "file": "package-lock.json",
+      "type": "Produkt",
+      "reason": "Synchronisierte Paketmetadaten"
+    },
+    {
+      "file": "nk-pro-project.json",
+      "type": "Produkt",
+      "reason": "Projekt- und Seitenstrukturversion"
+    }
+  ]
+}

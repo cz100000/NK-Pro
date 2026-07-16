@@ -1,5 +1,5 @@
-const CACHE_NAME = "nk-pro-v99-4-26-ap21b";
-const BUILD_ID = "99.4.26-ap21b";
+const CACHE_NAME = "nk-pro-v99-4-29-ap22a";
+const BUILD_ID = "99.4.29-ap22a";
 const CACHE_PREFIX = "nk-pro-";
 const APP_SHELL = [
   "./",
@@ -45,6 +45,8 @@ const APP_SHELL = [
   "./js/document-renderer.js",
   "./js/export-service.js",
   "./js/ui-table-tools.js",
+  "./js/ui-design-system.js",
+  "./js/ui-design-system.js?v=" + BUILD_ID,
   "./js/app-bootstrap.js",
   "./js/compatibility.js",
   "./js/default-seed.js",
@@ -54,8 +56,6 @@ const APP_SHELL = [
   "./js/ui-master-data.js",
   "./js/ui-quality.js",
   "./js/ui-costs.js",
-  "./js/ui-billing-overview.js",
-  "./js/ui-billing-overview.js?v=" + BUILD_ID,
   "./js/ui-navigation-pages.js",
   "./js/ui-archive-pages.js",
   "./js/browser-io.js",

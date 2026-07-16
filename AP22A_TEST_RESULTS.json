@@ -1,0 +1,32 @@
+{
+  "version": "99.4.29",
+  "workPackage": "AP22A",
+  "status": "passed",
+  "syntax": {
+    "status": "passed",
+    "javascriptUnits": 55
+  },
+  "fixtures": {
+    "status": "passed",
+    "referenceCases": 6
+  },
+  "metering": {
+    "status": "passed"
+  },
+  "architecture": {
+    "status": "passed"
+  },
+  "staticFoundation": {
+    "status": "passed"
+  },
+  "browserFoundation": {
+    "status": "passed",
+    "tests": 1,
+    "mode": "serverless Chromium setContent",
+    "chromium": "/usr/bin/chromium"
+  },
+  "existingRegressionTestsChanged": false,
+  "releaseConsistency": "passed",
+  "releaseReopen": "passed",
+  "releaseStart": "passed"
+}

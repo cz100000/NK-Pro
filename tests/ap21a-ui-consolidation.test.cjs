@@ -2,10 +2,10 @@
 const fs=require("node:fs"),path=require("node:path"),crypto=require("node:crypto");
 const root=path.resolve(__dirname,".."); const read=f=>fs.readFileSync(path.join(root,f),"utf8"); const json=f=>JSON.parse(read(f)); const assert=(v,m)=>{if(!v)throw new Error(m);};
 const html=read("index.html"),css=read("assets/app.css"),runtime=read("js/app-runtime-config.js"),pages=read("js/ui-navigation-pages.js"),controller=read("js/ui-page-controller.js"),individual=read("js/ui-individual-values.js"),workflow=read("js/billing-workflow.js"),context=read("js/billing-context.js"),project=json("nk-pro-project.json");
-assert(["99.4.24","99.4.25","99.4.26"].includes(project.appVersion)&&project.schemaVersion===5&&project.dataLayerContractVersion===1,"AP21A-Bestand oder Datenverträge sind inkonsistent.");
+assert(project.appVersion==="99.4.24"&&project.schemaVersion===5&&project.dataLayerContractVersion===1,"AP21A-Version oder Datenverträge sind inkonsistent.");
 assert(project.uiConsolidationVersion===1&&project.individualValuesPageVersion===1&&project.navigationTerminologyVersion===1&&project.globalSpacingGridVersion===1,"AP21A-Funktionsmetadaten fehlen.");
 const labels=[...html.matchAll(/class="nav-item-label">([^<]+)<\/span>/g)].map(m=>m[1].replace(/&amp;/g,"&"));
-assert(["Übersicht","Mietverhältnisse","Vorauszahlungen","Gesamtkosten","Individuelle Werte","Abrechnungsergebnis","Prüfung","Vorauszahlungsanpassung","Briefe","Export","Archiv"].every(label=>labels.includes(label)),"Freigegebene Menübezeichnungen fehlen.");
+assert(JSON.stringify(labels.slice(6,17))===JSON.stringify(["Übersicht","Mietverhältnisse","Vorauszahlungen","Gesamtkosten","Individuelle Werte","Abrechnungsergebnis","Prüfung","Vorauszahlungsanpassung","Briefe","Export","Archiv"]),"Freigegebene Menübezeichnungen fehlen.");
 for(const title of ["Nebenkostenabrechnung – Übersicht","Mietverhältnisse prüfen und bearbeiten","Vorauszahlungen erfassen","Gesamtkosten erfassen","Individuelle Werte und Verbräuche erfassen","Ergebnis der Abrechnung","Abrechnung prüfen und freigeben","Vorauszahlungen für das Folgejahr anpassen","Abrechnungsbriefe erstellen","Abrechnung exportieren","Abrechnungsarchiv"])assert(html.includes(title),`Seitentitel fehlt: ${title}`);
 assert(!html.includes('data-tab="verbraeuche"')&&html.includes('id="verbraeuche"')&&html.includes('data-legacy-redirect="manuellewerte"'),"Legacy-Seitenschlüssel ist nicht kompatibel umgeleitet.");
 assert(pages.includes('legacyTarget === "verbraeuche"')&&pages.includes('tabId = "manuellewerte"'),"Laufzeitweiterleitung der alten Verbrauchsseite fehlt.");
@@ -20,11 +20,9 @@ assert(css.includes('--ap21a-space-xs:4px')&&css.includes('app-main > .wrap { pa
 for(const selector of [".individual-cost-card",".individual-cost-status--complete",".individual-source-control",".individual-meter-source",".nav-archive-entry"])assert(css.includes(selector),`AP21A-Komponentenstil fehlt: ${selector}`);
 assert(pages.includes('Diese Abrechnung ist schreibgeschützt.')&&pages.includes('Änderungen sind erst nach dem Öffnen zur Bearbeitung möglich.')&&pages.includes('Zur Bearbeitung öffnen'),"Einheitliche Ansichtsmodus-Hinweisbox fehlt.");
 assert(!html.includes('data-page-readonly')&&!pages.includes('Schreibgeschützte Ansicht'),"Redundante Schreibschutzkennzeichnung ist noch vorhanden.");
-assert(controller.includes('billingWorkflowEntries:!!billingDashboard&&!!globalThis.NKProBillingOverview&&globalThis.NKProBillingOverview.describe().workflowSteps===6'),"AP21B-Prozessübersicht ist nicht auf sechs freigegebene Arbeitsschritte konsolidiert.");
+assert(controller.includes('billingWorkflowEntries:!!billingDashboard&&billingDashboard.querySelectorAll(\'.workflow-stage\').length===10'),"Konsolidierte Prozessübersicht ist nicht auf zehn Direkteinstiege reduziert.");
 assert(context.includes('stored === "verbraeuche" ? "manuellewerte"')&&context.includes('step = String(tabId || "") === "verbraeuche" ? "manuellewerte"'),"Gespeicherte alte Seitenschlüssel werden nicht kompatibel behandelt.");
-const qualityRules=read("js/quality-rules.js");
-assert((qualityRules.match(/rule\("NKP-[A-Z]+-\d+"/g)||[]).length===42,"Der freigegebene AP21-Regelbestand wurde verändert.");
-assert(qualityRules.includes('rule("NKP-FACH-001","Abrechnungszeitraum ist gültig"')&&qualityRules.includes('targetSelector:"[data-billing-overview-period-correction]"'),"NKP-FACH-001 oder sein AP21B-Direkteinstieg fehlt.");
-assert(qualityRules.includes('rule("NKP-FACH-002","Mindestens eine aktive Wohnung ist vorhanden"'),"NKP-FACH-002 wurde verändert oder entfernt.");
+const qualityHash=crypto.createHash("sha256").update(read("js/quality-rules.js")).digest("hex");
+assert(qualityHash==="5f03547b5b3c48aaf143b50f1b62e6f87539aaf02cee467c4e634279430012b4","Fachliche Prüfregeln wurden in AP21A verändert.");
 assert(read("AP21_REGEL_001_NKP_FACH_001.md").includes("NKP-FACH-001")&&read("AP21_REGEL_002_NKP_FACH_002.md").includes("Korrekturentscheidung ausstehend"),"AP21-Regelstand ist nicht erhalten.");
 process.stdout.write("AP21A-Strukturprüfung abgeschlossen: Navigation, gemeinsame Werteseite, Zählerquelle, Schreibschutz, Layout und unveränderte Fachregeln sind konsistent.\n");

@@ -1,6 +1,14 @@
-# UI-Architektur V99.4.24 / AP21A
+# AP21C – UI-Architektur Individuelle Werte
 
-Die gemeinsame Seite `manuellewerte` wird durch `js/ui-individual-values.js` gerendert; der historische Schlüssel `verbraeuche` bleibt als kompatible Weiterleitung bestehen.
+Die Seite nutzt weiterhin `index.html` als statischen Rahmen, `assets/app.css` für seitenbezogene Darstellung und `js/ui-individual-values.js` für dynamische Kostenarten- und Filterdarstellung. Fach- und Persistenzzugriffe verbleiben in den bestehenden zentralen Modulen.
+
+# UI-Architektur V99.4.26 / AP21B1
+
+Die linke Navigation besteht aus den drei unabhängig klappbaren Gruppen `object`, `billing` und `archive`. `js/navigation.js` hält die Gruppenpräferenz unter `nkpro.workflowNavigation.v6`, migriert ältere Präferenzen und ordnet `archiv` dem eigenständigen Archivbereich zu.
+
+Die sichtbare Navigation enthält 13 Ziele. Die Seiten `objektuebersicht`, `vorauszahlungsanpassung`, `export` und `sicherung` bleiben als kompatible Direkteinstiege im DOM und in der Seitensteuerung erhalten, werden aber nicht als reguläre Navigationsschritte angezeigt. Die Arbeitsweiche ist ausschließlich über `.sidebar-brand-home` und `#sidebarCollapseTop` erreichbar.
+
+Desktopbreite, Zustände und Responsive-Overlay liegen ausschließlich im AP21B1-Navigationsblock von `assets/app.css`. Fach- und Datenzustände werden durch die Navigation nicht mutiert.
 
 # NK-Pro – UI-Architektur V99.4.23
 
@@ -25,3 +33,6 @@ Der AP19-Kontext besitzt weiterhin `closed`, `edit` und `view`. Zehn Abrechnungs
 ## Barrierefreiheit und Responsivität
 
 Status werden mit Text statt nur Farbe kommuniziert. Fokuszustände sind sichtbar. Aufklappgruppen und Dialoge besitzen nachvollziehbare Beschriftungen. AP20 ergänzt Breakpoints bei 900 und 620 Pixeln sowie Regeln für geringe Höhe, Kartenstapel, Aktionsumbruch und kontrollierte Langtexte. Eine vollständige mobile Neuentwicklung bleibt außerhalb AP20.
+
+## V99.4.29 – AP22A UI-Bibliothek
+AP22A führt den zentralen Namensraum `nk-ui-*`, kanonische `--nk-ui-*`-Design-Tokens, eine JavaScript-Metadaten-Schnittstelle sowie Katalog und Migrationsmatrix ein. Bestehende Fachseiten und Altvarianten bleiben unverändert; die kontrollierte Migration folgt in separaten AP22-Paketen.

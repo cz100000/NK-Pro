@@ -1,3 +1,17 @@
+# Release V99.4.28 – AP21C Individuelle Werte
+
+AP21C konsolidiert ausschließlich die Seite „Individuelle Werte“. Status, Filter und Kostenarten sind als klar erkennbare Arbeitsbereiche strukturiert. Die Filteranzeige nennt die Anzahl der sichtbaren Kostenarten. Bestehende Klappboxen, zentrale Zählerdatenquelle, Datenattribute, Direkteinstiege, Schreibschutz und Speicheraktionen bleiben kompatibel.
+
+Nicht verändert wurden Navigation, Abrechnungskontext, Fachlogik, Berechnungen, Prüfregeln, Persistenz, Migration, Snapshot, Archiv, Briefe, Druck und Export.
+
+# Release V99.4.26 – AP21B1 Navigation
+
+AP21B1 überarbeitet ausschließlich die linke Navigation. Die Desktop-Navigation ist 256 px breit, verwendet den dunkelblauen Kopf und den weißen, oben abgerundeten Navigationskörper der Referenz und besitzt klar getrennte aktive, Hover- und Fokuszustände.
+
+Die sichtbare Struktur besteht aus „Projekt vorbereiten“, „Nebenkosten abrechnen“ und dem eigenständigen Hauptbereich „Archiv“. „Prüfung & Freigabe“ steht unmittelbar vor „Briefe“. Die Arbeitsweiche wird ausschließlich über das NK-PRO-Logo oder den runden Zurück-Button geöffnet. Historische Seitenschlüssel und Direkteinstiege bleiben kompatibel.
+
+Nicht verändert wurden die globale Abrechnungskontextleiste, Dirty-State- und Speicherlogik, Fachregeln, Prüfberechnungen, Persistenz, Migration, Snapshot- und Archivlogik, Briefe, Druck, Export und fachliche Tabellen. Datenschema 5 und Datenebenenvertrag 1 bleiben unverändert.
+
 # Release V99.4.24 – AP21A
 
 Navigation, gemeinsame Seite „Individuelle Werte“, globales UI-Konsistenzpaket und vereinheitlichter Ansichtsmodus. Datenschema 5 und NKP-FACH-001 bleiben unverändert; NKP-FACH-002 ist nicht umgesetzt.
@@ -40,3 +54,6 @@ Ein rückläufiger Zählerstand ohne dokumentierten Überlauf wird beim Neustart
 - Dezimalkomma und Dezimalpunkt werden korrekt akzeptiert.
 - Keine zusätzlichen Messwertrevisionen durch die reine Live-Vorschau.
 - PWA-Cache: `nk-pro-v99-4-23-ap20-corr2`.
+
+## V99.4.29 – AP22A UI-Bibliothek
+AP22A führt den zentralen Namensraum `nk-ui-*`, kanonische `--nk-ui-*`-Design-Tokens, eine JavaScript-Metadaten-Schnittstelle sowie Katalog und Migrationsmatrix ein. Bestehende Fachseiten und Altvarianten bleiben unverändert; die kontrollierte Migration folgt in separaten AP22-Paketen.

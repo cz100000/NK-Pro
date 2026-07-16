@@ -51,7 +51,9 @@ module.exports = defineConfig({
     { name:"ap19-billing-context-dashboards", testMatch:"ap19-billing-context-dashboards.spec.js" },
     { name:"ap20-central-quality-system", testMatch:"ap20-central-quality-system.spec.js" },
     { name:"ap21a-ui-consolidation", testMatch:"ap21a-ui-consolidation.spec.js" },
-    { name:"ap21b-overview-navigation-metering", testMatch:"ap21b-overview-navigation-metering.spec.js" }
+    { name:"ap21b1-navigation", testMatch:"ap21b1-navigation.spec.js" },
+    { name:"ap21b2-navigation-centralization", testMatch:"ap21b2-navigation-centralization.spec.js" },
+    { name:"ap22a-ui-library-foundation", testMatch:"ap22a-ui-library-foundation.spec.js" }
   ],
   use: {
     baseURL: "http://127.0.0.1:4173",

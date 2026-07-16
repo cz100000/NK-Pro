@@ -53,3 +53,13 @@ Ohne ausdrückliche Freigabe keine Schema- oder Austauschformatänderung.
 - Der neue Chat erhält nur die neue ZIP sowie diesen Projektstand und diese Arbeitsregeln.
 - Vollständige Quellcodedateien werden nicht unnötig in Chatantworten wiederholt.
 - Ergebnisse werden als ZIP, kurze Änderungsübersicht, Testnachweis und Restrisiken geliefert.
+## 7. Änderungskontrolle und Release-Abnahme
+
+1. Vor jeder Umsetzung ist eine Datei-Positivliste mit bereits geänderten und noch geplanten Produktdateien sowie einer kurzen Begründung je Datei zu erstellen.
+2. Dateien außerhalb dieser Positivliste dürfen erst nach konkreter Benennung, Begründung der technischen Notwendigkeit und vorheriger Freigabe geändert werden.
+3. Bestehende Regressionstests bleiben grundsätzlich unverändert. Neue Anforderungen erhalten neue, separate Tests des jeweiligen Arbeitspakets.
+4. Sobald insgesamt mehr als zehn Produktdateien betroffen wären oder ein nicht freigegebener Systembereich berührt wird, ist die Umsetzung sofort zu stoppen und der Umfang zu melden.
+5. Versionsnummern und Release-Dateien dürfen erst nach bestandener technischer und visueller Abnahme geändert werden.
+6. Ein Arbeitspaket gilt erst als abgeschlossen, wenn die Release-ZIP neu entpackt, aus diesem entpackten Stand erfolgreich gestartet und geprüft wurde.
+7. Die Positivliste, Testabgrenzung und Release-Abnahme sind im Abschlussnachweis des Arbeitspakets nachvollziehbar zu dokumentieren.
+

@@ -1,0 +1,11 @@
+{
+  "version": "99.4.28",
+  "workPackage": "AP21C",
+  "exclude": [
+    "node_modules",
+    "test-results",
+    "playwright-report",
+    ".git"
+  ],
+  "requireCleanRelease": true
+}

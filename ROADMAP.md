@@ -17,3 +17,6 @@
 - nach Abschluss aller Arbeitspakete: lokale vollständige Codex-/Playwright-/Chromium-End-to-End- und Regressionprüfung.
 
 Der Zählerbereich bleibt bis zu einem ausdrücklich freigegebenen Arbeitspaket DUMMY.
+
+## V99.4.29 – AP22A UI-Bibliothek
+AP22A führt den zentralen Namensraum `nk-ui-*`, kanonische `--nk-ui-*`-Design-Tokens, eine JavaScript-Metadaten-Schnittstelle sowie Katalog und Migrationsmatrix ein. Bestehende Fachseiten und Altvarianten bleiben unverändert; die kontrollierte Migration folgt in separaten AP22-Paketen.

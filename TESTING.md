@@ -1,6 +1,21 @@
-# Teststand V99.4.24 / AP21A
+# AP21C-Prüfstand V99.4.28
 
-Finaler Lauf: Syntax, Fixtures, Zählerregression, Architektur, Release-Inhalt und 102 Playwright-/Chromium-Szenarien. Siehe `AP21A_PRUEFBERICHT.md`.
+Neue separate Tests: `tests/ap21c-individual-values.test.cjs` und `tests/ap21c-individual-values.spec.js`. Bestehende Regressionstests wurden nicht verändert.
+
+# Teststand V99.4.26 / AP21B1
+
+AP21B1 besitzt neue, separate Tests: `tests/ap21b1-navigation.test.cjs` und `tests/ap21b1-navigation.spec.js`. Geprüft werden Reihenfolge und Bezeichnungen, 256-px-Referenzdarstellung, aktive/Hover-/Fokuszustände, unabhängiges Ein- und Ausklappen, Logo- und Zurück-Funktion, Responsive-Overlay, Escape/Außenklick, Seitenschlüssel, Direkteinstiege und interne Navigationsdiagnose.
+
+```text
+npm ci
+npm run test:syntax
+npm run test:fixtures
+npm run test:ap21b1
+npm run test:contents
+npm run test:release
+```
+
+Bestehende historische Regressionstestdateien wurden entsprechend der Änderungskontrolle nicht verändert. Tests mit fest eingebauten V99.4.24-/AP21A- oder früheren Navigationsannahmen bleiben als historische Nachweise erhalten; die aktuelle AP21B1-Abnahme erfolgt über die separaten AP21B1-Tests und die weiterhin fachlich relevanten unveränderten Regressionen.
 
 # Testanleitung – NK-Pro V99.4.23
 
@@ -76,3 +91,6 @@ node tools/check-ap20-meter-calculation-browser.cjs
 ```
 
 Geprüft werden Live-Verbrauch und Live-Summe vor dem Fokuswechsel, Enter-Commit, Dezimalkomma, Dezimalpunkt, Local-Storage-Speicherung und korrekte Wiederherstellung nach einem Neustart.
+
+## V99.4.29 – AP22A UI-Bibliothek
+AP22A führt den zentralen Namensraum `nk-ui-*`, kanonische `--nk-ui-*`-Design-Tokens, eine JavaScript-Metadaten-Schnittstelle sowie Katalog und Migrationsmatrix ein. Bestehende Fachseiten und Altvarianten bleiben unverändert; die kontrollierte Migration folgt in separaten AP22-Paketen.

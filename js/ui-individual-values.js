@@ -1,6 +1,6 @@
 "use strict";
 
-// AP21A: konsolidierte Oberfläche für individuelle, externe und zentrale Verbrauchswerte.
+// AP21C: konsolidierte Arbeitsoberfläche für individuelle, externe und zentrale Verbrauchswerte.
 (function (global) {
   let activeFilter = "all";
   let requestedFocus = null;
@@ -39,7 +39,7 @@
 
   function iconHtml(cost) {
     const name = iconName(cost);
-    return '<span class="individual-cost-icon individual-cost-icon--' + name + '" data-individual-icon="' + name + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONS[name] + '</svg></span>';
+    return '<span class="individual-cost-icon individual-cost-icon--' + name + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONS[name] + '</svg></span>';
   }
 
   function html(value) { return typeof escapeHtml === "function" ? escapeHtml(String(value == null ? "" : value)) : String(value == null ? "" : value); }
@@ -198,6 +198,11 @@
     });
     const visible=rows.filter(row => filterMatches(row.assessment));
     root.innerHTML=visible.map(row => cardHtml(row.cost,row.assessment)).join("");
+    const resultCount=document.querySelector("[data-individual-result-count]");
+    if (resultCount) {
+      const label=visible.length === 1 ? "1 Kostenart" : visible.length + " Kostenarten";
+      resultCount.textContent=activeFilter === "all" ? label : label + " im Filter";
+    }
     const empty=document.getElementById("individualValuesEmpty");
     if (empty) empty.hidden=visible.length > 0;
     connectMeterSourcePanel();
@@ -282,13 +287,7 @@
 
   document.addEventListener("toggle", event => {
     const panel=event.target;
-    if (panel && panel.open && (panel.id === "individualValuesMeterSource" || panel.closest("#individualValuesMeterSource"))) {
-      renderMeterSource();
-      requestAnimationFrame(() => {
-        const firstControl = panel.querySelector('input,select,button,textarea,[tabindex]:not([tabindex="-1"])');
-        if (firstControl) firstControl.focus({ preventScroll:true });
-      });
-    }
+    if (panel && panel.id === "individualValuesMeterSource" && panel.open) renderMeterSource();
   }, true);
 
   document.addEventListener("click", event => {
@@ -307,11 +306,7 @@
       renderMeterSource();
       if (panel) {
         panel.open=true;
-        requestAnimationFrame(() => {
-          panel.scrollIntoView({block:"start",behavior:"smooth"});
-          const firstSectionSummary=panel.querySelector(':scope > .individual-meter-source__body > details > summary');
-          if (firstSectionSummary) firstSectionSummary.focus({preventScroll:true});
-        });
+        requestAnimationFrame(() => panel.scrollIntoView({block:"start",behavior:"smooth"}));
       }
       return;
     }
@@ -336,7 +331,7 @@
     reader.readAsText(file,"utf-8");
   });
 
-  global.NKProIndividualValues=Object.freeze({ render, setFilter, requestFocus, assessment, sourceType, iconName, iconHtml, describe:() => Object.freeze({filter:activeFilter,activeCosts:activeCosts().length}) });
+  global.NKProIndividualValues=Object.freeze({ render, setFilter, requestFocus, assessment, sourceType, describe:() => Object.freeze({filter:activeFilter,activeCosts:activeCosts().length}) });
 })(globalThis);
 
 function renderIndividualValues() { return globalThis.NKProIndividualValues.render(); }

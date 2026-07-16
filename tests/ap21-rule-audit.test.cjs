@@ -43,7 +43,7 @@ function main(){
   const bindings=read("js/ui-bindings.js");
   const context=read("js/billing-context.js");
 
-  assert(rule&&rule.targetTab==="start"&&rule.targetSelector==="[data-billing-overview-period-correction]","NKP-FACH-001 besitzt keinen echten Perioden-Direkteinstieg.");
+  assert(rule&&rule.targetTab==="start"&&rule.targetSelector==="#billingPeriodSettings","NKP-FACH-001 besitzt keinen echten Perioden-Direkteinstieg.");
   assert(rule.dataSource.includes("abrechnungsjahr"),"Abrechnungsjahr fehlt in der Regel-Datenquelle.");
 
   let row=fach001(api,{abrechnungsjahr:"2025",abrechnungsbeginn:"2025-02-30",abrechnungsende:"2025-12-31"});
@@ -64,10 +64,9 @@ function main(){
   row=fach001(api,{abrechnungsjahr:"2025",abrechnungsbeginn:"2024-12-15",abrechnungsende:"2025-01-14"});
   assert(row.status==="Erledigt"&&row.values.durationDays===31,"Gültige jahresübergreifende Perioden werden nicht akzeptiert.");
 
-  const overview=read("js/ui-billing-overview.js");
-  assert(!html.includes('id="billingPeriodSection"')&&!html.includes('id="billingPeriodSettings"'),"Die entfernte Zeitraum-Klappbox ist noch vorhanden.");
-  assert(overview.includes('data-billing-overview-period-correction')&&overview.includes('Abrechnungszeitraum korrigieren'),"Gezielter Korrekturdialog für NKP-FACH-001 fehlt.");
-  assert(overview.includes('periodCorrectionRequired')&&overview.includes('billingContext.isEditing()'),"Korrekturbedarf oder Schreibschutz wird beim Zeitraum-Direkteinstieg nicht berücksichtigt.");
+  assert(html.includes('id="billingPeriodSection"')&&html.includes('id="billingPeriodSettings"'),"Periodenbereich auf der Abrechnungsübersicht fehlt.");
+  assert(ui.includes("function renderBillingPeriodSettings()")&&ui.includes('data-ui-action="billing.syncPeriodYear"'),"Periodenbereich oder Jahresabgleich wird nicht gerendert.");
+  assert(ui.includes("billingContext.isEditing()")&&ui.includes("Nur ansehen"),"Bearbeitungs- und Ansichtsmodus werden im Periodenbereich nicht unterschieden.");
   assert(workflow.includes("function syncPeriodYear()")&&bindings.includes('"billing.syncPeriodYear"')&&context.includes('"billing.syncPeriodYear"'),"Jahresabgleich ist nicht vollständig verdrahtet oder nicht schreibgeschützt.");
 
   process.stdout.write("AP21 Regelprüfung 1 bestanden: NKP-FACH-001 prüft echte ISO-Kalenderdaten, Reihenfolge und Endjahr; Teil- und jahresübergreifende Perioden bleiben zulässig.\n");

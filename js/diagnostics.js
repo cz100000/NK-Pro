@@ -795,24 +795,32 @@
     runCheck("Navigation", "AP11-Navigationsstruktur V99.4.12", () => {
       const nav = document.querySelector(".workflow-nav");
       if (!nav) throw new Error("Workflow-Navigation fehlt");
+      const navigation = NK_PRO_MODULES.navigation;
+      if (!navigation || typeof navigation.navigationDefinition !== "function" || typeof navigation.visibleTabIds !== "function") throw new Error("Zentrale Navigationsdefinition fehlt");
+      const definition = navigation.navigationDefinition();
+      const expectedGroups = definition.map(group => group.key);
+      const expected = navigation.visibleTabIds();
       const groups = Array.from(nav.querySelectorAll(":scope > .nav-group")).map(group => group.dataset.navGroupSection);
-      if (groups.join("|") !== "object|billing|extras") throw new Error("Navigationsgruppen sind unvollständig oder falsch sortiert");
-      const expanded = Array.from(nav.querySelectorAll('.nav-group-toggle[aria-expanded="true"]'));
-      if (expanded.length !== 1) throw new Error("Es muss genau eine Navigationsgruppe geöffnet sein");
+      if (groups.join("|") !== expectedGroups.join("|")) throw new Error("Gerenderte Navigationsgruppen weichen von der zentralen Definition ab");
+      const toggles = Array.from(nav.querySelectorAll('.nav-group-toggle[data-nav-toggle]'));
+      if (toggles.length !== definition.length || toggles.some(toggle => !toggle.hasAttribute("aria-expanded"))) throw new Error("Accordion-Steuerung der Navigationsgruppen ist unvollständig");
       const tabIds = Array.from(nav.querySelectorAll(".tab-btn[data-tab]")).map(button => button.dataset.tab);
-      const expected = START_NAV_TABS.concat(BILLING_NAV_TABS);
-      if (tabIds.length !== expected.length || new Set(tabIds).size !== expected.length || expected.some(id => !tabIds.includes(id))) throw new Error("Tabs fehlen oder sind mehrfach in der Navigation enthalten");
+      if (tabIds.join("|") !== expected.join("|") || new Set(tabIds).size !== expected.length) throw new Error("Gerenderte Navigation weicht von der zentralen Definition ab");
+      for (const directTab of ["objektuebersicht","vorauszahlungsanpassung","export","sicherung"]) if (!document.getElementById(directTab)) throw new Error("Kompatibler Direkteinstieg fehlt: " + directTab);
       const landingChoices = document.querySelectorAll("#landing .landing-choice");
       if (landingChoices.length !== 2) throw new Error("Landingpage besitzt nicht genau zwei Einstiege");
-      if (!NK_PRO_MODULES.navigation || typeof NK_PRO_MODULES.navigation.ensureNavigationPath !== "function" || typeof NK_PRO_MODULES.navigation.updateWorkflowNavigationContext !== "function") throw new Error("Zentrales Navigationsmodul fehlt");
+      if (typeof navigation.ensureNavigationPath !== "function" || typeof navigation.updateWorkflowNavigationContext !== "function") throw new Error("Zentrales Navigationsmodul ist unvollständig");
       const semanticNav = nav.tagName === "NAV" && nav.getAttribute("aria-label");
       if (!semanticNav) throw new Error("Navigation ist nicht semantisch als NAV ausgezeichnet");
-      if (nav.querySelectorAll(".nav-item-icon svg").length < 20) throw new Error("Lokales SVG-Iconsystem ist unvollständig");
+      if (nav.querySelectorAll(".tab-btn[data-tab] .nav-item-icon svg").length !== expected.length) throw new Error("Lokales SVG-Iconsystem ist unvollständig");
+      const brandHome = document.querySelector(".sidebar-brand-home");
+      const backHome = document.getElementById("sidebarCollapseTop");
+      if (!brandHome || brandHome.dataset.uiAction !== "navigation.showLanding" || !backHome || backHome.dataset.uiAction !== "navigation.showLanding") throw new Error("Logo- oder Zurück-Funktion zur Arbeitsweiche fehlt");
       const settings = document.querySelector(".sidebar-settings-dummy");
       if (!settings || settings.getAttribute("aria-disabled") !== "true" || settings.dataset.uiAction) throw new Error("Einstellungen-Dummy ist nicht korrekt deaktiviert");
       if (settings.dataset.navHint !== "Noch nicht verfügbar") throw new Error("Einstellungen-Hinweis fehlt");
       if (document.querySelectorAll(".workflow-nav").length !== 1) throw new Error("Parallele Navigation erkannt");
-      return "Start plus 3 Accordion-Gruppen, 18 Navigationsziele einschließlich getrenntem Archiv-Eintrag, lokales SVG-System, Einstellungen-Dummy und genau 2 Landingpage-Einstiege";
+      return "Zentrale Navigationsdefinition, gerenderte Accordion-Gruppen und sichtbare Ziele sind konsistent; Logo-/Zurück-Startzugang, kompatible Direkteinstiege, lokales SVG-System und Einstellungen-Dummy vorhanden";
     });
   
     runCheck("Startseite", "Sicherungstab und Entschlackung", () => {

@@ -1,0 +1,7 @@
+{
+  "workPackage": "AP21B2",
+  "targetVersion": "99.4.27",
+  "productFileCount": 9,
+  "existingRegressionTestsModified": false,
+  "productFiles": ["index.html","js/navigation.js","js/diagnostics.js","js/app-runtime-config.js","service-worker.js","manifest.webmanifest","package.json","package-lock.json","nk-pro-project.json"]
+}

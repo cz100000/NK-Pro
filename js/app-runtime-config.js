@@ -18,6 +18,7 @@ const NK_PRO_MODULES = (() => {
     documentRenderer:globalThis.NKProDocumentRenderer,
     exportService:globalThis.NKProExportService,
     uiTableTools:globalThis.NKProUiTableTools,
+    uiDesignSystem:globalThis.NKProUIDesignSystem,
     appBootstrap:globalThis.NKProAppBootstrap,
     compatibility:globalThis.NKProCompatibility,
     uiPreferences:globalThis.NKProUiPreferences,
@@ -47,8 +48,8 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.26";
-const APP_VERSION_NAME = "AP21B-Abrechnungsübersicht, Navigation und Zählerdaten-Korrektur";
+const APP_VERSION = "V99.4.29";
+const APP_VERSION_NAME = "AP22A-UI-Bibliothek-Fundament";
 const APP_RELEASE_DATE = "2026-07-16";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
@@ -114,7 +115,6 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
-  "V99.4.26 setzt AP21B mit dynamischer Abrechnungsübersicht, Referenznavigation, zuverlässigem Rendering der zentralen Zähler-Unterklappboxen und physischer Entfernung der Zeitraum-Klappbox um.",
   "V99.4.23 Korrekturstand 3 erzwingt die Aktualisierung der Zähler-UI-Assets über versionsgebundene URLs und einen cachefreien Service-Worker-Updatepfad; ein neuer Worker wird einmalig aktiviert und die App danach automatisch neu geladen.",
   "Ein zuvor falsch gespeicherter Zählerwert kann durch erneute Eingabe mit Dezimalkomma oder Dezimalpunkt sofort sichtbar und per Enter dauerhaft korrigiert werden.",
   "V99.4.19 führt das freigegebene AP16-Kachelsystem mit lokalen Linien-Icons, fachlichen Akzentfarben, klarerer Seitenhierarchie, geöffneten Primärbereichen und bereinigtem globalen Kopf ein.",

@@ -1,0 +1,1 @@
+{"version":"99.4.29","workPackage":"AP22A","exclude":["node_modules","test-results","playwright-report",".git"],"temporaryArtifactsAllowedInRelease":false}
