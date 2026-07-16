@@ -48,8 +48,8 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.31";
-const APP_VERSION_NAME = "AP22C-UI-Bibliothek-Tabellen-Listen";
+const APP_VERSION = "V99.4.32";
+const APP_VERSION_NAME = "AP22D-UI-Bibliothek-Dialoge-Leerzustaende";
 const APP_RELEASE_DATE = "2026-07-16";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
@@ -115,6 +115,7 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
+  "V99.4.32 vereinheitlicht fünf produktive Dialoge und zentrale Inhaltszustände einschließlich Fokusführung, Fokusfalle, Fokusrückgabe, Escape-/Hintergrundregeln und geschützter destruktiver Aktionen; Fachlogik und Dokumentausgabe bleiben unverändert.",
   "V99.4.31 migriert produktive Tabellen, Listen und tabellenbezogene Werkzeugleisten auf die zentrale nk-ui-Bibliothek; Druck- und Briefdarstellungen bleiben ausdrücklich unverändert.",
   "V99.4.30 migriert Buttons, Formularfelder, Karten, Klappboxen, Status und Hinweise kontrolliert auf die zentrale nk-ui-Bibliothek; dynamisch erzeugte Inhalte werden über eine rein darstellungsbezogene Upgrade-Schnittstelle nachgeführt.",
   "V99.4.23 Korrekturstand 3 erzwingt die Aktualisierung der Zähler-UI-Assets über versionsgebundene URLs und einen cachefreien Service-Worker-Updatepfad; ein neuer Worker wird einmalig aktiviert und die App danach automatisch neu geladen.",

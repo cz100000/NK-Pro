@@ -1,8 +1,8 @@
 {
-  "name": "nk-pro-v99-4-31",
-  "version": "99.4.31",
+  "name": "nk-pro-v99-4-32",
+  "version": "99.4.32",
   "private": true,
-  "description": "AP22C – UI-Bibliothek: produktive Tabellen, Listen und Tabellenwerkzeuge für NK-Pro V99.4.31",
+  "description": "AP22D – UI-Bibliothek: zentrale Dialoge und standardisierte Inhaltszustände für NK-Pro V99.4.32",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
     "test:fixtures": "node tools/check-fixtures.cjs",
@@ -10,7 +10,7 @@
     "test:browser": "playwright test",
     "test": "npm run test:syntax && npm run test:fixtures && npm run test:metering && npm run test:architecture && npm run test:contents && npm run test:release && npm run test:browser",
     "test:report": "playwright show-report",
-    "test:release": "node tests/ap22c-ui-tables-lists.test.cjs",
+    "test:release": "node tests/ap22d-ui-dialogs-states.test.cjs",
     "test:metering": "node tests/metering-domain.test.cjs && node tests/ap20-meter-start-regression.test.cjs && node tests/ap20-meter-calculation-regression.test.cjs && node tests/ap20-asset-refresh-regression.test.cjs",
     "test:architecture": "node tests/ap6-modularization.test.cjs && node tests/ap7-ui-integration.test.cjs && node tests/ap8-application-actions.test.cjs && node tests/ap9-core-orchestration.test.cjs && node tests/ap10-archive-year-quality-diagnostics.test.cjs && node tests/ap11-navigation.test.cjs && node tests/ap12-app-decoupling.test.cjs && node tests/ap13-letter-layout.test.cjs && node tests/ap14-ui-navigation.test.cjs && node tests/ap15-integration-release.test.cjs && node tests/ap17-area-dashboards.test.cjs && node tests/ap18-ui-ux-polish.test.cjs && node tests/ap19-billing-context-dashboards.test.cjs && node tests/ap20-central-quality-system.test.cjs && node tests/ap21-rule-audit.test.cjs && node tests/ap21a-ui-consolidation.test.cjs && node tests/ap21b1-navigation.test.cjs",
     "test:visual": "playwright test --project=ap11-navigation --grep \"Visuelle AP11-Referenzen\" --workers=1",
@@ -18,7 +18,7 @@
     "test:ap14": "node tests/ap14-ui-navigation.test.cjs && playwright test --project=ap14-ui-navigation --workers=1",
     "test:contents": "node tools/check-release-contents.cjs --ignore-node-modules --strict",
     "test:ap15": "node tests/ap15-integration-release.test.cjs && playwright test --project=ap15-integration-release --workers=1",
-    "release:check": "npm run test:syntax && npm run test:fixtures && npm run test:metering:ap21b1 && npm run test:architecture:ap21b2 && npm run test:ap21c && npm run test:ap22c && node -e \"const fs=require('fs');for(const p of ['test-results','playwright-report'])fs.rmSync(p,{recursive:true,force:true})\" && npm run test:contents && npm run test:release",
+    "release:check": "npm run test:syntax && npm run test:fixtures && npm run test:metering:ap21b1 && npm run test:architecture:ap21b2 && npm run test:ap21c && node tests/ap22d-ui-dialogs-states.test.cjs && node -e \"const fs=require('fs');for(const p of ['test-results','playwright-report'])fs.rmSync(p,{recursive:true,force:true})\" && npm run test:contents && npm run test:release",
     "test:ap17": "node tests/ap17-area-dashboards.test.cjs && playwright test --project=ap17-area-dashboards --workers=1",
     "test:ap18": "node tests/ap18-ui-ux-polish.test.cjs && playwright test --project=ap18-ui-ux-polish --workers=1",
     "test:ap19": "node tests/ap19-billing-context-dashboards.test.cjs && playwright test --project=ap19-billing-context-dashboards --workers=1",
@@ -40,7 +40,9 @@
     "test:ap21c": "node tests/ap21c-individual-values.test.cjs",
     "test:ap22a": "node tests/ap22a-ui-library-foundation.test.cjs && playwright test --project=ap22a-ui-library-foundation --workers=1",
     "test:ap22b": "node tests/ap22b-ui-base-components.test.cjs && playwright test --project=ap22b-ui-base-components --workers=1",
-    "test:ap22c": "node tests/ap22c-ui-tables-lists.test.cjs && playwright test --project=ap22c-ui-tables-lists --workers=1"
+    "test:ap22c": "node tests/ap22c-ui-tables-lists.test.cjs && playwright test --project=ap22c-ui-tables-lists --workers=1",
+    "test:ap22d": "node tests/ap22d-ui-dialogs-states.test.cjs && playwright test --project=ap22d-ui-dialogs-states --workers=1",
+    "test:browser:ap22d": "playwright test --workers=1 --project=document-export --project=migration-restore --project=module-boundaries --project=ui-controller-events --project=persistence-backup --project=reference-cases --project=ap10-orchestration --project=ap12-orchestration --project=ap13-letter-layout --project=ap19-billing-context-dashboards --project=ap20-central-quality-system --project=ap21b2-navigation-centralization --project=ap22d-ui-dialogs-states"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1"

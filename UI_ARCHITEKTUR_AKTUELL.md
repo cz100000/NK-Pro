@@ -36,3 +36,10 @@ Status werden mit Text statt nur Farbe kommuniziert. Fokuszustände sind sichtba
 
 ## V99.4.29 – AP22A UI-Bibliothek
 AP22A führt den zentralen Namensraum `nk-ui-*`, kanonische `--nk-ui-*`-Design-Tokens, eine JavaScript-Metadaten-Schnittstelle sowie Katalog und Migrationsmatrix ein. Bestehende Fachseiten und Altvarianten bleiben unverändert; die kontrollierte Migration folgt in separaten AP22-Paketen.
+
+
+## V99.4.32 – AP22D Dialog- und Zustandssystem
+
+`js/ui-design-system.js` stellt mit Version 1.3.0 eine zentrale Dialog- und Zustandsschicht bereit. Bestehende Fachmodule öffnen und schließen die ausgewählten Dialoge weiterhin über ihre bisherigen Aktionen; die UI-Bibliothek beobachtet ausschließlich den sichtbaren Zustand, übernimmt Semantik, Fokusführung, Fokusfalle, Fokusrückgabe sowie die freigegebenen Escape- und Hintergrundregeln.
+
+Fünf produktive Dialoge sind migriert. Der Löschdialog ist besonders geschützt. Sieben Inhaltszustände werden zentral erzeugt; zwei vorhandene Filter-Leerzustände sind produktiv angebunden. Brief-, Druck-, PDF- und Dokumentbereiche sind explizit ausgeschlossen. Daten-, Fach-, Speicher- und Navigationsarchitektur bleiben unverändert.

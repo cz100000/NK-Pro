@@ -28,3 +28,8 @@ AP22B migriert Buttons, Formularfelder, Karten, Klappboxen, Status und Hinweise 
 ## V99.4.31 – AP22C Tabellen und Listen
 
 AP22C migriert produktive Anwendungstabellen, Tabellencontainer, strukturierte Listen und unmittelbar tabellenbezogene Werkzeugleisten. Brief-, Druck- und PDF-Dokumenttabellen bleiben unverändert. Nächstes Paket ist AP22D – Dialoge und Leerzustände.
+
+
+## V99.4.32 – AP22D Dialoge und Leerzustände
+
+AP22D migriert fünf fachlich geeignete Dialoge auf das zentrale Dialogsystem und stellt sieben standardisierte Inhaltszustände bereit. Zwei produktive Filter-Leerzustände sind angebunden; Dokument- und Druckbereiche bleiben geschützt. Nächstes Paket ist AP22E – Seitenschale, Layout und Komponenten-Sonderformen.

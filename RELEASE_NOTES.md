@@ -1,3 +1,11 @@
+# Release V99.4.32 – AP22D Dialoge und Leerzustände
+
+AP22D erweitert die zentrale UI-Bibliothek um ein verbindliches Dialogsystem und sieben standardisierte Inhaltszustände. Migriert wurden die Dialoge zum Anlegen und Löschen einer Abrechnung, zum Bearbeiten eines Einheitspreises, zur Kostenartauswahl und zu Prüfpunktdetails sowie zwei geeignete leere Filterzustände.
+
+Tastaturbedienung, Fokusfalle, Fokusrückgabe, sichtbarer Fokus und dialogbezogene Escape-/Hintergrundregeln sind zentral abgesichert. Der destruktive Löschdialog ist besonders geschützt. Brief-, Druck-, PDF- und Exportbereiche bleiben außerhalb der Migration.
+
+Nicht verändert wurden Fachlogik, Berechnungen, Datenmodell, Persistenz, Migration, Backup, Restore, Archiv, Navigation, Abrechnungskontext, Prüfregeln und Dokumentausgabe.
+
 # Release V99.4.28 – AP21C Individuelle Werte
 
 AP21C konsolidiert ausschließlich die Seite „Individuelle Werte“. Status, Filter und Kostenarten sind als klar erkennbare Arbeitsbereiche strukturiert. Die Filteranzeige nennt die Anzahl der sichtbaren Kostenarten. Bestehende Klappboxen, zentrale Zählerdatenquelle, Datenattribute, Direkteinstiege, Schreibschutz und Speicheraktionen bleiben kompatibel.

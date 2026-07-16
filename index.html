@@ -3,10 +3,10 @@
 <html lang="de">
 <head>
 <meta charset="utf-8"/>
-<meta content="99.4.31-ap22c" name="nk-pro-build"/>
+<meta content="99.4.32-ap22d" name="nk-pro-build"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>NK-Pro V99.4.31 – AP22C Tabellen und Listen</title>
-<link href="./assets/app.css?v=99.4.31-ap22c" rel="stylesheet"/>
+<title>NK-Pro V99.4.32 – AP22D Dialoge und Leerzustände</title>
+<link href="./assets/app.css?v=99.4.32-ap22d" rel="stylesheet"/>
 <meta content="#031d41" name="theme-color"/>
 <meta content="yes" name="mobile-web-app-capable"/>
 <meta content="yes" name="apple-mobile-web-app-capable"/>
@@ -28,7 +28,7 @@
 <div class="sidebar-panel">
 <nav aria-label="Hauptnavigation" class="tabs workflow-nav" data-navigation-render-root="" data-workflow-navigation=""></nav>
 <footer class="sidebar-footer-zone">
-<div class="sidebar-user-status"><span aria-hidden="true" class="nav-item-icon"><svg aria-hidden="true" class="nav-icon-svg" fill="none" viewbox="0 0 24 24"><circle cx="12" cy="7.5" r="3.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M5 21a7 7 0 0 1 14 0" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span><span><small>Lokale Anwendung</small><strong>V99.4.31</strong></span></div>
+<div class="sidebar-user-status"><span aria-hidden="true" class="nav-item-icon"><svg aria-hidden="true" class="nav-icon-svg" fill="none" viewbox="0 0 24 24"><circle cx="12" cy="7.5" r="3.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M5 21a7 7 0 0 1 14 0" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span><span><small>Lokale Anwendung</small><strong>V99.4.32</strong></span></div>
 <button aria-describedby="settingsUnavailableText" aria-disabled="true" class="sidebar-settings-dummy" data-nav-hint="Noch nicht verfügbar" type="button"><span aria-hidden="true" class="nav-item-icon"><svg aria-hidden="true" class="nav-icon-svg" fill="none" viewbox="0 0 24 24"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V2.8h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9A1.7 1.7 0 0 0 21 10h.2v4H21a1.7 1.7 0 0 0-1.6 1z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span><span>Einstellungen</span></button>
 <span class="visually-hidden" id="settingsUnavailableText">Noch nicht verfügbar</span>
 <button aria-label="Navigation einklappen" class="sidebar-bottom-collapse" id="sidebarCollapseBottom" type="button"><svg aria-hidden="true" class="sidebar-control-svg" fill="none" viewbox="0 0 24 24"><path d="M20 12H5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path><path d="m10 6-6 6 6 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg><span>Navigation einklappen</span></button>
@@ -68,33 +68,31 @@
 <div class="toolbar start-record-primary-actions nk-ui-toolbar" id="startArchiveActions"></div>
 <div class="table-wrap dashboard-table nk-ui-table-wrap"><table class="nk-ui-table nk-ui-table--compact" id="startArchiveTable"></table></div>
 <div class="toolbar start-record-utility-actions nk-ui-toolbar nk-ui-toolbar--compact" id="startArchiveUtilityActions"></div>
-</div></div></details><div aria-live="polite" class="area-dashboard" data-area-dashboard="billing"></div><details class="page-section nk-ui-accordion" data-section-role="validation" id="startValidationSection"><summary class="page-section__summary"><span class="page-section__number">3.</span><span class="page-section__title">Prüfung und Plausibilität</span><span class="page-section__badge nk-ui-status">Kontrolle</span><span aria-hidden="true" class="page-section__chevron"><svg aria-hidden="true" class="page-section__chevron-svg" fill="none" viewbox="0 0 24 24"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span></summary><div class="page-section__body nk-ui-accordion__body"><div class="validation-placeholder">Prüfregeln für diesen Bereich sind noch zu definieren.</div></div></details></div></div><div class="modal-backdrop" id="billingCreateModal">
-<div class="modal-card">
-<h3>Neue Nebenkostenabrechnung anlegen</h3>
-<p class="small">Vor dem Anlegen wird der aktuelle Bearbeitungsstand als eigener Datensatz gesichert. Nach dem Anlegen bleibt die Abrechnung geschlossen und erscheint in dieser Übersicht.</p>
-<div class="split">
-<label>Abrechnungsjahr<br/><input id="newBillingYear" placeholder="z. B. 2026"/></label>
+</div></div></details><div aria-live="polite" class="area-dashboard" data-area-dashboard="billing"></div><details class="page-section nk-ui-accordion" data-section-role="validation" id="startValidationSection"><summary class="page-section__summary"><span class="page-section__number">3.</span><span class="page-section__title">Prüfung und Plausibilität</span><span class="page-section__badge nk-ui-status">Kontrolle</span><span aria-hidden="true" class="page-section__chevron"><svg aria-hidden="true" class="page-section__chevron-svg" fill="none" viewbox="0 0 24 24"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span></summary><div class="page-section__body nk-ui-accordion__body"><div class="validation-placeholder">Prüfregeln für diesen Bereich sind noch zu definieren.</div></div></details></div></div><div class="modal-backdrop nk-ui-dialog-layer" data-nk-ui-backdrop-close="true" data-nk-ui-close-action="billing.closeCreateModal" data-nk-ui-escape="true" id="billingCreateModal">
+<div aria-describedby="billingCreateDescription" aria-labelledby="billingCreateTitle" aria-modal="true" class="modal-card nk-ui-dialog" role="dialog" tabindex="-1">
+<div class="nk-ui-dialog__header"><div><h3 class="nk-ui-dialog__title" id="billingCreateTitle">Neue Nebenkostenabrechnung anlegen</h3><p class="small nk-ui-dialog__description" id="billingCreateDescription">Vor dem Anlegen wird der aktuelle Bearbeitungsstand als eigener Datensatz gesichert. Nach dem Anlegen bleibt die Abrechnung geschlossen und erscheint in dieser Übersicht.</p></div></div>
+<div class="nk-ui-dialog__body"><div class="split">
+<label>Abrechnungsjahr<br/><input data-nk-ui-initial-focus="true" id="newBillingYear" placeholder="z. B. 2026"/></label>
 <label>Beginn der Abrechnungsperiode<br/><input id="newBillingStart" type="date"/></label>
 <label>Ende der Abrechnungsperiode<br/><input id="newBillingEnd" type="date"/></label>
 </div>
-<div class="hint">Empfehlung: Für eine normale Jahresabrechnung den Zeitraum 01.01. bis 31.12. des gewünschten Jahres verwenden.<br/><br/><strong>Was beim Anlegen passiert:</strong> Der aktuelle Bearbeitungsstand wird als eigener Archivdatensatz gespeichert. Wohnungen, Mietverhältnisse, Kostenarten-Struktur, Umlageschlüssel, Textbausteine und Zähler-Endstände werden als neue Anfangswerte übernommen; die neuen Endwerte bleiben leer. Jahreswerte wie Rechnungsbeträge, erhaltene Kaltmiete, Verbrauchs-Endstände und manuelle Umlagewerte werden für die neue Abrechnung zurückgesetzt. NK-Vorauszahlungen werden aus der Vorjahresabrechnung übernommen, sofern möglich.</div>
-<div class="modal-actions">
-<button data-ui-action="billing.closeCreateModal">Abbrechen</button>
-<button class="primary" data-ui-action="billing.createFromModal">Abrechnung anlegen</button>
+<div class="hint">Empfehlung: Für eine normale Jahresabrechnung den Zeitraum 01.01. bis 31.12. des gewünschten Jahres verwenden.<br/><br/><strong>Was beim Anlegen passiert:</strong> Der aktuelle Bearbeitungsstand wird als eigener Archivdatensatz gespeichert. Wohnungen, Mietverhältnisse, Kostenarten-Struktur, Umlageschlüssel, Textbausteine und Zähler-Endstände werden als neue Anfangswerte übernommen; die neuen Endwerte bleiben leer. Jahreswerte wie Rechnungsbeträge, erhaltene Kaltmiete, Verbrauchs-Endstände und manuelle Umlagewerte werden für die neue Abrechnung zurückgesetzt. NK-Vorauszahlungen werden aus der Vorjahresabrechnung übernommen, sofern möglich.</div></div>
+<div class="modal-actions nk-ui-dialog__footer">
+<button data-ui-action="billing.closeCreateModal" type="button">Abbrechen</button>
+<button class="primary" data-ui-action="billing.createFromModal" type="button">Abrechnung anlegen</button>
 </div>
 </div>
-</div><div class="modal-backdrop" id="billingDeleteModal">
-<div class="modal-card">
-<h3>Nebenkostenabrechnung löschen</h3>
-<p class="small" id="deleteBillingText">Diese archivierte Abrechnung wird dauerhaft aus dem lokalen Datensatz entfernt.</p>
-<div class="hint">
+</div><div class="modal-backdrop nk-ui-dialog-layer" data-nk-ui-backdrop-close="false" data-nk-ui-close-action="billing.closeDeleteModal" data-nk-ui-dialog-variant="danger" data-nk-ui-escape="false" id="billingDeleteModal">
+<div aria-describedby="deleteBillingText" aria-labelledby="billingDeleteTitle" aria-modal="true" class="modal-card nk-ui-dialog nk-ui-dialog--danger" role="dialog" tabindex="-1">
+<div class="nk-ui-dialog__header"><div><h3 class="nk-ui-dialog__title" id="billingDeleteTitle">Nebenkostenabrechnung löschen</h3><p class="small nk-ui-dialog__description" id="deleteBillingText">Diese archivierte Abrechnung wird dauerhaft aus dem lokalen Datensatz entfernt.</p></div></div>
+<div class="nk-ui-dialog__body"><div class="hint">
             Um zu löschen, geben Sie diesen dreistelligen Code ein:<br/>
 <span class="delete-code-box" id="deleteBillingCodeDisplay">000</span>
 </div>
-<label>Code eingeben<br/><input data-ui-keydown="billing.handleDeleteKey" id="deleteBillingCodeInput" inputmode="numeric" maxlength="3" placeholder="000"/></label>
-<div class="modal-actions">
-<button data-ui-action="billing.closeDeleteModal">Abbrechen</button>
-<button class="warn" data-ui-action="billing.confirmDelete">OK</button>
+<label>Code eingeben<br/><input data-nk-ui-initial-focus="true" data-ui-keydown="billing.handleDeleteKey" id="deleteBillingCodeInput" inputmode="numeric" maxlength="3" placeholder="000"/></label></div>
+<div class="modal-actions nk-ui-dialog__footer">
+<button data-ui-action="billing.closeDeleteModal" type="button">Abbrechen</button>
+<button class="danger" data-ui-action="billing.confirmDelete" type="button">Endgültig löschen</button>
 </div>
 </div>
 </div></section>
@@ -155,8 +153,8 @@
 <div class="cost-section-body">
 <div class="cost-control-strip" id="costPilotControl"></div>
 <div class="cost-bottom-summary" id="costBottomSummary"></div></div>
-</details></div><p class="page-footnote">Hinweis: Beträge inkl. MwSt., sofern nicht anders angegeben.</p></div><div class="cost-modal-backdrop" hidden="" id="costPriceModal">
-<div aria-labelledby="costPriceDialogTitle" aria-modal="true" class="cost-price-dialog" role="dialog">
+</details></div><p class="page-footnote">Hinweis: Beträge inkl. MwSt., sofern nicht anders angegeben.</p></div><div class="cost-modal-backdrop nk-ui-dialog-layer" data-nk-ui-backdrop-close="true" data-nk-ui-close-action="cost.closePriceEditor" data-nk-ui-dialog-size="compact" data-nk-ui-escape="true" hidden="" id="costPriceModal">
+<div aria-labelledby="costPriceDialogTitle" aria-modal="true" class="cost-price-dialog nk-ui-dialog nk-ui-dialog--compact" role="dialog" tabindex="-1">
 <div class="cost-dialog-header">
 <div>
 <p class="cost-dialog-kicker">Preis je Einheit</p>
@@ -166,7 +164,7 @@
 </div>
 <div class="cost-price-dialog-body">
 <div class="cost-price-cost-name" id="costPriceDialogCostName"></div>
-<label><span>Preis je Einheit</span><input class="money" id="costPriceDialogInput" inputmode="decimal"/></label>
+<label><span>Preis je Einheit</span><input class="money" data-nk-ui-initial-focus="true" id="costPriceDialogInput" inputmode="decimal"/></label>
 <div class="cost-price-unit" id="costPriceDialogUnit"></div>
 <div class="small" id="costPriceDialogAutoNote"></div>
 </div>
@@ -176,8 +174,8 @@
 <button data-ui-action="cost.closePriceEditor" type="button">Abbrechen</button>
 </div>
 </div>
-</div><div class="cost-modal-backdrop" hidden="" id="costSelectionModal">
-<div aria-labelledby="costSelectionDialogTitle" aria-modal="true" class="cost-selection-dialog" role="dialog">
+</div><div class="cost-modal-backdrop nk-ui-dialog-layer" data-nk-ui-backdrop-close="true" data-nk-ui-close-action="cost.closeSelectionDialog" data-nk-ui-dialog-size="wide" data-nk-ui-escape="true" hidden="" id="costSelectionModal">
+<div aria-labelledby="costSelectionDialogTitle" aria-modal="true" class="cost-selection-dialog nk-ui-dialog nk-ui-dialog--wide" role="dialog" tabindex="-1">
 <div class="cost-dialog-header">
 <div>
 <p class="cost-dialog-kicker">Kostenart hinzufügen</p>
@@ -186,7 +184,7 @@
 <button aria-label="Auswahlfenster schließen" class="cost-dialog-close" data-ui-action="cost.closeSelectionDialog" type="button">×</button>
 </div>
 <div class="cost-dialog-search">
-<input data-ui-input="cost.renderSelectionDialog" id="costSelectionSearch" placeholder="Kostenart oder Gruppe suchen …" type="search"/>
+<input data-nk-ui-initial-focus="true" data-ui-input="cost.renderSelectionDialog" id="costSelectionSearch" placeholder="Kostenart oder Gruppe suchen …" type="search"/>
 </div>
 <div class="cost-dialog-content" id="costSelectionDialogContent"></div>
 <div class="cost-dialog-footer">
@@ -256,7 +254,7 @@
 </div>
 </div>
 <div aria-live="polite" class="individual-values-list" id="individualValuesList"></div><details class="individual-meter-source" data-individual-meter-source-panel="true" id="individualValuesMeterSource"><summary class="individual-meter-source__summary"><span aria-hidden="true" class="individual-meter-source__icon"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M12 2.5s6.5 6.8 6.5 11.2a6.5 6.5 0 1 1-13 0C5.5 9.3 12 2.5 12 2.5Z"></path><path d="M9 15a3.4 3.4 0 0 0 3 2"></path></svg></span><span><strong>Zentrale Zählerdaten prüfen</strong><small>Führende Datenquelle für automatisch übernommene Verbrauchswerte</small></span><span class="individual-meter-source__status">Zentrale Quelle</span><span aria-hidden="true" class="individual-cost-card__chevron"><svg fill="none" viewbox="0 0 24 24"><path d="m9 10 3 3 3-3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span></summary><div class="individual-meter-source__body"><div class="hint"><strong>Getrennte Datenverantwortung:</strong> Automatisch übernommene Werte bleiben in den Kostenart-Klappboxen schreibgeschützt. Korrekturen erfolgen ausschließlich hier an der zentralen Zählerquelle.</div><details class="page-section nk-ui-accordion" id="meterHouseSection"><summary class="page-section__summary"><span class="page-section__number">1.</span><span class="page-section__title">Hauszähler und Wasserwerksrechnung</span><span class="page-section__badge nk-ui-status">Hausanschluss</span><span aria-hidden="true" class="page-section__chevron"><svg aria-hidden="true" class="page-section__chevron-svg" fill="none" viewbox="0 0 24 24"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span></summary><div class="page-section__body nk-ui-accordion__body"><div class="meter-section-body"><div class="house-meter-grid" id="waterMeterSettings"></div><div id="meterHouseComparison"></div><div id="meterHouseHistoryNote"></div></div></div></details><details class="page-section nk-ui-accordion" id="meterEntrySection"><summary class="page-section__summary"><span class="page-section__number">2.</span><span class="page-section__title">Zählerstände erfassen</span><span class="page-section__badge nk-ui-status">Aktuelle Abrechnung</span><span aria-hidden="true" class="page-section__chevron"><svg aria-hidden="true" class="page-section__chevron-svg" fill="none" viewbox="0 0 24 24"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span></summary><div class="page-section__body nk-ui-accordion__body"><div class="meter-section-body"><div id="meterCarryForward"></div><div id="meterCurrentSections"></div><div hidden="" id="meterSections"></div></div></div></details><details class="page-section nk-ui-accordion" id="meterTenantSection"><summary class="page-section__summary"><span class="page-section__number">3.</span><span class="page-section__title">Verbrauch pro Mietverhältnis / Wohnung</span><span class="page-section__badge nk-ui-status">Kontrollsicht</span><span aria-hidden="true" class="page-section__chevron"><svg aria-hidden="true" class="page-section__chevron-svg" fill="none" viewbox="0 0 24 24"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span></summary><div class="page-section__body nk-ui-accordion__body"><div class="meter-section-body"><div id="meterConsumptionControl"></div></div></div></details><details class="page-section nk-ui-accordion" id="meterHistorySection"><summary class="page-section__summary"><span class="page-section__number">4.</span><span class="page-section__title">Historie und Vorjahresübernahme</span><span class="page-section__badge nk-ui-status">Prüfbasis</span><span aria-hidden="true" class="page-section__chevron"><svg aria-hidden="true" class="page-section__chevron-svg" fill="none" viewbox="0 0 24 24"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span></summary><div class="page-section__body nk-ui-accordion__body"><div class="meter-section-body"><div id="meterHistory"></div></div></div></details><details class="page-section nk-ui-accordion" data-section-role="validation" id="meterControlSection"><summary class="page-section__summary"><span class="page-section__number">5.</span><span class="page-section__title">Prüfung und Plausibilität</span><span class="page-section__badge nk-ui-status">Kontrolle</span><span aria-hidden="true" class="page-section__chevron"><svg aria-hidden="true" class="page-section__chevron-svg" fill="none" viewbox="0 0 24 24"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span></summary><div class="page-section__body nk-ui-accordion__body"><div class="meter-section-body"><div id="meterControlSummary"></div></div></div></details></div></details>
-<div class="individual-values-empty" hidden="" id="individualValuesEmpty"><strong>Keine passenden Kostenarten</strong><span>Für den gewählten Statusfilter sind keine Kostenarten vorhanden.</span></div>
+<div aria-live="polite" class="individual-values-empty nk-ui-empty-state nk-ui-empty-state--filtered" data-nk-ui-state="filtered" hidden="" id="individualValuesEmpty" role="status"><strong class="nk-ui-empty-state__title">Keine passenden Kostenarten</strong><span class="nk-ui-empty-state__description">Für den gewählten Statusfilter sind keine Kostenarten vorhanden.</span></div>
 </section>
 </div>
 </section><section class="tab" id="umlage"><div class="app-page" data-page-tab="umlage"><header class="page-header" data-page-header="umlage"><div class="page-header__identity"><p class="page-header__kicker">Nebenkosten abrechnen</p><h2 class="page-header__title">Ergebnis der Abrechnung</h2><p class="page-header__description">Kostenverteilung, Mieteranteile, Vorauszahlungen und Salden nachvollziehen.</p></div><div class="page-header__actions"><span class="page-header__save-status" data-page-save-status="">Gespeichert</span><button class="page-header__save-button" data-page-save="" data-ui-action="application.save" type="button">Speichern</button></div></header><div class="page-sections"><details class="page-section nk-ui-accordion" id="allocationTenantResultSection"><summary class="page-section__summary"><span class="page-section__number">1.</span><span class="page-section__title">Ergebnis je Mietverhältnis / Wohnung</span><span class="page-section__badge nk-ui-status">Ergebnis</span><span aria-hidden="true" class="page-section__chevron"><svg aria-hidden="true" class="page-section__chevron-svg" fill="none" viewbox="0 0 24 24"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span></summary><div class="page-section__body nk-ui-accordion__body"><div class="table-wrap nk-ui-table-wrap"><table class="nk-ui-table" id="umlageSummaryTable"></table></div></div></details><details class="page-section nk-ui-accordion" id="allocationCostControlSection"><summary class="page-section__summary"><span class="page-section__number">2.</span><span class="page-section__title">Umlage-Kontrolle nach Kostenart</span><span class="page-section__badge nk-ui-status">Kostenarten</span><span aria-hidden="true" class="page-section__chevron"><svg aria-hidden="true" class="page-section__chevron-svg" fill="none" viewbox="0 0 24 24"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span></summary><div class="page-section__body nk-ui-accordion__body"><p class="small">Gesamtbetrag, Schlüssel, Basis, verteilte Anteile und Differenzen werden je Kostenart kontrolliert.</p><div class="table-wrap nk-ui-table-wrap"><table class="nk-ui-table" id="umlageCostsTable"></table></div></div></details><details class="page-section nk-ui-accordion" id="allocationUnitProofSection"><summary class="page-section__summary"><span class="page-section__number">3.</span><span class="page-section__title">Berechnungsnachweis je Wohnung</span><span class="page-section__badge nk-ui-status">Nachweis</span><span aria-hidden="true" class="page-section__chevron"><svg aria-hidden="true" class="page-section__chevron-svg" fill="none" viewbox="0 0 24 24"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span></summary><div class="page-section__body nk-ui-accordion__body"><div class="table-wrap nk-ui-table-wrap"><table class="nk-ui-table" id="umlageUnitProofTable"></table></div></div></details><details class="page-section nk-ui-accordion" data-section-role="validation" id="allocationValidationSection"><summary class="page-section__summary"><span class="page-section__number">4.</span><span class="page-section__title">Prüfung und Plausibilität</span><span class="page-section__badge nk-ui-status">Kontrolle</span><span aria-hidden="true" class="page-section__chevron"><svg aria-hidden="true" class="page-section__chevron-svg" fill="none" viewbox="0 0 24 24"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span></summary><div class="page-section__body nk-ui-accordion__body"><div class="validation-placeholder">Summen-, Verteilungs- und Saldenprüfung werden aus der aktuellen Umlage berechnet.</div></div></details></div></div></section>
@@ -308,7 +306,7 @@
 </div>
 </main>
 </div>
-<dialog aria-labelledby="qualityDetailTitle" class="quality-detail-dialog" id="qualityDetailDialog"><form class="quality-detail-dialog__shell" method="dialog"><div class="quality-detail-dialog__header"><div><p class="page-header__kicker">Prüfpunkt</p><h2 id="qualityDetailTitle">Details</h2></div><button aria-label="Detailansicht schließen" class="ui-button nk-ui-button ui-button--icon" value="cancel">×</button></div><div class="quality-detail-dialog__content" id="qualityDetailContent"></div><div class="quality-detail-dialog__actions" id="qualityDetailActions"></div></form></dialog>
+<dialog aria-labelledby="qualityDetailTitle" aria-modal="true" class="quality-detail-dialog nk-ui-dialog nk-ui-dialog--wide" data-nk-ui-backdrop-close="true" data-nk-ui-dialog-size="wide" data-nk-ui-escape="true" id="qualityDetailDialog"><form class="quality-detail-dialog__shell" method="dialog"><div class="quality-detail-dialog__header"><div><p class="page-header__kicker">Prüfpunkt</p><h2 id="qualityDetailTitle">Details</h2></div><button aria-label="Detailansicht schließen" class="ui-button nk-ui-button ui-button--icon" value="cancel">×</button></div><div class="quality-detail-dialog__content" id="qualityDetailContent"></div><div class="quality-detail-dialog__actions" id="qualityDetailActions"></div></form></dialog>
 <script defer="" src="./js/ui-preferences.js"></script>
 <script defer="" src="./js/billing-context.js"></script>
 <script defer="" src="./js/state-access.js"></script>
@@ -317,8 +315,8 @@
 <script defer="" src="./js/cost-actions.js"></script>
 <script defer="" src="./js/billing-workflow.js"></script>
 <script defer="" src="./js/ui-controller.js"></script>
-<script defer="" src="./js/ui-bindings.js?v=99.4.31-ap22c"></script>
-<script defer="" src="./js/ui-events.js?v=99.4.31-ap22c"></script>
+<script defer="" src="./js/ui-bindings.js?v=99.4.32-ap22d"></script>
+<script defer="" src="./js/ui-events.js?v=99.4.32-ap22d"></script>
 <script defer="" src="./js/navigation.js"></script>
 <script defer="" src="./js/modal-events.js"></script>
 <script defer="" src="./js/persistence.js"></script>
@@ -341,7 +339,7 @@
 <script defer="" src="./js/document-renderer.js"></script>
 <script defer="" src="./js/export-service.js"></script>
 <script defer="" src="./js/ui-table-tools.js"></script>
-<script defer="" src="./js/ui-design-system.js?v=99.4.31-ap22c"></script>
+<script defer="" src="./js/ui-design-system.js?v=99.4.32-ap22d"></script>
 <script defer="" src="./js/app-bootstrap.js"></script>
 <script defer="" src="./js/compatibility.js"></script>
 <script defer="" src="./js/default-seed.js"></script>
@@ -354,13 +352,13 @@
 <script defer="" src="./js/ui-navigation-pages.js"></script>
 <script defer="" src="./js/ui-archive-pages.js"></script>
 <script defer="" src="./js/browser-io.js"></script>
-<script defer="" src="./js/ui-metering.js?v=99.4.31-ap22c"></script>
-<script defer="" src="./js/ui-billing-allocation.js"></script><script defer="" src="./js/ui-individual-values.js?v=99.4.31-ap22c"></script>
+<script defer="" src="./js/ui-metering.js?v=99.4.32-ap22d"></script>
+<script defer="" src="./js/ui-billing-allocation.js"></script><script defer="" src="./js/ui-individual-values.js?v=99.4.32-ap22d"></script>
 <script defer="" src="./js/ui-documents.js"></script>
 <script defer="" src="./js/ui-table-actions.js"></script>
 <script defer="" src="./js/ui-diagnostics.js"></script>
 <script defer="" src="./js/ui-page-controller.js"></script>
 <script defer="" src="./js/app.js"></script>
-<script defer="" src="./js/service-worker-register.js?v=99.4.31-ap22c"></script>
+<script defer="" src="./js/service-worker-register.js?v=99.4.32-ap22d"></script>
 </body>
 </html>

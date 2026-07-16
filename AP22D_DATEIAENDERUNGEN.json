@@ -1,0 +1,46 @@
+{
+  "version": "99.4.32",
+  "workPackage": "AP22D",
+  "productFiles": [
+    "assets/app.css",
+    "index.html",
+    "js/ui-design-system.js",
+    "js/app-runtime-config.js",
+    "service-worker.js",
+    "js/service-worker-register.js",
+    "manifest.webmanifest",
+    "package.json",
+    "package-lock.json",
+    "nk-pro-project.json"
+  ],
+  "productFileCount": 10,
+  "existingRegressionTestsChanged": false,
+  "testInfrastructure": [
+    "playwright.config.cjs",
+    "tests/ap22d-ui-dialogs-states.test.cjs",
+    "tests/ap22d-ui-dialogs-states.spec.js"
+  ],
+  "documentationFiles": [
+    "AP22D_DATEIPOSITIVLISTE.md",
+    "AP22D_INVENTAR_DIALOGE_UND_ZUSTAENDE.md",
+    "AP22D_UI_BIBLIOTHEK_DIALOGE_UND_LEERZUSTAENDE.md",
+    "AP22D_DATEIAENDERUNGEN.md",
+    "AP22D_DATEIAENDERUNGEN.json",
+    "AP22D_PRUEFBERICHT.md",
+    "AP22D_TEST_RESULTS.json",
+    "AP22D_RELEASE_CONTENT_POLICY.json",
+    "AP22D_ABSCHLUSS.md",
+    "UI_KOMPONENTENKATALOG.md",
+    "UI_DESIGN_TOKENS.md",
+    "UI_ARCHITEKTUR_AKTUELL.md",
+    "UI_MIGRATIONSMATRIX.md",
+    "UX_GUIDE.md",
+    "NK-PRO-PROJEKTSTAND.md",
+    "ROADMAP.md",
+    "CHANGELOG.md",
+    "RELEASE_NOTES.md"
+  ],
+  "releaseIntegrityFiles": [
+    "SHA256SUMS.txt"
+  ]
+}

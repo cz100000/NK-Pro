@@ -38,3 +38,10 @@ AP21 ist offen und nicht Bestandteil dieses Releases.
 
 ## V99.4.29 – AP22A UI-Bibliothek
 AP22A führt den zentralen Namensraum `nk-ui-*`, kanonische `--nk-ui-*`-Design-Tokens, eine JavaScript-Metadaten-Schnittstelle sowie Katalog und Migrationsmatrix ein. Bestehende Fachseiten und Altvarianten bleiben unverändert; die kontrollierte Migration folgt in separaten AP22-Paketen.
+
+
+## V99.4.32 – AP22D UI-Bibliothek
+
+AP22D ist abgeschlossen. Fünf produktive Dialoge verwenden das zentrale Dialogsystem einschließlich Fokusführung, Fokusfalle, Fokusrückgabe und kontrollierter Schließregeln. Sieben standardisierte Inhaltszustände stehen zentral bereit; zwei geeignete Filter-Leerzustände wurden produktiv migriert.
+
+Zehn Produktdateien liegen innerhalb der Änderungskontrolle. Fachlogik, Berechnungen, Datenmodell, Persistenz, Migration, Backup, Restore, Archiv, Navigation, Abrechnungskontext, Briefe, Druck, PDF, Import, Export und bestehende Prüfregeln blieben unverändert. Nächstes Paket: AP22E – UI-Bibliothek: Seitenschale, Layout und Komponenten-Sonderformen.

@@ -12,7 +12,11 @@
 | Status | `nk-ui-status` | neutral, info, success, warning, danger | Kompakter Zustand | Produktiv seit AP22B |
 | Hinweis | `nk-ui-notice` | info, success, warning, danger | Kontextmeldung | Grundmigration AP22B; Sonderformen später |
 | Toolbar | `nk-ui-toolbar` | default, compact | Filter und tabellenbezogene Aktionen | Produktiv seit AP22C |
-| Dialog | `nk-ui-dialog` | default, danger | Modale Interaktion | Fundament; Migration AP22D |
-| Leerzustand | `nk-ui-empty-state` | default | Fehlende Inhalte | Fundament; Migration AP22D |
+| Dialog | `nk-ui-dialog` | default, compact, wide, danger | Modale Interaktion | Produktiv seit AP22D |
+| Inhaltszustand | `nk-ui-empty-state` | no-data, not-created, filtered, loading, error, not-applicable, unavailable | Fehlende, geladene oder nicht verfügbare Inhalte | Produktiv seit AP22D |
 
 Die zentrale JavaScript-Schnittstelle `NKProUIDesignSystem` ergänzt kanonische Klassen auch an dynamisch erzeugtem Markup. Bestehende Legacy-Klassen bleiben bis zur vollständigen Restmigration als Kompatibilität erhalten.
+
+## AP22D-Schnittstellen
+
+`NKProUIDesignSystem.dialog` steuert Öffnen, Schließen, Fokusfalle und Fokusrückgabe. `NKProUIDesignSystem.states` erzeugt und rendert standardisierte Inhaltszustände. Dokument- und Druckbereiche sind von der automatischen Migration ausgeschlossen.

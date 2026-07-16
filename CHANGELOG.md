@@ -1,3 +1,16 @@
+# V99.4.32 – AP22D Dialoge und Leerzustände (2026-07-16)
+
+- zentrale Dialogkomponente mit Standard-, Kompakt-, Breit- und Gefahrvariante ergänzt,
+- fünf produktive Dialoge kontrolliert migriert,
+- Fokus beim Öffnen, Fokusfalle und Fokusrückgabe zentral abgesichert,
+- Escape- und Hintergrundschließen dialogbezogen steuerbar gemacht,
+- Löschdialog gegen unbeabsichtigtes Schließen und anfänglichen Fokus auf die destruktive Aktion geschützt,
+- sieben zentrale Inhaltszustände einschließlich Laden, Fehler und Nicht anwendbar ergänzt,
+- zwei vorhandene Filter-Leerzustände produktiv migriert,
+- dynamisch nachgeladene Dialoge und Zustände über den zentralen Upgradepfad unterstützt,
+- Brief-, Druck-, PDF- und Exportbereiche ausdrücklich ausgeschlossen,
+- Fachlogik, Datenmodell, Berechnungen, Persistenz, Navigation und bestehende Regressionstests unverändert.
+
 # V99.4.28 – AP21C Individuelle Werte (2026-07-16)
 
 - Seite „Individuelle Werte“ in klar getrennte Status-, Filter- und Kostenarten-Arbeitsbereiche gegliedert.

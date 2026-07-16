@@ -278,3 +278,13 @@ Die Statusbegriffe lauten vollständig, offen, Warnung, blockiert, in Bearbeitun
 - Bestätigt ist nicht gleich behoben. Datenänderungen können eine Bestätigung ungültig machen.
 - Im Ansichtsmodus sind sämtliche Prüfentscheidungen gesperrt.
 - Technische Selbsttests gehören in die Systemdiagnose, nicht in die fachliche Aufgabenliste.
+
+
+## AP22D – Dialoge und Inhaltszustände
+
+- Dialoge besitzen einen eindeutigen Titel, optional eine Beschreibung, einen scrollbaren Inhaltsbereich und einen klar getrennten Aktionsbereich.
+- Beim Öffnen erhält ein fachlich sinnvolles Element den Fokus; beim Schließen kehrt er zum Auslöser zurück.
+- Tab und Umschalt+Tab bleiben im geöffneten Dialog. Escape und Hintergrundklick sind nur zulässig, wenn der Dialog dies ausdrücklich erlaubt.
+- Destruktive Aktionen erhalten weder den Anfangsfokus noch eine ungeschützte Standardschließung.
+- Inhaltszustände unterscheiden keine Daten, noch nicht angelegt, leere Filterung, Laden, Fehler, nicht anwendbar und nicht verfügbar durch Text, Semantik und Darstellung; Farbe allein genügt nicht.
+- Lade- und Fehlerzustände verwenden passende Live- und ARIA-Zustände.

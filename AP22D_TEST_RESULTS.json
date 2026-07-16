@@ -1,0 +1,30 @@
+{
+  "version": "99.4.32",
+  "workPackage": "AP22D",
+  "status": "passed_with_documented_baseline_test_conflict",
+  "checks": [
+    { "name": "JavaScript syntax", "status": "passed", "units": 55 },
+    { "name": "Reference fixture semantics", "status": "passed", "cases": 6 },
+    { "name": "Current metering regressions", "status": "passed", "tests": 3 },
+    { "name": "Current architecture and navigation structure", "status": "passed", "tests": 7 },
+    { "name": "AP21C compatibility", "status": "passed", "tests": 1 },
+    { "name": "AP22D structure and release metadata", "status": "passed", "tests": 1 },
+    { "name": "AP22D Chromium", "status": "passed", "tests": 1 },
+    { "name": "Current complete Chromium regression", "status": "passed", "tests": 50 },
+    { "name": "Object standard and snapshot Chromium regression", "status": "passed", "tests": 9 },
+    { "name": "Release contents", "status": "passed", "files": 289 },
+    { "name": "SHA-256 release inventory", "status": "passed", "files": 288 },
+    { "name": "Fresh ZIP extraction and release check", "status": "passed", "tests": "complete AP22D release gate and AP22D Chromium" }
+  ],
+  "baselineTestConflict": {
+    "baselineVersion": "99.4.31",
+    "unchangedStaticLegacyFailuresInBaseline": 14,
+    "unchangedStaticLegacyFailuresAfterVersionBump": 15,
+    "reason": "hard-coded former versions, build IDs, asset references or pre-AP21B2 navigation expectations",
+    "existingRegressionTestFilesChanged": false
+  },
+  "existingRegressionTestsChanged": false,
+  "productFileCount": 10,
+  "releaseZip": "NK-Pro_V99_4_32_AP22D_UI_Bibliothek_Dialoge_und_Leerzustaende.zip",
+  "freshExtractionVerified": true
+}
