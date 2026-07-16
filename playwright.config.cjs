@@ -56,7 +56,8 @@ module.exports = defineConfig({
     { name:"ap22a-ui-library-foundation", testMatch:"ap22a-ui-library-foundation.spec.js" },
     { name:"ap22b-ui-base-components", testMatch:"ap22b-ui-base-components.spec.js" },
     { name:"ap22c-ui-tables-lists", testMatch:"ap22c-ui-tables-lists.spec.js" },
-    { name:"ap22d-ui-dialogs-states", testMatch:"ap22d-ui-dialogs-states.spec.js" }
+    { name:"ap22d-ui-dialogs-states", testMatch:"ap22d-ui-dialogs-states.spec.js" },
+    { name:"ap22e-ui-reference", testMatch:"ap22e-ui-reference.spec.js" }
   ],
   use: {
     baseURL: "http://127.0.0.1:4173",

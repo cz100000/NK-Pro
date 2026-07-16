@@ -45,3 +45,13 @@ AP22A führt den zentralen Namensraum `nk-ui-*`, kanonische `--nk-ui-*`-Design-T
 AP22D ist abgeschlossen. Fünf produktive Dialoge verwenden das zentrale Dialogsystem einschließlich Fokusführung, Fokusfalle, Fokusrückgabe und kontrollierter Schließregeln. Sieben standardisierte Inhaltszustände stehen zentral bereit; zwei geeignete Filter-Leerzustände wurden produktiv migriert.
 
 Zehn Produktdateien liegen innerhalb der Änderungskontrolle. Fachlogik, Berechnungen, Datenmodell, Persistenz, Migration, Backup, Restore, Archiv, Navigation, Abrechnungskontext, Briefe, Druck, PDF, Import, Export und bestehende Prüfregeln blieben unverändert. Nächstes Paket: AP22E – UI-Bibliothek: Seitenschale, Layout und Komponenten-Sonderformen.
+
+## V99.4.33 – AP22E UI-/UX-Designvertrag und Referenzbibliothek
+
+AP22E legt erstmals den vollständigen verbindlichen UI-/UX-Designvertrag fest. Zielbild, Seitenanatomie, Komponentenregeln, Design-Tokens, Abnahmekatalog und eine isolierte browserfähige Referenzbibliothek bilden die Abnahmegrundlage für alle folgenden UI-Pakete.
+
+Die produktive Anwendung bleibt technisch und visuell auf dem unveränderten Laufzeitstand V99.4.32. Alle produktiven HTML-, CSS- und JavaScript-Dateien, Navigation, Fachlogik, Daten, Persistenz, Dokumentausgabe und Service Worker wurden geschützt und per SHA-256 verglichen.
+
+Die Referenzbibliothek wird direkt über `ui-reference/index.html` oder über einen lokalen statischen Server unter `/ui-reference/` geöffnet. Sie verwendet ausschließlich fiktive deutsche NK-Pro-Beispiele.
+
+Nächster Schritt ist kein ungeprüfter Seitenumbau. Für jeden zusammengehörigen Seitenbereich wird zuerst ein Vorschlag mit Bestandsanalyse, Redundanzen, Zielkomponenten, Mockup, Datei-Positivliste, Abnahmekriterien, Tests und Schutzbereichen vorgelegt. Erst nach Nutzerfreigabe erfolgt die technische Migration.

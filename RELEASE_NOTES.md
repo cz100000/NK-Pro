@@ -65,3 +65,23 @@ Ein rückläufiger Zählerstand ohne dokumentierten Überlauf wird beim Neustart
 
 ## V99.4.29 – AP22A UI-Bibliothek
 AP22A führt den zentralen Namensraum `nk-ui-*`, kanonische `--nk-ui-*`-Design-Tokens, eine JavaScript-Metadaten-Schnittstelle sowie Katalog und Migrationsmatrix ein. Bestehende Fachseiten und Altvarianten bleiben unverändert; die kontrollierte Migration folgt in separaten AP22-Paketen.
+
+# NK-Pro V99.4.33 – AP22E UI-/UX-Designvertrag und Referenzbibliothek
+
+AP22E ist ein Dokumentations-, Design- und Referenzrelease ohne produktive UI-Migration. Der Release definiert verbindlich, wie NK-Pro-Seiten, Komponenten, Zustände, Fokus, Tastaturbedienung und Responsive-Verhalten künftig aussehen und geprüft werden.
+
+## Referenzbibliothek
+
+Öffnen Sie `ui-reference/index.html` direkt im Browser oder starten Sie einen lokalen statischen Server und rufen Sie `/ui-reference/` auf. Die Seite ist nicht in die produktive Navigation eingebunden und verwendet ausschließlich fiktive Beispieldaten.
+
+## Navigation
+
+Die Navigation aus V99.4.32 bleibt vollständig geschützt. Die Navigation des Styleguide-Bildes ist keine Zielvorgabe.
+
+## Produktive Anwendung
+
+Der produktive Laufzeitstand bleibt V99.4.32/AP22D. V99.4.33 bezeichnet den freigegebenen AP22E-Vertrags- und Referenzrelease. Produktdateien sind hash-identisch zum Ausgangsrelease.
+
+## Folgeprozess
+
+Spätere Migrationen benötigen vor Umsetzung einen freigegebenen Bereichsvorschlag einschließlich Mockup und Datei-Positivliste. Nicht geregelte Varianten dürfen nicht improvisiert werden.

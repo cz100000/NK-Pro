@@ -33,3 +33,24 @@ AP22C migriert produktive Anwendungstabellen, Tabellencontainer, strukturierte L
 ## V99.4.32 – AP22D Dialoge und Leerzustände
 
 AP22D migriert fünf fachlich geeignete Dialoge auf das zentrale Dialogsystem und stellt sieben standardisierte Inhaltszustände bereit. Zwei produktive Filter-Leerzustände sind angebunden; Dokument- und Druckbereiche bleiben geschützt. Nächstes Paket ist AP22E – Seitenschale, Layout und Komponenten-Sonderformen.
+
+## AP22E – abgeschlossen: Designvertrag und Referenzbibliothek
+
+- verbindlicher UI-/UX-Designvertrag
+- vollständiges Zielbild und Seitenanatomie
+- abschließende Komponenten- und Tokenregeln
+- objektiver Abnahmekatalog
+- nicht produktive Referenzbibliothek
+- seitenbezogene Migrationsmatrix
+- Schutz der Navigation und aller produktiven Dateien
+
+## Folgepakete – nur nach Einzelvorschlag und Freigabe
+
+1. Bestandsanalyse eines zusammengehörigen Seitenbereichs
+2. konkrete Redundanz- und Vereinfachungsvorschläge
+3. Zielkomponenten und visuelles Mockup
+4. Datei-Positivliste, Abnahmekriterien, Tests und Schutzliste
+5. Nutzerfreigabe
+6. vollständige technische Migration und Legacy-Bereinigung dieses Bereichs
+
+Eine mögliche Reihenfolge wird erst als Vorschlag festgelegt. AP22E autorisiert keine produktive Migration.

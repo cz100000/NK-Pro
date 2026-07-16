@@ -1,0 +1,107 @@
+{
+  "version": "99.4.33",
+  "workPackage": "AP22E",
+  "date": "2026-07-16",
+  "status": "passed_with_documented_baseline_test_conflict",
+  "releaseType": "documentation-design-reference",
+  "productiveRuntimeVersion": "99.4.32-ap22d",
+  "checks": [
+    {
+      "name": "JavaScript syntax",
+      "status": "passed",
+      "units": 55
+    },
+    {
+      "name": "Reference fixture semantics",
+      "status": "passed",
+      "cases": 6
+    },
+    {
+      "name": "Current metering regressions",
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "name": "Current architecture and navigation structure",
+      "status": "passed",
+      "tests": 7
+    },
+    {
+      "name": "AP21C compatibility",
+      "status": "passed",
+      "tests": 1
+    },
+    {
+      "name": "AP22D static baseline",
+      "status": "passed",
+      "tests": 1
+    },
+    {
+      "name": "AP22E static contract and protection",
+      "status": "passed",
+      "requiredDocuments": 20,
+      "referenceFiles": 6,
+      "protectedProductFiles": 58
+    },
+    {
+      "name": "AP22E Chromium reference and product start",
+      "status": "passed",
+      "tests": 2,
+      "viewports": [
+        "1440x1000",
+        "1024x800",
+        "390x844",
+        "900x620"
+      ]
+    },
+    {
+      "name": "Current complete AP22D Chromium regression",
+      "status": "passed",
+      "tests": 50,
+      "execution": "serial split into deterministic project batches because of host command-runtime limits"
+    },
+    {
+      "name": "Release contents",
+      "status": "passed",
+      "files": 310,
+      "checker": "tests/ap22e-ui-design-contract.test.cjs"
+    },
+    {
+      "name": "SHA-256 release inventory",
+      "status": "passed",
+      "files": 309
+    },
+    {
+      "name": "Fresh ZIP extraction",
+      "status": "passed",
+      "releaseGate": "passed",
+      "ap22eChromium": 2,
+      "ap22dChromium": 1
+    }
+  ],
+  "visualInspection": {
+    "status": "passed",
+    "referenceDesktop": true,
+    "referenceNarrow": true,
+    "navigationReferenceFromUnchangedProduct": true,
+    "unintendedHorizontalPageOverflow": false
+  },
+  "baselineTestConflict": {
+    "file": "tests/ap20-asset-refresh-regression.test.cjs",
+    "status": "unchanged_historical_failure",
+    "expectedBuild": "99.4.24-ap21a",
+    "actualProtectedBuild": "99.4.32-ap22d",
+    "reason": "The legacy test hard-codes an older build and asset query parameters. It already conflicts with the uploaded baseline and was not modified.",
+    "existingRegressionTestFilesChanged": false
+  },
+  "styleguideAsset": {
+    "status": "faithful_local_reproduction",
+    "source": "user-approved styleguide image supplied in the chat",
+    "note": "The chat image was visually available but its original binary file was not mounted in the working filesystem. A local SVG and PNG reproduction was created and explicitly documented."
+  },
+  "productiveFilesChanged": false,
+  "protectedProductFiles": 58,
+  "existingRegressionTestFilesChanged": false,
+  "freshExtractionVerified": true,
+  "releaseZip": "NK-Pro_V99_4_33_AP22E_UI_UX_Designvertrag_und_Referenzbibliothek.zip"
+}

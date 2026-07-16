@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>NK-Pro UI-/UX-Referenzbibliothek · AP22E</title>
+  <link rel="stylesheet" href="reference.css">
+</head>
+<body>
+  <svg class="icon-sprite" aria-hidden="true" focusable="false">
+    <symbol id="icon-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 10v6M12 7h.01"/></symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12 4 4 10-10"/></symbol>
+    <symbol id="icon-alert" viewBox="0 0 24 24"><path d="M12 3 2.8 20h18.4L12 3Z"/><path d="M12 9v5M12 17h.01"/></symbol>
+    <symbol id="icon-x" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="icon-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+    <symbol id="icon-edit" viewBox="0 0 24 24"><path d="m4 20 4.5-1 10-10a2 2 0 0 0-3-3l-10 10L4 20Z"/><path d="m14 7 3 3"/></symbol>
+    <symbol id="icon-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+    <symbol id="icon-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="icon-empty" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 9h8M8 13h5"/></symbol>
+    <symbol id="icon-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="icon-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></symbol>
+    <symbol id="icon-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+    <symbol id="icon-ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m6 6 12 12"/></symbol>
+  </svg>
+  <a class="skip-link" href="#main">Zum Inhalt</a>
+  <header class="reference-banner">
+    <div>
+      <p class="eyebrow">NK-Pro · AP22E · nicht produktiv</p>
+      <h1>UI-/UX-Referenzbibliothek</h1>
+      <p>Verbindliche visuelle Abnahmegrundlage. Ausschließlich fiktive Beispieldaten; keine Fachlogik, keine Persistenz und keine produktiven Ereignisse.</p>
+    </div>
+    <div class="reference-badges" aria-label="Referenzstatus">
+      <span class="badge badge--info">Designvertrag V1</span>
+      <span class="badge badge--neutral">Produktbasis V99.4.32 unverändert</span>
+    </div>
+  </header>
+
+  <nav class="section-nav" aria-label="Inhaltsverzeichnis der Referenzbibliothek">
+    <a href="#styleguide">Zielbild</a><a href="#navigation">Navigation</a><a href="#shell">Seitenschale</a>
+    <a href="#cards">Karten</a><a href="#accordions">Klappboxen</a><a href="#tables">Tabellen</a>
+    <a href="#forms">Formulare</a><a href="#actions">Aktionen</a><a href="#notices">Hinweise</a>
+    <a href="#dialogs">Dialoge</a><a href="#states">Zustände</a><a href="#responsive">Responsive</a>
+  </nav>
+
+  <main id="main" class="reference-shell">
+    <p class="visually-hidden">Fiktive NK-Pro-Beispiele: Objektübersicht, Mieter, Kosten erfassen, Verbräuche erfassen, Prüfung, Abrechnung, Briefe und Archiv.</p>
+    <section id="styleguide" class="reference-section" data-reference-group="styleguide">
+      <div class="section-heading"><div><p class="eyebrow">Visuelle Grundlage</p><h2>Freigegebenes Zielbild</h2></div><span class="badge badge--warning">Navigation im Bild ausgeschlossen</span></div>
+      <figure class="styleguide-figure">
+        <img src="assets/UI_UX_Styleguide_Bild.png" alt="NK-Pro UI-UX-Styleguide mit Übersicht, Komponenten, Formularen und UI-Baukasten">
+        <figcaption>Verbindlich sind Arbeitsflächen, Hierarchie, Karten, Tabellen, Formulare, Statusfarben, Icons, Abstände, Radien und Schatten. Die dargestellte Navigation wird nicht übernommen.</figcaption>
+      </figure>
+    </section>
+
+    <section id="navigation" class="reference-section" data-reference-group="navigation">
+      <div class="section-heading"><div><p class="eyebrow">Geschützte Bestandskomponente</p><h2>Navigation V99.4.32</h2></div><span class="badge badge--danger">Nicht verändern</span></div>
+      <div class="navigation-reference">
+        <img src="assets/navigation-v99-4-32.png" alt="Unveränderte produktive Navigation aus NK-Pro V99.4.32">
+        <div class="reference-note">
+          <h3>Vertraglicher Schutz</h3>
+          <p>Struktur, Gruppierung, Reihenfolge, aktive Zustände, Klappverhalten, Icons, Fokus und Responsive-Overlay bleiben unverändert. Diese Abbildung ist eine aus der Produktbasis erzeugte Bestandsreferenz.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="shell" class="reference-section" data-reference-group="shell">
+      <div class="section-heading"><div><p class="eyebrow">Seitenanatomie</p><h2>Seitenschale, Kopf und Abrechnungskontext</h2></div></div>
+      <article class="app-frame" aria-label="Beispiel einer NK-Pro-Seite">
+        <header class="app-topbar"><strong>NK PRO</strong><div class="top-tools"><button class="icon-button" type="button" aria-label="Hilfe"><span aria-hidden="true">?</span></button><button class="button button--secondary" type="button">Menü</button></div></header>
+        <div class="billing-context" data-state="view">
+          <strong>Abrechnungskontext</strong>
+          <span><b>Objekt:</b> Musterstraße 12</span><span><b>Zeitraum:</b> 01.01.–31.12.2025</span>
+          <span><b>Status:</b> In Prüfung</span><span><b>Modus:</b> Nur ansehen</span>
+          <div class="context-actions"><button class="button button--secondary" type="button">Wechseln</button><button class="button button--primary" type="button">Zur Bearbeitung öffnen</button></div>
+        </div>
+        <div class="app-content">
+          <header class="page-header">
+            <div><p class="eyebrow">Nebenkosten abrechnen</p><h3>Abrechnung – Übersicht</h3><p>Arbeitsstand prüfen, offene Punkte bearbeiten und den Abschluss vorbereiten.</p></div>
+            <div class="page-actions"><button class="button button--secondary" type="button">Daten importieren</button><button class="button button--primary" type="button">Neue Abrechnung</button></div>
+          </header>
+          <div class="notice notice--readonly"><div class="notice-icon"><svg class="svg-icon" aria-hidden="true"><use href="#icon-info"></use></svg></div><div><strong>Schreibgeschützte Abrechnung</strong><p>Diese Abrechnung ist schreibgeschützt. Änderungen sind erst nach dem Öffnen zur Bearbeitung möglich.</p></div><button class="button button--secondary" type="button">Zur Bearbeitung öffnen</button></div>
+        </div>
+      </article>
+
+      <div class="context-gallery" aria-label="Zustände der Abrechnungskontextleiste">
+        <div class="billing-context billing-context--compact"><strong>Kein Kontext</strong><span>Keine Abrechnung geöffnet</span><button class="button button--secondary" type="button">Abrechnung öffnen</button></div>
+        <div class="billing-context billing-context--compact"><strong>Bearbeitung</strong><span>Musterstraße 12 · 2025</span><span><b>Modus:</b> Bearbeiten</span><button class="button button--secondary" type="button">Abrechnung schließen</button></div>
+        <div class="billing-context billing-context--compact"><strong>Geschlossen</strong><span>Musterstraße 12 · 2024</span><span><b>Status:</b> Abgeschlossen</span><button class="button button--secondary" type="button">Ansehen</button></div>
+        <div class="billing-context billing-context--compact"><strong>Korrektur</strong><span>Musterstraße 12 · 2023</span><span><b>Modus:</b> Korrektur</span><button class="button button--secondary" type="button">Korrektur beenden</button></div>
+      </div>
+    </section>
+
+    <section id="cards" class="reference-section" data-reference-group="cards">
+      <div class="section-heading"><div><p class="eyebrow">Komponenten</p><h2>Karten und Layoutvarianten</h2></div></div>
+      <div class="metric-grid">
+        <article class="card card--metric"><p>Mieter</p><strong>12</strong><span>11 aktiv · 1 Leerstand</span></article>
+        <article class="card card--metric"><p>Erfasste Kosten</p><strong>24</strong><span>18.420,00 € Gesamt</span></article>
+        <article class="card card--metric"><p>Offene Prüfungen</p><strong>3</strong><span class="status status--warning"><span class="status-dot" aria-hidden="true"></span> Handlungsbedarf</span></article>
+        <article class="card card--metric"><p>Abschlussstatus</p><strong>74 %</strong><span class="status status--info"><span class="status-dot" aria-hidden="true"></span> In Prüfung</span></article>
+      </div>
+      <div class="card-grid">
+        <article class="card"><header><h3>Standardkarte</h3><span class="badge badge--neutral">Fachinhalt</span></header><p>Ruhige Gruppierung für zusammengehörige Informationen ohne dekorative Überhöhung.</p></article>
+        <article class="card card--interactive" tabindex="0"><header><h3>Interaktive Karte</h3><svg class="svg-icon line-icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></header><p>Öffnet den Bereich „Kosten erfassen“. Hover und Fokus bleiben ohne Layoutsprung.</p></article>
+        <article class="card card--status"><header><h3>Prüfstatus</h3><span class="status status--success"><svg class="svg-icon svg-icon--status" aria-hidden="true"><use href="#icon-check"></use></svg> Vollständig</span></header><p>Alle Pflichtdaten der Mietverhältnisse wurden geprüft.</p></article>
+        <article class="card card--compact"><header><h3>Kompakte Karte</h3></header><dl class="definition-list"><div><dt>Objekt</dt><dd>Musterstraße 12</dd></div><div><dt>Einheiten</dt><dd>8</dd></div></dl></article>
+        <article class="card card--dashboard"><header><h3>Nächster Schritt</h3></header><p>Drei offene Hinweise in „Prüfung“ bearbeiten.</p><footer><button class="button button--primary" type="button">Zur Prüfung</button></footer></article>
+        <article class="card"><header><h3>Karte mit Aktionen</h3><div class="compact-actions"><button class="icon-button" aria-label="Bearbeiten" type="button"><svg class="svg-icon" aria-hidden="true"><use href="#icon-edit"></use></svg></button><button class="icon-button" aria-label="Weitere Aktionen" type="button"><svg class="svg-icon" aria-hidden="true"><use href="#icon-more"></use></svg></button></div></header><p>Aktionen stehen konsistent im Kopf oder Fuß.</p></article>
+      </div>
+    </section>
+
+    <section id="accordions" class="reference-section" data-reference-group="accordions">
+      <div class="section-heading"><div><p class="eyebrow">Komponenten</p><h2>Klappboxen</h2></div></div>
+      <div class="accordion-stack">
+        <details class="accordion" open><summary><span><b>1. Mietverhältnisse</b><small>12 Datensätze</small></span><span class="status status--success"><svg class="svg-icon svg-icon--status" aria-hidden="true"><use href="#icon-check"></use></svg> Vollständig</span></summary><div class="accordion-body"><p>Fachliche Standardklappbox mit Status und ruhigem Inhaltsbereich.</p></div></details>
+        <details class="accordion accordion--compact"><summary><span><b>Verteilungsdetails</b><small>Ergänzende Informationen</small></span></summary><div class="accordion-body"><p>Kompakte Klappbox für nachrangige Details.</p></div></details>
+        <details class="accordion accordion--warning"><summary><span><b>Verbräuche prüfen</b><small>2 auffällige Werte</small></span><span class="status status--warning"><span aria-hidden="true">!</span> Handlungsbedarf</span></summary><div class="accordion-body"><p>Warnung wird durch Text und Status, nicht nur durch Farbe, vermittelt.</p><button class="button button--secondary" type="button">Zu den Verbräuchen</button></div></details>
+      </div>
+    </section>
+
+    <section id="tables" class="reference-section" data-reference-group="tables">
+      <div class="section-heading"><div><p class="eyebrow">Komponenten</p><h2>Tabellen, Listen und Filter</h2></div></div>
+      <div class="toolbar" role="search"><label>Abrechnungen suchen<input type="search" placeholder="Zeitraum oder Status"></label><div class="filter-group" aria-label="Statusfilter"><button class="filter-chip is-active" type="button">Alle</button><button class="filter-chip" type="button">In Bearbeitung</button><button class="filter-chip" type="button">Abgeschlossen</button><button class="filter-chip" type="button">Archiviert</button></div></div>
+      <div class="table-wrap" tabindex="0" aria-label="Abrechnungstabelle, horizontal scrollbar bei Bedarf">
+        <table>
+          <thead><tr><th scope="col">Zeitraum</th><th scope="col">Status</th><th scope="col">Bearbeitungsstand</th><th scope="col">Letzte Änderung</th><th scope="col">Aktionen</th></tr></thead>
+          <tbody>
+            <tr><td>2025</td><td><span class="status status--info"><span class="status-dot" aria-hidden="true"></span> In Bearbeitung</span></td><td><div class="progress"><span style="width:74%"></span></div><small>74 %</small></td><td>16.07.2026</td><td><div class="row-actions"><button class="button button--ghost" type="button">Bearbeiten</button><button class="icon-button" aria-label="Weitere Aktionen für 2025" type="button"><svg class="svg-icon" aria-hidden="true"><use href="#icon-more"></use></svg></button></div></td></tr>
+            <tr><td>2024</td><td><span class="status status--success"><svg class="svg-icon svg-icon--status" aria-hidden="true"><use href="#icon-check"></use></svg> Abgeschlossen</span></td><td><div class="progress progress--success"><span style="width:100%"></span></div><small>100 %</small></td><td>10.03.2025</td><td><button class="button button--ghost" type="button">Ansehen</button></td></tr>
+            <tr><td>2023</td><td><span class="status status--neutral"><span class="status-dot" aria-hidden="true"></span> Archiviert</span></td><td>–</td><td>04.02.2024</td><td><button class="button button--ghost" type="button">Ansehen</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="list-grid">
+        <article class="card"><h3>Definitionsliste</h3><dl class="definition-list"><div><dt>Objekt</dt><dd>Musterstraße 12</dd></div><div><dt>Zeitraum</dt><dd>2025</dd></div><div><dt>Modus</dt><dd>Nur ansehen</dd></div></dl></article>
+        <article class="card"><h3>Checkliste</h3><ul class="check-list"><li><svg class="svg-icon svg-icon--status" aria-hidden="true"><use href="#icon-check"></use></svg> Mieter vollständig</li><li><svg class="svg-icon svg-icon--status" aria-hidden="true"><use href="#icon-check"></use></svg> Kosten erfasst</li><li class="is-open"><svg class="svg-icon svg-icon--status" aria-hidden="true"><use href="#icon-alert"></use></svg> Verbräuche prüfen</li></ul></article>
+      </div>
+    </section>
+
+    <section id="forms" class="reference-section" data-reference-group="forms">
+      <div class="section-heading"><div><p class="eyebrow">Komponenten</p><h2>Formulare und Feldzustände</h2></div></div>
+      <form class="form-card" action="#" novalidate>
+        <fieldset><legend>Stammdaten des Mieters</legend><div class="form-grid">
+          <label class="field"><span>Name <em>Pflichtfeld</em></span><input type="text" value="Anna Beispiel" required><small>Vollständiger Name für die Abrechnung.</small></label>
+          <label class="field"><span>Wohnung</span><select><option>Wohnung 2 · 1. OG links</option></select></label>
+          <label class="field"><span>Einzugsdatum</span><input type="date" value="2025-01-01"></label>
+          <label class="field field--invalid"><span>Vorauszahlung</span><input type="text" value="abc" aria-invalid="true" aria-describedby="advance-error"><small id="advance-error" class="field-error">Bitte geben Sie einen gültigen Betrag ein.</small></label>
+          <label class="field field--readonly"><span>Abrechnungsstatus</span><input type="text" value="In Prüfung" readonly><small>Wird aus dem zentralen Prüfstatus gelesen.</small></label>
+          <label class="field"><span>Deaktiviertes Feld</span><input type="text" value="Aktuell nicht verfügbar" disabled></label>
+        </div></fieldset>
+        <fieldset><legend>Verteilungsart</legend><div class="choice-group"><label><input type="radio" name="distribution" checked> Verbrauch</label><label><input type="radio" name="distribution"> Wohnfläche</label><label><input type="radio" name="distribution"> Wohneinheiten</label></div><label class="checkbox"><input type="checkbox" checked> Vorauszahlung in der Abrechnung berücksichtigen</label></fieldset>
+        <div class="form-actions"><button class="button button--ghost" type="reset">Zurücksetzen</button><button class="button button--secondary" type="button">Abbrechen</button><button class="button button--primary" type="submit">Speichern</button></div>
+      </form>
+    </section>
+
+    <section id="actions" class="reference-section" data-reference-group="actions">
+      <div class="section-heading"><div><p class="eyebrow">Komponenten</p><h2>Buttons und Aktionsleisten</h2></div></div>
+      <div class="action-demo"><button class="button button--primary" type="button">Primäre Aktion</button><button class="button button--secondary" type="button">Sekundäre Aktion</button><button class="button button--ghost" type="button">Zurückhaltend</button><button class="button button--danger" type="button">Löschen</button><button class="icon-button" type="button" aria-label="Bearbeiten"><svg class="svg-icon" aria-hidden="true"><use href="#icon-edit"></use></svg></button><button class="button button--primary" type="button" disabled>Deaktiviert</button></div>
+      <div class="action-bar"><div><strong>Änderungen speichern</strong><span>3 Felder wurden bearbeitet.</span></div><div class="page-actions"><button class="button button--secondary" type="button">Abbrechen</button><button class="button button--primary" type="button">Speichern</button></div></div>
+    </section>
+
+    <section id="notices" class="reference-section" data-reference-group="notices">
+      <div class="section-heading"><div><p class="eyebrow">Komponenten</p><h2>Hinweise und Status</h2></div></div>
+      <div class="notice-grid">
+        <div class="notice notice--info"><div class="notice-icon"><svg class="svg-icon" aria-hidden="true"><use href="#icon-info"></use></svg></div><div><strong>Information</strong><p>Die Abrechnung verwendet fiktive Referenzdaten.</p></div></div>
+        <div class="notice notice--success"><div class="notice-icon"><svg class="svg-icon" aria-hidden="true"><use href="#icon-check"></use></svg></div><div><strong>Erfolgreich gespeichert</strong><p>Die Kosten wurden übernommen.</p></div></div>
+        <div class="notice notice--warning"><div class="notice-icon"><svg class="svg-icon" aria-hidden="true"><use href="#icon-alert"></use></svg></div><div><strong>Prüfung erforderlich</strong><p>Zwei Verbrauchswerte weichen deutlich vom Vorjahr ab.</p></div><button class="button button--secondary" type="button">Prüfen</button></div>
+        <div class="notice notice--danger"><div class="notice-icon"><svg class="svg-icon" aria-hidden="true"><use href="#icon-x"></use></svg></div><div><strong>Abschluss blockiert</strong><p>Mindestens eine Pflichtprüfung ist noch offen.</p></div></div>
+        <div class="notice notice--readonly"><div class="notice-icon"><svg class="svg-icon" aria-hidden="true"><use href="#icon-lock"></use></svg></div><div><strong>Schreibschutz</strong><p>Diese Abrechnung ist schreibgeschützt. Änderungen sind erst nach dem Öffnen zur Bearbeitung möglich.</p></div><button class="button button--secondary" type="button">Zur Bearbeitung öffnen</button></div>
+      </div>
+      <div class="status-row" aria-label="Statusbeispiele"><span class="status status--neutral"><span class="status-dot" aria-hidden="true"></span> Nicht begonnen</span><span class="status status--info"><span class="status-dot" aria-hidden="true"></span> In Bearbeitung</span><span class="status status--success"><svg class="svg-icon svg-icon--status" aria-hidden="true"><use href="#icon-check"></use></svg> Vollständig</span><span class="status status--warning"><svg class="svg-icon svg-icon--status" aria-hidden="true"><use href="#icon-alert"></use></svg> Offen</span><span class="status status--danger"><svg class="svg-icon svg-icon--status" aria-hidden="true"><use href="#icon-x"></use></svg> Blockiert</span></div>
+    </section>
+
+    <section id="dialogs" class="reference-section" data-reference-group="dialogs">
+      <div class="section-heading"><div><p class="eyebrow">Komponenten</p><h2>Dialogvarianten</h2></div></div>
+      <div class="dialog-launchers"><button class="button button--secondary" type="button" data-open-dialog="info-dialog">Hinweis öffnen</button><button class="button button--secondary" type="button" data-open-dialog="action-dialog">Fachliche Aktion</button><button class="button button--danger" type="button" data-open-dialog="danger-dialog">Destruktiven Dialog öffnen</button></div>
+      <dialog id="info-dialog" class="dialog" data-dialog-kind="notice"><form method="dialog"><header><div><p class="eyebrow">Hinweis</p><h3>Prüfergebnis aktualisiert</h3></div><button class="icon-button" value="cancel" aria-label="Dialog schließen"><svg class="svg-icon" aria-hidden="true"><use href="#icon-x"></use></svg></button></header><div class="dialog-body"><p>Die Statuswerte wurden aus den fiktiven Referenzdaten neu dargestellt.</p></div><footer><button class="button button--primary" value="ok">Verstanden</button></footer></form></dialog>
+      <dialog id="action-dialog" class="dialog" data-dialog-kind="action"><form method="dialog"><header><div><p class="eyebrow">Fachliche Aktion</p><h3>Abrechnung zur Bearbeitung öffnen?</h3></div><button class="icon-button" value="cancel" aria-label="Dialog schließen"><svg class="svg-icon" aria-hidden="true"><use href="#icon-x"></use></svg></button></header><div class="dialog-body"><p>Der Referenzdialog zeigt nur die Bedien- und Fokusregeln. Es wird keine produktive Aktion ausgelöst.</p></div><footer><button class="button button--secondary" value="cancel">Abbrechen</button><button class="button button--primary" value="confirm">Zur Bearbeitung öffnen</button></footer></form></dialog>
+      <dialog id="danger-dialog" class="dialog dialog--danger" data-dialog-kind="protected" data-protected="true"><form method="dialog"><header><div><p class="eyebrow">Besonders geschützt</p><h3>Fiktiven Datensatz löschen?</h3></div></header><div class="dialog-body"><div class="notice notice--danger"><div class="notice-icon"><svg class="svg-icon" aria-hidden="true"><use href="#icon-alert"></use></svg></div><div><strong>Diese Aktion wäre nicht rückgängig zu machen.</strong><p>In der Referenzbibliothek werden keine Daten verändert.</p></div></div></div><footer><button class="button button--secondary" value="cancel">Abbrechen</button><button class="button button--danger" value="confirm">Endgültig löschen</button></footer></form></dialog>
+    </section>
+
+    <section id="states" class="reference-section" data-reference-group="states">
+      <div class="section-heading"><div><p class="eyebrow">Inhaltszustände</p><h2>Leere, ladende und nicht verfügbare Inhalte</h2></div></div>
+      <div class="state-grid">
+        <article class="empty-state" data-state="no-data"><svg class="state-icon" aria-hidden="true"><use href="#icon-empty"></use></svg><h3>Keine Daten vorhanden</h3><p>Für das Archiv liegen aktuell keine Abrechnungen vor.</p></article>
+        <article class="empty-state" data-state="not-created"><svg class="state-icon" aria-hidden="true"><use href="#icon-plus"></use></svg><h3>Noch keine Datensätze angelegt</h3><p>Legen Sie den ersten Mieter für dieses Objekt an.</p><button class="button button--primary" type="button">Mieter anlegen</button></article>
+        <article class="empty-state" data-state="filtered"><svg class="state-icon" aria-hidden="true"><use href="#icon-search"></use></svg><h3>Keine passenden Ergebnisse</h3><p>Der Filter „Archiviert“ liefert keine Treffer.</p><button class="button button--secondary" type="button">Filter zurücksetzen</button></article>
+        <article class="empty-state" data-state="loading"><span class="spinner" aria-hidden="true"></span><h3>Inhalte werden geladen</h3><p>Die fiktive Kostenübersicht wird vorbereitet.</p></article>
+        <article class="empty-state empty-state--danger" data-state="error"><svg class="state-icon" aria-hidden="true"><use href="#icon-alert"></use></svg><h3>Inhalt konnte nicht geladen werden</h3><p>Versuchen Sie es erneut. Es wurden keine Daten verändert.</p><button class="button button--secondary" type="button">Erneut versuchen</button></article>
+        <article class="empty-state" data-state="not-applicable"><svg class="state-icon" aria-hidden="true"><use href="#icon-minus"></use></svg><h3>Nicht anwendbar</h3><p>Für diese Kostenart ist kein Verbrauchswert erforderlich.</p></article>
+        <article class="empty-state empty-state--disabled" data-state="disabled"><svg class="state-icon" aria-hidden="true"><use href="#icon-ban"></use></svg><h3>Deaktiviert</h3><p>Die Aktion ist im Modus „Nur ansehen“ nicht verfügbar.</p></article>
+        <article class="empty-state" data-state="unavailable"><svg class="state-icon" aria-hidden="true"><use href="#icon-x"></use></svg><h3>Aktuell nicht verfügbar</h3><p>Diese Funktion ist in NK-Pro noch nicht freigegeben.</p></article>
+      </div>
+    </section>
+
+    <section id="responsive" class="reference-section" data-reference-group="responsive">
+      <div class="section-heading"><div><p class="eyebrow">Verhalten</p><h2>Desktop, mittlere und schmale Ansicht</h2></div></div>
+      <div class="viewport-grid">
+        <article class="viewport-card"><header><strong>Desktop</strong><span>1440 px</span></header><div class="viewport viewport--desktop"><aside></aside><main><div class="mini-context"></div><div class="mini-title"></div><div class="mini-grid"><span></span><span></span><span></span></div><div class="mini-table"></div></main></div></article>
+        <article class="viewport-card"><header><strong>Mittel</strong><span>1024 px</span></header><div class="viewport viewport--medium"><aside></aside><main><div class="mini-context"></div><div class="mini-title"></div><div class="mini-grid"><span></span><span></span></div><div class="mini-table"></div></main></div></article>
+        <article class="viewport-card"><header><strong>Schmal</strong><span>390 px</span></header><div class="viewport viewport--narrow"><main><div class="mini-context"></div><div class="mini-title"></div><div class="mini-grid"><span></span><span></span><span></span></div><div class="mini-table"></div></main></div></article>
+      </div>
+      <div class="responsive-rules"><h3>Verbindliche Regeln</h3><ul><li>Seitenkopfaktionen wechseln unter den Titel und bleiben vollständig bedienbar.</li><li>Kontextinformationen umbrechen vor dem Aktionsbereich.</li><li>Kartenraster reduziert Spalten und stapelt unter 620 px.</li><li>Tabellen scrollen innerhalb ihres Containers, nicht die Gesamtseite.</li><li>Dialoge bleiben bei niedriger Höhe intern scrollbar und halten Aktionen erreichbar.</li></ul></div>
+    </section>
+  </main>
+
+  <footer class="reference-footer"><strong>NK-Pro AP22E</strong><span>Referenzbibliothek · keine Produktdaten · keine Persistenz · keine Navigationseinbindung</span></footer>
+  <script src="reference.js"></script>
+</body>
+</html>

@@ -94,3 +94,25 @@ Geprüft werden Live-Verbrauch und Live-Summe vor dem Fokuswechsel, Enter-Commit
 
 ## V99.4.29 – AP22A UI-Bibliothek
 AP22A führt den zentralen Namensraum `nk-ui-*`, kanonische `--nk-ui-*`-Design-Tokens, eine JavaScript-Metadaten-Schnittstelle sowie Katalog und Migrationsmatrix ein. Bestehende Fachseiten und Altvarianten bleiben unverändert; die kontrollierte Migration folgt in separaten AP22-Paketen.
+
+# AP22E – Designvertrag und Referenzbibliothek
+
+## Separate statische Prüfung
+
+`node tests/ap22e-ui-design-contract.test.cjs`
+
+Geprüft werden Dokumentvollständigkeit, zentrale Pflichtaussagen, Styleguide- und Navigationsschutz, isolierte Referenzbibliothek, deutsche Beispielinhalte, Komponenten-/Zustandsabdeckung, verbotene Produktdaten- und Persistenzzugriffe sowie SHA-256-Identität der geschützten Produktdateien.
+
+## Separate Browserprüfung
+
+`playwright test --project=ap22e-ui-reference --workers=1`
+
+Geprüft werden Start ohne Konsolenfehler, visuelle Hauptgruppen, Dialogfokus und Fokusrückgabe, Klappbox-Tastaturbedienung, Desktop-/Mittel-/Schmalansicht, geringe Fensterhöhe, fehlende Gesamtseiten-Horizontalscrollleiste und unveränderter produktiver Anwendungsstart.
+
+## Relevante bestehende Regression
+
+Die aktuellen AP22D-Release- und Browserprüfungen bleiben maßgeblich. Historische Tests mit fest verdrahteten älteren Versionen, Build-IDs oder Navigationsständen werden nicht geändert. Solche Konflikte werden getrennt dokumentiert und sind kein Anlass, alte Regressionstestdateien umzuschreiben.
+
+### AP22E-Releaseinhalt und geteilte Versionsrolle
+
+Der produktive Laufzeitstand bleibt absichtlich `99.4.32-ap22d`, während Paket und Vertragsrelease `99.4.33` tragen. Der ältere generische Inhaltsprüfer `tools/check-release-contents.cjs` setzt Paket- und Produktversion zwingend gleich und ist deshalb für AP22E nicht das Release-Gate. Er bleibt unverändert. Die separate AP22E-Prüfung übernimmt Inhaltsausschlüsse, Vertragsversion, Produkt-Hashschutz und Referenzisolation.

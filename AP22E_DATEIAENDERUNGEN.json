@@ -1,0 +1,58 @@
+{
+  "version": "99.4.33",
+  "workPackage": "AP22E",
+  "baselineVersion": "99.4.32",
+  "releaseType": "documentation-design-reference",
+  "newFiles": 21,
+  "changedExistingFiles": 13,
+  "removedFiles": 0,
+  "productiveFilesChanged": 0,
+  "protectedProductFilesVerified": 58,
+  "newContractAndEvidenceFiles": [
+    "UI_UX_DESIGNVERTRAG.md",
+    "UI_UX_ZIELBILD.md",
+    "UI_UX_SEITENANATOMIE.md",
+    "UI_UX_KOMPONENTENREGELN.md",
+    "UI_UX_ABNAHMEKATALOG.md",
+    "AP22E_DATEIPOSITIVLISTE.md",
+    "AP22E_BESTANDSAUFNAHME.md",
+    "AP22E_DATEIAENDERUNGEN.md",
+    "AP22E_DATEIAENDERUNGEN.json",
+    "AP22E_PRUEFBERICHT.md",
+    "AP22E_ABSCHLUSS.md",
+    "AP22E_TEST_RESULTS.json",
+    "AP22E_RELEASE_CONTENT_POLICY.json"
+  ],
+  "referenceLibraryFiles": [
+    "ui-reference/index.html",
+    "ui-reference/reference.css",
+    "ui-reference/reference.js",
+    "ui-reference/assets/UI_UX_Styleguide_Bild.svg",
+    "ui-reference/assets/UI_UX_Styleguide_Bild.png",
+    "ui-reference/assets/navigation-v99-4-32.png"
+  ],
+  "newTests": [
+    "tests/ap22e-ui-design-contract.test.cjs",
+    "tests/ap22e-ui-reference.spec.js"
+  ],
+  "changedDocumentation": [
+    "UI_DESIGN_TOKENS.md",
+    "UI_KOMPONENTENKATALOG.md",
+    "UI_ARCHITEKTUR_AKTUELL.md",
+    "UI_MIGRATIONSMATRIX.md",
+    "UX_GUIDE.md",
+    "NK-PRO-PROJEKTSTAND.md",
+    "ROADMAP.md",
+    "CHANGELOG.md",
+    "RELEASE_NOTES.md",
+    "TESTING.md"
+  ],
+  "changedTestAndReleaseIntegration": [
+    "playwright.config.cjs",
+    "package.json",
+    "package-lock.json",
+    "SHA256SUMS.txt"
+  ],
+  "existingRegressionTestFilesChanged": false,
+  "styleguideAsset": "faithful local SVG/PNG reproduction of the user-approved chat image; original binary was unavailable in the mounted workspace"
+}

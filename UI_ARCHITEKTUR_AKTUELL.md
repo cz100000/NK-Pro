@@ -43,3 +43,13 @@ AP22A führt den zentralen Namensraum `nk-ui-*`, kanonische `--nk-ui-*`-Design-T
 `js/ui-design-system.js` stellt mit Version 1.3.0 eine zentrale Dialog- und Zustandsschicht bereit. Bestehende Fachmodule öffnen und schließen die ausgewählten Dialoge weiterhin über ihre bisherigen Aktionen; die UI-Bibliothek beobachtet ausschließlich den sichtbaren Zustand, übernimmt Semantik, Fokusführung, Fokusfalle, Fokusrückgabe sowie die freigegebenen Escape- und Hintergrundregeln.
 
 Fünf produktive Dialoge sind migriert. Der Löschdialog ist besonders geschützt. Sieben Inhaltszustände werden zentral erzeugt; zwei vorhandene Filter-Leerzustände sind produktiv angebunden. Brief-, Druck-, PDF- und Dokumentbereiche sind explizit ausgeschlossen. Daten-, Fach-, Speicher- und Navigationsarchitektur bleiben unverändert.
+
+# V99.4.33 – AP22E UI-/UX-Designvertrag und Referenzbibliothek
+
+AP22E führt keine produktive UI-Migration aus. `UI_UX_DESIGNVERTRAG.md` ist der oberste UI-/UX-Standard. Zielbild, Seitenanatomie, Komponentenregeln, Tokens und Abnahmekatalog bilden gemeinsam den verbindlichen Designvertrag.
+
+Die nicht produktive Referenzbibliothek liegt vollständig isoliert unter `ui-reference/`. Sie lädt ausschließlich eigene lokale Dateien, fiktive Beispieldaten und keine produktiven Module. Sie besitzt keine Verbindung zu `NKProUIDesignSystem`, Fachdaten, Persistenz, Service Worker oder Produktnavigation.
+
+Die Navigation aus V99.4.32 ist eine geschützte Bestandskomponente. Die im Styleguide dargestellte Navigation ist ausgeschlossen. Produktive HTML-, CSS-, JavaScript-, Manifest- und Service-Worker-Dateien bleiben in AP22E hash-identisch.
+
+Spätere UI-Arbeitspakete beginnen zwingend mit Bestandsanalyse, Redundanzvorschlag, Zielkomponentenzuordnung, Mockup, Datei-Positivliste, Abnahmekriterien, Testkonzept, Schutzliste und Nutzerfreigabe. Erst danach erfolgt eine vollständige Bereichsmigration einschließlich kontrollierter Legacy-Bereinigung.

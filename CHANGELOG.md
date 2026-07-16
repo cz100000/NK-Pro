@@ -671,3 +671,21 @@ Die detaillierte frühere Historie bleibt in der Anwendung und im Versionsverlau
 
 ## V99.4.29 – AP22A UI-Bibliothek
 AP22A führt den zentralen Namensraum `nk-ui-*`, kanonische `--nk-ui-*`-Design-Tokens, eine JavaScript-Metadaten-Schnittstelle sowie Katalog und Migrationsmatrix ein. Bestehende Fachseiten und Altvarianten bleiben unverändert; die kontrollierte Migration folgt in separaten AP22-Paketen.
+
+## V99.4.33 – AP22E UI-/UX-Designvertrag und Referenzbibliothek – 16.07.2026
+
+### Neu
+- `UI_UX_DESIGNVERTRAG.md`, `UI_UX_ZIELBILD.md`, `UI_UX_SEITENANATOMIE.md`, `UI_UX_KOMPONENTENREGELN.md` und `UI_UX_ABNAHMEKATALOG.md`.
+- isolierte nicht produktive Referenzbibliothek unter `ui-reference/`.
+- separate AP22E-Struktur- und Chromium-Tests.
+- vollständige Datei-Positivliste, Bestandsaufnahme, Prüf- und Abschlussnachweise.
+
+### Aktualisiert
+- Design-Tokens, Komponentenkatalog, UI-Architektur, Migrationsmatrix, UX-Guide, Projektstand, Roadmap, Test- und Release-Dokumentation.
+
+### Unverändert
+- sämtliche produktiven HTML-, CSS- und JavaScript-Dateien,
+- Navigation und Navigationslogik,
+- Fachlogik, Datenmodell, Persistenz, Migration, Archiv und Sicherungen,
+- Briefe, Druck, PDF, Import und Export,
+- Manifest und Service Worker.

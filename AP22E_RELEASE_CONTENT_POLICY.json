@@ -1,0 +1,25 @@
+{
+  "version": "99.4.33",
+  "workPackage": "AP22E",
+  "releaseType": "documentation-design-reference",
+  "required": [
+    "unchanged productive V99.4.32 application",
+    "binding UI/UX contract documents",
+    "isolated ui-reference library and local reference assets",
+    "separate AP22E static and Chromium tests",
+    "current release and integrity documentation",
+    "package.json and package-lock.json"
+  ],
+  "exclude": [
+    "node_modules",
+    "test-results",
+    "playwright-report",
+    ".git",
+    "embedded release archives",
+    "temporary screenshots outside ui-reference/assets",
+    "temporary, backup and log files"
+  ],
+  "temporaryArtifactsAllowedInRelease": false,
+  "productiveRuntimeVersion": "99.4.32-ap22d",
+  "productiveFilesChanged": false
+}

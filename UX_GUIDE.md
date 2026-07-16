@@ -288,3 +288,31 @@ Die Statusbegriffe lauten vollständig, offen, Warnung, blockiert, in Bearbeitun
 - Destruktive Aktionen erhalten weder den Anfangsfokus noch eine ungeschützte Standardschließung.
 - Inhaltszustände unterscheiden keine Daten, noch nicht angelegt, leere Filterung, Laden, Fehler, nicht anwendbar und nicht verfügbar durch Text, Semantik und Darstellung; Farbe allein genügt nicht.
 - Lade- und Fehlerzustände verwenden passende Live- und ARIA-Zustände.
+
+# AP22E – Verbindliche Ergänzung zum UX-Guide
+
+## Rang
+
+Bei Widersprüchen gelten `UI_UX_DESIGNVERTRAG.md`, `UI_UX_ZIELBILD.md`, `UI_UX_SEITENANATOMIE.md`, `UI_UX_KOMPONENTENREGELN.md` und `UI_UX_ABNAHMEKATALOG.md` vorrangig.
+
+## Bedienprinzipien
+
+- Eine Seite zeigt genau einen Haupttitel und einen klaren nächsten Schritt.
+- Die gelbe Kontextleiste ist die einzige führende Abrechnungskontextanzeige.
+- „Modus: Nur ansehen“ bleibt dort sichtbar; zusätzliche kleine Schreibschutzplaketten im Seitenkopf entfallen.
+- Handlungsorientierte Hinweise nennen Zustand, Folge und passende Aktion.
+- Komplexe Fachbereiche werden durch progressive Offenlegung strukturiert, nicht durch Informationsverlust.
+- Status und Fehler werden mit Text plus Farbe/Icon vermittelt.
+- Destruktive Aktionen sind optisch, sprachlich und dialogseitig geschützt.
+
+## Tastatur und Fokus
+
+Alle sichtbaren Funktionen sind mit Tastatur erreichbar. Fokusreihenfolge folgt DOM, Leserichtung und fachlichem Ablauf. Fokus ist deutlicher als Hover. Dialoge halten Fokus innerhalb der Oberfläche und geben ihn an den Auslöser zurück. Klappboxen melden ihren Zustand semantisch.
+
+## Responsive Nutzung
+
+Unter 900 px werden mehrspaltige Layouts reduziert und Aktionen dürfen umbrechen. Unter 620 px werden Formulare, Karten und Aktionsgruppen einspaltig. Tabellen scrollen nur innerhalb des Tabellencontainers. Bei geringer Fensterhöhe bleiben Dialogkopf und -aktionen erreichbar; der Dialoginhalt scrollt kontrolliert.
+
+## Nicht geregelte UX-Fälle
+
+Nicht geregelte Fälle werden nicht durch lokale Texte, zusätzliche Kacheln oder neue Interaktionsmuster gelöst. Sie werden mit Zweck, Variantenbedarf, Auswirkungen, Mockup und Nutzerfreigabe in einem gesonderten Vorschlag behandelt.

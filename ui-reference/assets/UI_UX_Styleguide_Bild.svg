@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">NK-Pro UI/UX Styleguide Zielbild</title>
+  <desc id="desc">Vier Referenzbereiche für Übersicht, Komponenten, Formulare und UI-Baukasten. Die abgebildete Navigation ist für NK-Pro ausdrücklich nicht verbindlich.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#06293f"/><stop offset="1" stop-color="#0b4966"/></linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="10" stdDeviation="14" flood-opacity=".18"/></filter>
+    <style>
+      .t{font-family:"Segoe UI",Arial,sans-serif}.nav{fill:#112f46}.paper{fill:#f5f8fb}.card{fill:#fff;stroke:#dce6ef;stroke-width:1}.muted{fill:#65778a}.ink{fill:#173b5a}.blue{fill:#0f6cbd}.green{fill:#17865a}.orange{fill:#c26a13}.red{fill:#c83d3d}.line{stroke:#d9e4ed;stroke-width:1}.small{font-size:13px}.tiny{font-size:11px}.label{font-size:12px;font-weight:600}.h1{font-size:22px;font-weight:700}.h2{font-size:15px;font-weight:700}.white{fill:white}.pill{rx:8;ry:8}
+    </style>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <text x="800" y="46" text-anchor="middle" class="t white" font-size="26" font-weight="800">NK PRO · UI/UX STYLEGUIDE — ZIELBILD</text>
+  <text x="800" y="73" text-anchor="middle" class="t" fill="#b9d7e5" font-size="13" letter-spacing="3">DESIGNZIEL UND KOMPONENTENÜBERSICHT</text>
+
+  <!-- Panel 1 overview -->
+  <g transform="translate(38 105)" filter="url(#shadow)">
+    <rect width="365" height="730" rx="5" fill="#fff"/>
+    <rect width="78" height="730" class="nav"/>
+    <rect x="78" width="287" height="40" fill="#f8fafc"/>
+    <text x="18" y="29" class="t white" font-size="18" font-weight="800">NK PRO</text>
+    <text x="96" y="25" class="t ink tiny">Nebenkostenabrechnung</text>
+    <g class="t tiny" fill="#dce9f1">
+      <text x="18" y="88">Übersicht</text><text x="18" y="124">Objekte</text><text x="18" y="160">Mieter</text><text x="18" y="196">Kosten</text><text x="18" y="232">Verbräuche</text><text x="18" y="268">Prüfung</text><text x="18" y="304">Abrechnungen</text><text x="18" y="340">Briefe</text><text x="18" y="376">Archiv</text>
+    </g>
+    <rect x="82" y="42" width="279" height="34" fill="#fff3c5"/>
+    <text x="95" y="62" class="t ink tiny" font-weight="700">Objekt: Musterstraße 12 · Zeitraum 2025</text>
+    <g transform="translate(96 96)">
+      <text class="t ink h1">Übersicht</text><text y="24" class="t muted tiny">Arbeitsstand und nächste Schritte im Blick</text>
+      <g transform="translate(0 50)">
+        <rect width="78" height="72" rx="8" class="card"/><text x="12" y="22" class="t muted tiny">Mieter</text><text x="12" y="50" class="t ink" font-size="23" font-weight="700">12</text>
+        <rect x="88" width="78" height="72" rx="8" class="card"/><text x="100" y="22" class="t muted tiny">Kosten</text><text x="100" y="50" class="t ink" font-size="23" font-weight="700">24</text>
+        <rect x="176" width="78" height="72" rx="8" class="card"/><text x="188" y="22" class="t muted tiny">Offen</text><text x="188" y="50" class="t orange" font-size="23" font-weight="700">3</text>
+      </g>
+      <rect y="145" width="254" height="110" rx="8" class="card"/><text x="14" y="170" class="t ink h2">Abrechnungsstatus</text><rect x="14" y="186" width="226" height="8" rx="4" fill="#e6edf3"/><rect x="14" y="186" width="168" height="8" rx="4" class="blue"/><text x="14" y="218" class="t muted tiny">74 % vollständig · 2 Hinweise</text><rect x="14" y="232" width="75" height="20" rx="10" fill="#e8f5ee"/><text x="27" y="246" class="t green tiny" font-weight="700">In Prüfung</text>
+      <rect y="270" width="254" height="170" rx="8" class="card"/><text x="14" y="295" class="t ink h2">Letzte Aktivitäten</text>
+      <line x1="14" y1="312" x2="240" y2="312" class="line"/><text x="14" y="335" class="t ink tiny">Kosten erfasst</text><text x="184" y="335" class="t muted tiny">heute</text>
+      <line x1="14" y1="350" x2="240" y2="350" class="line"/><text x="14" y="373" class="t ink tiny">Mieter geprüft</text><text x="184" y="373" class="t muted tiny">gestern</text>
+      <line x1="14" y1="388" x2="240" y2="388" class="line"/><text x="14" y="411" class="t ink tiny">Verbräuche importiert</text><text x="184" y="411" class="t muted tiny">12.07.</text>
+      <rect y="455" width="254" height="96" rx="8" fill="#eef6fd" stroke="#c7dff1"/><text x="14" y="480" class="t ink h2">Nächster Schritt</text><text x="14" y="503" class="t muted tiny">Prüfungen abschließen und Freigabe vorbereiten.</text><rect x="14" y="518" width="104" height="24" rx="6" class="blue"/><text x="29" y="535" class="t white tiny" font-weight="700">Zur Prüfung</text>
+    </g>
+    <text x="182" y="714" text-anchor="middle" class="t ink" font-size="16" font-weight="800">ÜBERSICHT</text>
+  </g>
+
+  <!-- Panel 2 components -->
+  <g transform="translate(425 105)" filter="url(#shadow)">
+    <rect width="365" height="730" rx="5" class="paper"/>
+    <text x="182" y="34" text-anchor="middle" class="t ink" font-size="18" font-weight="800">KOMPONENTEN</text>
+    <g transform="translate(22 55)">
+      <text class="t ink h2">Buttons</text>
+      <rect y="18" width="90" height="32" rx="7" class="blue"/><text x="22" y="39" class="t white tiny" font-weight="700">Primäraktion</text>
+      <rect x="100" y="18" width="90" height="32" rx="7" fill="#fff" stroke="#cfdce7"/><text x="119" y="39" class="t ink tiny" font-weight="700">Sekundär</text>
+      <rect x="200" y="18" width="90" height="32" rx="7" fill="#fff2f1" stroke="#f0b8b3"/><text x="225" y="39" class="t red tiny" font-weight="700">Löschen</text>
+      <text y="77" class="t ink h2">Status</text>
+      <rect y="90" width="68" height="22" rx="11" fill="#e8f5ee"/><text x="17" y="105" class="t green tiny" font-weight="700">Erfolg</text>
+      <rect x="78" y="90" width="72" height="22" rx="11" fill="#fff4df"/><text x="95" y="105" class="t orange tiny" font-weight="700">Warnung</text>
+      <rect x="160" y="90" width="62" height="22" rx="11" fill="#feeceb"/><text x="177" y="105" class="t red tiny" font-weight="700">Fehler</text>
+      <rect x="232" y="90" width="58" height="22" rx="11" fill="#eaf4fc"/><text x="250" y="105" class="t blue tiny" font-weight="700">Info</text>
+      <text y="143" class="t ink h2">Cards</text>
+      <rect y="158" width="150" height="92" rx="9" class="card"/><text x="12" y="181" class="t ink h2">Standardkarte</text><text x="12" y="202" class="t muted tiny">Ruhige Gruppierung mit</text><text x="12" y="219" class="t muted tiny">feinem Rahmen.</text>
+      <rect x="165" y="158" width="156" height="92" rx="9" fill="#eef6fd" stroke="#bdd8ee"/><text x="177" y="181" class="t ink h2">Interaktiv</text><text x="177" y="202" class="t muted tiny">Hover und Fokus ohne</text><text x="177" y="219" class="t muted tiny">Layoutsprung.</text>
+      <text y="282" class="t ink h2">Hinweise</text>
+      <rect y="298" width="321" height="48" rx="7" fill="#eef6fd" stroke="#bdd8ee"/><rect width="4" height="48" rx="2" class="blue"/><text x="16" y="318" class="t ink tiny" font-weight="700">Information</text><text x="16" y="335" class="t muted tiny">Klare Aussage und passende nächste Aktion.</text>
+      <rect y="356" width="321" height="48" rx="7" fill="#fff7e8" stroke="#efd29d"/><rect width="4" height="48" rx="2" class="orange"/><text x="16" y="376" class="t ink tiny" font-weight="700">Handlungsbedarf</text><text x="16" y="393" class="t muted tiny">Status immer mit Text und Bedeutung.</text>
+      <text y="436" class="t ink h2">Dialog</text>
+      <rect y="451" width="321" height="126" rx="12" class="card"/><text x="18" y="476" class="t ink h2">Abrechnung abschließen?</text><text x="18" y="500" class="t muted tiny">Prüfen Sie offene Hinweise vor dem Abschluss.</text><line x1="0" y1="520" x2="321" y2="520" class="line"/><rect x="154" y="536" width="72" height="28" rx="6" fill="#fff" stroke="#cfdce7"/><text x="170" y="555" class="t ink tiny" font-weight="700">Abbrechen</text><rect x="235" y="536" width="72" height="28" rx="6" class="blue"/><text x="251" y="555" class="t white tiny" font-weight="700">Abschließen</text>
+      <text y="610" class="t ink h2">Icons</text>
+      <g transform="translate(0 624)" fill="none" stroke="#0f6cbd" stroke-width="2"><circle cx="14" cy="14" r="10"/><path d="M14 8v7l5 3"/><rect x="48" y="5" width="20" height="18" rx="3"/><path d="M53 10h10M53 15h7"/><path d="M96 6h16v16H96zM100 10h8M100 15h8"/><path d="M145 21l8-8 5 5 10-11"/></g>
+      <text x="182" y="669" text-anchor="middle" class="t muted tiny">16 · 18 · 20 · 24 px · SVG-Linienicons</text>
+    </g>
+  </g>
+
+  <!-- Panel 3 forms -->
+  <g transform="translate(812 105)" filter="url(#shadow)">
+    <rect width="365" height="730" rx="5" class="paper"/>
+    <text x="182" y="34" text-anchor="middle" class="t ink" font-size="18" font-weight="800">FORMULARE</text>
+    <g transform="translate(24 58)">
+      <text class="t ink label">Mietername</text><rect y="10" width="317" height="38" rx="7" fill="#fff" stroke="#cbd8e4"/><text x="12" y="35" class="t ink small">Anna Beispiel</text>
+      <text y="76" class="t ink label">Abrechnungsjahr</text><rect y="86" width="152" height="38" rx="7" fill="#fff" stroke="#0f6cbd" stroke-width="2"/><text x="12" y="111" class="t ink small">2025</text><rect x="164" y="86" width="153" height="38" rx="7" fill="#fff" stroke="#cbd8e4"/><text x="176" y="111" class="t ink small">Wohnung 2</text>
+      <text y="152" class="t ink label">Kostenart</text><rect y="162" width="317" height="38" rx="7" fill="#fff" stroke="#cbd8e4"/><text x="12" y="187" class="t ink small">Wasserkosten</text><path d="M296 177l6 6 6-6" fill="none" stroke="#607083" stroke-width="2"/>
+      <text y="228" class="t ink label">Betrag</text><rect y="238" width="317" height="38" rx="7" fill="#fff" stroke="#c83d3d" stroke-width="2"/><text x="12" y="263" class="t ink small">–</text><text y="294" class="t red tiny">Bitte geben Sie einen gültigen Betrag ein.</text>
+      <text y="330" class="t ink h2">Auswahl</text>
+      <rect y="346" width="16" height="16" rx="3" fill="#0f6cbd"/><path d="M4 354l4 4 7-8" transform="translate(0 -1)" fill="none" stroke="#fff" stroke-width="2"/><text x="26" y="359" class="t ink small">Vorauszahlung berücksichtigen</text>
+      <circle cx="8" cy="390" r="8" fill="#fff" stroke="#0f6cbd" stroke-width="2"/><circle cx="8" cy="390" r="4" class="blue"/><text x="26" y="395" class="t ink small">Verteilung nach Verbrauch</text>
+      <circle cx="8" cy="422" r="8" fill="#fff" stroke="#cbd8e4"/><text x="26" y="427" class="t ink small">Verteilung nach Fläche</text>
+      <text y="466" class="t ink h2">Schreibschutz</text>
+      <rect y="482" width="317" height="66" rx="7" fill="#f4f6f8" stroke="#d9e1e8"/><text x="12" y="506" class="t muted small">Wert: 1.245,00 €</text><text x="12" y="528" class="t muted tiny">Nur lesbar · Änderung im Bearbeitungsmodus</text>
+      <text y="584" class="t ink h2">Formularabschluss</text>
+      <line y1="600" x2="317" y2="600" class="line"/><rect x="133" y="616" width="82" height="32" rx="7" fill="#fff" stroke="#cbd8e4"/><text x="151" y="637" class="t ink tiny" font-weight="700">Abbrechen</text><rect x="225" y="616" width="92" height="32" rx="7" class="blue"/><text x="246" y="637" class="t white tiny" font-weight="700">Speichern</text>
+    </g>
+  </g>
+
+  <!-- Panel 4 UI kit -->
+  <g transform="translate(1199 105)" filter="url(#shadow)">
+    <rect width="363" height="730" rx="5" class="paper"/>
+    <text x="181" y="34" text-anchor="middle" class="t ink" font-size="18" font-weight="800">UI-BAUKASTEN</text>
+    <g transform="translate(22 58)">
+      <text class="t ink h2">Farbrollen</text>
+      <g transform="translate(0 18)"><circle cx="16" cy="16" r="16" class="blue"/><circle cx="58" cy="16" r="16" class="green"/><circle cx="100" cy="16" r="16" class="orange"/><circle cx="142" cy="16" r="16" class="red"/><circle cx="184" cy="16" r="16" fill="#7a5bc2"/><circle cx="226" cy="16" r="16" fill="#eef2f6" stroke="#d5dfe8"/><circle cx="268" cy="16" r="16" class="nav"/></g>
+      <text y="78" class="t ink h2">Typografie</text><text y="106" class="t ink" font-size="25" font-weight="700">Seitentitel</text><text y="134" class="t ink" font-size="18" font-weight="700">Bereichstitel</text><text y="159" class="t ink" font-size="15" font-weight="700">Kartentitel</text><text y="183" class="t ink small">Fließtext für verständliche Fachinformationen.</text><text y="204" class="t muted tiny">Hilfetext und sekundäre Information.</text>
+      <text y="244" class="t ink h2">Abstandsraster</text>
+      <g transform="translate(0 258)" fill="#dcebf6"><rect width="4" height="20"/><rect x="18" width="8" height="20"/><rect x="40" width="12" height="20"/><rect x="66" width="16" height="20"/><rect x="96" width="24" height="20"/><rect x="134" width="32" height="20"/><rect x="180" width="48" height="20"/></g><text y="296" class="t muted tiny">4 · 8 · 12 · 16 · 24 · 32 · 48 px</text>
+      <text y="334" class="t ink h2">Radien und Schatten</text><rect y="350" width="58" height="50" rx="6" class="card"/><rect x="70" y="350" width="58" height="50" rx="10" class="card"/><rect x="140" y="350" width="58" height="50" rx="14" class="card" filter="url(#shadow)"/><text y="419" class="t muted tiny">klein · mittel · Dialog</text>
+      <text y="457" class="t ink h2">Responsive</text>
+      <rect y="474" width="126" height="84" rx="6" fill="#fff" stroke="#bfcdda"/><rect x="7" y="481" width="24" height="70" class="nav"/><rect x="38" y="484" width="80" height="12" fill="#eaf4fc"/><rect x="38" y="503" width="36" height="39" class="card"/><rect x="80" y="503" width="38" height="39" class="card"/>
+      <rect x="142" y="484" width="76" height="74" rx="6" fill="#fff" stroke="#bfcdda"/><rect x="149" y="491" width="62" height="10" fill="#eaf4fc"/><rect x="149" y="507" width="62" height="18" class="card"/><rect x="149" y="531" width="62" height="18" class="card"/>
+      <rect x="234" y="494" width="46" height="64" rx="6" fill="#fff" stroke="#bfcdda"/><rect x="240" y="500" width="34" height="8" fill="#eaf4fc"/><rect x="240" y="514" width="34" height="16" class="card"/><rect x="240" y="536" width="34" height="16" class="card"/>
+      <text y="583" class="t muted tiny">Desktop · mittel · schmal</text>
+      <rect y="608" width="319" height="44" rx="7" fill="#fff3c5" stroke="#e7cd7d"/><text x="12" y="626" class="t ink tiny" font-weight="700">Navigation im Bild nicht verbindlich.</text><text x="12" y="643" class="t muted tiny">NK-Pro verwendet unverändert V99.4.32.</text>
+    </g>
+  </g>
+</svg>
