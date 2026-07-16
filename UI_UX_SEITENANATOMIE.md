@@ -29,19 +29,19 @@
 
 ## 3. Gelbe Abrechnungskontextleiste
 
-**Zweck:** einzige führende Anzeige für Objekt, Zeitraum, Status, Modus und kontextbezogene Hauptaktion.  
-**Reihenfolge:** Titel „Abrechnungskontext“, Objekt, Zeitraum, Status, Modus; Aktionen rechts.  
-**Zustände:** kein geladener Kontext, Bearbeitung, „Nur ansehen“, geschlossen, Korrektur.  
+**Zweck:** einzige führende Anzeige für Objekt, vollständigen Abrechnungszeitraum, Status und bestehende kontextbezogene Aktionen.  
+**Reihenfolge:** Titel „Abrechnungskontext“, Objekt, vollständiger Zeitraum, Status; Aktionen rechts.  
+**Zustände:** kein geladener Kontext, Bearbeitung, „Nur ansehen“, geschlossen, Archiv und Korrektur.  
 **Responsive:** Informationen umbrechen in semantischer Reihenfolge; Aktionen wechseln unter die Informationen.  
-**Verbot:** keine zweite Kontextkarte oder Zeitraum-Klappbox im Seiteninhalt.
+**Verbot:** keine Modusangabe, keine zweite Kontextkarte und keine zusätzliche Zeitraum-Klappbox im Seiteninhalt.
 
-„Modus: Nur ansehen“ bleibt sichtbar. Eine zusätzliche kleine Kennzeichnung „Schreibgeschützt“ im Seitenkopf bleibt entfallen. Ein größerer handlungsorientierter Schreibschutzhinweis ist auf betroffenen Seiten zulässig.
+Die Kontextleiste zeigt weder „Modus: Bearbeiten“ noch „Modus: Nur ansehen“ noch eine andere Modusangabe. Der Nur-ansehen-Zustand wird durch den größeren handlungsorientierten Schreibschutzhinweis, deaktivierte oder ausgeblendete Bearbeitungsfunktionen und die dort verbleibende Aktion `Zur Bearbeitung öffnen` vermittelt. Eine zusätzliche kleine Kennzeichnung „Schreibgeschützt“ im Seitenkopf bleibt entfallen.
 
 ## 4. Seitenschale
 
 **Zweck:** konsistenter äußerer Inhaltsrahmen.  
 **Breite:** flüssig mit zentral definiertem Maximum; keine seitenbezogenen Maximalbreiten.  
-**Abstand:** Desktop 24–32 px, mittlere Breite 20–24 px, schmale Ansicht 16 px.  
+**Abstand:** Desktop 32 px, unter 1280 px 24 px, unter 620 px 16 px.  
 **Struktur:** vertikaler Stapel mit zentralem Bereichsabstand.
 
 ## 5. Seitenkopf
@@ -81,6 +81,6 @@ Dialoge werden nur für fokussierte Entscheidungen oder geschützte Aktionen ver
 - Status im Seitenkopf und identisch unmittelbar darunter,
 - dieselbe Aktion gleichzeitig in Kopf, Karte und Abschlussleiste,
 - identischer Warnhinweis mehrfach auf derselben Sichtfläche,
-- zusätzliche Schreibschutzplakette neben dem bereits sichtbaren Kontextmodus.
+- zusätzliche kleine Schreibschutzplakette im Seitenkopf.
 
 Doppelte Titel, redundante Statusangaben und unnötige Informationswiederholungen werden in späteren Migrationspaketen konkret benannt und nur nach Freigabe entfernt oder zusammengeführt.

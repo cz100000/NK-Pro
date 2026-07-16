@@ -1,3 +1,18 @@
+# V99.4.34 – AP22F1A Globales Schalenfundament (2026-07-17)
+
+- globale Kopf-/Werkzeugleiste von einem konkurrierenden Seitentitel bereinigt,
+- alle 18 sichtbaren Ansichten auf genau eine zentrale `nk-ui-page-shell` und einen zentralen `nk-ui-page-header` migriert,
+- alle sichtbaren Seitentitel als eindeutiges `h1` umgesetzt,
+- Schalenbreiten 760/1180/1440 px sowie Seiteninnenabstände 32/24/16 px zentral eingeführt,
+- Seitenkopfaktionen responsiv angeordnet und unter 620 px vollständig gestapelt,
+- gelbe Abrechnungskontextleiste auf Objekt, vollständigen Abrechnungszeitraum, Status und bestehende Kontextaktionen reduziert,
+- jede Modusangabe einschließlich „Modus: Nur ansehen“ aus der Kontextleiste entfernt,
+- bestehende Schreibschutz-Notice und `Zur Bearbeitung öffnen` unverändert erhalten,
+- Definitionslisten-Kollision der Kontextleiste im UI-Designsystem ausgeschlossen,
+- Referenzbibliothek und verbindliche UI-/UX-Dokumente auf die allgemeingültige Regel ohne Modusfeld aktualisiert,
+- Navigation, `js/billing-context.js`, Fachlogik, Berechnungen, Datenmodell, Persistenz, Migration, Backup, Archiv, Import/Export, Brief, Druck und PDF hashgeschützt unverändert erhalten,
+- vier separate AP22F1A-Testdateien mit statischen, Browser-, Responsive-, Fokus- und Schutzprüfungen ergänzt.
+
 # V99.4.32 – AP22D Dialoge und Leerzustände (2026-07-16)
 
 - zentrale Dialogkomponente mit Standard-, Kompakt-, Breit- und Gefahrvariante ergänzt,

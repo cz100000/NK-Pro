@@ -41,3 +41,14 @@
 .svg-icon--status{width:14px;height:14px;stroke-width:2.2}.state-icon{width:28px;height:28px;color:var(--primary)}.empty-state--danger .state-icon{color:var(--danger)}
 .status-dot{width:8px;height:8px;border-radius:50%;background:currentColor;display:inline-block;flex:0 0 auto}
 .accordion summary::after{content:"";width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);color:var(--muted);margin-right:4px}.accordion[open] summary::after{transform:rotate(225deg)}
+
+/* AP22F1A – verbindliches globales Schalenfundament */
+.reference-rule{margin:var(--s4) 0 0;padding:12px 14px;border-left:4px solid var(--primary);border-radius:var(--r2);background:var(--primary-soft)}
+.app-content{width:min(1180px,100%);min-width:0;margin:0 auto;padding:32px}
+.page-header{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:var(--s5)}
+.page-header h1{margin:0;font-size:28px;line-height:1.2}
+.billing-context{display:grid;grid-template-columns:auto repeat(3,minmax(0,auto)) minmax(0,1fr);align-items:center}
+.billing-context .context-actions{justify-self:end}
+@media(max-width:1280px){.app-content{padding:24px}}
+@media(max-width:900px){.billing-context{grid-template-columns:repeat(2,minmax(0,1fr))}.billing-context .context-actions{grid-column:1/-1;justify-self:stretch}.page-header{grid-template-columns:1fr}.page-actions{justify-self:stretch}}
+@media(max-width:620px){.app-content{padding:16px}.billing-context{grid-template-columns:1fr}.billing-context .context-actions{grid-column:auto}.page-actions{flex-direction:column}.page-actions .button{width:100%}}

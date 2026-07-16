@@ -1,7 +1,7 @@
 # NK-Pro – Verbindlicher UI-/UX-Designvertrag
 
-**Vertragsstand:** AP22E / V99.4.33  
-**Technische Produktbasis:** unverändert V99.4.32 / AP22D  
+**Vertragsstand:** AP22F1A / V99.4.34  
+**Technische Produktbasis:** V99.4.34 / AP22F1A  
 **Geltung:** alle späteren produktiven UI-Arbeitspakete
 
 ## 1. Zweck und Geltungsbereich
@@ -42,6 +42,14 @@ Die Navigation aus V99.4.32 bleibt optisch, strukturell und funktional unveränd
 - Responsive Anpassung bewahrt alle fachlichen Informationen und Bedienmöglichkeiten.
 - Produktive Seiten definieren keine eigenen Farben, Abstände, Radien, Schatten, Fokusmuster oder Iconstile.
 - Fachlogik und UI bleiben getrennt; UI-Migrationen ändern keine Berechnungen, Datenverträge oder Persistenzpfade.
+
+## 5.1 Globale Schale und Abrechnungskontext nach AP22F1A
+
+Jede sichtbare produktive Ansicht verwendet genau eine zentrale `nk-ui-page-shell`, genau einen zentralen `nk-ui-page-header` und genau einen sichtbaren Haupttitel als `h1`. Der globale App-Kopf enthält keinen konkurrierenden oder versteckten Seitentitel.
+
+Die gelbe Abrechnungskontextleiste zeigt in semantischer Reihenfolge Objekt, vollständigen Abrechnungszeitraum und Status sowie bereits bestehende fachlich zulässige Kontextaktionen. **Eine Modusangabe wird in keinem Zustand dargestellt.** Das gilt insbesondere für Bearbeitung, Nur ansehen, Abschluss, Archiv und Korrektur. Der Nur-ansehen-Zustand wird ausschließlich durch die größere handlungsorientierte Schreibschutz-Notice, eingeschränkte Bedienmöglichkeiten und die dort verbleibende Aktion `Zur Bearbeitung öffnen` vermittelt.
+
+Die zentrale Seitenschale verwendet die Breiten `narrow` (760 px), `default` (1180 px) und `wide` (1440 px). Der Seiteninnenabstand beträgt 32 px, unter 1280 px 24 px und unter 620 px 16 px. Die geschützte Navigationsschwelle von 980 px bleibt unverändert.
 
 ## 6. Erlaubte Varianten
 

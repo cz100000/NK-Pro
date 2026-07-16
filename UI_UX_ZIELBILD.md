@@ -74,3 +74,10 @@ Semantische HTML-Struktur, Tastaturbedienbarkeit, sichtbarer Fokus, zugängliche
 ## 14. Verbindliche visuelle Referenz
 
 `ui-reference/assets/UI_UX_Styleguide_Bild.png` zeigt das freigegebene Zielbild für Arbeitsflächen und Komponenten. Die darin dargestellte Navigation ist ausgeschlossen. Die Referenzbibliothek unter `ui-reference/` übersetzt das Zielbild in NK-Pro-Komponenten und deutsche fiktive Beispieldaten.
+
+## AP22F1A – Globales Schalenfundament
+
+Die produktive Oberfläche verwendet eine einheitliche äußere Seitenschale mit 32 px Innenabstand auf großen Desktops, 24 px unter 1280 px und 16 px unter 620 px. Jede sichtbare Ansicht besitzt genau einen sichtbaren Haupttitel im zentralen Seitenkopf. Seitenkopfaktionen stehen bei ausreichender Breite rechts und stapeln unter 620 px vollständig unter Titel und Beschreibung.
+
+Die gelbe Abrechnungskontextleiste bleibt kompakt und zeigt ausschließlich Objekt, vollständigen Abrechnungszeitraum, Status und bestehende fachlich zulässige Kontextaktionen. Eine Modusangabe ist für sämtliche Zustände ausgeschlossen. Der Nur-ansehen-Zustand wird über die größere handlungsorientierte Schreibschutz-Notice und eingeschränkte Bedienmöglichkeiten vermittelt.
+

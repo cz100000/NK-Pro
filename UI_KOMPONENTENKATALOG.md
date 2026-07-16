@@ -4,9 +4,9 @@
 |---|---|---|---|---|
 | Navigation | bestehende V99.4.32-Navigation | Desktop, bestehendes Overlay, aktiv, inaktiv, deaktiviert, Gruppen offen/geschlossen | geschützt, unverändert | Referenzbibliothek: Navigation |
 | Kopf/Werkzeuge | globale Kopf- und Werkzeugleiste | Standard, reduzierte schmale Darstellung | Bestand; spätere Konsolidierung | Seitenschale |
-| Abrechnungskontext | `global-billing-context` / Ziel `nk-ui-context-bar` | kein Kontext, Bearbeiten, Nur ansehen, geschlossen, Korrektur | Fachlogik produktiv; visuelle Zielmigration offen | Seitenschale |
-| Seitenschale | Ziel `nk-ui-page-shell` | narrow, default, wide | neu spezifiziert, produktive Migration offen | Seitenschale |
-| Seitenkopf | Ziel `nk-ui-page-header` | Titel; Titel/Beschreibung; Titel/Aktionen; Titel/Beschreibung/Aktionen | Grundbestand vorhanden; Konsolidierung offen | Seitenschale |
+| Abrechnungskontext | `global-billing-context nk-ui-context-bar` | kein Kontext, Bearbeiten, Nur ansehen, geschlossen, Archiv, Korrektur; stets ohne Modusangabe | AP22F1A produktiv migriert; Fachlogik unverändert | Seitenschale |
+| Seitenschale | `nk-ui-page-shell` | narrow 760 px, default 1180 px, wide 1440 px | AP22F1A auf allen sichtbaren Seiten produktiv | Seitenschale |
+| Seitenkopf | `nk-ui-page-header` | Titel; Titel/Beschreibung; Titel/Aktionen; Titel/Beschreibung/Aktionen | AP22F1A zentral migriert; genau ein sichtbares `h1` je Ansicht | Seitenschale |
 | Layout | `nk-ui-stack`, `nk-ui-cluster`, Ziel `nk-ui-grid`, `nk-ui-main-aside` | stack sm/md/lg/xl, Cluster, 1/2 Spalten, Dashboard, Kartenraster, Haupt/Neben | Fundament vorhanden; Ausbau offen | Karten/Responsive |
 | Button | `nk-ui-button` | primary, secondary, ghost, danger, icon, disabled | produktiv seit AP22B | Aktionen |
 | Formularfeld | `nk-ui-field` | default, invalid, warning, disabled, readonly, group, section | Grundmigration AP22B; Sonderformen offen | Formulare |

@@ -147,7 +147,7 @@ function configureApplicationActions() {
   });
 }
 function configureNavigationModule() {
-  return NK_PRO_MODULES.navigation.configure({ currentYear:() => currentAbrechnungsjahr(), objectLabel:() => currentObjectLabel(), isArchiveViewer:() => isArchiveViewer(), hasActiveBilling:() => NK_PRO_MODULES.archiveActions.hasActiveCurrentBilling(), isFinalized:() => NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized(), isContextOpen:() => isBillingContextOpen(), tabTitle:tabId => TAB_DEFINITIONS[tabId] ? TAB_DEFINITIONS[tabId].title : "NK-Pro", updatePageHeaders:() => updateAllPageHeaders(), renderOverview:tabId => renderOverviewForTab(tabId) });
+  return NK_PRO_MODULES.navigation.configure({ currentYear:() => currentAbrechnungsjahr(), billingPeriodLabel:() => pageHeaderPeriodLabel(), objectLabel:() => currentObjectLabel(), isArchiveViewer:() => isArchiveViewer(), hasActiveBilling:() => NK_PRO_MODULES.archiveActions.hasActiveCurrentBilling(), isFinalized:() => NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized(), isContextOpen:() => isBillingContextOpen(), tabTitle:tabId => TAB_DEFINITIONS[tabId] ? TAB_DEFINITIONS[tabId].title : "NK-Pro", updatePageHeaders:() => updateAllPageHeaders(), renderOverview:tabId => renderOverviewForTab(tabId) });
 }
 function registerUiControllers() { return NK_PRO_MODULES.uiBindings.register({ modules:{ exportService:NK_PRO_MODULES.exportService, applicationActions:NK_PRO_MODULES.applicationActions } }); }
 function startUiEvents() {

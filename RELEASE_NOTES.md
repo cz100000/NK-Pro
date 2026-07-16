@@ -1,3 +1,11 @@
+# Release V99.4.34 – AP22F1A Globales Schalenfundament
+
+AP22F1A setzt ausschließlich die globale äußere UI-Schale um. Jede der 18 sichtbaren produktiven Ansichten besitzt nun genau eine zentrale Seitenschale, einen zentralen Seitenkopf und einen sichtbaren Haupttitel als `h1`. Die Inhaltsbreiten sind zentral als `narrow` 760 px, `default` 1180 px und `wide` 1440 px definiert; die Seiteninnenabstände betragen 32 px, unter 1280 px 24 px und unter 620 px 16 px.
+
+Die gelbe Abrechnungskontextleiste zeigt in allen Zuständen Objekt, vollständigen Abrechnungszeitraum und Status sowie bereits bestehende zulässige Kontextaktionen. Eine Modusangabe wird nicht mehr dargestellt. Der Nur-ansehen-Zustand bleibt über die größere handlungsorientierte Schreibschutz-Notice, deaktivierte beziehungsweise ausgeblendete Bearbeitungsfunktionen und die dort verbleibende Aktion `Zur Bearbeitung öffnen` eindeutig erkennbar.
+
+Die Navigation ist bytegleich zum Ausgangsstand geschützt. Ebenfalls unverändert blieben Fachlogik, Berechnungen, Datenschema 5, Persistenz, Migration, Backup/Restore, Archiv/Snapshots, Dirty-State, Import/Export, Prüfregeln, Brief, Druck und PDF. Karten, Tabellen, Formulare, Dialoge, Klappboxen, lokale Metablöcke und Save-Aktionen sind nicht Bestandteil dieses Pakets.
+
 # Release V99.4.32 – AP22D Dialoge und Leerzustände
 
 AP22D erweitert die zentrale UI-Bibliothek um ein verbindliches Dialogsystem und sieben standardisierte Inhaltszustände. Migriert wurden die Dialoge zum Anlegen und Löschen einer Abrechnung, zum Bearbeiten eines Einheitspreises, zur Kostenartauswahl und zu Prüfpunktdetails sowie zwei geeignete leere Filterzustände.

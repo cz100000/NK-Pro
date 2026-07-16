@@ -1,3 +1,11 @@
+# Projektstand V99.4.34 – AP22F1A Globales Schalenfundament
+
+AP22F1A ist technisch abgeschlossen. Die globale Kopf-/Werkzeugleiste, die gelbe Abrechnungskontextleiste, die äußere Seitenschale und die Seitenköpfe sind zentralisiert. Alle 18 sichtbaren Ansichten besitzen genau eine `nk-ui-page-shell`, einen `nk-ui-page-header` und ein sichtbares `h1`.
+
+Die Abrechnungskontextleiste zeigt ausschließlich Objekt, vollständigen Abrechnungszeitraum, Status und bestehende zulässige Kontextaktionen. Sie enthält weder im Bearbeitungs- noch im Nur-ansehen-, Abschluss-, Archiv- oder Korrekturkontext eine Modusangabe. Der Schreibschutz bleibt durch die bestehende größere Notice, die technische Schreibsperre und `Zur Bearbeitung öffnen` vermittelt.
+
+Navigation, Fachlogik, Berechnungen, Datenmodell, Datenschema 5, Persistenz, Migration, Backup/Restore, Archiv/Snapshots, Dirty-State, Import/Export, Prüfregeln, Brief, Druck und PDF sind geschützt unverändert. Nächster geplanter Schritt ist AP22F1B für die gesondert freizugebende Bereinigung lokaler Metablöcke, statischer Speicherstatus und globaler Save-Aktionen.
+
 # Projektstand V99.4.28 – AP21C
 
 AP21C ist abgeschlossen. Die Seite „Individuelle Werte“ wurde visuell und strukturell konsolidiert; Navigation, Datenlogik und Persistenz blieben unverändert. Nächstes Paket: AP21D.

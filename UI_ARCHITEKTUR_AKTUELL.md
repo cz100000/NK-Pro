@@ -18,7 +18,7 @@ Die App verwendet zentral `"Segoe UI", Arial, sans-serif`; Briefvorschau, Druck 
 
 ## Navigation und Abrechnungskontext
 
-Der AP19-Kontext besitzt weiterhin `closed`, `edit` und `view`. Zehn Abrechnungs-Unterpunkte sind ohne geöffneten Kontext sichtbar, aber nicht aufrufbar. Die gelbe Kontextleiste bleibt die zentrale Status- und Modusanzeige.
+Der AP19-Kontext besitzt weiterhin `closed`, `edit` und `view`. Zehn Abrechnungs-Unterpunkte sind ohne geöffneten Kontext sichtbar, aber nicht aufrufbar. Die gelbe Kontextleiste bleibt die zentrale Anzeige für Objekt, vollständigen Abrechnungszeitraum und Status. Sie enthält in keinem Zustand eine Modusangabe; der Nur-ansehen-Zustand bleibt über Schreibschutz-Notice und technische Schreibsperre vermittelt.
 
 ## AP20-Prüfoberflächen
 

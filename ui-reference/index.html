@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="light">
-  <title>NK-Pro UI-/UX-Referenzbibliothek · AP22E</title>
+  <title>NK-Pro UI-/UX-Referenzbibliothek · AP22F1A</title>
   <link rel="stylesheet" href="reference.css">
 </head>
 <body>
@@ -26,13 +26,13 @@
   <a class="skip-link" href="#main">Zum Inhalt</a>
   <header class="reference-banner">
     <div>
-      <p class="eyebrow">NK-Pro · AP22E · nicht produktiv</p>
+      <p class="eyebrow">NK-Pro · AP22F1A · nicht produktiv</p>
       <h1>UI-/UX-Referenzbibliothek</h1>
       <p>Verbindliche visuelle Abnahmegrundlage. Ausschließlich fiktive Beispieldaten; keine Fachlogik, keine Persistenz und keine produktiven Ereignisse.</p>
     </div>
     <div class="reference-badges" aria-label="Referenzstatus">
       <span class="badge badge--info">Designvertrag V1</span>
-      <span class="badge badge--neutral">Produktbasis V99.4.32 unverändert</span>
+      <span class="badge badge--neutral">Schalenfundament V99.4.34</span>
     </div>
   </header>
 
@@ -70,24 +70,26 @@
         <header class="app-topbar"><strong>NK PRO</strong><div class="top-tools"><button class="icon-button" type="button" aria-label="Hilfe"><span aria-hidden="true">?</span></button><button class="button button--secondary" type="button">Menü</button></div></header>
         <div class="billing-context" data-state="view">
           <strong>Abrechnungskontext</strong>
-          <span><b>Objekt:</b> Musterstraße 12</span><span><b>Zeitraum:</b> 01.01.–31.12.2025</span>
-          <span><b>Status:</b> In Prüfung</span><span><b>Modus:</b> Nur ansehen</span>
-          <div class="context-actions"><button class="button button--secondary" type="button">Wechseln</button><button class="button button--primary" type="button">Zur Bearbeitung öffnen</button></div>
+          <span><b>Objekt:</b> Musterstraße 12</span><span><b>Zeitraum:</b> 01.01.2025 – 31.12.2025</span>
+          <span><b>Status:</b> In Prüfung</span>
+          <div class="context-actions"><button class="button button--secondary" type="button">Wechseln</button></div>
         </div>
         <div class="app-content">
           <header class="page-header">
-            <div><p class="eyebrow">Nebenkosten abrechnen</p><h3>Abrechnung – Übersicht</h3><p>Arbeitsstand prüfen, offene Punkte bearbeiten und den Abschluss vorbereiten.</p></div>
+            <div><p class="eyebrow">Nebenkosten abrechnen</p><h1>Abrechnung – Übersicht</h1><p>Arbeitsstand prüfen, offene Punkte bearbeiten und den Abschluss vorbereiten.</p></div>
             <div class="page-actions"><button class="button button--secondary" type="button">Daten importieren</button><button class="button button--primary" type="button">Neue Abrechnung</button></div>
           </header>
           <div class="notice notice--readonly"><div class="notice-icon"><svg class="svg-icon" aria-hidden="true"><use href="#icon-info"></use></svg></div><div><strong>Schreibgeschützte Abrechnung</strong><p>Diese Abrechnung ist schreibgeschützt. Änderungen sind erst nach dem Öffnen zur Bearbeitung möglich.</p></div><button class="button button--secondary" type="button">Zur Bearbeitung öffnen</button></div>
         </div>
       </article>
 
+      <p class="reference-rule"><strong>Verbindliche Regel:</strong> Die gelbe Abrechnungskontextleiste zeigt Objekt, vollständigen Zeitraum und Status, jedoch keine Modusangabe. Der Nur-ansehen-Zustand wird durch die handlungsorientierte Schreibschutz-Notice und eingeschränkte Bedienmöglichkeiten vermittelt.</p>
+
       <div class="context-gallery" aria-label="Zustände der Abrechnungskontextleiste">
         <div class="billing-context billing-context--compact"><strong>Kein Kontext</strong><span>Keine Abrechnung geöffnet</span><button class="button button--secondary" type="button">Abrechnung öffnen</button></div>
-        <div class="billing-context billing-context--compact"><strong>Bearbeitung</strong><span>Musterstraße 12 · 2025</span><span><b>Modus:</b> Bearbeiten</span><button class="button button--secondary" type="button">Abrechnung schließen</button></div>
-        <div class="billing-context billing-context--compact"><strong>Geschlossen</strong><span>Musterstraße 12 · 2024</span><span><b>Status:</b> Abgeschlossen</span><button class="button button--secondary" type="button">Ansehen</button></div>
-        <div class="billing-context billing-context--compact"><strong>Korrektur</strong><span>Musterstraße 12 · 2023</span><span><b>Modus:</b> Korrektur</span><button class="button button--secondary" type="button">Korrektur beenden</button></div>
+        <div class="billing-context billing-context--compact"><strong>Bearbeitung</strong><span><b>Objekt:</b> Musterstraße 12</span><span><b>Zeitraum:</b> 01.01.2025 – 31.12.2025</span><span><b>Status:</b> In Bearbeitung</span><button class="button button--secondary" type="button">Abrechnung schließen</button></div>
+        <div class="billing-context billing-context--compact"><strong>Geschlossen</strong><span><b>Objekt:</b> Musterstraße 12</span><span><b>Zeitraum:</b> 01.01.2024 – 31.12.2024</span><span><b>Status:</b> Abgeschlossen</span><button class="button button--secondary" type="button">Ansehen</button></div>
+        <div class="billing-context billing-context--compact"><strong>Korrektur</strong><span><b>Objekt:</b> Musterstraße 12</span><span><b>Zeitraum:</b> 01.01.2023 – 31.12.2023</span><span><b>Status:</b> Wieder geöffnet</span><button class="button button--secondary" type="button">Korrektur beenden</button></div>
       </div>
     </section>
 
@@ -132,7 +134,7 @@
         </table>
       </div>
       <div class="list-grid">
-        <article class="card"><h3>Definitionsliste</h3><dl class="definition-list"><div><dt>Objekt</dt><dd>Musterstraße 12</dd></div><div><dt>Zeitraum</dt><dd>2025</dd></div><div><dt>Modus</dt><dd>Nur ansehen</dd></div></dl></article>
+        <article class="card"><h3>Definitionsliste</h3><dl class="definition-list"><div><dt>Objekt</dt><dd>Musterstraße 12</dd></div><div><dt>Zeitraum</dt><dd>01.01.2025 – 31.12.2025</dd></div><div><dt>Status</dt><dd>In Prüfung</dd></div></dl></article>
         <article class="card"><h3>Checkliste</h3><ul class="check-list"><li><svg class="svg-icon svg-icon--status" aria-hidden="true"><use href="#icon-check"></use></svg> Mieter vollständig</li><li><svg class="svg-icon svg-icon--status" aria-hidden="true"><use href="#icon-check"></use></svg> Kosten erfasst</li><li class="is-open"><svg class="svg-icon svg-icon--status" aria-hidden="true"><use href="#icon-alert"></use></svg> Verbräuche prüfen</li></ul></article>
       </div>
     </section>
@@ -188,7 +190,7 @@
         <article class="empty-state" data-state="loading"><span class="spinner" aria-hidden="true"></span><h3>Inhalte werden geladen</h3><p>Die fiktive Kostenübersicht wird vorbereitet.</p></article>
         <article class="empty-state empty-state--danger" data-state="error"><svg class="state-icon" aria-hidden="true"><use href="#icon-alert"></use></svg><h3>Inhalt konnte nicht geladen werden</h3><p>Versuchen Sie es erneut. Es wurden keine Daten verändert.</p><button class="button button--secondary" type="button">Erneut versuchen</button></article>
         <article class="empty-state" data-state="not-applicable"><svg class="state-icon" aria-hidden="true"><use href="#icon-minus"></use></svg><h3>Nicht anwendbar</h3><p>Für diese Kostenart ist kein Verbrauchswert erforderlich.</p></article>
-        <article class="empty-state empty-state--disabled" data-state="disabled"><svg class="state-icon" aria-hidden="true"><use href="#icon-ban"></use></svg><h3>Deaktiviert</h3><p>Die Aktion ist im Modus „Nur ansehen“ nicht verfügbar.</p></article>
+        <article class="empty-state empty-state--disabled" data-state="disabled"><svg class="state-icon" aria-hidden="true"><use href="#icon-ban"></use></svg><h3>Deaktiviert</h3><p>Die Aktion ist im Nur-ansehen-Zustand nicht verfügbar.</p></article>
         <article class="empty-state" data-state="unavailable"><svg class="state-icon" aria-hidden="true"><use href="#icon-x"></use></svg><h3>Aktuell nicht verfügbar</h3><p>Diese Funktion ist in NK-Pro noch nicht freigegeben.</p></article>
       </div>
     </section>

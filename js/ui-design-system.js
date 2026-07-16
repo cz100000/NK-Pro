@@ -1,7 +1,7 @@
 (function(global) {
   "use strict";
 
-  const VERSION = "1.3.0";
+  const VERSION = "1.4.0";
 
   const TOKENS = Object.freeze({
     color: Object.freeze({
@@ -32,15 +32,18 @@
     notice: Object.freeze({ className: "nk-ui-notice", variants: Object.freeze(["info", "success", "warning", "danger"]) }),
     toolbar: Object.freeze({ className: "nk-ui-toolbar", variants: Object.freeze(["default", "compact"]) }),
     dialog: Object.freeze({ className: "nk-ui-dialog", variants: Object.freeze(["default", "compact", "wide", "danger"]) }),
-    emptyState: Object.freeze({ className: "nk-ui-empty-state", variants: Object.freeze(["no-data", "not-created", "filtered", "loading", "error", "not-applicable", "unavailable"]) })
+    emptyState: Object.freeze({ className: "nk-ui-empty-state", variants: Object.freeze(["no-data", "not-created", "filtered", "loading", "error", "not-applicable", "unavailable"]) }),
+    pageShell: Object.freeze({ className: "nk-ui-page-shell", variants: Object.freeze(["narrow", "default", "wide"]) }),
+    pageHeader: Object.freeze({ className: "nk-ui-page-header", variants: Object.freeze(["default", "dashboard", "with-actions"]) }),
+    contextBar: Object.freeze({ className: "nk-ui-context-bar", variants: Object.freeze(["default", "empty", "readonly"]) })
   });
 
   const MIGRATION = Object.freeze({
-    package: "AP22D",
-    components: Object.freeze(["dialog", "emptyState"]),
+    package: "AP22F1A",
+    components: Object.freeze(["pageShell", "pageHeader", "contextBar"]),
     scope: "productive-application-content",
     legacyRemoval: false,
-    previousPackages: Object.freeze(["AP22A", "AP22B", "AP22C"])
+    previousPackages: Object.freeze(["AP22A", "AP22B", "AP22C", "AP22D", "AP22E"])
   });
 
   const BUTTON_SELECTOR = [
@@ -92,7 +95,6 @@
     ".status",
     ".billing-status-badge",
     ".global-billing-context__status",
-    ".global-billing-context__mode",
     ".dummy-badge",
     ".period-badge",
     ".backup-pill",
@@ -138,7 +140,6 @@
   ].join(",");
 
   const LIST_SELECTOR = [
-    ".global-billing-context__facts",
     ".app-main .app-page .overview-card__checklist",
     ".app-main .app-page .context-quality-list",
     ".app-main .app-page .quality-value-list",
@@ -374,7 +375,7 @@
     if (element.tagName === "DL") return "definition";
     if (element.matches(".context-quality-list,.quality-detail-grid")) return "divided";
     if (element.matches(".overview-card__checklist,.cost-check-list,.brief-preflight-list,.print-hardening-list")) return "check";
-    if (element.matches(".global-billing-context__facts,.cost-metric-list,.quality-value-list")) return "plain";
+    if (element.matches(".cost-metric-list,.quality-value-list")) return "plain";
     return "default";
   }
 
@@ -735,9 +736,32 @@
     return state;
   }
 
+  function upgradeGlobalShell(root) {
+    let count = 0;
+    candidates(root, ".nk-ui-page-shell,.app-main .app-page,#landing > .landing-page").forEach(element => {
+      element.classList.add("nk-ui-page-shell");
+      mark(element, "page-shell");
+      count += 1;
+    });
+    candidates(root, ".nk-ui-page-header,.app-main .page-header,#landing > .landing-page > .landing-page__intro").forEach(element => {
+      element.classList.add("nk-ui-page-header");
+      mark(element, "page-header");
+      count += 1;
+    });
+    candidates(root, "[data-global-billing-context]").forEach(element => {
+      element.classList.add("nk-ui-context-bar");
+      element.classList.toggle("nk-ui-context-bar--empty", element.classList.contains("is-empty"));
+      element.classList.toggle("nk-ui-context-bar--readonly", element.classList.contains("is-readonly"));
+      mark(element, "context-bar");
+      count += 1;
+    });
+    return count;
+  }
+
   function upgrade(root) {
     const target = root || (typeof document !== "undefined" ? document : null);
     const result = Object.freeze({
+      globalShell: upgradeGlobalShell(target),
       button: upgradeButtons(target),
       field: upgradeFields(target),
       card: upgradeCards(target),

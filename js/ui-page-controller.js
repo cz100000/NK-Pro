@@ -285,6 +285,39 @@ function renderOverviewForTab(tabId) {
 }
 function renderAllOverviewCards() { AP17_DASHBOARD_TABS.forEach(renderOverviewForTab); }
 
+const AP22F1A_PAGE_SHELL_VARIANTS = Object.freeze({
+  objektuebersicht:"default", objekt:"default", wasser:"default",
+  archiv:"wide", start:"wide", mieterverwaltung:"wide", wohnungsverwaltung:"wide", sicherung:"wide",
+  qualitaet:"wide", einstellungen:"wide", mieter:"wide", einnahmen:"wide", manuellewerte:"wide",
+  umlage:"wide", vorauszahlungsanpassung:"wide", briefe:"wide", export:"wide"
+});
+function ensureGlobalPageShellsAndHeaders() {
+  const landing=document.querySelector("#landing > .landing-page");
+  if (landing) {
+    landing.classList.add("nk-ui-page-shell","nk-ui-page-shell--default");
+    landing.dataset.pageShell="default";
+    const landingHeader=landing.querySelector(":scope > .landing-page__intro");
+    if (landingHeader) landingHeader.classList.add("nk-ui-page-header");
+  }
+  Object.entries(AP22F1A_PAGE_SHELL_VARIANTS).forEach(([tabId,variant])=>{
+    const page=document.querySelector('[data-page-tab="'+tabId+'"]');
+    if (!page) return;
+    page.classList.remove("nk-ui-page-shell--default","nk-ui-page-shell--narrow","nk-ui-page-shell--wide");
+    page.classList.add("nk-ui-page-shell","nk-ui-page-shell--"+variant);
+    page.dataset.pageShell=variant;
+    const header=page.querySelector(":scope > .page-header");
+    if (!header) return;
+    header.classList.add("nk-ui-page-header");
+    const title=header.querySelector(":scope .page-header__title");
+    if (title && title.tagName !== "H1") {
+      const h1=document.createElement("h1");
+      Array.from(title.attributes).forEach(attribute=>h1.setAttribute(attribute.name,attribute.value));
+      h1.innerHTML=title.innerHTML;
+      title.replaceWith(h1);
+    }
+  });
+}
+
 function pageHeaderPeriodLabel() {
   const format = value => {
     const match = String(value || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
@@ -293,6 +326,7 @@ function pageHeaderPeriodLabel() {
   return format(periodStart()) + " – " + format(periodEnd());
 }
 function updateAllPageHeaders() {
+  ensureGlobalPageShellsAndHeaders();
   const context=NK_PRO_MODULES.billingContext.snapshot();
   const open=NK_PRO_MODULES.billingContext.isOpen();
   const readOnly=NK_PRO_MODULES.billingContext.isReadOnly();

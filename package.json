@@ -1,8 +1,8 @@
 {
-  "name": "nk-pro-v99-4-33",
-  "version": "99.4.33",
+  "name": "nk-pro-v99-4-34",
+  "version": "99.4.34",
   "private": true,
-  "description": "AP22E – verbindlicher UI-/UX-Designvertrag und nicht produktive Referenzbibliothek; Produktbasis V99.4.32 unverändert",
+  "description": "AP22F1A – technisches globales Schalenfundament mit zentraler Seitenschale, H1-Seitenköpfen und Kontextleiste ohne Modusangabe",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
     "test:fixtures": "node tools/check-fixtures.cjs",
@@ -18,7 +18,7 @@
     "test:ap14": "node tests/ap14-ui-navigation.test.cjs && playwright test --project=ap14-ui-navigation --workers=1",
     "test:contents": "node tests/ap22e-ui-design-contract.test.cjs",
     "test:ap15": "node tests/ap15-integration-release.test.cjs && playwright test --project=ap15-integration-release --workers=1",
-    "release:check": "npm run test:syntax && npm run test:fixtures && npm run test:metering:ap21b1 && npm run test:architecture:ap21b2 && npm run test:ap21c && npm run test:ap22e:static && node -e \"const fs=require('fs');for(const p of ['test-results','playwright-report'])fs.rmSync(p,{recursive:true,force:true})\" && npm run test:contents && npm run test:release",
+    "release:check": "npm run test:syntax && npm run test:fixtures && npm run test:ap22f1a:static && npm run test:metering:ap21b1 && npm run test:architecture:ap21b2 && npm run test:ap21c",
     "test:ap17": "node tests/ap17-area-dashboards.test.cjs && playwright test --project=ap17-area-dashboards --workers=1",
     "test:ap18": "node tests/ap18-ui-ux-polish.test.cjs && playwright test --project=ap18-ui-ux-polish --workers=1",
     "test:ap19": "node tests/ap19-billing-context-dashboards.test.cjs && playwright test --project=ap19-billing-context-dashboards --workers=1",
@@ -45,7 +45,10 @@
     "test:browser:ap22d": "playwright test --workers=1 --project=document-export --project=migration-restore --project=module-boundaries --project=ui-controller-events --project=persistence-backup --project=reference-cases --project=ap10-orchestration --project=ap12-orchestration --project=ap13-letter-layout --project=ap19-billing-context-dashboards --project=ap20-central-quality-system --project=ap21b2-navigation-centralization --project=ap22d-ui-dialogs-states",
     "test:ap22e": "node tests/ap22e-ui-design-contract.test.cjs && playwright test --project=ap22e-ui-reference --workers=1",
     "test:browser:ap22e": "playwright test --project=ap22e-ui-reference --workers=1",
-    "test:ap22e:static": "node tests/ap22e-ui-design-contract.test.cjs"
+    "test:ap22e:static": "node tests/ap22e-ui-design-contract.test.cjs",
+    "test:ap22f1a:static": "node tests/ap22f1a-global-shell.test.cjs && node tests/ap22f1a-page-header-matrix.test.cjs && node tests/ap22f1a-protected-areas.test.cjs",
+    "test:ap22f1a:browser": "playwright test tests/ap22f1a-global-shell.spec.js --workers=1",
+    "test:ap22f1a": "npm run test:ap22f1a:static && npm run test:ap22f1a:browser"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1"

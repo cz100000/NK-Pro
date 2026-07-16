@@ -27,18 +27,17 @@ Jede Komponente verwendet ausschließlich zentrale Tokens, freigegebene Variante
 
 1. Bezeichnung „Abrechnungskontext“
 2. Objekt
-3. Zeitraum
+3. vollständiger Abrechnungszeitraum
 4. Status
-5. Modus
-6. kontextabhängiger Aktionsbereich
+5. kontextabhängiger Aktionsbereich
 
 ### Zustände
 
-- **Kein Kontext:** neutrale Information und Aktion zum Öffnen/Wechseln.
-- **Bearbeitung:** Objekt, Zeitraum, Status und „Modus: Bearbeiten“.
-- **Nur ansehen:** „Modus: Nur ansehen“, handlungsorientierte Aktion „Zur Bearbeitung öffnen“, sofern fachlich möglich.
-- **Geschlossen:** geschlossener Status und zulässige Folgeaktion.
-- **Korrektur:** klarer Modus „Korrektur“ ohne zusätzliche konkurrierende Plakette.
+- **Kein Kontext:** neutrale Information und bestehende zulässige Aktion zum Öffnen oder Wechseln.
+- **Bearbeitung:** Objekt, vollständiger Zeitraum, fachlicher Status und bestehende Kontextaktionen.
+- **Nur ansehen:** keine Modusangabe; der Zustand wird durch die größere Schreibschutz-Notice und eingeschränkte Bedienmöglichkeiten vermittelt. `Zur Bearbeitung öffnen` verbleibt in der Notice.
+- **Geschlossen/Archiv:** Objekt, vollständiger Zeitraum, fachlicher Status und zulässige Folgeaktion.
+- **Korrektur:** Objekt, vollständiger Zeitraum und fachlicher Status ohne zusätzliche konkurrierende Plakette oder Modusangabe.
 
 ### Gestaltung
 
@@ -46,12 +45,12 @@ Zurückhaltender warmer Gelbton, feiner Rahmen, keine starke Warnoptik. Informat
 
 ### Verbot
 
-Keine Fachlogikänderung, keine zweite Kontextanzeige, keine versteckten Modusangaben und keine zusätzliche kleine „Schreibgeschützt“-Kennzeichnung im Seitenkopf.
+Keine Fachlogikänderung, keine zweite Kontextanzeige, keinerlei sichtbare oder versteckte Modusangabe in der Kontextleiste und keine zusätzliche kleine „Schreibgeschützt“-Kennzeichnung im Seitenkopf.
 
 ## 4. Seitenschale
 
 - **Breiten:** flexibel; `--nk-ui-content-max`, `--nk-ui-content-wide` und `--nk-ui-content-narrow`.
-- **Innenabstand:** zentral über `--nk-ui-page-padding-*`.
+- **Innenabstand:** zentral 32 px, unter 1280 px 24 px und unter 620 px 16 px über semantische Schalentokens.
 - **Vertikaler Rhythmus:** `--nk-ui-space-xl` zwischen Hauptbereichen.
 - **Verbot:** lokale Seitenränder oder eigene Maximalbreiten.
 

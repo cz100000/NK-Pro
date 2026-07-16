@@ -14,10 +14,15 @@ Eine Seite ist nur migriert, wenn alle anwendbaren Punkte mit **bestanden**, **n
 ## B. Seitenanatomie
 
 - [ ] Zentrale Seitenschale wird verwendet.
+- [ ] Jede sichtbare Ansicht besitzt genau eine `nk-ui-page-shell` und genau einen `nk-ui-page-header`.
+- [ ] Jede sichtbare Ansicht besitzt genau ein sichtbares `h1`; der globale App-Kopf enthält keinen Seitentitel.
 - [ ] Es gibt genau einen Hauptseitentitel.
 - [ ] Seitenkopf entspricht einer freigegebenen Variante.
 - [ ] Globale und seitenspezifische Aktionen sind getrennt.
 - [ ] Es existiert höchstens eine führende Abrechnungskontextanzeige.
+- [ ] Die Kontextleiste zeigt Objekt, vollständigen Abrechnungszeitraum und Status in dieser Reihenfolge.
+- [ ] Die Kontextleiste enthält in keinem Zustand ein Modusfeld oder einen Modustext.
+- [ ] Der Nur-ansehen-Zustand bleibt über die größere Schreibschutz-Notice und eingeschränkte Bedienmöglichkeiten erkennbar.
 - [ ] Keine redundante kleine Schreibschutzkennzeichnung steht im Seitenkopf.
 - [ ] Haupt-, Neben- und Abschlussbereiche folgen der verbindlichen Reihenfolge.
 

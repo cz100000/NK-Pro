@@ -1,13 +1,13 @@
-# NK-Pro – UI-Migrationsmatrix nach AP22E
+# NK-Pro – UI-Migrationsmatrix nach AP22F1A
 
-**Statusregel:** AP22E inventarisiert und plant. Es entfernt oder migriert keine produktiven Seitenelemente.
+**Statusregel:** AP22F1A migriert ausschließlich globale Kopf-/Werkzeugleiste, Abrechnungskontext, Seitenschale und Seitenköpfe. Inhaltskomponenten bleiben für Folgepakete offen.
 
 | Produktive Seite/Bereich | Vorhandene UI-Elemente | Zielkomponenten | Erkannte Redundanzen/Vereinfachungsvorschlag | Freigabe nötig | Technischer Status | Visueller Prüfstatus | Legacy-Bereinigung | Abschluss |
 |---|---|---|---|---|---|---|---|---|
 | Globale Navigation | Gruppen, Ziele, aktive/deaktivierte Zustände, Overlay | geschützte Bestandskomponente | keine Änderung; nur dokumentieren | ja, gesondertes Navigationspaket | geschützt V99.4.32 | Bestandsreferenz vorhanden | nicht zulässig in AP22E | geschützt |
-| Globale Kopf-/Werkzeugleiste | Titel, Offline-Status, Hilfe, Menü | Kopf-/Werkzeugleiste | Seitentitel im globalen Kopf gegen Seitenkopf auf Doppelung prüfen | ja | Bestand | Referenz vorhanden | offen | geplant |
-| Globale Abrechnungskontextleiste | Objekt, Jahr, Status, Modus, Aktionen | Kontextleiste | keine zweite Kontext-/Zeitraumanzeige zulassen; Umbruch vereinheitlichen | ja | Fachlogik produktiv | Referenz vorhanden | offen | geplant |
-| Arbeitsweiche/`landing` | zwei große Einstiegskarten | Seitenkopf, interaktive Karten | Informationsdichte und responsive Anordnung prüfen; Funktionen erhalten | ja | Bestand | Zielbild vorhanden | offen | geplant |
+| Globale Kopf-/Werkzeugleiste | App-Kennzeichnung, Offline-Status, Hilfe, Menü | Kopf-/Werkzeugleiste | konkurrierender globaler Seitentitel entfernt | freigegeben AP22F1A | zentral migriert | geprüft | abgeschlossen | abgeschlossen AP22F1A |
+| Globale Abrechnungskontextleiste | Objekt, vollständiger Zeitraum, Status, bestehende Aktionen; keine Modusangabe | `nk-ui-context-bar` | keine zweite Kontextanzeige; Nur-ansehen über Notice und Schreibsperre | freigegeben AP22F1A | zentral migriert | geprüft | abgeschlossen | abgeschlossen AP22F1A |
+| Arbeitsweiche/`landing` | zwei große Einstiegskarten | Seitenschale, Seitenkopf, interaktive Karten | äußere Schale und eindeutiges H1 migriert; Karten unverändert | freigegeben AP22F1A | Schale migriert | geprüft | Inhaltsmigration offen | teilweise AP22F1A |
 | Objektübersicht/`objektuebersicht` | Dashboardkarten, Status, nächste Schritte | Seitenschale, Dashboardraster, Status-/Aktionskarten | generische Karten auf fachlichen Mehrwert prüfen | ja | Grundkomponenten vorhanden | offen | offen | nicht begonnen |
 | Objektdaten/`objekt` | Seitenkopf, Klappboxen, Hinweise, Toolbar | Seitenkopf, Standard-/Statusklappbox, Hinweis, Aktionsleiste | Perioden-/Speicherinformationen auf Doppelung prüfen | ja | Grundmigration | offen | offen | nicht begonnen |
 | Wohnungen/`wohnungsverwaltung` | Formulare, Tabellen, Klappboxen, Hinweise | Formularabschnitt, Datentabelle, Klappbox, Status | lokale Formularabstände und Aktionsduplikate prüfen | ja | Tabellen migriert | offen | offen | nicht begonnen |
@@ -32,3 +32,7 @@
 ## Verbindlicher Folgeprozess
 
 Jede Zeile wird in einem späteren Paket zuerst als konkreter Vorschlag mit betroffenen Komponenten, Seiten, Datei-Positivliste, Mockup, Abnahmekriterien, Tests und Schutzbereichen vorgelegt. Ein Statuswechsel zu „freigegeben“ erfolgt ausschließlich nach Nutzerfreigabe.
+
+## AP22F1A-Querschnittsstatus
+
+Unabhängig vom weiterhin offenen Inhaltsmigrationsstatus jeder Tabellenzeile sind seit AP22F1A alle 18 sichtbaren Ansichten hinsichtlich äußerer Seitenschale, zentralem Seitenkopf, eindeutiger H1-Semantik und globalem Responsive-Grundlayout migriert. Karten, Tabellen, Formulare, Dialoge, Klappboxen, lokale Metablöcke und Save-Aktionen bleiben in den jeweiligen Zeilen offen.

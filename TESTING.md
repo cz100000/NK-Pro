@@ -116,3 +116,30 @@ Die aktuellen AP22D-Release- und Browserprüfungen bleiben maßgeblich. Historis
 ### AP22E-Releaseinhalt und geteilte Versionsrolle
 
 Der produktive Laufzeitstand bleibt absichtlich `99.4.32-ap22d`, während Paket und Vertragsrelease `99.4.33` tragen. Der ältere generische Inhaltsprüfer `tools/check-release-contents.cjs` setzt Paket- und Produktversion zwingend gleich und ist deshalb für AP22E nicht das Release-Gate. Er bleibt unverändert. Die separate AP22E-Prüfung übernimmt Inhaltsausschlüsse, Vertragsversion, Produkt-Hashschutz und Referenzisolation.
+
+# AP22F1A – Globales Schalenfundament
+
+## Neue Releaseprüfungen
+
+```text
+npm run test:ap22f1a:static
+CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:ap22f1a:browser
+npm run release:check
+```
+
+`test:ap22f1a:static` prüft genau eine Topbar und Kontextleiste, Kontextreihenfolge Objekt/Zeitraum/Status, vollständiges Modusverbot, 18 sichtbare Seitenschalen, 18 Seitenköpfe, 18 H1-Titel, zentrale Breiten und Abstände, Ausschluss der Definitionslisten-Kollision sowie zwölf Hashschutzbereiche.
+
+`test:ap22f1a:browser` umfasst zehn Chromium-Fälle: sechs Ziel-Viewports (1440×1000, 1280×900, 1024×800, 900×620, 620×800, 390×844), die vollständige Seitenkopfmatrix, Bearbeiten/Nur ansehen/Archiv/kein Kontext, vollständigen Zeitraum, Schreibschutz-Notice, mobile Aktionsstapelung, sichtbaren Fokus und die aktualisierte Referenzbibliothek. Es entsteht keine horizontale Gesamtseiten-Scrollleiste.
+
+## Bestandsergebnisse
+
+Bestanden wurden Syntaxprüfung (55 JavaScript-Einheiten), sechs Fixtures, Zählerregression, Architekturprüfung AP6/AP7/AP8/AP9/AP13/AP21/AP21B2, AP21C, AP13 statisch und acht Browserfälle sowie AP21B2 statisch und drei Browserfälle.
+
+Mehrere unveränderte historische Testdateien besitzen fest verdrahtete ältere Release-, Navigations-, Modus- oder UI-Bibliotheksstände. Sie werden gemäß Änderungs-Kontrollregel nicht umgeschrieben. Dokumentierte Konflikte sind insbesondere:
+
+- AP11/AP14 erwarten eine vor AP21B2 gültige Navigation mit früheren Gruppen und 18 Zielen.
+- AP19/AP20 erwarten das ausdrücklich aufgehobene Element `[data-global-billing-mode]` und Texte wie „Modus: Nur ansehen“.
+- AP21A und ältere Smoke-Tests erwarten V99.4.24 sowie frühere Navigationsbezeichnungen.
+- AP22A bis AP22D erwarten jeweils exakt UI-Designsystem 1.0.0 bis 1.3.0 statt des fortgeschriebenen Stands 1.4.0.
+
+Diese Altassertionen sind keine Release-Gates für AP22F1A. Ihre Fach- und Schutzwirkung wird durch die unveränderten fachlichen Tests, die AP21B2-Navigationsregression, die AP13-Dokumentregression und die neuen AP22F1A-Schutztests abgedeckt. Bestehende Testdateien bleiben unverändert.
