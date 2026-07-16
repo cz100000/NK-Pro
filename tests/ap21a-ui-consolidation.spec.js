@@ -118,6 +118,26 @@ test("Individuelle Werte erzeugt dynamische Klappboxen, Filter und Quellenansich
   runtime.assertClean();
 });
 
+test("Zentrale Zählerdaten werden auch beim direkten Öffnen der Klappbox gerendert", async ({ page }) => {
+  const runtime = attachRuntimeGuards(page);
+  await openInlineApp(page);
+  await loadFixture(page, "alle-eingabequellen.json");
+  await openCurrentBilling(page, "edit");
+
+  const sourcePanel = page.locator("#individualValuesMeterSource");
+  await expect(page.locator("#waterMeterSettings")).toBeEmpty();
+  await sourcePanel.locator(":scope > summary").click();
+  await expect(sourcePanel).toHaveAttribute("open", "");
+  await expect(page.locator("#waterMeterSettings input").first()).toBeVisible();
+  await expect(page.locator("#meterCurrentSections")).not.toBeEmpty();
+
+  const entrySection = page.locator("#meterEntrySection");
+  await entrySection.locator(":scope > summary").click();
+  await expect(entrySection).toHaveAttribute("open", "");
+  await expect(page.locator("#meterCurrentSections table").first()).toBeVisible();
+  runtime.assertClean();
+});
+
 test("Alte Direkteinstiege werden kompatibel auf Individuelle Werte umgeleitet", async ({ page }) => {
   const runtime = attachRuntimeGuards(page);
   await openInlineApp(page);

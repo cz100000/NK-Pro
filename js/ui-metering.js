@@ -570,7 +570,7 @@ function renderWaterMeters() {
   const settingsEl = document.getElementById("waterMeterSettings");
   const houseComparisonEl = document.getElementById("meterHouseComparison");
   const houseHistoryNoteEl = document.getElementById("meterHouseHistoryNote");
-  if (!settingsEl || !houseComparisonEl || !houseHistoryNoteEl || !currentSectionsEl || !historyEl || !carryForwardEl || !consumptionControlEl || !controlSummaryEl) return;
+  if (!settingsEl || !houseComparisonEl || !houseHistoryNoteEl || !currentSectionsEl || !historyEl || !carryForwardEl || !consumptionControlEl) return;
 
   const visibleRows = visibleTenantRows();
   const settings = state.waterMeters.settings;
@@ -645,7 +645,7 @@ function renderWaterMeters() {
     '</tbody>' + controlFooter + '</table></div>';
 
   const meterEntryState = meterStatus.filled > 0 ? {key:"ok",icon:"✓"} : {key:"warn",icon:"⚠"};
-  controlSummaryEl.innerHTML = '<div class="water-validation-list">' +
+  if (controlSummaryEl) controlSummaryEl.innerHTML = '<div class="water-validation-list">' +
     waterValidationItemHtml(houseResult.invalid ? {key:"error",icon:"✕"} : (houseResult.complete ? {key:"ok",icon:"✓"} : {key:"warn",icon:"⚠"}),
       houseResult.invalid ? "Hauszählerstand ist unplausibel" : (houseResult.complete ? "Hauszählerverbrauch berechnet" : "Hauszählerstände noch unvollständig"),
       houseResult.invalid ? "Der Endstand liegt unter dem Anfangsstand." : (houseResult.complete ? houseResult.value.toLocaleString("de-DE", { maximumFractionDigits:3 }) + " m³" : "Anfangs- und Endstand ergänzen.")) +

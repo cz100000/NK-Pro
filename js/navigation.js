@@ -3,7 +3,7 @@
 
   const preferences = global.NKProUiPreferences;
   if (!preferences) throw new Error("NK-Pro UI-Einstellungsspeicher fehlt.");
-  const NAV_GROUP_STORAGE_KEY = "nkpro.workflowNavigation.v4";
+  const NAV_GROUP_STORAGE_KEY = "nkpro.workflowNavigation.v5";
   const LEGACY_NAV_GROUP_STORAGE_KEY = "nkpro.workflowNavigation.v3";
   const GROUP_KEYS = ["group-object", "group-billing", "group-extras"];
   const BILLING_CONTEXT_TABS = ["start","mieter","einnahmen","einstellungen","manuellewerte","umlage","qualitaet","vorauszahlungsanpassung","briefe","export","archiv"];
@@ -44,7 +44,7 @@
       const legacy = preferences.get(LEGACY_NAV_GROUP_STORAGE_KEY);
       if (GROUP_KEYS.includes(legacy)) return new Set([legacy]);
     } catch(error) {}
-    return new Set(["group-object"]);
+    return new Set(["group-object", "group-billing"]);
   }
   function saveOpenGroups() { preferences.set(NAV_GROUP_STORAGE_KEY, JSON.stringify(GROUP_KEYS.filter(key => openGroups.has(key)))); }
   function applyGroupState() {
@@ -118,7 +118,7 @@
     }
     if (object) object.textContent = contextOpen ? objectLabel : "Keine Abrechnung geöffnet";
     if (code) code.textContent = contextOpen ? (typeof global.currentObjectShortCode === "function" ? global.currentObjectShortCode() : "–") : "–";
-    if (year) year.textContent = contextOpen ? (currentYear || "–") : "–";
+    if (year) year.textContent = contextOpen ? (typeof periodLabelShort === "function" ? periodLabelShort() : (currentYear || "–")) : "–";
     if (status) {
       status.classList.remove("is-archive", "is-finalized", "is-working", "is-none");
       if (!contextOpen) { status.textContent = "Nicht geöffnet"; status.classList.add("is-none"); }

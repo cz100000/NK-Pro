@@ -4,10 +4,11 @@
 (function (global) {
   let activeFilter = "all";
   let requestedFocus = null;
+  const connectedMeterSourcePanels = new WeakSet();
 
   const ICONS = Object.freeze({
     water:'<path d="M12 2.5s6.5 6.8 6.5 11.2a6.5 6.5 0 1 1-13 0C5.5 9.3 12 2.5 12 2.5Z"/><path d="M9.2 15.2a3 3 0 0 0 2.8 2"/>',
-    heat:'<path d="M8 4c-2 2-2 4 0 6s2 4 0 6M12 3c-2 2.3-2 4.7 0 7s2 4.7 0 7M16 4c-2 2-2 4 0 6s2 4 0 6"/>',
+    heat:'<path d="M13.2 2.5c.6 3.1-.7 4.7-2.1 6.2-1.5 1.6-3 3.2-3 6a4.1 4.1 0 0 0 8.2 0c0-1.5-.6-2.8-1.5-4 2.6 1.3 4.2 3.8 4.2 6.5A7 7 0 0 1 5 17.2c0-3.9 2.3-6.2 4.4-8.4 1.8-1.9 3.5-3.6 3.8-6.3Z"/><path d="M12.1 12.2c1.4 1.2 2.2 2.5 2.2 4a2.3 2.3 0 1 1-4.6 0c0-1.4.9-2.7 2.4-4Z"/>',
     electricity:'<path d="m13 2-7 12h6l-1 8 7-12h-6l1-8Z"/>',
     building:'<path d="M4 21V7l8-4 8 4v14M8 10h2M14 10h2M8 14h2M14 14h2M9 21v-4h6v4M3 21h18"/>',
     chimney:'<path d="M5 21V9l7-5 7 5v12M14 6V2h4v7M9 21v-6h6v6"/>',
@@ -16,6 +17,7 @@
     garden:'<path d="M19 4c-6 .2-10 3.5-10 8.5 0 2.8 2 5 5 5 4.8 0 6-6.7 5-13.5Z"/><path d="M5 21c1.5-5 4.5-8 9-10"/>',
     waste:'<path d="M4 7h16M9 3h6l1 4H8l1-4ZM6 7l1 14h10l1-14M10 11v6M14 11v6"/>',
     lift:'<rect x="5" y="3" width="14" height="18" rx="1"/><path d="M9 8h6M9 16h6M12 6v4M10 8l2-2 2 2M12 18v-4M10 16l2 2 2-2"/>',
+    satellite:'<path d="M4.5 5.5a10 10 0 0 0 14 14"/><path d="M7 3a14 14 0 0 0 14 14"/><path d="m8.2 15.8-3.7 3.7M4 22h7"/><circle cx="15.5" cy="8.5" r="1.4"/>',
     default:'<path d="M6 3h12v18H6zM9 8h6M9 12h6M9 16h4"/>'
   });
 
@@ -30,6 +32,7 @@
     if (/garten|pflanz/.test(text)) return "garden";
     if (/müll|abfall/.test(text)) return "waste";
     if (/aufzug|lift/.test(text)) return "lift";
+    if (/antenne|verteilanlage|satellit|kabelanlage/.test(text)) return "satellite";
     if (/grundsteuer|gebäude|haus/.test(text)) return "building";
     return "default";
   }
@@ -197,6 +200,9 @@
     root.innerHTML=visible.map(row => cardHtml(row.cost,row.assessment)).join("");
     const empty=document.getElementById("individualValuesEmpty");
     if (empty) empty.hidden=visible.length > 0;
+    connectMeterSourcePanel();
+    const meterPanel=document.getElementById("individualValuesMeterSource");
+    if (meterPanel && meterPanel.open) renderMeterSource();
     if (requestedFocus) {
       requestAnimationFrame(() => {
         const target=root.querySelector('details[open]');
@@ -259,13 +265,46 @@
 
   function requestFocus(options = {}) { requestedFocus={costId:String(options.costId || ""),source:String(options.source || "")}; }
 
+  function renderMeterSource() {
+    if (typeof global.renderWaterMeters === "function") global.renderWaterMeters();
+  }
+
+  function connectMeterSourcePanel() {
+    const panel=document.getElementById("individualValuesMeterSource");
+    if (!panel || connectedMeterSourcePanels.has(panel)) return;
+    connectedMeterSourcePanels.add(panel);
+    panel.addEventListener("toggle", () => {
+      if (panel.open) renderMeterSource();
+    });
+  }
+
+  connectMeterSourcePanel();
+
+  document.addEventListener("toggle", event => {
+    const panel=event.target;
+    if (panel && panel.open && (panel.id === "individualValuesMeterSource" || panel.closest("#individualValuesMeterSource"))) {
+      renderMeterSource();
+      requestAnimationFrame(() => {
+        const firstControl = panel.querySelector('input,select,button,textarea,[tabindex]:not([tabindex="-1"])');
+        if (firstControl) firstControl.focus({ preventScroll:true });
+      });
+    }
+  }, true);
+
   document.addEventListener("click", event => {
+    const meterSourceSummary=event.target.closest("#individualValuesMeterSource > summary");
+    if (meterSourceSummary) {
+      requestAnimationFrame(() => {
+        const panel=document.getElementById("individualValuesMeterSource");
+        if (panel && panel.open) renderMeterSource();
+      });
+    }
     const filter=event.target.closest("[data-individual-filter]");
     if (filter) { setFilter(filter.dataset.individualFilter); return; }
     const meterSource=event.target.closest("[data-individual-open-meter-source]");
     if (meterSource) {
       const panel=document.getElementById("individualValuesMeterSource");
-      if (typeof global.renderWaterMeters === "function") global.renderWaterMeters();
+      renderMeterSource();
       if (panel) {
         panel.open=true;
         requestAnimationFrame(() => panel.scrollIntoView({block:"start",behavior:"smooth"}));

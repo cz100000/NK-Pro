@@ -105,7 +105,7 @@ const AP17_ICON_PATHS = Object.freeze({
 const TAB_DEFINITIONS = {
   objektuebersicht:{title:"Objekt vorbereiten – Übersicht",kicker:"Objekt vorbereiten",firstSection:null,nextTab:"objekt",renderContent:null},
   objekt:{title:"Objektdaten",kicker:"Objekt vorbereiten",firstSection:"objectPreparationSection",nextTab:"wohnungsverwaltung",renderContent:null},
-  start:{title:"Nebenkostenabrechnung – Übersicht",kicker:"Nebenkosten abrechnen",firstSection:"startRecordsSection",nextTab:"mieter",renderContent:()=>renderStart()},
+  start:{title:"Nebenkostenabrechnung – Übersicht",kicker:"Nebenkosten abrechnen",firstSection:null,nextTab:"mieter",renderContent:()=>renderStart()},
   archiv:{title:"Abrechnungsarchiv",kicker:"Archiv",firstSection:"archiveRecordsSection",nextTab:"start",renderContent:()=>renderArchive()},
   mieterverwaltung:{title:"Mieterverwaltung",kicker:"Objekt vorbereiten",firstSection:"masterTenantSection",nextTab:"wohnungsverwaltung",renderContent:()=>renderStartTenantManagement()},
   wohnungsverwaltung:{title:"Wohnungsverwaltung",kicker:"Objekt vorbereiten",firstSection:"masterUnitSection",nextTab:"mieterverwaltung",renderContent:()=>renderStartUnitManagement()},
@@ -316,23 +316,23 @@ function updateAllPageHeaders() {
 
 function auditV992Structure() {
   const objectDashboard=document.querySelector('[data-area-dashboard="object"]');
-  const billingDashboard=document.querySelector('[data-area-dashboard="billing"]');
+  const billingDashboard=document.querySelector('#billingOverviewRoot');
   const billingPages=BILLING_NAV_TABS.map(tab=>document.querySelector('[data-page-tab="'+tab+'"]')).filter(Boolean);
   const checks={
     objectDashboard:!!objectDashboard,
     billingDashboard:!!billingDashboard,
     objectDirectEntries:!!objectDashboard&&objectDashboard.querySelectorAll('.dashboard-entry').length===4,
-    billingWorkflowEntries:!!billingDashboard&&billingDashboard.querySelectorAll('.workflow-stage').length===10,
-    productiveDashboardValues:document.querySelectorAll('.dashboard-preview-notice').length===0&&document.querySelectorAll('[data-value-kind="dummy"]').length===1,
+    billingWorkflowEntries:!!billingDashboard&&!!globalThis.NKProBillingOverview&&globalThis.NKProBillingOverview.describe().workflowSteps===6,
+    productiveDashboardValues:document.querySelectorAll('.dashboard-preview-notice').length===0,
     controlledContext:NK_PRO_MODULES.billingContext.describe().stateCount===3,
     contextClosedAfterStart:!NK_PRO_MODULES.billingContext.isOpen()||document.documentElement.dataset.billingExplicitlyOpened==="true",
     billingHeadersWithoutRedundantPeriod:billingPages.every(page=>!page.querySelector('[data-page-period]')),
-    centralBillingTable:!!document.querySelector('#startArchiveTable')&&typeof buildBillingRecordsTableHtml==='function'&&(buildBillingRecordsTableHtml().match(/<th(?:\s|>)/g)||[]).length===9,
+    centralBillingTable:!!document.querySelector('#billingOverviewRoot')&&!!globalThis.NKProBillingOverview,
     contextBar:!!document.querySelector('[data-global-billing-context]'),
     svgSectionChevrons:Array.from(document.querySelectorAll('.page-section__chevron')).every(node=>!!node.querySelector('svg')),
     compactHeaders:Array.from(document.querySelectorAll('.app-page')).every(page=>page.querySelectorAll(':scope > .page-header').length===1)
   };
-  const report={version:APP_VERSION,workPackage:"AP21A",generatedAt:new Date().toISOString(),allPassed:Object.values(checks).every(Boolean),checks};
+  const report={version:APP_VERSION,workPackage:"AP21B",generatedAt:new Date().toISOString(),allPassed:Object.values(checks).every(Boolean),checks};
   NK_PRO_MODULES.runtimeDiagnostics.setStructureAudit(report);
   document.documentElement.dataset.v992Audit=report.allPassed?'passed':'failed';
   document.documentElement.dataset.ap17Audit=report.allPassed?'passed':'failed';

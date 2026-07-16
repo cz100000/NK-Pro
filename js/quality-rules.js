@@ -35,7 +35,7 @@
   }
 
   const REGISTRY = Object.freeze([
-    rule("NKP-FACH-001","Abrechnungszeitraum ist gültig",CATEGORY.MANDATORY,"object-period",{dataSource:"meta.abrechnungsjahr, meta.abrechnungsbeginn, meta.abrechnungsende",targetTab:"start",targetSelector:"#billingPeriodSettings",solution:"Beginn und Ende als echte Kalenderdaten erfassen und das Abrechnungsjahr mit dem Endjahr der Periode abgleichen."}),
+    rule("NKP-FACH-001","Abrechnungszeitraum ist gültig",CATEGORY.MANDATORY,"object-period",{dataSource:"meta.abrechnungsjahr, meta.abrechnungsbeginn, meta.abrechnungsende",targetTab:"start",targetSelector:"[data-billing-overview-period-correction]",solution:"Beginn und Ende als echte Kalenderdaten erfassen und das Abrechnungsjahr mit dem Endjahr der Periode abgleichen."}),
     rule("NKP-FACH-002","Mindestens eine aktive Wohnung ist vorhanden",CATEGORY.MANDATORY,"object-period",{dataSource:"wohnungen",targetTab:"wohnungsverwaltung"}),
     rule("NKP-FACH-003","Mindestens ein abrechenbares Mietverhältnis ist vorhanden",CATEGORY.MANDATORY,"units-tenancies",{dataSource:"mieter, Abrechnungszeitraum",targetTab:"mieterverwaltung"}),
     rule("NKP-FACH-004","Mietername ist vorhanden",CATEGORY.MANDATORY,"units-tenancies",{dataSource:"mieter.name",targetTab:"mieterverwaltung",solution:"Den Namen im betroffenen Mietverhältnis ergänzen."}),
