@@ -1,0 +1,15 @@
+{
+  "version": "V99.4.38",
+  "scannedFiles": 364,
+  "strict": true,
+  "ignoredInstalledDependencies": true,
+  "findings": [],
+  "warnings": [
+    {
+      "type": "installed-dependencies",
+      "path": "node_modules",
+      "detail": "Installierte Abhängigkeiten gehören nicht in die Arbeits-ZIP."
+    }
+  ],
+  "status": "passed"
+}

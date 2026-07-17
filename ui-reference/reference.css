@@ -71,3 +71,24 @@
 @media(max-width:1100px){.object-reference__grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){.object-reference__summary{grid-template-columns:1fr}.object-reference__next{padding:var(--s4) 0 0;border-left:0;border-top:1px solid var(--border)}}
 @media(max-width:620px){.object-reference__summary{padding:var(--s4)}.object-reference__next .button{width:100%}.object-reference__heading{align-items:flex-start;flex-direction:column}.object-reference__grid{grid-template-columns:1fr}.object-reference__task{min-height:0;padding:var(--s3)}}
+
+
+/* AP22F3B – verbindliche Referenz der rein lesenden Objektdatenansicht */
+.object-data-reference{display:grid;gap:var(--s4)}
+.object-data-reference__main{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s4)}
+.object-data-reference__card,.object-data-reference__routes{min-width:0;padding:var(--s4)}
+.object-data-reference__heading{display:flex;align-items:flex-start;gap:var(--s3);margin-bottom:var(--s3)}
+.object-data-reference__heading h3,.object-data-reference__routes h3{margin:0}
+.object-data-reference__icon{width:40px;height:40px;display:grid;place-items:center;flex:0 0 auto;border-radius:var(--r2);background:var(--primary-soft);color:var(--primary)}
+.object-data-reference__icon--success{background:var(--success-soft);color:var(--success)}
+.object-data-reference__meta{display:grid;margin:0}
+.object-data-reference__meta>div{display:grid;grid-template-columns:minmax(120px,.8fr) minmax(0,1.2fr);gap:var(--s2);padding:var(--s2) 0;border-top:1px solid var(--border)}
+.object-data-reference__meta dt{color:var(--muted)}.object-data-reference__meta dd{margin:0;font-weight:650}.object-data-reference__meta code{padding:2px 5px;border-radius:var(--r1);background:var(--surface-muted)}
+.object-data-reference__description{margin:var(--s3) 0 0;color:var(--muted)}
+.object-data-reference__routes-header{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s4);margin-bottom:var(--s3)}
+.object-data-reference__routes-header p:last-child{margin:var(--s1) 0 0;color:var(--muted)}
+.object-data-reference__route-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.object-data-reference__route-list .button{min-width:0;min-height:72px;display:grid;justify-items:start;align-content:center;border:0;border-right:1px solid var(--border);border-bottom:1px solid var(--border);border-radius:0;text-align:left;color:var(--text)}
+.object-data-reference__route-list .button:nth-child(2n){border-right:0}.object-data-reference__route-list .button:nth-last-child(-n+2){border-bottom:0}.object-data-reference__route-list small{margin-top:var(--s1);color:var(--muted);font-weight:400}
+@media(max-width:900px){.object-data-reference__main{grid-template-columns:1fr}}
+@media(max-width:620px){.object-data-reference__routes-header{display:grid}.object-data-reference__routes-header .button{width:100%}.object-data-reference__route-list{grid-template-columns:1fr}.object-data-reference__route-list .button,.object-data-reference__route-list .button:nth-child(2n),.object-data-reference__route-list .button:nth-last-child(-n+2){border-right:0;border-bottom:1px solid var(--border)}.object-data-reference__route-list .button:last-child{border-bottom:0}}

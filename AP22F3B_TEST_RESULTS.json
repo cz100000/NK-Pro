@@ -1,0 +1,78 @@
+{
+  "workPackage": "AP22F3B",
+  "release": "V99.4.38",
+  "status": "passed-with-documented-legacy-test-exceptions",
+  "releaseGate": {
+    "status": "passed",
+    "scannedFiles": 352,
+    "syntaxUnits": 55,
+    "fixtures": 6
+  },
+  "ap22f3b": {
+    "static": 2,
+    "browser": 9,
+    "passed": 11,
+    "failed": 0
+  },
+  "protection": {
+    "wholeFiles": 29,
+    "fragments": 14,
+    "existingTestFiles": 71,
+    "status": "passed"
+  },
+  "browserCorePassed": {
+    "documentExport": 2,
+    "migrationRestore": 6,
+    "objectSnapshot": 7,
+    "persistenceBackup": 5,
+    "ap22f1cBehavior": 5
+  },
+  "legacyExceptions": [
+    {
+      "test": "tests/ap22f1b-page-header-cleanup.test.cjs",
+      "reason": "erwartet weiterhin 11 Speicheraktionen; AP22F3B entfernt die Aktion auf objekt verbindlich, daher sind 10 korrekt",
+      "baselineStatus": "passed",
+      "currentStatus": "expected-fail"
+    },
+    {
+      "test": "tests/ap10-archive-year-quality-diagnostics.test.cjs",
+      "reason": "historisch fest verdrahtete Version V99.4.24",
+      "baselineStatus": "failed",
+      "currentStatus": "failed"
+    },
+    {
+      "test": "tests/ap20-asset-refresh-regression.test.cjs",
+      "reason": "historisch fest verdrahtete Assetversion V99.4.23",
+      "baselineStatus": "failed",
+      "currentStatus": "failed"
+    },
+    {
+      "test": "tests/ap22e-ui-design-contract.test.cjs",
+      "reason": "historisch fest verdrahtete Paketversion 99.4.33",
+      "baselineStatus": "failed",
+      "currentStatus": "failed"
+    },
+    {
+      "test": "tests/ap22f1c-dialog-version-regression.test.cjs",
+      "reason": "historisch fest verdrahteter HTML-Fallback V99.4.36",
+      "baselineStatus": "not-relevant-to-current-version",
+      "currentStatus": "failed"
+    },
+    {
+      "test": "tests/ap22f2b-object-overview.test.cjs",
+      "reason": "historisch fest verdrahtetes Versionslabel V99.4.37",
+      "baselineStatus": "passed-on-baseline",
+      "currentStatus": "failed"
+    },
+    {
+      "test": "tests/service-worker.spec.js",
+      "reason": "historisch fest verdrahteter V99.4.24-App-Shell",
+      "baselineStatus": "pre-existing-obsolete-expectation",
+      "currentStatus": "failed"
+    }
+  ],
+  "notes": [
+    "Vollständiger 166-Test-Browserlauf wurde angestoßen, aber wegen historischer Teststalls nicht vollständig beendet.",
+    "Alle neuen AP22F3B-Tests und der aktuelle Release-Gate-Pfad sind vollständig bestanden."
+  ]
+}

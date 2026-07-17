@@ -1,0 +1,237 @@
+{
+  "workPackage": "AP22F3B",
+  "release": "V99.4.38",
+  "files": [
+    {
+      "path": "AP22F3B_ABNAHMEKATALOG.md",
+      "status": "neu",
+      "group": "Abschlussartefakt",
+      "bytes": 2404,
+      "sha256": "310702c7a4975c8e798290c9134a316713cd7df5400aaf92c43a3946c80b6c89"
+    },
+    {
+      "path": "AP22F3B_ABSCHLUSS.md",
+      "status": "neu",
+      "group": "Abschlussartefakt",
+      "bytes": 541,
+      "sha256": "d91b603035b2393203f8483be78b979418ef85d4af80afa71cf2f64d1ba43cc6"
+    },
+    {
+      "path": "AP22F3B_DATEIAENDERUNGEN.json",
+      "status": "neu",
+      "group": "Abschlussartefakt",
+      "bytes": 7156,
+      "sha256": null
+    },
+    {
+      "path": "AP22F3B_DATEIAENDERUNGEN.md",
+      "status": "neu",
+      "group": "Abschlussartefakt",
+      "bytes": 3148,
+      "sha256": null
+    },
+    {
+      "path": "AP22F3B_DATEIPOSITIVLISTE.md",
+      "status": "neu",
+      "group": "Abschlussartefakt",
+      "bytes": 1015,
+      "sha256": "460946083fc4bfc1ff9f72577f6b1680a117c2221244898707f2b55ff8bae4dc"
+    },
+    {
+      "path": "AP22F3B_PAKETVOLLSTAENDIGKEIT.md",
+      "status": "neu",
+      "group": "Abschlussartefakt",
+      "bytes": 853,
+      "sha256": "29e5dabea2a55ee161094708a42473c106b983aafe187c722465dec549e11190"
+    },
+    {
+      "path": "AP22F3B_README.md",
+      "status": "neu",
+      "group": "Abschlussartefakt",
+      "bytes": 1620,
+      "sha256": "36e43a98f744e3f01b853e9679fe509316f3521e5fec7f25b5d5aea0c6209632"
+    },
+    {
+      "path": "AP22F3B_RELEASE_CONTENT_POLICY.json",
+      "status": "neu",
+      "group": "Abschlussartefakt",
+      "bytes": 334,
+      "sha256": "cafcd6bff50886e3b069bb83fdb9db049acbc3f2bf1470e9713a118a51bcbd06"
+    },
+    {
+      "path": "AP22F3B_SCHUTZ_HASH_PRUEFBERICHT.md",
+      "status": "neu",
+      "group": "Abschlussartefakt",
+      "bytes": 935,
+      "sha256": "2a2fa1721ca90e733bd500591c78dc4f4f6ebc5d44dc57fb929ff7f81f1a3b33"
+    },
+    {
+      "path": "AP22F3B_Screenshots/01_desktop_vollstaendig.png",
+      "status": "neu",
+      "group": "Screenshot",
+      "bytes": 152711,
+      "sha256": "d77793a9f63c0aabac5b48a8f9c2f47aeeeef7e7cd3051e78eebfca96dc25c1e"
+    },
+    {
+      "path": "AP22F3B_Screenshots/02_desktop_handlungsbedarf.png",
+      "status": "neu",
+      "group": "Screenshot",
+      "bytes": 176508,
+      "sha256": "139cf213b0baf8c1ef8b89c8f544e6bc5f5ad554b738e1516dba2fae8661b33e"
+    },
+    {
+      "path": "AP22F3B_Screenshots/03_nur_ansehen.png",
+      "status": "neu",
+      "group": "Screenshot",
+      "bytes": 152214,
+      "sha256": "5d7a5b1632199b28b4b91d8995aa9a2947057fadfbad5e702a2865da94981dbc"
+    },
+    {
+      "path": "AP22F3B_Screenshots/04_schmale_ansicht.png",
+      "status": "neu",
+      "group": "Screenshot",
+      "bytes": 109821,
+      "sha256": "9594846de3a559f56846c3f4bb5156f4bd7c0df980a1b97d2fa4219766b3ce41"
+    },
+    {
+      "path": "AP22F3B_TESTBERICHT.md",
+      "status": "neu",
+      "group": "Abschlussartefakt",
+      "bytes": 2234,
+      "sha256": "becddc8d464962bcc71ec140acb7bb1ceff0b6bb36382a88900a385fdec68a7c"
+    },
+    {
+      "path": "AP22F3B_TEST_RESULTS.json",
+      "status": "neu",
+      "group": "Abschlussartefakt",
+      "bytes": 2448,
+      "sha256": "cc8dc20df3eaf6d7ac1597e1dbff9ac5cc521000a9fa35e6697e2ae065591ccb"
+    },
+    {
+      "path": "AP22F3B_UMSETZUNGSBERICHT.md",
+      "status": "neu",
+      "group": "Abschlussartefakt",
+      "bytes": 1360,
+      "sha256": "89bc006534f00c5ae92673855cae1a1efab8f0ab429c01fd2d096f189819d72b"
+    },
+    {
+      "path": "SHA256SUMS.txt",
+      "status": "geändert",
+      "group": "Prüfsummen",
+      "bytes": 35279,
+      "sha256": "bc2591634f3be75f108a2d1d679674c20d3e738c2efda37c95bbef95e6376b53"
+    },
+    {
+      "path": "assets/app.css",
+      "status": "geändert",
+      "group": "Produkt/Referenz",
+      "bytes": 260989,
+      "sha256": "464c6bfd1ddf571b841af2c437a3acd679bfc063e9aa4ebfd82bc72af1ae2289"
+    },
+    {
+      "path": "index.html",
+      "status": "geändert",
+      "group": "Produkt/Referenz",
+      "bytes": 86630,
+      "sha256": "cb156ee039645c57d997a4446742373689fcd384042fd62918cd3223da669872"
+    },
+    {
+      "path": "js/app-runtime-config.js",
+      "status": "geändert",
+      "group": "Produkt/Referenz",
+      "bytes": 35066,
+      "sha256": "d8c83bc967657e10b115da2f268d02791604bc2f5db4a5f33f93583d6a43019e"
+    },
+    {
+      "path": "js/service-worker-register.js",
+      "status": "geändert",
+      "group": "Produkt/Referenz",
+      "bytes": 2186,
+      "sha256": "3bbfa609f47f1ed1e1ced323111ed2d2d4278a800512ce9f7542084adbb7992f"
+    },
+    {
+      "path": "js/ui-page-controller.js",
+      "status": "geändert",
+      "group": "Produkt/Referenz",
+      "bytes": 44528,
+      "sha256": "cbad650147f13d015b229ffd948cfc53762bd41e89cf5a00df82928738fb2b48"
+    },
+    {
+      "path": "manifest.webmanifest",
+      "status": "geändert",
+      "group": "Produkt/Referenz",
+      "bytes": 1082,
+      "sha256": "8a47a80526f6bc9d4ff90335d8b2af9b62f2982bb024aeb5d812fc67dee3a568"
+    },
+    {
+      "path": "nk-pro-project.json",
+      "status": "geändert",
+      "group": "Produkt/Referenz",
+      "bytes": 2687,
+      "sha256": "b1b0517d39253b0a063405daf7f25b6d8b923a397a843ac7a7a7abd96994719e"
+    },
+    {
+      "path": "package-lock.json",
+      "status": "geändert",
+      "group": "Testintegration",
+      "bytes": 2510,
+      "sha256": "7ecc9e46e0e1eedfaeb46d43b428b102fa4a81d5f0c8585c7ae4ad1a1f3b1ec3"
+    },
+    {
+      "path": "package.json",
+      "status": "geändert",
+      "group": "Testintegration",
+      "bytes": 9520,
+      "sha256": "c664f566e6d191b76feb6a00418635547d42426e1d1c2ae52235a362408f2ab2"
+    },
+    {
+      "path": "playwright.config.cjs",
+      "status": "geändert",
+      "group": "Testintegration",
+      "bytes": 3938,
+      "sha256": "c51a8596d963c1639632b70f7c0f5504a87f6169f1dccdcdae0f5dd32185096c"
+    },
+    {
+      "path": "service-worker.js",
+      "status": "geändert",
+      "group": "Produkt/Referenz",
+      "bytes": 3715,
+      "sha256": "7fae1cac91602d495f894ded9ff0f73a3bea0bb8f077fa38945d1ba0f2ae84fe"
+    },
+    {
+      "path": "tests/ap22f3b-object-data.spec.js",
+      "status": "neu",
+      "group": "neuer Test",
+      "bytes": 6277,
+      "sha256": "70fb9ab596d062163b8aa6bf21af366d1d05a723f0b798e05558e2c7a979401c"
+    },
+    {
+      "path": "tests/ap22f3b-object-data.test.cjs",
+      "status": "neu",
+      "group": "neuer Test",
+      "bytes": 4151,
+      "sha256": "3fe5b61664c00266bb593cab19bc8b38e29d411bc6f09e4117bf590982648465"
+    },
+    {
+      "path": "tests/ap22f3b-protected-areas.test.cjs",
+      "status": "neu",
+      "group": "neuer Test",
+      "bytes": 22301,
+      "sha256": "7e58494a11d49777ed6e6023fe5f99f51d19f4f777d341ba977cd7fca72bcc79"
+    },
+    {
+      "path": "ui-reference/index.html",
+      "status": "geändert",
+      "group": "Produkt/Referenz",
+      "bytes": 37125,
+      "sha256": "247f44367572dc4c3f4322fbc73bdf90d7172e16c12cddf3b31f6e4f26861c65"
+    },
+    {
+      "path": "ui-reference/reference.css",
+      "status": "geändert",
+      "group": "Produkt/Referenz",
+      "bytes": 24233,
+      "sha256": "f39ba965b2ba5eada7a4adbf6d4f5cdb34bf654310a9d250b78f263b5430ac31"
+    }
+  ]
+}

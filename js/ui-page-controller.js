@@ -104,7 +104,7 @@ const AP17_ICON_PATHS = Object.freeze({
 
 const TAB_DEFINITIONS = {
   objektuebersicht:{title:"Objekt vorbereiten – Übersicht",kicker:"Objekt vorbereiten",firstSection:null,nextTab:"objekt",renderContent:null},
-  objekt:{title:"Objektdaten",kicker:"Objekt vorbereiten",firstSection:"objectPreparationSection",nextTab:"wohnungsverwaltung",renderContent:null},
+  objekt:{title:"Objektdaten",kicker:"Objekt vorbereiten",firstSection:null,nextTab:"wohnungsverwaltung",renderContent:()=>renderObjectDataPage()},
   start:{title:"Nebenkostenabrechnung – Übersicht",kicker:"Nebenkosten abrechnen",firstSection:"startRecordsSection",nextTab:"mieter",renderContent:()=>renderStart()},
   archiv:{title:"Abrechnungsarchiv",kicker:"Archiv",firstSection:"archiveRecordsSection",nextTab:"start",renderContent:()=>renderArchive()},
   mieterverwaltung:{title:"Mieterverwaltung",kicker:"Objekt vorbereiten",firstSection:"masterTenantSection",nextTab:"wohnungsverwaltung",renderContent:()=>renderStartTenantManagement()},
@@ -211,6 +211,87 @@ function dashboardAction(label,target,icon,meta="",kind="data") {
 function statusTone(status) {
   return status === "Vollständig" || status === "Abgeschlossen" || status === "Archiviert" ? "done" : (status === "Blockiert" ? "blocked" : (status === "Warnung" ? "warning" : "open"));
 }
+function objectDataText(value, fallback="Nicht hinterlegt") {
+  const normalized=String(value === undefined || value === null ? "" : value).trim();
+  return normalized || fallback;
+}
+function objectDataIssueRoute(code) {
+  const normalized=String(code || "").toUpperCase();
+  if (normalized === "UNIT_BUILDING_UNKNOWN" || normalized.startsWith("UNIT_")) return {target:"wohnungsverwaltung",label:"Wohnungen öffnen",icon:"home"};
+  if (normalized.startsWith("CONTRACT_") || normalized.startsWith("PARTNER_")) return {target:"mieterverwaltung",label:"Mietverhältnisse öffnen",icon:"users"};
+  if (normalized.startsWith("METER_") || normalized.startsWith("ELECTRICITY_DUMMY_")) return {target:"wasser",label:"Zähler öffnen",icon:"meter"};
+  return {target:"sicherung",label:"Systemdiagnose öffnen",icon:"shield"};
+}
+function objectDataPrimaryRoute(issues) {
+  const rows=Array.isArray(issues) ? issues : [];
+  const priorities=["wohnungsverwaltung","mieterverwaltung","wasser","sicherung"];
+  for (const target of priorities) {
+    const issue=rows.find(row=>objectDataIssueRoute(row && row.code).target===target);
+    if (issue) return {...objectDataIssueRoute(issue.code),issue};
+  }
+  return null;
+}
+function objectDataModel() {
+  const standard=state && state.objektStandard && typeof state.objektStandard === "object" && !Array.isArray(state.objektStandard) ? state.objektStandard : null;
+  const object=standard && standard.objekt && typeof standard.objekt === "object" ? standard.objekt : {};
+  const buildings=standard && Array.isArray(standard.gebaeude) ? standard.gebaeude : [];
+  const building=buildings[0] && typeof buildings[0] === "object" ? buildings[0] : {};
+  const validation=safeOverviewCall(()=>validateObjectStandard(state),{valid:false,errors:[{code:"OBJECT_STANDARD_MISSING",severity:"error",message:"Objektstandard fehlt."}],warnings:[],infos:[]});
+  const errors=Array.isArray(validation.errors) ? validation.errors : [];
+  const warnings=Array.isArray(validation.warnings) ? validation.warnings : [];
+  const infos=Array.isArray(validation.infos) ? validation.infos : [];
+  const actionable=errors.length ? errors : warnings;
+  const primary=objectDataPrimaryRoute(actionable);
+  const objectId=objectDataText(object.id || object.objektId,"Nicht vorhanden");
+  const buildingId=objectDataText(building.id || building.gebaeudeId,"Nicht vorhanden");
+  const objectLabel=objectDataText(object.bezeichnung,safeOverviewCall(()=>currentObjectLabel(),"Objekt"));
+  const buildingLabel=objectDataText(building.bezeichnung,"Nicht hinterlegt");
+  const addressParts=[objectDataText(building.strasse,""),[objectDataText(building.plz,""),objectDataText(building.ort,"")].filter(Boolean).join(" ")].filter(Boolean);
+  const version=standard ? Number(standard.version || standard.objectStandardVersion) : 0;
+  const standardStatus=objectDataText(object.status,"Status nicht hinterlegt");
+  const tone=errors.length ? "danger" : (warnings.length ? "warning" : "success");
+  const title=errors.length ? "Objektstandard benötigt Korrekturen" : (warnings.length ? "Objektstandard sollte geprüft werden" : "Objektstandard ist konsistent");
+  const statusText=errors.length
+    ? errors.length+" "+(errors.length===1?"technischer Befund muss":"technische Befunde müssen")+" korrigiert werden"
+    : (warnings.length ? warnings.length+" "+(warnings.length===1?"Hinweis muss":"Hinweise müssen")+" geprüft werden" : "Keine Aktion erforderlich");
+  const description=errors.length || warnings.length
+    ? "Die bestehenden Prüfbefunde werden vollständig angezeigt und in den fachlich verantwortlichen Bereichen korrigiert."
+    : "Objekt, Gebäude, Einheiten, Verträge und Zähler sind technisch eindeutig zugeordnet.";
+  return {standard,object,building,validation,errors,warnings,infos,primary,objectId,buildingId,objectLabel,buildingLabel,addressParts,version,standardStatus,tone,title,statusText,description};
+}
+function objectDataAction(label,target,icon,description,extra="") {
+  return '<button class="nk-ui-button nk-ui-button--secondary object-data-route" type="button" data-object-data-route="'+escapeHtml(target)+'" data-ui-action="navigation.switchTab" data-ui-args="[&quot;'+escapeHtml(target)+'&quot;]">'+
+    '<span class="object-data-route__icon">'+ap17Icon(icon,"object-data-icon")+'</span><span class="object-data-route__copy"><strong>'+escapeHtml(label)+'</strong><small>'+escapeHtml(description)+'</small></span>'+extra+'<span class="object-data-route__arrow" aria-hidden="true">→</span></button>';
+}
+function renderObjectDataPage() {
+  const root=document.querySelector('[data-object-data-view]');
+  if (!root) return;
+  const model=objectDataModel();
+  const issueRows=model.errors.concat(model.warnings);
+  const issues=issueRows.length
+    ? '<ul class="object-data-issues nk-ui-list nk-ui-list--plain" data-object-data-issues="">'+issueRows.map(row=>'<li class="nk-ui-notice nk-ui-notice--'+(row.severity==="warning"?"warning":"danger")+'"><span class="object-data-issue__symbol" aria-hidden="true">!</span><span><strong>'+escapeHtml(objectDataText(row.message,"Technischer Prüfbefund"))+'</strong><small>Bestehender Prüfbefund · '+escapeHtml(objectDataText(row.code,"TECHNICAL_ISSUE"))+'</small></span></li>').join('')+'</ul>'
+    : '';
+  const infoRows=model.infos.length
+    ? '<div class="object-data-infos" data-object-data-info=""><strong>Technischer Hinweis</strong><ul class="nk-ui-list">'+model.infos.map(row=>'<li>'+escapeHtml(objectDataText(row.message,"Information zur technischen Integrität"))+' <small>('+escapeHtml(objectDataText(row.code,"INFO"))+')</small></li>').join('')+'</ul></div>'
+    : '';
+  const primary=model.primary
+    ? '<button class="primary nk-ui-button nk-ui-button--primary object-data-primary" data-object-data-primary="" data-target="'+escapeHtml(model.primary.target)+'" data-ui-action="navigation.switchTab" data-ui-args="[&quot;'+escapeHtml(model.primary.target)+'&quot;]" type="button">'+ap17Icon(model.primary.icon,"object-data-icon")+escapeHtml(model.primary.label)+'</button>'
+    : '';
+  const address=model.addressParts.length ? model.addressParts.map(part=>escapeHtml(part)).join('<br>') : 'Nicht hinterlegt';
+  const versionLabel=model.version ? 'Version '+escapeHtml(String(model.version))+' · '+escapeHtml(model.standardStatus) : 'Nicht vorhanden · '+escapeHtml(model.standardStatus);
+  root.innerHTML=
+    '<div class="object-data-main-grid">'+
+      '<section class="nk-ui-card object-data-card" data-object-data-identity="" aria-labelledby="objectDataIdentityTitle"><div class="object-data-card__heading"><span class="object-data-card__icon">'+ap17Icon("building","object-data-icon")+'</span><div><p class="object-data-eyebrow">Identität</p><h2 id="objectDataIdentityTitle">Objekt und Gebäude</h2></div></div><dl class="nk-ui-list nk-ui-list--definition object-data-meta"><div><dt>Objekt</dt><dd>'+escapeHtml(model.objectLabel)+'</dd></div><div><dt>Anschrift</dt><dd>'+address+'</dd></div><div><dt>Objekt-ID</dt><dd><code>'+escapeHtml(model.objectId)+'</code></dd></div><div><dt>Gebäude</dt><dd>'+escapeHtml(model.buildingLabel)+'</dd></div><div><dt>Gebäude-ID</dt><dd><code>'+escapeHtml(model.buildingId)+'</code></dd></div><div><dt>Objektstandard</dt><dd>'+versionLabel+'</dd></div></dl></section>'+
+      '<section class="nk-ui-card object-data-card object-data-integrity object-data-integrity--'+model.tone+'" data-object-data-integrity="" aria-labelledby="objectDataIntegrityTitle"><div class="object-data-card__heading"><span class="object-data-card__icon object-data-card__icon--'+model.tone+'">'+ap17Icon("shield","object-data-icon")+'</span><div><p class="object-data-eyebrow">Technische Integrität</p><h2 id="objectDataIntegrityTitle">'+escapeHtml(model.title)+'</h2></div></div><div class="nk-ui-notice nk-ui-notice--'+model.tone+' object-data-status" data-object-data-status="" role="status"><span class="object-data-status__dot" aria-hidden="true"></span><strong>'+escapeHtml(model.statusText)+'</strong></div><p class="object-data-status__description">'+escapeHtml(model.description)+'</p>'+issues+infoRows+primary+'</section>'+
+    '</div>'+
+    '<section class="nk-ui-card object-data-card object-data-routes" data-object-data-routes="" aria-labelledby="objectDataRoutesTitle"><div class="object-data-routes__header"><div><p class="object-data-eyebrow">Änderungswege</p><h2 id="objectDataRoutesTitle">Wo werden Daten geändert?</h2><p>Die führenden Daten bleiben in ihren bestehenden Pflegebereichen.</p></div><button class="nk-ui-button nk-ui-button--secondary object-data-overview-link" data-object-data-overview="" data-ui-action="navigation.switchTab" data-ui-args="[&quot;objektuebersicht&quot;]" type="button">Zur Objektübersicht</button></div><div class="object-data-route-list">'+
+      objectDataAction("Wohnungen","wohnungsverwaltung","home","Bezeichnung, Status, Fläche und Einheitenzuordnung")+
+      objectDataAction("Mietverhältnisse","mieterverwaltung","users","Partner, Vertragszeiträume und Kontaktdaten")+
+      objectDataAction("Zähler","wasser","meter","Bestehender Inventar-DUMMY; keine neue Fachfunktion",'<span class="nk-ui-status object-data-route__badge">DUMMY</span>')+
+      objectDataAction("Datensicherung & System","sicherung","shield","Technische Diagnose bei nicht direkt pflegbaren Standardfehlern")+
+    '</div></section>';
+}
+
 function objectOverviewModel(stats) {
   const validation=stats.objectValidation || {errors:[],warnings:[]};
   const errors=Array.isArray(validation.errors) ? validation.errors.length : 0;
