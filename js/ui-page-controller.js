@@ -211,31 +211,59 @@ function dashboardAction(label,target,icon,meta="",kind="data") {
 function statusTone(status) {
   return status === "Vollständig" || status === "Abgeschlossen" || status === "Archiviert" ? "done" : (status === "Blockiert" ? "blocked" : (status === "Warnung" ? "warning" : "open"));
 }
-function renderObjectDashboard(root, stats) {
+function objectOverviewModel(stats) {
   const validation=stats.objectValidation || {errors:[],warnings:[]};
-  const errors=Array.isArray(validation.errors)?validation.errors.length:0;
-  const warnings=Array.isArray(validation.warnings)?validation.warnings.length:0;
-  const objectStatus=errors ? "Blockiert" : (warnings ? "Warnung" : "Vollständig");
-  const nextRule=stats.rules.find(rule=>!rule.complete) || {label:"Objektvorbereitung",target:"objekt",blocked:false};
-  const nextText=nextRule.blocked ? "Blockierende Angaben prüfen" : "Offene Angaben vervollständigen";
+  const errors=Array.isArray(validation.errors) ? validation.errors.length : 0;
+  const warnings=Array.isArray(validation.warnings) ? validation.warnings.length : 0;
+  const unitsTotal=stats.activeUnits.length;
+  const unitsCompleteCount=stats.completeUnits.length;
+  const tenantsTotal=stats.tenants.length;
+  const tenantsCompleteCount=stats.completeTenants.length;
+  const objectComplete=errors===0 && warnings===0;
+  const unitsComplete=unitsTotal>0 && unitsCompleteCount===unitsTotal;
+  const tenantsComplete=tenantsTotal>0 && tenantsCompleteCount===tenantsTotal;
+  const completedCount=[objectComplete,unitsComplete,tenantsComplete].filter(Boolean).length;
+  const missingUnits=Math.max(0,unitsTotal-unitsCompleteCount);
+  const missingTenants=Math.max(0,tenantsTotal-tenantsCompleteCount);
+  let next={target:"start",title:"Nebenkostenabrechnung beginnen",description:"Die produktiven Grundlagen der Objektvorbereitung sind vollständig.",button:"Zur Abrechnungsübersicht"};
+  if (!objectComplete) {
+    const issueParts=[];
+    if (errors) issueParts.push(errors+' blockierende '+(errors===1?'Angabe':'Angaben'));
+    if (warnings) issueParts.push(warnings+' warnende '+(warnings===1?'Angabe':'Angaben'));
+    next={target:"objekt",title:"Objektdaten prüfen",description:(issueParts.join(' und ') || 'Offene Objektangaben')+' benötigen Prüfung.',button:"Objektdaten öffnen"};
+  } else if (!unitsComplete) {
+    next={target:"wohnungsverwaltung",title:"Wohnungen vervollständigen",description:missingUnits===1?'Eine Wohneinheit benötigt noch vollständige Stammdaten.':missingUnits+' Wohneinheiten benötigen noch vollständige Stammdaten.',button:"Wohnungen öffnen"};
+  } else if (!tenantsComplete) {
+    next={target:"mieterverwaltung",title:"Mietverhältnisse vervollständigen",description:missingTenants===1?'Ein Mietverhältnis benötigt noch vollständige Stammdaten.':missingTenants+' Mietverhältnisse benötigen noch vollständige Stammdaten.',button:"Mietverhältnisse öffnen"};
+  }
+  return {errors,warnings,unitsTotal,unitsCompleteCount,tenantsTotal,tenantsCompleteCount,objectComplete,unitsComplete,tenantsComplete,completedCount,next};
+}
+function renderObjectDashboard(root, stats) {
+  const model=objectOverviewModel(stats);
+  const overallComplete=model.completedCount===3;
+  const statusMarkup=(label,tone="")=>'<span class="nk-ui-status'+(tone?' nk-ui-status--'+tone:'')+'">'+escapeHtml(label)+'</span>';
+  const task=(key,label,target,icon,statusLabel,statusToneName,description,muted=false)=>
+    '<button class="dashboard-entry nk-ui-card nk-ui-card--interactive object-overview-task'+(muted?' nk-ui-card--muted object-overview-task--dummy':'')+'" data-value-kind="'+(muted?'dummy':'data')+'" data-object-overview-task="'+escapeHtml(key)+'" data-target="'+escapeHtml(target)+'" data-ui-action="navigation.switchTab" data-ui-args="[&quot;'+escapeHtml(target)+'&quot;]" type="button">'+
+      '<span class="object-overview-task__icon">'+ap17Icon(icon)+'</span><span class="object-overview-task__copy"><span class="object-overview-task__title">'+escapeHtml(label)+'</span>'+statusMarkup(statusLabel,statusToneName)+'<span class="object-overview-task__description">'+escapeHtml(description)+'</span></span><span class="object-overview-task__arrow" aria-hidden="true">→</span></button>';
+  const objectStatus=model.errors ? "Blockiert" : (model.warnings ? "Warnung" : "Vollständig");
+  const objectTone=model.errors ? "danger" : (model.warnings ? "warning" : "success");
+  const objectDescription=model.objectComplete
+    ? "Objektstandard und grundlegende Zuordnungen sind vollständig."
+    : model.errors+' blockierende und '+model.warnings+' warnende Angaben prüfen.';
+  const unitsStatus=model.unitsComplete ? "Vollständig" : model.unitsCompleteCount+' von '+model.unitsTotal+' vollständig';
+  const tenantsStatus=model.tenantsComplete ? "Vollständig" : model.tenantsCompleteCount+' von '+model.tenantsTotal+' vollständig';
   root.innerHTML =
-    '<div class="dashboard-value-grid">'+
-      dashboardValue("Aktuelles Objekt",stats.objectLabel,"data","Aus vorhandenen Objekt- und Mieterdaten","blue")+
-      dashboardValue("Gebäudekurzcode",stats.objectCode,"data","Aus Stammdaten abgeleitet","petrol")+
-      dashboardValue("Einheiten vollständig",stats.completeUnits.length+' von '+stats.activeUnits.length,stats.completeUnits.length===stats.activeUnits.length&&stats.activeUnits.length?"complete":"open",stats.activeUnits.length-stats.completeUnits.length+' offene Einheiten',"blue")+
-      dashboardValue("Mieter vollständig",stats.completeTenants.length+' von '+stats.tenants.length,stats.completeTenants.length===stats.tenants.length&&stats.tenants.length?"complete":"open",stats.tenants.length-stats.completeTenants.length+' offene Mietverhältnisse',"violet")+
-    '</div>'+
-    '<div class="dashboard-summary-grid">'+
-      '<article class="dashboard-status-panel dashboard-status-panel--'+(objectStatus==="Vollständig"?'green':(objectStatus==="Warnung"?'orange':'red'))+'"><div class="dashboard-panel-heading"><span>'+ap17Icon("shield")+'</span><div><h3>Objektstandard</h3>'+valueKindBadge(statusTone(objectStatus)==="done"?"complete":statusTone(objectStatus))+'</div></div><strong>'+escapeHtml(objectStatus)+'</strong><p>'+errors+' blockierende und '+warnings+' warnende Angaben aus der vorhandenen Objektprüfung.</p></article>'+
-      '<article class="dashboard-status-panel dashboard-status-panel--blue"><div class="dashboard-panel-heading"><span>'+ap17Icon("receipt")+'</span><div><h3>Kostenarten und Schlüssel</h3>'+valueKindBadge(stats.completeCosts.length===stats.costs.length&&stats.costs.length?"complete":(stats.blockedCosts.length?"blocked":"open"))+'</div></div><strong>'+stats.completeCosts.length+' von '+stats.costs.length+' vollständig</strong><p>'+stats.blockedCosts.length+' blockiert, '+stats.openCosts.length+' offen oder mit Warnung.</p></article>'+
-      '<article class="dashboard-next-step"><div><span class="dashboard-next-step__label">Nächster nachvollziehbarer Vorbereitungsschritt</span><h3>'+escapeHtml(nextRule.label)+': '+escapeHtml(nextText)+'</h3><p>Der Direkteinstieg basiert auf der ersten noch nicht erfüllten Prüfregel.</p></div><button class="primary" data-ui-action="navigation.switchTab" data-ui-args="[&quot;'+escapeHtml(nextRule.target)+'&quot;]" type="button">Arbeitsbereich öffnen</button></article>'+
-    '</div>'+
-    '<section class="dashboard-entry-section"><div class="dashboard-section-heading"><div><p class="page-header__kicker">Direkteinstiege</p><h3>Objekt vorbereiten</h3></div><span>4 Arbeitsbereiche</span></div><div class="dashboard-entry-grid dashboard-entry-grid--four">'+
-      dashboardAction("Objektdaten","objekt","building","Objektstandard und Zuordnungen")+
-      dashboardAction("Wohnungen","wohnungsverwaltung","home",stats.completeUnits.length+' von '+stats.activeUnits.length+' vollständig')+
-      dashboardAction("Mieter","mieterverwaltung","users",stats.completeTenants.length+' von '+stats.tenants.length+' vollständig')+
-      dashboardAction("Zähler-DUMMY","wasser","meter","Reiner Clickdummy ohne Fachlogik","dummy")+
-    '</div></section>';
+    '<article class="nk-ui-card object-overview-summary" data-object-overview-summary="">'+
+      '<div class="object-overview-summary__identity"><span class="object-overview-summary__icon">'+ap17Icon(overallComplete?"shield":"building")+'</span><div class="object-overview-summary__copy"><h2>'+escapeHtml(stats.objectLabel)+'</h2><p>Gebäudekurzcode '+escapeHtml(stats.objectCode)+'</p></div><div class="object-overview-summary__status">'+statusMarkup(overallComplete?"Vorbereitung vollständig":"Handlungsbedarf",overallComplete?"success":"warning")+'<span>'+model.completedCount+' von 3 Bereichen vollständig</span></div></div>'+
+      '<div class="object-overview-summary__next"><p class="object-overview-label">Nächster Schritt</p><h2>'+escapeHtml(model.next.title)+'</h2><p>'+escapeHtml(model.next.description)+'</p><button class="primary nk-ui-button nk-ui-button--primary" data-object-overview-primary="" data-target="'+escapeHtml(model.next.target)+'" data-ui-action="navigation.switchTab" data-ui-args="[&quot;'+escapeHtml(model.next.target)+'&quot;]" type="button">'+escapeHtml(model.next.button)+'</button></div>'+
+    '</article>'+
+    '<section class="object-overview-tasks" aria-labelledby="objectOverviewTasksTitle"><div class="object-overview-tasks__heading"><div><p class="object-overview-label">Arbeitsbereiche</p><h2 id="objectOverviewTasksTitle">Objektvorbereitung</h2></div><span>3 produktive Bereiche · 1 DUMMY</span></div><div class="object-overview-task-grid">'+
+      task("object","Objektdaten","objekt","building",objectStatus,objectTone,objectDescription)+
+      task("units","Wohnungen","wohnungsverwaltung","home",unitsStatus,model.unitsComplete?"success":"warning",model.unitsComplete?'Alle aktiven Wohneinheiten besitzen vollständige Stammdaten.':Math.max(0,model.unitsTotal-model.unitsCompleteCount)+' aktive Wohneinheiten benötigen noch Angaben.')+
+      task("tenancies","Mietverhältnisse","mieterverwaltung","users",tenantsStatus,model.tenantsComplete?"success":"warning",model.tenantsComplete?'Alle relevanten Mietverhältnisse sind zugeordnet.':Math.max(0,model.tenantsTotal-model.tenantsCompleteCount)+' relevante Mietverhältnisse benötigen noch Angaben.')+
+      task("meter","Zähler","wasser","meter","DUMMY","","Clickdummy ohne Fachlogik",true)+
+    '</div></section>'+
+    '<p class="object-overview-boundary">Kostenarten, Umlageschlüssel und Abrechnungsprüfungen erscheinen ausschließlich im Bereich „Nebenkosten abrechnen“.</p>';
 }
 function workflowStage(label,target,icon,status,detail) {
   const tone=statusTone(status);

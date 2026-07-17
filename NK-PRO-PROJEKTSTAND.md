@@ -1,3 +1,11 @@
+# Projektstand V99.4.37 – AP22F2B Technische Migration der Objektübersicht
+
+Die produktive Seite `objektuebersicht` ist nach dem freigegebenen AP22F2A-Plan migriert. Eine kompakte gemeinsame Objektidentität verbindet Objektname und Gebäudekurzcode. Der Gesamtstatus zählt ausschließlich Objektdaten, Wohnungen und Mietverhältnisse; der Zähler-DUMMY bleibt ausgeschlossen. Genau eine nächste Aktion folgt der Priorität Objektdaten, Wohnungen, Mietverhältnisse und anschließend Abrechnungsübersicht.
+
+Die Seite besitzt genau vier Aufgaben-/Statuskarten. Die bereichsfremde Karte „Kostenarten und Schlüssel“, die vier alten Kennzahlenkarten sowie doppelte Einheiten- und Mieteranzeigen sind entfernt. Die Zählerkarte bleibt textlich als `DUMMY` und `Clickdummy ohne Fachlogik` gekennzeichnet.
+
+Navigation, globale Kontextleiste, Seitenkopf, Objektstandard, Datenmodell, Datenquellen, Fachlogik, Persistenz, Migration, Backup/Restore, Archiv, Abrechnung, Kosten, Prüfregeln, Import/Export, Brief, Druck und PDF sind unverändert geschützt. Datenschema 5 und Datenebenenvertrag 1 bleiben bestehen.
+
 # Projektstand V99.4.36 – AP22F1C Dialogausblendung und zentrale Versionsanzeige
 
 AP22F1C ist als eng begrenztes Korrekturpaket abgeschlossen. Geschlossene native Dialoge mit der zentralen Klasse `nk-ui-dialog` werden wieder zuverlässig durch ihren fehlenden `open`-Zustand ausgeblendet und erscheinen nicht mehr als leere Box am Seitenende. Öffnen, Escape, Hintergrundschließen, Fokusfalle und Fokusrückgabe bleiben erhalten.

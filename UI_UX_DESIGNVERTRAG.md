@@ -1,7 +1,7 @@
 # NK-Pro – Verbindlicher UI-/UX-Designvertrag
 
-**Vertragsstand:** AP22F1C / V99.4.36  
-**Technische Produktbasis:** V99.4.36 / AP22F1C  
+**Vertragsstand:** AP22F2B / V99.4.37  
+**Technische Produktbasis:** V99.4.37 / AP22F2B  
 **Geltung:** alle späteren produktiven UI-Arbeitspakete
 
 ## 1. Zweck und Geltungsbereich
@@ -127,3 +127,6 @@ Geschlossene native Dialoge dürfen durch zentrale Layoutklassen nicht sichtbar 
 
 Die sichtbare Releaseversion wird aus genau einer zentralen Laufzeitquelle abgeleitet. Statisch unabhängige Versionsangaben in produktiven Navigations- oder Statusbereichen sind unzulässig.
 
+## 13. AP22F2B – Verbindlicher Objektübersichtsstandard
+
+Die Objektübersicht ist ausschließlich die Arbeitsübersicht der Objektvorbereitung. Sie verwendet eine kompakte gemeinsame Objektidentität, einen Gesamtstatus für genau Objektdaten, Wohnungen und Mietverhältnisse, genau eine priorisierte nächste Aktion und genau vier Aufgaben-/Statuskarten. Zähler ist ein nachrangiger, textlich eindeutiger DUMMY und zählt nicht zur Vollständigkeit. Kostenarten, Umlageschlüssel und Abrechnungsprüfungen gehören nicht auf diese Seite.

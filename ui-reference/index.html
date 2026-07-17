@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="light">
-  <title>NK-Pro UI-/UX-Referenzbibliothek · AP22F1C</title>
+  <title>NK-Pro UI-/UX-Referenzbibliothek · AP22F2B</title>
   <link rel="stylesheet" href="reference.css">
 </head>
 <body>
@@ -22,23 +22,27 @@
     <symbol id="icon-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></symbol>
     <symbol id="icon-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
     <symbol id="icon-ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m6 6 12 12"/></symbol>
+    <symbol id="icon-building" viewBox="0 0 24 24"><path d="M5 21V5l7-2v18M12 8h7v13M8 8h1M8 12h1M8 16h1M15 11h1M15 15h1M3 21h18"/></symbol>
+    <symbol id="icon-home" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5M5 10v11h14V10M9 21v-7h6v7"/></symbol>
+    <symbol id="icon-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="icon-meter" viewBox="0 0 24 24"><path d="M5 20a8 8 0 1 1 14 0M12 12l4-4M8 20h8"/></symbol>
   </svg>
   <a class="skip-link" href="#main">Zum Inhalt</a>
   <header class="reference-banner">
     <div>
-      <p class="eyebrow">NK-Pro · AP22F1C · nicht produktiv</p>
+      <p class="eyebrow">NK-Pro · AP22F2B · nicht produktiv</p>
       <h1>UI-/UX-Referenzbibliothek</h1>
       <p>Verbindliche visuelle Abnahmegrundlage. Ausschließlich fiktive Beispieldaten; keine Fachlogik, keine Persistenz und keine produktiven Ereignisse.</p>
     </div>
     <div class="reference-badges" aria-label="Referenzstatus">
       <span class="badge badge--info">Designvertrag V1</span>
-      <span class="badge badge--neutral">Korrekturstand V99.4.36</span>
+      <span class="badge badge--neutral">Migrationsstand V99.4.37</span>
     </div>
   </header>
 
   <nav class="section-nav" aria-label="Inhaltsverzeichnis der Referenzbibliothek">
     <a href="#styleguide">Zielbild</a><a href="#navigation">Navigation</a><a href="#shell">Seitenschale</a>
-    <a href="#cards">Karten</a><a href="#accordions">Klappboxen</a><a href="#tables">Tabellen</a>
+    <a href="#object-overview">Objektübersicht</a><a href="#cards">Karten</a><a href="#accordions">Klappboxen</a><a href="#tables">Tabellen</a>
     <a href="#forms">Formulare</a><a href="#actions">Aktionen</a><a href="#notices">Hinweise</a>
     <a href="#dialogs">Dialoge</a><a href="#states">Zustände</a><a href="#responsive">Responsive</a>
   </nav>
@@ -109,6 +113,24 @@
         <div class="billing-context billing-context--compact"><strong>Geschlossen</strong><span><b>Objekt:</b> Musterstraße 12</span><span><b>Zeitraum:</b> 01.01.2024 – 31.12.2024</span><span><b>Status:</b> Abgeschlossen</span><button class="button button--secondary" type="button">Ansehen</button></div>
         <div class="billing-context billing-context--compact"><strong>Korrektur</strong><span><b>Objekt:</b> Musterstraße 12</span><span><b>Zeitraum:</b> 01.01.2023 – 31.12.2023</span><span><b>Status:</b> Wieder geöffnet</span><button class="button button--secondary" type="button">Korrektur beenden</button></div>
       </div>
+    </section>
+
+    <section id="object-overview" class="reference-section" data-reference-group="object-overview">
+      <div class="section-heading"><div><p class="eyebrow">AP22F2B · verbindliche Seitenmigration</p><h2>Objekt vorbereiten – Übersicht</h2></div><span class="badge badge--success">vollständig migriert</span></div>
+      <article class="object-reference" aria-label="Freigegebene Objektübersicht mit Handlungsbedarf">
+        <div class="object-reference__summary card">
+          <div class="object-reference__identity"><span class="object-reference__icon"><svg class="svg-icon" aria-hidden="true"><use href="#icon-building"></use></svg></span><div><h3>Am Rauhen Biehl 5</h3><p>Gebäudekurzcode AMR5</p></div><div class="object-reference__status"><span class="status status--warning"><span class="status-dot" aria-hidden="true"></span> Handlungsbedarf</span><span>2 von 3 Bereichen vollständig</span></div></div>
+          <div class="object-reference__next"><p class="eyebrow">Nächster Schritt</p><h3>Wohnungen vervollständigen</h3><p>Eine Wohneinheit benötigt noch vollständige Stammdaten.</p><button class="button button--primary" type="button">Wohnungen öffnen</button></div>
+        </div>
+        <div class="object-reference__heading"><div><p class="eyebrow">Arbeitsbereiche</p><h3>Objektvorbereitung</h3></div><span>3 produktive Bereiche · 1 DUMMY</span></div>
+        <div class="object-reference__grid">
+          <button class="object-reference__task card card--interactive" type="button"><span class="object-reference__icon"><svg class="svg-icon" aria-hidden="true"><use href="#icon-building"></use></svg></span><span><strong>Objektdaten</strong><span class="status status--success"><span class="status-dot" aria-hidden="true"></span> Vollständig</span><small>Objektstandard und grundlegende Zuordnungen sind vollständig.</small></span><b aria-hidden="true">→</b></button>
+          <button class="object-reference__task card card--interactive" type="button"><span class="object-reference__icon"><svg class="svg-icon" aria-hidden="true"><use href="#icon-home"></use></svg></span><span><strong>Wohnungen</strong><span class="status status--warning"><span class="status-dot" aria-hidden="true"></span> 7 von 8 vollständig</span><small>Eine aktive Wohneinheit benötigt noch Angaben.</small></span><b aria-hidden="true">→</b></button>
+          <button class="object-reference__task card card--interactive" type="button"><span class="object-reference__icon"><svg class="svg-icon" aria-hidden="true"><use href="#icon-users"></use></svg></span><span><strong>Mietverhältnisse</strong><span class="status status--success"><span class="status-dot" aria-hidden="true"></span> Vollständig</span><small>Alle relevanten Mietverhältnisse sind zugeordnet.</small></span><b aria-hidden="true">→</b></button>
+          <button class="object-reference__task object-reference__task--dummy card card--interactive" type="button"><span class="object-reference__icon"><svg class="svg-icon" aria-hidden="true"><use href="#icon-meter"></use></svg></span><span><strong>Zähler</strong><span class="status status--neutral"><span class="status-dot" aria-hidden="true"></span> DUMMY</span><small>Clickdummy ohne Fachlogik</small></span><b aria-hidden="true">→</b></button>
+        </div>
+      </article>
+      <p class="reference-rule"><strong>Verbindliche Regel:</strong> Der Gesamtstatus berücksichtigt ausschließlich Objektdaten, Wohnungen und Mietverhältnisse. Die Seite zeigt genau eine nächste Aktion und vier Aufgaben-/Statuskarten. Zähler bleibt ein textlich eindeutiger DUMMY; Kostenarten und Abrechnungsprüfungen erscheinen hier nicht.</p>
     </section>
 
     <section id="cards" class="reference-section" data-reference-group="cards">

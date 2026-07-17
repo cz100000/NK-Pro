@@ -49,3 +49,11 @@ Unabhängig vom weiterhin offenen Inhaltsmigrationsstatus jeder Tabellenzeile si
 | `start`/`#billingPeriodSection` | geschützt und ausdrücklich nicht migriert |
 
 Der Inhaltsmigrationsstatus für Karten, Tabellen, Formulare, Dialoge und Klappboxen bleibt durch AP22F1B unverändert.
+
+## AP22F2B – Fortschreibung
+
+| Seite/Bereich | Stand | Migrierte Elemente | Ausdrücklich unverändert |
+|---|---|---|---|
+| `objektuebersicht` | abgeschlossen V99.4.37 | Objektidentität, Gesamtstatus, nächste Aktion, vier Aufgaben-/Statuskarten, responsive Darstellung | Seitenschale, Seitenkopf, Navigation, Kontextleiste, Datenquellen, Fachlogik, Zielseiten |
+
+Die Objektübersicht gilt damit als vollständig migriert. Andere produktive Seiten erhalten durch AP22F2B keinen neuen Migrationsstatus.

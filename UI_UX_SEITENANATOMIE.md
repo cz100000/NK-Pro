@@ -91,3 +91,14 @@ Doppelte Titel, redundante Statusangaben und unnötige Informationswiederholunge
 - **Fachseite mit eigenen Inhaltsaktionen:** Identität ohne allgemeine Kopfaktion; Archiv-, Sicherungs- und Exportaktionen stehen fachlich benannt im Inhalt.
 - **Schreibgeschützte Datenseite:** derselbe Seitenkopf, zentral ausgeblendete Speicheraktion und unveränderte große Schreibschutz-Notice mit `Zur Bearbeitung öffnen`.
 - **Nicht zulässig:** statischer Speicherstatus, redundanter lokaler Perioden-/Bestandsblock oder mehrere konkurrierende Speicherwege.
+
+## AP22F2B – Anatomie `objektuebersicht`
+
+1. unveränderte Seitenschale und unveränderter Seitenkopf,
+2. gemeinsame Objektidentität mit Gesamtstatus,
+3. genau eine nächste Aktion in derselben übergeordneten Fläche,
+4. Überschrift „Objektvorbereitung“ mit Bereichsabgrenzung,
+5. vier gleichrangige Aufgaben-/Statuskarten,
+6. nachrangiger Hinweis zur Grenze gegenüber dem Abrechnungsbereich.
+
+Ein zusätzlicher Kennzahlenblock, eine Kostenartenkarte oder eine zweite Direkteinstiegssektion ist unzulässig.

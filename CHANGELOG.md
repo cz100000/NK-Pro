@@ -1,3 +1,15 @@
+# V99.4.37 – AP22F2B Technische Migration der Objektübersicht (2026-07-17)
+
+- Objektname und Gebäudekurzcode in einer kompakten Identitätsdarstellung zusammengeführt,
+- Gesamtstatus auf genau drei produktive Bereiche begrenzt: Objektdaten, Wohnungen und Mietverhältnisse,
+- genau eine nächste Aktion mit der freigegebenen Prioritätsregel umgesetzt,
+- genau vier Aufgaben-/Statuskarten für Objektdaten, Wohnungen, Mietverhältnisse und Zähler-DUMMY eingeführt,
+- alte Einzelkennzahlen, doppelte Wohnungs-/Mieterwerte und „Kostenarten und Schlüssel“ entfernt,
+- Zähler unverändert als `DUMMY` und `Clickdummy ohne Fachlogik` gekennzeichnet,
+- zentrale Referenzbibliothek um die freigegebene Objektübersicht ergänzt,
+- drei separate AP22F2B-Testdateien sowie V99.4.37/PWA-Kennungen ergänzt,
+- Navigation, Kontextleiste, Seitenkopf, Fach-, Daten-, Speicher- und Dokumentbereiche hashgeschützt unverändert erhalten.
+
 # V99.4.36 – AP22F1C Dialogausblendung und zentrale Versionsanzeige (2026-07-17)
 
 - geschlossene native `dialog.nk-ui-dialog` über `:not([open])` zuverlässig ausgeblendet,

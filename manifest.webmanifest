@@ -1,7 +1,7 @@
 {
-  "name": "NK-Pro V99.4.36",
+  "name": "NK-Pro V99.4.37",
   "short_name": "NK-Pro",
-  "description": "Lokale Nebenkostenabrechnung mit geschützter Navigation, zentralem Prüfsystem, zuverlässiger Dialogausblendung und zentraler Versionsanzeige.",
+  "description": "Lokale Nebenkostenabrechnung mit zentralem Prüfsystem und vollständig migrierter Objektübersicht für Objektdaten, Wohnungen und Mietverhältnisse.",
   "lang": "de-DE",
   "id": "./",
   "start_url": "./",
@@ -9,7 +9,7 @@
   "display": "standalone",
   "background_color": "#f4f6f9",
   "theme_color": "#031d41",
-  "version": "99.4.36",
+  "version": "99.4.37",
   "icons": [
     {
       "src": "./icons/icon-180.png",

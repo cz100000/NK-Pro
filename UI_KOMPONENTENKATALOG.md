@@ -43,3 +43,13 @@ Der zentrale Seitenkopf besitzt ab V99.4.35 zwei produktive Aktionsvarianten: Da
 - `[data-app-version]` ist das einzige sichtbare Versionslabel der Navigation und wird aus `APP_VERSION` befüllt.
 - Der HTML-Text des Labels ist lediglich ein startfähiger Fallback und muss der aktuellen zentralen Version entsprechen.
 
+## AP22F2B – produktive Varianten
+
+| Komponente | Produktiver Status | Einsatz |
+|---|---|---|
+| Objektidentitäts-/Nächste-Aktion-Karte | migriert | `objektuebersicht` |
+| Aufgaben-/Statuskarte | migriert, vier Instanzen | Objektdaten, Wohnungen, Mietverhältnisse, Zähler-DUMMY |
+| Gesamtstatus „x von 3 Bereichen“ | migriert | ausschließlich produktive Objektvorbereitung |
+| DUMMY-Statuskarte | migriert | bestehendes Ziel `wasser`, ohne Fachlogik |
+
+Die alten Objekt-Dashboard-Kennzahlen und die Kostenartenstatuskarte sind für `objektuebersicht` entfallen.

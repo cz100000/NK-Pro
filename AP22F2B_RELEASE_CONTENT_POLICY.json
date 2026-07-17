@@ -1,0 +1,28 @@
+{
+  "workPackage": "AP22F2B",
+  "releaseArtifact": "NK-Pro_V99_4_37_AP22F2B_Objektuebersicht.zip",
+  "exclude": [
+    "node_modules/",
+    "test-results/",
+    "playwright-report/",
+    "coverage/",
+    "*.log",
+    "*.trace",
+    "development screenshots",
+    "embedded archives"
+  ],
+  "require": [
+    "index.html",
+    "package.json",
+    "manifest.webmanifest",
+    "service-worker.js",
+    "SHA256SUMS.txt",
+    "AP22F2B_ABSCHLUSS.md",
+    "AP22F2B_PRUEFBERICHT.md",
+    "tests/ap22f2b-object-overview.test.cjs",
+    "tests/ap22f2b-object-overview.spec.js",
+    "tests/ap22f2b-protected-areas.test.cjs"
+  ],
+  "freshExtractionVerification": true,
+  "nestedArchivesAllowed": false
+}

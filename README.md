@@ -1,3 +1,18 @@
+# NK-Pro V99.4.37 – AP22F2B Objektübersicht
+
+Aktueller Release mit vollständig migrierter Seite „Objekt vorbereiten – Übersicht“. Die Seite zeigt eine kompakte Objektidentität, den Status der drei produktiven Vorbereitungsbereiche, genau eine nächste Aktion und vier Aufgaben-/Statuskarten. Kostenarten- und Doppelanzeigen entfallen; Zähler bleibt ein eindeutig gekennzeichneter DUMMY.
+
+Prüfung:
+
+```text
+npm ci
+npm run test:ap22f2b:static
+CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:ap22f2b:browser
+npm run release:check
+```
+
+Datenschema 5 und Datenebenenvertrag 1 sind unverändert.
+
 # NK-Pro V99.4.28 – AP21C Individuelle Werte
 
 Aktueller Release mit konsolidierter Arbeitsoberfläche für individuelle Werte. Datenschema 5 und Datenebenenvertrag 1 bleiben unverändert.

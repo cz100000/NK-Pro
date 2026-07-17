@@ -1,0 +1,45 @@
+{
+  "workPackage": "AP22F2B",
+  "release": "V99.4.37",
+  "status": "passed",
+  "newStaticTests": {
+    "status": "passed",
+    "files": 2,
+    "protectedWholeFiles": 23,
+    "protectedFragments": 12
+  },
+  "newBrowserTests": {
+    "status": "passed",
+    "cases": 15,
+    "viewports": [
+      "1440x1000",
+      "1280x900",
+      "1024x800",
+      "900x620",
+      "620x800",
+      "390x844"
+    ]
+  },
+  "currentRegressions": {
+    "AP22F1B": {
+      "staticBehavior": "passed",
+      "browserCases": 9
+    },
+    "AP22F1C": {
+      "browserBehaviorCases": 5,
+      "currentReleaseDialogAndVersionCases": 2
+    },
+    "AP21B2": {
+      "static": "passed",
+      "browserCases": 3
+    },
+    "releaseStaticGate": "passed",
+    "browserReleaseGatePassedCases": 40
+  },
+  "historicalFrozenAssertions": [
+    "AP17 static test expects an older fixed package version; browser suite is historically tied to prior navigation/dashboard behavior.",
+    "AP19 and one AP20 case expect the globally removed data-global-billing-mode element.",
+    "AP22E tests expect the original V99.4.32/AP22E product version and exactly 12 reference groups."
+  ],
+  "runtimeErrorsInAP22F2BTests": 0
+}

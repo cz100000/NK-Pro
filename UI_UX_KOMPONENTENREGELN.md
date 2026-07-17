@@ -259,3 +259,7 @@ Komponenten dürfen keine unbeabsichtigte horizontale Gesamtseiten-Scrollleiste 
 ## AP22F1B – Status- und Aktionsplatzierung
 
 `nk-ui-page-header` zeigt keinen statischen Save-Status. Erfolg und Fehler einer tatsächlichen Speicheraktion werden über die bestehende zeitbezogene Rückmeldung vermittelt. `application.save` darf je sichtbarer Datenseite höchstens einmal als führende Kopfaktion vorkommen. Karten oder Formularabschnitte wiederholen diese allgemeine Aktion nicht. Fachaktionen wie Sichern, Importieren, Exportieren, Drucken, Archivieren oder Zurücksetzen behalten ihre fachliche Benennung und ihren fachlichen Inhaltsort.
+
+## AP22F2B – Aufgaben-/Statuskarten der Objektübersicht
+
+Jede Karte verbindet Icon, eindeutigen Titel, textlichen Status, Kurzbeschreibung und genau einen Navigationsweg. Die Karten verwenden zentrale `nk-ui-card`- und `nk-ui-status`-Varianten. Wohnungs- und Mietverhältnisvollständigkeit erscheinen jeweils nur einmal. Die DUMMY-Karte verwendet zusätzlich einen neutralen Status und den Text „Clickdummy ohne Fachlogik“. Der Gesamtstatus zählt nur drei produktive Karten.

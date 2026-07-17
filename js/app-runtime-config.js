@@ -48,8 +48,8 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.36";
-const APP_VERSION_NAME = "AP22F1C-Dialogausblendung-und-zentrale-Versionsanzeige";
+const APP_VERSION = "V99.4.37";
+const APP_VERSION_NAME = "AP22F2B-Objektuebersicht";
 const APP_RELEASE_DATE = "2026-07-17";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
@@ -115,6 +115,7 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
+  "V99.4.37 migriert die Objektübersicht auf eine kompakte Objektidentität, einen Gesamtstatus für Objektdaten, Wohnungen und Mietverhältnisse, genau eine nächste Aktion und vier Aufgaben-/Statuskarten; Kostenarten- und Doppelanzeigen entfallen, der Zähler bleibt eindeutig als DUMMY gekennzeichnet.",
   "V99.4.36 blendet geschlossene native Dialoge trotz zentralem Flex-Layout zuverlässig aus und speist die sichtbare Navigationsversion aus der zentralen Laufzeitkonstante; Dialoginteraktion, Navigation und Fachlogik bleiben unverändert.",
   "V99.4.35 entfernt statische Speicherbehauptungen und lokale Metablöcke aus zentralen Seitenköpfen, reduziert allgemeine Kopf-Speicheraktionen auf fachlich passende Datenseiten und belässt auf Individuelle Werte genau einen führenden Speicherweg; Fachlogik, Persistenz und Dokumentausgabe bleiben unverändert.",
   "V99.4.34 führt das globale Schalenfundament mit zentraler Seitenschale, eindeutigen H1-Seitenköpfen und einer Abrechnungskontextleiste ohne Modusangabe ein; Navigation, Fachlogik und Dokumentausgabe bleiben unverändert.",

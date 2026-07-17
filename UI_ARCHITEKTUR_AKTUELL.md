@@ -65,3 +65,6 @@ Native `<dialog>`-Elemente bleiben Teil des zentralen AP22D-Dialogsystems. Die L
 
 Die Navigationsversion ist ein reines globales Metadatenlabel. `index.html` stellt `[data-app-version]` bereit; `updateAllPageHeaders()` synchronisiert den Text bei der bestehenden zentralen UI-Aktualisierung aus `APP_VERSION`. Es entsteht keine zweite Versionsquelle und keine neue Fach- oder Persistenzabhängigkeit.
 
+## AP22F2B – technischer Migrationsstand
+
+`renderObjectDashboard()` erzeugt ausschließlich die freigegebene Objektübersicht. Der direkt benachbarte reine Darstellungshelfer `objectOverviewModel(stats)` leitet Status und nächste Aktion ausschließlich aus bereits von `dashboardStats()` gelieferten Werten ab. Es erfolgen keine Zustandsmutation, Persistenz oder neue Fachprüfung. AP22F2B-spezifische Styles sind auf den Objektübersichtsbereich begrenzt und verwenden zentrale `--nk-ui-*`-Tokens.

@@ -84,3 +84,7 @@ Die gelbe Abrechnungskontextleiste bleibt kompakt und zeigt ausschließlich Obje
 ## AP22F1B – Bereinigte Seitenköpfe
 
 Seitenköpfe konzentrieren sich auf Kontext, eindeutigen Haupttitel, kurze Beschreibung und höchstens eine fachlich passende führende Aktion. Sie enthalten keine statische Behauptung `Gespeichert` und keine redundanten lokalen Metadaten, wenn dieselbe Information bereits global oder im Fachinhalt vermittelt wird. Archiv, Datensicherung und Export besitzen keine allgemeine Speicheraktion im Kopf; ihre fachlich benannten Aktionen verbleiben im Inhalt.
+
+## AP22F2B – Zielbild der Objektübersicht
+
+Die Objektübersicht besteht aus einer ruhigen gemeinsamen Status-/Aktionsfläche und einem kompakten Raster aus vier Arbeitsbereichskarten. Kennzahlen werden nicht zusätzlich wiederholt. Die Primäraktion ist klar hervorgehoben, der DUMMY visuell nachrangig und textlich eindeutig. Bei mittleren Breiten reduziert das Raster auf zwei Spalten, bei schmalen Breiten auf eine Spalte ohne Gesamtseiten-Overflow.

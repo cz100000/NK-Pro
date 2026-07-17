@@ -109,3 +109,14 @@ Eine Seite ist nur migriert, wenn alle anwendbaren Punkte mit **bestanden**, **n
 - [x] `manuellewerte` besitzt genau einen führenden Speicherweg; Reset, Import und Eingaben bleiben erhalten.
 - [x] Schreibschutz-Notice, `Zur Bearbeitung öffnen`, Kontextleiste und Zeitraumsektion bleiben unverändert.
 - [x] Sechs Ziel-Viewports weisen keinen unbeabsichtigten Dokument-Overflow auf; Fokus und Aktionsstapelung bleiben sichtbar.
+
+## AP22F2B – Objektübersicht
+
+- [x] Objektname und Gebäudekurzcode stehen genau einmal zusammen.
+- [x] Genau eine nächste Aktion folgt der freigegebenen Prioritätsregel.
+- [x] Genau vier Aufgaben-/Statuskarten sind vorhanden.
+- [x] Gesamtstatus zählt genau drei produktive Bereiche; DUMMY ist ausgeschlossen.
+- [x] Einheiten- und Mietervervollständigkeit werden nicht doppelt angezeigt.
+- [x] Kostenarten, Umlageschlüssel und Abrechnungsstatus erscheinen nicht.
+- [x] Sechs Ziel-Viewports, Tastaturreihenfolge, Fokus und 200-%-Zoomäquivalent bestehen.
+- [x] Schutz-Hashes, aktuelle Regressionen und frisch extrahierter Release bestehen.

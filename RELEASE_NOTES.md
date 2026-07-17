@@ -1,3 +1,11 @@
+# Release V99.4.37 – AP22F2B Technische Migration der Objektübersicht
+
+Die Seite „Objekt vorbereiten – Übersicht“ ist vollständig auf den freigegebenen UI-/UX-Standard migriert. Objektname und Gebäudekurzcode erscheinen gemeinsam; der Vorbereitungsstatus umfasst genau Objektdaten, Wohnungen und Mietverhältnisse. Eine einzige hervorgehobene Aktion führt abhängig vom vorhandenen Arbeitsstand zuerst zu Objektdaten, dann Wohnungen, dann Mietverhältnissen und bei vollständiger Vorbereitung zur Abrechnungsübersicht.
+
+Die Arbeitsbereiche werden in genau vier kompakten Statuskarten dargestellt. Kostenarten, Umlageschlüssel und Abrechnungsprüfungen wurden aus der Objektübersicht entfernt. Der Zählerbereich bleibt unverändert ein deutlich gekennzeichneter Clickdummy ohne Fachlogik.
+
+Nicht verändert wurden Navigation, gelbe Abrechnungskontextleiste, Seitenkopf, Objektstandard, Datenmodell, Datenquellen, Fach- und Prüfregeln, Persistenz, Migration, Backup/Restore, Archiv, Abrechnung, Kosten, Import/Export, Brief, Druck und PDF.
+
 # Release V99.4.36 – AP22F1C Dialogausblendung und zentrale Versionsanzeige
 
 AP22F1C korrigiert zwei sichtbare Releasefehler aus der bisherigen Produktbasis. Der native Prüfpunkt-Detaildialog bleibt ohne `open`-Attribut nun vollständig unsichtbar und wird nicht mehr durch das zentrale Flex-Layout als leere Box am Seitenende dargestellt. Die vorhandene Dialogbedienung einschließlich Escape, Hintergrundschließen, Fokusführung und Fokusrückgabe bleibt erhalten.

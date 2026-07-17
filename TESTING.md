@@ -1,3 +1,19 @@
+# Teststand V99.4.37 / AP22F2B
+
+Neue separate Tests:
+
+```text
+npm run test:ap22f2b:static
+CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:ap22f2b:browser
+npm run release:check
+```
+
+`test:ap22f2b:static` prüft Komponenten- und Textmatrix, genau vier Aufgaben-/Statuskarten, Entfernung der Kostenarten- und Doppelanzeigen, reine Nutzung vorhandener Dashboardwerte, Mutationsfreiheit, zentrale Tokens, Referenzbibliothek sowie 23 vollständige Datei- und 12 Fragment-Schutzbereiche.
+
+`test:ap22f2b:browser` prüft die vier Prioritätszustände, alle vier Zielseiten, DUMMY-Kennzeichnung, Tastatur- und Fokusreihenfolge, sechs Viewports, 200-%-Zoomäquivalent, Laufzeitfehlerfreiheit sowie die übernommenen AP22F1C-Korrekturen für Dialogausblendung und zentrale Versionsanzeige.
+
+Release-fest verdrahtete historische Tests werden nicht geändert. Dazu gehören insbesondere AP17/AP22E-Versionserwartungen sowie AP19/AP20-Assertions auf die seit AP22F1A entfernte Modusangabe. Ihre weiterhin gültigen Aussagen werden durch aktuelle AP22F2B-Schutz-, Browser-, Navigations-, Persistenz-, Archiv-, Export- und Dokumenttests abgedeckt.
+
 # Teststand V99.4.36 / AP22F1C
 
 Neue separate Tests:

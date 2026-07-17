@@ -1,0 +1,50 @@
+{
+  "workPackage": "AP22F2B",
+  "release": "V99.4.37",
+  "sourceRelease": "V99.4.36 / AP22F1C",
+  "productiveAndReferenceFiles": [
+    "assets/app.css",
+    "index.html",
+    "js/ui-page-controller.js",
+    "ui-reference/index.html",
+    "ui-reference/reference.css",
+    "js/app-runtime-config.js",
+    "js/service-worker-register.js",
+    "service-worker.js",
+    "manifest.webmanifest",
+    "nk-pro-project.json"
+  ],
+  "testAndIntegrationFiles": [
+    "package.json",
+    "package-lock.json",
+    "playwright.config.cjs",
+    "tests/ap22f2b-object-overview.test.cjs",
+    "tests/ap22f2b-object-overview.spec.js",
+    "tests/ap22f2b-protected-areas.test.cjs"
+  ],
+  "documentationFiles": [
+    "AP22F2B_ABSCHLUSS.md",
+    "AP22F2B_DATEIAENDERUNGEN.md",
+    "AP22F2B_DATEIAENDERUNGEN.json",
+    "AP22F2B_DATEIPOSITIVLISTE.md",
+    "AP22F2B_PRUEFBERICHT.md",
+    "AP22F2B_TEST_RESULTS.json",
+    "AP22F2B_RELEASE_CONTENT_POLICY.json",
+    "NK-PRO-PROJEKTSTAND.md",
+    "UI_UX_DESIGNVERTRAG.md",
+    "UI_UX_ZIELBILD.md",
+    "UI_UX_SEITENANATOMIE.md",
+    "UI_UX_KOMPONENTENREGELN.md",
+    "UI_UX_ABNAHMEKATALOG.md",
+    "UI_KOMPONENTENKATALOG.md",
+    "UI_ARCHITEKTUR_AKTUELL.md",
+    "UI_MIGRATIONSMATRIX.md",
+    "TESTING.md",
+    "CHANGELOG.md",
+    "README.md",
+    "RELEASE_NOTES.md",
+    "SHA256SUMS.txt"
+  ],
+  "outsidePositiveList": [],
+  "existingRegressionTestsModified": false
+}
