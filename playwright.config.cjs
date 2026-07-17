@@ -59,7 +59,8 @@ module.exports = defineConfig({
     { name:"ap22d-ui-dialogs-states", testMatch:"ap22d-ui-dialogs-states.spec.js" },
     { name:"ap22e-ui-reference", testMatch:"ap22e-ui-reference.spec.js" },
     { name:"ap22f1a-global-shell", testMatch:"ap22f1a-global-shell.spec.js" },
-    { name:"ap22f1b-page-header-cleanup", testMatch:"ap22f1b-page-header-cleanup.spec.js" }
+    { name:"ap22f1b-page-header-cleanup", testMatch:"ap22f1b-page-header-cleanup.spec.js" },
+    { name:"ap22f1c-dialog-version-regression", testMatch:"ap22f1c-dialog-version-regression.spec.js" }
   ],
   use: {
     baseURL: "http://127.0.0.1:4173",

@@ -1,7 +1,7 @@
 # NK-Pro – Verbindlicher UI-/UX-Designvertrag
 
-**Vertragsstand:** AP22F1B / V99.4.35  
-**Technische Produktbasis:** V99.4.35 / AP22F1B  
+**Vertragsstand:** AP22F1C / V99.4.36  
+**Technische Produktbasis:** V99.4.36 / AP22F1C  
 **Geltung:** alle späteren produktiven UI-Arbeitspakete
 
 ## 1. Zweck und Geltungsbereich
@@ -121,3 +121,9 @@ Die Migration erfolgt hybrid: zentrale Komponenten werden vervollständigt; ansc
 Produktive Seitenköpfe dürfen keinen statischen Speicherzustand behaupten. Eine Speicherinformation wird nur als zeitbezogene Rückmeldung nach einer tatsächlichen Aktion ausgegeben. Lokale Kopf-Metablöcke sind nur zulässig, wenn sie eine eigenständige, nicht bereits global dargestellte und freigegebene Funktion besitzen.
 
 Eine allgemeine Kopfaktion `Speichern` ist nur auf bearbeitbaren Datenseiten zulässig und dort höchstens einmal als führender Speicherweg. Fachseiten für Archiv, Datensicherung oder Export verwenden ausschließlich fachlich benannte Inhaltsaktionen. Die Sichtbarkeits- und Schreibschutzsteuerung der zulässigen Kopfaktionen bleibt zentral.
+## 14. AP22F1C – Technische Zustands- und Metadatenregel
+
+Geschlossene native Dialoge dürfen durch zentrale Layoutklassen nicht sichtbar werden. Ein `<dialog>` ohne `open`-Attribut ist in jedem Ziel-Viewport vollständig ausgeblendet; bei geöffnetem Zustand gelten weiterhin die verbindlichen Dialog-, Fokus- und Schließregeln.
+
+Die sichtbare Releaseversion wird aus genau einer zentralen Laufzeitquelle abgeleitet. Statisch unabhängige Versionsangaben in produktiven Navigations- oder Statusbereichen sind unzulässig.
+

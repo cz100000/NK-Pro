@@ -37,3 +37,9 @@ Brief-, Druck-, PDF- und Dokumentausgaben sind keine App-UI-Komponenten dieses K
 ## AP22F1B – Produktiver Seitenkopfstand
 
 Der zentrale Seitenkopf besitzt ab V99.4.35 zwei produktive Aktionsvarianten: Datenseite mit genau einer führenden `application.save`-Aktion und Fachseite ohne allgemeine Speicheraktion. Die frühere statische Statusvariante `[data-page-save-status]` ist entfallen. Lokale `.page-header__period`-Blöcke auf Objekt, Archiv, Mieterverwaltung, Wohnungsverwaltung, Datensicherung und Zähler sind entfernt; daraus entsteht keine neue Komponentensonderform.
+## AP22F1C – Geschlossener Dialogzustand und Versionslabel
+
+- `dialog.nk-ui-dialog:not([open])` ist zwingend unsichtbar; die sichtbare Flex-Darstellung gilt ausschließlich für geöffnete Dialoge.
+- `[data-app-version]` ist das einzige sichtbare Versionslabel der Navigation und wird aus `APP_VERSION` befüllt.
+- Der HTML-Text des Labels ist lediglich ein startfähiger Fallback und muss der aktuellen zentralen Version entsprechen.
+

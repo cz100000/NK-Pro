@@ -5632,6 +5632,7 @@ body:not(.document-print-window) .nk-ui-dialog-layer {
 }
 body:not(.document-print-window) .nk-ui-dialog-layer[hidden],
 body:not(.document-print-window) .modal-backdrop.nk-ui-dialog-layer:not(.show) { display:none !important; }
+body:not(.document-print-window) dialog.nk-ui-dialog:not([open]) { display:none; }
 body.nk-ui-dialog-open { overflow:hidden; }
 body:not(.document-print-window) .nk-ui-dialog {
   width:min(640px,calc(100vw - 32px));

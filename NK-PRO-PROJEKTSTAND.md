@@ -1,3 +1,11 @@
+# Projektstand V99.4.36 – AP22F1C Dialogausblendung und zentrale Versionsanzeige
+
+AP22F1C ist als eng begrenztes Korrekturpaket abgeschlossen. Geschlossene native Dialoge mit der zentralen Klasse `nk-ui-dialog` werden wieder zuverlässig durch ihren fehlenden `open`-Zustand ausgeblendet und erscheinen nicht mehr als leere Box am Seitenende. Öffnen, Escape, Hintergrundschließen, Fokusfalle und Fokusrückgabe bleiben erhalten.
+
+Die sichtbare Versionsangabe in der linken Navigation wird nicht mehr als unabhängiger historischer Text geführt, sondern über `[data-app-version]` aus der zentralen Laufzeitkonstante `APP_VERSION` gesetzt. Der HTML-Fallback, Laufzeitversion, PWA-Metadaten sowie Cache- und Buildkennungen stehen einheitlich auf V99.4.36.
+
+Navigation, Abrechnungskontext, Zeitraumlogik, Schreibschutz, Fachlogik, Prüfregeln, Datenmodell, Persistenz, Migration, Backup/Restore, Archiv, Export, Berechnung, Brief, Druck und PDF bleiben unverändert. Der nächste produktive UI-Schritt ist weiterhin erst nach gesonderter Bestandsanalyse und Freigabe festzulegen.
+
 # Projektstand V99.4.35 – AP22F1B Seitenkopf- und Redundanzbereinigung
 
 AP22F1B ist technisch abgeschlossen. Alle statischen Speicherstatus in produktiven Seitenköpfen, sechs freigegebene lokale Kopf-Metablöcke sowie die fachfremden allgemeinen Kopf-Speicheraktionen auf Archiv, Datensicherung und Export sind entfernt. Auf „Individuelle Werte“ besteht genau ein führender Speicherweg im Seitenkopf.

@@ -1,3 +1,11 @@
+# Release V99.4.36 – AP22F1C Dialogausblendung und zentrale Versionsanzeige
+
+AP22F1C korrigiert zwei sichtbare Releasefehler aus der bisherigen Produktbasis. Der native Prüfpunkt-Detaildialog bleibt ohne `open`-Attribut nun vollständig unsichtbar und wird nicht mehr durch das zentrale Flex-Layout als leere Box am Seitenende dargestellt. Die vorhandene Dialogbedienung einschließlich Escape, Hintergrundschließen, Fokusführung und Fokusrückgabe bleibt erhalten.
+
+Die Versionsangabe in der linken Navigation wird aus der zentralen Laufzeitkonstante `APP_VERSION` gespeist. Damit kann die sichtbare Version nicht mehr unabhängig von Laufzeit-, PWA- und Buildversion zurückbleiben. Das Release trägt durchgängig V99.4.36 / AP22F1C.
+
+Nicht verändert wurden Navigationseinträge, gelbe Abrechnungskontextleiste, Zeitraum- und Schreibschutzlogik, Fachregeln, Datenmodell, Persistenz, Migration, Backup/Restore, Archiv, Import/Export, Berechnung, Brief, Druck und PDF.
+
 # Release V99.4.35 – AP22F1B Seitenkopf- und Redundanzbereinigung
 
 AP22F1B bereinigt ausschließlich Redundanzen in den bereits zentralisierten Seitenköpfen. Dauerhafte statische Angaben `Gespeichert` entfallen vollständig. Die sechs freigegebenen lokalen Kopf-Metablöcke wurden ohne Ersatz entfernt. Archiv, Datensicherung und Export verwenden keine allgemeine Kopfaktion `Speichern` mehr, sondern ausschließlich ihre vorhandenen fachlich benannten Inhaltsaktionen.

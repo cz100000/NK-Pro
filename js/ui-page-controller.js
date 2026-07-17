@@ -326,6 +326,7 @@ function pageHeaderPeriodLabel() {
   return format(periodStart()) + " – " + format(periodEnd());
 }
 function updateAllPageHeaders() {
+  document.querySelectorAll("[data-app-version]").forEach(label=>{ label.textContent=APP_VERSION; });
   ensureGlobalPageShellsAndHeaders();
   const context=NK_PRO_MODULES.billingContext.snapshot();
   const open=NK_PRO_MODULES.billingContext.isOpen();

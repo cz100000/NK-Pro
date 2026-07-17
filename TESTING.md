@@ -1,3 +1,19 @@
+# Teststand V99.4.36 / AP22F1C
+
+Neue separate Tests:
+
+```text
+npm run test:ap22f1c:static
+CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:ap22f1c:browser
+npm run release:check
+```
+
+`test:ap22f1c:static` prüft die explizite Ausblendung geschlossener nativer Dialoge, die zentrale Bindung des Navigationslabels an `APP_VERSION`, vollständige Releasekonsistenz, 15 unveränderte geschützte Produktmodule sowie den exakt begrenzten Patch in HTML, CSS, Seitencontroller, Laufzeitmetadaten und Service Worker.
+
+`test:ap22f1c:browser` umfasst sechs Chromium-Fälle: unsichtbarer geschlossener Prüfpunktdialog bei 1440×1000, 900×620 und 390×844, Öffnen/Schließen einschließlich Escape, Hintergrund, Fokusfalle und Fokusrückgabe, unveränderte nicht-native Dialoglayer sowie zentrale Versionssynchronisation.
+
+Das aktuelle `release:check` kombiniert Syntax, Fixtures, die weiterhin gültige AP22F1B-Verhaltensprüfung, AP22F1C-Schutzprüfung, Zählerregression, Architektur AP21B2, AP21C und die strikte Release-Inhaltsprüfung. Historische Testdateien bleiben unverändert.
+
 # Teststand V99.4.35 / AP22F1B
 
 Neue separate Prüfungen:

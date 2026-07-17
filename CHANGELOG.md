@@ -1,3 +1,14 @@
+# V99.4.36 – AP22F1C Dialogausblendung und zentrale Versionsanzeige (2026-07-17)
+
+- geschlossene native `dialog.nk-ui-dialog` über `:not([open])` zuverlässig ausgeblendet,
+- leere Prüfpunkt-Detailbox am unteren Seitenrand beseitigt,
+- Öffnen, Escape, Hintergrundschließen, Fokusfalle und Fokusrückgabe unverändert erhalten,
+- sichtbares Navigationslabel mit `[data-app-version]` an `APP_VERSION` gebunden,
+- veraltete fest codierte Anzeige `V99.4.32` entfernt,
+- HTML-, Laufzeit-, Manifest-, Paket-, Projekt-, Service-Worker- und Cachekennungen auf V99.4.36 vereinheitlicht,
+- zwei separate AP22F1C-Testdateien ergänzt,
+- Navigation, Kontextleiste, Zeitraum, Schreibschutz, Fachmodule, Persistenz und Dokumentausgabe geschützt unverändert erhalten.
+
 # V99.4.35 – AP22F1B Seitenkopf- und Redundanzbereinigung (2026-07-17)
 
 - alle 14 statischen Angaben `Gespeichert` aus produktiven Seitenköpfen entfernt,

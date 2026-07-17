@@ -59,3 +59,9 @@ Spätere UI-Arbeitspakete beginnen zwingend mit Bestandsanalyse, Redundanzvorsch
 Die Seitenkopfstruktur bleibt statisch in `index.html` und wird durch `js/ui-page-controller.js` ausschließlich hinsichtlich Sichtbarkeit zulässiger Kopf-Speicheraktionen gesteuert. Der Controller erzeugt oder behauptet keinen Speicherstatus. Die tatsächliche Speichersemantik verbleibt vollständig bei `application.save`/`saveData()` und der Persistenzschicht.
 
 `js/ui-individual-values.js` rendert keine allgemeine Speicheraktion mehr in Kostenartenkarten. Archiv, Datensicherung und Export besitzen ausschließlich ihre vorhandenen fachlichen Inhaltsaktionen. Navigation, Abrechnungskontext, Zeitraum- und Schreibschutzlogik sind architektonisch unverändert.
+# V99.4.36 – AP22F1C Dialogzustand und Versionsmetadaten
+
+Native `<dialog>`-Elemente bleiben Teil des zentralen AP22D-Dialogsystems. Die Layoutklasse `.nk-ui-dialog` darf den nativen geschlossenen Zustand nicht übersteuern; deshalb besitzt `dialog.nk-ui-dialog:not([open])` eine explizite Ausblendungsregel. Dialog-Markup, Dialog-API und Fachaktionen bleiben unverändert.
+
+Die Navigationsversion ist ein reines globales Metadatenlabel. `index.html` stellt `[data-app-version]` bereit; `updateAllPageHeaders()` synchronisiert den Text bei der bestehenden zentralen UI-Aktualisierung aus `APP_VERSION`. Es entsteht keine zweite Versionsquelle und keine neue Fach- oder Persistenzabhängigkeit.
+
