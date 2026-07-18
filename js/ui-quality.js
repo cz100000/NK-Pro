@@ -470,6 +470,7 @@ function renderContextualQualitySummaries(existingReport) {
   document.querySelectorAll('[data-section-role="validation"]').forEach(section=>{
     const tab=section.closest('section.tab'); if(!tab||tab.id==="qualitaet")return;
     const body=section.querySelector('.page-section__body'); if(!body)return;
+    if(tab.id==="einnahmen"&&typeof renderPrepaymentQualitySummary==="function"){renderPrepaymentQualitySummary();return;}
     const rows=contextualRowsForTab(report,tab.id),blocked=rows.filter(r=>r.status==="Blockiert").length,review=rows.filter(r=>r.status==="Zu prüfen").length,hints=rows.filter(r=>r.status==="Hinweis").length;
     body.innerHTML='<div class="context-quality-summary '+(blocked?'err':review?'warn':hints?'info':'ok')+'"><div><strong>Auf dieser Seite: '+blocked+' blockiert · '+review+' zu prüfen · '+hints+' Hinweise</strong><p class="small">Die Werte stammen aus der zentralen AP20-Regelregistry.</p></div><button type="button" class="secondary"'+uiActionAttributes("quality.openPageIssues",[tab.id])+'>Details anzeigen</button></div>'+(rows.length?'<ul class="context-quality-list">'+rows.slice(0,4).map(row=>'<li><span class="status '+qualityStatusClass(row.status)+'">'+escapeHtml(row.status)+'</span><button type="button" class="link-button"'+uiActionAttributes("quality.openDetail",[qualityEncoded(row.instanceId)])+'>'+escapeHtml(row.title)+'</button></li>').join('')+'</ul>':'');
   });

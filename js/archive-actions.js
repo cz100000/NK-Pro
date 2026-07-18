@@ -251,7 +251,7 @@
     const prepayments = Array.isArray(data.vorauszahlungen) ? data.vorauszahlungen : [];
     if (prepayments.some(row => row && (Math.abs(d.num(row.summe)) > 0.004 || (Array.isArray(row.werte) && row.werte.some(value => Math.abs(d.num(value)) > 0.004))))) return true;
     const tenants = Array.isArray(data.mieter) ? data.mieter : [];
-    if (tenants.some(tenant => tenant && tenant.id && tenant.name && (Math.abs(d.num(tenant.kaltErhalten)) > 0.004 || Math.abs(d.num(tenant.nkVoraus)) > 0.004 || Math.abs(d.num(tenant.einnahmen)) > 0.004 || Math.abs(d.num(tenant.vorjahresKorrektur)) > 0.004))) return true;
+    if (tenants.some(tenant => tenant && tenant.id && tenant.name && (Math.abs(d.num(tenant.kaltErhalten)) > 0.004 || Math.abs(d.num(tenant.nkVoraus)) > 0.004 || Math.abs(d.num(tenant.einnahmen)) > 0.004 || Math.abs(d.num(tenant.vorjahresKorrektur)) > 0.004 || Math.abs(d.num(tenant.kaltmietKorrektur)) > 0.004))) return true;
     const inputs = data.umlageInputs && typeof data.umlageInputs === "object" ? data.umlageInputs : {};
     if (Object.values(inputs).some(row => row && Array.isArray(row.values) && row.values.some(value => Math.abs(d.num(value)) > 0.004))) return true;
     const water = data.waterMeters || {};
@@ -468,7 +468,7 @@
     base.wohnungen = units.map((label, index) => ({ id:d.canonicalUnitIdFor({ bezeichnung:label, lage:label }) || d.generatedUnitIdForLabel(label, index), bezeichnung:label, lage:label, wohnflaeche:55, zimmer:"", status:"aktiv", bemerkung:"Import" }));
     const unitId = {};
     base.wohnungen.forEach(unit => { unitId[unit.bezeichnung] = unit.id; });
-    base.mieter = rows.map((entry, index) => ({ id:"M" + String(index + 1).padStart(3, "0"), wohnung:unitId[entry.wohnung] || base.wohnungen[0].id, name:entry.mieter, einzug:(entry.periode || "").split(" bis ")[0] || start, auszug:(entry.periode || "").split(" bis ")[1] || end, kaltSoll:0, kaltErhalten:0, nkVoraus:entry.vorauszahlung, einnahmen:entry.vorauszahlung, aktiveTage:365, wohnflaeche:55, bemerkung:"Import: Heizung " + (entry.heizPeriode || "") + ", Wasser " + (entry.wasserPeriode || "") + ", Abfall " + (entry.abfallPeriode || ""), status:"Aktiv", personen:1, personentage:365, geschlecht:"Frau/Herr", standardanrede:"Sehr geehrte(r) Mieter/in,", strasse:"Am Rauhen Biehl 5", plz:"55774", ort:"Baumholder", telefon:"", email:"", wasserWeitereVorauszahlung:0, vorjahresKorrektur:0, abrechnungRolle:"Mieter", archivedAt:"" }));
+    base.mieter = rows.map((entry, index) => ({ id:"M" + String(index + 1).padStart(3, "0"), wohnung:unitId[entry.wohnung] || base.wohnungen[0].id, name:entry.mieter, einzug:(entry.periode || "").split(" bis ")[0] || start, auszug:(entry.periode || "").split(" bis ")[1] || end, kaltSoll:0, kaltErhalten:0, nkVoraus:entry.vorauszahlung, einnahmen:entry.vorauszahlung, aktiveTage:365, wohnflaeche:55, bemerkung:"Import: Heizung " + (entry.heizPeriode || "") + ", Wasser " + (entry.wasserPeriode || "") + ", Abfall " + (entry.abfallPeriode || ""), status:"Aktiv", personen:1, personentage:365, geschlecht:"Frau/Herr", standardanrede:"Sehr geehrte(r) Mieter/in,", strasse:"Am Rauhen Biehl 5", plz:"55774", ort:"Baumholder", telefon:"", email:"", wasserWeitereVorauszahlung:0, vorjahresKorrektur:0, kaltmietKorrektur:0, abrechnungRolle:"Mieter", archivedAt:"" }));
 
     const costIds = ["K006", "K002", "K009", "K040"];
     const sums = { K006:0, K002:0, K009:0, K040:0 };

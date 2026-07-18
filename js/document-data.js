@@ -94,6 +94,7 @@
     if (Math.abs(rowPrepay - num(result.prepayments)) > 0.02) warnings.push("Vorauszahlungen im Brief weichen von der Umlage ab: " + fmtMoney(rowPrepay) + " vs. " + fmtMoney(result.prepayments));
     const signedSaldo = num(result.prepayments) + num(result.correction || tenant.vorjahresKorrektur) - num(result.costShare);
     if (!Number.isFinite(signedSaldo)) errors.push("Briefsaldo ist nicht berechenbar.");
+    if (!Number.isFinite(num(tenant.kaltmietKorrektur))) errors.push("Kaltmietkorrektur ist nicht berechenbar.");
     return { errors, warnings };
   }
 

@@ -338,7 +338,16 @@
   function correctionRowHtml(correction, year) {
     if (Math.abs(num(correction)) < 0.005) return "";
     const previousYear = String(global.NKProArchiveActions.yearNumber(year) - 1);
-    return '<tr class="table-correction-row"><td class="cell-cost">Korrektur/Gutschrift ' + escapeHtml(previousYear) + '</td><td colspan="6"></td><td class="money">' + prepaymentMoneyHtml(correction) + '</td><td class="money">' + signedMoneyHtml(-num(correction)) + '</td></tr>';
+    return '<tr class="table-correction-row"><td class="cell-cost">Korrektur/Gutschrift NK-Vorauszahlung ' + escapeHtml(previousYear) + '</td><td colspan="6"></td><td class="money">' + prepaymentMoneyHtml(correction) + '</td><td class="money">' + signedMoneyHtml(-num(correction)) + '</td></tr>';
+  }
+
+  function rentCorrectionNoteHtml(tenant, year) {
+    const correction = num(tenant && tenant.kaltmietKorrektur);
+    if (Math.abs(correction) < 0.005) return "";
+    const previousYear = String(global.NKProArchiveActions.yearNumber(year) - 1);
+    const type = correction > 0 ? "Gutschrift" : "Nachbelastung";
+    const adjusted = num(tenant && tenant.kaltErhalten) - correction;
+    return '<div class="notice-box rent-correction-note"><span class="notice-title">Kaltmietkorrektur / Gutschrift ' + escapeHtml(previousYear) + '</span><p>' + escapeHtml(type) + ': ' + fmtMoney(Math.abs(correction)) + '. Kaltmiete nach Korrektur: ' + fmtMoney(adjusted) + '.</p><p><strong>Hinweis:</strong> Diese Kaltmietkorrektur wird getrennt ausgewiesen und verändert das Ergebnis der Nebenkostenabrechnung nicht.</p></div>';
   }
 
   function mainTableHtml(costRows, result, correction, settlement, year) {
@@ -353,11 +362,11 @@
       '</tbody></table>';
   }
 
-  function resultStripHtml(result, settlement) {
+  function resultStripHtml(result, settlement, correction) {
     const finalLabel = settlement.isBalanced ? "Ausgeglichen" : (settlement.isNachzahlung ? "Ihre Nachzahlung an die Vermieterin" : "Ihr Guthaben");
     return '<div class="result-strip" aria-label="Abrechnungsergebnis">' +
       '<div class="result-cell"><span class="result-label">Ihr Kostenanteil</span><span class="result-value">' + fmtMoney(result.costShare) + '</span></div>' +
-      '<div class="result-cell result-cell--middle"><span class="result-label">Geleistete Vorauszahlungen</span><span class="result-value">' + fmtMoney(result.prepayments) + '</span></div>' +
+      '<div class="result-cell result-cell--middle"><span class="result-label">Vorauszahlungen inkl. NK-Korrektur</span><span class="result-value">' + fmtMoney(num(result.prepayments) + num(correction)) + '</span></div>' +
       '<div class="result-cell result-cell--final ' + (settlement.isNachzahlung ? "is-due" : "is-credit") + '"><span class="result-label">' + escapeHtml(finalLabel) + '</span><span class="result-value">' + fmtMoney(settlement.amount) + '</span></div>' +
       '</div>';
   }
@@ -435,8 +444,8 @@
       '<main class="letter-main-content"><h1 class="letter-title">Nebenkostenabrechnung ' + escapeHtml(year) + '</h1>' +
       '<p class="letter-salutation">' + escapeHtml(salutationForTenant(tenant)) + '</p>' +
       (intro ? '<p class="letter-intro">' + briefProseHtml(intro) + '</p>' : '') +
-      resultStripHtml(result, settlement) +
-      '<h2 class="detail-heading">Abrechnungsübersicht im Detail:</h2>' + mainTableHtml(costRows, result, correction, settlement, year) +
+      resultStripHtml(result, settlement, correction) +
+      '<h2 class="detail-heading">Abrechnungsübersicht im Detail:</h2>' + mainTableHtml(costRows, result, correction, settlement, year) + rentCorrectionNoteHtml(tenant, year) +
       (String(settings.heizkostenFussnote || "").trim() ? '<div class="notice-box"><span class="notice-title">Hinweise</span>' + briefProseHtml(settings.heizkostenFussnote) + '</div>' : '') +
       (paymentText.trim() ? '<p class="payment-text">' + briefProseHtml(paymentText) + '</p>' : '') +
       (pageCount === 1 ? documentEndHtml(settings, false) : '') + '</main>' +

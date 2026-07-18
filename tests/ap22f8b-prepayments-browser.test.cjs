@@ -29,9 +29,9 @@ async function openPage(page,mode="edit"){
   assert.equal(await page.locator("#einnahmen details").count(),0);
   assert.equal(await page.locator("#einnahmen .prepayment-card").count(),4);
   assert.equal(await page.locator("#einnahmen table").count(),3);
-  assert.match(await page.locator("#prepaymentCaseSummary").innerText(),/7 Fälle insgesamt/);
-  assert.match(await page.locator("#prepaymentCaseSummary").innerText(),/4 abrechenbar/);
-  assert.match(await page.locator("#prepaymentCaseSummary").innerText(),/3 nicht abrechenbar/);
+  assert.equal(await page.locator("#prepaymentTileCasesValue").innerText(),"7");
+  assert.match(await page.locator("#prepaymentTileCasesDetail").innerText(),/4 abrechenbar/);
+  assert.match(await page.locator("#prepaymentTileCasesDetail").innerText(),/3 nicht abrechenbar/);
   assert.equal(await page.locator("#vorauszahlungenTable thead th").count(),9);
   assert.equal(await page.locator("#einnahmenTable tbody tr").count(),8);
   assert.equal(await page.locator("#incomeCorrectionsTable tbody tr").count(),8);
@@ -79,7 +79,7 @@ async function openPage(page,mode="edit"){
   assert.equal(await page.locator("#einnahmenTable input").first().isEditable(),false);
   await page.screenshot({path:path.join(shots,"05_desktop_nur_ansehen.png"),fullPage:true});
   await page.evaluate(()=>{window.__ap22f8b={wohnungen:JSON.parse(JSON.stringify(state.wohnungen)),mieter:JSON.parse(JSON.stringify(state.mieter)),vorauszahlungen:JSON.parse(JSON.stringify(state.vorauszahlungen))};state.wohnungen=[];state.mieter=[];state.vorauszahlungen=[];renderEinnahmen();});
-  assert.match(await page.locator("#prepaymentCaseSummary").innerText(),/0 Fälle insgesamt/);
+  assert.equal(await page.locator("#prepaymentTileCasesValue").innerText(),"0");
   assert.match(await page.locator("#einnahmenTable").innerText(),/Keine Fälle/);
   await page.screenshot({path:path.join(shots,"06_leerzustand.png"),fullPage:true});
   await page.evaluate(()=>{state.wohnungen=window.__ap22f8b.wohnungen;state.mieter=window.__ap22f8b.mieter;state.vorauszahlungen=window.__ap22f8b.vorauszahlungen;delete window.__ap22f8b;renderEinnahmen();document.getElementById("prepaymentPageError").hidden=false;document.getElementById("prepaymentPageError").scrollIntoView({block:"center"});});

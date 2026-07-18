@@ -421,11 +421,13 @@
       const costShare = costResults.reduce((sum,row) => sum + num(row.allocations[t.originalIndex]), 0);
       const prepayments = totalVorauszahlungForTenant(t.originalIndex);
       const correction = num(t.vorjahresKorrektur);
+      const rentCorrection = num(t.kaltmietKorrektur);
       return {
         tenant:t,
         costShare,
         prepayments,
         correction,
+        rentCorrection,
         balance: costShare - prepayments - correction
       };
     });
@@ -437,6 +439,7 @@
         costShare,
         prepayments: totalVorauszahlungForTenant(t.originalIndex),
         correction: num(t.vorjahresKorrektur),
+        rentCorrection: num(t.kaltmietKorrektur),
         balance: costShare - totalVorauszahlungForTenant(t.originalIndex) - num(t.vorjahresKorrektur)
       };
     });
@@ -452,12 +455,13 @@
     const ownerShare = calc.costResults.reduce((s,r) => s + num(r.ownerShare), 0);
     const prepayments = calc.tenantResults.reduce((s,r) => s + num(r.prepayments), 0);
     const corrections = calc.tenantResults.reduce((s,r) => s + num(r.correction), 0);
+    const rentCorrections = calc.tenantResults.reduce((s,r) => s + num(r.rentCorrection), 0);
     const unitTotal = calc.costResults.reduce((s,r) => s + num(r.unitTotal), 0);
     const balance = billableShare - prepayments - corrections;
     const allocatedCheck = allTenantShare + ownerShare;
     const allocationDelta = totalCosts - allocatedCheck;
     const prepaymentMatrixTotal = calc.activeCosts.filter(k => k.vorauszahlung === "Ja").reduce((sum,k) => sum + prepaymentMatrixSumForCost(k.id, {allowedOnly:true}), 0);
-    return { totalCosts, allTenantShare, billableShare, privateShare, ownerShare, prepayments, corrections, unitTotal, balance, allocatedCheck, allocationDelta, prepaymentMatrixTotal };
+    return { totalCosts, allTenantShare, billableShare, privateShare, ownerShare, prepayments, corrections, rentCorrections, unitTotal, balance, allocatedCheck, allocationDelta, prepaymentMatrixTotal };
   }
 
   function prepaymentRoundingStep(mode) {

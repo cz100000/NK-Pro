@@ -140,6 +140,8 @@
     syncKostenartenMieterUmlage(data);
     (Array.isArray(data.mieter) ? data.mieter : []).forEach((tenant, index) => {
       tenant.nkVoraus = d.totalVorauszahlungForTenant(index);
+      tenant.vorjahresKorrektur = d.num(tenant.vorjahresKorrektur);
+      tenant.kaltmietKorrektur = d.num(tenant.kaltmietKorrektur);
       tenant.einnahmen = d.num(tenant.kaltErhalten) + d.num(tenant.nkVoraus);
     });
     return data.mieter;

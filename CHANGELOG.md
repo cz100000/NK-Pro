@@ -1,3 +1,15 @@
+# V99.4.43 – AP22F8B Korrektur 1 (2026-07-18)
+
+- vier kompakte Kacheln für Bestand, NK-Vorauszahlungen, Kaltmieteinnahmen und Korrekturen/Gutschriften ergänzt;
+- alle Mieter-/Wohnungsfallspalten der NK-Vorauszahlungsmatrix auf identische Breite vereinheitlicht;
+- NK-Vorauszahlungs-Korrektur und Kaltmietkorrektur als getrennte Werte mit getrennten Summen eingeführt;
+- „Kaltmieteinnahmen nach Korrektur“ reagiert unmittelbar auf Eingaben;
+- NK-Korrektur wirkt weiterhin ausschließlich auf die Nebenkostenabrechnung, Kaltmietkorrektur bleibt davon getrennt;
+- Brief- und CSV-Ausgabe weisen beide Korrekturarten getrennt aus;
+- sichtbaren Seitenbereich „Prüfung und Hinweise“ mit bestehenden und neuer zentraler Regel ergänzt;
+- Altdaten erhalten `kaltmietKorrektur = 0`; Datenschema 5 bleibt bestehen;
+- PWA-Build- und Cachekennung auf `99.4.43-ap22f8b-k1` fortgeschrieben.
+
 # V99.4.43 – AP22F8B Vorauszahlungen (2026-07-18)
 
 - Seite `einnahmen` als flachen Arbeitsbereich ohne Klappboxen migriert;

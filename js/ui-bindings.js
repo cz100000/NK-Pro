@@ -111,7 +111,8 @@
       "cost.openTenantDetails":call(handlers, "openCostTenantDetails"), "cost.toggleRowSelection":call(handlers, "toggleCostRowSelection"),
       "cost.toggleAllVisibleRows":call(handlers, "toggleAllVisibleCostRows"),
       "cost.prepaymentSetSearch":call(handlers, "prepaymentSetSearch"), "cost.prepaymentSetFilter":call(handlers, "prepaymentSetFilter"),
-      "cost.prepaymentReset":call(handlers, "prepaymentReset"), "cost.prepaymentSort":call(handlers, "prepaymentSort")
+      "cost.prepaymentReset":call(handlers, "prepaymentReset"), "cost.prepaymentSort":call(handlers, "prepaymentSort"),
+      "cost.prepaymentSetTenantValue":call(handlers, "prepaymentSetTenantValue")
     });
     registerController("billing", "Abrechnungslebenszyklus, Erfassungsaktionen und zentrale Ergebnisdarstellung", {
       "billing.openCurrent":call(handlers, "openCurrentBilling"), "billing.openCurrentEdit":call(handlers, "openCurrentBillingForEdit"), "billing.openCurrentView":call(handlers, "openCurrentBillingForView"),

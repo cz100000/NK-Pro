@@ -127,3 +127,14 @@ Die zentrale Komponente `nk-ui-table` führt den rechten Tabellenabschluss verbi
 | Reine UI-Suche, Statusfilter und Sortierung | migriert | keine Mutation von Fachdaten oder Berechnungsgrundlagen |
 
 Nicht abrechenbare Fälle werden aus Gründen der Vollständigkeit angezeigt, begründen jedoch keine neue Fachlogik und fließen weiterhin nicht in Berechnung oder Summen ein.
+
+
+## AP22F8B Korrektur 1 – Ergänzte Komponenten
+
+| Komponente | Produktiver Status | Einsatz |
+|---|---|---|
+| Vierer-Kachelgruppe Vorauszahlungen | produktiv | Bestand, NK nach Korrektur, Kaltmieteinnahmen nach Korrektur sowie getrennte Korrektursummen |
+| Gleich breite Fallspalten | produktiv | identische 150-px-Breite für alle Mieter-, Wohnungs-, Leerstands- und Privatfallspalten der NK-Matrix |
+| Getrennte Korrekturfelder | produktiv | `vorjahresKorrektur` für NK und `kaltmietKorrektur` für Kaltmiete |
+| Live-Nach-Korrektur-Werte | produktiv | unmittelbare Aktualisierung der Zeilen, Summen und Kacheln ohne Seitenwechsel |
+| Vorauszahlungs-Prüfbereich | produktiv | zentrale Regeln NKP-FACH-015, NKP-PLAU-009 und NKP-FACH-020 mit sichtbaren Ergebnissen |

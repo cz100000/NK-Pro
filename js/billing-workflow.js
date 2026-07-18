@@ -82,6 +82,7 @@
     const prepayments = calculation.tenantResults.reduce((sum, row) => sum + d.num(row.prepayments), 0);
     const tenantShares = calculation.tenantResults.reduce((sum, row) => sum + d.num(row.costShare), 0);
     const corrections = calculation.tenantResults.reduce((sum, row) => sum + d.num(row.correction), 0);
+    const rentCorrections = calculation.tenantResults.reduce((sum, row) => sum + d.num(row.rentCorrection), 0);
     const costs = (Array.isArray(data.kostenarten) ? data.kostenarten : [])
       .filter(row => row && row.kostenart && row.inNK === "Ja")
       .reduce((sum, row) => sum + d.num(row.gesamtbetrag), 0);
@@ -93,6 +94,7 @@
       vorauszahlungen:prepayments,
       mieterKostenanteile:tenantShares,
       korrekturen:corrections,
+      kaltmietKorrekturen:rentCorrections,
       saldo:tenantShares - prepayments - corrections
     };
     const readiness = d.validateBillingReadiness(data);

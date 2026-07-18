@@ -49,7 +49,7 @@ const NK_PRO_MODULES = (() => {
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
 const APP_VERSION = "V99.4.43";
-const APP_VERSION_NAME = "AP22F8B-Vorauszahlungen";
+const APP_VERSION_NAME = "AP22F8B-Vorauszahlungen-Korrektur1";
 const APP_RELEASE_DATE = "2026-07-18";
 if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – AP22F8B Vorauszahlungen";
 const DATA_SCHEMA_VERSION = 5;

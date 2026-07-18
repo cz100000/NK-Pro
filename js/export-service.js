@@ -66,8 +66,8 @@
   function downloadMieterCsv() {
     ensureUnitIdentityData(state);
     ensureTenantContactData();
-    const header = ["Mieter-ID","Wohnungs-ID","Mietername","Rolle","Geschlecht","Standardanrede","Straße","PLZ","Ort","Telefon","E-Mail","Einzug","Auszug","Kaltmiete Soll","Kaltmiete erhalten","NK-Voraus","Einmalige Korrektur / Gutschrift","Einnahmen","Aktive Tage","Personen","Status"];
-    const rows = state.mieter.map(m => [m.id,m.wohnung,m.name,m.abrechnungRolle,m.geschlecht,m.standardanrede,m.strasse,m.plz,m.ort,m.telefon,m.email,m.einzug,m.auszug,m.kaltSoll,m.kaltErhalten,m.nkVoraus,m.vorjahresKorrektur,m.einnahmen,m.aktiveTage,m.personen,m.status]);
+    const header = ["Mieter-ID","Wohnungs-ID","Mietername","Rolle","Geschlecht","Standardanrede","Straße","PLZ","Ort","Telefon","E-Mail","Einzug","Auszug","Kaltmiete Soll","Kaltmiete erhalten","NK-Voraus","NK-Korrektur / Gutschrift","Kaltmiet-Korrektur / Gutschrift","Einnahmen vor Korrektur","Aktive Tage","Personen","Status"];
+    const rows = state.mieter.map(m => [m.id,m.wohnung,m.name,m.abrechnungRolle,m.geschlecht,m.standardanrede,m.strasse,m.plz,m.ort,m.telefon,m.email,m.einzug,m.auszug,m.kaltSoll,m.kaltErhalten,m.nkVoraus,m.vorjahresKorrektur,m.kaltmietKorrektur,m.einnahmen,m.aktiveTage,m.personen,m.status]);
     download("nk-pro-mieter.csv", toCsv([header, ...rows]), "text/csv;charset=utf-8");
   }
 
@@ -81,14 +81,14 @@
 
   function downloadUmlageCsv() {
     const calc = calculateUmlage();
-    const header = ["Typ","Mieter-ID","Wohnungs-ID","Name","Rolle","Kostenanteil","Vorauszahlungen","Korrektur","Saldo-Typ","Saldo-Betrag"];
+    const header = ["Typ","Mieter-ID","Wohnungs-ID","Name","Rolle","Kostenanteil","Vorauszahlungen","NK-Korrektur","Kaltmietkorrektur","Saldo-Typ","Saldo-Betrag"];
     const rows = [];
     calc.tenantResults.forEach(r => {
       const s = settlementInfoForResult(r, r.tenant);
-      rows.push(["Mieter", r.tenant.id, r.tenant.wohnung, r.tenant.name, r.tenant.abrechnungRolle || "Mieter", r.costShare, r.prepayments, r.correction, s.type, s.amount]);
+      rows.push(["Mieter", r.tenant.id, r.tenant.wohnung, r.tenant.name, r.tenant.abrechnungRolle || "Mieter", r.costShare, r.prepayments, r.correction, r.rentCorrection, s.type, s.amount]);
     });
     calc.privateResults.forEach(r => {
-      rows.push(["Eigentümer/Privat", r.tenant.id, r.tenant.wohnung, r.tenant.name, r.tenant.abrechnungRolle || "Eigentümer/Privat", r.costShare, r.prepayments, r.correction, "Privatanteil", r.costShare]);
+      rows.push(["Eigentümer/Privat", r.tenant.id, r.tenant.wohnung, r.tenant.name, r.tenant.abrechnungRolle || "Eigentümer/Privat", r.costShare, r.prepayments, r.correction, r.rentCorrection, "Privatanteil", r.costShare]);
     });
     download(csvFileName("nk-pro-umlage"), toCsv([header, ...rows]), "text/csv;charset=utf-8");
   }

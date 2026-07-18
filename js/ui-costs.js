@@ -621,95 +621,160 @@ function prepaymentFilteredCases(kind,cases) {
   return rows;
 }
 function prepaymentUpdateText(id,text) { const el=document.getElementById(id); if(el)el.textContent=text; }
+function prepaymentNkCorrection(tenant) { return num(tenant && tenant.vorjahresKorrektur); }
+function prepaymentRentCorrection(tenant) { return num(tenant && tenant.kaltmietKorrektur); }
+function prepaymentNkAfterCorrection(tenant) { return num(tenant && tenant.nkVoraus) + prepaymentNkCorrection(tenant); }
+function prepaymentRentAfterCorrection(tenant) { return num(tenant && tenant.kaltErhalten) - prepaymentRentCorrection(tenant); }
+function prepaymentFinancialInput(value,index,key) {
+  return '<input class="money" inputmode="decimal" value="'+escapeHtml(value ?? '')+'"'+uiActionAttributes('cost.prepaymentSetTenantValue',[Number(index),String(key),'$value'],'input')+editDisabledAttr()+'>';
+}
+function prepaymentFinancialTotals(cases) {
+  return (Array.isArray(cases)?cases:prepaymentDisplayCases()).filter(row=>row.billable&&row.tenant).reduce((totals,row)=>{
+    const tenant=row.tenant;
+    totals.kaltSoll+=num(tenant.kaltSoll);
+    totals.kaltErhalten+=num(tenant.kaltErhalten);
+    totals.nkVoraus+=num(tenant.nkVoraus);
+    totals.nkKorrektur+=prepaymentNkCorrection(tenant);
+    totals.kaltKorrektur+=prepaymentRentCorrection(tenant);
+    totals.nkNachKorrektur+=prepaymentNkAfterCorrection(tenant);
+    totals.kaltNachKorrektur+=prepaymentRentAfterCorrection(tenant);
+    if(Math.abs(prepaymentNkCorrection(tenant))>.004||Math.abs(prepaymentRentCorrection(tenant))>.004)totals.affected+=1;
+    return totals;
+  },{kaltSoll:0,kaltErhalten:0,nkVoraus:0,nkKorrektur:0,kaltKorrektur:0,nkNachKorrektur:0,kaltNachKorrektur:0,affected:0});
+}
+function prepaymentRefreshFinancialDisplays(cases) {
+  const allCases=Array.isArray(cases)?cases:prepaymentDisplayCases();
+  const billable=allCases.filter(row=>row.billable&&row.tenant);
+  const totals=prepaymentFinancialTotals(allCases);
+  prepaymentUpdateText('prepaymentTileCasesValue',String(allCases.length));
+  prepaymentUpdateText('prepaymentTileCasesDetail',billable.length+' abrechenbar · '+(allCases.length-billable.length)+' nicht abrechenbar');
+  prepaymentUpdateText('prepaymentTileNkValue',fmtMoney(totals.nkNachKorrektur));
+  prepaymentUpdateText('prepaymentTileNkDetail','Vor Korrektur '+fmtMoney(totals.nkVoraus));
+  prepaymentUpdateText('prepaymentTileRentValue',fmtMoney(totals.kaltNachKorrektur));
+  prepaymentUpdateText('prepaymentTileRentDetail','Soll '+fmtMoney(totals.kaltSoll)+' · erhalten '+fmtMoney(totals.kaltErhalten)+' · Korrektur '+fmtMoney(totals.kaltKorrektur));
+  prepaymentUpdateText('prepaymentTileCorrectionValue',totals.affected+' '+(totals.affected===1?'Fall':'Fälle'));
+  prepaymentUpdateText('prepaymentTileCorrectionDetail','NK '+fmtMoney(totals.nkKorrektur)+' · Kaltmiete '+fmtMoney(totals.kaltKorrektur));
+  document.querySelectorAll('[data-prepayment-nk-after]').forEach(node=>{const tenant=state.mieter[Number(node.getAttribute('data-prepayment-nk-after'))];node.textContent=fmtMoney(prepaymentNkAfterCorrection(tenant));});
+  document.querySelectorAll('[data-prepayment-rent-after]').forEach(node=>{const tenant=state.mieter[Number(node.getAttribute('data-prepayment-rent-after'))];node.textContent=fmtMoney(prepaymentRentAfterCorrection(tenant));});
+  prepaymentUpdateText('prepaymentRentTotalAfter',fmtMoney(totals.kaltNachKorrektur));
+  prepaymentUpdateText('prepaymentNkCorrectionTotal',fmtMoney(totals.nkKorrektur));
+  prepaymentUpdateText('prepaymentNkAfterTotal',fmtMoney(totals.nkNachKorrektur));
+  prepaymentUpdateText('prepaymentRentCorrectionTotal',fmtMoney(totals.kaltKorrektur));
+  prepaymentUpdateText('prepaymentCorrectionRentAfterTotal',fmtMoney(totals.kaltNachKorrektur));
+  return totals;
+}
+function prepaymentSetTenantValue(index,key,value) {
+  const allowed=new Set(['kaltSoll','kaltErhalten','vorjahresKorrektur','kaltmietKorrektur']);
+  const numericIndex=Number(index);
+  if(!allowed.has(String(key))||!state.mieter||!state.mieter[numericIndex])return;
+  const tenant=state.mieter[numericIndex];
+  tenant[key]=num(value);
+  tenant.kaltmietKorrektur=num(tenant.kaltmietKorrektur);
+  tenant.vorjahresKorrektur=num(tenant.vorjahresKorrektur);
+  tenant.einnahmen=num(tenant.kaltErhalten)+num(tenant.nkVoraus);
+  ensureTenantIdentityFields(tenant);
+  commitStateChange({reason:'Benutzereingabe',render:false,tabId:'einnahmen'});
+  prepaymentRefreshFinancialDisplays();
+  renderPrepaymentQualitySummary();
+}
+function prepaymentQualityClass(status) {
+  if(status==='Blockiert')return 'err';
+  if(status==='Zu prüfen')return 'warn';
+  if(status==='Hinweis')return 'info';
+  return 'ok';
+}
+function renderPrepaymentQualitySummary() {
+  const body=document.querySelector('#incomeValidationSection .prepayment-quality__body');
+  if(!body)return;
+  let rows=[];
+  try { const report=typeof qualityReport==='function'?qualityReport(true):null; rows=report&&Array.isArray(report.results)?report.results.filter(row=>row.targetTab==='einnahmen'):[]; } catch(_){ rows=[]; }
+  const cases=prepaymentDisplayCases();
+  const totals=prepaymentFinancialTotals(cases);
+  const separationOk=Object.values(totals).every(value=>Number.isFinite(Number(value)));
+  const central=rows.length?rows.map(row=>'<li><span class="status '+prepaymentQualityClass(row.status)+'">'+escapeHtml(row.status)+'</span><span><strong>'+escapeHtml(row.title)+'</strong><small>'+escapeHtml(row.details||row.resultText||'Zentrale Prüfung ausgeführt.')+'</small></span></li>').join(''):'<li><span class="status ok">Erledigt</span><span><strong>Zentrale Vorauszahlungsprüfungen</strong><small>Keine offenen Prüfpunkte für diese Seite.</small></span></li>';
+  const local='<li><span class="status '+(separationOk?'ok':'err')+'">'+(separationOk?'Erledigt':'Blockiert')+'</span><span><strong>NK- und Kaltmietkorrekturen sind getrennt</strong><small>NK '+fmtMoney(totals.nkKorrektur)+' · Kaltmiete '+fmtMoney(totals.kaltKorrektur)+' · nicht abrechenbare Fälle bleiben ausgeschlossen.</small></span></li>';
+  body.innerHTML='<div class="prepayment-quality-summary"><div><strong>Prüfstatus dieser Seite</strong><p>Vorauszahlungsmatrix, fehlende Vorauszahlungen und die getrennten Korrektursummen werden kontrolliert.</p></div><button type="button" class="secondary" data-ui-action="quality.openPageIssues" data-ui-args=\'["einnahmen"]\'>Details anzeigen</button></div><ul class="prepayment-quality-list">'+central+local+'</ul>';
+}
 
 function renderEinnahmen() {
-  const rentTable=document.getElementById("einnahmenTable");
-  const correctionTable=document.getElementById("incomeCorrectionsTable");
-  const prepaymentTable=document.getElementById("vorauszahlungenTable");
+  const rentTable=document.getElementById('einnahmenTable');
+  const correctionTable=document.getElementById('incomeCorrectionsTable');
+  const prepaymentTable=document.getElementById('vorauszahlungenTable');
   if(!rentTable||!correctionTable||!prepaymentTable)return;
   try {
     const cases=prepaymentDisplayCases();
     const billableCases=cases.filter(row=>row.billable&&row.tenant);
-    const nonBillableCases=cases.filter(row=>!row.billable);
     const statusOptions=Array.from(new Set(cases.map(prepaymentCaseStatus))).sort(prepaymentCompare);
-    prepaymentSetSelectOptions(document.getElementById("prepaymentRentStatusFilter"),statusOptions,prepaymentUiState.rents.status,"Alle Fälle");
-    prepaymentSetSelectOptions(document.getElementById("prepaymentCorrectionStatusFilter"),statusOptions,prepaymentUiState.corrections.status,"Alle Fälle");
-
-    const summary=document.getElementById("prepaymentCaseSummary");
-    if(summary)summary.innerHTML='<span><strong>'+cases.length+'</strong> Fälle insgesamt</span><span><strong>'+billableCases.length+'</strong> abrechenbar</span><span><strong>'+nonBillableCases.length+'</strong> nicht abrechenbar</span>';
+    prepaymentSetSelectOptions(document.getElementById('prepaymentRentStatusFilter'),statusOptions,prepaymentUiState.rents.status,'Alle Fälle');
+    prepaymentSetSelectOptions(document.getElementById('prepaymentCorrectionStatusFilter'),statusOptions,prepaymentUiState.corrections.status,'Alle Fälle');
 
     renderPrepaymentCarryForwardNotice();
     const activeIds=new Set(activePrepaymentCostIds());
     const allCostRows=(Array.isArray(state.vorauszahlungen)?state.vorauszahlungen:[]).map((row,originalIndex)=>({...row,originalIndex})).filter(row=>activeIds.has(row.kostenId));
     const costState=prepaymentUiState.costs;
-    const costQuery=costState.search.trim().toLocaleLowerCase("de-DE");
+    const costQuery=costState.search.trim().toLocaleLowerCase('de-DE');
     let filteredCosts=allCostRows.filter(row=>!costQuery||prepaymentSearchText([row.kostenId,row.kostenart]).includes(costQuery));
     filteredCosts.sort((a,b)=>{
-      const av=costState.sortKey==="sum"?billableCases.reduce((sum,item)=>sum+(isCostAllowedForTenant(a.kostenId,item.tenant)?num(a.werte[item.originalIndex]):0),0):a[costState.sortKey];
-      const bv=costState.sortKey==="sum"?billableCases.reduce((sum,item)=>sum+(isCostAllowedForTenant(b.kostenId,item.tenant)?num(b.werte[item.originalIndex]):0),0):b[costState.sortKey];
-      const cmp=typeof av==="number"&&typeof bv==="number"?av-bv:prepaymentCompare(av,bv);
-      return costState.sortDirection==="asc"?cmp:-cmp;
+      const av=costState.sortKey==='sum'?billableCases.reduce((sum,item)=>sum+(isCostAllowedForTenant(a.kostenId,item.tenant)?num(a.werte[item.originalIndex]):0),0):a[costState.sortKey];
+      const bv=costState.sortKey==='sum'?billableCases.reduce((sum,item)=>sum+(isCostAllowedForTenant(b.kostenId,item.tenant)?num(b.werte[item.originalIndex]):0),0):b[costState.sortKey];
+      const cmp=typeof av==='number'&&typeof bv==='number'?av-bv:prepaymentCompare(av,bv);
+      return costState.sortDirection==='asc'?cmp:-cmp;
     });
     const allColumnTotals=cases.map(item=>item.billable&&item.tenant?allCostRows.reduce((sum,row)=>sum+(isCostAllowedForTenant(row.kostenId,item.tenant)?num(row.werte[item.originalIndex]):0),0):null);
     const grandPrepaymentTotal=allColumnTotals.reduce((sum,value)=>sum+num(value),0);
-    const caseHeads=cases.map(prepaymentCaseHeaderHtml).join("");
+    const caseHeads=cases.map(prepaymentCaseHeaderHtml).join('');
+    const caseCols=cases.map(()=>'<col class="prepayment-case-col">').join('');
+    prepaymentTable.style.minWidth=(370+cases.length*150)+'px';
     const matrixRows=filteredCosts.length?filteredCosts.map(row=>{
       const allowedSum=billableCases.reduce((sum,item)=>sum+(isCostAllowedForTenant(row.kostenId,item.tenant)?num(row.werte[item.originalIndex]):0),0);
       const cells=cases.map(item=>{
-        if(!item.billable||!item.tenant)return '<td class="prepayment-nonbillable">'+prepaymentReadonlyMoney(null,prepaymentCaseStatus(item))+'</td>';
+        if(!item.billable||!item.tenant)return '<td class="prepayment-case-cell prepayment-nonbillable">'+prepaymentReadonlyMoney(null,prepaymentCaseStatus(item))+'</td>';
         const current=num(row.werte[item.originalIndex]);
-        if(!isCostAllowedForTenant(row.kostenId,item.tenant))return '<td class="prepayment-nonbillable">'+prepaymentReadonlyMoney(Math.abs(current)>0.01?current:null,"nicht umlagefähig")+'</td>';
-        return '<td class="editable">'+inputHtml(row.werte[item.originalIndex],"setPrepaymentValue("+row.originalIndex+","+item.originalIndex+",this.value)","money")+'</td>';
-      }).join("");
-      return '<tr><td><strong>'+escapeHtml(row.kostenart||"—")+'</strong><small>'+escapeHtml(row.kostenId||"—")+'</small></td><td class="money readonly-cell">'+fmtMoney(allowedSum)+'</td>'+cells+'</tr>';
-    }).join(""):'<tr><td colspan="'+(2+cases.length)+'" class="prepayment-empty">'+(allCostRows.length?'Keine Kostenarten entsprechen der Suche.':'Keine Kostenart für NK-Vorauszahlungen aktiviert.')+'</td></tr>';
-    const matrixTotal=allCostRows.length?'<tr class="total-row prepayment-total-row"><td>Gesamtsumme aller aktivierten Kostenarten<small>'+billableCases.length+' abrechenbare Mietverhältnisse</small></td><td class="money">'+fmtMoney(grandPrepaymentTotal)+'</td>'+allColumnTotals.map(value=>'<td class="money">'+(value===null?'—':fmtMoney(value))+'</td>').join("")+'</tr>':'';
-    prepaymentTable.innerHTML='<thead><tr><th scope="col">'+prepaymentSortButton("costs","kostenart","Kostenart")+'</th><th scope="col" class="money">'+prepaymentSortButton("costs","sum","Summe")+'</th>'+caseHeads+'</tr></thead><tbody>'+matrixRows+matrixTotal+'</tbody>';
+        if(!isCostAllowedForTenant(row.kostenId,item.tenant))return '<td class="prepayment-case-cell prepayment-nonbillable">'+prepaymentReadonlyMoney(Math.abs(current)>0.01?current:null,'nicht umlagefähig')+'</td>';
+        return '<td class="prepayment-case-cell editable">'+inputHtml(row.werte[item.originalIndex],'setPrepaymentValue('+row.originalIndex+','+item.originalIndex+',this.value)','money')+'</td>';
+      }).join('');
+      return '<tr><td><strong>'+escapeHtml(row.kostenart||'—')+'</strong><small>'+escapeHtml(row.kostenId||'—')+'</small></td><td class="money readonly-cell">'+fmtMoney(allowedSum)+'</td>'+cells+'</tr>';
+    }).join(''):'<tr><td colspan="'+(2+cases.length)+'" class="prepayment-empty">'+(allCostRows.length?'Keine Kostenarten entsprechen der Suche.':'Keine Kostenart für NK-Vorauszahlungen aktiviert.')+'</td></tr>';
+    const matrixTotal=allCostRows.length?'<tr class="total-row prepayment-total-row"><td>Gesamtsumme aller aktivierten Kostenarten<small>'+billableCases.length+' abrechenbare Mietverhältnisse</small></td><td class="money">'+fmtMoney(grandPrepaymentTotal)+'</td>'+allColumnTotals.map(value=>'<td class="money prepayment-case-cell">'+(value===null?'—':fmtMoney(value))+'</td>').join('')+'</tr>':'';
+    prepaymentTable.innerHTML='<colgroup><col class="prepayment-cost-col"><col class="prepayment-sum-col">'+caseCols+'</colgroup><thead><tr><th scope="col">'+prepaymentSortButton('costs','kostenart','Kostenart')+'</th><th scope="col" class="money">'+prepaymentSortButton('costs','sum','Summe')+'</th>'+caseHeads+'</tr></thead><tbody>'+matrixRows+matrixTotal+'</tbody>';
 
-    const incomeTotals=billableCases.reduce((totals,row)=>{
-      const tenant=row.tenant;
-      totals.kaltSoll+=num(tenant.kaltSoll);
-      totals.kaltErhalten+=num(tenant.kaltErhalten);
-      totals.nkVoraus+=num(tenant.nkVoraus);
-      totals.einnahmen+=num(tenant.einnahmen);
-      totals.korrektur+=num(tenant.vorjahresKorrektur);
-      return totals;
-    },{kaltSoll:0,kaltErhalten:0,nkVoraus:0,einnahmen:0,korrektur:0});
-
-    const filteredRents=prepaymentFilteredCases("rents",cases);
+    const totals=prepaymentFinancialTotals(cases);
+    const filteredRents=prepaymentFilteredCases('rents',cases);
     const rentRows=filteredRents.length?filteredRents.map(row=>{
-      const tenant=row.tenant;
-      const editable=row.billable&&tenant;
-      return '<tr class="'+(editable?'':'prepayment-nonbillable-row')+'"><td>'+prepaymentIdentityCell(row)+'</td><td>'+prepaymentUnitCell(row)+'</td><td class="'+(editable?'editable':'prepayment-nonbillable')+'">'+(editable?inputHtml(tenant.kaltSoll,"setNested(\'mieter\',"+row.originalIndex+",\'kaltSoll\',this.value,\'number\')","money"):prepaymentReadonlyMoney(tenant?tenant.kaltSoll:null,prepaymentCaseStatus(row)))+'</td><td class="'+(editable?'editable':'prepayment-nonbillable')+'">'+(editable?inputHtml(tenant.kaltErhalten,"setNested(\'mieter\',"+row.originalIndex+",\'kaltErhalten\',this.value,\'number\')","money"):prepaymentReadonlyMoney(tenant?tenant.kaltErhalten:null,prepaymentCaseStatus(row)))+'</td><td class="readonly-cell">'+prepaymentReadonlyMoney(tenant?tenant.nkVoraus:null,editable?"automatisch":prepaymentCaseStatus(row))+'</td><td class="money readonly-cell">'+prepaymentReadonlyMoney(tenant?tenant.einnahmen:null,editable?"inkl. Korrektur":prepaymentCaseStatus(row))+'</td><td>'+prepaymentStatusCell(row)+'</td></tr>';
-    }).join(""):'<tr><td colspan="7" class="prepayment-empty">Keine Fälle entsprechen der Suche oder dem Filter.</td></tr>';
-    const rentTotal='<tr class="total-row prepayment-total-row"><td colspan="2">Gesamtsumme abrechenbare Fälle<small>'+billableCases.length+' von '+cases.length+' Fällen</small></td><td class="money">'+fmtMoney(incomeTotals.kaltSoll)+'</td><td class="money">'+fmtMoney(incomeTotals.kaltErhalten)+'</td><td class="money">'+fmtMoney(incomeTotals.nkVoraus)+'</td><td class="money">'+fmtMoney(incomeTotals.einnahmen)+'</td><td></td></tr>';
-    rentTable.innerHTML='<thead><tr><th scope="col">'+prepaymentSortButton("rents","tenant","Mieter / Fall")+'</th><th scope="col">'+prepaymentSortButton("rents","unit","Wohnung")+'</th><th scope="col" class="money">'+prepaymentSortButton("rents","kaltSoll","Kaltmiete Soll / Jahr")+'</th><th scope="col" class="money">'+prepaymentSortButton("rents","kaltErhalten","Kaltmiete erhalten")+'</th><th scope="col" class="money">'+prepaymentSortButton("rents","nkVoraus","NK-Vorauszahlungen")+'</th><th scope="col" class="money">'+prepaymentSortButton("rents","einnahmen","Einnahmen gesamt")+'</th><th scope="col">'+prepaymentSortButton("rents","status","Status")+'</th></tr></thead><tbody>'+rentRows+rentTotal+'</tbody>';
+      const tenant=row.tenant; const editable=row.billable&&tenant;
+      return '<tr class="'+(editable?'':'prepayment-nonbillable-row')+'"><td>'+prepaymentIdentityCell(row)+'</td><td>'+prepaymentUnitCell(row)+'</td><td class="'+(editable?'editable':'prepayment-nonbillable')+'">'+(editable?prepaymentFinancialInput(tenant.kaltSoll,row.originalIndex,'kaltSoll'):prepaymentReadonlyMoney(tenant?tenant.kaltSoll:null,prepaymentCaseStatus(row)))+'</td><td class="'+(editable?'editable':'prepayment-nonbillable')+'">'+(editable?prepaymentFinancialInput(tenant.kaltErhalten,row.originalIndex,'kaltErhalten'):prepaymentReadonlyMoney(tenant?tenant.kaltErhalten:null,prepaymentCaseStatus(row)))+'</td><td class="money readonly-cell">'+(editable?'<span data-prepayment-rent-after="'+row.originalIndex+'">'+fmtMoney(prepaymentRentAfterCorrection(tenant))+'</span><small>inkl. Kaltmietkorrektur</small>':'—<small>'+escapeHtml(prepaymentCaseStatus(row))+'</small>')+'</td><td>'+prepaymentStatusCell(row)+'</td></tr>';
+    }).join(''):'<tr><td colspan="6" class="prepayment-empty">Keine Fälle entsprechen der Suche oder dem Filter.</td></tr>';
+    const rentTotal='<tr class="total-row prepayment-total-row"><td colspan="2">Gesamtsumme abrechenbare Fälle<small>'+billableCases.length+' von '+cases.length+' Fällen</small></td><td class="money">'+fmtMoney(totals.kaltSoll)+'</td><td class="money">'+fmtMoney(totals.kaltErhalten)+'</td><td class="money" id="prepaymentRentTotalAfter">'+fmtMoney(totals.kaltNachKorrektur)+'</td><td></td></tr>';
+    rentTable.innerHTML='<thead><tr><th scope="col">'+prepaymentSortButton('rents','tenant','Mieter / Fall')+'</th><th scope="col">'+prepaymentSortButton('rents','unit','Wohnung')+'</th><th scope="col" class="money">'+prepaymentSortButton('rents','kaltSoll','Kaltmiete Soll / Jahr')+'</th><th scope="col" class="money">'+prepaymentSortButton('rents','kaltErhalten','Kaltmiete erhalten')+'</th><th scope="col" class="money">Kaltmieteinnahmen nach Korrektur</th><th scope="col">'+prepaymentSortButton('rents','status','Status')+'</th></tr></thead><tbody>'+rentRows+rentTotal+'</tbody>';
 
-    const filteredCorrections=prepaymentFilteredCases("corrections",cases);
+    const filteredCorrections=prepaymentFilteredCases('corrections',cases);
     const correctionRows=filteredCorrections.length?filteredCorrections.map(row=>{
-      const tenant=row.tenant;
-      const editable=row.billable&&tenant;
-      return '<tr class="'+(editable?'':'prepayment-nonbillable-row')+'"><td>'+prepaymentIdentityCell(row)+'</td><td>'+prepaymentUnitCell(row)+'</td><td class="'+(editable?'editable':'prepayment-nonbillable')+'">'+(editable?inputHtml(tenant.vorjahresKorrektur,"setNested(\'mieter\',"+row.originalIndex+",\'vorjahresKorrektur\',this.value,\'number\')","money"):prepaymentReadonlyMoney(tenant?tenant.vorjahresKorrektur:null,prepaymentCaseStatus(row)))+'</td><td class="money readonly-cell">'+prepaymentReadonlyMoney(tenant?tenant.einnahmen:null,editable?"nach Korrektur":prepaymentCaseStatus(row))+'</td><td>'+prepaymentStatusCell(row)+'</td></tr>';
-    }).join(""):'<tr><td colspan="5" class="prepayment-empty">Keine Fälle entsprechen der Suche oder dem Filter.</td></tr>';
-    const correctionTotal='<tr class="total-row prepayment-total-row"><td colspan="2">Gesamtsumme abrechenbare Fälle<small>'+billableCases.length+' von '+cases.length+' Fällen</small></td><td class="money">'+fmtMoney(incomeTotals.korrektur)+'</td><td class="money">'+fmtMoney(incomeTotals.einnahmen)+'</td><td></td></tr>';
-    correctionTable.innerHTML='<thead><tr><th scope="col">'+prepaymentSortButton("corrections","tenant","Mieter / Fall")+'</th><th scope="col">'+prepaymentSortButton("corrections","unit","Wohnung")+'</th><th scope="col" class="money">'+prepaymentSortButton("corrections","vorjahresKorrektur","Korrektur / Gutschrift")+'</th><th scope="col" class="money">'+prepaymentSortButton("corrections","einnahmen","Einnahmen nach Korrektur")+'</th><th scope="col">'+prepaymentSortButton("corrections","status","Status")+'</th></tr></thead><tbody>'+correctionRows+correctionTotal+'</tbody>';
+      const tenant=row.tenant; const editable=row.billable&&tenant;
+      const nkInput=editable?prepaymentFinancialInput(tenant.vorjahresKorrektur,row.originalIndex,'vorjahresKorrektur'):prepaymentReadonlyMoney(tenant?tenant.vorjahresKorrektur:null,prepaymentCaseStatus(row));
+      const rentInput=editable?prepaymentFinancialInput(tenant.kaltmietKorrektur,row.originalIndex,'kaltmietKorrektur'):prepaymentReadonlyMoney(tenant?tenant.kaltmietKorrektur:null,prepaymentCaseStatus(row));
+      return '<tr class="'+(editable?'':'prepayment-nonbillable-row')+'"><td>'+prepaymentIdentityCell(row)+'</td><td>'+prepaymentUnitCell(row)+'</td><td class="'+(editable?'editable':'prepayment-nonbillable')+'">'+nkInput+'</td><td class="money readonly-cell">'+(editable?'<span data-prepayment-nk-after="'+row.originalIndex+'">'+fmtMoney(prepaymentNkAfterCorrection(tenant))+'</span>':'—')+'</td><td class="'+(editable?'editable':'prepayment-nonbillable')+'">'+rentInput+'</td><td class="money readonly-cell">'+(editable?'<span data-prepayment-rent-after="'+row.originalIndex+'">'+fmtMoney(prepaymentRentAfterCorrection(tenant))+'</span>':'—')+'</td><td>'+prepaymentStatusCell(row)+'</td></tr>';
+    }).join(''):'<tr><td colspan="7" class="prepayment-empty">Keine Fälle entsprechen der Suche oder dem Filter.</td></tr>';
+    const correctionTotal='<tr class="total-row prepayment-total-row"><td colspan="2">Gesamtsummen abrechenbare Fälle<small>'+billableCases.length+' von '+cases.length+' Fällen</small></td><td class="money" id="prepaymentNkCorrectionTotal">'+fmtMoney(totals.nkKorrektur)+'</td><td class="money" id="prepaymentNkAfterTotal">'+fmtMoney(totals.nkNachKorrektur)+'</td><td class="money" id="prepaymentRentCorrectionTotal">'+fmtMoney(totals.kaltKorrektur)+'</td><td class="money" id="prepaymentCorrectionRentAfterTotal">'+fmtMoney(totals.kaltNachKorrektur)+'</td><td></td></tr>';
+    correctionTable.innerHTML='<thead><tr><th scope="col">'+prepaymentSortButton('corrections','tenant','Mieter / Fall')+'</th><th scope="col">'+prepaymentSortButton('corrections','unit','Wohnung')+'</th><th scope="col" class="money">'+prepaymentSortButton('corrections','vorjahresKorrektur','NK-Korrektur / Gutschrift')+'</th><th scope="col" class="money">NK nach Korrektur</th><th scope="col" class="money">'+prepaymentSortButton('corrections','kaltmietKorrektur','Kaltmiet-Korrektur / Gutschrift')+'</th><th scope="col" class="money">Kaltmieteinnahmen nach Korrektur</th><th scope="col">'+prepaymentSortButton('corrections','status','Status')+'</th></tr></thead><tbody>'+correctionRows+correctionTotal+'</tbody>';
 
     const costResult=filteredCosts.length+' von '+allCostRows.length+' Kostenarten';
     const rentResult=filteredRents.length+' von '+cases.length+' Fällen';
     const correctionResult=filteredCorrections.length+' von '+cases.length+' Fällen';
-    ["prepaymentCostResults","prepaymentCostFooterResults"].forEach(id=>prepaymentUpdateText(id,costResult));
-    ["prepaymentRentResults","prepaymentRentFooterResults"].forEach(id=>prepaymentUpdateText(id,rentResult));
-    ["prepaymentCorrectionResults","prepaymentCorrectionFooterResults"].forEach(id=>prepaymentUpdateText(id,correctionResult));
-    prepaymentUpdateText("prepaymentCostHeadingCount","("+allCostRows.length+")");
-    prepaymentUpdateText("prepaymentRentHeadingCount","("+cases.length+")");
-    prepaymentUpdateText("prepaymentCorrectionHeadingCount","("+cases.length+")");
+    ['prepaymentCostResults','prepaymentCostFooterResults'].forEach(id=>prepaymentUpdateText(id,costResult));
+    ['prepaymentRentResults','prepaymentRentFooterResults'].forEach(id=>prepaymentUpdateText(id,rentResult));
+    ['prepaymentCorrectionResults','prepaymentCorrectionFooterResults'].forEach(id=>prepaymentUpdateText(id,correctionResult));
+    prepaymentUpdateText('prepaymentCostHeadingCount','('+allCostRows.length+')');
+    prepaymentUpdateText('prepaymentRentHeadingCount','('+cases.length+')');
+    prepaymentUpdateText('prepaymentCorrectionHeadingCount','('+cases.length+')');
     const inputValues={prepaymentCostSearch:prepaymentUiState.costs.search,prepaymentRentSearch:prepaymentUiState.rents.search,prepaymentCorrectionSearch:prepaymentUiState.corrections.search};
     Object.entries(inputValues).forEach(([id,value])=>{const input=document.getElementById(id);if(input&&input.value!==value)input.value=value;});
-    const error=document.getElementById("prepaymentPageError");if(error)error.hidden=true;
+    prepaymentRefreshFinancialDisplays(cases);
+    renderPrepaymentQualitySummary();
+    const error=document.getElementById('prepaymentPageError');if(error)error.hidden=true;
     prepaymentScheduleHeaderCleanup();
   } catch(error) {
-    const errorBox=document.getElementById("prepaymentPageError");if(errorBox)errorBox.hidden=false;
-    if(typeof console!=="undefined"&&console.error)console.error("Vorauszahlungen konnten nicht dargestellt werden",error);
+    const errorBox=document.getElementById('prepaymentPageError');if(errorBox)errorBox.hidden=false;
+    if(typeof console!=='undefined'&&console.error)console.error('Vorauszahlungen konnten nicht dargestellt werden',error);
   }
 }
 

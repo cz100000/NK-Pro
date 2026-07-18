@@ -1,3 +1,11 @@
+# Projektstand V99.4.43 – AP22F8B Korrektur 1
+
+Die Vorauszahlungsseite führt vier kompakte Übersichts­kacheln. Die Fallspalten der NK-Vorauszahlungsmatrix besitzen eine einheitliche Breite. Korrekturen/Gutschriften werden fachlich und visuell zwischen NK-Vorauszahlung und Kaltmiete getrennt, separat summiert und unmittelbar in den jeweiligen Nach-Korrektur-Werten aktualisiert.
+
+Die bestehende Eigenschaft `vorjahresKorrektur` bleibt NK-Korrektur. Ergänzt wurde die optionale Eigenschaft `kaltmietKorrektur`, die bei vorhandenen Daten mit `0` normalisiert wird. Nur die NK-Korrektur beeinflusst den Saldo der Nebenkostenabrechnung. Kaltmietkorrekturen werden im Brief separat erläutert und verändern den NK-Saldo nicht. Der sichtbare Abschnitt „Prüfung und Hinweise“ zeigt die zentralen Vorauszahlungsregeln und die Trennungsprüfung.
+
+Produktversion und Datenschema bleiben V99.4.43 beziehungsweise 5; Cache- und Buildkennung lauten `99.4.43-ap22f8b-k1`.
+
 # Projektstand V99.4.43 – AP22F8B Vorauszahlungen
 
 Die technische Seite `einnahmen` entspricht dem freigegebenen und korrigierten AP22F8A-Zielbild. Der bisherige Klappboxaufbau ist durch einen flachen Seitenfluss mit drei getrennten Tabellen für NK-Vorauszahlungen, Kaltmiete sowie Korrekturen/Gutschriften ersetzt. Alle Wohnungen und Belegungsfälle bleiben sichtbar. Nicht abrechenbare Fälle sind gekennzeichnet und gesperrt, bleiben aber unverändert außerhalb von Berechnung und Summen. Sämtliche bestehenden Gesamtsummen sind in neutralen Summenzeilen erhalten.

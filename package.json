@@ -2,7 +2,7 @@
   "name": "nk-pro-v99-4-43",
   "version": "99.4.43",
   "private": true,
-  "description": "AP22F8B – Migration der Seite Vorauszahlungen auf NK-Pro UI Referenz 1.0",
+  "description": "AP22F8B Korrektur 1 – Vorauszahlungen mit Kennzahlen, getrennten Korrekturarten und Briefausgabe",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
     "test:fixtures": "node tools/check-fixtures.cjs",
@@ -18,7 +18,7 @@
     "test:ap14": "node tests/ap14-ui-navigation.test.cjs && playwright test --project=ap14-ui-navigation --workers=1",
     "test:contents": "node tests/ap22e-ui-design-contract.test.cjs",
     "test:ap15": "node tests/ap15-integration-release.test.cjs && playwright test --project=ap15-integration-release --workers=1",
-    "release:check": "npm run test:syntax && npm run test:fixtures && npm run test:ap22f8b:static && npm run test:metering:ap21b1 && npm run test:architecture:ap22f8b && npm run test:ap21c && node tools/check-release-contents.cjs --ignore-node-modules --strict",
+    "release:check": "npm run test:syntax && npm run test:fixtures && npm run test:ap22f8b:static && npm run test:ap22f8b:k1:static && npm run test:metering:ap21b1 && npm run test:architecture:ap22f8b && npm run test:ap21c && node tools/check-release-contents.cjs --ignore-node-modules --strict",
     "test:ap17": "node tests/ap17-area-dashboards.test.cjs && playwright test --project=ap17-area-dashboards --workers=1",
     "test:ap18": "node tests/ap18-ui-ux-polish.test.cjs && playwright test --project=ap18-ui-ux-polish --workers=1",
     "test:ap19": "node tests/ap19-billing-context-dashboards.test.cjs && playwright test --project=ap19-billing-context-dashboards --workers=1",
@@ -87,7 +87,9 @@
     "test:ap22f8b:static": "node tests/ap22f8b-prepayments.test.cjs && node tests/ap22f8b-protected-areas.test.cjs",
     "test:ap22f8b:browser": "node tests/ap22f8b-prepayments-browser.test.cjs",
     "test:ap22f8b": "npm run test:ap22f8b:static && npm run test:ap22f8b:browser",
-    "test:architecture:ap22f8b": "node tests/ap6-modularization.test.cjs && node tests/ap8-application-actions.test.cjs && node tests/ap9-core-orchestration.test.cjs && node tests/ap13-letter-layout.test.cjs && node tests/ap21-rule-audit.test.cjs && node tests/ap21b2-navigation-centralization.test.cjs"
+    "test:architecture:ap22f8b": "node tests/ap6-modularization.test.cjs && node tests/ap8-application-actions.test.cjs && node tests/ap9-core-orchestration.test.cjs && node tests/ap13-letter-layout.test.cjs && node tests/ap21-rule-audit.test.cjs && node tests/ap21b2-navigation-centralization.test.cjs",
+    "test:ap22f8b:k1:static": "node tests/ap22f8b-korrektur1.test.cjs && node tests/ap22f8b-korrektur1-protected-areas.test.cjs",
+    "test:ap22f8b:k1:browser": "node tests/ap22f8b-korrektur1-browser.test.cjs"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1"

@@ -398,6 +398,7 @@
       tenant.kaltErhalten = 0;
       tenant.nkVoraus = 0;
       tenant.vorjahresKorrektur = 0;
+      tenant.kaltmietKorrektur = 0;
       tenant.wasserWeitereVorauszahlung = 0;
       tenant.einnahmen = 0;
       const activeDays = d.tenantActiveDaysInCurrentPeriod(tenant) || periodDays;

@@ -324,7 +324,7 @@ function resetCostPriceFromDialog() {
 
 function recalculateAll() {
   state.kostenarten.forEach(row => row.status = NK_PRO_MODULES.costActions.kostenStatus(row));
-  state.mieter.forEach(row => { row.kaltSoll = num(row.kaltSoll); row.kaltErhalten = num(row.kaltErhalten); row.nkVoraus = num(row.nkVoraus); row.einnahmen = num(row.kaltErhalten) + num(row.nkVoraus); });
+  state.mieter.forEach(row => { row.kaltSoll = num(row.kaltSoll); row.kaltErhalten = num(row.kaltErhalten); row.nkVoraus = num(row.nkVoraus); row.vorjahresKorrektur = num(row.vorjahresKorrektur); row.kaltmietKorrektur = num(row.kaltmietKorrektur); row.einnahmen = num(row.kaltErhalten) + num(row.nkVoraus); });
   commitStateChange({ reason:"Benutzereingabe" });
 }
 
@@ -341,7 +341,7 @@ function setNested(collection, index, key, value, type="text") {
     NK_PRO_MODULES.costActions.syncKostenartenMieterUmlage();
   }
   if (collection === "wohnungen") ensureUnitIdentityFields(state[collection][index]);
-  if (collection === "mieter") { const row = state[collection][index]; row.einnahmen = num(row.kaltErhalten) + num(row.nkVoraus); ensureTenantIdentityFields(row); }
+  if (collection === "mieter") { const row = state[collection][index]; row.vorjahresKorrektur = num(row.vorjahresKorrektur); row.kaltmietKorrektur = num(row.kaltmietKorrektur); row.einnahmen = num(row.kaltErhalten) + num(row.nkVoraus); ensureTenantIdentityFields(row); }
   commitStateChange({ reason:"Benutzereingabe" });
 }
 
@@ -372,6 +372,7 @@ function ensureTenantContactFields(m) {
   if (m.abrechnungRolle === undefined || m.abrechnungRolle === null || m.abrechnungRolle === "") m.abrechnungRolle = (m.id === "M000" || String(m.name || "").includes("Zimmermann")) ? "Eigentümer/Privat" : "Mieter";
   if (m.wasserWeitereVorauszahlung === undefined || m.wasserWeitereVorauszahlung === null || m.wasserWeitereVorauszahlung === "") m.wasserWeitereVorauszahlung = 0;
   if (m.vorjahresKorrektur === undefined || m.vorjahresKorrektur === null || m.vorjahresKorrektur === "") m.vorjahresKorrektur = 0;
+  if (m.kaltmietKorrektur === undefined || m.kaltmietKorrektur === null || m.kaltmietKorrektur === "") m.kaltmietKorrektur = 0;
   if (m.vzChangeHeizung === undefined || m.vzChangeHeizung === null || m.vzChangeHeizung === "") m.vzChangeHeizung = "";
   if (m.vzChangeWasser === undefined || m.vzChangeWasser === null || m.vzChangeWasser === "") m.vzChangeWasser = "";
   if (m.vzChangeAbfall === undefined || m.vzChangeAbfall === null || m.vzChangeAbfall === "") m.vzChangeAbfall = "";

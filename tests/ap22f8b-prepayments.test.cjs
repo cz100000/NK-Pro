@@ -33,7 +33,7 @@ assert.match(controller,/einnahmen:\{title:"Vorauszahlungen",kicker:"Nebenkosten
 
 assert.match(css,/#einnahmen \.nk-ui-table td\.editable\{background:#fff!important\}/);
 assert.match(css,/#einnahmen \.prepayment-total-row td\{background:var\(--nk-ui-color-surface-muted\)!important/);
-assert.match(css,/#einnahmen \.prepayment-matrix\{min-width:1180px\}/);
+assert.match(css,/#einnahmen \.prepayment-matrix\{min-width:1180px;table-layout:fixed\}/);
 assert.doesNotMatch(css.slice(css.lastIndexOf("/* AP22F8B")),/background:\s*var\(--yellow\)|background:\s*#fff2cc|background:\s*#e2f0d9/i);
 
 console.log("AP22F8B static: PASS");
@@ -46,13 +46,13 @@ const project=JSON.parse(read("nk-pro-project.json"));
 const pkg=JSON.parse(read("package.json"));
 const lock=JSON.parse(read("package-lock.json"));
 assert.match(runtime,/const APP_VERSION = "V99\.4\.43";/);
-assert.match(runtime,/const APP_VERSION_NAME = "AP22F8B-Vorauszahlungen";/);
-assert.match(worker,/const CACHE_NAME = "nk-pro-v99-4-43-ap22f8b";/);
-assert.match(worker,/const BUILD_ID = "99\.4\.43-ap22f8b";/);
-assert.match(register,/const BUILD_ID = "99\.4\.43-ap22f8b";/);
+assert.match(runtime,/const APP_VERSION_NAME = "AP22F8B-Vorauszahlungen(?:-Korrektur1)?";/);
+assert.match(worker,/const CACHE_NAME = "nk-pro-v99-4-43-ap22f8b(?:-k1)?";/);
+assert.match(worker,/const BUILD_ID = "99\.4\.43-ap22f8b(?:-k1)?";/);
+assert.match(register,/const BUILD_ID = "99\.4\.43-ap22f8b(?:-k1)?";/);
 assert.equal(manifest.version,"99.4.43");
 assert.equal(project.appVersion,"99.4.43");
-assert.equal(project.runtimeBuildId,"99.4.43-ap22f8b");
+assert.match(project.runtimeBuildId,/^99\.4\.43-ap22f8b(?:-k1)?$/);
 assert.equal(project.prepaymentPageMigrationVersion,1);
 assert.equal(pkg.version,"99.4.43");
 assert.equal(lock.version,pkg.version);

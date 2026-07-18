@@ -201,3 +201,15 @@ Mietverhältnisse vor Wohnungen, keine Klappboxen, keine Kennzahlenkarten, volls
 - [x] Tabellen besitzen rechts den zentralen Abschluss und scrollen auf 620 px und 390 px ausschließlich intern.
 - [x] Schreibschutz sperrt Fachdatenfelder, ohne Suche, Filter und Lesbarkeit einzuschränken.
 - [x] Datenmodell, Berechnung, Persistenz, Migration, Archivierung, Brief und Druck bleiben unverändert.
+
+
+## AP22F8B Korrektur 1 – Zusatzabnahme
+
+- [x] Vier kompakte Kacheln zeigen Bestand, NK nach Korrektur, Kaltmieteinnahmen nach Korrektur und getrennte Korrektursummen.
+- [x] Alle Fallspalten der NK-Vorauszahlungsmatrix besitzen dieselbe feste Breite.
+- [x] NK- und Kaltmietkorrekturen werden je Fall und in den Gesamtsummen getrennt ausgewiesen.
+- [x] Nach-Korrektur-Werte, Summen und Kacheln reagieren unmittelbar auf Eingaben.
+- [x] Positive Werte bleiben Gutschriften, negative Werte Nachbelastungen.
+- [x] Nur NK-Korrekturen beeinflussen den NK-Saldo; Kaltmietkorrekturen werden im Brief getrennt ausgewiesen.
+- [x] „Prüfung und Hinweise“ zeigt die bestehenden Vorauszahlungsregeln und die Trennungsprüfung sichtbar an.
+- [x] Nicht abrechenbare Fälle bleiben sichtbar, gesperrt und aus allen Summen ausgeschlossen.

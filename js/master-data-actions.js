@@ -160,6 +160,7 @@
       abrechnungRolle:"Mieter",
       wasserWeitereVorauszahlung:0,
       vorjahresKorrektur:0,
+      kaltmietKorrektur:0,
       archivedAt:""
     };
   }
@@ -239,6 +240,7 @@
     row.kaltErhalten = 0;
     row.nkVoraus = 0;
     row.vorjahresKorrektur = 0;
+    row.kaltmietKorrektur = 0;
     row.wasserWeitereVorauszahlung = 0;
     row.einnahmen = 0;
     row.aktiveTage = activeDays;
@@ -261,7 +263,7 @@
 
   const BILLING_VALUE_FIELDS_TO_KEEP = Object.freeze([
     "kaltSoll", "kaltErhalten", "nkVoraus", "einnahmen", "wasserWeitereVorauszahlung",
-    "vorjahresKorrektur", "vzChangeHeizung", "vzChangeWasser", "vzChangeAbfall", "vzChangeAntenne"
+    "vorjahresKorrektur", "kaltmietKorrektur", "vzChangeHeizung", "vzChangeWasser", "vzChangeAbfall", "vzChangeAntenne"
   ]);
 
   function tenantBillingCopyFromMasterKeepValues(masterTenant, existingTenant, periodDays) {
@@ -278,6 +280,7 @@
     row.kaltErhalten = d.num(row.kaltErhalten);
     row.nkVoraus = d.num(row.nkVoraus);
     row.vorjahresKorrektur = d.num(row.vorjahresKorrektur);
+    row.kaltmietKorrektur = d.num(row.kaltmietKorrektur);
     row.wasserWeitereVorauszahlung = d.num(row.wasserWeitereVorauszahlung);
     row.einnahmen = d.num(row.kaltErhalten) + d.num(row.nkVoraus);
     row.aktiveTage = d.tenantActiveDaysInCurrentPeriod(row) || (existingTenant ? d.normalizeActiveDayValue(existingTenant.aktiveTage) : 0) || periodDays;

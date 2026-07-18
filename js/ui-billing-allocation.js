@@ -65,7 +65,7 @@ function renderUmlage() {
     return '<tr><td>' + tenantIdCellHtml(r.tenant) + '</td><td>' + unitRefCellHtml(r.tenant.wohnung) + '</td><td>' + escapeHtml(r.tenant.name) + '</td><td>' + fmtMoney(r.costShare) + '</td><td>' + fmtMoney(r.prepayments) + '</td><td>' + fmtMoney(r.correction || 0) + '</td><td>' + fmtMoney(Math.abs(r.balance)) + '</td><td><span class="status ' + (r.balance > 0.01 ? "warn" : "ok") + '">' + saldoText + '</span></td></tr>';
   }).join("") + calc.privateResults.map(r => '<tr class="owner-private-row"><td>'+tenantIdCellHtml(r.tenant)+'</td><td>'+unitRefCellHtml(r.tenant.wohnung)+'</td><td>'+escapeHtml(r.tenant.name)+'</td><td>'+fmtMoney(r.costShare)+'</td><td>–</td><td>–</td><td>'+fmtMoney(r.costShare)+'</td><td><span class="status warn">Eigentümer/Privat · Kostenanteil</span></td></tr>').join("");
   document.getElementById("umlageSummaryTable").innerHTML =
-    '<thead><tr><th>ID</th><th>Wohnungs-ID</th><th>Name / Rolle</th><th>Kostenanteil</th><th>Vorauszahlungen</th><th>Korrektur Vorjahr</th><th>Saldo / Anteil</th><th>Ergebnis</th></tr></thead><tbody>' + summaryRows + '</tbody>';
+    '<thead><tr><th>ID</th><th>Wohnungs-ID</th><th>Name / Rolle</th><th>Kostenanteil</th><th>Vorauszahlungen</th><th>NK-Korrektur / Gutschrift</th><th>Saldo / Anteil</th><th>Ergebnis</th></tr></thead><tbody>' + summaryRows + '</tbody>';
 
   const unitColumns = allWohnungen();
   const tenantsByUnit = {};

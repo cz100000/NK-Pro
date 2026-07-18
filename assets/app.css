@@ -6484,13 +6484,19 @@ body:not(.document-print-window) #mieter .billing-unit-table thead th.sortable:h
 
 /* AP22F8B – Vorauszahlungen: flache, neutrale Tabellenansicht mit vollständigem Bestand. */
 #einnahmen .prepayment-page-content{display:grid;gap:16px;min-width:0}
-#einnahmen .prepayment-overview{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding:17px 20px;border-left:4px solid var(--nk-ui-color-accent)}
-#einnahmen .prepayment-overview h2,#einnahmen .prepayment-card h2{margin:0;color:#123b65;font-size:1.15rem}
-#einnahmen .prepayment-overview p{margin:5px 0 0;max-width:820px;color:#607286;font-size:.86rem}
+#einnahmen .prepayment-summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--nk-ui-space-md)}
+@media(max-width:1100px){#einnahmen .prepayment-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+#einnahmen .prepayment-summary-card{min-width:0;display:flex;align-items:center;gap:var(--nk-ui-space-md);padding:var(--nk-ui-space-lg);border:1px solid var(--nk-ui-color-border);border-radius:var(--nk-ui-radius-lg);background:var(--nk-ui-color-surface);box-shadow:var(--nk-ui-shadow-sm)}
+#einnahmen .prepayment-summary-card__icon{width:40px;height:40px;display:grid;place-items:center;flex:0 0 40px;color:var(--nk-ui-color-accent)}
+#einnahmen .prepayment-summary-card__icon svg{width:30px;height:30px}
+#einnahmen .prepayment-summary-card--rent .prepayment-summary-card__icon{color:var(--nk-ui-color-success)}
+#einnahmen .prepayment-summary-card--corrections .prepayment-summary-card__icon{color:var(--nk-ui-color-warning)}
+#einnahmen .prepayment-summary-card>span:last-child{min-width:0;display:grid;gap:var(--nk-ui-space-3xs)}
+#einnahmen .prepayment-summary-card small{color:var(--nk-ui-color-text-muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+#einnahmen .prepayment-summary-card strong{color:var(--nk-ui-color-text);font-size:22px;line-height:1.1;white-space:nowrap}
+#einnahmen .prepayment-summary-card em{overflow:hidden;color:var(--nk-ui-color-text-muted);font-size:12px;font-style:normal;white-space:nowrap;text-overflow:ellipsis}
+#einnahmen .prepayment-card h2{margin:0;color:#123b65;font-size:1.15rem}
 #einnahmen .prepayment-eyebrow{margin:0 0 3px;text-transform:uppercase;letter-spacing:.06em;font-size:.68rem;font-weight:800;color:#60788f}
-#einnahmen .prepayment-overview__summary{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px 18px;min-width:330px;color:#52677b;font-size:.82rem}
-#einnahmen .prepayment-overview__summary span{white-space:nowrap}
-#einnahmen .prepayment-overview__summary strong{margin-right:3px;color:#123b65;font-size:1rem}
 #einnahmen .prepayment-card{overflow:hidden;padding:0}
 #einnahmen .prepayment-card__header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:17px 20px;border-bottom:1px solid var(--nk-ui-color-border);background:#fff}
 #einnahmen .prepayment-card__header h2 span{color:#6a7d90}
@@ -6502,11 +6508,21 @@ body:not(.document-print-window) #mieter .billing-unit-table thead th.sortable:h
 #einnahmen .prepayment-toolbar select{flex:0 1 220px;max-width:220px}
 #einnahmen .prepayment-results{margin-left:auto;white-space:nowrap;color:#617589;font-size:.82rem}
 #einnahmen .prepayment-table-shell{margin:10px 10px 0;max-width:calc(100% - 20px);background:#fff}
-#einnahmen .prepayment-matrix{min-width:1180px}
+#einnahmen .prepayment-matrix{min-width:1180px;table-layout:fixed}
+#einnahmen .prepayment-matrix col.prepayment-cost-col{width:240px}
+#einnahmen .prepayment-matrix col.prepayment-sum-col{width:130px}
+#einnahmen .prepayment-matrix col.prepayment-case-col{width:150px}
+#einnahmen .prepayment-matrix .prepayment-case-head,#einnahmen .prepayment-matrix .prepayment-case-cell{width:150px;min-width:150px;max-width:150px}
 #einnahmen .prepayment-rent-table{min-width:980px}
-#einnahmen .prepayment-correction-table{min-width:760px}
+#einnahmen .prepayment-correction-table{min-width:1120px}
 #einnahmen .prepayment-card__footer{display:flex;justify-content:space-between;gap:12px;padding:10px 18px;color:#64788b;font-size:.78rem;border-top:1px solid var(--nk-ui-color-border);background:#f8fbfd}
 #einnahmen .prepayment-quality__body{padding:14px 18px}
+#einnahmen .prepayment-quality-summary{display:flex;align-items:center;justify-content:space-between;gap:16px}
+#einnahmen .prepayment-quality-summary p{margin:3px 0 0;color:var(--nk-ui-color-text-muted);font-size:.82rem}
+#einnahmen .prepayment-quality-list{display:grid;gap:8px;margin:12px 0 0;padding:0;list-style:none}
+#einnahmen .prepayment-quality-list li{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:start;gap:10px;padding:10px 12px;border:1px solid var(--nk-ui-color-border);border-radius:var(--nk-ui-radius-md);background:var(--nk-ui-color-surface-muted)}
+#einnahmen .prepayment-quality-list li>span:last-child{display:grid;gap:2px}
+#einnahmen .prepayment-quality-list small{color:var(--nk-ui-color-text-muted)}
 #einnahmen .prepayment-error{margin:0}
 #einnahmen .prepayment-empty{text-align:center;padding:28px!important;color:#697d90}
 #einnahmen .prepayment-table-shell td strong{display:block;color:#123b65}
@@ -6538,10 +6554,9 @@ body:not(.document-print-window) #einnahmen .prepayment-sort span{color:var(--nk
 body:not(.document-print-window) #einnahmen .nk-ui-table thead th.sortable::after{content:none!important;display:none!important}
 body:not(.document-print-window) #einnahmen .nk-ui-table thead th.sortable:hover{background:var(--nk-ui-color-surface-muted)!important}
 @media(max-width:760px){
-  #einnahmen .prepayment-overview{flex-direction:column}
-  #einnahmen .prepayment-overview__summary{justify-content:flex-start;min-width:0}
   #einnahmen .prepayment-toolbar{align-items:stretch;flex-direction:column}
   #einnahmen .prepayment-toolbar .prepayment-search,#einnahmen .prepayment-toolbar select,#einnahmen .prepayment-toolbar button{flex:auto;max-width:none;width:100%}
   #einnahmen .prepayment-results{margin-left:0}
-  #einnahmen .prepayment-card__header,#einnahmen .prepayment-card__footer{align-items:flex-start;flex-direction:column}
+  #einnahmen .prepayment-card__header,#einnahmen .prepayment-card__footer,#einnahmen .prepayment-quality-summary{align-items:flex-start;flex-direction:column}
+  #einnahmen .prepayment-summary-grid{grid-template-columns:1fr}
 }
