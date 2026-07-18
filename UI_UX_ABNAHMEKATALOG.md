@@ -142,3 +142,16 @@ Eine Seite ist nur migriert, wenn alle anwendbaren Punkte mit **bestanden**, **n
 - [ ] Eine UI-Migration fügt keine produktive Aktion hinzu, die im Bestand nicht vorhanden war.
 - [ ] Bestandskennzahlen nennen nur fachlich vorhandene Zustände und verwenden vorhandene Datenquellen.
 - [ ] Breite Stammdatentabellen bleiben in einer eigenen weißen Overflow-Hülle; die Gesamtseite läuft nicht horizontal über.
+
+## AP22F6B – Abnahme Nebenkostenabrechnung Übersicht
+
+- [x] Genau eine kompakte gemeinsame Tabellenstruktur mit getrennten Gruppen für aktuelle und archivierte Abrechnungen.
+- [x] Suche, Filter Alle/Aktuell/Archiv und Ergebniszählung arbeiten rein darstellungsbezogen.
+- [x] Keine eigenständigen Kennzahlenkarten und kein Drei-Punkte-Menü.
+- [x] Alle vorhandenen Aktionen bleiben sichtbar und verwenden unveränderte `data-ui-action`-Handler.
+- [x] Aktionsbuttons sind quadratisch, ausschließlich mit SVG-Symbol sichtbar, vollständig per Tooltip und `aria-label` beschriftet und in einer einzigen `nowrap`-Gruppe angeordnet.
+- [x] Fokus und deaktivierte Zustände sind sichtbar und eindeutig.
+- [x] Schreibschutz wird ausschließlich über die große Notice im normalen Dokumentfluss vermittelt; die Kontextleiste enthält keine Modusangabe.
+- [x] Desktop, 620 px, 390 px und 200-Prozent-Zoomäquivalent besitzen keinen horizontalen Dokument-Overflow; bei Bedarf scrollt nur die Tabellenhülle.
+- [x] Positivliste, 392 geschützte Dateien und 25 geschützte Bereiche sind abgeglichen.
+- [x] Fach-, Status-, Speicher-, Lade-, Migrations-, Archivierungs-, Berechnungs-, Brief- und Drucklogik bleiben unverändert.

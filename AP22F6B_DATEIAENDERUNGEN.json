@@ -1,0 +1,182 @@
+{
+  "release": "V99.4.41",
+  "workPackage": "AP22F6B",
+  "files": [
+    {
+      "path": "AP22F6B_ABNAHMEBERICHT.md",
+      "change": "AP22F6B-Abschluss- und Nachweisdokument."
+    },
+    {
+      "path": "AP22F6B_ABSCHLUSS.md",
+      "change": "AP22F6B-Abschluss- und Nachweisdokument."
+    },
+    {
+      "path": "AP22F6B_DATEIAENDERUNGEN.json",
+      "change": "AP22F6B-Abschluss- und Nachweisdokument."
+    },
+    {
+      "path": "AP22F6B_DATEIAENDERUNGEN.md",
+      "change": "AP22F6B-Abschluss- und Nachweisdokument."
+    },
+    {
+      "path": "AP22F6B_POSITIVLISTENABGLEICH.md",
+      "change": "AP22F6B-Abschluss- und Nachweisdokument."
+    },
+    {
+      "path": "AP22F6B_README.md",
+      "change": "AP22F6B-Abschluss- und Nachweisdokument."
+    },
+    {
+      "path": "AP22F6B_SCHUTZ_HASH_BERICHT.md",
+      "change": "AP22F6B-Abschluss- und Nachweisdokument."
+    },
+    {
+      "path": "AP22F6B_TESTBERICHT.md",
+      "change": "AP22F6B-Abschluss- und Nachweisdokument."
+    },
+    {
+      "path": "AP22F6B_TEST_RESULTS.json",
+      "change": "AP22F6B-Abschluss- und Nachweisdokument."
+    },
+    {
+      "path": "AP22F6B_UI_REFERENZ.md",
+      "change": "AP22F6B-Abschluss- und Nachweisdokument."
+    },
+    {
+      "path": "AP22F6B_UMSETZUNGSBERICHT.md",
+      "change": "AP22F6B-Abschluss- und Nachweisdokument."
+    },
+    {
+      "path": "CHANGELOG.md",
+      "change": "Releaseeintrag V99.4.41 ergänzt."
+    },
+    {
+      "path": "NK-PRO-PROJEKTSTAND.md",
+      "change": "Projektstand auf V99.4.41/AP22F6B fortgeschrieben."
+    },
+    {
+      "path": "README.md",
+      "change": "Releasebeschreibung und Start-/Prüfhinweise für AP22F6B aktualisiert."
+    },
+    {
+      "path": "RELEASE_NOTES.md",
+      "change": "Releasehinweise für AP22F6B ergänzt."
+    },
+    {
+      "path": "SHA256SUMS.txt",
+      "change": "Nach Abschluss vollständig neu erzeugte interne Prüfsummenliste (ohne Selbsthash)."
+    },
+    {
+      "path": "UI_KOMPONENTENKATALOG.md",
+      "change": "Tabelle, Filter, Aktionsgruppe und Symbolbuttons der Abrechnungsübersicht dokumentiert."
+    },
+    {
+      "path": "UI_MIGRATIONSMATRIX.md",
+      "change": "Seite start als nach UI Referenz 1.0 migriert dokumentiert."
+    },
+    {
+      "path": "UI_UX_ABNAHMEKATALOG.md",
+      "change": "AP22F6B-Abnahmepunkte ergänzt und abgehakt."
+    },
+    {
+      "path": "assets/app.css",
+      "change": "Ausschließlich nachgelagerte, auf #start begrenzte Regeln für kompakte Tabelle, interne horizontale Tabellenhülle, nicht umbrechende Aktionsgruppe, quadratische Symbolbuttons, Fokus, deaktivierte Zustände und Responsive-Verhalten ergänzt."
+    },
+    {
+      "path": "index.html",
+      "change": "Struktur und Semantik von section#start auf eine kompakte Tabellenübersicht mit Suche, Bestandsfiltern, Ergebniszählung, interner Tabellenhülle und Dokumentfluss-Hinweis migriert; globale Leisten, Dialoge und andere Seiten unverändert."
+    },
+    {
+      "path": "js/app-runtime-config.js",
+      "change": "Zentrale Releasekennung und Änderungsbeschreibung auf V99.4.41/AP22F6B fortgeschrieben."
+    },
+    {
+      "path": "js/service-worker-register.js",
+      "change": "Build-/Cachekennung auf 99.4.41-ap22f6b fortgeschrieben."
+    },
+    {
+      "path": "js/ui-navigation-pages.js",
+      "change": "Reine Darstellungs-, Such-, Filter- und Zähllogik der Abrechnungsübersicht sowie Icon-only-Aktionsmarkup ergänzt; bestehende data-ui-action-Ziele und Lebenszyklusfunktionen unverändert."
+    },
+    {
+      "path": "js/ui-page-controller.js",
+      "change": "Startseite aus dem bisherigen großen Prozessdashboard herausgenommen und der zugehörige Strukturaudit auf AP22F6B aktualisiert."
+    },
+    {
+      "path": "manifest.webmanifest",
+      "change": "Manifestversion und Releasebeschreibung auf V99.4.41 aktualisiert."
+    },
+    {
+      "path": "nk-pro-project.json",
+      "change": "Projektversion, Releasebezeichnung und Migrationsstand aktualisiert."
+    },
+    {
+      "path": "package-lock.json",
+      "change": "Nur Paketmetadaten auf 99.4.41 synchronisiert; keine neue Abhängigkeit."
+    },
+    {
+      "path": "package.json",
+      "change": "Paketname/-version, Beschreibung sowie AP22F6B-Testskripte aktualisiert; keine neue Abhängigkeit."
+    },
+    {
+      "path": "screenshots/AP22F6B/01_desktop_uebersicht_geschlossen.png",
+      "change": "Realer Chromium-Browser-Screenshot des benannten AP22F6B-Zustands."
+    },
+    {
+      "path": "screenshots/AP22F6B/02_desktop_bearbeiten.png",
+      "change": "Realer Chromium-Browser-Screenshot des benannten AP22F6B-Zustands."
+    },
+    {
+      "path": "screenshots/AP22F6B/03_desktop_nur_ansehen.png",
+      "change": "Realer Chromium-Browser-Screenshot des benannten AP22F6B-Zustands."
+    },
+    {
+      "path": "screenshots/AP22F6B/04_desktop_archiviert.png",
+      "change": "Realer Chromium-Browser-Screenshot des benannten AP22F6B-Zustands."
+    },
+    {
+      "path": "screenshots/AP22F6B/05_schmal_620.png",
+      "change": "Realer Chromium-Browser-Screenshot des benannten AP22F6B-Zustands."
+    },
+    {
+      "path": "screenshots/AP22F6B/06_schmal_390.png",
+      "change": "Realer Chromium-Browser-Screenshot des benannten AP22F6B-Zustands."
+    },
+    {
+      "path": "screenshots/AP22F6B/07_leerzustand.png",
+      "change": "Realer Chromium-Browser-Screenshot des benannten AP22F6B-Zustands."
+    },
+    {
+      "path": "screenshots/AP22F6B/08_fehlerzustand.png",
+      "change": "Realer Chromium-Browser-Screenshot des benannten AP22F6B-Zustands."
+    },
+    {
+      "path": "screenshots/AP22F6B/09_zoom_200_prozent_aequivalent.png",
+      "change": "Realer Chromium-Browser-Screenshot des benannten AP22F6B-Zustands."
+    },
+    {
+      "path": "service-worker.js",
+      "change": "PWA-Cache- und Buildkennung auf AP22F6B fortgeschrieben."
+    },
+    {
+      "path": "tests/ap22f6b-billing-overview.spec.js",
+      "change": "Realer Chromium-Test für Aktionen, Schreibschutz, Kontext, Suche/Filter, Leer-/Fehlerzustände, Responsive und Screenshots."
+    },
+    {
+      "path": "tests/ap22f6b-billing-overview.test.cjs",
+      "change": "Statischer Struktur-, Semantik-, Positivlisten- und Fachlogikschutztest."
+    },
+    {
+      "path": "tests/ap22f6b-protected-areas.test.cjs",
+      "change": "Hashprüfung von 392 geschützten Dateien und 25 geschützten Bereichen."
+    },
+    {
+      "path": "ui-reference/index.html",
+      "change": "Nicht produktive UI-Referenz um die freigegebene AP22F6B-Abrechnungsübersicht ergänzt."
+    },
+    {
+      "path": "ui-reference/reference.css",
+      "change": "Nicht produktive Referenzdarstellung für Tabelle, Filter und Symbolaktionsspalte ergänzt."
+    }
+  ]
+}

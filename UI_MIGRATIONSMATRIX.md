@@ -74,3 +74,9 @@ Die Wohnungsverwaltung gilt damit als vollständig auf „NK-Pro UI Referenz 1.0
 | `mieterverwaltung` | abgeschlossen V99.4.40 | vier bestandsbasierte Kennzahlenkarten, Suche, Wohnungs-/Statusfilter, Tabellenkarte, Aktionsspalte, Archivbereich, Ergebnisfuß, responsive Tabellenhülle | zwölf vorhandene Felder, Neuanlage, Speichern, Archivieren, Reaktivieren, zentrale Daten- und Persistenzwege |
 
 Beide Seiten gelten damit in ihrem freigegebenen Funktionsumfang als auf `NK-Pro UI Referenz 1.0` migriert. Die Inhalte der Mietverhältnis-Kennzahlen können in einem späteren Paket geändert werden, sofern ausschließlich vorhandene Daten verwendet werden; neue Statusregeln oder Berechnungen erfordern eine gesonderte Planung.
+
+## AP22F6B – Fortschreibung
+
+| Seite | Status | Migrierte Darstellung | Unverändert geschützt |
+|---|---|---|---|
+| `start` – Nebenkosten abrechnen: Übersicht | abgeschlossen V99.4.41 | gemeinsame kompakte Tabelle für aktuelle und archivierte Abrechnungen; Suche; Filter Alle/Aktuell/Archiv; Ergebniszählung; interne Scrollhülle; quadratische SVG-Symbolaktionen ohne Umbruch; Leer-, Filterleer- und Fehlerzustand; Schreibschutz-Notice im Dokumentfluss | Navigation, Seitenkopf, Kontextleiste, Abrechnungsstatus, Zeitraum, Fortschritt, Saldo, Fach- und Statuslogik, Handler, Persistenz, Migration, Archivierung, Berechnung, Brief und Druck |

@@ -1,0 +1,78 @@
+{
+  "release": "V99.4.41",
+  "workPackage": "AP22F6B",
+  "date": "2026-07-18",
+  "status": "passed_with_historical_test_notes",
+  "source": {
+    "productZip": "NK-Pro_V99_4_40_AP22F5B_Zaehler_und_Mietverhaeltnisse_Korrektur1.zip",
+    "productSha256": "ad73fed915f043c20cb291f19381041a1726e156194de1f5095af267a48fb13e",
+    "planningZip": "AP22F6A_Planungsartefakte_Korrektur2.zip",
+    "planningSha256": "e612681f230d507b8bddb8aee77f847c34ecc3d739009e5f49d6190f87624ae9"
+  },
+  "tests": [
+    {
+      "name": "AP22F6B static structure",
+      "command": "npm run test:ap22f6b:static",
+      "status": "passed",
+      "detail": "Strukturtest und Schutztest bestanden; 392 Dateien, 25 Bereiche."
+    },
+    {
+      "name": "AP22F6B browser",
+      "command": "npm run test:ap22f6b:browser",
+      "status": "passed",
+      "detail": "Aktionen, Handler, Suche, Filter, Tooltips, aria-label, Fokus, Schreibschutz, Kontext, Statuslogik, Leer-/Fehlerzustände, 620 px, 390 px und Zoomäquivalent bestanden."
+    },
+    {
+      "name": "Release check",
+      "command": "npm run release:check",
+      "status": "passed",
+      "detail": "Syntax, Fixtures, AP22F6B-Schutz, Zählerregression, Architektur, AP21C und ZIP-Inhaltsprüfung bestanden."
+    },
+    {
+      "name": "AP22F5B neighboring browser regression",
+      "command": "node tests/ap22f5b-pages-browser.test.cjs",
+      "status": "passed",
+      "detail": "Zähler und Mietverhältnisse unverändert im Browser bestanden."
+    },
+    {
+      "name": "Document export and migration browser regression",
+      "command": "CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npx playwright test --project=document-export --project=migration-restore --workers=1",
+      "status": "passed",
+      "detail": "8/8 Tests bestanden."
+    },
+    {
+      "name": "Persistence, backup and letter browser regression",
+      "command": "CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npx playwright test --project=persistence-backup --project=ap13-letter-layout --workers=1",
+      "status": "passed",
+      "detail": "13/13 Tests bestanden."
+    },
+    {
+      "name": "Object data neighboring browser regression",
+      "command": "CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npx playwright test --project=ap22f3b-object-data --workers=1",
+      "status": "passed",
+      "detail": "9/9 Tests bestanden einschließlich 620/390 px und Fokus."
+    },
+    {
+      "name": "Quality system unaffected browser regression",
+      "command": "CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npx playwright test --project=ap20-central-quality-system --grep-invert \"Ansichtsmodus sperrt AP20-Bestätigungen technisch und visuell\" --workers=1",
+      "status": "passed",
+      "detail": "4/4 fachlich relevante Tests bestanden."
+    }
+  ],
+  "historicalNotes": [
+    "Der geschützte AP22F5B-Statiktest erwartet fest V99.4.40 und schlägt nach der planmäßigen Versionsfortschreibung auf V99.4.41 ausschließlich an dieser Altversionsassertion fehl.",
+    "Ein geschützter AP20-Browsertest erwartet das planmäßig bereits entfallene Element [data-global-billing-mode]. Die aktuelle Designvorgabe verlangt ausdrücklich keine Modusangabe; der Schreibschutz selbst ist durch AP22F6B-Browsertests bestätigt.",
+    "Ältere AP19/App-Smoke-Assertions erwarten die frühere Startseitenstruktur und Modusanzeige. Sie wurden nicht verändert und sind für AP22F6B durch die neue spezifische Testgruppe ersetzt."
+  ],
+  "screenshots": [
+    "screenshots/AP22F6B/01_desktop_uebersicht_geschlossen.png",
+    "screenshots/AP22F6B/02_desktop_bearbeiten.png",
+    "screenshots/AP22F6B/03_desktop_nur_ansehen.png",
+    "screenshots/AP22F6B/04_desktop_archiviert.png",
+    "screenshots/AP22F6B/05_schmal_620.png",
+    "screenshots/AP22F6B/06_schmal_390.png",
+    "screenshots/AP22F6B/07_leerzustand.png",
+    "screenshots/AP22F6B/08_fehlerzustand.png",
+    "screenshots/AP22F6B/09_zoom_200_prozent_aequivalent.png"
+  ]
+}

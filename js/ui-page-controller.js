@@ -83,7 +83,7 @@ function renderStatusAndFeedbackSafely() {
 
 
 
-const AP17_DASHBOARD_TABS = Object.freeze(["objektuebersicht", "start"]);
+const AP17_DASHBOARD_TABS = Object.freeze(["objektuebersicht"]);
 const AP17_ICON_PATHS = Object.freeze({
   dashboard:'<path d="M4 4h7v7H4zM13 4h7v4h-7zM13 10h7v10h-7zM4 13h7v7H4z"/>',
   building:'<path d="M5 21V5l7-2v18M12 8h7v13M8 8h1M8 12h1M8 16h1M15 11h1M15 15h1M3 21h18"/>',
@@ -464,23 +464,21 @@ function updateAllPageHeaders() {
 
 function auditV992Structure() {
   const objectDashboard=document.querySelector('[data-area-dashboard="object"]');
-  const billingDashboard=document.querySelector('[data-area-dashboard="billing"]');
   const billingPages=BILLING_NAV_TABS.map(tab=>document.querySelector('[data-page-tab="'+tab+'"]')).filter(Boolean);
   const checks={
     objectDashboard:!!objectDashboard,
-    billingDashboard:!!billingDashboard,
     objectDirectEntries:!!objectDashboard&&objectDashboard.querySelectorAll('.dashboard-entry').length===4,
-    billingWorkflowEntries:!!billingDashboard&&billingDashboard.querySelectorAll('.workflow-stage').length===10,
+    billingDashboardRemoved:!document.querySelector('[data-area-dashboard="billing"]'),
     productiveDashboardValues:document.querySelectorAll('.dashboard-preview-notice').length===0&&document.querySelectorAll('[data-value-kind="dummy"]').length===1,
     controlledContext:NK_PRO_MODULES.billingContext.describe().stateCount===3,
     contextClosedAfterStart:!NK_PRO_MODULES.billingContext.isOpen()||document.documentElement.dataset.billingExplicitlyOpened==="true",
     billingHeadersWithoutRedundantPeriod:billingPages.every(page=>!page.querySelector('[data-page-period]')),
-    centralBillingTable:!!document.querySelector('#startArchiveTable')&&typeof buildBillingRecordsTableHtml==='function'&&(buildBillingRecordsTableHtml().match(/<th(?:\s|>)/g)||[]).length===9,
+    centralBillingTable:typeof buildBillingRecordsTableHtml==='function'&&((buildBillingRecordsTableHtml().split('<tbody',1)[0].match(/<th(?:\s|>)/g)||[]).length===7),
     contextBar:!!document.querySelector('[data-global-billing-context]'),
     svgSectionChevrons:Array.from(document.querySelectorAll('.page-section__chevron')).every(node=>!!node.querySelector('svg')),
     compactHeaders:Array.from(document.querySelectorAll('.app-page')).every(page=>page.querySelectorAll(':scope > .page-header').length===1)
   };
-  const report={version:APP_VERSION,workPackage:"AP21A",generatedAt:new Date().toISOString(),allPassed:Object.values(checks).every(Boolean),checks};
+  const report={version:APP_VERSION,workPackage:"AP22F6B",generatedAt:new Date().toISOString(),allPassed:Object.values(checks).every(Boolean),checks};
   NK_PRO_MODULES.runtimeDiagnostics.setStructureAudit(report);
   document.documentElement.dataset.v992Audit=report.allPassed?'passed':'failed';
   document.documentElement.dataset.ap17Audit=report.allPassed?'passed':'failed';

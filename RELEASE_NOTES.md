@@ -1,3 +1,9 @@
+# Release V99.4.41 – AP22F6B Nebenkostenabrechnung Übersicht
+
+Dieses Release migriert ausschließlich die Seite „Nebenkosten abrechnen – Übersicht“. Die vorhandenen Abrechnungen, Status-, Fortschritts-, Zeitraum- und Saldodarstellungen sowie alle bestehenden Aktionswege bleiben erhalten. Neu ist ausschließlich die freigegebene kompakte Darstellung mit gemeinsamer Tabelle, Suche, Statussegmenten, Ergebniszählung und einer nicht umbrechenden Symbolaktionsgruppe.
+
+Datenmodell und Datenschema 5, Fachlogik, Persistenz, Migration, Archivierung, Abrechnungsberechnung, Navigation sowie Brief- und Drucksystem wurden nicht verändert.
+
 # Release V99.4.40 – AP22F5B Korrektur 1
 
 Die Mietverhältnisse-Seite verwendet nun eine kompakte Übersicht: Zusammenfassungszeilen enthalten keine dauerhaften Eingabe- oder Auswahlfelder. Alle zwölf vorhandenen Pflegefelder erscheinen erst im aufgeklappten Detailbereich. Aktive und archivierte Mietverhältnisse teilen sich eine Tabellenkarte mit dem Umschalter `Aktiv / Archiv`; Archivzeilen und Archivdetails bleiben schreibgeschützt, die bestehende Reaktivierungsaktion bleibt erhalten.

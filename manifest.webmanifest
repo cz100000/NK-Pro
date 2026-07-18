@@ -1,7 +1,7 @@
 {
-  "name": "NK-Pro V99.4.40",
+  "name": "NK-Pro V99.4.41",
   "short_name": "NK-Pro",
-  "description": "Lokale Nebenkostenabrechnung mit zentralem Prüfsystem und auf UI Referenz 1.0 migrierten Seiten Zähler-DUMMY und Mietverhältnisse.",
+  "description": "Lokale Nebenkostenabrechnung mit zentralem Prüfsystem und auf UI Referenz 1.0 migrierter Seite Nebenkosten abrechnen – Übersicht.",
   "lang": "de-DE",
   "id": "./",
   "start_url": "./",
@@ -9,7 +9,7 @@
   "display": "standalone",
   "background_color": "#f4f6f9",
   "theme_color": "#031d41",
-  "version": "99.4.40",
+  "version": "99.4.41",
   "icons": [
     {
       "src": "./icons/icon-180.png",

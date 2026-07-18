@@ -1,3 +1,13 @@
+# V99.4.41 – AP22F6B Nebenkostenabrechnung Übersicht (2026-07-18)
+
+- Seite `start` als kompakte gemeinsame Übersicht für aktuelle und archivierte Abrechnungen migriert.
+- Suche, Filter Alle/Aktuell/Archiv und Ergebniszählung ergänzt, ohne Fachdaten zu verändern.
+- Aktionsspalte auf quadratische SVG-Symbolbuttons mit vollständigen Tooltips, `aria-label`, Fokus- und deaktivierten Zuständen umgestellt.
+- Bestehende Handler und Statuslogik für Bearbeiten, Ansehen, Abschließen, Archivieren, Archiv aktualisieren und Zur Korrektur öffnen unverändert weiterverwendet.
+- Interner horizontaler Tabellen-Scroll bei schmalen Viewports; kein horizontaler Seitenüberlauf.
+- Schreibschutzhinweise ausschließlich im normalen Dokumentfluss; Kontextleiste weiterhin ohne Modusangabe.
+- Release-, PWA-, Cache- und Paketkennungen auf V99.4.41 / `99.4.41-ap22f6b` fortgeschrieben.
+
 # V99.4.40 – AP22F5B Korrektur 1 (2026-07-18)
 
 - dauerhaft sichtbare Formularmatrix der Mietverhältnisse durch kompakte Zusammenfassungszeilen ersetzt,

@@ -1,3 +1,9 @@
+# Projektstand V99.4.41 – AP22F6B Nebenkostenabrechnung Übersicht
+
+Die Seite `start` („Nebenkosten abrechnen – Übersicht“) entspricht dem freigegebenen Zielbild AP22F6A Korrektur 2. Verbindlich umgesetzt sind die kompakte gemeinsame Tabellenstruktur, Trennung aktueller und archivierter Datensätze, Suche, Bestandsfilter, Ergebniszählung sowie quadratische Symbolbuttons in einer einzigen nicht umbrechenden Aktionsgruppe.
+
+Navigation, globaler Seitenkopf, Abrechnungskontext, Datenmodell, Fach- und Statuslogik, Persistenz, Migration, Archivierung, Berechnung, Qualitätsregeln und Dokumentausgabe bleiben unverändert.
+
 # Projektstand V99.4.40 – AP22F5B Korrektur 1
 
 Die Seite `mieterverwaltung` verwendet eine kompakte aktive Tabelle und eine gemeinsame Archivansicht. Alle zwölf bestehenden Pflegefelder sind weiterhin verfügbar, werden jedoch nur im aufgeklappten Detailbereich angezeigt. Archivdatensätze sind vollständig lesend; die vorhandene Reaktivierung bleibt erhalten. Die Zählerseite bleibt unverändert ein DUMMY.

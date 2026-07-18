@@ -79,3 +79,14 @@ Die alten Objekt-Dashboard-Kennzahlen und die Kostenartenstatuskarte sind für `
 | Interne Tabellenhülle mit weißem Innenabstand | migriert | beide Seiten; kein horizontaler Dokumentüberlauf |
 
 DUMMY-Komponenten dürfen keine produktiv wirkenden Aktionen oder Speicherwege vortäuschen. Farbakzente dienen nur der Unterscheidung der Zählerarten und werden über zentrale Tokens bezogen.
+
+## AP22F6B – Ergänzte produktive Komponenten
+
+| Komponente | Produktiver Status | Einsatz |
+|---|---|---|
+| Abrechnungsübersichts-Tabelle | migriert | aktuelle und archivierte Abrechnungen auf `start` |
+| Segmentfilter Alle/Aktuell/Archiv | migriert | reine Sichtfilterung ohne Fachdatenmutation |
+| Tabellen-Suchfeld und Ergebniszählung | migriert | Abrechnung, Objekt, Status, Arbeitsstand, Datum und Saldo |
+| Quadratischer Tabellen-Symbolbutton | migriert | Auge, Stift, Abschluss, Archiv und Archiv-Aktualisierung; `title` und `aria-label` vollständig |
+| Nicht umbrechende Aktionsgruppe | migriert | sämtliche je Datensatz verfügbaren Aktionen in bestehender Reihenfolge |
+| Interne responsive Tabellenhülle | migriert | 620 px, 390 px und Zoomäquivalent ohne Dokument-Overflow |

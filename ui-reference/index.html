@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="light">
-  <title>NK-Pro UI-/UX-Referenzbibliothek · AP22F5B</title>
+  <title>NK-Pro UI-/UX-Referenzbibliothek · AP22F6B</title>
   <link rel="stylesheet" href="reference.css">
 </head>
 <body>
@@ -32,23 +32,25 @@
     <symbol id="icon-flame" viewBox="0 0 24 24"><path d="M13 2s1 4-2 7c-2.2 2.2-3 4.1-3 6a4 4 0 0 0 8 0c0-1.8-.8-3.4-2-5 3 1.5 5 4.2 5 7a7 7 0 1 1-14 0c0-4.5 3-8.5 8-15Z"/></symbol>
     <symbol id="icon-bolt" viewBox="0 0 24 24"><path d="m13 2-8 12h7l-1 8 8-12h-7l1-8Z"/></symbol>
     <symbol id="icon-archive" viewBox="0 0 24 24"><path d="M3 6h18M5 6v15h14V6M8 3h8l2 3H6l2-3M9 11h6"/></symbol>
+    <symbol id="icon-eye" viewBox="0 0 24 24"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></symbol>
+    <symbol id="icon-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6.1 8.4A7 7 0 0 1 18.5 7M17.9 15.6A7 7 0 0 1 5.5 17"/></symbol>
   </svg>
   <a class="skip-link" href="#main">Zum Inhalt</a>
   <header class="reference-banner">
     <div>
-      <p class="eyebrow">NK-Pro · AP22F5B · nicht produktiv</p>
+      <p class="eyebrow">NK-Pro · AP22F6B · nicht produktiv</p>
       <h1>UI-/UX-Referenzbibliothek</h1>
       <p>Verbindliche visuelle Abnahmegrundlage. Ausschließlich fiktive Beispieldaten; keine Fachlogik, keine Persistenz und keine produktiven Ereignisse.</p>
     </div>
     <div class="reference-badges" aria-label="Referenzstatus">
       <span class="badge badge--info">Designvertrag V1</span>
-      <span class="badge badge--neutral">Migrationsstand V99.4.40</span>
+      <span class="badge badge--neutral">Migrationsstand V99.4.41</span>
     </div>
   </header>
 
   <nav class="section-nav" aria-label="Inhaltsverzeichnis der Referenzbibliothek">
     <a href="#styleguide">Zielbild</a><a href="#navigation">Navigation</a><a href="#shell">Seitenschale</a>
-    <a href="#object-overview">Objektübersicht</a><a href="#object-data">Objektdaten</a><a href="#units-page">Wohnungen</a><a href="#meters-page">Zähler</a><a href="#tenancies-page">Mietverhältnisse</a><a href="#cards">Karten</a><a href="#accordions">Klappboxen</a><a href="#tables">Tabellen</a>
+    <a href="#object-overview">Objektübersicht</a><a href="#object-data">Objektdaten</a><a href="#units-page">Wohnungen</a><a href="#meters-page">Zähler</a><a href="#tenancies-page">Mietverhältnisse</a><a href="#billing-overview-page">Abrechnungsübersicht</a><a href="#cards">Karten</a><a href="#accordions">Klappboxen</a><a href="#tables">Tabellen</a>
     <a href="#forms">Formulare</a><a href="#actions">Aktionen</a><a href="#notices">Hinweise</a>
     <a href="#dialogs">Dialoge</a><a href="#states">Zustände</a><a href="#responsive">Responsive</a>
   </nav>
@@ -180,6 +182,17 @@
       <article class="card tenancy-reference__archive"><header><div><p class="eyebrow">Gleiche Tabellenfläche</p><h3>Archiv <span>(2)</span></h3></div><span class="status status--info">Schreibgeschützt</span></header><p>Die Archivansicht verwendet denselben Tabellenkopf, dieselben Abstände, dieselbe Suche und dieselbe Aktionsspalte. Archivdetails enthalten keine Eingabefelder; Reaktivieren bleibt als bestehende Aktion erhalten.</p></article>
       <div class="notice notice--readonly tenancy-reference__readonly"><div class="notice-icon"><svg class="svg-icon" aria-hidden="true"><use href="#icon-lock"></use></svg></div><div><strong>Nur ansehen</strong><p>Aktive Details bleiben lesbar, aber deaktiviert. Archivdatensätze sind unabhängig vom Modus immer schreibgeschützt.</p></div><button class="button button--secondary" type="button">Zur Bearbeitung öffnen</button></div>
       <p class="reference-rule"><strong>Verbindliche Abgrenzung:</strong> Es werden keine Felder, Statusregeln oder Speicherwege ergänzt. Die Korrektur verändert nur Informationsdichte, Sichtbarkeit der bestehenden Felder und die gemeinsame Darstellung von Aktivbestand und Archiv.</p>
+    </section>
+
+    <section id="billing-overview-page" class="reference-section" data-reference-group="billing-overview-page">
+      <div class="section-heading"><div><p class="eyebrow">AP22F6B · verbindliche Zielkomponente</p><h2>Nebenkosten abrechnen – Übersicht</h2><p>Aktuelle und archivierte Abrechnungen in einer kompakten, filterbaren Tabellenfläche mit nicht umbrechenden Symbolaktionen.</p></div><span class="badge badge--info">UI Referenz 1.0</span></div>
+      <article class="card billing-overview-reference">
+        <header class="billing-overview-reference__header"><div><p class="eyebrow">Abrechnungsbestand</p><h3>Abrechnungen <span>(5)</span></h3></div><div class="billing-overview-reference__segments" aria-label="Abrechnungen filtern"><button class="is-active" type="button">Alle <span>5</span></button><button type="button">Aktuell <span>1</span></button><button type="button">Archiv <span>4</span></button></div></header>
+        <div class="toolbar billing-overview-reference__toolbar"><input type="search" aria-label="Abrechnung oder Objekt suchen" placeholder="Abrechnung oder Objekt suchen …"><button class="button button--secondary" type="button">Zurücksetzen</button><button class="button button--primary" type="button">+ Neue Abrechnung</button><small>5 von 5 Abrechnungen</small></div>
+        <div class="billing-overview-reference__table-wrap" tabindex="0" aria-label="Beispieltabelle horizontal verschiebbar"><table class="table billing-overview-reference__table"><thead><tr><th>Abrechnung</th><th>Objekt</th><th>Status</th><th>Arbeitsstand</th><th>Zuletzt bearbeitet</th><th>Saldo</th><th>Aktionen</th></tr></thead><tbody><tr class="billing-overview-reference__group"><th colspan="7">Aktuelle Abrechnung · 1</th></tr><tr><td><strong>2025</strong><small>1.1.2025 – 31.12.2025</small></td><td><strong>Am Rauhen Biehl 5</strong><small>AMR5</small></td><td><span class="status status--warning">In Bearbeitung</span></td><td><strong>0 von 3 Kostenarten vollständig</strong><small>4 Einheiten berechenbar</small></td><td><strong>Noch nicht gespeichert</strong></td><td>in der Abrechnung</td><td><div class="billing-overview-reference__actions"><button class="icon-button" type="button" title="Bearbeiten" aria-label="Bearbeiten"><svg class="svg-icon" aria-hidden="true"><use href="#icon-edit"></use></svg></button><button class="icon-button" type="button" title="Ansehen" aria-label="Ansehen"><svg class="svg-icon" aria-hidden="true"><use href="#icon-eye"></use></svg></button><button class="icon-button" type="button" title="Abschließen" aria-label="Abschließen"><svg class="svg-icon" aria-hidden="true"><use href="#icon-check"></use></svg></button><button class="icon-button" type="button" title="Archivieren" aria-label="Archivieren"><svg class="svg-icon" aria-hidden="true"><use href="#icon-archive"></use></svg></button></div></td></tr><tr class="billing-overview-reference__group"><th colspan="7">Archivierte Abrechnungen · 4</th></tr><tr><td><strong>2024</strong><small>1.1.2024 – 31.12.2024</small></td><td><strong>Am Rauhen Biehl 5</strong><small>AMR5</small></td><td><span class="status">Archiviert</span></td><td><strong>5 Mietverhältnisse</strong><small>Importiert / übernommen</small></td><td><strong>25.10.25</strong><small>02:00</small></td><td><strong>Nachzahlung</strong><small>2.100,56 €</small></td><td><div class="billing-overview-reference__actions"><button class="icon-button" type="button" title="Ansehen" aria-label="Ansehen"><svg class="svg-icon" aria-hidden="true"><use href="#icon-eye"></use></svg></button><button class="icon-button billing-overview-reference__action--warning" type="button" title="Zur Korrektur öffnen" aria-label="Zur Korrektur öffnen"><svg class="svg-icon" aria-hidden="true"><use href="#icon-edit"></use></svg></button></div></td></tr></tbody></table></div>
+        <footer class="billing-overview-reference__footer"><span>5 von 5 Abrechnungen</span><span>Sortierung: aktuell, danach Jahr absteigend</span></footer>
+      </article>
+      <p class="reference-rule"><strong>Verbindliche Aktionsregel:</strong> Jede verfügbare Zeilenaktion bleibt sichtbar und steht als quadratischer Symbolbutton mit Tooltip, eindeutigem <code>aria-label</code>, sichtbarem Tastaturfokus und deaktiviertem Zustand in genau einer nicht umbrechenden Gruppe. Kein Drei-Punkte-Menü und keine zusammengefassten Aktionen.</p>
     </section>
 
     <section id="cards" class="reference-section" data-reference-group="cards">

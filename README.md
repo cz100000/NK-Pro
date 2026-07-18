@@ -1,3 +1,15 @@
+# NK-Pro V99.4.41 – AP22F6B Nebenkostenabrechnung Übersicht
+
+AP22F6B migriert ausschließlich `Nebenkosten abrechnen → Übersicht` auf `NK-Pro UI Referenz 1.0`. Aktuelle und archivierte Abrechnungen stehen in einer kompakten gemeinsamen Tabellenstruktur mit Suche, Bestandsfiltern, Ergebniszählung und quadratischen Symbolbuttons ohne sichtbare Textbeschriftung oder Zeilenumbruch. Fach-, Status-, Speicher-, Lade-, Migrations-, Archivierungs-, Berechnungs-, Brief- und Druckwege bleiben unverändert.
+
+Prüfung:
+
+```bash
+npm ci
+npm run release:check
+npm run test:ap22f6b:browser
+```
+
 # NK-Pro V99.4.40 – AP22F5B Korrektur 1
 
 Aktueller Paketstand: kompakte Mietverhältnisse mit aufklappbaren Details und gemeinsamer schreibgeschützter Archivansicht. Siehe `AP22F5B_README.md`.
