@@ -30,8 +30,8 @@
 
 ## Zulässige neue Dateien
 - drei neue AP22F4B-Testdateien
-- vier Zielzustands-Screenshots
-- AP22F4B-Abschlussdokumente
+- fünf Zielzustands-Screenshots
+- AP22F4B-Abschluss- und Korrekturdokumente
 
 ## Negativabgleich
 - keine geschützte Gesamtdatei verändert

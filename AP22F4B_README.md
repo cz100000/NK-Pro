@@ -15,6 +15,7 @@ Dieses Release migriert ausschließlich die Seite **Objekt vorbereiten → Wohnu
 ## Manuelle Sichtprüfung
 - Seite `Objekt vorbereiten → Wohnungen` öffnen.
 - Suche, Filter und Aktionsspalte prüfen.
+- Auf einer breiten Desktopansicht prüfen, dass die Tabelle die Kartenbreite nutzt und rundum ein weißer Innenabstand sichtbar bleibt.
 - Eine vorhandene Wohnung ändern und über die bestehende globale Speicheraktion speichern.
 - Nur-Ansehen-Kontext öffnen und prüfen, dass Eingaben und Speichern deaktiviert sind.
 - Schmale Browserbreite prüfen: Die Tabelle scrollt intern, die Gesamtseite nicht horizontal.
@@ -27,6 +28,7 @@ Dieses Release migriert ausschließlich die Seite **Objekt vorbereiten → Wohnu
 - `AP22F4B_SCHUTZ_HASH_BERICHT.md`
 - `AP22F4B_DATEIAENDERUNGEN.md`
 - `AP22F4B_UI_REFERENZ.md`
+- `AP22F4B_KORREKTUR_1.md`
 - `SHA256SUMS.txt`
 
 ## Bekannter organisatorischer Hinweis

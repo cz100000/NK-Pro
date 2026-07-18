@@ -24,7 +24,7 @@
     },
     {
       "path": "assets/app.css",
-      "change": "Ausschließlich seitenbezogene, tokenbasierte Styles für Tabellenkarte, Toolbar, Tabelle, Aktionen, Hinweise und Responsive ergänzt."
+      "change": "Seitenbezogene Styles ergänzt; Korrektur 1 ergänzt den weißen 8-px-Innenabstand und die vollbreite Desktoptabelle."
     },
     {
       "path": "index.html",
@@ -72,7 +72,7 @@
     },
     {
       "path": "ui-reference/reference.css",
-      "change": "Referenzdarstellung für Wohnungs-Tabelle, Zustände und Responsive ergänzt."
+      "change": "Referenzdarstellung einschließlich weißem Tabelleninnenrand und vollbreiter Desktoptabelle ergänzt."
     },
     {
       "path": "screenshots/AP22F4B/01_desktop_vollstaendig.png",
@@ -91,12 +91,16 @@
       "change": "Zielzustand 390 px mit intern scrollbar bleibender Tabelle."
     },
     {
+      "path": "screenshots/AP22F4B/05_desktop_weisser_innenrand.png",
+      "change": "Korrekturregression: vollbreite Tabelle mit weißem Innenabstand bei 1648 px."
+    },
+    {
       "path": "tests/ap22f4b-housing-management.test.cjs",
-      "change": "Statische AP22F4B-Struktur-, Fachgrenzen-, Token- und Versionsprüfung."
+      "change": "Statische AP22F4B-Prüfung einschließlich weißem Tabelleninnenrand und vollbreiter Tabelle."
     },
     {
       "path": "tests/ap22f4b-housing-management-browser.test.cjs",
-      "change": "Browserprüfung aller Zielzustände, Bearbeitungs-, Filter-, Fokus-, Schreibschutz- und Flussfälle."
+      "change": "Browserprüfung aller Zielzustände sowie eigener 1648-px-Regressionsfall für den weißen Tabelleninnenrand."
     },
     {
       "path": "tests/ap22f4b-protected-areas.test.cjs",
@@ -141,6 +145,10 @@
     {
       "path": "AP22F4B_README.md",
       "change": "Release-README und Nutzungshinweise."
+    },
+    {
+      "path": "AP22F4B_KORREKTUR_1.md",
+      "change": "Befund, Ursache, technische Korrektur und Regressionstest der visuellen Nachkorrektur."
     },
     {
       "path": "SHA256SUMS.txt",

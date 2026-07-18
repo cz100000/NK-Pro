@@ -6,7 +6,7 @@
     {
       "name": "AP22F4B static",
       "result": "PASS",
-      "details": "Struktur, sechs Bestandsfelder, fünf bestehende Schreibpfade, UNIT_*-Grenze, zentrale Tokens, Referenz und Version"
+      "details": "Struktur, sechs Bestandsfelder, fünf bestehende Schreibpfade, UNIT_*-Grenze, zentrale Tokens, weißer Tabelleninnenrand, vollbreite Tabelle, Referenz und Version"
     },
     {
       "name": "AP22F4B protected areas",
@@ -16,7 +16,7 @@
     {
       "name": "AP22F4B browser",
       "result": "PASS",
-      "details": "Desktop vollständig, Handlungsbedarf, Nur ansehen, 620 px, 390 px, 200-%-Äquivalent; Bearbeiten, Speichern, Suche, Filter, Fokus und Dokumentfluss"
+      "details": "Desktop vollständig, weißer Tabelleninnenrand bei 1648 px, Handlungsbedarf, Nur ansehen, 620 px, 390 px, 200-%-Äquivalent; Bearbeiten, Speichern, Suche, Filter, Fokus und Dokumentfluss"
     },
     {
       "name": "JavaScript syntax",
@@ -73,5 +73,12 @@
       "reason": "fest verdrahtete Alt-Releasetitel oder inzwischen planmäßig entfallene frühere Aktion"
     }
   ],
-  "knownProductDefects": []
+  "knownProductDefects": [],
+  "corrections": [
+    {
+      "id": "AP22F4B-K1",
+      "status": "PASS",
+      "details": "8-px-Innenabstand, vollbreite Desktoptabelle, UI-Referenz und 1648-px-Browserregression"
+    }
+  ]
 }

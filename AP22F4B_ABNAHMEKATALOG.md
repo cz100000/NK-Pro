@@ -6,6 +6,7 @@
 - [x] Inhaltsfläche entspricht der freigegebenen bevorzugten Zielrichtung.
 - [x] AP22F4B-CSS verwendet zentrale `--nk-ui-*`-Tokens und keine lokalen Farbwerte.
 - [x] Tabellenkarte, heller Tabellenkopf, Zeilen, Zellabstände und Tabellenfuß entsprechen dem Tabellenstandard.
+- [x] Die Tabelle füllt auf breiten Ansichten die verfügbare Kartenbreite und ist rundum durch einen weißen tokenbasierten Innenabstand vom Kartenrand getrennt.
 - [x] Suchfeld steht oberhalb der Tabelle und ist tastaturbedienbar.
 - [x] Statusfilter nutzt ausschließlich vorhandene wohnungsbezogene Prüfbefunde.
 - [x] Aktionsspalte steht rechts und verwendet ein kleines SVG-Linienicon.
@@ -30,4 +31,4 @@
 - [x] Hinweisboxen bleiben bei schmalen Viewports und 200-%-Äquivalent lesbar.
 
 ## Abnahmeergebnis
-Alle AP22F4B-spezifischen Abnahmekriterien sind erfüllt. Historische Altversionsassertions werden im Testbericht separat dokumentiert.
+Alle AP22F4B-spezifischen Abnahmekriterien sind einschließlich Korrektur 1 erfüllt. Historische Altversionsassertions werden im Testbericht separat dokumentiert.

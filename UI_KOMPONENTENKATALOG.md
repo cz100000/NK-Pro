@@ -58,7 +58,7 @@ Die alten Objekt-Dashboard-Kennzahlen und die Kostenartenstatuskarte sind für `
 
 | Komponente | Produktiver Status | Einsatz |
 |---|---|---|
-| Stammdatentabellenkarte mit Kopf und Fuß | migriert | `wohnungsverwaltung` |
+| Stammdatentabellenkarte mit Kopf, weißem Tabelleninnenrand und Fuß | migriert | `wohnungsverwaltung` |
 | Tabellen-Suchfeld | migriert, zentrale Tabellenwerkzeuge | sichtbare Wohnungszeilen |
 | Bestandsbasierter Statusfilter | migriert | „Alle Wohnungen“ / „Mit Handlungsbedarf“ |
 | Kompakte Zeilenaktion | migriert | Fokus auf vorhandene Inline-Bearbeitung; im Schreibschutz deaktiviert |

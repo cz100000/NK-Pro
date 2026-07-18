@@ -11,6 +11,7 @@ function guards(page){const errors=[];page.on("console",m=>{if(m.type()==="error
 async function newApp(browser,viewport={width:1440,height:1000}){const page=await browser.newPage({viewport,locale:"de-DE",timezoneId:"Europe/Berlin"});const clean=guards(page);await openFreshApp(page);await loadFixture(page,"standardfall.json");await page.evaluate(()=>{switchToTab("wohnungsverwaltung");renderAll({tabIds:["wohnungsverwaltung"],reason:"ap22f4b-browser"});});await page.waitForSelector("#wohnungsverwaltung.active #startUnitTable tbody tr");return{page,clean};}
 async function editField(page,selector,value){const field=page.locator(selector);await field.fill(String(value));await field.blur();await page.waitForTimeout(20);}
 async function assertDocumentFlow(page){const boxes=await page.evaluate(()=>{const card=document.querySelector("#wohnungsverwaltung .unit-management-card");const issue=document.querySelector("#wohnungsverwaltung [data-unit-issues]");const note=document.querySelector("#wohnungsverwaltung .unit-management-system-note");const rect=n=>n&& !n.hidden?n.getBoundingClientRect():null;return{card:rect(card),issue:rect(issue),note:rect(note)};});if(boxes.issue){assert.ok(boxes.issue.top>=boxes.card.bottom,JSON.stringify(boxes));assert.ok(boxes.note.top>=boxes.issue.bottom,JSON.stringify(boxes));}else assert.ok(boxes.note.top>=boxes.card.bottom,JSON.stringify(boxes));}
+async function assertWhiteTableInset(page,requireFill=false){const layout=await page.evaluate(()=>{const wrap=document.querySelector("#wohnungsverwaltung .unit-management-table-wrap"),table=document.querySelector("#wohnungsverwaltung .unit-management-table"),style=getComputedStyle(wrap),wr=wrap.getBoundingClientRect(),tr=table.getBoundingClientRect();return{paddingLeft:parseFloat(style.paddingLeft),paddingRight:parseFloat(style.paddingRight),paddingTop:parseFloat(style.paddingTop),paddingBottom:parseFloat(style.paddingBottom),background:style.backgroundColor,wrapLeft:wr.left,wrapRight:wr.right,tableLeft:tr.left,tableRight:tr.right,tableWidth:tr.width,contentWidth:wrap.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight),scrollWidth:wrap.scrollWidth,clientWidth:wrap.clientWidth};});assert.ok(layout.paddingLeft>=7&&layout.paddingRight>=7&&layout.paddingTop>=7&&layout.paddingBottom>=7,JSON.stringify(layout));assert.ok(layout.tableLeft>=layout.wrapLeft+layout.paddingLeft-1,JSON.stringify(layout));assert.ok(layout.tableWidth>=layout.contentWidth-1,JSON.stringify(layout));assert.match(layout.background,/rgb\(255, 255, 255\)/);if(requireFill){assert.ok(layout.scrollWidth<=layout.clientWidth+2,JSON.stringify(layout));assert.ok(Math.abs(layout.tableWidth-layout.contentWidth)<=2,JSON.stringify(layout));}}
 (async()=>{
  const executablePath=process.env.CHROMIUM_EXECUTABLE_PATH||"/usr/bin/chromium";
  const browser=await chromium.launch({headless:true,executablePath,args:["--no-sandbox","--disable-setuid-sandbox","--disable-dev-shm-usage","--disable-gpu"]});
@@ -27,6 +28,7 @@ async function assertDocumentFlow(page){const boxes=await page.evaluate(()=>{con
    assert.equal(await page.locator("#wohnungsverwaltung .unit-management-card nav").count(),0,"keine künstliche Pagination");
    assert.doesNotMatch(await page.locator("#wohnungsverwaltung").textContent(),/Kostenarten|Umlageschlüssel|Vorauszahlungen|Abrechnungsprüfung/);
    await assertDocumentFlow(page);
+   await assertWhiteTableInset(page);
    await page.screenshot({path:path.join(screenshotDir,"01_desktop_vollstaendig.png"),fullPage:true});
 
    await editField(page,"#unit-bezeichnung-0","UG geprüft");
@@ -83,10 +85,16 @@ async function assertDocumentFlow(page){const boxes=await page.evaluate(()=>{con
    if(viewport.width===390)await page.screenshot({path:path.join(screenshotDir,"04_schmale_ansicht.png"),fullPage:true});clean();await page.close();
   }
   {
+   const {page,clean}=await newApp(browser,{width:1648,height:894});
+   await assertWhiteTableInset(page,true);
+   const pageLayout=await page.evaluate(()=>({doc:document.documentElement.scrollWidth,client:document.documentElement.clientWidth}));assert.ok(pageLayout.doc<=pageLayout.client,JSON.stringify(pageLayout));
+   await page.screenshot({path:path.join(screenshotDir,"05_desktop_weisser_innenrand.png"),fullPage:true});clean();await page.close();
+  }
+  {
    const {page,clean}=await newApp(browser,{width:720,height:900});
    await page.evaluate(()=>{state.objektStandard.einheiten[0].gebaeudeId="GEB-UNBEKANNT";renderAll({tabIds:["wohnungsverwaltung"],reason:"ap22f4b-zoom"});document.documentElement.style.fontSize="200%";});await page.waitForTimeout(50);
    const flow=await page.evaluate(()=>{const issue=document.querySelector('[data-unit-issues]'),note=document.querySelector('.unit-management-system-note');return{doc:document.documentElement.scrollWidth,client:document.documentElement.clientWidth,issueHeight:issue.getBoundingClientRect().height,issueScroll:issue.scrollHeight,noteTop:note.getBoundingClientRect().top,issueBottom:issue.getBoundingClientRect().bottom};});assert.ok(flow.doc<=flow.client,JSON.stringify(flow));assert.ok(flow.issueHeight>=flow.issueScroll-1,JSON.stringify(flow));assert.ok(flow.noteTop>=flow.issueBottom,JSON.stringify(flow));clean();await page.close();
   }
-  console.log("AP22F4B housing management browser test: PASS (Desktop, Handlungsbedarf, Nur ansehen, 620 px, 390 px, 200-%-Äquivalent)");
+  console.log("AP22F4B housing management browser test: PASS (Desktop, weißer Tabelleninnenrand, Handlungsbedarf, Nur ansehen, 620 px, 390 px, 200-%-Äquivalent)");
  }finally{await browser.close();}
 })().catch(error=>{console.error(error);process.exit(1)});

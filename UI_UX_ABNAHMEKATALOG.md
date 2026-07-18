@@ -77,6 +77,7 @@ Eine Seite ist nur migriert, wenn alle anwendbaren Punkte mit **bestanden**, **n
 - [ ] Karten, Formulare und Seitenkopfaktionen umbrechen kontrolliert.
 - [ ] Kontextleiste behält semantische Reihenfolge.
 - [ ] Tabellen scrollen nur im Tabellencontainer oder nutzen eine freigegebene Alternative.
+- [ ] Vollbreite Desktoptabellen bleiben durch einen sichtbaren weißen Innenabstand von ihrer Kartenhülle getrennt.
 - [ ] Keine unbeabsichtigte horizontale Gesamtseiten-Scrollleiste.
 
 ## H. Fach- und Regressionsschutz

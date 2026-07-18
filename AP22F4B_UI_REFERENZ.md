@@ -14,6 +14,7 @@ Die Seite `wohnungsverwaltung` verwendet den projektweiten Designstandard **NK-P
 - Tabellenkarte und Bestandsstatus
 - Suchfeld und Statusfilter
 - heller Tabellenkopf
+- vollbreite Desktoptabelle mit weißem Innenabstand zur Kartenhülle
 - vorhandene Wohnungsfelder
 - rechte Aktionsspalte
 - Ergebnisfuß ohne künstliche Pagination
@@ -25,6 +26,7 @@ Die Seite `wohnungsverwaltung` verwendet den projektweiten Designstandard **NK-P
 - `screenshots/AP22F4B/02_desktop_handlungsbedarf.png`
 - `screenshots/AP22F4B/03_nur_ansehen.png`
 - `screenshots/AP22F4B/04_schmale_ansicht.png`
+- `screenshots/AP22F4B/05_desktop_weisser_innenrand.png`
 
 ## Schutz
 Die produktive Navigation wurde nicht umgestaltet. `js/navigation.js` ist hashidentisch zur freigegebenen Ausgangsbasis.

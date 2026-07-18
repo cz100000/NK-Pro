@@ -36,9 +36,12 @@ const apCss=css.slice(css.indexOf("/* AP22F4B – technische Migration der Seite
 assert.ok(!/#[0-9a-f]{3,8}\b/i.test(apCss),"AP22F4B-CSS darf keine lokalen Farbwerte definieren");
 assert.ok(apCss.includes("var(--nk-ui-"),"AP22F4B-CSS muss zentrale UI-Tokens verwenden");
 assert.ok(css.includes("overflow-x:auto")&&css.includes("unit-management-table-wrap"),"interner Tabellenüberlauf fehlt");
+assert.ok(/unit-management-table-wrap\{[^}]*padding:var\(--nk-ui-space-sm\)/.test(apCss),"weißer Innenrand der Tabellenkarte fehlt");
+assert.ok(/unit-management-table\{width:100%;min-width:980px/.test(apCss),"Wohnungstabelle füllt die verfügbare Kartenbreite nicht");
 assert.ok(css.includes("position:static")&&css.includes("unit-management-issues"),"Hinweise sind nicht explizit im Dokumentfluss");
 assert.ok(reference.includes('id="units-page"')&&reference.includes("AP22F4B · verbindliche Zielkomponente"),"aktualisierte UI-Referenz fehlt");
 assert.ok(referenceCss.includes("AP22F4B – verbindliche Referenz der Wohnungsverwaltung"),"Referenz-CSS fehlt");
+assert.ok(/units-reference__table-wrap\{[^}]*padding:var\(--s2\)/.test(referenceCss)&&/units-reference__table\{width:100%;/.test(referenceCss),"weißer Tabelleninnenrand fehlt in der UI-Referenz");
 assert.ok(html.includes('<strong data-app-version="">V99.4.39</strong>'),"statische Releasekennung fehlt");
 assert.ok(read("js/app-runtime-config.js").includes('const APP_VERSION = "V99.4.39";'),"zentrale Releasekennung fehlt");
 assert.equal(JSON.parse(read("manifest.webmanifest")).version,"99.4.39");

@@ -6,9 +6,9 @@
 ## Erfolgreiche Prüfungen
 | Prüfung | Ergebnis | Umfang |
 |---|---|---|
-| AP22F4B statisch | PASS | Seitenstruktur, Tabellenfelder, bestehende Schreibpfade, UNIT_*-Befunde, Tokenverwendung, UI-Referenz und Releasekennung |
+| AP22F4B statisch | PASS | Seitenstruktur, Tabellenfelder, bestehende Schreibpfade, UNIT_*-Befunde, Tokenverwendung, weißer Tabelleninnenrand, vollbreite Tabelle, UI-Referenz und Releasekennung |
 | Schutzbereiche | PASS | 13 geschützte Gesamtdateien und 74 bestehende Regressionstestdateien |
-| AP22F4B Browser | PASS | vollständig, Handlungsbedarf, Nur ansehen, 620 px, 390 px, 200-%-Äquivalent |
+| AP22F4B Browser | PASS | vollständig, weißer Tabelleninnenrand bei 1648 px, Handlungsbedarf, Nur ansehen, 620 px, 390 px, 200-%-Äquivalent |
 | Bearbeiten/Speichern | PASS | alle fünf vorhandenen Feldtypen und bestehender globaler Speicherweg |
 | Suche/Statusfilter | PASS | Ergebnisfilterung ohne Mutation des Wohnungsbestands |
 | Fokus/Tastatur | PASS | Suchfeld und Zeilenaktion mit sichtbarem Fokus |
@@ -32,9 +32,13 @@
 - Statusfilter verwendet ausschließlich vorhandene wohnungsbezogene Objektstandardbefunde
 - Aktionsspalte im Bearbeitungsmodus fokussierbar; im Nur-Ansehen-Modus deaktiviert
 - kein Modusfeld in der Kontextleiste
+- sichtbarer weißer Tabelleninnenrand und vollbreite Tabelle bei 1440 px und 1648 px
 - kein horizontaler Dokumentüberlauf bei 620 px und 390 px
 - interner Tabellenüberlauf auf schmalen Ansichten
 - mehrzeilige Hinweise und 200-%-Äquivalent ohne Abschneiden oder Überlagerung
+
+## Korrekturregression
+Der gemeldete Desktopfall ist durch berechnete Mindestabstände an allen vier Seiten der Tabellenhülle, weiße Hintergrundfarbe, vollständige Nutzung der verfügbaren Inhaltsbreite und den Screenshot `05_desktop_weisser_innenrand.png` abgesichert.
 
 ## Historische Testhinweise
 Einige unverändert geschützte ältere Tests sind auf die damalige Releaseversion fest verdrahtet. Dazu gehören insbesondere AP22E (`99.4.33`) und der bisherige AP22F3B-Release-Gate (`99.4.38`). Einzelne ältere AP22F1A-Prüfungen erwarten außerdem eine inzwischen planmäßig entfallene Aktion auf der Seite `objekt` oder einen früheren Titel der UI-Referenz. Diese historischen Assertions wurden nicht verändert und nicht als V99.4.39-Release-Gate gewertet.

@@ -6082,8 +6082,8 @@ body:not(.document-print-window) #wohnungsverwaltung .unit-management-toolbar in
 body:not(.document-print-window) #wohnungsverwaltung .unit-management-toolbar select{flex:0 1 220px;width:auto!important;max-width:260px;min-width:190px;height:38px}
 body:not(.document-print-window) #wohnungsverwaltung .unit-management-toolbar button{flex:0 0 auto;width:auto!important}
 #wohnungsverwaltung .unit-management-toolbar .small{margin-left:auto}
-#wohnungsverwaltung .unit-management-table-wrap{width:100%;max-width:100%;min-width:0;margin:0;border:0;border-radius:0;overflow-x:auto;overflow-y:visible;overscroll-behavior-inline:contain;scrollbar-gutter:stable}
-#wohnungsverwaltung .unit-management-table{min-width:980px;margin:0;border-collapse:separate;border-spacing:0}
+#wohnungsverwaltung .unit-management-table-wrap{width:100%;max-width:100%;min-width:0;margin:0;padding:var(--nk-ui-space-sm);border:0;border-radius:0;overflow-x:auto;overflow-y:visible;overscroll-behavior-inline:contain;scrollbar-gutter:stable;background:var(--nk-ui-color-surface)!important}
+#wohnungsverwaltung .unit-management-table{width:100%;min-width:980px;margin:0;border-collapse:separate;border-spacing:0}
 body:not(.document-print-window) #wohnungsverwaltung .unit-management-table thead th{padding:11px var(--nk-ui-space-md);background:var(--nk-ui-color-surface-muted)!important;color:var(--nk-ui-color-text)!important;border-color:var(--nk-ui-color-border)!important;font-size:12px;font-weight:700;text-transform:none;letter-spacing:0;white-space:nowrap}
 #wohnungsverwaltung .unit-management-table tbody td{height:49px;padding:var(--nk-ui-space-2xs) var(--nk-ui-space-sm);vertical-align:middle;border-color:var(--nk-ui-color-border)}
 body:not(.document-print-window) #wohnungsverwaltung .unit-management-table tbody tr:nth-child(odd) td{background:var(--nk-ui-color-surface)!important}

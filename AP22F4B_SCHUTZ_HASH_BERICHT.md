@@ -31,5 +31,8 @@ Alle **74** im AP22F4A-Planungspaket verzeichneten bestehenden Regressionstestda
 - `js/ui-page-controller.js`: Seitenkonfiguration und generische Read-only-Deaktivierung ergänzt; andere Fachrenderer unverändert
 - Navigation und Abrechnungskontext: durch unveränderte geschützte Dateien abgesichert
 
+## Korrektur 1
+Die visuelle Nachkorrektur betrifft ausschließlich `assets/app.css`, `ui-reference/reference.css`, die bereits neuen AP22F4B-Tests, Screenshots und Abschlussdokumente. Sämtliche geschützten Produktdateien und bestehenden Regressionstests bleiben unverändert.
+
 ## Ergebnis
 **BESTANDEN: 13 geschützte Dateien und 74 bestehende Regressionstestdateien unverändert.**

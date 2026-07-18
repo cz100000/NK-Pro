@@ -62,6 +62,6 @@ Die Objektübersicht gilt damit als vollständig migriert. Andere produktive Sei
 
 | Seite/Bereich | Stand | Migrierte Elemente | Ausdrücklich unverändert |
 |---|---|---|---|
-| `wohnungsverwaltung` | abgeschlossen V99.4.39 | Tabellenkarte, Suche, bestandsbasierter Statusfilter, Aktionsspalte, Ergebnissumme, UNIT-Prüfhinweise, Nur-Ansehen-Zustand, responsive Tabellenhülle | weiße Navigation, globale Leisten, sechs Datenfelder, zentrale Schreibwege, Objektstandardprüfung, Persistenz und Fachlogik |
+| `wohnungsverwaltung` | abgeschlossen V99.4.39 | Tabellenkarte mit weißem Innenrand, vollbreiter Desktoptabelle, Suche, bestandsbasierter Statusfilter, Aktionsspalte, Ergebnissumme, UNIT-Prüfhinweise, Nur-Ansehen-Zustand, responsive Tabellenhülle | weiße Navigation, globale Leisten, sechs Datenfelder, zentrale Schreibwege, Objektstandardprüfung, Persistenz und Fachlogik |
 
 Die Wohnungsverwaltung gilt damit als vollständig auf „NK-Pro UI Referenz 1.0“ migriert. Andere produktive Seiten erhalten durch AP22F4B keinen neuen Migrationsstatus.
