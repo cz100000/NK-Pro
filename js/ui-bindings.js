@@ -109,7 +109,8 @@
       "cost.activateDefaultPrepayments":appCall(applicationActions, "cost", "activateDefaultPrepayments"), "cost.deactivateAllPrepayments":appCall(applicationActions, "cost", "deactivateAllPrepayments"),
       "cost.setTenantAllowed":appCall(applicationActions, "cost", "setTenantAllowed"), "cost.activateFromDialog":call(handlers, "activateCostFromDialog"),
       "cost.openTenantDetails":call(handlers, "openCostTenantDetails"), "cost.toggleRowSelection":call(handlers, "toggleCostRowSelection"),
-      "cost.toggleAllVisibleRows":call(handlers, "toggleAllVisibleCostRows"),
+      "cost.toggleAllVisibleRows":call(handlers, "toggleAllVisibleCostRows"), "cost.setSearch":call(handlers, "setCostSearch"),
+      "cost.clearSearch":call(handlers, "clearCostSearch"),
       "cost.prepaymentSetSearch":call(handlers, "prepaymentSetSearch"), "cost.prepaymentSetFilter":call(handlers, "prepaymentSetFilter"),
       "cost.prepaymentReset":call(handlers, "prepaymentReset"), "cost.prepaymentSort":call(handlers, "prepaymentSort"),
       "cost.prepaymentSetTenantValue":call(handlers, "prepaymentSetTenantValue")

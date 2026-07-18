@@ -1,11 +1,11 @@
 {
-  "appVersion": "99.4.43",
-  "displayVersion": "V99.4.43",
-  "versionName": "AP22F8B – Vorauszahlungen",
+  "appVersion": "99.4.44",
+  "displayVersion": "V99.4.44",
+  "versionName": "AP22F9B – Gesamtkosten",
   "schemaVersion": 5,
   "dataLayerContractVersion": 1,
   "snapshotScope": "billingSnapshot",
-  "basedOn": "99.4.42-AP22F7B-Korrektur3",
+  "basedOn": "99.4.43-AP22F8B-Korrektur1",
   "releaseDate": "2026-07-18",
   "runtime": [
     "HTML",
@@ -14,7 +14,7 @@
   ],
   "framework": null,
   "buildSystem": null,
-  "nextWorkPackage": "AP22F9A – Planung der Migration der Seite Gesamtkosten",
+  "nextWorkPackage": "AP22F10A – Planung der nächsten Seitenmigration",
   "objectStandardVersion": 1,
   "billingSnapshotVersion": 2,
   "meterMasterStandardVersion": 1,
@@ -33,7 +33,7 @@
   "documentLayoutVersion": 4,
   "uiVisualSystemVersion": 4,
   "meterInventoryDummyVersion": 2,
-  "pwaCacheName": "nk-pro-v99-4-43-ap22f8b-k1",
+  "pwaCacheName": "nk-pro-v99-4-44-ap22f9b",
   "releaseHardeningVersion": 1,
   "releaseContentPolicyVersion": 1,
   "transientUiResetVersion": 1,
@@ -57,7 +57,7 @@
   "meterInputLocaleNumberVersion": 1,
   "assetCacheBustVersion": 1,
   "serviceWorkerForcedUpdateVersion": 1,
-  "runtimeBuildId": "99.4.43-ap22f8b-k1",
+  "runtimeBuildId": "99.4.44-ap22f9b",
   "uiConsolidationVersion": 1,
   "individualValuesPageVersion": 3,
   "navigationTerminologyVersion": 1,
@@ -86,5 +86,6 @@
   "projectWideTableWidthCorrectionVersion": 1,
   "prepaymentPageMigrationVersion": 1,
   "prepaymentPageCorrectionVersion": 1,
-  "description": "AP22F8B Korrektur 1 – Vorauszahlungen mit Kennzahlen, getrennten Korrekturarten und sichtbaren Prüfhinweisen"
+  "description": "AP22F9B – Gesamtkosten mit vier Bestandskennzahlen, flachen Arbeitsbereichen und unveränderter Fachlogik",
+  "totalCostsPageMigrationVersion": 1
 }

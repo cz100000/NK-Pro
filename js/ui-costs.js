@@ -29,7 +29,7 @@ function renderKostenMieterUmlageMatrix() {
   const tenantHeads = tenants.map(t => tenantHeaderHtml(t)).join("");
 
   if (!costs.length || !tenants.length) {
-    el.innerHTML = '<thead><tr><th>Hinweis</th></tr></thead><tbody><tr><td>Keine aktive Kostenart oder kein Mietverhältnis in dieser Abrechnungsperiode vorhanden.</td></tr></tbody>';
+    el.innerHTML = '<thead><tr><th>Hinweis</th></tr></thead><tbody><tr><td class="cost-empty-cell"><strong>Keine Umlagezuordnung verfügbar.</strong><span>Keine aktive Kostenart oder kein Mietverhältnis in dieser Abrechnungsperiode vorhanden.</span></td></tr></tbody>';
     return;
   }
 
@@ -38,7 +38,8 @@ function renderKostenMieterUmlageMatrix() {
       const tenantId = tenantIdForUmlage(t);
       return '<td class="toggle-cell-wrap">' + costTenantToggleHtml(k.id, tenantId, isCostAllowedForTenant(k.id, t)) + '</td>';
     }).join("");
-    return '<tr><td>' + escapeHtml(k.id) + '</td><td>' + escapeHtml(k.kostenart) + '</td><td>' + escapeHtml(NK_PRO_MODULES.costActions.kostenStatus(k)) + '</td><td>' + escapeHtml(costExclusionHandling(k)) + '</td>' + tenantCells + '</tr>';
+    const status = NK_PRO_MODULES.costActions.kostenStatus(k);
+    return '<tr><td>' + escapeHtml(k.id) + '</td><td><strong>' + escapeHtml(k.kostenart) + '</strong></td><td><span class="cost-row-status ' + (status === "Vollständig" ? "ok" : "warn") + '">' + escapeHtml(status) + '</span></td><td>' + escapeHtml(costExclusionHandling(k)) + '</td>' + tenantCells + '</tr>';
   }).join("");
 
   el.innerHTML = '<thead><tr><th>Kosten-ID</th><th>Kostenart</th><th>Status</th><th>Ausschluss-Behandlung</th>' + tenantHeads + '</tr></thead><tbody>' + rows + '</tbody>';
@@ -47,6 +48,7 @@ function renderKostenMieterUmlageMatrix() {
 
 let costPageSize = 25;
 let costShowAllRows = false;
+let costSearchQuery = "";
 let selectedCostRows = new Set();
 
 function toggleCostRowSelection(index, checked) {
@@ -75,8 +77,8 @@ function updateCostSelectionUi() {
   if (button) {
     button.disabled = selectedCostRows.size === 0 || isArchiveViewer();
     button.textContent = selectedCostRows.size <= 1
-      ? "⊘ Ausgewählte Kostenart deaktivieren"
-      : "⊘ " + selectedCostRows.size + " Kostenarten deaktivieren";
+      ? "Kostenart deaktivieren"
+      : selectedCostRows.size + " Kostenarten deaktivieren";
   }
 
   const boxes = Array.from(document.querySelectorAll(".cost-row-checkbox"));
@@ -133,6 +135,20 @@ function toggleAllCostRows() {
   renderEinstellungen();
 }
 
+function setCostSearch(value) {
+  costSearchQuery = String(value || "");
+  costShowAllRows = false;
+  renderEinstellungen();
+}
+
+function clearCostSearch() {
+  costSearchQuery = "";
+  costShowAllRows = false;
+  renderEinstellungen();
+  const search = document.getElementById("costTableSearch");
+  if (search) search.focus();
+}
+
 function openCostColumnInfo() {
   setActionMessage("Alle verfügbaren Kostenarten-Spalten sind bereits sichtbar.");
   renderActionFeedback();
@@ -161,9 +177,12 @@ function closeCostSelectionDialog() {
 function resetCostUiState() {
   costPageSize = 25;
   costShowAllRows = false;
+  costSearchQuery = "";
   selectedCostRows = new Set();
   const search = document.getElementById("costSelectionSearch");
   if (search) search.value = "";
+  const tableSearch = document.getElementById("costTableSearch");
+  if (tableSearch) tableSearch.value = "";
   closeCostSelectionDialog();
   updateCostSelectionUi();
 }
@@ -266,12 +285,9 @@ function costIsComplete(cost) {
 function renderCostMockupOverview(activeCosts) {
   const costs = activeCosts.map(item => item.k);
   const total = costs.reduce((sum, cost) => sum + num(cost.gesamtbetrag), 0);
-  const complete = costs.filter(costIsComplete).length;
-  const open = Math.max(0, costs.length - complete);
-  const umlagefaehig = total;
-  const nonUmlage = 0;
-  const qualityTarget = open ? "Prüfen Sie die Hinweise in der Qualitätsprüfung." : "Alle aktiven Kostenarten sind vollständig.";
-  const period = escapeHtml(periodLabelShort());
+  const openCosts = costs.filter(cost => !costIsComplete(cost));
+  const complete = costs.length - openCosts.length;
+  const open = openCosts.length;
 
   if (typeof renderOverviewForTab === "function") renderOverviewForTab("einstellungen");
 
@@ -279,69 +295,84 @@ function renderCostMockupOverview(activeCosts) {
   const specialBadge = document.getElementById("costSpecialBadge");
   const controlBadge = document.getElementById("costControlBadge");
   if (editBadge) editBadge.textContent = costs.length + " aktive Kostenarten";
-  if (specialBadge) specialBadge.textContent = costs.filter(c => costExclusionHandling(c) !== COST_EXCLUSION_OPTIONS[0]).length + " aktiv";
-  if (controlBadge) controlBadge.textContent = open ? open + " prüfen" : "OK";
+  if (specialBadge) specialBadge.textContent = "Einzelwerte";
+  if (controlBadge) controlBadge.textContent = open === 1 ? "1 Hinweis" : open + " Hinweise";
 
-  const floorArea = (state.wohnungen || []).filter(w => w && w.status === "aktiv").reduce((sum,w) => sum + num(w.wohnflaeche), 0);
-  const people = (state.mieter || []).filter(m => m && m.status === "Aktiv").reduce((sum,m) => sum + num(m.personen), 0);
-  const perSqm = floorArea > 0 ? umlagefaehig / floorArea : 0;
-  const perPerson = people > 0 ? umlagefaehig / people : 0;
+  const totalTile = document.getElementById("costTileTotalValue");
+  const activeTile = document.getElementById("costTileActiveValue");
+  const completeTile = document.getElementById("costTileCompleteValue");
+  const openTile = document.getElementById("costTileOpenValue");
+  const openTileDetail = document.getElementById("costTileOpenDetail");
+  const openTileCard = document.getElementById("costTileOpenCard");
+  if (totalTile) totalTile.textContent = fmtMoney(total);
+  if (activeTile) activeTile.textContent = String(costs.length);
+  if (completeTile) completeTile.textContent = complete + " von " + costs.length;
+  if (openTile) openTile.textContent = String(open);
+  if (openTileDetail) openTileDetail.textContent = openCosts.length ? String(openCosts[0].kostenart || "Kostenart") + " prüfen" : "Keine offenen Hinweise";
+  if (openTileCard) openTileCard.classList.toggle("has-warning", open > 0);
 
   const control = document.getElementById("costPilotControl");
   if (control) {
-    control.innerHTML =
-      '<div class="cost-control-metric"><span>Summe Gesamtkosten</span><strong>' + fmtMoney(total) + '</strong></div>' +
-      '<div class="cost-control-metric"><span>Summe umlagefähige Kosten</span><strong>' + fmtMoney(umlagefaehig) + '</strong></div>' +
-      '<div class="cost-control-metric"><span>Nicht umlagefähig</span><strong>' + fmtMoney(nonUmlage) + '</strong></div>' +
-      '<div class="cost-control-metric"><span>Umlagebare Kosten je m²</span><strong>' + fmtMoney(perSqm) + '</strong></div>' +
-      '<div class="cost-control-metric"><span>Umlagebare Kosten je Person</span><strong>' + fmtMoney(perPerson) + '</strong></div>' +
-      '<div class="cost-control-action"><button type="button"' + uiActionAttributes("cost.openTenantDetails") + '>Detail-Kontrollansicht öffnen<br><span class="small">(Sonderfälle &amp; Details)&nbsp; ›</span></button></div>';
+    const warningItems = openCosts.map(cost =>
+      '<div class="cost-check-item is-warning"><span class="cost-row-status warn">Hinweis</span><span><strong>' + escapeHtml(cost.kostenart || cost.id || "Kostenart") + ' prüfen</strong><small>Der bestehende Kostenstatus ist noch nicht vollständig.</small></span><button type="button"' + uiActionAttributes("cost.openTenantDetails") + '>Details anzeigen</button></div>'
+    ).join("");
+    const completeItem = '<div class="cost-check-item is-complete"><span class="cost-row-status ok">Vollständig</span><span><strong>Übrige Kostenarten vollständig</strong><small>' + complete + ' von ' + costs.length + ' aktiven Kostenarten sind vollständig erfasst.</small></span></div>';
+    control.innerHTML = warningItems + completeItem;
   }
 
+  const bottom = document.getElementById("costBottomSummary");
+  if (bottom) bottom.innerHTML = "";
+}
+
+function costPeriodLabel() {
+  return String(periodLabelShort()).replace(/\b(\d{1,2})\.(\d{1,2})\.(\d{4})\b/g, (_match, day, month, year) =>
+    String(day).padStart(2, "0") + "." + String(month).padStart(2, "0") + "." + year
+  );
 }
 
 function renderEinstellungen() {
-
   const allActiveCosts = state.kostenarten
     .map((k,i) => ({ k, i }))
     .filter(item => item.k && item.k.id && item.k.kostenart && item.k.inNK === "Ja");
-
-  const visibleCount = costShowAllRows ? allActiveCosts.length : Math.min(costPageSize, allActiveCosts.length);
-  const activeCosts = allActiveCosts.slice(0, visibleCount);
+  const query = costSearchQuery.trim().toLocaleLowerCase("de-DE");
+  const filteredActiveCosts = allActiveCosts.filter(({k}) => !query || [k.kostenart,k.id,costGroupLabel(k),k.bereich].some(value => String(value || "").toLocaleLowerCase("de-DE").includes(query)));
+  const visibleCount = costShowAllRows ? filteredActiveCosts.length : Math.min(costPageSize, filteredActiveCosts.length);
+  const activeCosts = filteredActiveCosts.slice(0, visibleCount);
   const keyOptions = ["Verbrauch","Wohnfläche","Personen","Verteilung auf alle Wohneinheiten","Verteilung nur auf aktive Wohneinheiten","Miettage",UMLAGE_MANUAL,"Entfällt"];
+  const total = allActiveCosts.reduce((sum, item) => sum + num(item.k.gesamtbetrag), 0);
 
   const rows = activeCosts.length ? activeCosts.map(({k,i}, rowIndex) => {
-    const status = costIsComplete(k) ? "OK" : "Hinweis";
-    const statusClassName = costIsComplete(k) ? "ok" : "warn";
+    const status = NK_PRO_MODULES.costActions.kostenStatus(k);
+    const statusClassName = status === "Vollständig" ? "ok" : "warn";
     const price = k.umlageschluessel === "Verbrauch" ? priceCellHtml(k, i) : '<span class="cost-disabled-value">–</span>';
     return '<tr class="' + (selectedCostRows.has(i) ? 'is-selected' : '') + '">' +
-      '<td class="cost-select-col"><input type="checkbox" class="cost-row-checkbox" data-cost-index="' + i + '" ' + (selectedCostRows.has(i) ? 'checked' : '') + uiActionAttributes("cost.toggleRowSelection", [i,"$checked"], "change") + '></td>' +
+      '<td class="cost-select-col"><input type="checkbox" class="cost-row-checkbox" data-cost-index="' + i + '" ' + (selectedCostRows.has(i) ? 'checked' : '') + uiActionAttributes("cost.toggleRowSelection", [i,"$checked"], "change") + ' aria-label="' + escapeHtml(k.kostenart) + ' auswählen"></td>' +
       '<td>' + (rowIndex + 1) + '</td>' +
-      '<td><span class="cost-readonly-identity">' + escapeHtml(k.kostenart) + '</span></td>' +
+      '<td><span class="cost-readonly-identity">' + escapeHtml(k.kostenart) + '<small>' + escapeHtml(k.id) + '</small></span></td>' +
       '<td><span class="cost-readonly-group">' + escapeHtml(costGroupLabel(k)) + '</span></td>' +
-      '<td>' + inputHtml(k.gesamtbetrag, "setCostSetting(" + i + ",\'gesamtbetrag\',this.value)", "money").replace("<input ", "<input class=\\\"cost-money-input\\\" ") + '</td>' +
-      '<td>' + selectHtml(k.vorauszahlung, ["Ja","Nein"], "setCostSetting(" + i + ",\'vorauszahlung\',this.value)") + '</td>' +
-      '<td>' + selectHtml(k.berechnungsart, ["Automatisch","Manuell je Mieter","Entfällt"], "setNested(\'kostenarten\'," + i + ",\'berechnungsart\',this.value)") + '</td>' +
-      '<td>' + selectHtml(k.umlageschluessel, keyOptions, "setNested(\'kostenarten\'," + i + ",\'umlageschluessel\',this.value)") + '</td>' +
-      '<td>' + selectHtml(costExclusionHandling(k), COST_EXCLUSION_OPTIONS, "setCostSetting(" + i + ",\'ausschlussBehandlung\',this.value)") + '</td>' +
+      '<td class="editable">' + inputHtml(k.gesamtbetrag, "setCostSetting(" + i + ",\'gesamtbetrag\',this.value)", "money").replace("<input ", "<input class=\"cost-money-input\" ") + '</td>' +
+      '<td class="editable">' + selectHtml(k.vorauszahlung, ["Ja","Nein"], "setCostSetting(" + i + ",\'vorauszahlung\',this.value)") + '</td>' +
+      '<td class="editable">' + selectHtml(k.berechnungsart, ["Automatisch","Manuell je Mieter","Entfällt"], "setNested(\'kostenarten\'," + i + ",\'berechnungsart\',this.value)") + '</td>' +
+      '<td class="editable">' + selectHtml(k.umlageschluessel, keyOptions, "setNested(\'kostenarten\'," + i + ",\'umlageschluessel\',this.value)") + '</td>' +
+      '<td class="editable">' + selectHtml(costExclusionHandling(k), COST_EXCLUSION_OPTIONS, "setCostSetting(" + i + ",\'ausschlussBehandlung\',this.value)") + '</td>' +
       '<td>' + escapeHtml(costUnitLabel(k)) + '</td>' +
-      '<td>' + inputHtml(k.gesamtverbrauch, "setCostSetting(" + i + ",\'gesamtverbrauch\',this.value)", "number") + '</td>' +
-      '<td>' + price + '</td>' +
-      '<td>' + escapeHtml(periodLabelShort()) + '</td>' +
-      '<td>' + inputHtml(k.bemerkung, "setNested(\'kostenarten\'," + i + ",\'bemerkung\',this.value)") + '</td>' +
-      '<td><span class="cost-row-status ' + statusClassName + '">' + status + '</span></td>' +
+      '<td class="editable">' + inputHtml(k.gesamtverbrauch, "setCostSetting(" + i + ",\'gesamtverbrauch\',this.value)", "number") + '</td>' +
+      '<td class="editable">' + price + '</td>' +
+      '<td>' + escapeHtml(costPeriodLabel()) + '</td>' +
+      '<td class="editable">' + inputHtml(k.bemerkung, "setNested(\'kostenarten\'," + i + ",\'bemerkung\',this.value)") + '</td>' +
+      '<td><span class="cost-row-status ' + statusClassName + '">' + escapeHtml(status) + '</span></td>' +
     '</tr>';
-  }).join("") : '<tr><td colspan="15">Noch keine Kostenart aktiviert. Über „Kostenart hinzufügen“ kann eine vorhandene oder freie Kostenart ausgewählt werden.</td></tr>';
+  }).join("") : '<tr><td class="cost-empty-cell" colspan="15"><strong>' + (allActiveCosts.length ? 'Keine Kostenart entspricht der Suche.' : 'Noch keine Kostenart aktiviert.') + '</strong><span>' + (allActiveCosts.length ? 'Suchbegriff ändern oder zurücksetzen.' : 'Über „Kostenart hinzufügen“ kann eine vorhandene oder freie Kostenart ausgewählt werden.') + '</span></td></tr>';
 
   const table = document.getElementById("settingsTable");
   if (table) {
     table.innerHTML =
       '<thead><tr>' +
-        '<th class="cost-select-col"><input id="costSelectAll" class="cost-select-all-checkbox" type="checkbox"' + uiActionAttributes("cost.toggleAllVisibleRows", ["$checked"], "change") + ' title="Alle sichtbaren Kostenarten auswählen"></th>' +
+        '<th class="cost-select-col"><input id="costSelectAll" class="cost-select-all-checkbox" type="checkbox"' + uiActionAttributes("cost.toggleAllVisibleRows", ["$checked"], "change") + ' title="Alle sichtbaren Kostenarten auswählen" aria-label="Alle sichtbaren Kostenarten auswählen"></th>' +
         '<th>Nr.</th>' +
         '<th>Kostenart</th>' +
         '<th>Gruppe</th>' +
-        '<th>Gesamtkosten<br>(Euro)</th>' +
+        '<th class="money">Gesamtkosten<br>(Euro)</th>' +
         '<th>Vorauszahlung?</th>' +
         '<th>Berechnungsart</th>' +
         '<th>Umlageschlüssel</th>' +
@@ -357,14 +388,18 @@ function renderEinstellungen() {
 
   const showMoreButton = document.getElementById("costShowMoreButton");
   if (showMoreButton) {
-    const remaining = Math.max(0, allActiveCosts.length - visibleCount);
-    showMoreButton.hidden = allActiveCosts.length <= costPageSize && !costShowAllRows;
-    if (!showMoreButton.hidden) {
-      showMoreButton.textContent = costShowAllRows
-        ? "Weniger Kostenarten anzeigen ︿"
-        : remaining + " weitere Kostenarten anzeigen ﹀";
-    }
+    const remaining = Math.max(0, filteredActiveCosts.length - visibleCount);
+    showMoreButton.hidden = filteredActiveCosts.length <= costPageSize && !costShowAllRows;
+    if (!showMoreButton.hidden) showMoreButton.textContent = costShowAllRows ? "Weniger Kostenarten anzeigen ︿" : remaining + " weitere Kostenarten anzeigen ﹀";
   }
+  const results = document.getElementById("costTableResults");
+  if (results) results.textContent = filteredActiveCosts.length + " von " + allActiveCosts.length + " Kostenarten";
+  const totalResult = document.getElementById("costTableTotal");
+  if (totalResult) totalResult.textContent = fmtMoney(total);
+  const search = document.getElementById("costTableSearch");
+  if (search && search.value !== costSearchQuery) search.value = costSearchQuery;
+  const pageSize = document.getElementById("costPageSize");
+  if (pageSize && pageSize.value !== String(costPageSize)) pageSize.value = String(costPageSize);
 
   renderKostenMieterUmlageMatrix();
   renderCostMockupOverview(allActiveCosts);

@@ -1,0 +1,49 @@
+{
+  "workPackage": "AP22F9B",
+  "version": "99.4.44",
+  "buildId": "99.4.44-ap22f9b",
+  "schemaVersion": 5,
+  "result": "passed_with_documented_baseline_deviations",
+  "ap22f9b": {
+    "static": "pass",
+    "protectedAreas": "pass: 13 full hashes + 5 partial areas",
+    "browser": "pass",
+    "screenshots": 7,
+    "viewports": [1440, 620, 390]
+  },
+  "regression": {
+    "ap22f6bBillingOverview": "pass",
+    "ap22f6bCorrection1": "pass",
+    "ap22f7bBillingTenants": "pass",
+    "ap22f7bCorrection1": "pass",
+    "ap22f7bTableWidth": "pass: 57 measurements",
+    "ap22f7bTableFrame": "pass: 57 table/viewport checks",
+    "ap22f8bPrepayments": "pass",
+    "ap22f8bCorrection1": "pass",
+    "meteringAndCalculation": "pass",
+    "architecture": "pass",
+    "individualValues": "pass",
+    "persistenceBackup": "pass: 5/5",
+    "migrationRestoreAndReferenceCases": "pass: 12/12",
+    "documentExport": "pass: 2/2",
+    "letterLayout": "pass: 8/8"
+  },
+  "baselineDeviations": [
+    {
+      "test": "tests/ap20-asset-refresh-regression.test.cjs",
+      "message": "Versionsparameter fehlt für ui-bindings.js.",
+      "status": "present before and after; explicitly documented"
+    },
+    {
+      "test": "AP20 central quality legacy tests",
+      "message": "hard-coded old package version, 42 instead of 43 rules, removed mode element",
+      "status": "identical in clean baseline and release"
+    },
+    {
+      "test": "tests/service-worker.spec.js",
+      "message": "hard-coded V99.4.24 app shell and obsolete asset list",
+      "status": "legacy test not applicable to successor release"
+    }
+  ],
+  "newRegressions": 0
+}
