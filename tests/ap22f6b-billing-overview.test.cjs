@@ -23,6 +23,9 @@ assert.match(start,/<span[^>]*data-ap22f6b-diagnostics-compat[^>]*hidden/,"unsic
 assert.doesNotMatch(start,/data-ui-action="archive\.deleteAt"|billing\.openDeleteModal/,"Löschaktion darf nicht auf start erscheinen");
 assert.match(start,/billing-overview-table-shell/,"interne Tabellen-Overflow-Hülle fehlt");
 assert.match(start,/billing-readonly-notice|billing-overview-content/,"normaler Dokumentfluss fehlt");
+assert.doesNotMatch(start,/<details[^>]*id="billingPeriodSection"/,"verwirrende Zeitraum-Klappbox darf nicht mehr vorhanden sein");
+assert.match(start,/id="billingPeriodSettings"[^>]*>Abrechnungszeitraum bearbeiten<\/button>/,"klar bezeichnete Zeitraumaktion fehlt");
+assert.match(start,/class="modal-backdrop[^"]*"[^>]*id="billingPeriodSection"/,"separater Zeitraumdialog fehlt");
 const context=html.match(/<section aria-label="Abrechnungskontext"[\s\S]*?<\/section>/)?.[0]||"";
 assert.ok(context,"Kontextleiste fehlt");
 assert.doesNotMatch(context,/Modus|data-global-billing-mode/i,"Kontextleiste enthält eine Modusangabe");
@@ -46,6 +49,10 @@ assert.match(css,/#start \.billing-overview-action:disabled[^}]*cursor:not-allow
 assert.match(css,/#start \.billing-overview-table-shell\{[^}]*overflow-x:auto/,"interner Tabellen-Scroll fehlt");
 assert.match(css,/@media\(max-width:620px\)/,"620-px-Regeln fehlen");
 assert.match(css,/@media\(max-width:420px\)/,"390-px-nahe Regeln fehlen");
+assert.match(css,/#start \.billing-overview-messages:not\(:has\(/,"leerer Hinweisbereich wird nicht vollständig ausgeblendet");
+assert.match(css,/\.workflow-nav\.archive-nav \[data-nav-group-section="object"\]\{display:block!important\}/,"Objekt-vorbereiten-Navigation wird im Archivmodus nicht wiederhergestellt");
+assert.match(nav,/function openBillingPeriodEditor\(\)/,"Zeitraumdialog-Öffnung fehlt");
+assert.match(nav,/trigger\.textContent = editable \? "Abrechnungszeitraum bearbeiten" : "Abrechnungszeitraum anzeigen"/,"Zeitraumaktion unterscheidet Bearbeiten und Ansehen nicht");
 const prefix=Buffer.from(css,"utf8").subarray(0,291694);
 assert.equal(sha(prefix),"09f71132f6db4537427f625412a21b6543271a9fc49b43cdec51b37d3774e471","bestehender CSS-Präfix wurde verändert");
 assert.match(controller,/const AP17_DASHBOARD_TABS = Object\.freeze\(\["objektuebersicht"\]\)/,"start darf nicht mehr als Prozessdashboard gerendert werden");

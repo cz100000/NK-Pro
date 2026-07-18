@@ -1,7 +1,7 @@
 {
   "name": "NK-Pro V99.4.41",
   "short_name": "NK-Pro",
-  "description": "Lokale Nebenkostenabrechnung mit zentralem Prüfsystem und auf UI Referenz 1.0 migrierter Seite Nebenkosten abrechnen – Übersicht.",
+  "description": "Lokale Nebenkostenabrechnung mit AP22F6B Korrektur 1: kompakter Übersichtsstart, separater Zeitraumdialog und vollständige Navigation im Archivmodus.",
   "lang": "de-DE",
   "id": "./",
   "start_url": "./",

@@ -6318,3 +6318,15 @@ body:not(.document-print-window) #mieterverwaltung [data-page-save]:disabled,bod
 @media(max-width:420px){#start .billing-overview-card__header{padding:var(--nk-ui-space-md)}#start .billing-overview-segments button{gap:4px;padding:0 7px!important;font-size:11px}#start .billing-overview-segments button strong{min-width:18px;height:18px;padding:0 4px}#start .billing-overview-card__header h2{font-size:19px}}
 #start .billing-overview-action{position:relative}
 #start .billing-overview-action .visually-hidden{top:0!important;left:0!important}
+
+/* AP22F6B Korrektur 1 – kompakter Seitenbeginn, separater Zeitraumdialog und vollständige Archivnavigation. */
+#start .billing-overview-messages:not(:has(#appStatusBox:not(:empty),#appFeedbackBox:not(:empty))){display:none!important}
+#start .billing-overview-messages #appStatusBox:empty,#start .billing-overview-messages #appFeedbackBox:empty{display:none!important;margin:0!important}
+#start .billing-period-editor-trigger[hidden]{display:none!important}
+#start .billing-period-editor-dialog{width:min(760px,calc(100vw - 32px))}
+#start .billing-period-editor-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+#start .billing-period-editor-status{margin:var(--nk-ui-space-md) 0 0}
+#start .billing-period-editor-sync{margin:var(--nk-ui-space-md) 0 0}
+#start .billing-period-editor-sync:has(button[hidden]){display:none}
+.workflow-nav.archive-nav [data-nav-group-section="object"]{display:block!important}
+@media(max-width:620px){#start .billing-period-editor-grid{grid-template-columns:1fr}}

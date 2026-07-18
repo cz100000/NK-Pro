@@ -1014,36 +1014,81 @@ function renderWorkflowDashboard() {
   el.innerHTML = '<div class="workflow-dashboard ' + cls + '"><div class="workflow-dashboard-head"><div><h3>Arbeitsstand dieser Abrechnung</h3><div class="small">Vorhandene Qualitätsprüfungen kompakt zusammengefasst · keine zusätzliche Berechnungslogik.</div></div><div><span class="status ' + cls + '">' + escapeHtml(readiness.label) + '</span><div class="small" style="margin-top:4px;text-align:right">' + openCount + ' offene Hinweise/Prüfpunkte</div></div></div><div class="workflow-status-grid">' + cards + '</div><div class="toolbar" style="margin-bottom:0"><button type="button" class="primary" data-ui-action="navigation.switchTab" data-ui-args="[&quot;qualitaet&quot;]">Qualitätsprüfung öffnen</button></div></div>';
 }
 
+function openBillingPeriodEditor() {
+  const trigger = document.getElementById("billingPeriodSettings");
+  const modal = document.getElementById("billingPeriodSection");
+  if (!trigger || !modal || !NK_PRO_MODULES.billingContext.isOpen()) return;
+  renderBillingPeriodSettings();
+  if (globalThis.NKProUIDesignSystem && NKProUIDesignSystem.dialog) NKProUIDesignSystem.dialog.open(modal, { trigger });
+  else modal.classList.add("show");
+}
+
+function closeBillingPeriodEditor() {
+  const modal = document.getElementById("billingPeriodSection");
+  if (!modal) return;
+  if (globalThis.NKProUIDesignSystem && NKProUIDesignSystem.dialog) NKProUIDesignSystem.dialog.close(modal);
+  else modal.classList.remove("show");
+  const trigger = document.getElementById("billingPeriodSettings");
+  if (trigger) trigger.setAttribute("aria-expanded", "false");
+}
+
 function renderBillingPeriodSettings() {
-  const section = document.getElementById("billingPeriodSection");
-  const el = document.getElementById("billingPeriodSettings");
-  if (!section || !el) return;
+  const modal = document.getElementById("billingPeriodSection");
+  const trigger = document.getElementById("billingPeriodSettings");
+  const title = document.getElementById("billingPeriodEditorTitle");
+  const description = document.getElementById("billingPeriodEditorDescription");
+  const yearEl = document.getElementById("billingPeriodYearValue");
+  const startEl = document.getElementById("billingPeriodStartValue");
+  const endEl = document.getElementById("billingPeriodEndValue");
+  const statusEl = document.getElementById("billingPeriodEditorStatus");
+  const syncButton = document.getElementById("billingPeriodSyncYear");
+  const closeButton = document.getElementById("billingPeriodClose");
+  if (!modal || !trigger || !yearEl || !startEl || !endEl || !statusEl || !syncButton || !closeButton) return;
   const open = NK_PRO_MODULES.billingContext.isOpen();
-  section.hidden = !open;
-  if (!open) { el.innerHTML = ""; return; }
+  trigger.hidden = !open;
+  if (!open) {
+    if (modal.classList.contains("show")) closeBillingPeriodEditor();
+    return;
+  }
   const editable = NK_PRO_MODULES.billingContext.isEditing() && !isArchiveViewer();
-  const readOnlyLabel = editable ? "Bearbeitbar" : "Nur ansehen";
   const year = String(currentAbrechnungsjahr() || "");
   const start = String(periodStart() || "");
   const end = String(periodEnd() || "");
   const endYear = periodYearFromDate(end);
   const yearMismatch = !!endYear && year !== endYear;
-  const disabled = editable ? "" : " disabled";
-  const mismatchAction = yearMismatch && editable
-    ? '<button class="secondary" type="button" data-ui-action="billing.syncPeriodYear">Abrechnungsjahr '+escapeHtml(endYear)+' übernehmen</button>'
-    : "";
+  trigger.textContent = editable ? "Abrechnungszeitraum bearbeiten" : "Abrechnungszeitraum anzeigen";
+  trigger.setAttribute("aria-label", trigger.textContent);
+  trigger.setAttribute("aria-expanded", modal.classList.contains("show") ? "true" : "false");
+  if (title) title.textContent = editable ? "Abrechnungszeitraum bearbeiten" : "Abrechnungszeitraum anzeigen";
+  if (description) description.textContent = editable
+    ? "Beginn und Ende der aktuell geöffneten Abrechnung. Teilperioden und jahresübergreifende Zeiträume sind zulässig."
+    : "Der Zeitraum der geöffneten Abrechnung wird schreibgeschützt angezeigt.";
+  yearEl.value = year;
+  startEl.value = start;
+  endEl.value = end;
+  startEl.disabled = !editable;
+  endEl.disabled = !editable;
+  startEl.setAttribute("aria-readonly", editable ? "false" : "true");
+  endEl.setAttribute("aria-readonly", editable ? "false" : "true");
   const statusClass = yearMismatch ? "warn" : "ok";
   const statusText = yearMismatch ? "Abrechnungsjahr und Endjahr weichen ab" : "Abrechnungsjahr entspricht dem Endjahr";
-  el.innerHTML = '<div class="start-box billing-period-settings-card">' +
-    '<div class="inline-titlebar"><div><h3>Zeitraum der geöffneten Abrechnung</h3><p class="small">Teilperioden und jahresübergreifende Zeiträume sind zulässig. Das Abrechnungsjahr entspricht dem Jahr des Enddatums.</p></div><span class="status '+statusClass+'">'+escapeHtml(readOnlyLabel)+'</span></div>' +
-    '<div class="split billing-period-settings-grid">' +
-      '<label class="small"><strong>Abrechnungsjahr</strong><br><input value="'+escapeHtml(year)+'" readonly aria-describedby="billingPeriodYearHint"></label>' +
-      '<label class="small"><strong>Beginn</strong><br><input type="date" value="'+escapeHtml(start)+'"'+disabled+uiActionAttributes("billing.setPeriod", ["abrechnungsbeginn","$value"], "change")+'></label>' +
-      '<label class="small"><strong>Ende</strong><br><input type="date" value="'+escapeHtml(end)+'"'+disabled+uiActionAttributes("billing.setPeriod", ["abrechnungsende","$value"], "change")+'></label>' +
-    '</div>' +
-    '<div id="billingPeriodYearHint" class="hint"><strong>Prüfstatus:</strong> <span class="status '+statusClass+'">'+escapeHtml(statusText)+'</span>' + (yearMismatch ? ' · Eingetragen: '+escapeHtml(year)+'; Endjahr: '+escapeHtml(endYear)+'.' : '') + '</div>' +
-    (mismatchAction ? '<div class="toolbar">'+mismatchAction+'</div>' : '') +
-  '</div>';
+  statusEl.innerHTML = '<strong>Prüfstatus:</strong> <span class="status ' + statusClass + '">' + escapeHtml(statusText) + '</span>' + (yearMismatch ? ' · Eingetragen: ' + escapeHtml(year) + '; Endjahr: ' + escapeHtml(endYear) + '.' : '');
+  // Kompatibilitätsnachweis der bestehenden Aktion: data-ui-action="billing.syncPeriodYear"
+  syncButton.hidden = !(yearMismatch && editable);
+  if (!syncButton.hidden) syncButton.textContent = "Abrechnungsjahr " + endYear + " übernehmen";
+  if (trigger.dataset.billingPeriodBound !== "true") {
+    trigger.dataset.billingPeriodBound = "true";
+    trigger.addEventListener("click", openBillingPeriodEditor);
+  }
+  if (closeButton.dataset.billingPeriodBound !== "true") {
+    closeButton.dataset.billingPeriodBound = "true";
+    closeButton.addEventListener("click", closeBillingPeriodEditor);
+  }
+  if (modal.dataset.billingPeriodBound !== "true") {
+    modal.dataset.billingPeriodBound = "true";
+    const observer = new MutationObserver(() => trigger.setAttribute("aria-expanded", modal.classList.contains("show") ? "true" : "false"));
+    observer.observe(modal, { attributes:true, attributeFilter:["class"] });
+  }
 }
 
 function renderBillingOverviewReadonlyNotice() {

@@ -2,7 +2,7 @@
   "name": "nk-pro-v99-4-41",
   "version": "99.4.41",
   "private": true,
-  "description": "AP22F6B – technische Migration der Seite Nebenkosten abrechnen – Übersicht",
+  "description": "AP22F6B Korrektur 1 – Nebenkostenabrechnung Übersicht",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
     "test:fixtures": "node tools/check-fixtures.cjs",
@@ -67,9 +67,10 @@
     "test:ap22f5b:static": "node tests/ap22f5b-pages.test.cjs",
     "test:ap22f5b:browser": "node tests/ap22f5b-pages-browser.test.cjs",
     "test:ap22f5b": "npm run test:ap22f5b:static && npm run test:ap22f5b:browser",
-    "test:ap22f6b:static": "node tests/ap22f6b-billing-overview.test.cjs && node tests/ap22f6b-protected-areas.test.cjs",
-    "test:ap22f6b:browser": "node tests/ap22f6b-billing-overview.spec.js",
-    "test:ap22f6b": "npm run test:ap22f6b:static && npm run test:ap22f6b:browser"
+    "test:ap22f6b:static": "node tests/ap22f6b-billing-overview.test.cjs && node tests/ap22f6b-korrektur1.test.cjs && node tests/ap22f6b-protected-areas.test.cjs",
+    "test:ap22f6b:browser": "node tests/ap22f6b-billing-overview.spec.js && node tests/ap22f6b-korrektur1-browser.test.cjs",
+    "test:ap22f6b": "npm run test:ap22f6b:static && npm run test:ap22f6b:browser",
+    "test:ap22f6b:korr1": "node tests/ap22f6b-korrektur1.test.cjs && node tests/ap22f6b-korrektur1-browser.test.cjs"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1"

@@ -1,3 +1,9 @@
+# Release V99.4.41 – AP22F6B Korrektur 1
+
+Diese Korrektur bereinigt drei nach der Sichtprüfung festgestellte UI-Abweichungen. Die Übersicht beginnt ohne leeren Hinweisblock direkt im normalen Seitenraster. Die bisher unterhalb der Übersicht eingeblendete Klappbox „1. Abrechnungszeitraum“ entfällt; bei geöffneter Abrechnung steht stattdessen die eindeutig bezeichnete Aktion „Abrechnungszeitraum bearbeiten“ beziehungsweise im schreibgeschützten Zustand „Abrechnungszeitraum anzeigen“ zur Verfügung. Beim Ansehen einer archivierten Abrechnung bleibt der vollständige Navigationsabschnitt „Objekt vorbereiten“ sichtbar.
+
+Zeitraumvalidierung, Datenmodell, Fach- und Statuslogik, Persistenz, Migration, Archivierung, Berechnung, Brief und Druck bleiben unverändert. Die Produktversion bleibt V99.4.41; die Cachekennung lautet `99.4.41-ap22f6b-k1`.
+
 # Release V99.4.41 – AP22F6B Nebenkostenabrechnung Übersicht
 
 Dieses Release migriert ausschließlich die Seite „Nebenkosten abrechnen – Übersicht“. Die vorhandenen Abrechnungen, Status-, Fortschritts-, Zeitraum- und Saldodarstellungen sowie alle bestehenden Aktionswege bleiben erhalten. Neu ist ausschließlich die freigegebene kompakte Darstellung mit gemeinsamer Tabelle, Suche, Statussegmenten, Ergebniszählung und einer nicht umbrechenden Symbolaktionsgruppe.

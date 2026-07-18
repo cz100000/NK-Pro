@@ -1,3 +1,9 @@
+# Projektstand V99.4.41 – AP22F6B Korrektur 1
+
+Die nach der Sichtprüfung festgelegten Korrekturen sind umgesetzt: Der Seitenkopf geht ohne leeren Statusbereich in die Abrechnungskarte über, die Zeitraum-Klappbox wurde durch eine klar bezeichnete Dialogaktion ersetzt, und `Objekt vorbereiten` bleibt bei archivierten Ansichten vollständig in der Navigation sichtbar. Die bestehenden Zeitraumfelder, Prüfungen und Schreibaktionen werden ausschließlich über ihre vorhandenen zentralen Wege verwendet.
+
+Produktversion, Datenschema 5, Datenmodell, Fach- und Statuslogik, Persistenz, Migration, Archivierung, Berechnung sowie Brief- und Drucksystem bleiben unverändert.
+
 # Projektstand V99.4.41 – AP22F6B Nebenkostenabrechnung Übersicht
 
 Die Seite `start` („Nebenkosten abrechnen – Übersicht“) entspricht dem freigegebenen Zielbild AP22F6A Korrektur 2. Verbindlich umgesetzt sind die kompakte gemeinsame Tabellenstruktur, Trennung aktueller und archivierter Datensätze, Suche, Bestandsfilter, Ergebniszählung sowie quadratische Symbolbuttons in einer einzigen nicht umbrechenden Aktionsgruppe.

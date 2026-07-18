@@ -1,0 +1,54 @@
+{
+  "workPackage": "AP22F6B Korrektur 1",
+  "productVersion": "V99.4.41",
+  "overall": "PASS",
+  "protectedFiles": 392,
+  "protectedRegions": 24,
+  "tests": [
+    {
+      "name": "AP22F6B Korrektur 1 statisch",
+      "result": "PASS"
+    },
+    {
+      "name": "AP22F6B Gesamtstatik",
+      "result": "PASS"
+    },
+    {
+      "name": "AP22F6B Schutzbereiche",
+      "result": "PASS"
+    },
+    {
+      "name": "AP22F6B Zielseiten-Browsertest",
+      "result": "PASS"
+    },
+    {
+      "name": "AP22F6B Korrektur-1-Browsertest",
+      "result": "PASS"
+    },
+    {
+      "name": "AP21B2 Navigation Playwright",
+      "result": "PASS",
+      "count": "3/3"
+    },
+    {
+      "name": "Dokument/CSV, Migration, Persistenz Playwright",
+      "result": "PASS",
+      "count": "13/13"
+    },
+    {
+      "name": "JS-Syntax",
+      "result": "PASS",
+      "count": 55
+    },
+    {
+      "name": "Fixtures",
+      "result": "PASS",
+      "count": 6
+    },
+    {
+      "name": "Release-Inhaltsprüfung",
+      "result": "PASS"
+    }
+  ],
+  "knownFunctionalRemainders": []
+}

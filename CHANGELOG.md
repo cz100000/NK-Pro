@@ -1,3 +1,12 @@
+# V99.4.41 – AP22F6B Korrektur 1 (2026-07-18)
+
+- leeren Status-/Hinweisbereich unter dem Seitenkopf vollständig ausgeblendet; der übergroße Abstand und der gelbe Leerstreifen entfallen,
+- Klappbox „1. Abrechnungszeitraum“ aus der Übersicht entfernt,
+- Zeitraumänderung über die klar bezeichnete Aktion „Abrechnungszeitraum bearbeiten“ in einem separaten Dialog zugänglich gemacht; im Ansichtsmodus heißt die Aktion „Abrechnungszeitraum anzeigen“,
+- bestehende Zeitraumprüfung und die vorhandenen Schreibwege `billing.setPeriod` und `billing.syncPeriodYear` unverändert weiterverwendet,
+- Navigationsabschnitt „Objekt vorbereiten“ auch beim Ansehen archivierter Abrechnungen sichtbar gehalten,
+- PWA-Build- und Cachekennung auf `99.4.41-ap22f6b-k1` fortgeschrieben; Produktversion und Datenschema bleiben unverändert.
+
 # V99.4.41 – AP22F6B Nebenkostenabrechnung Übersicht (2026-07-18)
 
 - Seite `start` als kompakte gemeinsame Übersicht für aktuelle und archivierte Abrechnungen migriert.

@@ -1,3 +1,15 @@
+# NK-Pro V99.4.41 – AP22F6B Korrektur 1
+
+Korrigierter Paketstand der Seite `Nebenkosten abrechnen → Übersicht`: normaler Seitenabstand ohne leeren Hinweisbereich, keine Zeitraum-Klappbox mehr, klar bezeichneter Zeitraumdialog und vollständig sichtbarer Navigationsabschnitt `Objekt vorbereiten` auch im Archiv-Ansichtsmodus. Fachlogik und Datenwege bleiben unverändert.
+
+Prüfung:
+
+```bash
+npm ci
+npm run release:check
+npm run test:ap22f6b:browser
+```
+
 # NK-Pro V99.4.41 – AP22F6B Nebenkostenabrechnung Übersicht
 
 AP22F6B migriert ausschließlich `Nebenkosten abrechnen → Übersicht` auf `NK-Pro UI Referenz 1.0`. Aktuelle und archivierte Abrechnungen stehen in einer kompakten gemeinsamen Tabellenstruktur mit Suche, Bestandsfiltern, Ergebniszählung und quadratischen Symbolbuttons ohne sichtbare Textbeschriftung oder Zeilenumbruch. Fach-, Status-, Speicher-, Lade-, Migrations-, Archivierungs-, Berechnungs-, Brief- und Druckwege bleiben unverändert.
