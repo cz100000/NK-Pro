@@ -1,3 +1,9 @@
+# Release V99.4.42 – AP22F7B Korrektur 2
+
+Diese Korrektur setzt den freigegebenen Tabellenbreitenstandard nicht nur für die beiden AP22F7B-Tabellen, sondern projektweit für alle 19 produktiven Standardtabellen um. Auf Desktop reicht jede Tabelle bis zum rechten Rand ihres Tabellencontainers. Nach der letzten Spalte bleibt keine leere weiße Fläche. Bei breitem Inhalt wächst ausschließlich die Tabelle innerhalb ihres eigenen horizontalen Scrollcontainers; die Gesamtseite bleibt ohne horizontalen Überlauf.
+
+Die Korrektur erfolgt zentral über die bestehende `nk-ui-table-wrap`-/`nk-ui-table`-Komponente. Datenmodell, Datenschema 5, Fachlogik, Eingaben, Sortierung, Filterung, Statuswerte, Persistenz, Migration, Archivierung, Berechnung, Qualitätsregeln, Brief und Druck bleiben unverändert. Die Produktversion bleibt V99.4.42; die Cachekennung lautet `99.4.42-ap22f7b-k2`.
+
 # Release V99.4.42 – AP22F7B Korrektur 1
 
 Diese Korrektur beseitigt die nach der Browser-Sichtprüfung festgestellte Abweichung der Tabellenköpfe auf `Nebenkosten abrechnen → Mietverhältnisse`. Beide Tabellen verwenden wieder die bereits freigegebene einheitliche hellgraue Kopfzeile mit dunkler Beschriftung und genau einem Sortiersymbol je sortierbarer Spalte. Die Details-Kopfzelle ist identisch gestaltet.

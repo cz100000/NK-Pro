@@ -5516,12 +5516,17 @@ body:not(.document-print-window) .nk-ui-notice--danger { border-left-color:var(-
   body:not(.document-print-window) .page-section.nk-ui-accordion > summary { grid-template-columns:auto minmax(0,1fr) auto; }
 }
 
-/* AP22C: produktive Migration von Tabellen, Listen und Tabellenwerkzeugen */
+/* AP22C: produktive Migration von Tabellen, Listen und Tabellenwerkzeugen.
+   AP22F7B Korrektur 2: Der einspaltige Grid-Track erzwingt projektweit den
+   vollständigen rechten Tabellenabschluss und wächst bei breitem Inhalt
+   ausschließlich innerhalb des horizontal scrollbar bleibenden Containers. */
 body:not(.document-print-window) .nk-ui-table-wrap {
   width:100%;
   max-width:100%;
   min-width:0;
   overflow:auto;
+  display:grid;
+  grid-template-columns:minmax(100%,max-content);
   border:1px solid var(--nk-ui-color-border) !important;
   border-radius:var(--nk-ui-radius-md);
   background:var(--nk-ui-color-surface) !important;
@@ -5529,8 +5534,8 @@ body:not(.document-print-window) .nk-ui-table-wrap {
   scrollbar-gutter:stable;
 }
 body:not(.document-print-window) .nk-ui-table {
-  width:max-content;
-  min-width:100%;
+  width:100%;
+  min-width:0;
   border-collapse:separate;
   border-spacing:0;
   color:var(--nk-ui-color-text);

@@ -2,7 +2,7 @@
   "name": "nk-pro-v99-4-42",
   "version": "99.4.42",
   "private": true,
-  "description": "AP22F7B Korrektur 1 – Einheitliche Tabellenköpfe bei Nebenkosten abrechnen – Mietverhältnisse",
+  "description": "AP22F7B Korrektur 2 – Projektweiter Tabellenabschluss und vollbreite Standardtabellen",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
     "test:fixtures": "node tools/check-fixtures.cjs",
@@ -18,7 +18,7 @@
     "test:ap14": "node tests/ap14-ui-navigation.test.cjs && playwright test --project=ap14-ui-navigation --workers=1",
     "test:contents": "node tests/ap22e-ui-design-contract.test.cjs",
     "test:ap15": "node tests/ap15-integration-release.test.cjs && playwright test --project=ap15-integration-release --workers=1",
-    "release:check": "npm run test:syntax && npm run test:fixtures && npm run test:ap22f7b:static && node tests/ap22f7b-korrektur1.test.cjs && npm run test:metering:ap21b1 && npm run test:architecture:ap22f7b && npm run test:ap21c && node tools/check-release-contents.cjs --ignore-node-modules --strict",
+    "release:check": "npm run test:syntax && npm run test:fixtures && npm run test:ap22f7b:static && npm run test:metering:ap21b1 && npm run test:architecture:ap22f7b && npm run test:ap21c && node tools/check-release-contents.cjs --ignore-node-modules --strict",
     "test:ap17": "node tests/ap17-area-dashboards.test.cjs && playwright test --project=ap17-area-dashboards --workers=1",
     "test:ap18": "node tests/ap18-ui-ux-polish.test.cjs && playwright test --project=ap18-ui-ux-polish --workers=1",
     "test:ap19": "node tests/ap19-billing-context-dashboards.test.cjs && playwright test --project=ap19-billing-context-dashboards --workers=1",
@@ -71,13 +71,16 @@
     "test:ap22f6b:browser": "node tests/ap22f6b-billing-overview.spec.js && node tests/ap22f6b-korrektur1-browser.test.cjs",
     "test:ap22f6b": "npm run test:ap22f6b:static && npm run test:ap22f6b:browser",
     "test:ap22f6b:korr1": "node tests/ap22f6b-korrektur1.test.cjs && node tests/ap22f6b-korrektur1-browser.test.cjs",
-    "test:ap22f7b:static": "node tests/ap22f7b-billing-tenants.test.cjs && node tests/ap22f7b-protected-areas.test.cjs",
-    "test:ap22f7b:browser": "node tests/ap22f7b-billing-tenants-browser.test.cjs",
+    "test:ap22f7b:static": "node tests/ap22f7b-billing-tenants.test.cjs && node tests/ap22f7b-korrektur1.test.cjs && node tests/ap22f7b-korrektur2-table-width.test.cjs && node tests/ap22f7b-korrektur2-protected-areas.test.cjs",
+    "test:ap22f7b:browser": "node tests/ap22f7b-billing-tenants-browser.test.cjs && node tests/ap22f7b-korrektur1-browser.test.cjs && node tests/ap22f7b-korrektur2-table-width-browser.test.cjs",
     "test:ap22f7b": "npm run test:ap22f7b:static && npm run test:ap22f7b:browser",
     "test:architecture:ap22f7b": "node tests/ap6-modularization.test.cjs && node tests/ap8-application-actions.test.cjs && node tests/ap9-core-orchestration.test.cjs && node tests/ap13-letter-layout.test.cjs && node tests/ap21-rule-audit.test.cjs && node tests/ap21b2-navigation-centralization.test.cjs",
-    "test:ap22f7b:korr1:static": "node tests/ap22f7b-korrektur1.test.cjs && node tests/ap22f7b-protected-areas.test.cjs",
+    "test:ap22f7b:korr1:static": "node tests/ap22f7b-korrektur1.test.cjs && node tests/ap22f7b-korrektur2-protected-areas.test.cjs",
     "test:ap22f7b:korr1:browser": "node tests/ap22f7b-korrektur1-browser.test.cjs",
-    "test:ap22f7b:korr1": "npm run test:ap22f7b:korr1:static && npm run test:ap22f7b:korr1:browser"
+    "test:ap22f7b:korr1": "npm run test:ap22f7b:korr1:static && npm run test:ap22f7b:korr1:browser",
+    "test:ap22f7b:korr2:static": "node tests/ap22f7b-korrektur2-table-width.test.cjs && node tests/ap22f7b-korrektur2-protected-areas.test.cjs",
+    "test:ap22f7b:korr2:browser": "node tests/ap22f7b-korrektur2-table-width-browser.test.cjs",
+    "test:ap22f7b:korr2": "npm run test:ap22f7b:korr2:static && npm run test:ap22f7b:korr2:browser"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1"

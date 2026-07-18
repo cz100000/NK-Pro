@@ -1,3 +1,12 @@
+# V99.4.42 – AP22F7B Korrektur 2 (2026-07-18)
+
+- alle 19 produktiven Standardtabellen auf vollständige Containerbreite und klaren rechten Abschluss umgestellt;
+- zentrale Tabellenhülle als einspaltigen Grid-Track mit `minmax(100%, max-content)` abgesichert;
+- schmale Ansichten behalten ausschließlich internen horizontalen Tabellen-Scroll ohne horizontalen Seitenüberlauf;
+- bestehende individuelle Mindestbreiten, Sortierungen, Filter, Eingaben und Statusdarstellungen funktional unverändert gelassen;
+- projektweite Browserprüfung bei 1720 px, 620 px und 390 px mit 57 Tabellenmessungen ergänzt;
+- PWA-Build- und Cachekennung auf `99.4.42-ap22f7b-k2` fortgeschrieben; Produktversion und Datenschema bleiben unverändert.
+
 # V99.4.42 – AP22F7B Korrektur 1 (2026-07-18)
 
 - Tabellenköpfe der Mietverhältnis- und Wohnungstabelle an den freigegebenen hellgrauen NK-Pro-Standard angeglichen;

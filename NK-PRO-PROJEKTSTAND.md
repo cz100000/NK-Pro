@@ -1,3 +1,7 @@
+# Projektstand V99.4.42 – AP22F7B Korrektur 2
+
+Der projektweite Tabellenabschluss ist umgesetzt: Alle 19 produktiven Standardtabellen füllen auf Desktop ihre jeweilige Tabellenhülle vollständig aus und besitzen rechts einen klaren Abschluss. Auf 620 px und 390 px bleibt horizontaler Überlauf auf die interne Tabellenhülle begrenzt. Die Änderung ist rein darstellungsbezogen; Fach-, Daten-, Speicher-, Migrations-, Archiv-, Berechnungs-, Brief- und Druckwege sind unverändert.
+
 # Projektstand V99.4.42 – AP22F7B Korrektur 1
 
 Die Tabellenköpfe der Seite `mieter` unter `Nebenkosten abrechnen` entsprechen wieder dem verbindlichen Tabellenstandard der zuvor migrierten Seiten. Es gibt eine einheitliche hellgraue Kopfzeile, dunkle Beschriftung, genau ein Sortiersymbol je sortierbarer Spalte und keine zusätzliche Sortierunterzeile. Die Kopfzelle `Details` verwendet dieselbe Gestaltung wie alle übrigen Spalten.

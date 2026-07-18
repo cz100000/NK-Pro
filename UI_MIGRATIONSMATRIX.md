@@ -93,3 +93,12 @@ Beide Seiten gelten damit in ihrem freigegebenen Funktionsumfang als auf `NK-Pro
 | Seite | Stand | Korrektur | Unverändert |
 |---|---|---|---|
 | `mieter` – Nebenkosten abrechnen: Mietverhältnisse | abgeschlossen V99.4.42 Korrektur 1 | Tabellenköpfe beider Tabellen verwenden wieder die freigegebene einheitliche hellgraue Standarddarstellung; genau ein Sortiersymbol je sortierbarer Spalte; keine zusätzliche Sortierunterzeile; `Details` identisch zu den übrigen Kopfzellen | Tabelleninhalt, Sortier-, Such-, Filter-, Detail-, Status-, Speicher- und Fachlogik |
+
+## AP22F7B Korrektur 2 – Projektweiter Tabellenbreitenabgleich
+
+| Bereich | Stand | Ergebnis |
+|---|---|---|
+| Alle 19 produktiven `.nk-ui-table`-Tabellen | abgeschlossen V99.4.42 Korrektur 2 | vollständige Containerbreite auf Desktop, klarer rechter Abschluss, interner Scroll bei breitem Inhalt |
+| Navigation, Fachlogik, Datenmodell, Persistenz, Migration, Archivierung, Brief und Druck | geschützt | unverändert |
+
+Der Tabellenbreitenstandard gilt damit querschnittlich auch für noch nicht vollständig inhaltlich migrierte Seiten.

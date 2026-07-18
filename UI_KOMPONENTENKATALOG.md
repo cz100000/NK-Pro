@@ -99,3 +99,13 @@ Datenstandsblock, kompakte Tabellenkarte, Tabellenwerkzeugleiste, interne Overfl
 ## AP22F7B Korrektur 1 – Tabellenkopf
 
 Für `mieterTable` und `wohnungenTable` wird keine eigene visuelle Tabellenkopfvariante mehr geführt. Die vorhandenen Sortierbuttons sind vollständig in die freigegebene Standard-Kopfzeile integriert: transparenter Button ohne eigenen Rahmen, ein Sortiersymbol direkt neben der Beschriftung und sichtbarer Tastaturfokus innerhalb der Kopfzelle. Die generische Alt-Sortierung wird für diese beiden Tabellen nach dem Rendern entfernt, damit ausschließlich der AP22F7B-Präsentationscontroller sortiert.
+
+## AP22F7B Korrektur 2 – Verbindlicher Tabellenabschluss
+
+- Jede produktive Standardtabelle steht in genau einer `.nk-ui-table-wrap`.
+- Die Tabellenhülle verwendet einen einspaltigen Track `minmax(100%, max-content)`.
+- Die Tabelle füllt mindestens die vollständige Inhaltsbreite der Hülle aus.
+- Breiter Tabelleninhalt vergrößert ausschließlich den internen Scrollbereich.
+- Nach der letzten Spalte bleibt auf Desktop keine leere Restfläche.
+- Rechte Außenkante und Eckradien werden durch die zentrale Tabellenhülle konsistent abgeschlossen.
+- Seitenspezifische Breiten-Sonderlösungen sind nur als fachlich begründete Mindestbreite zulässig; sie dürfen den vollbreiten Desktopabschluss nicht aufheben.

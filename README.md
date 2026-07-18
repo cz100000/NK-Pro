@@ -1,3 +1,15 @@
+# NK-Pro V99.4.42 – AP22F7B Korrektur 2
+
+AP22F7B Korrektur 2 setzt den verbindlichen Tabellenabschluss projektweit um. Alle 19 produktiven `nk-ui-table`-Tabellen füllen auf Desktop die verfügbare Breite ihres Containers vollständig aus. Breite Inhalte bleiben auf schmalen Ansichten ausschließlich innerhalb der jeweiligen Tabellenhülle horizontal scrollbar. Nach der letzten Spalte entsteht keine leere weiße Restfläche. Fachlogik, Datenwege, Sortierung, Filter, Navigation, Brief und Druck bleiben unverändert.
+
+Prüfung:
+
+```bash
+npm ci
+npm run release:check
+CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:ap22f7b:korr2
+```
+
 # NK-Pro V99.4.42 – AP22F7B Korrektur 1
 
 AP22F7B Korrektur 1 gleicht die Tabellenköpfe auf `Nebenkosten abrechnen → Mietverhältnisse` wieder exakt an den verbindlichen Tabellenstandard an. Weiße Einzelbuttons, die doppelte Sortierzeile und die abweichende Details-Kopfzelle entfallen. Die bestehende Sortier-, Filter-, Fokus- und Tastaturlogik bleibt erhalten. Fachlogik und Datenwege bleiben unverändert.

@@ -170,3 +170,12 @@ Mietverhältnisse vor Wohnungen, keine Klappboxen, keine Kennzahlenkarten, volls
 - [x] Sortierung funktioniert auf- und absteigend unverändert.
 - [x] Tastaturfokus bleibt sichtbar.
 - [x] Desktop und 620 px ohne horizontalen Seitenüberlauf; Tabellen scrollen bei Bedarf intern.
+
+## AP22F7B Korrektur 2 – Zusätzliche Tabellenabnahme
+
+- [ ] Tabelle füllt auf Desktop die vollständige Inhaltsbreite ihres Containers.
+- [ ] Nach der letzten Spalte bleibt keine leere weiße Restfläche.
+- [ ] Die rechte Tabellenkante ist über Rahmen und Eckradius eindeutig abgeschlossen.
+- [ ] Breite Inhalte erzeugen ausschließlich internen horizontalen Tabellen-Scroll.
+- [ ] Die Gesamtseite besitzt bei Desktop, 620 px, 390 px und Zoomäquivalent keinen horizontalen Überlauf.
+- [ ] Sortierung, Filterung, Eingaben und Fokusdarstellung bleiben durch die Breitenanpassung unverändert.
