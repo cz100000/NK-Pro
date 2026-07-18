@@ -1,20 +1,23 @@
-# AP22F5B – Aktualisierte UI-Referenz
+# AP22F5B Korrektur 1 – Aktualisierte UI-Referenz
 
 ## Nicht produktive Referenz
-- Datei: `ui-reference/index.html`
+- HTML: `ui-reference/index.html`
 - Styling: `ui-reference/reference.css`
-- Produktive Navigationseinbindung: **nein**
+- Einbindung in die produktive Navigation: **nein**
 
-## Neue Abschnitte
-- `#meters-page`: fünf Zählerarten-Karten, DUMMY-Hinweis, Such-/Filterleiste, statische Tabelle und Ergebnisfuß
-- `#tenancies-page`: Kennzahlenkarten, Such-/Filterleiste, Mietverhältnistabelle, Aktionen, Archivzustand und Nur-Ansehen-Muster
+## Verbindliches Mietverhältnis-Muster
+- kompakte Zusammenfassungszeilen ohne dauerhafte Formularfelder
+- gemeinsame Tabellenkarte mit Umschalter `Aktiv / Archiv`
+- aufklappbarer Bearbeitungsbereich für aktive Datensätze
+- schreibgeschützter Definitionsbereich für Archivdatensätze
+- einheitliche Such-, Filter-, Status-, Aktions- und Tabellenfußkomponenten
+- interner Tabellen-Scroll und Hinweise im normalen Dokumentfluss
 
 ## Zielzustandsnachweise
-- `AP22F5B_Screenshots/01_zaehler_desktop.png`
-- `AP22F5B_Screenshots/02_zaehler_schmal.png`
-- `AP22F5B_Screenshots/03_mietverhaeltnisse_desktop.png`
-- `AP22F5B_Screenshots/04_mietverhaeltnisse_schmal.png`
-- `AP22F5B_Screenshots/05_mietverhaeltnisse_nur_ansehen.png`
+- `AP22F5B_Korrektur1_Screenshots/01_aktive_kompakt_mit_detail.png`
+- `AP22F5B_Korrektur1_Screenshots/02_archiv_mit_details.png`
+- `AP22F5B_Korrektur1_Screenshots/03_schmal_mit_detail.png`
+- `AP22F5B_Korrektur1_Screenshots/04_nur_ansehen.png`
 
-## Gestaltungsregeln
-Die Kartenflächen bleiben neutral. Nur die Zählerlinienicons verwenden die zentralen semantischen Zählerfarbtokens. Breite Tabellen nutzen eine weiße Innenhülle und internen horizontalen Scroll. Hinweise überlagern keine Inhalte. Der Nur-Ansehen-Zustand hält Filter bedienbar und sperrt ausschließlich schreibende Bedienelemente.
+## Unverändert
+Die Zählerreferenz mit fünf farbigen zentralen SVG-Linienicons bleibt unverändert. Die Korrektur führt keine neue Dialog-, Daten- oder Aktionskomponente ein.

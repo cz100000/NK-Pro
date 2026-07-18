@@ -6162,7 +6162,7 @@ body:not(.document-print-window) #wasser #meterInventoryDummyTable tbody tr:hove
 #wasser .meter-inventory-table-footer{display:flex;align-items:center;justify-content:space-between;gap:var(--nk-ui-space-lg);padding:var(--nk-ui-space-md) var(--nk-ui-space-xl);border-top:1px solid var(--nk-ui-color-border);background:var(--nk-ui-color-surface-muted);color:var(--nk-ui-color-text-muted);font-size:12px}
 #wasser .meter-inventory-system-note{position:static;min-height:0;height:auto;margin:0;inset:auto;z-index:auto;align-items:flex-start}
 
-/* Mietverhältnisse: Bestandskennzahlen, kompakte Filterleiste und bestehende Datenpflege */
+/* Mietverhältnisse: kompakte Übersicht, aufklappbare Details und gemeinsame Archivansicht */
 #mieterverwaltung .tenant-summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--nk-ui-space-md)}
 #mieterverwaltung .tenant-summary-card{min-width:0;display:flex;align-items:center;gap:var(--nk-ui-space-md);padding:var(--nk-ui-space-lg);border:1px solid var(--nk-ui-color-border);border-radius:var(--nk-ui-radius-lg);background:var(--nk-ui-color-surface);box-shadow:var(--nk-ui-shadow-sm)}
 #mieterverwaltung .tenant-summary-card__icon{width:40px;height:40px;display:grid;place-items:center;flex:0 0 40px;color:var(--nk-ui-color-accent)}
@@ -6179,58 +6179,60 @@ body:not(.document-print-window) #mieterverwaltung .tenant-management-card__head
 #mieterverwaltung .tenant-management-card__eyebrow{margin:0 0 var(--nk-ui-space-2xs);color:var(--nk-ui-color-text-muted);font-size:12px;font-weight:700;letter-spacing:.03em;text-transform:uppercase}
 #mieterverwaltung .tenant-management-card__header h2{margin:0;font-size:20px;line-height:1.25}
 #mieterverwaltung .tenant-management-card__count{color:var(--nk-ui-color-text-muted);font-weight:600}
+#mieterverwaltung .tenant-management-card__header-actions{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:var(--nk-ui-space-md)}
+#mieterverwaltung .tenant-view-switch{display:inline-flex;align-items:center;padding:3px;border:1px solid var(--nk-ui-color-border);border-radius:var(--nk-ui-radius-md);background:var(--nk-ui-color-surface-muted)}
+#mieterverwaltung .tenant-view-switch button{width:auto!important;min-height:32px;padding:5px 11px!important;border:0!important;border-radius:var(--nk-ui-radius-sm)!important;background:transparent!important;color:var(--nk-ui-color-text-muted)!important;font-size:12px;font-weight:700;box-shadow:none!important}
+#mieterverwaltung .tenant-view-switch button span{display:inline-grid;min-width:20px;height:20px;place-items:center;margin-left:4px;padding:0 5px;border-radius:var(--nk-ui-radius-pill);background:var(--nk-ui-color-surface);color:inherit;font-size:11px}
+#mieterverwaltung .tenant-view-switch button.is-active{background:var(--nk-ui-color-surface)!important;color:var(--nk-ui-color-accent)!important;box-shadow:var(--nk-ui-shadow-sm)!important}
+#mieterverwaltung .tenant-view-switch button:focus-visible{outline:2px solid var(--nk-ui-color-focus);outline-offset:2px}
 body:not(.document-print-window) #mieterverwaltung .tenant-management-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:var(--nk-ui-space-sm);margin:0;padding:var(--nk-ui-space-md) var(--nk-ui-space-xl);border:0;border-bottom:1px solid var(--nk-ui-color-border);border-radius:0;background:var(--nk-ui-color-surface)!important}
 body:not(.document-print-window) #mieterverwaltung .tenant-management-toolbar input[type="search"]{flex:1 1 270px;width:auto!important;max-width:420px;min-width:min(300px,100%);height:38px}
 body:not(.document-print-window) #mieterverwaltung .tenant-management-toolbar select{flex:0 1 190px;width:auto!important;max-width:240px;min-width:170px;height:38px}
 body:not(.document-print-window) #mieterverwaltung .tenant-management-toolbar button{flex:0 0 auto;width:auto!important}
 #mieterverwaltung .tenant-management-toolbar .small{margin-left:auto}
 #mieterverwaltung .tenant-management-table-wrap{width:100%;max-width:100%;min-width:0;margin:0;padding:var(--nk-ui-space-sm);border:0;border-radius:0;overflow-x:auto;overflow-y:visible;overscroll-behavior-inline:contain;scrollbar-gutter:stable;background:var(--nk-ui-color-surface)!important}
-#mieterverwaltung .tenant-management-table{width:100%!important;min-width:1580px!important;margin:0;border-collapse:separate;border-spacing:0}
+#mieterverwaltung #startTenantTable.tenant-management-table{width:100%!important;min-width:900px!important;margin:0;border-collapse:separate;border-spacing:0}
 body:not(.document-print-window) #mieterverwaltung .tenant-management-table thead th{padding:11px var(--nk-ui-space-md);background:var(--nk-ui-color-surface-muted)!important;color:var(--nk-ui-color-text)!important;border-color:var(--nk-ui-color-border)!important;font-size:12px;font-weight:700;text-transform:none;letter-spacing:0;white-space:nowrap}
-#mieterverwaltung .tenant-management-table tbody td{padding:var(--nk-ui-space-xs) var(--nk-ui-space-sm);vertical-align:top;border-color:var(--nk-ui-color-border)}
-body:not(.document-print-window) #mieterverwaltung .tenant-management-table tbody tr:nth-child(odd) td{background:var(--nk-ui-color-surface)!important}
-body:not(.document-print-window) #mieterverwaltung .tenant-management-table tbody tr:nth-child(even) td{background:var(--nk-ui-color-surface-muted)!important}
-body:not(.document-print-window) #mieterverwaltung .tenant-management-table tbody tr:hover td{background:var(--nk-ui-color-accent-soft)!important}
-#mieterverwaltung .tenant-management-id-cell{font-weight:700;white-space:nowrap}
-#mieterverwaltung .tenant-management-unit-cell{min-width:190px}
-#mieterverwaltung .tenant-management-name-cell{min-width:180px}
-#mieterverwaltung .tenant-management-table input,
-#mieterverwaltung .tenant-management-table select{width:100%;min-width:0;height:34px;padding:var(--nk-ui-space-xs) var(--nk-ui-space-sm);border:1px solid var(--nk-ui-color-border);border-radius:var(--nk-ui-radius-sm);background:var(--nk-ui-color-surface);color:var(--nk-ui-color-text);font:inherit}
-#mieterverwaltung .tenant-management-table input:focus,
-#mieterverwaltung .tenant-management-table select:focus{border-color:var(--nk-ui-color-accent);outline:2px solid var(--nk-ui-color-focus);outline-offset:1px}
-#mieterverwaltung .tenant-management-date-fields,
-#mieterverwaltung .tenant-management-address-fields,
-#mieterverwaltung .tenant-management-contact-fields,
-#mieterverwaltung .tenant-management-letter-fields{display:grid;gap:var(--nk-ui-space-xs)}
-#mieterverwaltung .tenant-management-date-fields{grid-template-columns:repeat(2,minmax(135px,1fr));min-width:280px}
-#mieterverwaltung .tenant-management-date-fields label{display:grid;gap:2px;color:var(--nk-ui-color-text-muted);font-size:10px;font-weight:700;text-transform:uppercase}
-#mieterverwaltung .tenant-management-address-fields{min-width:300px}
-#mieterverwaltung .tenant-management-address-fields>div{display:grid;grid-template-columns:90px minmax(150px,1fr);gap:var(--nk-ui-space-xs)}
-#mieterverwaltung .tenant-management-contact-fields{min-width:230px}
-#mieterverwaltung .tenant-management-letter-fields{min-width:245px}
-#mieterverwaltung .tenant-management-status-cell{min-width:120px;white-space:nowrap}
-#mieterverwaltung .tenant-management-action-heading,
-#mieterverwaltung .tenant-management-action-cell{width:90px;text-align:center}
+#mieterverwaltung .tenant-management-table tbody td{height:48px;padding:var(--nk-ui-space-sm) var(--nk-ui-space-md);vertical-align:middle;border-color:var(--nk-ui-color-border)}
+body:not(.document-print-window) #mieterverwaltung .tenant-management-summary-row:nth-child(odd) td{background:var(--nk-ui-color-surface)!important}
+body:not(.document-print-window) #mieterverwaltung .tenant-management-summary-row:nth-child(even) td{background:var(--nk-ui-color-surface-muted)!important}
+body:not(.document-print-window) #mieterverwaltung .tenant-management-summary-row:hover td{background:var(--nk-ui-color-accent-soft)!important}
+#mieterverwaltung .tenant-management-person{display:grid;gap:2px;min-width:170px}
+#mieterverwaltung .tenant-management-person strong{color:var(--nk-ui-color-text);font-size:13px}
+#mieterverwaltung .tenant-management-person small{color:var(--nk-ui-color-text-muted);font-size:11px;font-weight:600}
+#mieterverwaltung .tenant-management-status-cell{white-space:nowrap}
+#mieterverwaltung .tenant-management-action-heading,#mieterverwaltung .tenant-management-action-cell{width:104px;text-align:center}
 #mieterverwaltung .tenant-management-actions{display:flex;align-items:center;justify-content:center;gap:var(--nk-ui-space-xs)}
 #mieterverwaltung .tenant-management-row-action{width:34px!important;height:34px!important;min-width:34px;display:inline-grid!important;place-items:center;padding:0!important;border:1px solid var(--nk-ui-color-border)!important;border-radius:var(--nk-ui-radius-sm)!important;background:var(--nk-ui-color-surface)!important;color:var(--nk-ui-color-accent)!important;text-decoration:none}
 #mieterverwaltung .tenant-management-row-action svg{width:18px;height:18px}
+#mieterverwaltung .tenant-management-row-action.is-active{border-color:var(--nk-ui-color-accent)!important;background:var(--nk-ui-color-accent-soft)!important}
 #mieterverwaltung .tenant-management-row-action--archive{color:var(--nk-ui-color-warning)!important}
+#mieterverwaltung .tenant-management-row-action--restore{color:var(--nk-ui-color-success)!important}
 #mieterverwaltung .tenant-management-row-action:disabled{cursor:not-allowed;background:var(--nk-ui-color-surface-muted)!important;color:var(--nk-ui-color-text-muted)!important;opacity:1}
-#mieterverwaltung .tenant-management-row-action:hover:not(:disabled),
-#mieterverwaltung .tenant-management-row-action:focus-visible{border-color:var(--nk-ui-color-accent)!important;background:var(--nk-ui-color-accent-soft)!important;outline:2px solid var(--nk-ui-color-focus);outline-offset:1px}
+#mieterverwaltung .tenant-management-row-action:hover:not(:disabled),#mieterverwaltung .tenant-management-row-action:focus-visible{border-color:var(--nk-ui-color-accent)!important;background:var(--nk-ui-color-accent-soft)!important;outline:2px solid var(--nk-ui-color-focus);outline-offset:1px}
+#mieterverwaltung .tenant-management-detail-row td{height:auto!important;padding:0!important;background:var(--nk-ui-color-surface)!important}
+#mieterverwaltung .tenant-detail-panel{margin:var(--nk-ui-space-sm);padding:var(--nk-ui-space-lg);border:1px solid var(--nk-ui-color-border);border-left:3px solid var(--nk-ui-color-accent);border-radius:var(--nk-ui-radius-md);background:var(--nk-ui-color-surface);box-shadow:var(--nk-ui-shadow-sm)}
+#mieterverwaltung .tenant-detail-panel--readonly{border-left-color:var(--nk-ui-color-text-muted);background:var(--nk-ui-color-surface-muted)}
+#mieterverwaltung .tenant-detail-panel__header{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--nk-ui-space-lg);margin-bottom:var(--nk-ui-space-lg);padding-bottom:var(--nk-ui-space-md);border-bottom:1px solid var(--nk-ui-color-border)}
+#mieterverwaltung .tenant-detail-panel__header>div{display:grid;gap:var(--nk-ui-space-3xs)}
+#mieterverwaltung .tenant-detail-panel__header strong{font-size:16px}
+#mieterverwaltung .tenant-detail-panel__header small{color:var(--nk-ui-color-text-muted);font-size:12px}
+#mieterverwaltung .tenant-detail-close{width:auto!important;flex:0 0 auto}
+#mieterverwaltung .tenant-detail-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--nk-ui-space-lg)}
+#mieterverwaltung .tenant-detail-section{min-width:0;display:grid;align-content:start;gap:var(--nk-ui-space-sm);padding:var(--nk-ui-space-md);border:1px solid var(--nk-ui-color-border);border-radius:var(--nk-ui-radius-md);background:var(--nk-ui-color-surface)}
+#mieterverwaltung .tenant-detail-section h3{margin:0 0 var(--nk-ui-space-xs);font-size:13px}
+#mieterverwaltung .tenant-detail-field{min-width:0;display:grid;gap:4px;color:var(--nk-ui-color-text-muted);font-size:11px;font-weight:700}
+#mieterverwaltung .tenant-detail-field input,#mieterverwaltung .tenant-detail-field select{width:100%;min-width:0;height:36px;padding:var(--nk-ui-space-xs) var(--nk-ui-space-sm);border:1px solid var(--nk-ui-color-border);border-radius:var(--nk-ui-radius-sm);background:var(--nk-ui-color-surface);color:var(--nk-ui-color-text);font:inherit;font-weight:400}
+#mieterverwaltung .tenant-detail-field input:focus,#mieterverwaltung .tenant-detail-field select:focus{border-color:var(--nk-ui-color-accent);outline:2px solid var(--nk-ui-color-focus);outline-offset:1px}
+#mieterverwaltung .tenant-detail-field input:disabled,#mieterverwaltung .tenant-detail-field select:disabled{background:var(--nk-ui-color-surface-muted);color:var(--nk-ui-color-text-muted)}
+#mieterverwaltung .tenant-detail-field-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--nk-ui-space-sm)}
+#mieterverwaltung .tenant-detail-field-row--postal{grid-template-columns:90px minmax(0,1fr)}
+#mieterverwaltung .tenant-archive-detail-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--nk-ui-space-md);margin:0}
+#mieterverwaltung .tenant-archive-detail-grid>div{min-width:0;display:grid;gap:4px;padding:var(--nk-ui-space-md);border:1px solid var(--nk-ui-color-border);border-radius:var(--nk-ui-radius-sm);background:var(--nk-ui-color-surface)}
+#mieterverwaltung .tenant-archive-detail-grid dt{color:var(--nk-ui-color-text-muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+#mieterverwaltung .tenant-archive-detail-grid dd{margin:0;overflow-wrap:anywhere;color:var(--nk-ui-color-text);font-size:13px}
 #mieterverwaltung .tenant-management-empty{padding:var(--nk-ui-space-xl)!important;text-align:center;color:var(--nk-ui-color-text-muted)}
 #mieterverwaltung .tenant-management-card__footer{display:flex;align-items:center;justify-content:space-between;gap:var(--nk-ui-space-lg);padding:var(--nk-ui-space-md) var(--nk-ui-space-xl);border-top:1px solid var(--nk-ui-color-border);background:var(--nk-ui-color-surface-muted);color:var(--nk-ui-color-text-muted);font-size:12px}
-#mieterverwaltung .tenant-archive-card{min-width:0;overflow:hidden;padding:0}
-#mieterverwaltung .tenant-archive-card__summary{display:flex;align-items:center;gap:var(--nk-ui-space-lg);padding:var(--nk-ui-space-lg) var(--nk-ui-space-xl);cursor:pointer;list-style:none}
-#mieterverwaltung .tenant-archive-card__summary::-webkit-details-marker{display:none}
-#mieterverwaltung .tenant-archive-card__summary>span:first-child{min-width:0;display:grid;gap:var(--nk-ui-space-2xs);margin-right:auto}
-#mieterverwaltung .tenant-archive-card__summary small{color:var(--nk-ui-color-text-muted);font-weight:400}
-#mieterverwaltung .tenant-archive-card__chevron{width:24px;height:24px;display:grid;place-items:center;transition:transform .16s ease}
-#mieterverwaltung .tenant-archive-card__chevron svg{width:18px;height:18px}
-#mieterverwaltung .tenant-archive-card[open] .tenant-archive-card__chevron{transform:rotate(180deg)}
-#mieterverwaltung .tenant-archive-card__body{padding:0;border-top:1px solid var(--nk-ui-color-border)}
-#mieterverwaltung .tenant-archive-table-wrap{margin:0;padding:var(--nk-ui-space-sm);border:0;border-radius:0;overflow-x:auto;background:var(--nk-ui-color-surface)}
-#mieterverwaltung .tenant-archive-table-wrap table{width:100%!important;min-width:1000px!important;margin:0}
 #mieterverwaltung .tenant-management-readonly-notice{position:static;width:auto;min-height:0;height:auto;margin:0;inset:auto;z-index:auto;align-items:flex-start}
 body:not(.document-print-window) #mieterverwaltung [data-page-save]:disabled,body:not(.document-print-window) #mieterverwaltung .tenant-management-toolbar button:disabled{cursor:not-allowed;border-color:var(--nk-ui-color-border)!important;background:var(--nk-ui-color-surface-muted)!important;color:var(--nk-ui-color-text-muted)!important;opacity:1}
 #mieterverwaltung .tenant-management-system-note{position:static;min-height:0;height:auto;margin:0;inset:auto;z-index:auto;align-items:flex-start}
@@ -6239,9 +6241,9 @@ body:not(.document-print-window) #mieterverwaltung [data-page-save]:disabled,bod
 #mieterverwaltung .tenant-management-system-note>span:last-child{display:grid;gap:var(--nk-ui-space-2xs)}
 #mieterverwaltung .tenant-management-system-note small{line-height:1.45}
 
-@media(max-width:1100px){#wasser .meter-inventory-cards{grid-template-columns:repeat(3,minmax(0,1fr))}#mieterverwaltung .tenant-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:900px){body:not(.document-print-window) #wasser .meter-inventory-table-heading,body:not(.document-print-window) #mieterverwaltung .tenant-management-card__header{padding:var(--nk-ui-space-lg)}body:not(.document-print-window) #wasser .meter-inventory-toolbar,body:not(.document-print-window) #mieterverwaltung .tenant-management-toolbar{align-items:stretch;flex-direction:column;padding:var(--nk-ui-space-md) var(--nk-ui-space-lg)}body:not(.document-print-window) #wasser .meter-inventory-toolbar input[type="search"],body:not(.document-print-window) #wasser .meter-inventory-toolbar select,body:not(.document-print-window) #wasser .meter-inventory-toolbar button,body:not(.document-print-window) #mieterverwaltung .tenant-management-toolbar input[type="search"],body:not(.document-print-window) #mieterverwaltung .tenant-management-toolbar select,body:not(.document-print-window) #mieterverwaltung .tenant-management-toolbar button{flex:1 1 auto;width:100%!important;min-width:0;max-width:none}#wasser .meter-inventory-toolbar .small,#mieterverwaltung .tenant-management-toolbar .small{margin-left:0}#wasser .meter-inventory-table-footer,#mieterverwaltung .tenant-management-card__footer{align-items:flex-start;flex-direction:column;padding:var(--nk-ui-space-md) var(--nk-ui-space-lg)}}
-@media(max-width:620px){#wasser .meter-inventory-dummy-notice{width:100%;margin-left:0}#wasser .meter-inventory-cards,#mieterverwaltung .tenant-summary-grid{grid-template-columns:1fr}body:not(.document-print-window) #wasser .meter-inventory-table-heading,body:not(.document-print-window) #mieterverwaltung .tenant-management-card__header{align-items:flex-start;flex-direction:column}#mieterverwaltung .tenant-archive-card__summary{align-items:flex-start;flex-wrap:wrap;padding:var(--nk-ui-space-lg)}#mieterverwaltung .tenant-archive-card__summary>span:first-child{width:100%}}
-#wasser .table-tools[data-table="meterInventoryDummyTable"],
-#mieterverwaltung .table-tools[data-table="startTenantTable"],
-#mieterverwaltung .table-tools[data-table="startTenantArchiveTable"]{display:none!important}
+@media(max-width:1250px){#mieterverwaltung .tenant-detail-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:1100px){#wasser .meter-inventory-cards{grid-template-columns:repeat(3,minmax(0,1fr))}#mieterverwaltung .tenant-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#mieterverwaltung .tenant-archive-detail-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:900px){body:not(.document-print-window) #wasser .meter-inventory-table-heading,body:not(.document-print-window) #mieterverwaltung .tenant-management-card__header{padding:var(--nk-ui-space-lg)}body:not(.document-print-window) #wasser .meter-inventory-toolbar,body:not(.document-print-window) #mieterverwaltung .tenant-management-toolbar{align-items:stretch;flex-direction:column;padding:var(--nk-ui-space-md) var(--nk-ui-space-lg)}body:not(.document-print-window) #wasser .meter-inventory-toolbar input[type="search"],body:not(.document-print-window) #wasser .meter-inventory-toolbar select,body:not(.document-print-window) #wasser .meter-inventory-toolbar button,body:not(.document-print-window) #mieterverwaltung .tenant-management-toolbar input[type="search"],body:not(.document-print-window) #mieterverwaltung .tenant-management-toolbar select,body:not(.document-print-window) #mieterverwaltung .tenant-management-toolbar button{flex:1 1 auto;width:100%!important;min-width:0;max-width:none}#wasser .meter-inventory-toolbar .small,#mieterverwaltung .tenant-management-toolbar .small{margin-left:0}#wasser .meter-inventory-table-footer,#mieterverwaltung .tenant-management-card__footer{align-items:flex-start;flex-direction:column;padding:var(--nk-ui-space-md) var(--nk-ui-space-lg)}#mieterverwaltung .tenant-management-card__header-actions{justify-content:flex-start}#mieterverwaltung .tenant-detail-panel__header{align-items:stretch;flex-direction:column}#mieterverwaltung .tenant-detail-close{align-self:flex-start}}
+@media(max-width:700px){#mieterverwaltung .tenant-detail-grid,#mieterverwaltung .tenant-archive-detail-grid{grid-template-columns:1fr}}
+@media(max-width:620px){#wasser .meter-inventory-dummy-notice{width:100%;margin-left:0}#wasser .meter-inventory-cards,#mieterverwaltung .tenant-summary-grid{grid-template-columns:1fr}body:not(.document-print-window) #wasser .meter-inventory-table-heading,body:not(.document-print-window) #mieterverwaltung .tenant-management-card__header{align-items:flex-start;flex-direction:column}#mieterverwaltung .tenant-view-switch{width:100%}#mieterverwaltung .tenant-view-switch button{flex:1 1 50%}#mieterverwaltung .tenant-detail-field-row,#mieterverwaltung .tenant-detail-field-row--postal{grid-template-columns:1fr}}
+#wasser .table-tools[data-table="meterInventoryDummyTable"],#mieterverwaltung .table-tools[data-table="startTenantTable"]{display:none!important}

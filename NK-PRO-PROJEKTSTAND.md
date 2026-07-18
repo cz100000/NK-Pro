@@ -1,3 +1,9 @@
+# Projektstand V99.4.40 – AP22F5B Korrektur 1
+
+Die Seite `mieterverwaltung` verwendet eine kompakte aktive Tabelle und eine gemeinsame Archivansicht. Alle zwölf bestehenden Pflegefelder sind weiterhin verfügbar, werden jedoch nur im aufgeklappten Detailbereich angezeigt. Archivdatensätze sind vollständig lesend; die vorhandene Reaktivierung bleibt erhalten. Die Zählerseite bleibt unverändert ein DUMMY.
+
+Navigation, Datenmodell, Fachlogik, Persistenz, Migration, Abrechnung, Qualitätsregeln und Dokumentausgabe sind unverändert. Die Produktversion bleibt V99.4.40.
+
 # Projektstand V99.4.40 – AP22F5B Zähler-DUMMY und Mietverhältnisse
 
 Die produktiven Seiten `wasser` und `mieterverwaltung` sind auf den verbindlichen Designstandard `NK-Pro UI Referenz 1.0` migriert. `wasser` bleibt ausdrücklich ein DUMMY mit statischen Beispieldaten und ohne produktive Aktionen, Speicherung oder Abrechnungswirkung. Die fünf Zählerarten verwenden zentrale, farbige SVG-Linienicons.

@@ -1,3 +1,13 @@
+# V99.4.40 – AP22F5B Korrektur 1 (2026-07-18)
+
+- dauerhaft sichtbare Formularmatrix der Mietverhältnisse durch kompakte Zusammenfassungszeilen ersetzt,
+- alle zwölf vorhandenen Felder in einen aufklappbaren Detailbereich verlagert,
+- aktive und archivierte Mietverhältnisse in einer gemeinsamen Tabellenkarte mit Umschalter zusammengeführt,
+- Archivdetails vollständig schreibgeschützt dargestellt und bestehende Reaktivierung erhalten,
+- Statusfilter und Neuanlage in der Archivansicht ausgeblendet,
+- Nur-Ansehen-Modus, Responsive-Verhalten und interne Tabellenverschiebung regressionsgeprüft,
+- keine neue Fachlogik, Datenfelder oder Speicherwege.
+
 # V99.4.40 – AP22F5B Zähler-DUMMY und Mietverhältnisse (2026-07-18)
 
 - Seite `wasser` als ausdrücklich nicht produktiven Zähler-DUMMY auf `NK-Pro UI Referenz 1.0` migriert,

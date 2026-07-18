@@ -1,13 +1,26 @@
-# AP22F5B – Positivlistenabgleich
+# AP22F5B Korrektur 1 – Positivlistenabgleich
 
 ## Ergebnis
-**BESTANDEN.** Alle produktiven Änderungen sind durch `AP22F5B_DATEIPOSITIVLISTE.md` gedeckt. Neue Dateien sind ausschließlich AP22F5-Dokumente, Tests und Zielzustands-Screenshots.
+**BESTANDEN.** Die Korrektur verändert ausschließlich die freigegebenen Mietverhältnis-UI-Dateien, die zugehörige nicht produktive Referenz, AP22F5B-Prüfdateien sowie Abschlussdokumentation und Prüfsummen.
+
+## Produktive Änderungen
+- `index.html`: kompakte gemeinsame Tabellenstruktur und Ansichtsumschalter
+- `assets/app.css`: kompakte Zeilen, Detailbereiche, Archivdarstellung und Responsive-Regeln
+- `js/ui-navigation-pages.js`: Darstellung, Filterung, Umschaltung und Detailöffnung unter Wiederverwendung der bestehenden Datenaktionen
+
+## Nicht produktive Referenz und Prüfung
+- `ui-reference/index.html`
+- `ui-reference/reference.css`
+- `tests/ap22f5b-pages.test.cjs`
+- `tests/ap22f5b-pages-browser.test.cjs`
+- `tests/ap22f5b-correction-browser.test.cjs`
+- Korrekturscreenshots und AP22F5B-Abschlussartefakte
 
 ## Negativabgleich
 - keine Datei gelöscht
-- keine vorhandene Regressionstestdatei verändert
-- keine Änderung an `js/navigation.js`
-- keine Änderung an Persistenz-, Migrations-, Backup-, Snapshot- oder Zählerfachmodulen
-- keine neue produktive Aktion auf der DUMMY-Zählerseite
-- keine neuen Mietverhältnisfelder oder Schreibwege
-- `package-lock.json` ausschließlich bei Paketname und Version fortgeschrieben; `package.json` zusätzlich um die AP22F5B-Testskripte und die aktuelle Releasebeschreibung ergänzt
+- keine Änderung an Navigation oder Seitenschlüsseln
+- keine Änderung an Datenmodell, Fachlogik, Persistenz oder Migration
+- keine Änderung am Zähler-DUMMY oder an Zählerfachmodulen
+- keine neuen Mietverhältnisfelder, Statuswerte oder Schreibwege
+- keine Änderung an Abrechnung, Qualitätsregeln, Brief, Druck, PDF oder Export
+- alle 94 Einträge aus `AP22F5B_PROTECTED_HASHES.json` hashidentisch

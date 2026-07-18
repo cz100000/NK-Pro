@@ -1,3 +1,9 @@
+# Release V99.4.40 – AP22F5B Korrektur 1
+
+Die Mietverhältnisse-Seite verwendet nun eine kompakte Übersicht: Zusammenfassungszeilen enthalten keine dauerhaften Eingabe- oder Auswahlfelder. Alle zwölf vorhandenen Pflegefelder erscheinen erst im aufgeklappten Detailbereich. Aktive und archivierte Mietverhältnisse teilen sich eine Tabellenkarte mit dem Umschalter `Aktiv / Archiv`; Archivzeilen und Archivdetails bleiben schreibgeschützt, die bestehende Reaktivierungsaktion bleibt erhalten.
+
+Die Produktversion bleibt V99.4.40. Datenmodell, Fachlogik, Speicherwege, Navigation und Zähler-DUMMY sind unverändert.
+
 # Release V99.4.40 – AP22F5B Zähler-DUMMY und Mietverhältnisse
 
 AP22F5B migriert zwei Seiten gemeinsam auf den verbindlichen Standard `NK-Pro UI Referenz 1.0`. Die Seite „Zähler“ bleibt vollständig ein nicht produktiver DUMMY. Sie zeigt ausschließlich fiktive Beispieldaten, genau fünf Zählerarten und eine rein visuelle Such-/Filterfunktion. Es entstehen keine Zählerstammdaten, Messwerte, Schreibwege oder Abrechnungswirkungen.

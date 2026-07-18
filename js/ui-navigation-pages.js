@@ -948,19 +948,20 @@ function ap22f5ActionIcon(name) {
   const paths = {
     edit:'<path d="m4 20 4.5-1 10-10a2 2 0 0 0-3-3l-10 10L4 20Z"></path><path d="m14 7 3 3"></path>',
     archive:'<path d="M3 6h18M5 6v15h14V6M8 3h8l2 3H6l2-3M9 11h6"></path>',
-    restore:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5"></path>'
+    restore:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5"></path>',
+    view:'<path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path><circle cx="12" cy="12" r="2.5"></circle>'
   };
   return '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + (paths[name] || paths.edit) + '</svg>';
 }
 
 function renderStartTenantManagement() {
+  const pageEl = document.querySelector('#mieterverwaltung [data-tenant-management]');
   const tableEl = document.getElementById("startTenantTable");
-  const archiveEl = document.getElementById("startTenantArchiveTable");
   const searchEl = document.getElementById("tenantManagementSearch");
   const unitFilterEl = document.getElementById("tenantManagementUnitFilter");
   const statusFilterEl = document.getElementById("tenantManagementStatusFilter");
   const resetEl = document.getElementById("tenantManagementReset");
-  if (!tableEl || !archiveEl || !searchEl || !unitFilterEl || !statusFilterEl || !resetEl) return;
+  if (!pageEl || !tableEl || !searchEl || !unitFilterEl || !statusFilterEl || !resetEl) return;
 
   NK_PRO_MODULES.masterDataActions.masterData();
   const readOnly = NK_PRO_MODULES.billingContext.isReadOnly();
@@ -973,6 +974,8 @@ function renderStartTenantManagement() {
   const visibleRows = NK_PRO_MODULES.masterDataActions.masterVisibleTenantRows();
   const archivedRows = NK_PRO_MODULES.masterDataActions.masterArchivedTenantRows();
   const units = NK_PRO_MODULES.masterDataActions.masterUnits();
+  const view = pageEl.dataset.tenantView === "archive" ? "archive" : "active";
+  const expandedIndex = pageEl.dataset.tenantExpandedIndex === undefined ? "" : String(pageEl.dataset.tenantExpandedIndex);
 
   const selectedUnit = unitFilterEl.value || "all";
   unitFilterEl.innerHTML = '<option value="all">Alle Wohnungen</option>' + units.map(unit => {
@@ -985,77 +988,153 @@ function renderStartTenantManagement() {
   const query = String(searchEl.value || "").trim().toLocaleLowerCase("de-DE");
   const unitFilter = unitFilterEl.value || "all";
   const statusFilter = statusFilterEl.value || "all";
-  const filteredRows = visibleRows.filter(row => {
+  const matchesCommonFilters = row => {
     const status = tenantOpenStatus(row);
-    const isActive = status === "Aktiv";
-    const searchText = [row.id,row.name,row.wohnung,row.einzug,row.auszug,row.abrechnungRolle,row.geschlecht,row.strasse,row.plz,row.ort,row.telefon,row.email,status]
+    const searchText = [row.id,row.name,row.wohnung,row.einzug,row.auszug,row.abrechnungRolle,row.geschlecht,row.standardanrede,row.strasse,row.plz,row.ort,row.telefon,row.email,row.archivedAt,status]
       .map(value => String(value || "").toLocaleLowerCase("de-DE")).join(" ");
     return (!query || searchText.includes(query)) &&
-      (unitFilter === "all" || String(row.wohnung || "") === unitFilter) &&
+      (unitFilter === "all" || String(row.wohnung || "") === unitFilter);
+  };
+  const filteredActiveRows = visibleRows.filter(row => {
+    const status = tenantOpenStatus(row);
+    const isActive = status === "Aktiv";
+    return matchesCommonFilters(row) &&
       (statusFilter === "all" || (statusFilter === "active" ? isActive : !isActive));
   });
+  const filteredArchiveRows = archivedRows.filter(matchesCommonFilters);
 
-  const addInputId = (html, id) => html.replace('<input ', '<input id="' + id + '" ');
   const statusBadge = row => {
     const status = tenantOpenStatus(row) || "Ohne Status";
     const tone = status === "Aktiv" ? "ok" : (status === "NK offen" ? "warn" : "info");
     return '<span class="status ' + tone + '">' + escapeHtml(status) + '</span>';
   };
-  const rows = filteredRows.length ? filteredRows.map(row => {
+  const periodText = row => escapeHtml(row.einzug || "—") + ' – ' + escapeHtml(row.auszug || "offen");
+  const roleText = row => escapeHtml(row.abrechnungRolle || "Mieter");
+  const summaryPerson = row => '<span class="tenant-management-person"><strong>' + escapeHtml(row.name || "Ohne Namen") + '</strong><small>' + tenantIdCellHtml(row) + '</small></span>';
+  const toggleButton = (row, archiveMode) => {
+    const index = String(row.originalIndex);
+    const expanded = expandedIndex === index;
+    const label = archiveMode ? "Archivdetails" : (readOnly ? "Details ansehen" : "Details bearbeiten");
+    return '<button class="tenant-management-row-action' + (expanded ? ' is-active' : '') + '" type="button" data-tenant-toggle="' + escapeHtml(index) + '" aria-expanded="' + (expanded ? 'true' : 'false') + '" aria-label="' + escapeHtml((row.name || tenantDisplayId(row)) + ' – ' + label) + '">' + ap22f5ActionIcon(archiveMode || readOnly ? "view" : "edit") + '</button>';
+  };
+  const field = (label, html, className="") => '<label class="tenant-detail-field ' + className + '"><span>' + label + '</span>' + html + '</label>';
+  const activeDetailRow = row => {
     const index = row.originalIndex;
-    const nameFieldId = "tenant-name-" + index;
-    const nameInput = addInputId(readOnlyControl(inputHtml(row.name, "setMasterNested('mieter'," + index + ",'name',this.value)", "tenant-management-input")), nameFieldId);
-    const editAction = readOnly
-      ? '<button class="tenant-management-row-action" type="button" disabled aria-disabled="true" aria-label="' + escapeHtml(row.name || tenantDisplayId(row)) + ' im Nur-Ansehen-Modus">' + ap22f5ActionIcon("edit") + '</button>'
-      : '<a class="tenant-management-row-action" href="#' + nameFieldId + '" aria-label="' + escapeHtml(row.name || tenantDisplayId(row)) + ' bearbeiten">' + ap22f5ActionIcon("edit") + '</a>';
-    const archiveAction = '<button class="tenant-management-row-action tenant-management-row-action--archive" type="button" aria-label="' + escapeHtml(row.name || tenantDisplayId(row)) + ' archivieren"' +
-      (readOnly ? ' disabled aria-disabled="true"' : uiActionAttributes("object.archiveMasterTenancy", [index])) + '>' + ap22f5ActionIcon("archive") + '</button>';
-    return '<tr data-tenant-row="' + index + '">' +
-      '<td class="tenant-management-id-cell">' + tenantIdCellHtml(row) + '</td>' +
-      '<td class="editable tenant-management-unit-cell">' + readOnlyControl(masterUnitSelectHtml(row.wohnung, "setMasterNested('mieter'," + index + ",'wohnung',this.value)")) + '</td>' +
-      '<td class="editable tenant-management-name-cell">' + nameInput + '</td>' +
-      '<td class="editable"><div class="tenant-management-date-fields"><label><span>Von</span>' + readOnlyControl(dateInputHtml(row.einzug, "setMasterNested('mieter'," + index + ",'einzug',this.value)", "tenant-management-input")) + '</label><label><span>Bis</span>' + readOnlyControl(dateInputHtml(row.auszug, "setMasterNested('mieter'," + index + ",'auszug',this.value)", "tenant-management-input")) + '</label></div></td>' +
-      '<td class="editable"><div class="tenant-management-address-fields">' + readOnlyControl(inputHtml(row.strasse, "setMasterNested('mieter'," + index + ",'strasse',this.value)", "tenant-management-input tenant-management-input--street")) + '<div>' + readOnlyControl(inputHtml(row.plz, "setMasterNested('mieter'," + index + ",'plz',this.value)", "tenant-management-input tenant-management-input--postal")) + readOnlyControl(inputHtml(row.ort, "setMasterNested('mieter'," + index + ",'ort',this.value)", "tenant-management-input")) + '</div></div></td>' +
-      '<td class="editable"><div class="tenant-management-contact-fields">' + readOnlyControl(inputHtml(row.telefon, "setMasterNested('mieter'," + index + ",'telefon',this.value)", "tenant-management-input")) + readOnlyControl(inputHtml(row.email, "setMasterNested('mieter'," + index + ",'email',this.value)", "tenant-management-input")) + '</div></td>' +
-      '<td class="editable"><div class="tenant-management-letter-fields">' + readOnlyControl(selectHtml(row.abrechnungRolle || "Mieter", roleOptions, "setMasterNested('mieter'," + index + ",'abrechnungRolle',this.value)")) + readOnlyControl(selectHtml(row.geschlecht, genderOptions, "setMasterNested('mieter'," + index + ",'geschlecht',this.value)")) + readOnlyControl(selectHtml(row.standardanrede, salutationOptions, "setMasterNested('mieter'," + index + ",'standardanrede',this.value)")) + '</div></td>' +
-      '<td class="tenant-management-status-cell">' + statusBadge(row) + '</td>' +
-      '<td class="tenant-management-action-cell"><div class="tenant-management-actions">' + editAction + archiveAction + '</div></td></tr>';
-  }).join("") : '<tr><td class="tenant-management-empty" colspan="9">Keine Mietverhältnisse entsprechen der aktuellen Suche oder Filterung.</td></tr>';
+    const close = '<button type="button" class="secondary tenant-detail-close" data-tenant-toggle="' + escapeHtml(String(index)) + '">Detail schließen</button>';
+    return '<tr class="tenant-management-detail-row" data-tenant-detail-row="' + index + '"><td colspan="6"><div class="tenant-detail-panel" role="region" aria-label="Details zu ' + escapeHtml(row.name || tenantDisplayId(row)) + '">' +
+      '<div class="tenant-detail-panel__header"><div><strong>' + escapeHtml(row.name || "Neues Mietverhältnis") + '</strong><small>' + escapeHtml(tenantDisplayId(row)) + ' · Änderungen werden über „Speichern“ übernommen.</small></div>' + close + '</div>' +
+      '<div class="tenant-detail-grid">' +
+        '<section class="tenant-detail-section"><h3>Zuordnung und Zeitraum</h3>' +
+          field('Mietername', readOnlyControl(inputHtml(row.name, "setMasterNested(\'mieter\'," + index + ",\'name\',this.value)", "tenant-management-input"))) +
+          field('Wohnung', readOnlyControl(masterUnitSelectHtml(row.wohnung, "setMasterNested(\'mieter\'," + index + ",\'wohnung\',this.value)"))) +
+          '<div class="tenant-detail-field-row">' + field('Von', readOnlyControl(dateInputHtml(row.einzug, "setMasterNested(\'mieter\'," + index + ",\'einzug\',this.value)", "tenant-management-input"))) + field('Bis', readOnlyControl(dateInputHtml(row.auszug, "setMasterNested(\'mieter\'," + index + ",\'auszug\',this.value)", "tenant-management-input"))) + '</div>' +
+        '</section>' +
+        '<section class="tenant-detail-section"><h3>Adresse</h3>' +
+          field('Straße und Hausnummer', readOnlyControl(inputHtml(row.strasse, "setMasterNested(\'mieter\'," + index + ",\'strasse\',this.value)", "tenant-management-input"))) +
+          '<div class="tenant-detail-field-row tenant-detail-field-row--postal">' + field('PLZ', readOnlyControl(inputHtml(row.plz, "setMasterNested(\'mieter\'," + index + ",\'plz\',this.value)", "tenant-management-input"))) + field('Ort', readOnlyControl(inputHtml(row.ort, "setMasterNested(\'mieter\'," + index + ",\'ort\',this.value)", "tenant-management-input"))) + '</div>' +
+        '</section>' +
+        '<section class="tenant-detail-section"><h3>Kontakt</h3>' +
+          field('Telefon', readOnlyControl(inputHtml(row.telefon, "setMasterNested(\'mieter\'," + index + ",\'telefon\',this.value)", "tenant-management-input"))) +
+          field('E-Mail', readOnlyControl(inputHtml(row.email, "setMasterNested(\'mieter\'," + index + ",\'email\',this.value)", "tenant-management-input"))) +
+        '</section>' +
+        '<section class="tenant-detail-section"><h3>Brief und Rolle</h3>' +
+          field('Rolle', readOnlyControl(selectHtml(row.abrechnungRolle || "Mieter", roleOptions, "setMasterNested(\'mieter\'," + index + ",\'abrechnungRolle\',this.value)"))) +
+          field('Anrede', readOnlyControl(selectHtml(row.geschlecht, genderOptions, "setMasterNested(\'mieter\'," + index + ",\'geschlecht\',this.value)"))) +
+          field('Briefanrede', readOnlyControl(selectHtml(row.standardanrede, salutationOptions, "setMasterNested(\'mieter\'," + index + ",\'standardanrede\',this.value)"))) +
+        '</section>' +
+      '</div></div></td></tr>';
+  };
+  const archiveDetailRow = row => {
+    const value = entry => escapeHtml(String(entry || "—"));
+    return '<tr class="tenant-management-detail-row tenant-management-detail-row--archive" data-tenant-detail-row="' + row.originalIndex + '"><td colspan="7"><div class="tenant-detail-panel tenant-detail-panel--readonly" role="region" aria-label="Archivdetails zu ' + escapeHtml(row.name || tenantDisplayId(row)) + '">' +
+      '<div class="tenant-detail-panel__header"><div><strong>' + escapeHtml(row.name || "Archiviertes Mietverhältnis") + '</strong><small>Schreibgeschützter Archivdatensatz</small></div><button type="button" class="secondary tenant-detail-close" data-tenant-toggle="' + escapeHtml(String(row.originalIndex)) + '">Detail schließen</button></div>' +
+      '<dl class="tenant-archive-detail-grid">' +
+        '<div><dt>Mieter-ID</dt><dd>' + value(tenantDisplayId(row)) + '</dd></div><div><dt>Wohnung</dt><dd>' + value(row.wohnung) + '</dd></div><div><dt>Mietzeitraum</dt><dd>' + periodText(row) + '</dd></div><div><dt>Rolle</dt><dd>' + roleText(row) + '</dd></div>' +
+        '<div><dt>Adresse</dt><dd>' + value([row.strasse, [row.plz,row.ort].filter(Boolean).join(" ")].filter(Boolean).join(", ")) + '</dd></div><div><dt>Kontakt</dt><dd>' + value([row.telefon,row.email].filter(Boolean).join(" · ")) + '</dd></div><div><dt>Anrede</dt><dd>' + value(row.geschlecht) + '</dd></div><div><dt>Briefanrede</dt><dd>' + value(row.standardanrede) + '</dd></div><div><dt>Archiviert am</dt><dd>' + value(row.archivedAt) + '</dd></div>' +
+      '</dl></div></td></tr>';
+  };
 
-  tableEl.innerHTML = '<thead><tr><th>Mieter-ID</th><th>Wohnung</th><th>Mietername</th><th>Mietzeitraum</th><th>Adresse</th><th>Kontakt</th><th>Brief &amp; Rolle</th><th>Status</th><th class="tenant-management-action-heading">Aktionen</th></tr></thead><tbody>' + rows + '</tbody>';
+  if (view === "archive") {
+    const body = filteredArchiveRows.length ? filteredArchiveRows.map(row => {
+      const expanded = expandedIndex === String(row.originalIndex);
+      const restoreAction = '<button class="tenant-management-row-action tenant-management-row-action--restore" type="button" aria-label="' + escapeHtml((row.name || tenantDisplayId(row)) + ' reaktivieren') + '"' + (readOnly ? ' disabled aria-disabled="true"' : uiActionAttributes("object.restoreMasterTenancy", [row.originalIndex])) + '>' + ap22f5ActionIcon("restore") + '</button>';
+      const summary = '<tr class="tenant-management-summary-row" data-tenant-row="' + row.originalIndex + '"><td>' + summaryPerson(row) + '</td><td>' + unitRefCellHtml(row.wohnung) + '</td><td>' + periodText(row) + '</td><td>' + roleText(row) + '</td><td>' + escapeHtml(row.archivedAt || "—") + '</td><td><span class="status info">Archiviert</span></td><td class="tenant-management-action-cell"><div class="tenant-management-actions">' + toggleButton(row, true) + restoreAction + '</div></td></tr>';
+      return summary + (expanded ? archiveDetailRow(row) : "");
+    }).join("") : '<tr><td class="tenant-management-empty" colspan="7">Keine archivierten Mietverhältnisse entsprechen der aktuellen Suche oder Filterung.</td></tr>';
+    tableEl.innerHTML = '<thead><tr><th>Mieter</th><th>Wohnung</th><th>Mietzeitraum</th><th>Rolle</th><th>Archiviert am</th><th>Status</th><th class="tenant-management-action-heading">Aktionen</th></tr></thead><tbody>' + body + '</tbody>';
+  } else {
+    const body = filteredActiveRows.length ? filteredActiveRows.map(row => {
+      const expanded = expandedIndex === String(row.originalIndex);
+      const archiveAction = '<button class="tenant-management-row-action tenant-management-row-action--archive" type="button" aria-label="' + escapeHtml((row.name || tenantDisplayId(row)) + ' archivieren') + '"' + (readOnly ? ' disabled aria-disabled="true"' : uiActionAttributes("object.archiveMasterTenancy", [row.originalIndex])) + '>' + ap22f5ActionIcon("archive") + '</button>';
+      const summary = '<tr class="tenant-management-summary-row" data-tenant-row="' + row.originalIndex + '"><td>' + summaryPerson(row) + '</td><td>' + unitRefCellHtml(row.wohnung) + '</td><td>' + periodText(row) + '</td><td>' + roleText(row) + '</td><td>' + statusBadge(row) + '</td><td class="tenant-management-action-cell"><div class="tenant-management-actions">' + toggleButton(row, false) + archiveAction + '</div></td></tr>';
+      return summary + (expanded ? activeDetailRow(row) : "");
+    }).join("") : '<tr><td class="tenant-management-empty" colspan="6">Keine Mietverhältnisse entsprechen der aktuellen Suche oder Filterung.</td></tr>';
+    tableEl.innerHTML = '<thead><tr><th>Mieter</th><th>Wohnung</th><th>Mietzeitraum</th><th>Rolle</th><th>Status</th><th class="tenant-management-action-heading">Aktionen</th></tr></thead><tbody>' + body + '</tbody>';
+  }
 
-  const archiveRowsHtml = archivedRows.length ? archivedRows.map(row =>
-    '<tr><td>' + tenantIdCellHtml(row) + '</td><td>' + unitRefCellHtml(row.wohnung) + '</td><td>' + escapeHtml(row.name || "") + '</td><td>' + escapeHtml(row.einzug || "") + '</td><td>' + escapeHtml(row.auszug || "") + '</td><td>' + escapeHtml(row.strasse || "") + '</td><td>' + escapeHtml((row.plz || "") + " " + (row.ort || "")) + '</td><td>' + escapeHtml(row.archivedAt || "") + '</td><td class="tenant-management-action-cell"><button class="tenant-management-row-action" type="button" aria-label="' + escapeHtml(row.name || tenantDisplayId(row)) + ' reaktivieren"' + (readOnly ? ' disabled aria-disabled="true"' : uiActionAttributes("object.restoreMasterTenancy", [row.originalIndex])) + '>' + ap22f5ActionIcon("restore") + '</button></td></tr>'
-  ).join("") : '<tr><td colspan="9">Noch keine archivierten Mietverhältnisse.</td></tr>';
-  archiveEl.innerHTML = '<thead><tr><th>Mieter-ID</th><th>Wohnung</th><th>Mietername</th><th>Einzug</th><th>Auszug</th><th>Straße</th><th>PLZ / Ort</th><th>Archiviert am</th><th>Aktion</th></tr></thead><tbody>' + archiveRowsHtml + '</tbody>';
+  tableEl.querySelectorAll('[data-tenant-toggle]').forEach(button => {
+    button.addEventListener('click', () => {
+      const index = String(button.dataset.tenantToggle || "");
+      pageEl.dataset.tenantExpandedIndex = pageEl.dataset.tenantExpandedIndex === index ? "" : index;
+      renderStartTenantManagement();
+      const expanded = pageEl.dataset.tenantExpandedIndex;
+      const target = expanded ? tableEl.querySelector('[data-tenant-detail-row="' + CSS.escape(expanded) + '"]') : tableEl.querySelector('[data-tenant-row="' + CSS.escape(index) + '"]');
+      if (target) target.scrollIntoView({block:"nearest"});
+    });
+  });
 
   const activeCount = visibleRows.filter(row => tenantOpenStatus(row) === "Aktiv").length;
   const inactiveCount = visibleRows.length - activeCount;
+  const currentRows = view === "archive" ? filteredArchiveRows : filteredActiveRows;
+  const currentTotal = view === "archive" ? archivedRows.length : visibleRows.length;
   const setText = (selector, value) => { const element = document.querySelector(selector); if (element) element.textContent = String(value); };
   setText('[data-tenant-summary-total]', visibleRows.length + archivedRows.length);
   setText('[data-tenant-summary-active]', activeCount);
   setText('[data-tenant-summary-ended]', inactiveCount);
   setText('[data-tenant-summary-archived]', archivedRows.length);
-  setText('[data-tenant-count]', '(' + visibleRows.length + ')');
-  setText('[data-tenant-results]', filteredRows.length + ' von ' + visibleRows.length + ' Mietverhältnissen');
-  setText('[data-tenant-footer-results]', filteredRows.length + ' von ' + visibleRows.length + ' Mietverhältnissen');
-  setText('[data-tenant-archive-count]', archivedRows.length + ' archiviert');
+  setText('[data-tenant-view-active-count]', visibleRows.length);
+  setText('[data-tenant-view-archive-count]', archivedRows.length);
+  setText('[data-tenant-count]', '(' + currentTotal + ')');
+  const resultText = currentRows.length + ' von ' + currentTotal + (view === "archive" ? ' archivierten Mietverhältnissen' : ' Mietverhältnissen');
+  setText('[data-tenant-results]', resultText);
+  setText('[data-tenant-footer-results]', resultText);
+
+  const title = document.getElementById('tenantManagementTitle');
+  if (title) title.childNodes[0].nodeValue = view === "archive" ? "Archiv " : "Aktive Mietverhältnisse ";
   const overallStatus = document.querySelector('[data-tenant-status]');
   if (overallStatus) {
-    overallStatus.textContent = visibleRows.length ? "Bestand vorhanden" : "Kein Bestand";
-    overallStatus.classList.toggle("nk-ui-status--success", visibleRows.length > 0);
-    overallStatus.classList.toggle("nk-ui-status--warning", visibleRows.length === 0);
+    overallStatus.textContent = view === "archive" ? "Schreibgeschützt" : (visibleRows.length ? "Bestand vorhanden" : "Kein Bestand");
+    overallStatus.classList.toggle("nk-ui-status--success", view === "active" && visibleRows.length > 0);
+    overallStatus.classList.toggle("nk-ui-status--warning", view === "active" && visibleRows.length === 0);
+    overallStatus.classList.toggle("nk-ui-status--info", view === "archive");
   }
 
+  document.querySelectorAll('#mieterverwaltung [data-tenant-view-button]').forEach(button => {
+    const selected = button.dataset.tenantViewButton === view;
+    button.classList.toggle('is-active', selected);
+    button.setAttribute('aria-selected', selected ? 'true' : 'false');
+    if (button.dataset.tenantViewBound !== 'true') {
+      button.dataset.tenantViewBound = 'true';
+      button.addEventListener('click', () => {
+        pageEl.dataset.tenantView = button.dataset.tenantViewButton === 'archive' ? 'archive' : 'active';
+        pageEl.dataset.tenantExpandedIndex = '';
+        renderStartTenantManagement();
+      });
+    }
+  });
+
+  statusFilterEl.hidden = view === "archive";
+  statusFilterEl.disabled = view === "archive";
   const addButton = document.querySelector('#mieterverwaltung [data-ui-action="object.addMasterTenancy"]');
   if (addButton) {
-    addButton.disabled = readOnly;
-    addButton.setAttribute("aria-disabled", readOnly ? "true" : "false");
+    addButton.hidden = view === "archive";
+    addButton.disabled = readOnly || view === "archive";
+    addButton.setAttribute("aria-disabled", addButton.disabled ? "true" : "false");
   }
   const editabilityNote = document.querySelector('[data-tenant-editability-note]');
-  if (editabilityNote) editabilityNote.textContent = readOnly
-    ? "Stammdaten sind im Nur-Ansehen-Modus lesbar, aber nicht veränderbar."
-    : "Alle vorhandenen Stammdaten bleiben direkt in der Tabelle bearbeitbar.";
+  if (editabilityNote) editabilityNote.textContent = view === "archive"
+    ? "Archivdatensätze sind schreibgeschützt; Details können angesehen und bestehende Datensätze reaktiviert werden."
+    : (readOnly ? "Details sind lesbar, aber im Nur-Ansehen-Modus nicht veränderbar." : "Details werden bei Bedarf aufgeklappt und über die bestehenden Felder bearbeitet.");
   const readonlyNotice = document.querySelector('[data-tenant-readonly-notice]');
   if (readonlyNotice) {
     readonlyNotice.hidden = !readOnly;
@@ -1084,6 +1163,7 @@ function renderStartTenantManagement() {
       searchEl.value = "";
       unitFilterEl.value = "all";
       statusFilterEl.value = "all";
+      pageEl.dataset.tenantExpandedIndex = "";
       renderStartTenantManagement();
       searchEl.focus();
     });

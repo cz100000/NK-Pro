@@ -1,26 +1,26 @@
-# AP22F5B – Paketvollständigkeit
+# AP22F5B Korrektur 1 – Paketvollständigkeit
 
 ## Releasebaum
-- Release: **V99.4.40 / AP22F5B**
-- Dateien insgesamt: **404**
-- bestehende Dateien geändert: **21**
-- neue Dateien: **21**
+- Produktversion: **V99.4.40**
+- Paketstand: **AP22F5B Korrektur 1**
+- Dateien insgesamt: **413**
+- bestehende Dateien gegenüber dem ersten AP22F5B-Release geändert: **21**
+- neue Dateien: **9**
 - gelöschte Dateien: **0**
-- Zielzustands-Screenshots: **5**
-- neue AP22F5B-Testdateien: **2**
+- Korrektur-Screenshots: **4**
+- neue Korrektur-Testdateien: **1**
 
 ## Enthaltene Abschlussartefakte
-- Release-ZIP und externe SHA-256-Datei
-- Umsetzungsbericht
+- Korrektur- und Umsetzungsbericht
 - Dateiänderungsliste als Markdown und JSON
-- Positivlistenabgleich
+- Positivlistenabgleich und Datei-Positivliste
 - Schutz-Hash-Bericht und Schutzmanifest
 - Testbericht und maschinenlesbare Testergebnisse
 - ausgefüllter Abnahmekatalog
-- aktualisierte UI-Referenz
-- fünf Screenshots der Zielzustände
-- README und Release Notes
+- aktualisierte nicht produktive UI-Referenz
+- vier Zielzustands-Screenshots
+- README, Release Notes, Changelog und Projektstand
 - interne `SHA256SUMS.txt`
 
 ## Bereinigung
-Installierte Abhängigkeiten, Browserberichte, temporäre Tests, Cacheverzeichnisse und Logdateien sind nicht Bestandteil des Releasebaums.
+Installierte Abhängigkeiten, Browserberichte, Testausgaben, Cacheverzeichnisse, Logdateien und verschachtelte Archive sind nicht Bestandteil des Releasebaums.

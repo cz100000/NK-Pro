@@ -1,0 +1,160 @@
+{
+  "release": "V99.4.40",
+  "workPackage": "AP22F5B Korrektur 1",
+  "comparisonBase": "NK-Pro_V99_4_40_AP22F5B_Zaehler_und_Mietverhaeltnisse.zip",
+  "changedExistingFiles": 21,
+  "newFiles": 9,
+  "deletedFiles": 0,
+  "files": [
+    {
+      "status": "geändert",
+      "path": "AP22F5B_ABNAHMEKATALOG.md",
+      "purpose": "AP22F5B-Abschluss- oder Prüfarbeitsdokument auf Korrekturstand aktualisiert."
+    },
+    {
+      "status": "geändert",
+      "path": "AP22F5B_PAKETVOLLSTAENDIGKEIT.md",
+      "purpose": "AP22F5B-Abschluss- oder Prüfarbeitsdokument auf Korrekturstand aktualisiert."
+    },
+    {
+      "status": "geändert",
+      "path": "AP22F5B_POSITIVLISTENABGLEICH.md",
+      "purpose": "AP22F5B-Abschluss- oder Prüfarbeitsdokument auf Korrekturstand aktualisiert."
+    },
+    {
+      "status": "geändert",
+      "path": "AP22F5B_README.md",
+      "purpose": "AP22F5B-Abschluss- oder Prüfarbeitsdokument auf Korrekturstand aktualisiert."
+    },
+    {
+      "status": "geändert",
+      "path": "AP22F5B_SCHUTZ_HASH_BERICHT.md",
+      "purpose": "AP22F5B-Abschluss- oder Prüfarbeitsdokument auf Korrekturstand aktualisiert."
+    },
+    {
+      "status": "geändert",
+      "path": "AP22F5B_TESTBERICHT.md",
+      "purpose": "AP22F5B-Abschluss- oder Prüfarbeitsdokument auf Korrekturstand aktualisiert."
+    },
+    {
+      "status": "geändert",
+      "path": "AP22F5B_TESTERGEBNISSE.json",
+      "purpose": "AP22F5B-Abschluss- oder Prüfarbeitsdokument auf Korrekturstand aktualisiert."
+    },
+    {
+      "status": "geändert",
+      "path": "AP22F5B_UI_REFERENZ.md",
+      "purpose": "AP22F5B-Abschluss- oder Prüfarbeitsdokument auf Korrekturstand aktualisiert."
+    },
+    {
+      "status": "geändert",
+      "path": "AP22F5B_UMSETZUNGSBERICHT.md",
+      "purpose": "AP22F5B-Abschluss- oder Prüfarbeitsdokument auf Korrekturstand aktualisiert."
+    },
+    {
+      "status": "geändert",
+      "path": "CHANGELOG.md",
+      "purpose": "Projekt- und Release-Dokumentation auf Korrekturstand ergänzt."
+    },
+    {
+      "status": "geändert",
+      "path": "NK-PRO-PROJEKTSTAND.md",
+      "purpose": "Projekt- und Release-Dokumentation auf Korrekturstand ergänzt."
+    },
+    {
+      "status": "geändert",
+      "path": "README.md",
+      "purpose": "Projekt- und Release-Dokumentation auf Korrekturstand ergänzt."
+    },
+    {
+      "status": "geändert",
+      "path": "RELEASE_NOTES.md",
+      "purpose": "Projekt- und Release-Dokumentation auf Korrekturstand ergänzt."
+    },
+    {
+      "status": "geändert",
+      "path": "SHA256SUMS.txt",
+      "purpose": "Interne Prüfsummen über den finalen Releasebaum neu erzeugt."
+    },
+    {
+      "status": "geändert",
+      "path": "assets/app.css",
+      "purpose": "Layout für Kompaktzeilen, Detailbereiche, Archiv und Responsive-Verhalten."
+    },
+    {
+      "status": "geändert",
+      "path": "index.html",
+      "purpose": "Gemeinsame kompakte Tabellenstruktur mit Umschalter Aktiv/Archiv."
+    },
+    {
+      "status": "geändert",
+      "path": "js/ui-navigation-pages.js",
+      "purpose": "Rendering, Filter, Ansichtswechsel und Detailbereiche über bestehende Datenaktionen."
+    },
+    {
+      "status": "geändert",
+      "path": "tests/ap22f5b-pages-browser.test.cjs",
+      "purpose": "Korrekturspezifische statische beziehungsweise browserbasierte Regression."
+    },
+    {
+      "status": "geändert",
+      "path": "tests/ap22f5b-pages.test.cjs",
+      "purpose": "Korrekturspezifische statische beziehungsweise browserbasierte Regression."
+    },
+    {
+      "status": "geändert",
+      "path": "ui-reference/index.html",
+      "purpose": "Nicht produktive UI-Referenz für das korrigierte Mietverhältnis-Muster."
+    },
+    {
+      "status": "geändert",
+      "path": "ui-reference/reference.css",
+      "purpose": "Nicht produktive UI-Referenz für das korrigierte Mietverhältnis-Muster."
+    },
+    {
+      "status": "neu",
+      "path": "AP22F5B_KORREKTUR_1.md",
+      "purpose": "AP22F5B-Abschluss- oder Prüfarbeitsdokument auf Korrekturstand aktualisiert."
+    },
+    {
+      "status": "neu",
+      "path": "AP22F5B_KORREKTUR_1_DATEIAENDERUNGEN.json",
+      "purpose": "AP22F5B-Abschluss- oder Prüfarbeitsdokument auf Korrekturstand aktualisiert."
+    },
+    {
+      "status": "neu",
+      "path": "AP22F5B_KORREKTUR_1_DATEIAENDERUNGEN.md",
+      "purpose": "AP22F5B-Abschluss- oder Prüfarbeitsdokument auf Korrekturstand aktualisiert."
+    },
+    {
+      "status": "neu",
+      "path": "AP22F5B_KORREKTUR_1_DATEIPOSITIVLISTE.md",
+      "purpose": "AP22F5B-Abschluss- oder Prüfarbeitsdokument auf Korrekturstand aktualisiert."
+    },
+    {
+      "status": "neu",
+      "path": "AP22F5B_Korrektur1_Screenshots/01_aktive_kompakt_mit_detail.png",
+      "purpose": "Visueller Zielzustandsnachweis."
+    },
+    {
+      "status": "neu",
+      "path": "AP22F5B_Korrektur1_Screenshots/02_archiv_mit_details.png",
+      "purpose": "Visueller Zielzustandsnachweis."
+    },
+    {
+      "status": "neu",
+      "path": "AP22F5B_Korrektur1_Screenshots/03_schmal_mit_detail.png",
+      "purpose": "Visueller Zielzustandsnachweis."
+    },
+    {
+      "status": "neu",
+      "path": "AP22F5B_Korrektur1_Screenshots/04_nur_ansehen.png",
+      "purpose": "Visueller Zielzustandsnachweis."
+    },
+    {
+      "status": "neu",
+      "path": "tests/ap22f5b-correction-browser.test.cjs",
+      "purpose": "Korrekturspezifische statische beziehungsweise browserbasierte Regression."
+    }
+  ]
+}

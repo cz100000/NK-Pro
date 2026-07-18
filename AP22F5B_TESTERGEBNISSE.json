@@ -1,18 +1,25 @@
 {
   "release": "V99.4.40",
-  "workPackage": "AP22F5B",
+  "workPackage": "AP22F5B Korrektur 1",
   "overall": "PASS",
   "protectedHashes": 94,
-  "protectedProductFiles": 17,
-  "protectedExistingTests": 77,
   "javascriptUnits": 55,
   "fixtureCases": 6,
-  "targetScreenshots": 5,
+  "targetScreenshots": 4,
   "checks": {
-    "ap22f5bStatic": "PASS",
-    "ap22f5bBrowser": "PASS",
-    "tenantReadOnly": "PASS",
-    "releaseCheck": "PASS",
-    "ap22f4bCurrentVersionRegression": "PASS"
-  }
+    "correctionStatic": "PASS",
+    "correctionBrowser": "PASS",
+    "meterDummyRegression": "PASS",
+    "compactActiveRows": "PASS",
+    "twelveExistingDetailFields": "PASS",
+    "activeArchiveSwitch": "PASS",
+    "archiveReadOnly": "PASS",
+    "archiveRestore": "PASS",
+    "tenantReadOnlyMode": "PASS",
+    "responsive390": "PASS",
+    "meteringDomain": "PASS",
+    "ap21cRegression": "PASS",
+    "architectureAp6ToAp9": "PASS"
+  },
+  "historicalTestNote": "Vorgaengertests mit fest codierten Alt-Hashes oder Altversionen sind nicht die aktuelle Freigabepruefung."
 }

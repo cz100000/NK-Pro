@@ -1,37 +1,43 @@
-# AP22F5B – Ausgefüllter Abnahmekatalog
+# AP22F5B Korrektur 1 – Ausgefüllter Abnahmekatalog
 
-## Gemeinsam
-- [x] Bestehende Navigation unverändert.
-- [x] Beide Seiten verwenden zentrale Seitenschale und genau ein sichtbares `h1`.
-- [x] Tabellenkarten entsprechen `NK-Pro UI Referenz 1.0`.
-- [x] Tabellen besitzen weißen Innenabstand und internen horizontalen Overflow.
+## Gemeinsame Grundlagen
+- [x] Navigation und Seitenschlüssel unverändert.
+- [x] Produktversion bleibt V99.4.40.
+- [x] Hinweise liegen im normalen Dokumentfluss.
+- [x] Tabellen besitzen eine interne horizontale Scrollhülle.
 - [x] Gesamtseite läuft bei 390 px nicht horizontal über.
-- [x] Hinweisboxen liegen im normalen Dokumentfluss.
-- [x] Abstände, Radien, Rahmen, Schatten und Farben verwenden zentrale Tokens.
-- [x] Fokuszustände und Tastaturbedienung bleiben erhalten.
+- [x] 94 geschützte Dateien sind hashidentisch.
 
 ## Zähler
-- [x] Seite ist mehrfach eindeutig als DUMMY gekennzeichnet.
-- [x] Genau fünf Zählerarten: Wasser, Wärme, HKV, Gas und Strom.
-- [x] Farbige Icons sind einheitliche SVG-Linienicons aus zentralen Tokenfarben.
-- [x] DUMMY-Suche und -Filter mutieren keine Anwendungsdaten.
-- [x] Keine produktive Aktion, Speicherung oder Abrechnungswirkung.
-- [x] Keine neuen Zählerdatenfelder oder Fachmodule.
+- [x] Zählerseite bleibt ein eindeutig gekennzeichneter DUMMY.
+- [x] Genau fünf Zählerarten und zentrale farbige Linienicons.
+- [x] Suche und Filter verändern keine Anwendungsdaten.
+- [x] Keine produktiven Aktionen oder Speicherung.
 
-## Mietverhältnisse
-- [x] Mockup-A-Richtung mit vier Kennzahlenkarten umgesetzt.
-- [x] Kennzahlen verwenden ausschließlich vorhandene Daten.
-- [x] Suche, Wohnungs- und Statusfilter verändern keine Fachdaten.
-- [x] Alle zwölf vorhandenen Pflegefelder bleiben verfügbar.
-- [x] Neuanlage, Speichern, Archivieren und Reaktivieren verwenden bestehende Wege.
-- [x] Archivbereich und Statusdarstellung sind zugänglich und responsiv.
-- [x] Nur-Ansehen-Modus zeigt einen handlungsorientierten Schreibschutzhinweis im normalen Dokumentfluss.
-- [x] Im Nur-Ansehen-Modus sind Speichern, Neuanlage, Eingaben, Archivieren und Reaktivieren deaktiviert.
-- [x] Suche und Filter bleiben im Nur-Ansehen-Modus nutzbar und mutieren keine Daten.
-- [x] Keine neuen Statusregeln, Berechnungen oder Persistenzwege.
+## Mietverhältnisse – aktive Ansicht
+- [x] Kompakte Tabelle mit Mieter, Wohnung, Mietzeitraum, Rolle, Status und Aktionen.
+- [x] Keine dauerhaft sichtbaren Eingabe- oder Auswahlfelder in den Zusammenfassungszeilen.
+- [x] Genau ein Detailbereich kann aufgeklappt werden.
+- [x] Alle zwölf bestehenden Pflegefelder bleiben verfügbar.
+- [x] Vorhandene Neuanlage, Speicherung und Archivierung bleiben erhalten.
+- [x] Suche, Wohnungsfilter und Statusfilter verändern keine Fachdaten.
 
-## Schutz und Release
-- [x] 17 geschützte Produktdateien unverändert.
-- [x] 77 vorhandene Regressionstestdateien unverändert.
-- [x] Version, Manifest, Paket- und Cachekennung auf V99.4.40 fortgeschrieben.
-- [x] Zielzustands-Screenshots für Desktop, 390 px und Nur-Ansehen-Modus vorhanden.
+## Mietverhältnisse – Archiv
+- [x] Umschalter `Aktiv / Archiv` verwendet eine gemeinsame Tabellenkarte.
+- [x] Keine separate Legacy-Archivtabelle vorhanden.
+- [x] Archivzeilen und Archivdetails sind vollständig schreibgeschützt.
+- [x] Bestehende Reaktivierungsaktion bleibt erhalten.
+- [x] Statusfilter und Neuanlage werden in der Archivansicht ausgeblendet.
+
+## Nur-Ansehen-Modus
+- [x] Handlungsorientierter Schreibschutzhinweis sichtbar.
+- [x] Detailansichten bleiben lesbar und aufklappbar.
+- [x] Speichern, Neuanlage, Eingaben, Archivieren und Reaktivieren sind gesperrt.
+- [x] Suche, Filter und Ansichtsumschalter bleiben nutzbar.
+
+## Abschlussartefakte
+- [x] Umsetzungsbericht, Testbericht und Positivlistenabgleich aktualisiert.
+- [x] Korrekturspezifische Dateiänderungsliste als Markdown und JSON vorhanden.
+- [x] UI-Referenz aktualisiert.
+- [x] Vier Zielzustands-Screenshots vorhanden.
+- [x] interne und externe SHA-256-Prüfsummen werden aus dem finalen Paketstand erzeugt.

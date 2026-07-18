@@ -1,3 +1,7 @@
+# NK-Pro V99.4.40 – AP22F5B Korrektur 1
+
+Aktueller Paketstand: kompakte Mietverhältnisse mit aufklappbaren Details und gemeinsamer schreibgeschützter Archivansicht. Siehe `AP22F5B_README.md`.
+
 # NK-Pro V99.4.40 – AP22F5B Zähler-DUMMY und Mietverhältnisse
 
 Aktueller Release mit migrierten Seiten **Objekt vorbereiten → Zähler** und **Objekt vorbereiten → Mietverhältnisse**. Zähler bleibt ein deutlich gekennzeichneter, rein statischer DUMMY ohne Speicherung oder Fachlogik. Mietverhältnisse verwendet den neuen Kennzahlen-, Filter- und Tabellenstandard, erhält aber sämtliche vorhandenen Felder und zentralen Datenpflegewege.

@@ -1,37 +1,39 @@
-# AP22F5B – Testbericht
+# AP22F5B Korrektur 1 – Testbericht
 
 ## Gesamturteil
-**BESTANDEN.** Die technische Migration der Seiten **Zähler** und **Mietverhältnisse** ist für Release **V99.4.40** freigabefähig.
+**BESTANDEN.** Die kompakte Mietverhältnisse-Übersicht und die gemeinsame Archivansicht sind für das Korrekturpaket von Release **V99.4.40** freigabefähig.
 
-## AP22F5B-Struktur- und Schutzprüfung
-- AP22F5B-Strukturtest: **PASS**
-- 17 geschützte Produktdateien: **unverändert**
-- 77 bestehende Regressionstestdateien: **unverändert**
-- insgesamt 94 Schutz-Hashes: **bestanden**
-- Zähler-DUMMY ohne produktive Aktionen, Datenmutation oder Speicherung: **bestanden**
-- Mietverhältnisse mit zwölf bestehenden Pflegefeldern und unveränderten Schreibwegen: **bestanden**
+## Korrekturspezifische Strukturprüfung
+- genau zwei Ansichten im Umschalter `Aktiv / Archiv`: **PASS**
+- separate Legacy-Archivtabelle vollständig entfernt: **PASS**
+- aktive Kompaktzeilen ohne Eingabe- oder Auswahlfelder: **PASS**
+- alle zwölf bestehenden Pflegefelder im aufklappbaren Detailbereich: **PASS**
+- Archivansicht und Archivdetail vollständig ohne Eingabe- oder Auswahlfelder: **PASS**
+- bestehende Archivierungs- und Reaktivierungsaktionen erhalten: **PASS**
+- Nur-Ansehen-Schutz und zentrale Speicherwege erhalten: **PASS**
+- 94 Schutz-Hashes aus AP22F5B unverändert: **PASS**
 
 ## Browserprüfung
-- Zähler Desktop: fünf Karten, zentrale farbige SVG-Linienicons, Suche und Filter, normaler Dokumentfluss: **PASS**
-- Zähler 390 px: kein horizontaler Seitenüberlauf; Tabellen-Scroll intern: **PASS**
-- Mietverhältnisse Desktop: Kennzahlen, Suche, Filter, Bearbeitung, Speichern, Archivieren und Reaktivieren: **PASS**
-- Mietverhältnisse 390 px: kein horizontaler Seitenüberlauf; Tabellen-Scroll intern: **PASS**
-- Mietverhältnisse Nur ansehen: Schreibschutzhinweis sichtbar, alle Schreibaktionen gesperrt, Suche und Filter weiterhin nutzbar und ohne Datenmutation: **PASS**
-- weiße Tabelleninnenränder und Hinweise ohne Überlagerung: **PASS**
+- Zähler-DUMMY: fünf Karten, keine produktive Aktion und keine Zustandsmutation durch Suche/Reset: **PASS**
+- aktive Mietverhältnisse: fünf kompakte Zeilen, Detail öffnen/schließen und genau zwölf Pflegefelder: **PASS**
+- bestehender Schreibweg: Änderung eines Namens aktualisiert den vorhandenen Stammdatenpfad: **PASS**
+- Archivieren, Umschalten in die Archivansicht, lesendes Archivdetail und Reaktivieren: **PASS**
+- Statusfilter und Neuanlage im Archiv ausgeblendet: **PASS**
+- Nur-Ansehen-Modus: Details aufklappbar, sämtliche Eingaben und schreibenden Aktionen gesperrt: **PASS**
+- 390-Pixel-Ansicht ohne horizontalen Überlauf der Gesamtseite: **PASS**
+- vier Zielzustands-Screenshots erzeugt: **PASS**
 
 ## Kernregression
 - JavaScript-Syntax: **55 Einheiten fehlerfrei**
 - Referenzdaten: **6 logische Fälle semantisch unverändert**
-- Zählerstandard, Zählerstart und Zählerberechnung: **PASS**
-- Architekturregression AP6/AP7/AP8/AP9/AP13/AP21/AP21B2: **PASS**
+- Zählerdomäne einschließlich Dummy-Ausschluss: **PASS**
 - AP21C Individuelle Werte: **PASS**
-- AP22F4B Wohnungen gegen V99.4.40: **statische und browserbasierte Regression PASS**, einschließlich weißem Tabelleninnenrand, Schreibschutz, 620 px, 390 px und 200-%-Äquivalent
-- Release-Inhaltsprüfung: **PASS**
+- Architekturprüfungen AP6, AP7, AP8 und AP9: **PASS**
 
-## Historische Tests
-Einzelne geschützte AP22F3B-/AP22F4B-Tests enthalten fest codierte frühere Releasekennungen. Diese historischen Dateien bleiben bytegleich geschützt. Ihre fachlichen und visuellen Prüfungen wurden mit ausschließlich auf V99.4.40 angepasster temporärer Versionsannahme erneut ausgeführt und bestanden; die temporären Dateien sind nicht Bestandteil des Releases.
+## Historische Testgrenzen
+Ältere Schutz- und Browsertests einzelner AP22F-Vorgänger enthalten fest codierte Hashes oder frühere Versionskennungen. Sie sind nach späteren freigegebenen Seitenmigrationen nicht als aktuelle Releaseprüfung verwendbar. Maßgeblich für diese Korrektur sind die AP22F5B-Schutzliste und die korrigierten AP22F5B-Tests; ältere Testdateien wurden nicht umgeschrieben.
 
 ## Verbleibende Risiken
-- Die Seite Zähler bleibt absichtlich ein DUMMY mit fiktiven Beispieldaten und ohne Speicherung.
-- Die breite Mietverhältnistabelle benötigt aufgrund der zwölf erhaltenen Pflegefelder einen internen horizontalen Scroll. Die Gesamtseite läuft nicht horizontal über.
-- Änderungen an Auswahl oder Bedeutung der Kennzahlenkarten sind später möglich, sofern ausschließlich vorhandene Daten verwendet werden; neue Fachregeln benötigen eine gesonderte Planung.
+- Die Zählerseite bleibt absichtlich ein DUMMY.
+- Auf sehr schmalen Ansichten benötigt die Tabelle weiterhin internen horizontalen Scroll; die Gesamtseite läuft nicht horizontal über.
+- Der aufgeklappte Detailbereich liegt innerhalb der Tabellenhülle. Dies erhält den direkten Zeilenbezug, setzt auf sehr kleinen Displays jedoch horizontales Verschieben innerhalb der Karte voraus.
