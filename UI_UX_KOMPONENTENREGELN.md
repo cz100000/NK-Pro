@@ -267,3 +267,7 @@ Jede Karte verbindet Icon, eindeutigen Titel, textlichen Status, Kurzbeschreibun
 ## AP22F4B – Wohnungsverwaltung
 
 Die Wohnungsverwaltung nutzt `nk-ui-card`, `nk-ui-table`, `nk-ui-toolbar`, `nk-ui-status` und `nk-ui-notice`. Die sechs vorhandenen Stammdatenfelder bleiben unverändert; die Wohnungs-ID ist ein lesendes Systemfeld. Die Tabelle füllt innerhalb der Kartenhülle die verfügbare Breite und besitzt einen tokenbasierten weißen Innenabstand zu allen Kartenrändern. Suche und Filter wirken ausschließlich auf die sichtbaren Zeilen. Prüfbefunde stammen nur aus bestehenden `UNIT_*`-Ergebnissen der Objektstandardprüfung. Die Aktionsspalte führt im Bearbeitungsmodus zum vorhandenen Inline-Feld und ist im Nur-Ansehen-Modus deaktiviert. Eine Pagination wird erst bei tatsächlichem fachlichem Bedarf ergänzt.
+### Rechter Tabellenabschluss
+
+`nk-ui-table` ist verpflichtend. Jede Zeile schließt an ihrer letzten Zelle mit `border-right` ab. Die letzte Kopfzelle erhält den rechten oberen, die letzte Zelle der letzten Datenzeile den rechten unteren Standardradius. Seitenspezifische Ausnahmen oder offene Tabellenkanten sind nicht zulässig.
+

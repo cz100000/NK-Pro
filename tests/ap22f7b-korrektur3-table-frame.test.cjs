@@ -1,0 +1,12 @@
+"use strict";
+const assert=require("node:assert/strict");
+const fs=require("node:fs");
+const css=fs.readFileSync("assets/app.css","utf8");
+const costs=fs.readFileSync("js/ui-costs.js","utf8");
+assert.match(css,/\.nk-ui-table tr > :last-child\s*\{[^}]*border-right:1px solid var\(--nk-ui-color-border\) !important;/s,"Zentraler rechter Tabellenrahmen fehlt.");
+assert.match(css,/\.nk-ui-table thead tr:first-child > th:last-child\s*\{[^}]*border-top-right-radius:var\(--nk-ui-radius-sm\)/s,"Rechter oberer Tabellenradius fehlt.");
+assert.match(css,/\.nk-ui-table tbody tr:last-child > :last-child\s*\{[^}]*border-bottom-right-radius:var\(--nk-ui-radius-sm\)/s,"Rechter unterer Tabellenradius fehlt.");
+assert.match(costs,/function billingTenantDate\(value\)/,"Deutsche Datumsformatierung für Abrechnungs-Mietverhältnisse fehlt.");
+assert.match(costs,/match\[3\]\+"\."\+match\[2\]\+"\."\+match\[1\]/,"Format TT.MM.JJJJ fehlt.");
+assert.match(costs,/key==="period"\?billingTenantPeriodSortValue\(m\)/,"Mietzeitraum-Sortierung muss ISO-basiert bleiben.");
+console.log("AP22F7B Korrektur 3 Tabellenrahmen/Datumsformat: PASS");

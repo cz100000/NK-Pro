@@ -49,9 +49,9 @@ const NK_PRO_MODULES = (() => {
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
 const APP_VERSION = "V99.4.42";
-const APP_VERSION_NAME = "AP22F7B-Mietverhaeltnisse-Abrechnung-Korrektur2";
+const APP_VERSION_NAME = "AP22F7B-Mietverhaeltnisse-Abrechnung-Korrektur3";
 const APP_RELEASE_DATE = "2026-07-18";
-if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – AP22F7B Mietverhältnisse Abrechnung Korrektur 2";
+if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – AP22F7B Mietverhältnisse Abrechnung Korrektur 3";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
 const ARCHIVE_SNAPSHOT_SCOPE = "billingSnapshot";
@@ -116,6 +116,7 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
+  "V99.4.42 AP22F7B Korrektur 3 ergänzt den verbindlichen sichtbaren rechten Rahmen an allen zentralen Standardtabellen und schreibt diesen Standard für künftige Tabellenmigrationen fest. Auf Nebenkosten abrechnen – Mietverhältnisse werden Mietzeiträume im deutschen Format TT.MM.JJJJ angezeigt; Sortierung, Datenwerte und Fachlogik bleiben unverändert.",
   "V99.4.42 AP22F7B Korrektur 2 schließt alle 19 produktiven Standardtabellen auf Desktop vollständig bis zum rechten Tabellencontainer ab. Schmale Ansichten behalten ausschließlich internen horizontalen Tabellenlauf; Fach-, Sortier-, Filter-, Speicher-, Migrations-, Archiv-, Brief- und Druckwege bleiben unverändert.",
   "V99.4.42 AP22F7B Korrektur 1 vereinheitlicht zusätzlich die Tabellenköpfe der Abrechnungs-Mietverhältnisse mit dem verbindlichen Tabellenstandard. AP22F7B migriert ausschließlich die Seite Nebenkosten abrechnen – Mietverhältnisse auf NK-Pro UI Referenz 1.0: flacher Seitenfluss, kompakter Datenstandsblock, führende 8-spaltige Mietverhältnistabelle mit Lesedetails, nachgeordnete 6-spaltige Wohnungstabelle sowie Suche, Filter und Sortierung ohne Datenmutation. Fach-, Snapshot-, Speicher-, Migrations-, Archiv-, Brief- und Druckwege bleiben unverändert.",
   "V99.4.41 AP22F6B Korrektur 1 beseitigt den leeren Abstand unter dem Seitenkopf, ersetzt die Zeitraum-Klappbox durch die klar bezeichnete Aktion Abrechnungszeitraum bearbeiten beziehungsweise anzeigen und hält Objekt vorbereiten auch beim Ansehen archivierter Abrechnungen sichtbar. Fach-, Status-, Speicher-, Archiv-, Migrations- und Berechnungslogik bleiben unverändert.",

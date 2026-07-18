@@ -179,3 +179,11 @@ Mietverhältnisse vor Wohnungen, keine Klappboxen, keine Kennzahlenkarten, volls
 - [ ] Breite Inhalte erzeugen ausschließlich internen horizontalen Tabellen-Scroll.
 - [ ] Die Gesamtseite besitzt bei Desktop, 620 px, 390 px und Zoomäquivalent keinen horizontalen Überlauf.
 - [ ] Sortierung, Filterung, Eingaben und Fokusdarstellung bleiben durch die Breitenanpassung unverändert.
+## AP22F7B Korrektur 3 – Verbindliche Tabellenabnahme
+
+- [x] Jede produktive Standardtabelle besitzt an der letzten Kopf- und Datenzelle einen sichtbaren rechten Rahmen.
+- [x] Rechte obere und untere Tabellenradien sind vorhanden.
+- [x] Die Regel gilt zentral für alle künftigen Tabellenmigrationen.
+- [x] Mietzeiträume auf „Nebenkosten abrechnen → Mietverhältnisse“ erscheinen als `TT.MM.JJJJ`.
+- [x] Sortierung und gespeicherte ISO-Datumswerte bleiben unverändert.
+

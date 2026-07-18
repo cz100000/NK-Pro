@@ -2,7 +2,7 @@
   "name": "nk-pro-v99-4-42",
   "version": "99.4.42",
   "private": true,
-  "description": "AP22F7B Korrektur 2 – Projektweiter Tabellenabschluss und vollbreite Standardtabellen",
+  "description": "AP22F7B Korrektur 3 – Verbindlicher rechter Tabellenrahmen und deutsches Mietzeitraumformat",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
     "test:fixtures": "node tools/check-fixtures.cjs",
@@ -71,8 +71,8 @@
     "test:ap22f6b:browser": "node tests/ap22f6b-billing-overview.spec.js && node tests/ap22f6b-korrektur1-browser.test.cjs",
     "test:ap22f6b": "npm run test:ap22f6b:static && npm run test:ap22f6b:browser",
     "test:ap22f6b:korr1": "node tests/ap22f6b-korrektur1.test.cjs && node tests/ap22f6b-korrektur1-browser.test.cjs",
-    "test:ap22f7b:static": "node tests/ap22f7b-billing-tenants.test.cjs && node tests/ap22f7b-korrektur1.test.cjs && node tests/ap22f7b-korrektur2-table-width.test.cjs && node tests/ap22f7b-korrektur2-protected-areas.test.cjs",
-    "test:ap22f7b:browser": "node tests/ap22f7b-billing-tenants-browser.test.cjs && node tests/ap22f7b-korrektur1-browser.test.cjs && node tests/ap22f7b-korrektur2-table-width-browser.test.cjs",
+    "test:ap22f7b:static": "node tests/ap22f7b-billing-tenants.test.cjs && node tests/ap22f7b-korrektur1.test.cjs && node tests/ap22f7b-korrektur2-table-width.test.cjs && node tests/ap22f7b-korrektur3-table-frame.test.cjs && node tests/ap22f7b-korrektur3-protected-areas.test.cjs",
+    "test:ap22f7b:browser": "node tests/ap22f7b-billing-tenants-browser.test.cjs && node tests/ap22f7b-korrektur1-browser.test.cjs && node tests/ap22f7b-korrektur2-table-width-browser.test.cjs && node tests/ap22f7b-korrektur3-table-frame-browser.test.cjs",
     "test:ap22f7b": "npm run test:ap22f7b:static && npm run test:ap22f7b:browser",
     "test:architecture:ap22f7b": "node tests/ap6-modularization.test.cjs && node tests/ap8-application-actions.test.cjs && node tests/ap9-core-orchestration.test.cjs && node tests/ap13-letter-layout.test.cjs && node tests/ap21-rule-audit.test.cjs && node tests/ap21b2-navigation-centralization.test.cjs",
     "test:ap22f7b:korr1:static": "node tests/ap22f7b-korrektur1.test.cjs && node tests/ap22f7b-korrektur2-protected-areas.test.cjs",
@@ -80,7 +80,10 @@
     "test:ap22f7b:korr1": "npm run test:ap22f7b:korr1:static && npm run test:ap22f7b:korr1:browser",
     "test:ap22f7b:korr2:static": "node tests/ap22f7b-korrektur2-table-width.test.cjs && node tests/ap22f7b-korrektur2-protected-areas.test.cjs",
     "test:ap22f7b:korr2:browser": "node tests/ap22f7b-korrektur2-table-width-browser.test.cjs",
-    "test:ap22f7b:korr2": "npm run test:ap22f7b:korr2:static && npm run test:ap22f7b:korr2:browser"
+    "test:ap22f7b:korr2": "npm run test:ap22f7b:korr2:static && npm run test:ap22f7b:korr2:browser",
+    "test:ap22f7b:korr3:static": "node tests/ap22f7b-korrektur3-table-frame.test.cjs && node tests/ap22f7b-korrektur3-protected-areas.test.cjs",
+    "test:ap22f7b:korr3:browser": "node tests/ap22f7b-korrektur3-table-frame-browser.test.cjs",
+    "test:ap22f7b:korr3": "npm run test:ap22f7b:korr3:static && npm run test:ap22f7b:korr3:browser"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1"

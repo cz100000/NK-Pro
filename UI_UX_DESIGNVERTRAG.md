@@ -134,3 +134,7 @@ Die Objektübersicht ist ausschließlich die Arbeitsübersicht der Objektvorbere
 ## 14. AP22F4B – Verbindlicher Standard für führende Stammdatentabellen
 
 Die Seite `wohnungsverwaltung` verwendet den Tabellenstandard der „NK-Pro UI Referenz 1.0“ bei unveränderter weißer Navigation. Suchfeld, bestandsbasierter Statusfilter, kompakte Aktionsspalte und Ergebnissumme bilden eine gemeinsame Tabellenkarte. Die Tabelle füllt auf breiten Ansichten die verfügbare Kartenbreite und bleibt durch einen festen weißen Innenabstand sichtbar vom Kartenrand getrennt. Tabellenhinweise stehen ausschließlich im normalen Dokumentfluss. Bei schmalen Viewports bleibt die Seitenschale überlauffrei; nur die Tabelle darf innerhalb ihrer eigenen Hülle horizontal verschoben werden. Neue Datenfelder, Prüfregeln, Fachaktionen oder Persistenzwege sind ausgeschlossen.
+## Verbindlicher rechter Tabellenabschluss
+
+Alle bestehenden, bereits migrierten und künftig migrierten Tabellen verwenden auf Desktop einen sichtbaren rechten Abschluss direkt an der letzten Spalte. Die letzte Kopf- und Datenzelle besitzt einen vollständigen rechten Rahmen sowie die standardgerechten rechten Eckradien. Nach der letzten Spalte darf keine offene Tabellenkante entstehen. Auf schmalen Ansichten bleibt ausschließlich der interne horizontale Tabellen-Scroll zulässig.
+

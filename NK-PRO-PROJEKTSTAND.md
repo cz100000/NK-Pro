@@ -1,4 +1,4 @@
-# Projektstand V99.4.42 – AP22F7B Korrektur 2
+# Projektstand V99.4.42 – AP22F7B Korrektur 3
 
 Der projektweite Tabellenabschluss ist umgesetzt: Alle 19 produktiven Standardtabellen füllen auf Desktop ihre jeweilige Tabellenhülle vollständig aus und besitzen rechts einen klaren Abschluss. Auf 620 px und 390 px bleibt horizontaler Überlauf auf die interne Tabellenhülle begrenzt. Die Änderung ist rein darstellungsbezogen; Fach-, Daten-, Speicher-, Migrations-, Archiv-, Berechnungs-, Brief- und Druckwege sind unverändert.
 
@@ -129,4 +129,9 @@ Die produktive Anwendung bleibt technisch und visuell auf dem unveränderten Lau
 Die Referenzbibliothek wird direkt über `ui-reference/index.html` oder über einen lokalen statischen Server unter `/ui-reference/` geöffnet. Sie verwendet ausschließlich fiktive deutsche NK-Pro-Beispiele.
 
 Nächster Schritt ist kein ungeprüfter Seitenumbau. Für jeden zusammengehörigen Seitenbereich wird zuerst ein Vorschlag mit Bestandsanalyse, Redundanzen, Zielkomponenten, Mockup, Datei-Positivliste, Abnahmekriterien, Tests und Schutzbereichen vorgelegt. Erst nach Nutzerfreigabe erfolgt die technische Migration.
+
+
+## AP22F7B Korrektur 3
+
+Der zentrale Tabellenstandard verlangt für jede bestehende und künftige `nk-ui-table` einen sichtbaren rechten Rahmen an der letzten Kopf- und Datenzelle sowie standardgerechte rechte Eckradien. Die Tabellen füllen auf Desktop weiterhin die verfügbare Inhaltsbreite; auf schmalen Ansichten scrollt ausschließlich die Tabellenhülle. Mietzeiträume auf „Nebenkosten abrechnen → Mietverhältnisse“ werden sichtbar als `TT.MM.JJJJ` dargestellt, während Sortierung und gespeicherte ISO-Werte unverändert bleiben.
 

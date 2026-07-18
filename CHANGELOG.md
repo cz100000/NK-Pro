@@ -1,3 +1,12 @@
+# V99.4.42 – AP22F7B Korrektur 3 (2026-07-18)
+
+- Sichtbaren rechten Tabellenrahmen zentral für alle `nk-ui-table`-Tabellen ergänzt.
+- Rechte obere und untere Eckradien der letzten Tabellenzelle standardisiert.
+- Vorgabe in Designvertrag, Komponentenregeln und Abnahmekatalog für alle zukünftigen Tabellenmigrationen verankert.
+- Mietzeitraum auf „Nebenkosten abrechnen → Mietverhältnisse“ auf `TT.MM.JJJJ` umgestellt.
+- ISO-basierte Sortierung, Datenmodell, Persistenz und Fachlogik unverändert.
+- PWA-Build- und Cachekennung auf `99.4.42-ap22f7b-k3` fortgeschrieben.
+
 # V99.4.42 – AP22F7B Korrektur 2 (2026-07-18)
 
 - alle 19 produktiven Standardtabellen auf vollständige Containerbreite und klaren rechten Abschluss umgestellt;

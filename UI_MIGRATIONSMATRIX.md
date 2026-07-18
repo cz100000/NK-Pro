@@ -102,3 +102,7 @@ Beide Seiten gelten damit in ihrem freigegebenen Funktionsumfang als auf `NK-Pro
 | Navigation, Fachlogik, Datenmodell, Persistenz, Migration, Archivierung, Brief und Druck | geschützt | unverändert |
 
 Der Tabellenbreitenstandard gilt damit querschnittlich auch für noch nicht vollständig inhaltlich migrierte Seiten.
+## AP22F7B Korrektur 3
+
+Projektweiter Tabellenrahmen für alle zentral migrierten Tabellen abgeschlossen; verbindliche Übernahme in alle künftigen Menü- und Seitenmigrationen. Sichtbares Mietzeitraumformat der Abrechnungs-Mietverhältnisse auf `TT.MM.JJJJ` vereinheitlicht.
+

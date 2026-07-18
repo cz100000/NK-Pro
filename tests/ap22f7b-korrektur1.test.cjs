@@ -10,5 +10,5 @@ assert.match(css,/thead th\.sortable::after[\s\S]*?content:none!important/);
 assert.match(costs,/billingTenantScheduleHeaderCleanup\(\)/);
 assert.match(costs,/cell\.classList\.remove\("sortable","sort-asc","sort-desc"\)/);
 assert.match(costs,/cell\.onclick=null/);
-assert.match(sw,/99\.4\.42-ap22f7b-k[12]/);
+assert.match(sw,/99\.4\.42-ap22f7b-k[123]/);
 console.log("AP22F7B Korrektur 1 static: PASS");

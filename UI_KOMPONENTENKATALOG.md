@@ -109,3 +109,7 @@ Für `mieterTable` und `wohnungenTable` wird keine eigene visuelle Tabellenkopfv
 - Nach der letzten Spalte bleibt auf Desktop keine leere Restfläche.
 - Rechte Außenkante und Eckradien werden durch die zentrale Tabellenhülle konsistent abgeschlossen.
 - Seitenspezifische Breiten-Sonderlösungen sind nur als fachlich begründete Mindestbreite zulässig; sie dürfen den vollbreiten Desktopabschluss nicht aufheben.
+## AP22F7B Korrektur 3 – Tabellenrahmen und Datumsformat
+
+Die zentrale Komponente `nk-ui-table` führt den rechten Tabellenabschluss verbindlich selbst: letzte Kopf- und Datenzelle mit sichtbarem rechten Rahmen, rechte Eckradien an Kopf und letzter Datenzeile. Der Standard gilt für alle bestehenden und künftigen Tabellenmigrationen. Mietzeiträume in der Abrechnungs-Mietverhältnistabelle werden als `TT.MM.JJJJ` dargestellt; die Sortierung bleibt auf ISO-Rohwerten.
+
