@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="light">
-  <title>NK-Pro UI-/UX-Referenzbibliothek · AP22F3B</title>
+  <title>NK-Pro UI-/UX-Referenzbibliothek · AP22F4B</title>
   <link rel="stylesheet" href="reference.css">
 </head>
 <body>
@@ -30,19 +30,19 @@
   <a class="skip-link" href="#main">Zum Inhalt</a>
   <header class="reference-banner">
     <div>
-      <p class="eyebrow">NK-Pro · AP22F3B · nicht produktiv</p>
+      <p class="eyebrow">NK-Pro · AP22F4B · nicht produktiv</p>
       <h1>UI-/UX-Referenzbibliothek</h1>
       <p>Verbindliche visuelle Abnahmegrundlage. Ausschließlich fiktive Beispieldaten; keine Fachlogik, keine Persistenz und keine produktiven Ereignisse.</p>
     </div>
     <div class="reference-badges" aria-label="Referenzstatus">
       <span class="badge badge--info">Designvertrag V1</span>
-      <span class="badge badge--neutral">Migrationsstand V99.4.38</span>
+      <span class="badge badge--neutral">Migrationsstand V99.4.39</span>
     </div>
   </header>
 
   <nav class="section-nav" aria-label="Inhaltsverzeichnis der Referenzbibliothek">
     <a href="#styleguide">Zielbild</a><a href="#navigation">Navigation</a><a href="#shell">Seitenschale</a>
-    <a href="#object-overview">Objektübersicht</a><a href="#object-data">Objektdaten</a><a href="#cards">Karten</a><a href="#accordions">Klappboxen</a><a href="#tables">Tabellen</a>
+    <a href="#object-overview">Objektübersicht</a><a href="#object-data">Objektdaten</a><a href="#units-page">Wohnungen</a><a href="#cards">Karten</a><a href="#accordions">Klappboxen</a><a href="#tables">Tabellen</a>
     <a href="#forms">Formulare</a><a href="#actions">Aktionen</a><a href="#notices">Hinweise</a>
     <a href="#dialogs">Dialoge</a><a href="#states">Zustände</a><a href="#responsive">Responsive</a>
   </nav>
@@ -144,6 +144,18 @@
         <article class="card object-data-reference__routes"><div class="object-data-reference__routes-header"><div><p class="eyebrow">Änderungswege</p><h3>Wo werden Daten geändert?</h3><p>Die führenden Daten bleiben in ihren bestehenden Pflegebereichen.</p></div><button class="button button--secondary" type="button">Zur Objektübersicht</button></div><div class="object-data-reference__route-list"><button class="button button--secondary" type="button"><strong>Wohnungen</strong><small>Bezeichnung, Status, Fläche und Einheitenzuordnung</small></button><button class="button button--secondary" type="button"><strong>Mietverhältnisse</strong><small>Partner, Vertragszeiträume und Kontaktdaten</small></button><button class="button button--secondary" type="button"><strong>Zähler <span class="status">DUMMY</span></strong><small>Bestehender Inventar-DUMMY; keine neue Fachfunktion</small></button><button class="button button--secondary" type="button"><strong>Datensicherung &amp; System</strong><small>Technische Diagnose bei nicht direkt pflegbaren Standardfehlern</small></button></div></article>
       </div>
       <p class="reference-rule"><strong>Zustandsregel:</strong> Im vollständigen Zustand gibt es keine Primäraktion. Bei Fehlern oder Warnungen werden alle bestehenden Prüfbefunde angezeigt und höchstens eine fachlich priorisierte Weiterleitung angeboten.</p>
+    </section>
+
+    <section id="units-page" class="reference-section" data-reference-group="units-page">
+      <div class="section-heading"><div><p class="eyebrow">AP22F4B · verbindliche Zielkomponente</p><h2>Wohnungen – zentrale Tabellenpflege</h2><p>Führende Stammdatenpflege mit ruhigem Tabellenlayout, bestehender Objektstandardprüfung und ausschließlich internem horizontalem Tabellenlauf.</p></div><span class="badge badge--info">UI Referenz 1.0</span></div>
+      <article class="card units-reference">
+        <header class="units-reference__header"><div><p class="eyebrow">Wohnungsbestand</p><h3>Wohnungen <span>(7)</span></h3></div><span class="status status--success"><span class="status-dot" aria-hidden="true"></span> Vollständig</span></header>
+        <div class="toolbar units-reference__toolbar"><label class="visually-hidden" for="referenceUnitSearch">Wohnungen durchsuchen</label><input id="referenceUnitSearch" type="search" placeholder="Wohnung suchen …"><label class="visually-hidden" for="referenceUnitFilter">Prüfstatus filtern</label><select id="referenceUnitFilter"><option>Alle Wohnungen</option><option>Mit Handlungsbedarf</option></select><button class="button button--secondary" type="button">Zurücksetzen</button><small>Suche und bestehende Prüfbefunde filtern.</small></div>
+        <div class="units-reference__table-wrap" tabindex="0" aria-label="Beispieltabelle horizontal verschiebbar"><table class="table units-reference__table"><thead><tr><th>Wohnungs-ID</th><th>Bezeichnung</th><th>Etage / Lage</th><th>Wohnfläche m²</th><th>Zimmer</th><th>Bemerkung</th><th>Aktion</th></tr></thead><tbody><tr><td><strong>W000.UG</strong></td><td>UG</td><td>UG</td><td>55</td><td>2</td><td>–</td><td><button class="icon-button" type="button" aria-label="Wohnung UG bearbeiten"><svg class="svg-icon" aria-hidden="true"><use href="#icon-edit"></use></svg></button></td></tr><tr><td><strong>W001.EG-L</strong></td><td>EG-Links</td><td>EG-Links</td><td>55</td><td>3</td><td>–</td><td><button class="icon-button" type="button" aria-label="Wohnung EG-Links bearbeiten"><svg class="svg-icon" aria-hidden="true"><use href="#icon-edit"></use></svg></button></td></tr><tr class="units-reference__issue-row"><td><strong>W002.EG-R</strong><span class="units-reference__marker">!</span></td><td>EG-Rechts</td><td>EG-Rechts</td><td>55</td><td>2</td><td>Zuordnung prüfen</td><td><button class="icon-button" type="button" aria-label="Wohnung EG-Rechts bearbeiten"><svg class="svg-icon" aria-hidden="true"><use href="#icon-edit"></use></svg></button></td></tr></tbody></table></div>
+        <footer class="units-reference__footer"><span>3 von 7 Wohnungen</span><span>Spaltenüberschriften sortieren die Tabelle.</span></footer>
+      </article>
+      <div class="notice-grid units-reference__notices"><div class="notice notice--warning"><svg class="svg-icon" aria-hidden="true"><use href="#icon-alert"></use></svg><span><strong>Handlungsbedarf in der Wohnungstabelle</strong><small>Nur bestehende UNIT-Prüfbefunde werden angezeigt; betroffene Zeilen sind markiert.</small></span></div><div class="notice notice--info"><svg class="svg-icon" aria-hidden="true"><use href="#icon-info"></use></svg><span><strong>Systemfeld</strong><small>Die Wohnungs-ID ist nicht bearbeitbar. Im Nur-Ansehen-Modus bleiben Werte lesbar und Aktionen deaktiviert.</small></span></div></div>
+      <p class="reference-rule"><strong>Verbindliche Abgrenzung:</strong> Die sechs bestehenden Stammdatenfelder und ihre zentralen Schreibwege bleiben unverändert. Es gibt keine neue Fachlogik, keine künstliche Pagination und keine Hinweise außerhalb des normalen Dokumentflusses.</p>
     </section>
 
     <section id="cards" class="reference-section" data-reference-group="cards">

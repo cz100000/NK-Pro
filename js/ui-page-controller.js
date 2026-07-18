@@ -108,7 +108,7 @@ const TAB_DEFINITIONS = {
   start:{title:"Nebenkostenabrechnung – Übersicht",kicker:"Nebenkosten abrechnen",firstSection:"startRecordsSection",nextTab:"mieter",renderContent:()=>renderStart()},
   archiv:{title:"Abrechnungsarchiv",kicker:"Archiv",firstSection:"archiveRecordsSection",nextTab:"start",renderContent:()=>renderArchive()},
   mieterverwaltung:{title:"Mieterverwaltung",kicker:"Objekt vorbereiten",firstSection:"masterTenantSection",nextTab:"wohnungsverwaltung",renderContent:()=>renderStartTenantManagement()},
-  wohnungsverwaltung:{title:"Wohnungsverwaltung",kicker:"Objekt vorbereiten",firstSection:"masterUnitSection",nextTab:"mieterverwaltung",renderContent:()=>renderStartUnitManagement()},
+  wohnungsverwaltung:{title:"Wohnungen",kicker:"Objekt vorbereiten",firstSection:null,nextTab:"mieterverwaltung",disableSaveInReadOnly:true,renderContent:()=>renderStartUnitManagement()},
   sicherung:{title:"Datensicherung & System",kicker:"Extras",firstSection:"backupMainSection",nextTab:"landing",renderContent:()=>renderSicherung()},
   mieter:{title:"Mietverhältnisse prüfen und bearbeiten",kicker:"Nebenkosten abrechnen",firstSection:"tenantUnitsSection",nextTab:"einnahmen",renderContent:()=>renderWohnungen()},
   einstellungen:{title:"Gesamtkosten erfassen",kicker:"Nebenkosten abrechnen",firstSection:"costEditSection",nextTab:"manuellewerte",renderContent:()=>renderEinstellungen()},
@@ -444,11 +444,17 @@ function updateAllPageHeaders() {
     const page=document.querySelector('[data-page-tab="'+tabId+'"]');
     if (!page) return;
     const billingPage=BILLING_NAV_TABS.includes(tabId);
+    const pageDefinition=TAB_DEFINITIONS[tabId] || {};
     const saveButton=page.querySelector('[data-page-save]');
     if (saveButton&&billingPage) {
       saveButton.hidden=readOnly||!open;
       saveButton.disabled=readOnly||!open;
       saveButton.setAttribute("aria-hidden",saveButton.hidden?"true":"false");
+    } else if (saveButton&&pageDefinition.disableSaveInReadOnly) {
+      saveButton.hidden=false;
+      saveButton.disabled=readOnly;
+      saveButton.setAttribute("aria-hidden","false");
+      saveButton.setAttribute("aria-disabled",readOnly?"true":"false");
     }
   });
   const globalTitle=document.getElementById('workspaceTitle');

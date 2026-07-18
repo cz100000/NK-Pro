@@ -982,15 +982,129 @@ function renderStartUnitManagement() {
   const tableEl = document.getElementById("startUnitTable");
   if (!tableEl) return;
   const units = NK_PRO_MODULES.masterDataActions.masterUnits();
-  const rows = units.map((w,i) =>
-    '<tr><td>' + unitIdCellHtml(w) + '</td>' +
-    '<td class="editable">' + inputHtml(w.bezeichnung, "setMasterNested('wohnungen'," + i + ",'bezeichnung',this.value)") + '</td>' +
-    '<td class="editable">' + inputHtml(w.lage, "setMasterNested('wohnungen'," + i + ",'lage',this.value)") + '</td>' +
-    '<td class="editable">' + inputHtml(w.wohnflaeche, "setMasterNested('wohnungen'," + i + ",'wohnflaeche',this.value,'number')", "number") + '</td>' +
-    '<td class="editable">' + inputHtml(w.zimmer, "setMasterNested('wohnungen'," + i + ",'zimmer',this.value)") + '</td>' +
-    '<td class="editable">' + inputHtml(w.bemerkung, "setMasterNested('wohnungen'," + i + ",'bemerkung',this.value)") + '</td></tr>'
-  ).join("");
-  tableEl.innerHTML = '<thead><tr><th>Wohnungs-ID</th><th>Bezeichnung</th><th>Etage / Lage</th><th>Wohnfläche m²</th><th>Zimmer</th><th>Bemerkung</th></tr></thead><tbody>' + rows + '</tbody>';
+  const readOnly = NK_PRO_MODULES.billingContext.isReadOnly();
+  const validation = (() => {
+    try { return validateObjectStandard(state); }
+    catch (error) { return { issues:[] }; }
+  })();
+  const unitIssues = (Array.isArray(validation && validation.issues) ? validation.issues : [])
+    .filter(item => String(item && item.code || "").startsWith("UNIT_"));
+  const issuesByIndex = new Map();
+  unitIssues.forEach(item => {
+    const match = String(item && item.path || "").match(/objektStandard\.einheiten\[(\d+)\]/);
+    const index = match ? Number(match[1]) : units.findIndex(unit => String(unit && unit.id || unit && unit.einheitId || "") === String(item && item.entityId || ""));
+    if (index < 0) return;
+    if (!issuesByIndex.has(index)) issuesByIndex.set(index, []);
+    issuesByIndex.get(index).push(item);
+  });
+  const unitInput = (value, expression, cssClass, id) => {
+    let html = inputHtml(value, expression, cssClass || "");
+    html = html.replace('<input ', '<input id="' + id + '" ');
+    html = html.replace('class="', 'class="unit-management-input ');
+    if (readOnly) html = html.replace('>', ' readonly aria-readonly="true">');
+    return html;
+  };
+  const actionIcon = '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m4 20 4.5-1 10-10a2 2 0 0 0-3-3l-10 10L4 20Z"></path><path d="m14 7 3 3"></path></svg>';
+  const rows = units.map((w,i) => {
+    const issues = issuesByIndex.get(i) || [];
+    const hasIssue = issues.length > 0;
+    const unitLabel = String(w && (w.bezeichnung || w.id || w.einheitId) || "Wohnung " + (i + 1));
+    const fieldId = "unit-bezeichnung-" + i;
+    const action = readOnly
+      ? '<button class="unit-management-row-action" type="button" disabled aria-label="' + escapeHtml(unitLabel) + ' im Nur-Ansehen-Modus"><span class="visually-hidden">Nur ansehen</span>' + actionIcon + '</button>'
+      : '<a class="unit-management-row-action" href="#' + fieldId + '" aria-label="' + escapeHtml(unitLabel) + ' bearbeiten">' + actionIcon + '</a>';
+    return '<tr data-unit-row="' + i + '" data-unit-issue="' + (hasIssue ? 'true' : 'false') + '"' + (hasIssue ? ' class="unit-management-row--issue"' : '') + '>' +
+      '<td class="unit-management-id-cell">' + unitIdCellHtml(w) + (hasIssue ? '<span class="unit-management-issue-marker" title="Prüfbefund vorhanden" aria-label="Prüfbefund vorhanden">!</span>' : '') + '</td>' +
+      '<td class="editable">' + unitInput(w.bezeichnung, "setMasterNested('wohnungen'," + i + ",'bezeichnung',this.value)", "", fieldId) + '</td>' +
+      '<td class="editable">' + unitInput(w.lage, "setMasterNested('wohnungen'," + i + ",'lage',this.value)", "", "unit-lage-" + i) + '</td>' +
+      '<td class="editable">' + unitInput(w.wohnflaeche, "setMasterNested('wohnungen'," + i + ",'wohnflaeche',this.value,'number')", "number", "unit-wohnflaeche-" + i) + '</td>' +
+      '<td class="editable">' + unitInput(w.zimmer, "setMasterNested('wohnungen'," + i + ",'zimmer',this.value)", "", "unit-zimmer-" + i) + '</td>' +
+      '<td class="editable">' + unitInput(w.bemerkung, "setMasterNested('wohnungen'," + i + ",'bemerkung',this.value)", "", "unit-bemerkung-" + i) + '</td>' +
+      '<td class="unit-management-action-cell">' + action + '</td></tr>';
+  }).join("");
+  tableEl.innerHTML = '<thead><tr><th>Wohnungs-ID</th><th>Bezeichnung</th><th>Etage / Lage</th><th>Wohnfläche m²</th><th>Zimmer</th><th>Bemerkung</th><th class="unit-management-action-heading">Aktion</th></tr></thead><tbody>' + rows + '</tbody>';
+
+  const count = document.querySelector('[data-unit-count]');
+  if (count) count.textContent = '(' + units.length + ')';
+  const status = document.querySelector('[data-unit-status]');
+  if (status) {
+    status.textContent = unitIssues.length ? unitIssues.length + (unitIssues.length === 1 ? ' Prüfbefund' : ' Prüfbefunde') : 'Vollständig';
+    status.classList.toggle('nk-ui-status--warning', unitIssues.length > 0);
+    status.classList.toggle('nk-ui-status--success', unitIssues.length === 0);
+  }
+
+  const readonlyNotice = document.querySelector('[data-unit-readonly-notice]');
+  if (readonlyNotice) {
+    readonlyNotice.hidden = !readOnly;
+    readonlyNotice.className = readOnly ? 'billing-readonly-notice unit-management-readonly-notice' : '';
+    readonlyNotice.setAttribute('role', readOnly ? 'status' : 'presentation');
+    readonlyNotice.innerHTML = readOnly
+      ? '<span class="billing-readonly-notice__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10" width="14" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg></span><span><strong>Diese Abrechnung ist schreibgeschützt.</strong><small>Wohnungsstammdaten können erst nach dem Öffnen zur Bearbeitung geändert werden.</small></span><button type="button" class="secondary" data-ui-action="billing.switchToEdit">Zur Bearbeitung öffnen</button>'
+      : '';
+  }
+
+  const issuesRoot = document.querySelector('[data-unit-issues]');
+  if (issuesRoot) {
+    issuesRoot.hidden = unitIssues.length === 0;
+    issuesRoot.className = unitIssues.length ? 'nk-ui-notice nk-ui-notice--warning unit-management-issues' : '';
+    issuesRoot.setAttribute('role', unitIssues.length ? 'status' : 'presentation');
+    issuesRoot.innerHTML = unitIssues.length
+      ? '<span class="unit-management-note__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2.8 20h18.4L12 3Z"></path><path d="M12 9v5M12 17h.01"></path></svg></span><span><strong>Handlungsbedarf in der Wohnungstabelle</strong><small>' + unitIssues.map(item => escapeHtml(item.message || item.code || 'Prüfbefund')).join(' · ') + '</small></span>'
+      : '';
+  }
+
+  if (globalThis.NKProUiTableTools) {
+    NKProUiTableTools.ensureTableTools(tableEl);
+    const tools = document.querySelector('.table-tools[data-table="startUnitTable"]');
+    if (tools) {
+      tools.classList.add('nk-ui-toolbar','unit-management-toolbar');
+      const input = tools.querySelector('input[type="search"]');
+      const reset = tools.querySelector('button');
+      const hint = tools.querySelector('.small');
+      if (input) {
+        input.placeholder = 'Wohnung suchen …';
+        input.setAttribute('aria-label','Wohnungen durchsuchen');
+      }
+      if (reset) reset.textContent = 'Zurücksetzen';
+      if (hint) hint.textContent = 'Suche und bestehende Prüfbefunde filtern.';
+      let select = tools.querySelector('[data-unit-status-filter]');
+      if (!select) {
+        select = document.createElement('select');
+        select.dataset.unitStatusFilter = '';
+        select.setAttribute('aria-label','Wohnungen nach Prüfstatus filtern');
+        select.innerHTML = '<option value="all">Alle Wohnungen</option><option value="issues">Mit Handlungsbedarf</option>';
+        if (reset) tools.insertBefore(select, reset); else tools.appendChild(select);
+      }
+      const updateResults = () => {
+        const visible = Array.from(tableEl.tBodies[0] ? tableEl.tBodies[0].rows : []).filter(row => !row.classList.contains('filtered-out') && !row.classList.contains('unit-filtered-out')).length;
+        const result = document.querySelector('[data-unit-results]');
+        if (result) result.textContent = visible + ' von ' + units.length + (units.length === 1 ? ' Wohnung' : ' Wohnungen');
+      };
+      const applyUnitFilters = () => {
+        const query = String(input && input.value || '').toLocaleLowerCase('de-DE').trim();
+        const issuesOnly = select && select.value === 'issues';
+        Array.from(tableEl.tBodies[0] ? tableEl.tBodies[0].rows : []).forEach(row => {
+          const values = [row.textContent].concat(Array.from(row.querySelectorAll('input,select,textarea')).map(control => control.value)).join(' ').toLocaleLowerCase('de-DE');
+          row.classList.toggle('filtered-out', query !== '' && !values.includes(query));
+          row.classList.toggle('unit-filtered-out', issuesOnly && row.dataset.unitIssue !== 'true');
+        });
+        updateResults();
+      };
+      if (input && input.dataset.unitResultsBound !== 'true') {
+        input.dataset.unitResultsBound = 'true';
+        input.addEventListener('input', applyUnitFilters);
+      }
+      if (select && select.dataset.unitFilterBound !== 'true') {
+        select.dataset.unitFilterBound = 'true';
+        select.addEventListener('change', applyUnitFilters);
+      }
+      if (reset && reset.dataset.unitResetBound !== 'true') {
+        reset.dataset.unitResetBound = 'true';
+        reset.addEventListener('click', () => { if (select) select.value = 'all'; setTimeout(applyUnitFilters, 0); });
+      }
+      applyUnitFilters();
+    }
+  }
 }
 
 

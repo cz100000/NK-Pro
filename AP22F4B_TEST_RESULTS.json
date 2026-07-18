@@ -1,0 +1,77 @@
+{
+  "release": "V99.4.39",
+  "workPackage": "AP22F4B",
+  "status": "passed_with_historical_exclusions",
+  "passed": [
+    {
+      "name": "AP22F4B static",
+      "result": "PASS",
+      "details": "Struktur, sechs Bestandsfelder, fünf bestehende Schreibpfade, UNIT_*-Grenze, zentrale Tokens, Referenz und Version"
+    },
+    {
+      "name": "AP22F4B protected areas",
+      "result": "PASS",
+      "details": "13 Schutzdateien und 74 bestehende Regressionstestdateien"
+    },
+    {
+      "name": "AP22F4B browser",
+      "result": "PASS",
+      "details": "Desktop vollständig, Handlungsbedarf, Nur ansehen, 620 px, 390 px, 200-%-Äquivalent; Bearbeiten, Speichern, Suche, Filter, Fokus und Dokumentfluss"
+    },
+    {
+      "name": "JavaScript syntax",
+      "result": "PASS",
+      "details": "55 JavaScript-Einheiten"
+    },
+    {
+      "name": "Fixtures",
+      "result": "PASS",
+      "details": "6 Referenzfälle semantisch unverändert"
+    },
+    {
+      "name": "Metering regression",
+      "result": "PASS",
+      "details": "Zählerstandard, Zählerstart und Dezimalberechnung"
+    },
+    {
+      "name": "Architecture regression",
+      "result": "PASS",
+      "details": "AP6, AP7, AP8, AP9, AP13, AP21 und AP21B2"
+    },
+    {
+      "name": "AP21C static",
+      "result": "PASS",
+      "details": "Struktur und Kompatibilität"
+    },
+    {
+      "name": "AP22F3B browser",
+      "result": "PASS",
+      "details": "9 von 9 Tests"
+    },
+    {
+      "name": "AP22F2B browser relevant",
+      "result": "PASS",
+      "details": "Fachprioritäten, vier Aktionen, Fokus sowie 1440/1280/1024/900/620/390 px, 200-%-Äquivalent und Dialogausblendung"
+    },
+    {
+      "name": "Release contents",
+      "result": "PASS",
+      "details": "keine generierten Testverzeichnisse oder installierten Abhängigkeiten im Release"
+    }
+  ],
+  "historicalExclusions": [
+    {
+      "test": "AP22E design contract static",
+      "reason": "geschützter historischer Test erwartet fest V99.4.33"
+    },
+    {
+      "test": "AP22F3B release static / package test:release",
+      "reason": "geschützter historischer Release-Test erwartet V99.4.38"
+    },
+    {
+      "test": "einzelne ältere AP22F1A/AP22E browser assertions",
+      "reason": "fest verdrahtete Alt-Releasetitel oder inzwischen planmäßig entfallene frühere Aktion"
+    }
+  ],
+  "knownProductDefects": []
+}

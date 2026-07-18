@@ -6068,3 +6068,47 @@ body:not(.document-print-window) .object-data-route:nth-last-child(-n+2){border-
 .object-data-route__arrow{color:var(--nk-ui-color-text-muted)}
 @media(max-width:900px){.object-data-main-grid{grid-template-columns:1fr}}
 @media(max-width:620px){.object-data-card{padding:var(--nk-ui-space-lg)}.object-data-meta>div{grid-template-columns:minmax(100px,.8fr) minmax(0,1.2fr)}.object-data-primary,.object-data-overview-link{width:100%}.object-data-routes__header{display:grid}.object-data-route-list{grid-template-columns:1fr}body:not(.document-print-window) .object-data-route,body:not(.document-print-window) .object-data-route:nth-child(2n),body:not(.document-print-window) .object-data-route:nth-last-child(-n+2){border-right:0;border-bottom:1px solid var(--nk-ui-color-border)}body:not(.document-print-window) .object-data-route:last-child{border-bottom:0}}
+
+
+/* AP22F4B – technische Migration der Seite Wohnungen */
+#wohnungsverwaltung .unit-management-page{min-width:0;display:grid;gap:var(--nk-ui-space-lg)}
+#wohnungsverwaltung .unit-management-card{min-width:0;overflow:hidden;padding:0}
+body:not(.document-print-window) #wohnungsverwaltung .unit-management-card > .unit-management-card__header{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--nk-ui-space-lg);padding:var(--nk-ui-space-lg) var(--nk-ui-space-xl);border-bottom:1px solid var(--nk-ui-color-border);background:var(--nk-ui-color-surface)!important;color:var(--nk-ui-color-text)!important;box-shadow:none!important}
+#wohnungsverwaltung .unit-management-card__eyebrow{margin:0 0 var(--nk-ui-space-2xs);color:var(--nk-ui-color-text-muted)!important;font-size:12px;font-weight:700;letter-spacing:.03em;text-transform:uppercase}
+#wohnungsverwaltung .unit-management-card__header h2{margin:0;font-size:20px;line-height:1.25}
+#wohnungsverwaltung .unit-management-card__count{color:var(--nk-ui-color-text-muted);font-weight:600}
+body:not(.document-print-window) #wohnungsverwaltung .unit-management-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:var(--nk-ui-space-sm);margin:0;padding:var(--nk-ui-space-md) var(--nk-ui-space-xl);border:0;border-bottom:1px solid var(--nk-ui-color-border);border-radius:0;background:var(--nk-ui-color-surface)!important}
+body:not(.document-print-window) #wohnungsverwaltung .unit-management-toolbar input[type="search"]{flex:1 1 280px;width:auto!important;max-width:440px;min-width:min(360px,100%);height:38px}
+body:not(.document-print-window) #wohnungsverwaltung .unit-management-toolbar select{flex:0 1 220px;width:auto!important;max-width:260px;min-width:190px;height:38px}
+body:not(.document-print-window) #wohnungsverwaltung .unit-management-toolbar button{flex:0 0 auto;width:auto!important}
+#wohnungsverwaltung .unit-management-toolbar .small{margin-left:auto}
+#wohnungsverwaltung .unit-management-table-wrap{width:100%;max-width:100%;min-width:0;margin:0;border:0;border-radius:0;overflow-x:auto;overflow-y:visible;overscroll-behavior-inline:contain;scrollbar-gutter:stable}
+#wohnungsverwaltung .unit-management-table{min-width:980px;margin:0;border-collapse:separate;border-spacing:0}
+body:not(.document-print-window) #wohnungsverwaltung .unit-management-table thead th{padding:11px var(--nk-ui-space-md);background:var(--nk-ui-color-surface-muted)!important;color:var(--nk-ui-color-text)!important;border-color:var(--nk-ui-color-border)!important;font-size:12px;font-weight:700;text-transform:none;letter-spacing:0;white-space:nowrap}
+#wohnungsverwaltung .unit-management-table tbody td{height:49px;padding:var(--nk-ui-space-2xs) var(--nk-ui-space-sm);vertical-align:middle;border-color:var(--nk-ui-color-border)}
+body:not(.document-print-window) #wohnungsverwaltung .unit-management-table tbody tr:nth-child(odd) td{background:var(--nk-ui-color-surface)!important}
+body:not(.document-print-window) #wohnungsverwaltung .unit-management-table tbody tr:nth-child(even) td{background:var(--nk-ui-color-surface-muted)!important}
+body:not(.document-print-window) #wohnungsverwaltung .unit-management-table tbody tr:hover td{background:var(--nk-ui-color-accent-soft)!important}
+body:not(.document-print-window) #wohnungsverwaltung .unit-management-table tbody tr.unit-management-row--issue td{background:var(--nk-ui-color-warning-soft)!important}
+#wohnungsverwaltung .unit-management-table tbody tr.unit-filtered-out{display:none}
+#wohnungsverwaltung .unit-management-input{width:100%;min-width:92px;height:36px;padding:var(--nk-ui-space-xs) var(--nk-ui-space-sm);border:1px solid transparent;border-radius:var(--nk-ui-radius-sm);background:transparent;color:inherit;font:inherit}
+#wohnungsverwaltung .unit-management-input:hover:not([readonly]):not(:disabled){border-color:var(--nk-ui-color-border);background:var(--nk-ui-color-surface)}
+#wohnungsverwaltung .unit-management-input:focus{border-color:var(--nk-ui-color-accent);background:var(--nk-ui-color-surface);outline:2px solid var(--nk-ui-color-focus);outline-offset:1px}
+#wohnungsverwaltung .unit-management-input[readonly],#wohnungsverwaltung .unit-management-input:disabled{cursor:default;color:var(--nk-ui-color-text);opacity:1}
+#wohnungsverwaltung .unit-management-id-cell{position:relative;font-weight:700;white-space:nowrap}
+#wohnungsverwaltung .unit-management-issue-marker{display:inline-grid;place-items:center;width:18px;height:18px;margin-left:var(--nk-ui-space-xs);border-radius:var(--nk-ui-radius-pill);background:var(--nk-ui-color-warning);color:var(--nk-ui-color-surface);font-size:11px;font-weight:800}
+#wohnungsverwaltung .unit-management-action-heading,#wohnungsverwaltung .unit-management-action-cell{width:68px;text-align:center}
+#wohnungsverwaltung .unit-management-row-action{width:34px;height:34px;display:inline-grid;place-items:center;border:1px solid var(--nk-ui-color-border);border-radius:var(--nk-ui-radius-sm);background:var(--nk-ui-color-surface);color:var(--nk-ui-color-accent);text-decoration:none}
+#wohnungsverwaltung .unit-management-row-action svg{width:18px;height:18px}
+#wohnungsverwaltung .unit-management-row-action:hover:not(:disabled),#wohnungsverwaltung .unit-management-row-action:focus-visible{border-color:var(--nk-ui-color-accent);background:var(--nk-ui-color-accent-soft);outline:2px solid var(--nk-ui-color-focus);outline-offset:1px}
+body:not(.document-print-window) #wohnungsverwaltung .unit-management-row-action:disabled{cursor:not-allowed;border-color:var(--nk-ui-color-border)!important;background:var(--nk-ui-color-surface-muted)!important;color:var(--nk-ui-color-text-muted)!important;opacity:1}
+#wohnungsverwaltung .unit-management-card__footer{display:flex;align-items:center;justify-content:space-between;gap:var(--nk-ui-space-lg);padding:var(--nk-ui-space-md) var(--nk-ui-space-xl);border-top:1px solid var(--nk-ui-color-border);background:var(--nk-ui-color-surface-muted);color:var(--nk-ui-color-text-muted);font-size:12px}
+#wohnungsverwaltung .unit-management-readonly-notice{position:static;width:auto;min-height:0;height:auto;margin:0 0 var(--nk-ui-space-lg);inset:auto;z-index:auto}
+#wohnungsverwaltung .unit-management-issues,#wohnungsverwaltung .unit-management-system-note{position:static;min-height:0;height:auto;margin:0;inset:auto;z-index:auto;align-items:flex-start}
+#wohnungsverwaltung .unit-management-note__icon{width:24px;height:24px;display:grid;place-items:center;flex:0 0 auto}
+#wohnungsverwaltung .unit-management-note__icon svg{width:20px;height:20px}
+#wohnungsverwaltung .unit-management-issues>span:last-child,#wohnungsverwaltung .unit-management-system-note>span:last-child{display:grid;gap:var(--nk-ui-space-2xs)}
+#wohnungsverwaltung .unit-management-issues small,#wohnungsverwaltung .unit-management-system-note small{line-height:1.45}
+body:not(.document-print-window) #wohnungsverwaltung [data-page-save]:disabled{cursor:not-allowed;border-color:var(--nk-ui-color-border)!important;background:var(--nk-ui-color-surface-muted)!important;color:var(--nk-ui-color-text-muted)!important;opacity:1}
+@media(max-width:900px){body:not(.document-print-window) #wohnungsverwaltung .unit-management-card > .unit-management-card__header{padding:var(--nk-ui-space-lg)}body:not(.document-print-window) #wohnungsverwaltung .unit-management-toolbar{align-items:stretch;flex-direction:column;padding:var(--nk-ui-space-md) var(--nk-ui-space-lg)}body:not(.document-print-window) #wohnungsverwaltung .unit-management-toolbar input[type="search"],body:not(.document-print-window) #wohnungsverwaltung .unit-management-toolbar select,body:not(.document-print-window) #wohnungsverwaltung .unit-management-toolbar button{flex:1 1 auto;width:100%!important;min-width:0;max-width:none}#wohnungsverwaltung .unit-management-toolbar .small{margin-left:0}#wohnungsverwaltung .unit-management-card__footer{align-items:flex-start;flex-direction:column;padding:var(--nk-ui-space-md) var(--nk-ui-space-lg)}}
+@media(max-width:620px){body:not(.document-print-window) #wohnungsverwaltung .unit-management-card > .unit-management-card__header{align-items:flex-start;flex-direction:column}#wohnungsverwaltung .unit-management-readonly-notice{align-items:flex-start;flex-wrap:wrap}#wohnungsverwaltung .unit-management-readonly-notice button{width:calc(100% - 40px);margin-left:40px}#wohnungsverwaltung .unit-management-table{min-width:900px}}

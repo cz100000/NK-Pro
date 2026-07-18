@@ -92,3 +92,17 @@
 .object-data-reference__route-list .button:nth-child(2n){border-right:0}.object-data-reference__route-list .button:nth-last-child(-n+2){border-bottom:0}.object-data-reference__route-list small{margin-top:var(--s1);color:var(--muted);font-weight:400}
 @media(max-width:900px){.object-data-reference__main{grid-template-columns:1fr}}
 @media(max-width:620px){.object-data-reference__routes-header{display:grid}.object-data-reference__routes-header .button{width:100%}.object-data-reference__route-list{grid-template-columns:1fr}.object-data-reference__route-list .button,.object-data-reference__route-list .button:nth-child(2n),.object-data-reference__route-list .button:nth-last-child(-n+2){border-right:0;border-bottom:1px solid var(--border)}.object-data-reference__route-list .button:last-child{border-bottom:0}}
+
+
+/* AP22F4B – verbindliche Referenz der Wohnungsverwaltung */
+.units-reference{min-width:0;overflow:hidden}
+.units-reference__header{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s4);padding:var(--s4);border-bottom:1px solid var(--border);background:var(--surface);color:var(--text)}
+.units-reference__header h3{margin:0;font-size:20px}.units-reference__header h3 span{color:var(--muted)}
+.units-reference__toolbar{margin:0;padding:var(--s3) var(--s4);border:0;border-bottom:1px solid var(--border);border-radius:0;background:var(--surface)}
+.units-reference__toolbar input{flex:1 1 280px;max-width:430px}.units-reference__toolbar select{flex:0 1 220px}.units-reference__toolbar small{margin-left:auto;color:var(--muted)}
+.units-reference__table-wrap{max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain}
+.units-reference__table{min-width:920px;margin:0;border:0;border-radius:0}.units-reference__table th{background:var(--surface-muted);color:var(--text)}.units-reference__table td:last-child,.units-reference__table th:last-child{text-align:center}
+.units-reference__issue-row td{background:var(--warning-soft)}.units-reference__marker{display:inline-grid;place-items:center;width:18px;height:18px;margin-left:6px;border-radius:50%;background:var(--warning);color:#fff;font-size:11px;font-weight:800}
+.units-reference__footer{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);padding:var(--s3) var(--s4);border-top:1px solid var(--border);background:var(--surface-muted);color:var(--muted);font-size:12px}
+.units-reference__notices{margin-top:var(--s4)}.units-reference__notices .notice{align-items:flex-start}.units-reference__notices small{display:block;margin-top:3px}
+@media(max-width:900px){.units-reference__toolbar{align-items:stretch;flex-direction:column}.units-reference__toolbar input,.units-reference__toolbar select,.units-reference__toolbar .button{width:100%;max-width:none}.units-reference__toolbar small{margin-left:0}.units-reference__footer{align-items:flex-start;flex-direction:column}}

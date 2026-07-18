@@ -1,0 +1,46 @@
+"use strict";
+const assert=require("node:assert/strict");
+const fs=require("node:fs");
+const path=require("node:path");
+const root=path.resolve(__dirname,"..");
+const read=file=>fs.readFileSync(path.join(root,file),"utf8");
+function extractSection(source,id){
+  const start=new RegExp(`<section\\b[^>]*\\bid="${id}"[^>]*>`,"i").exec(source);assert.ok(start,`section#${id} fehlt`);
+  const tags=/<\/?section\b[^>]*>/ig;tags.lastIndex=start.index+start[0].length;let depth=1,match;
+  while((match=tags.exec(source))){depth+=match[0][1]==="/"?-1:1;if(depth===0)return source.slice(start.index,tags.lastIndex);}throw new Error(`section#${id} unvollständig`);
+}
+function extractFunction(source,name,next){const a=source.indexOf(`function ${name}(`);const candidate=next?source.indexOf(`function ${next}(`,a):-1;const b=candidate>a?candidate:source.length;assert.ok(a>=0&&b>a);return source.slice(a,b);}
+const html=read("index.html"),rendererSource=read("js/ui-navigation-pages.js"),controller=read("js/ui-page-controller.js"),css=read("assets/app.css"),reference=read("ui-reference/index.html"),referenceCss=read("ui-reference/reference.css");
+const section=extractSection(html,"wohnungsverwaltung");
+assert.equal((html.match(/<section\b[^>]*\bid="wohnungsverwaltung"/g)||[]).length,1,"Wohnungsseite nicht eindeutig");
+assert.equal((section.match(/<h1\b/g)||[]).length,1,"genau ein h1 erforderlich");
+assert.ok(section.includes(">Wohnungen</h1>"),"Zieltitel fehlt");
+assert.ok(section.includes('id="startUnitTable"'),"Wohnungstabelle fehlt");
+assert.ok(section.includes('data-unit-results=""'),"Ergebnissumme fehlt");
+assert.ok(section.includes('data-unit-issues=""'),"Prüfhinweis-Host fehlt");
+assert.ok(section.includes('data-unit-readonly-notice=""'),"Schreibschutz-Host fehlt");
+for(const forbidden of ["masterUnitValidationSection","validation-placeholder","Prüfregeln für diesen Bereich sind noch zu definieren."])assert.ok(!section.includes(forbidden),`Altstruktur verblieben: ${forbidden}`);
+const renderer=extractFunction(rendererSource,"renderStartUnitManagement",null);
+for(const field of ["bezeichnung","lage","wohnflaeche","zimmer","bemerkung"])assert.ok(renderer.includes(`'${field}'`),`Feld fehlt: ${field}`);
+assert.equal((renderer.match(/setMasterNested\('wohnungen'/g)||[]).length,5,"bestehende fünf editierbare Schreibpfade müssen erhalten bleiben");
+assert.ok(renderer.includes("validateObjectStandard(state)"),"bestehende Objektstandardprüfung fehlt");
+assert.ok(renderer.includes('startsWith("UNIT_")'),"Prüffilter ist nicht auf UNIT_* begrenzt");
+for(const forbidden of ["normalizeObjectStandard","saveState","persist","migration","kostenarten","vorauszahlungen"])assert.ok(!renderer.toLowerCase().includes(forbidden.toLowerCase()),`verbotener Fach-/Persistenzbezug: ${forbidden}`);
+assert.ok(renderer.includes("NKProUiTableTools.ensureTableTools"),"zentrale Tabellenwerkzeuge werden nicht verwendet");
+assert.ok(renderer.includes("data-unit-status-filter"),"Statusfilter fehlt");
+assert.ok(renderer.includes("unit-management-row-action"),"Aktionsspalte fehlt");
+assert.ok(controller.includes('wohnungsverwaltung:{title:"Wohnungen",kicker:"Objekt vorbereiten",firstSection:null'),"Seitenkonfiguration nicht migriert");
+assert.ok(controller.includes("disableSaveInReadOnly:true"),"Schreibschutzkonfiguration fehlt");
+assert.ok(css.includes("/* AP22F4B – technische Migration der Seite Wohnungen */"),"AP22F4B-CSS fehlt");
+const apCss=css.slice(css.indexOf("/* AP22F4B – technische Migration der Seite Wohnungen */"));
+assert.ok(!/#[0-9a-f]{3,8}\b/i.test(apCss),"AP22F4B-CSS darf keine lokalen Farbwerte definieren");
+assert.ok(apCss.includes("var(--nk-ui-"),"AP22F4B-CSS muss zentrale UI-Tokens verwenden");
+assert.ok(css.includes("overflow-x:auto")&&css.includes("unit-management-table-wrap"),"interner Tabellenüberlauf fehlt");
+assert.ok(css.includes("position:static")&&css.includes("unit-management-issues"),"Hinweise sind nicht explizit im Dokumentfluss");
+assert.ok(reference.includes('id="units-page"')&&reference.includes("AP22F4B · verbindliche Zielkomponente"),"aktualisierte UI-Referenz fehlt");
+assert.ok(referenceCss.includes("AP22F4B – verbindliche Referenz der Wohnungsverwaltung"),"Referenz-CSS fehlt");
+assert.ok(html.includes('<strong data-app-version="">V99.4.39</strong>'),"statische Releasekennung fehlt");
+assert.ok(read("js/app-runtime-config.js").includes('const APP_VERSION = "V99.4.39";'),"zentrale Releasekennung fehlt");
+assert.equal(JSON.parse(read("manifest.webmanifest")).version,"99.4.39");
+assert.equal(JSON.parse(read("nk-pro-project.json")).housingManagementMigrationVersion,1);
+console.log("AP22F4B housing management static test: PASS");

@@ -130,3 +130,7 @@ Die sichtbare Releaseversion wird aus genau einer zentralen Laufzeitquelle abgel
 ## 13. AP22F2B – Verbindlicher Objektübersichtsstandard
 
 Die Objektübersicht ist ausschließlich die Arbeitsübersicht der Objektvorbereitung. Sie verwendet eine kompakte gemeinsame Objektidentität, einen Gesamtstatus für genau Objektdaten, Wohnungen und Mietverhältnisse, genau eine priorisierte nächste Aktion und genau vier Aufgaben-/Statuskarten. Zähler ist ein nachrangiger, textlich eindeutiger DUMMY und zählt nicht zur Vollständigkeit. Kostenarten, Umlageschlüssel und Abrechnungsprüfungen gehören nicht auf diese Seite.
+
+## 14. AP22F4B – Verbindlicher Standard für führende Stammdatentabellen
+
+Die Seite `wohnungsverwaltung` verwendet den Tabellenstandard der „NK-Pro UI Referenz 1.0“ bei unveränderter weißer Navigation. Suchfeld, bestandsbasierter Statusfilter, kompakte Aktionsspalte und Ergebnissumme bilden eine gemeinsame Tabellenkarte. Tabellenhinweise stehen ausschließlich im normalen Dokumentfluss. Bei schmalen Viewports bleibt die Seitenschale überlauffrei; nur die Tabelle darf innerhalb ihrer eigenen Hülle horizontal verschoben werden. Neue Datenfelder, Prüfregeln, Fachaktionen oder Persistenzwege sind ausgeschlossen.

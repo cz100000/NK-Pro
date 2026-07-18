@@ -57,3 +57,11 @@ Der Inhaltsmigrationsstatus für Karten, Tabellen, Formulare, Dialoge und Klappb
 | `objektuebersicht` | abgeschlossen V99.4.37 | Objektidentität, Gesamtstatus, nächste Aktion, vier Aufgaben-/Statuskarten, responsive Darstellung | Seitenschale, Seitenkopf, Navigation, Kontextleiste, Datenquellen, Fachlogik, Zielseiten |
 
 Die Objektübersicht gilt damit als vollständig migriert. Andere produktive Seiten erhalten durch AP22F2B keinen neuen Migrationsstatus.
+
+## AP22F4B – Fortschreibung
+
+| Seite/Bereich | Stand | Migrierte Elemente | Ausdrücklich unverändert |
+|---|---|---|---|
+| `wohnungsverwaltung` | abgeschlossen V99.4.39 | Tabellenkarte, Suche, bestandsbasierter Statusfilter, Aktionsspalte, Ergebnissumme, UNIT-Prüfhinweise, Nur-Ansehen-Zustand, responsive Tabellenhülle | weiße Navigation, globale Leisten, sechs Datenfelder, zentrale Schreibwege, Objektstandardprüfung, Persistenz und Fachlogik |
+
+Die Wohnungsverwaltung gilt damit als vollständig auf „NK-Pro UI Referenz 1.0“ migriert. Andere produktive Seiten erhalten durch AP22F4B keinen neuen Migrationsstatus.

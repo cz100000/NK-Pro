@@ -1,0 +1,150 @@
+{
+  "release": "V99.4.39",
+  "workPackage": "AP22F4B",
+  "files": [
+    {
+      "path": "UI_KOMPONENTENKATALOG.md",
+      "change": "Tabellenkomponente Wohnungen und Zustände in Referenz 1.0 verankert."
+    },
+    {
+      "path": "UI_MIGRATIONSMATRIX.md",
+      "change": "Migration der Seite `wohnungsverwaltung` mit Release V99.4.39 dokumentiert."
+    },
+    {
+      "path": "UI_UX_ABNAHMEKATALOG.md",
+      "change": "Abnahmeregeln für Wohnungsbestand, Suche, Status, Aktionen und Responsive ergänzt."
+    },
+    {
+      "path": "UI_UX_DESIGNVERTRAG.md",
+      "change": "NK-Pro UI Referenz 1.0 für die Wohnungsseite verbindlich fortgeschrieben."
+    },
+    {
+      "path": "UI_UX_KOMPONENTENREGELN.md",
+      "change": "Zentrale Tabellen-, Hinweis- und Aktionsregeln für die Migration ergänzt."
+    },
+    {
+      "path": "assets/app.css",
+      "change": "Ausschließlich seitenbezogene, tokenbasierte Styles für Tabellenkarte, Toolbar, Tabelle, Aktionen, Hinweise und Responsive ergänzt."
+    },
+    {
+      "path": "index.html",
+      "change": "Struktur der Seite `wohnungsverwaltung` auf Tabellenkarte, Hinweis-Hosts und Ergebnisfuß migriert; Release-Assets fortgeschrieben."
+    },
+    {
+      "path": "js/app-runtime-config.js",
+      "change": "Releasekennung, Name, Datum und Änderungsprotokoll auf V99.4.39 aktualisiert."
+    },
+    {
+      "path": "js/service-worker-register.js",
+      "change": "Buildkennung auf `99.4.39-ap22f4b` aktualisiert."
+    },
+    {
+      "path": "js/ui-navigation-pages.js",
+      "change": "Wohnungstabelle mit vorhandenen Feldern, bestehender Objektstandardprüfung, Suche, Statusfilter, Aktionsspalte und Schreibschutz gerendert."
+    },
+    {
+      "path": "js/ui-page-controller.js",
+      "change": "Seitenkonfiguration und Deaktivierung der Speicheraktion im Nur-Ansehen-Modus ergänzt."
+    },
+    {
+      "path": "manifest.webmanifest",
+      "change": "Version und Releasebeschreibung aktualisiert."
+    },
+    {
+      "path": "nk-pro-project.json",
+      "change": "Releasemetadaten und Migrationsstand der Wohnungsseite aktualisiert."
+    },
+    {
+      "path": "package-lock.json",
+      "change": "Ausschließlich Paketname und Version auf 99.4.39 angeglichen."
+    },
+    {
+      "path": "package.json",
+      "change": "Ausschließlich Paketname und Version auf 99.4.39 angeglichen."
+    },
+    {
+      "path": "service-worker.js",
+      "change": "Cache- und Buildkennung auf V99.4.39 aktualisiert."
+    },
+    {
+      "path": "ui-reference/index.html",
+      "change": "Nicht produktive Referenz um die verbindliche Wohnungsseiten-Komponente ergänzt."
+    },
+    {
+      "path": "ui-reference/reference.css",
+      "change": "Referenzdarstellung für Wohnungs-Tabelle, Zustände und Responsive ergänzt."
+    },
+    {
+      "path": "screenshots/AP22F4B/01_desktop_vollstaendig.png",
+      "change": "Zielzustand Desktop vollständig."
+    },
+    {
+      "path": "screenshots/AP22F4B/02_desktop_handlungsbedarf.png",
+      "change": "Zielzustand Desktop mit wohnungsbezogenem Handlungsbedarf."
+    },
+    {
+      "path": "screenshots/AP22F4B/03_nur_ansehen.png",
+      "change": "Zielzustand Nur ansehen."
+    },
+    {
+      "path": "screenshots/AP22F4B/04_schmale_ansicht.png",
+      "change": "Zielzustand 390 px mit intern scrollbar bleibender Tabelle."
+    },
+    {
+      "path": "tests/ap22f4b-housing-management.test.cjs",
+      "change": "Statische AP22F4B-Struktur-, Fachgrenzen-, Token- und Versionsprüfung."
+    },
+    {
+      "path": "tests/ap22f4b-housing-management-browser.test.cjs",
+      "change": "Browserprüfung aller Zielzustände, Bearbeitungs-, Filter-, Fokus-, Schreibschutz- und Flussfälle."
+    },
+    {
+      "path": "tests/ap22f4b-protected-areas.test.cjs",
+      "change": "Hashprüfung der 13 Schutzdateien und 74 bestehenden Regressionstestdateien."
+    },
+    {
+      "path": "AP22F4B_UMSETZUNGSBERICHT.md",
+      "change": "Abschlussbericht."
+    },
+    {
+      "path": "AP22F4B_DATEIAENDERUNGEN.md",
+      "change": "Menschenlesbare Dateiänderungsliste."
+    },
+    {
+      "path": "AP22F4B_DATEIAENDERUNGEN.json",
+      "change": "Maschinenlesbare Dateiänderungsliste."
+    },
+    {
+      "path": "AP22F4B_POSITIVLISTENABGLEICH.md",
+      "change": "Abgleich mit ursprünglicher und ausdrücklich erweiterter Positivliste."
+    },
+    {
+      "path": "AP22F4B_SCHUTZ_HASH_BERICHT.md",
+      "change": "Schutz-Hash-Bericht."
+    },
+    {
+      "path": "AP22F4B_TESTBERICHT.md",
+      "change": "Testbericht."
+    },
+    {
+      "path": "AP22F4B_TEST_RESULTS.json",
+      "change": "Maschinenlesbares Testergebnis."
+    },
+    {
+      "path": "AP22F4B_ABNAHMEKATALOG.md",
+      "change": "Ausgefüllter Abnahmekatalog."
+    },
+    {
+      "path": "AP22F4B_UI_REFERENZ.md",
+      "change": "Nachweis der aktualisierten UI-Referenz."
+    },
+    {
+      "path": "AP22F4B_README.md",
+      "change": "Release-README und Nutzungshinweise."
+    },
+    {
+      "path": "SHA256SUMS.txt",
+      "change": "Nach Abschluss vollständig neu erzeugte interne Datei-Prüfsummen."
+    }
+  ]
+}

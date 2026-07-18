@@ -120,3 +120,15 @@ Eine Seite ist nur migriert, wenn alle anwendbaren Punkte mit **bestanden**, **n
 - [x] Kostenarten, Umlageschlüssel und Abrechnungsstatus erscheinen nicht.
 - [x] Sechs Ziel-Viewports, Tastaturreihenfolge, Fokus und 200-%-Zoomäquivalent bestehen.
 - [x] Schutz-Hashes, aktuelle Regressionen und frisch extrahierter Release bestehen.
+
+## AP22F4B – Wohnungen
+
+- [x] Weiße Navigation, globale Leisten und Seitenkontext bleiben unverändert.
+- [x] Die sechs bestehenden Stammdatenfelder sind vollständig und unverändert vorhanden.
+- [x] Wohnungs-ID bleibt lesend; alle anderen Felder verwenden die bestehenden zentralen Schreibwege.
+- [x] Suche, bestandsbasierter Statusfilter, Aktionsspalte und Ergebnissumme entsprechen UI Referenz 1.0.
+- [x] Ausschließlich bestehende `UNIT_*`-Prüfbefunde werden angezeigt und betroffene Zeilen markiert.
+- [x] Der leere Prüfplatzhalter ist entfernt.
+- [x] Nur-Ansehen deaktiviert Speichern und Bearbeitung, ohne die Lesbarkeit zu verlieren.
+- [x] Hinweise liegen im normalen Dokumentfluss und überlagern keine Inhalte.
+- [x] Die Seite verursacht in den Ziel-Viewports keinen horizontalen Dokumentüberlauf; die Tabelle bleibt intern verschiebbar.

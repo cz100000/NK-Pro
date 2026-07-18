@@ -53,3 +53,15 @@ Der zentrale Seitenkopf besitzt ab V99.4.35 zwei produktive Aktionsvarianten: Da
 | DUMMY-Statuskarte | migriert | bestehendes Ziel `wasser`, ohne Fachlogik |
 
 Die alten Objekt-Dashboard-Kennzahlen und die Kostenartenstatuskarte sind für `objektuebersicht` entfallen.
+
+## AP22F4B – Ergänzte produktive Tabellenkomponenten
+
+| Komponente | Produktiver Status | Einsatz |
+|---|---|---|
+| Stammdatentabellenkarte mit Kopf und Fuß | migriert | `wohnungsverwaltung` |
+| Tabellen-Suchfeld | migriert, zentrale Tabellenwerkzeuge | sichtbare Wohnungszeilen |
+| Bestandsbasierter Statusfilter | migriert | „Alle Wohnungen“ / „Mit Handlungsbedarf“ |
+| Kompakte Zeilenaktion | migriert | Fokus auf vorhandene Inline-Bearbeitung; im Schreibschutz deaktiviert |
+| Ergebnissumme | migriert | sichtbare von gesamten Wohnungen |
+| UNIT-Prüfhinweis | migriert | ausschließlich bestehende Objektstandardbefunde |
+| Intern horizontal verschiebbare Tabellenhülle | migriert | schmale Viewports ohne Seitenüberlauf |

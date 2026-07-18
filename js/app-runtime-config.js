@@ -48,9 +48,9 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.38";
-const APP_VERSION_NAME = "AP22F3B-Objektdaten";
-const APP_RELEASE_DATE = "2026-07-17";
+const APP_VERSION = "V99.4.39";
+const APP_VERSION_NAME = "AP22F4B-Wohnungen";
+const APP_RELEASE_DATE = "2026-07-18";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
 const ARCHIVE_SNAPSHOT_SCOPE = "billingSnapshot";
@@ -115,6 +115,7 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
+  "V99.4.39 migriert die Seite Wohnungen auf den verbindlichen Tabellenstandard der NK-Pro UI Referenz 1.0 mit Suche, bestandsbasiertem Statusfilter, kompakter Aktionsspalte, Ergebnissumme, normalfließenden Hinweisen und internem horizontalem Tabellenlauf; Datenfelder, Objektstandardprüfung, Fachlogik und zentrale Schreibwege bleiben unverändert.",
   "V99.4.38 migriert Objektdaten zu einer rein lesenden Objektidentitäts- und Integritätsansicht mit bestehender Objektstandardprüfung, klaren Änderungswegen und höchstens einer priorisierten Weiterleitung; neue Pflege-, Prüf- oder Schreiblogik entsteht nicht.",
   "V99.4.37 migriert die Objektübersicht auf eine kompakte Objektidentität, einen Gesamtstatus für Objektdaten, Wohnungen und Mietverhältnisse, genau eine nächste Aktion und vier Aufgaben-/Statuskarten; Kostenarten- und Doppelanzeigen entfallen, der Zähler bleibt eindeutig als DUMMY gekennzeichnet.",
   "V99.4.36 blendet geschlossene native Dialoge trotz zentralem Flex-Layout zuverlässig aus und speist die sichtbare Navigationsversion aus der zentralen Laufzeitkonstante; Dialoginteraktion, Navigation und Fachlogik bleiben unverändert.",

@@ -263,3 +263,7 @@ Komponenten dürfen keine unbeabsichtigte horizontale Gesamtseiten-Scrollleiste 
 ## AP22F2B – Aufgaben-/Statuskarten der Objektübersicht
 
 Jede Karte verbindet Icon, eindeutigen Titel, textlichen Status, Kurzbeschreibung und genau einen Navigationsweg. Die Karten verwenden zentrale `nk-ui-card`- und `nk-ui-status`-Varianten. Wohnungs- und Mietverhältnisvollständigkeit erscheinen jeweils nur einmal. Die DUMMY-Karte verwendet zusätzlich einen neutralen Status und den Text „Clickdummy ohne Fachlogik“. Der Gesamtstatus zählt nur drei produktive Karten.
+
+## AP22F4B – Wohnungsverwaltung
+
+Die Wohnungsverwaltung nutzt `nk-ui-card`, `nk-ui-table`, `nk-ui-toolbar`, `nk-ui-status` und `nk-ui-notice`. Die sechs vorhandenen Stammdatenfelder bleiben unverändert; die Wohnungs-ID ist ein lesendes Systemfeld. Suche und Filter wirken ausschließlich auf die sichtbaren Zeilen. Prüfbefunde stammen nur aus bestehenden `UNIT_*`-Ergebnissen der Objektstandardprüfung. Die Aktionsspalte führt im Bearbeitungsmodus zum vorhandenen Inline-Feld und ist im Nur-Ansehen-Modus deaktiviert. Eine Pagination wird erst bei tatsächlichem fachlichem Bedarf ergänzt.
