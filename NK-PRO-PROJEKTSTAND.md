@@ -1,3 +1,9 @@
+# Projektstand V99.4.42 – AP22F7B Korrektur 1
+
+Die Tabellenköpfe der Seite `mieter` unter `Nebenkosten abrechnen` entsprechen wieder dem verbindlichen Tabellenstandard der zuvor migrierten Seiten. Es gibt eine einheitliche hellgraue Kopfzeile, dunkle Beschriftung, genau ein Sortiersymbol je sortierbarer Spalte und keine zusätzliche Sortierunterzeile. Die Kopfzelle `Details` verwendet dieselbe Gestaltung wie alle übrigen Spalten.
+
+Die eigene AP22F7B-Sortierlogik bleibt vollständig erhalten; die konkurrierende generische Tabellenkopfsortierung wird für diese beiden Tabellen nach dem Rendern entfernt. Navigation, Seitenkopf, Abrechnungskontext, Datenmodell, Datenschema 5, Fach- und Statuslogik, Persistenz, Migration, Archivierung, Berechnung, Qualitätsregeln sowie Brief- und Drucksystem bleiben unverändert.
+
 # Projektstand V99.4.42 – AP22F7B Mietverhältnisse Abrechnung
 
 Die technische Seite `mieter` unter `Nebenkosten abrechnen` entspricht dem freigegebenen Zielbild AP22F7A. Der bisherige Klappboxaufbau wurde durch einen flachen Seitenfluss ersetzt. Ein kompakter Datenstandsblock erläutert die periodengebundene Abrechnungskopie und die ausschließlich bewusste Übernahme des zentralen Bestands. Mietverhältnisse werden in einer 8-spaltigen Tabelle vor den Wohnungen angezeigt; Adresse, Kontakt, Briefanrede und Sonderfälle bleiben vollständig über Lesedetails erreichbar. Die nachgeordnete Wohnungstabelle verwendet sechs Spalten und lässt ausschließlich den vorhandenen periodenspezifischen Status bearbeiten.

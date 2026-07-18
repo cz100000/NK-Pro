@@ -1,0 +1,14 @@
+"use strict";
+const assert=require("node:assert/strict");
+const fs=require("node:fs");
+const css=fs.readFileSync("assets/app.css","utf8");
+const costs=fs.readFileSync("js/ui-costs.js","utf8");
+const sw=fs.readFileSync("service-worker.js","utf8");
+assert.match(css,/AP22F7B Korrektur 1 – Tabellenköpfe/);
+assert.match(css,/#mieter \.billing-tenant-sort\{[\s\S]*?border:0!important;[\s\S]*?background:transparent!important;/);
+assert.match(css,/thead th\.sortable::after[\s\S]*?content:none!important/);
+assert.match(costs,/billingTenantScheduleHeaderCleanup\(\)/);
+assert.match(costs,/cell\.classList\.remove\("sortable","sort-asc","sort-desc"\)/);
+assert.match(costs,/cell\.onclick=null/);
+assert.match(sw,/99\.4\.42-ap22f7b-k1/);
+console.log("AP22F7B Korrektur 1 static: PASS");

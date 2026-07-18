@@ -87,3 +87,9 @@ Beide Seiten gelten damit in ihrem freigegebenen Funktionsumfang als auf `NK-Pro
 | Seite | Status | Migrierte Darstellung | Unverändert geschützt |
 |---|---|---|---|
 | `mieter` – Nebenkosten abrechnen: Mietverhältnisse | abgeschlossen V99.4.42 | flacher Seitenfluss ohne Klappboxen; kompakter Datenstandsblock; führende 8-spaltige Mietverhältnistabelle; Suche, Wohnungs-/Statusfilter, Sortierung und Ergebniszählung; aufklappbare Lesedetails; nachgeordnete 6-spaltige Wohnungstabelle; interne responsive Scrollhüllen; kompakte Sonderfallhinweise | Navigation, Seitenkopf, Kontextleiste, Snapshot-Prinzip, bewusste Bestandsübernahme, Fach- und Statuslogik, Datenfelder, Speichern, Wohnungsstatushandler, Persistenz, Migration, Archivierung, Berechnung, Qualitätsregeln, Brief und Druck |
+
+## AP22F7B Korrektur 1 – Fortschreibung
+
+| Seite | Stand | Korrektur | Unverändert |
+|---|---|---|---|
+| `mieter` – Nebenkosten abrechnen: Mietverhältnisse | abgeschlossen V99.4.42 Korrektur 1 | Tabellenköpfe beider Tabellen verwenden wieder die freigegebene einheitliche hellgraue Standarddarstellung; genau ein Sortiersymbol je sortierbarer Spalte; keine zusätzliche Sortierunterzeile; `Details` identisch zu den übrigen Kopfzellen | Tabelleninhalt, Sortier-, Such-, Filter-, Detail-, Status-, Speicher- und Fachlogik |

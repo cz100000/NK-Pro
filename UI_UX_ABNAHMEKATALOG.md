@@ -160,3 +160,13 @@ Eine Seite ist nur migriert, wenn alle anwendbaren Punkte mit **bestanden**, **n
 ## AP22F7B – Abnahme
 
 Mietverhältnisse vor Wohnungen, keine Klappboxen, keine Kennzahlenkarten, vollständige Lesedetails, 8/6 Zielspalten und interne Tabellen-Scrolls umgesetzt und geprüft.
+
+## AP22F7B Korrektur 1 – Abnahme
+
+- [x] Mietverhältnis- und Wohnungstabelle verwenden die einheitliche hellgraue Standard-Kopfzeile.
+- [x] Keine weißen Einzelbuttons und keine zusätzliche dunkelblaue Sortierunterzeile.
+- [x] `Details` ist identisch zu den übrigen Kopfzellen gestaltet.
+- [x] Sortiersymbol erscheint genau einmal je sortierbarer Spalte.
+- [x] Sortierung funktioniert auf- und absteigend unverändert.
+- [x] Tastaturfokus bleibt sichtbar.
+- [x] Desktop und 620 px ohne horizontalen Seitenüberlauf; Tabellen scrollen bei Bedarf intern.

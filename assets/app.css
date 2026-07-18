@@ -6399,3 +6399,67 @@ body:not(.document-print-window) #mieterverwaltung [data-page-save]:disabled,bod
 
 #mieter .billing-tenant-detail-button{min-width:34px}
 #mieter .billing-tenant-detail-button svg{flex:0 0 18px;min-width:18px}
+
+/* AP22F7B Korrektur 1 – Tabellenköpfe verwenden wieder den verbindlichen Standard. */
+body:not(.document-print-window) #mieter .billing-tenant-table thead th,
+body:not(.document-print-window) #mieter .billing-unit-table thead th{
+  padding:0;
+  background:var(--nk-ui-color-surface-muted)!important;
+  border-color:var(--nk-ui-color-border)!important;
+  color:var(--nk-ui-color-text)!important;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:0;
+  text-transform:none;
+  white-space:nowrap;
+}
+body:not(.document-print-window) #mieter .billing-tenant-table thead th:last-child{
+  padding:11px var(--nk-ui-space-md);
+}
+body:not(.document-print-window) #mieter .billing-tenant-sort{
+  display:inline-flex!important;
+  width:100%!important;
+  min-height:38px!important;
+  align-items:center;
+  justify-content:flex-start;
+  gap:4px;
+  margin:0!important;
+  padding:11px var(--nk-ui-space-md)!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:inherit!important;
+  box-shadow:none!important;
+  font:inherit;
+  font-weight:700;
+  line-height:1.2;
+  text-align:left;
+  cursor:pointer;
+}
+body:not(.document-print-window) #mieter .billing-tenant-sort:hover{
+  border:0!important;
+  background:var(--nk-ui-color-accent-soft)!important;
+  color:var(--nk-ui-color-text)!important;
+  box-shadow:none!important;
+}
+body:not(.document-print-window) #mieter .billing-tenant-sort:focus-visible{
+  position:relative;
+  z-index:1;
+  outline:2px solid var(--nk-ui-color-focus);
+  outline-offset:-3px;
+  box-shadow:none!important;
+}
+body:not(.document-print-window) #mieter .billing-tenant-sort span{
+  flex:0 0 auto;
+  color:var(--nk-ui-color-accent);
+  font-weight:700;
+}
+body:not(.document-print-window) #mieter .billing-tenant-table thead th.sortable::after,
+body:not(.document-print-window) #mieter .billing-unit-table thead th.sortable::after{
+  content:none!important;
+  display:none!important;
+}
+body:not(.document-print-window) #mieter .billing-tenant-table thead th.sortable:hover,
+body:not(.document-print-window) #mieter .billing-unit-table thead th.sortable:hover{
+  background:var(--nk-ui-color-surface-muted)!important;
+}

@@ -95,3 +95,7 @@ DUMMY-Komponenten dürfen keine produktiv wirkenden Aktionen oder Speicherwege v
 ## AP22F7B – verwendete Komponenten
 
 Datenstandsblock, kompakte Tabellenkarte, Tabellenwerkzeugleiste, interne Overflow-Hülle, quadratischer Lesedetail-Symbolbutton, Statusbadge, Notice und Leer-/Fehlerzustand.
+
+## AP22F7B Korrektur 1 – Tabellenkopf
+
+Für `mieterTable` und `wohnungenTable` wird keine eigene visuelle Tabellenkopfvariante mehr geführt. Die vorhandenen Sortierbuttons sind vollständig in die freigegebene Standard-Kopfzeile integriert: transparenter Button ohne eigenen Rahmen, ein Sortiersymbol direkt neben der Beschriftung und sichtbarer Tastaturfokus innerhalb der Kopfzelle. Die generische Alt-Sortierung wird für diese beiden Tabellen nach dem Rendern entfernt, damit ausschließlich der AP22F7B-Präsentationscontroller sortiert.

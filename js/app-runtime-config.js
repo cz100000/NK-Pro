@@ -49,9 +49,9 @@ const NK_PRO_MODULES = (() => {
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
 const APP_VERSION = "V99.4.42";
-const APP_VERSION_NAME = "AP22F7B-Mietverhaeltnisse-Abrechnung";
+const APP_VERSION_NAME = "AP22F7B-Mietverhaeltnisse-Abrechnung-Korrektur1";
 const APP_RELEASE_DATE = "2026-07-18";
-if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – AP22F7B Mietverhältnisse Abrechnung";
+if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – AP22F7B Mietverhältnisse Abrechnung Korrektur 1";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
 const ARCHIVE_SNAPSHOT_SCOPE = "billingSnapshot";
@@ -116,7 +116,7 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
-  "V99.4.42 AP22F7B migriert ausschließlich die Seite Nebenkosten abrechnen – Mietverhältnisse auf NK-Pro UI Referenz 1.0: flacher Seitenfluss, kompakter Datenstandsblock, führende 8-spaltige Mietverhältnistabelle mit Lesedetails, nachgeordnete 6-spaltige Wohnungstabelle sowie Suche, Filter und Sortierung ohne Datenmutation. Fach-, Snapshot-, Speicher-, Migrations-, Archiv-, Brief- und Druckwege bleiben unverändert.",
+  "V99.4.42 AP22F7B Korrektur 1 vereinheitlicht zusätzlich die Tabellenköpfe der Abrechnungs-Mietverhältnisse mit dem verbindlichen Tabellenstandard. AP22F7B migriert ausschließlich die Seite Nebenkosten abrechnen – Mietverhältnisse auf NK-Pro UI Referenz 1.0: flacher Seitenfluss, kompakter Datenstandsblock, führende 8-spaltige Mietverhältnistabelle mit Lesedetails, nachgeordnete 6-spaltige Wohnungstabelle sowie Suche, Filter und Sortierung ohne Datenmutation. Fach-, Snapshot-, Speicher-, Migrations-, Archiv-, Brief- und Druckwege bleiben unverändert.",
   "V99.4.41 AP22F6B Korrektur 1 beseitigt den leeren Abstand unter dem Seitenkopf, ersetzt die Zeitraum-Klappbox durch die klar bezeichnete Aktion Abrechnungszeitraum bearbeiten beziehungsweise anzeigen und hält Objekt vorbereiten auch beim Ansehen archivierter Abrechnungen sichtbar. Fach-, Status-, Speicher-, Archiv-, Migrations- und Berechnungslogik bleiben unverändert.",
   "V99.4.41 migriert ausschließlich die Seite Nebenkosten abrechnen – Übersicht auf NK-Pro UI Referenz 1.0: kompakte gemeinsame Tabelle für aktuelle und archivierte Abrechnungen, Suche, Bestandsfilter, Ergebniszählung und quadratische Symbolaktionen ohne Zeilenumbruch. Fach-, Status-, Speicher-, Archiv-, Migrations- und Berechnungslogik bleiben unverändert.",
   "V99.4.40 migriert den bestehenden Zähler-Clickdummy und die Seite Mietverhältnisse auf NK-Pro UI Referenz 1.0. Der Zähler bleibt vollständig fiktiv und ohne Speicherung; Mietverhältnisse behalten alle vorhandenen Felder, Schreib-, Archiv- und Reaktivierungswege. Neu sind ausschließlich zentrale Karten-, Such-, Filter-, Tabellen- und Hinweisdarstellungen ohne neue Fachlogik.",

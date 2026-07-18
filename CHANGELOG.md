@@ -1,3 +1,12 @@
+# V99.4.42 – AP22F7B Korrektur 1 (2026-07-18)
+
+- Tabellenköpfe der Mietverhältnis- und Wohnungstabelle an den freigegebenen hellgrauen NK-Pro-Standard angeglichen;
+- weiße Einzelbuttons und zusätzliche dunkelblaue Sortierzeile entfernt;
+- Spalte `Details` identisch zu den übrigen Kopfzellen gestaltet;
+- Sortiersymbole nur noch einmal direkt neben der Spaltenbezeichnung angezeigt;
+- konkurrierende generische Tabellensortierung für diese beiden Tabellen deaktiviert, ohne die vorhandene AP22F7B-Sortierlogik zu verändern;
+- PWA-Build- und Cachekennung auf `99.4.42-ap22f7b-k1` fortgeschrieben; Produktversion und Datenschema bleiben unverändert.
+
 # V99.4.42 – AP22F7B Mietverhältnisse Abrechnung (2026-07-18)
 
 - drei große Klappboxen durch einen flachen Dokumentfluss ersetzt;

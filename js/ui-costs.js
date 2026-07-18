@@ -411,6 +411,7 @@ function renderWohnungen() {
     const unitHeading=document.getElementById("tenantUnitsHeadingCount"); if(unitHeading)unitHeading.textContent='('+units.length+')';
     const unitSearchInput=document.getElementById("billingUnitSearch"); if(unitSearchInput&&unitSearchInput.value!==unitState.search)unitSearchInput.value=unitState.search;
     if(typeof renderOverviewForTab==="function")renderOverviewForTab("mieter");
+    billingTenantScheduleHeaderCleanup();
   } catch(error) {
     const errorBox=document.getElementById("billingTenantError"); if(errorBox)errorBox.hidden=false;
     if(typeof console!=="undefined"&&console.error)console.error("Mietverhältnisse konnten nicht dargestellt werden",error);
@@ -430,6 +431,20 @@ function billingTenantCompare(a,b) { return String(a ?? "").localeCompare(String
 function billingTenantUnit(id) { return (Array.isArray(state.wohnungen) ? state.wohnungen : []).find(w => String(w && w.id || "") === String(id || "")) || null; }
 function billingTenantUnitName(id) { const unit=billingTenantUnit(id); return unit ? (unit.bezeichnung || unit.lage || unit.id) : String(id || ""); }
 function billingTenantPeriod(m) { return billingTenantText(m.einzug || "offen") + " – " + billingTenantText(m.auszug || "offen"); }
+function billingTenantScheduleHeaderCleanup() {
+  const cleanup=()=>{
+    ["mieterTable","wohnungenTable"].forEach(id=>{
+      const table=document.getElementById(id);
+      if(!table)return;
+      table.querySelectorAll("thead th").forEach(cell=>{
+        cell.classList.remove("sortable","sort-asc","sort-desc");
+        cell.onclick=null;
+      });
+    });
+  };
+  if(typeof queueMicrotask==="function")queueMicrotask(cleanup);
+  else setTimeout(cleanup,0);
+}
 function billingTenantSortButton(kind,key,label) {
   const statePart=billingTenantUiState[kind];
   const active=statePart.sortKey===key;

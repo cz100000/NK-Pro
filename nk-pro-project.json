@@ -1,7 +1,7 @@
 {
   "appVersion": "99.4.42",
   "displayVersion": "V99.4.42",
-  "versionName": "AP22F7B – Technische Migration Nebenkosten abrechnen – Mietverhältnisse",
+  "versionName": "AP22F7B Korrektur 1 – Einheitliche Tabellenköpfe Mietverhältnisse Abrechnung",
   "schemaVersion": 5,
   "dataLayerContractVersion": 1,
   "snapshotScope": "billingSnapshot",
@@ -33,7 +33,7 @@
   "documentLayoutVersion": 4,
   "uiVisualSystemVersion": 4,
   "meterInventoryDummyVersion": 2,
-  "pwaCacheName": "nk-pro-v99-4-42-ap22f7b",
+  "pwaCacheName": "nk-pro-v99-4-42-ap22f7b-k1",
   "releaseHardeningVersion": 1,
   "releaseContentPolicyVersion": 1,
   "transientUiResetVersion": 1,
@@ -57,7 +57,7 @@
   "meterInputLocaleNumberVersion": 1,
   "assetCacheBustVersion": 1,
   "serviceWorkerForcedUpdateVersion": 1,
-  "runtimeBuildId": "99.4.42-ap22f7b",
+  "runtimeBuildId": "99.4.42-ap22f7b-k1",
   "uiConsolidationVersion": 1,
   "individualValuesPageVersion": 3,
   "navigationTerminologyVersion": 1,
@@ -81,5 +81,6 @@
   "tenantManagementMigrationVersion": 1,
   "billingOverviewMigrationVersion": 1,
   "billingOverviewCorrectionVersion": 1,
-  "billingTenantPageMigrationVersion": 1
+  "billingTenantPageMigrationVersion": 1,
+  "billingTenantPageCorrectionVersion": 1
 }

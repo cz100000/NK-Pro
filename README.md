@@ -1,13 +1,13 @@
-# NK-Pro V99.4.42 – AP22F7B Mietverhältnisse Abrechnung
+# NK-Pro V99.4.42 – AP22F7B Korrektur 1
 
-AP22F7B migriert ausschließlich `Nebenkosten abrechnen → Mietverhältnisse` auf NK-Pro UI Referenz 1.0. Die periodengebundene Abrechnungskopie wird ohne Klappboxen als kompakter Datenstandsblock, führende Mietverhältnistabelle mit Lesedetails, nachgeordnete Wohnungstabelle und verständliche Sonderfallhinweise dargestellt. Fachlogik und Datenwege bleiben unverändert.
+AP22F7B Korrektur 1 gleicht die Tabellenköpfe auf `Nebenkosten abrechnen → Mietverhältnisse` wieder exakt an den verbindlichen Tabellenstandard an. Weiße Einzelbuttons, die doppelte Sortierzeile und die abweichende Details-Kopfzelle entfallen. Die bestehende Sortier-, Filter-, Fokus- und Tastaturlogik bleibt erhalten. Fachlogik und Datenwege bleiben unverändert.
 
 Prüfung:
 
 ```bash
 npm ci
 npm run release:check
-npm run test:ap22f7b:browser
+npm run test:ap22f7b:korr1
 ```
 
 # NK-Pro V99.4.41 – AP22F6B Korrektur 1

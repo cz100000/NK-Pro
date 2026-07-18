@@ -1,3 +1,9 @@
+# Release V99.4.42 – AP22F7B Korrektur 1
+
+Diese Korrektur beseitigt die nach der Browser-Sichtprüfung festgestellte Abweichung der Tabellenköpfe auf `Nebenkosten abrechnen → Mietverhältnisse`. Beide Tabellen verwenden wieder die bereits freigegebene einheitliche hellgraue Kopfzeile mit dunkler Beschriftung und genau einem Sortiersymbol je sortierbarer Spalte. Die Details-Kopfzelle ist identisch gestaltet.
+
+Sortierung, Suche, Filter, Ergebniszählung, Lesedetails, periodenspezifischer Wohnungsstatus und Tastaturfokus bleiben funktional unverändert. Datenmodell, Datenschema 5, Snapshot-Grenzen, Persistenz, Migration, Archivierung, Berechnung, Qualitätsregeln, Brief und Druck bleiben unverändert. Die Produktversion bleibt V99.4.42; die Cachekennung lautet `99.4.42-ap22f7b-k1`.
+
 # Release V99.4.42 – AP22F7B Mietverhältnisse Abrechnung
 
 Dieses Release migriert ausschließlich die periodengebundene Seite „Nebenkosten abrechnen – Mietverhältnisse“. Der zentrale Stammdatenbestand und die Abrechnungskopie bleiben fachlich strikt getrennt. Die vorhandene bestätigungspflichtige Übernahme, Speicherung und Wohnungsstatusänderung verwenden unverändert ihre bisherigen Handler.
