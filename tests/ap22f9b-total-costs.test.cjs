@@ -24,6 +24,8 @@ function section(source,id,nextId){
 const page=section(html,"einstellungen","mieter");
 assert.match(page,/class="tab cost-mockup-page cost-view-standard" id="einstellungen"/);
 assert.equal((page.match(/<article class="cost-summary-card/g)||[]).length,4,"Vier Kennzahlenkacheln erforderlich");
+assert.equal((page.match(/class="cost-summary-card__icon"[^>]*><svg/g)||[]).length,4,"Vier Linien-SVG-Symbole erforderlich");
+assert.doesNotMatch(page,/class="cost-summary-card__icon"[^>]*>(?:€|≡|✓|!)/,"Textglyphen entsprechen nicht dem Kachelstandard");
 for(const id of ["costTileTotalValue","costTileActiveValue","costTileCompleteValue","costTileOpenValue"]){
   assert.match(page,new RegExp(`id="${id}"`),`Kachelwert ${id} fehlt`);
 }
@@ -45,6 +47,8 @@ for(const heading of ["Auswahl","Nr.","Kostenart","Gruppe","Gesamtkosten","Vorau
 assert.match(costs,/let costSearchQuery = "";/);
 assert.match(costs,/function setCostSearch\(value\)/);
 assert.match(costs,/function clearCostSearch\(\)/);
+assert.match(costs,/function scheduleCostTableHeaderCleanup\(\)/);
+assert.match(costs,/cell\.classList\.remove\("sortable", "sort-asc", "sort-desc"\)/);
 assert.match(costs,/NK_PRO_MODULES\.costActions\.kostenStatus\(k\)/);
 assert.match(costs,/allActiveCosts\.reduce\(\(sum, item\) => sum \+ num\(item\.k\.gesamtbetrag\), 0\)/);
 assert.match(costs,/complete \+ " von " \+ costs\.length/);
@@ -60,19 +64,21 @@ assert.match(scoped,/#einstellungen \.cost-summary-grid\{display:grid;grid-templ
 assert.match(scoped,/@media\(max-width:1100px\)\{#einstellungen \.cost-summary-grid\{grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
 assert.match(scoped,/#einstellungen \.cost-mockup-table-wrap,#einstellungen \.cost-tenant-table-wrap\{[^}]*overflow-x:auto!important/);
 assert.match(scoped,/#einstellungen \.cost-mockup-table\{[^}]*min-width:1900px!important/);
+assert.match(scoped,/body:not\(\.document-print-window\) #einstellungen \.cost-mockup-table thead th,[\s\S]*background:var\(--nk-ui-color-surface-muted\)!important[\s\S]*color:var\(--nk-ui-color-text\)!important/);
+assert.match(scoped,/#einstellungen \.cost-summary-card__icon svg\{width:30px;height:30px\}/);
 assert.match(scoped,/#einstellungen \.cost-table-footer\{[^}]*border-top:2px solid/);
 assert.doesNotMatch(scoped,/background:\s*(?:#fff2cc|#e2f0d9|var\(--yellow\))/i);
 assert.match(runtime,/const DATA_SCHEMA_VERSION = 5;/);
 assert.match(runtime,/const APP_VERSION = "V99\.4\.44";/);
 assert.match(runtime,/const APP_VERSION_NAME = "AP22F9B-Gesamtkosten";/);
-assert.match(serviceWorker,/const CACHE_NAME = "nk-pro-v99-4-44-ap22f9b";/);
-assert.match(serviceWorker,/const BUILD_ID = "99\.4\.44-ap22f9b";/);
-assert.match(serviceWorkerRegister,/const BUILD_ID = "99\.4\.44-ap22f9b";/);
+assert.match(serviceWorker,/const CACHE_NAME = "nk-pro-v99-4-44-ap22f9b-k1";/);
+assert.match(serviceWorker,/const BUILD_ID = "99\.4\.44-ap22f9b-k1";/);
+assert.match(serviceWorkerRegister,/const BUILD_ID = "99\.4\.44-ap22f9b-k1";/);
 assert.equal(manifest.version,"99.4.44");
-assert.equal(manifest.buildId,"99.4.44-ap22f9b");
+assert.equal(manifest.buildId,"99.4.44-ap22f9b-k1");
 assert.equal(project.schemaVersion,5);
 assert.equal(project.appVersion,"99.4.44");
-assert.equal(project.runtimeBuildId,"99.4.44-ap22f9b");
+assert.equal(project.runtimeBuildId,"99.4.44-ap22f9b-k1");
 assert.equal(packageJson.version,"99.4.44");
 assert.ok(packageJson.scripts["test:ap22f9b"],"AP22F9B-Testskript fehlt");
 console.log("AP22F9B Gesamtkosten static: PASS");

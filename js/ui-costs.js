@@ -51,6 +51,21 @@ let costShowAllRows = false;
 let costSearchQuery = "";
 let selectedCostRows = new Set();
 
+function scheduleCostTableHeaderCleanup() {
+  const cleanup = () => {
+    ["settingsTable", "kostenMieterUmlageTable"].forEach(id => {
+      const table = document.getElementById(id);
+      if (!table) return;
+      table.querySelectorAll("thead th").forEach(cell => {
+        cell.classList.remove("sortable", "sort-asc", "sort-desc");
+        cell.onclick = null;
+      });
+    });
+  };
+  if (typeof queueMicrotask === "function") queueMicrotask(cleanup);
+  else setTimeout(cleanup, 0);
+}
+
 function toggleCostRowSelection(index, checked) {
   const numericIndex = Number(index);
   if (checked) selectedCostRows.add(numericIndex);
@@ -404,6 +419,7 @@ function renderEinstellungen() {
   renderKostenMieterUmlageMatrix();
   renderCostMockupOverview(allActiveCosts);
   updateCostSelectionUi();
+  scheduleCostTableHeaderCleanup();
 }
 
 function renderWohnungen() {

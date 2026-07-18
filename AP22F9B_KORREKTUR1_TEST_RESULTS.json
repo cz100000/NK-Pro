@@ -1,0 +1,18 @@
+{
+  "workPackage": "AP22F9B Korrektur 1",
+  "appVersion": "99.4.44",
+  "buildId": "99.4.44-ap22f9b-k1",
+  "schemaVersion": 5,
+  "results": {
+    "static": "PASS",
+    "browser": "PASS",
+    "protectedAreas": "PASS",
+    "protectedFullHashes": 13,
+    "protectedPartialAreas": 5,
+    "syntaxUnits": 55,
+    "fixtures": 6,
+    "releaseCheck": "PASS",
+    "screenshots": 7
+  },
+  "knownBaselineDeviation": "tests/ap20-asset-refresh-regression.test.cjs erwartet weiterhin einen Versionsparameter für ui-bindings.js."
+}

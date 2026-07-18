@@ -1,7 +1,7 @@
 {
   "name": "NK-Pro V99.4.44",
   "short_name": "NK-Pro",
-  "description": "Lokale Nebenkostenabrechnung mit AP22F9B: migrierte Gesamtkostenseite mit vier Bestandskennzahlen und unveränderter Fachlogik.",
+  "description": "Lokale Nebenkostenabrechnung mit AP22F9B Korrektur 1: migrierte Gesamtkostenseite mit vier Bestandskennzahlen und unveränderter Fachlogik.",
   "lang": "de-DE",
   "id": "./",
   "start_url": "./",
@@ -42,5 +42,5 @@
       "purpose": "maskable"
     }
   ],
-  "buildId": "99.4.44-ap22f9b"
+  "buildId": "99.4.44-ap22f9b-k1"
 }

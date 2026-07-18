@@ -72,7 +72,17 @@ async function assertFrame(page,selector,{requireOverflow=true}={}){
   assert.equal(await page.locator("#einstellungen details").count(),0);
   assert.equal(await page.locator("#einstellungen .cost-card").count(),3);
   assert.equal(await page.locator("#einstellungen .cost-summary-card").count(),4);
+  assert.equal(await page.locator("#einstellungen .cost-summary-card__icon svg").count(),4,"Kennzahlen müssen die freigegebenen Linien-SVG-Symbole verwenden");
+  assert.equal(await page.locator("#einstellungen .cost-summary-card__icon").evaluateAll(nodes=>nodes.every(node=>node.textContent.trim()==="")),true,"Textglyphen sind in den Kennzahlen nicht zulässig");
   assert.equal(await page.locator("#settingsTable thead th").count(),15);
+  await page.waitForTimeout(20);
+  const tableHeadDesign=await page.evaluate(()=>{
+    const main=document.querySelector("#settingsTable thead th");
+    const allocation=document.querySelector("#kostenMieterUmlageTable thead th");
+    const style=getComputedStyle(main),allocationStyle=getComputedStyle(allocation);
+    return {mainBackground:style.backgroundColor,mainColor:style.color,allocationBackground:allocationStyle.backgroundColor,allocationColor:allocationStyle.color,sortable:document.querySelectorAll("#settingsTable thead th.sortable,#kostenMieterUmlageTable thead th.sortable").length};
+  });
+  assert.deepEqual(tableHeadDesign,{mainBackground:"rgb(247, 249, 252)",mainColor:"rgb(23, 59, 90)",allocationBackground:"rgb(247, 249, 252)",allocationColor:"rgb(23, 59, 90)",sortable:0},"Tabellenköpfe entsprechen nicht dem neutralen NK-Pro-Standard");
   assert.equal(await page.locator("#settingsTable tbody tr").count(),5);
   assert.equal(await page.locator(".table-tools[data-table='settingsTable'], .table-tools[data-table='kostenMieterUmlageTable']").count(),0,"Nicht freigegebene Filter-/Sortierwerkzeuge dürfen nicht erscheinen");
   assert.equal(moneyNumber(await page.locator("#costTileTotalValue").innerText()),16152.15);
