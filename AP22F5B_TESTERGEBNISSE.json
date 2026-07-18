@@ -1,0 +1,18 @@
+{
+  "release": "V99.4.40",
+  "workPackage": "AP22F5B",
+  "overall": "PASS",
+  "protectedHashes": 94,
+  "protectedProductFiles": 17,
+  "protectedExistingTests": 77,
+  "javascriptUnits": 55,
+  "fixtureCases": 6,
+  "targetScreenshots": 5,
+  "checks": {
+    "ap22f5bStatic": "PASS",
+    "ap22f5bBrowser": "PASS",
+    "tenantReadOnly": "PASS",
+    "releaseCheck": "PASS",
+    "ap22f4bCurrentVersionRegression": "PASS"
+  }
+}

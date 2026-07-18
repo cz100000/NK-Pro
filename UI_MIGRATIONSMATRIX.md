@@ -65,3 +65,12 @@ Die Objektübersicht gilt damit als vollständig migriert. Andere produktive Sei
 | `wohnungsverwaltung` | abgeschlossen V99.4.39 | Tabellenkarte mit weißem Innenrand, vollbreiter Desktoptabelle, Suche, bestandsbasierter Statusfilter, Aktionsspalte, Ergebnissumme, UNIT-Prüfhinweise, Nur-Ansehen-Zustand, responsive Tabellenhülle | weiße Navigation, globale Leisten, sechs Datenfelder, zentrale Schreibwege, Objektstandardprüfung, Persistenz und Fachlogik |
 
 Die Wohnungsverwaltung gilt damit als vollständig auf „NK-Pro UI Referenz 1.0“ migriert. Andere produktive Seiten erhalten durch AP22F4B keinen neuen Migrationsstatus.
+
+## AP22F5B – Fortschreibung
+
+| Seite/Bereich | Stand | Migrierte Elemente | Ausdrücklich unverändert |
+|---|---|---|---|
+| `wasser` | abgeschlossen V99.4.40 | fünf DUMMY-Zählerkarten, zentrale farbige Linienicons, DUMMY-Suche und -Filter, statische Referenztabelle, Ergebnisfuß, Hinweise im Dokumentfluss, responsive Tabellenhülle | DUMMY-Status, keine produktiven Daten, keine Aktionen, keine Speicherung, keine Zählerfachlogik |
+| `mieterverwaltung` | abgeschlossen V99.4.40 | vier bestandsbasierte Kennzahlenkarten, Suche, Wohnungs-/Statusfilter, Tabellenkarte, Aktionsspalte, Archivbereich, Ergebnisfuß, responsive Tabellenhülle | zwölf vorhandene Felder, Neuanlage, Speichern, Archivieren, Reaktivieren, zentrale Daten- und Persistenzwege |
+
+Beide Seiten gelten damit in ihrem freigegebenen Funktionsumfang als auf `NK-Pro UI Referenz 1.0` migriert. Die Inhalte der Mietverhältnis-Kennzahlen können in einem späteren Paket geändert werden, sofern ausschließlich vorhandene Daten verwendet werden; neue Statusregeln oder Berechnungen erfordern eine gesonderte Planung.

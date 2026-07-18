@@ -1,3 +1,11 @@
+# Release V99.4.40 – AP22F5B Zähler-DUMMY und Mietverhältnisse
+
+AP22F5B migriert zwei Seiten gemeinsam auf den verbindlichen Standard `NK-Pro UI Referenz 1.0`. Die Seite „Zähler“ bleibt vollständig ein nicht produktiver DUMMY. Sie zeigt ausschließlich fiktive Beispieldaten, genau fünf Zählerarten und eine rein visuelle Such-/Filterfunktion. Es entstehen keine Zählerstammdaten, Messwerte, Schreibwege oder Abrechnungswirkungen.
+
+Die Seite „Mietverhältnisse“ übernimmt die freigegebene Richtung von Mockup A. Vier Kennzahlenkarten verwenden ausschließlich den vorhandenen Bestand: Gesamt, Aktiv, Nicht aktiv und Archiviert. Suche und Filter mutieren keine Fachdaten. Alle zwölf vorhandenen Pflegefelder sowie Neuanlage, globale Speicherung, Archivierung und Reaktivierung bleiben über die bestehenden zentralen Wege erhalten. Im Nur-Ansehen-Modus sind alle schreibenden Bedienelemente gesperrt; Suche und Filter bleiben ohne Datenmutation nutzbar.
+
+Nicht verändert wurden Navigation, Objektstandard, Zählerfachmodell, Persistenz, Migration, Backup/Restore, Abrechnungssnapshot, Berechnungen, Qualitätsregeln, Brief, Druck und PDF. Datenschema 5 und Datenebenenvertrag 1 bleiben unverändert.
+
 # Release V99.4.37 – AP22F2B Technische Migration der Objektübersicht
 
 Die Seite „Objekt vorbereiten – Übersicht“ ist vollständig auf den freigegebenen UI-/UX-Standard migriert. Objektname und Gebäudekurzcode erscheinen gemeinsam; der Vorbereitungsstatus umfasst genau Objektdaten, Wohnungen und Mietverhältnisse. Eine einzige hervorgehobene Aktion führt abhängig vom vorhandenen Arbeitsstand zuerst zu Objektdaten, dann Wohnungen, dann Mietverhältnissen und bei vollständiger Vorbereitung zur Abrechnungsübersicht.

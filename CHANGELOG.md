@@ -1,3 +1,17 @@
+# V99.4.40 – AP22F5B Zähler-DUMMY und Mietverhältnisse (2026-07-18)
+
+- Seite `wasser` als ausdrücklich nicht produktiven Zähler-DUMMY auf `NK-Pro UI Referenz 1.0` migriert,
+- genau fünf vorhandene Zählerarten Wasser, Wärme, HKV, Gas und Strom in einer kompakten Kartenleiste dargestellt,
+- farbige SVG-Linienicons über zentrale semantische Zählerfarbtokens eingeführt,
+- statische DUMMY-Tabelle mit Suche und Zählerartfilter ohne Datenmutation oder Speicherung ergänzt,
+- produktive Aktionen, Datenfelder, Persistenz und Abrechnungswirkung auf der Zählerseite ausgeschlossen,
+- Seite `mieterverwaltung` unter dem sichtbaren Titel „Mietverhältnisse“ mit vier bestandsbasierten Kennzahlenkarten, Suche, Wohnungs- und Statusfilter sowie zentraler Tabellenkarte migriert,
+- alle zwölf vorhandenen Mietverhältnisfelder sowie Neuanlage, Speichern, Archivieren und Reaktivieren über die bestehenden Datenwege erhalten,
+- vorhandenen Nur-Ansehen-Modus mit sichtbarem Schreibschutzhinweis, gesperrten Schreibaktionen und weiterhin nutzbaren Filtern abgesichert,
+- Tabellen und Hinweisboxen in normalen Dokumentfluss sowie interne responsive Overflow-Container überführt,
+- Navigation, Fachmodule, Persistenz, Migration, Zählerfachmodule und 77 vorhandene Regressionstests hashgeschützt unverändert erhalten,
+- Release-, PWA-, Cache- und Paketkennungen auf V99.4.40 / `99.4.40-ap22f5b` fortgeschrieben.
+
 # V99.4.37 – AP22F2B Technische Migration der Objektübersicht (2026-07-17)
 
 - Objektname und Gebäudekurzcode in einer kompakten Identitätsdarstellung zusammengeführt,

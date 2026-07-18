@@ -1,3 +1,17 @@
+# NK-Pro V99.4.40 – AP22F5B Zähler-DUMMY und Mietverhältnisse
+
+Aktueller Release mit migrierten Seiten **Objekt vorbereiten → Zähler** und **Objekt vorbereiten → Mietverhältnisse**. Zähler bleibt ein deutlich gekennzeichneter, rein statischer DUMMY ohne Speicherung oder Fachlogik. Mietverhältnisse verwendet den neuen Kennzahlen-, Filter- und Tabellenstandard, erhält aber sämtliche vorhandenen Felder und zentralen Datenpflegewege.
+
+Prüfung:
+
+```text
+npm ci
+npm run test:ap22f5b
+npm run release:check
+```
+
+Datenschema 5 und Datenebenenvertrag 1 sind unverändert.
+
 # NK-Pro V99.4.37 – AP22F2B Objektübersicht
 
 Aktueller Release mit vollständig migrierter Seite „Objekt vorbereiten – Übersicht“. Die Seite zeigt eine kompakte Objektidentität, den Status der drei produktiven Vorbereitungsbereiche, genau eine nächste Aktion und vier Aufgaben-/Statuskarten. Kostenarten- und Doppelanzeigen entfallen; Zähler bleibt ein eindeutig gekennzeichneter DUMMY.

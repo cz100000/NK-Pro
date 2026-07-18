@@ -1,3 +1,11 @@
+# Projektstand V99.4.40 – AP22F5B Zähler-DUMMY und Mietverhältnisse
+
+Die produktiven Seiten `wasser` und `mieterverwaltung` sind auf den verbindlichen Designstandard `NK-Pro UI Referenz 1.0` migriert. `wasser` bleibt ausdrücklich ein DUMMY mit statischen Beispieldaten und ohne produktive Aktionen, Speicherung oder Abrechnungswirkung. Die fünf Zählerarten verwenden zentrale, farbige SVG-Linienicons.
+
+`mieterverwaltung` trägt den sichtbaren Titel „Mietverhältnisse“ und verwendet vier bestandsbasierte Kennzahlen, eine kompakte Such-/Filterleiste, eine intern horizontal verschiebbare Tabellenkarte sowie den vorhandenen Archivbereich. Die zwölf bestehenden Pflegefelder und alle bisherigen zentralen Aktionen bleiben erhalten.
+
+Navigation, Fachlogik, Zählerfachmodule, Datenmodell, Persistenz, Migration, Backup/Restore, Snapshot, Qualitätsregeln, Brief, Druck und PDF sind unverändert geschützt. Datenschema 5 und Datenebenenvertrag 1 bleiben bestehen.
+
 # Projektstand V99.4.37 – AP22F2B Technische Migration der Objektübersicht
 
 Die produktive Seite `objektuebersicht` ist nach dem freigegebenen AP22F2A-Plan migriert. Eine kompakte gemeinsame Objektidentität verbindet Objektname und Gebäudekurzcode. Der Gesamtstatus zählt ausschließlich Objektdaten, Wohnungen und Mietverhältnisse; der Zähler-DUMMY bleibt ausgeschlossen. Genau eine nächste Aktion folgt der Priorität Objektdaten, Wohnungen, Mietverhältnisse und anschließend Abrechnungsübersicht.

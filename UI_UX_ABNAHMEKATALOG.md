@@ -133,3 +133,12 @@ Eine Seite ist nur migriert, wenn alle anwendbaren Punkte mit **bestanden**, **n
 - [x] Nur-Ansehen deaktiviert Speichern und Bearbeitung, ohne die Lesbarkeit zu verlieren.
 - [x] Hinweise liegen im normalen Dokumentfluss und überlagern keine Inhalte.
 - [x] Die Seite verursacht in den Ziel-Viewports keinen horizontalen Dokumentüberlauf; die Tabelle bleibt intern verschiebbar.
+
+## AP22F5B – Zusatzkriterien
+
+- [ ] DUMMY-Seiten sind im Titel, Inhalt und Abschluss eindeutig als nicht produktiv gekennzeichnet.
+- [ ] DUMMY-Suche und -Filter verändern weder `state` noch lokalen Speicher.
+- [ ] Farbige Zählericons verwenden zentrale semantische Tokens und einheitliche SVG-Linienicons.
+- [ ] Eine UI-Migration fügt keine produktive Aktion hinzu, die im Bestand nicht vorhanden war.
+- [ ] Bestandskennzahlen nennen nur fachlich vorhandene Zustände und verwenden vorhandene Datenquellen.
+- [ ] Breite Stammdatentabellen bleiben in einer eigenen weißen Overflow-Hülle; die Gesamtseite läuft nicht horizontal über.

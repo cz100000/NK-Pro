@@ -65,3 +65,17 @@ Die alten Objekt-Dashboard-Kennzahlen und die Kostenartenstatuskarte sind für `
 | Ergebnissumme | migriert | sichtbare von gesamten Wohnungen |
 | UNIT-Prüfhinweis | migriert | ausschließlich bestehende Objektstandardbefunde |
 | Intern horizontal verschiebbare Tabellenhülle | migriert | schmale Viewports ohne Seitenüberlauf |
+
+## AP22F5B – Ergänzte produktive Komponenten
+
+| Komponente | Produktiver Status | Einsatz |
+|---|---|---|
+| Kompakte Zählerarten-Kartenleiste | migriert, DUMMY | genau Wasser, Wärme, HKV, Gas und Strom auf `wasser` |
+| Semantische Zählerfarbtokens | zentral | ausschließlich Linienicons; Kartenflächen bleiben neutral |
+| DUMMY-Tabellenkarte | migriert | statische Beispieldaten, Suche und Filter ohne Mutation |
+| Mietverhältnis-Kennzahlenkarte | migriert | Gesamt, Aktiv, Nicht aktiv, Archiviert aus vorhandenem Bestand |
+| Mietverhältnis-Tabellenkarte | migriert | zwölf vorhandene Pflegefelder in gruppierten Tabellenspalten |
+| Archiv-Klappkarte | migriert | bestehendes Archivieren und Reaktivieren |
+| Interne Tabellenhülle mit weißem Innenabstand | migriert | beide Seiten; kein horizontaler Dokumentüberlauf |
+
+DUMMY-Komponenten dürfen keine produktiv wirkenden Aktionen oder Speicherwege vortäuschen. Farbakzente dienen nur der Unterscheidung der Zählerarten und werden über zentrale Tokens bezogen.
