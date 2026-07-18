@@ -1,7 +1,7 @@
 {
-  "name": "NK-Pro V99.4.41",
+  "name": "NK-Pro V99.4.42",
   "short_name": "NK-Pro",
-  "description": "Lokale Nebenkostenabrechnung mit AP22F6B Korrektur 1: kompakter Übersichtsstart, separater Zeitraumdialog und vollständige Navigation im Archivmodus.",
+  "description": "Lokale Nebenkostenabrechnung mit AP22F7B: kompakte periodengebundene Mietverhältnisse, Lesedetails und unveränderte Bestandsübernahme.",
   "lang": "de-DE",
   "id": "./",
   "start_url": "./",
@@ -9,7 +9,7 @@
   "display": "standalone",
   "background_color": "#f4f6f9",
   "theme_color": "#031d41",
-  "version": "99.4.41",
+  "version": "99.4.42",
   "icons": [
     {
       "src": "./icons/icon-180.png",

@@ -93,6 +93,11 @@
       "object.archiveMasterTenancy":interactiveAppCall(applicationActions, "object", "archiveMasterTenancy", handlers), "object.restoreMasterTenancy":appCall(applicationActions, "object", "restoreMasterTenancy"),
       "object.setBillingUnitStatus":appCall(applicationActions, "object", "setBillingUnitStatus"), "object.setMasterNested":appCall(applicationActions, "object", "setMasterNested")
     });
+    registerController("billingTenant", "Reine Suche, Filterung, Sortierung und Lesedetails der Abrechnungs-Mietverhältnisse", {
+      "billingTenant.setSearch":call(handlers, "billingTenantSetSearch"), "billingTenant.setFilter":call(handlers, "billingTenantSetFilter"),
+      "billingTenant.reset":call(handlers, "billingTenantReset"), "billingTenant.toggleDetail":call(handlers, "billingTenantToggleDetail"),
+      "billingTenant.sort":call(handlers, "billingTenantSort")
+    });
     registerController("cost", "Kostenerfassung, Auswahl, Detailzuordnung und Preisdialog", {
       "cost.configureFree":presentingAppCall(applicationActions, "cost", "configureFree", handlers), "cost.setSetting":appCall(applicationActions, "cost", "setSetting"),
       "cost.openPriceEditor":call(handlers, "openCostPriceEditor"), "cost.closePriceEditor":call(handlers, "closeCostPriceEditor"),

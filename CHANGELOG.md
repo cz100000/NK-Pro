@@ -1,3 +1,14 @@
+# V99.4.42 – AP22F7B Mietverhältnisse Abrechnung (2026-07-18)
+
+- drei große Klappboxen durch einen flachen Dokumentfluss ersetzt;
+- Snapshot-Prinzip und bewusste Bestandsübernahme direkt im Datenstandsblock erklärt;
+- Mietverhältnisse vor Wohnungen angeordnet und von 17 auf 8 sichtbare Spalten verdichtet;
+- Kontakt-, Adress-, Brief- und Sonderfalldaten in aufklappbaren Lesedetails vollständig erhalten;
+- Wohnungstabelle auf 6 Spalten verdichtet; nur der bestehende periodenspezifische Status bleibt editierbar;
+- Suche, bestandsbasierte Filter, Sortierung, Zurücksetzen und Ergebniszählungen als reine UI-Zustände ergänzt;
+- Sonderfallauswertung kompakt dargestellt, ohne Regeln oder Severity zu ändern;
+- Release-, PWA- und Cachekennung auf V99.4.42 / `99.4.42-ap22f7b` fortgeschrieben.
+
 # V99.4.41 – AP22F6B Korrektur 1 (2026-07-18)
 
 - leeren Status-/Hinweisbereich unter dem Seitenkopf vollständig ausgeblendet; der übergroße Abstand und der gelbe Leerstreifen entfallen,

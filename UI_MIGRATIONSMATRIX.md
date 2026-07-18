@@ -80,3 +80,10 @@ Beide Seiten gelten damit in ihrem freigegebenen Funktionsumfang als auf `NK-Pro
 | Seite | Status | Migrierte Darstellung | Unverändert geschützt |
 |---|---|---|---|
 | `start` – Nebenkosten abrechnen: Übersicht | abgeschlossen V99.4.41 | gemeinsame kompakte Tabelle für aktuelle und archivierte Abrechnungen; Suche; Filter Alle/Aktuell/Archiv; Ergebniszählung; interne Scrollhülle; quadratische SVG-Symbolaktionen ohne Umbruch; Leer-, Filterleer- und Fehlerzustand; Schreibschutz-Notice im Dokumentfluss | Navigation, Seitenkopf, Kontextleiste, Abrechnungsstatus, Zeitraum, Fortschritt, Saldo, Fach- und Statuslogik, Handler, Persistenz, Migration, Archivierung, Berechnung, Brief und Druck |
+
+
+## AP22F7B – Fortschreibung
+
+| Seite | Status | Migrierte Darstellung | Unverändert geschützt |
+|---|---|---|---|
+| `mieter` – Nebenkosten abrechnen: Mietverhältnisse | abgeschlossen V99.4.42 | flacher Seitenfluss ohne Klappboxen; kompakter Datenstandsblock; führende 8-spaltige Mietverhältnistabelle; Suche, Wohnungs-/Statusfilter, Sortierung und Ergebniszählung; aufklappbare Lesedetails; nachgeordnete 6-spaltige Wohnungstabelle; interne responsive Scrollhüllen; kompakte Sonderfallhinweise | Navigation, Seitenkopf, Kontextleiste, Snapshot-Prinzip, bewusste Bestandsübernahme, Fach- und Statuslogik, Datenfelder, Speichern, Wohnungsstatushandler, Persistenz, Migration, Archivierung, Berechnung, Qualitätsregeln, Brief und Druck |

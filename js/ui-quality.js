@@ -45,14 +45,11 @@ function renderSpecialCaseWatch() {
   const el = document.getElementById("sonderfallWatchBox");
   if (!el) return;
   const report = NK_PRO_MODULES.qualityAssurance.specialCases();
-  const visibleRows = report.rows.filter(r => r.severity !== "Info");
-  const infoRows = report.rows.filter(r => r.severity === "Info");
-  const rowsHtml = visibleRows.length ? visibleRows.slice(0, 12).map(r => '<tr><td><span class="status ' + qualitySeverityClass(r.severity) + '">' + escapeHtml(r.severity) + '</span></td><td>' + escapeHtml(r.type) + '</td><td>' + escapeHtml(r.subject) + '</td><td>' + escapeHtml(r.detail) + '</td></tr>').join("") : '<tr><td colspan="4">Keine prüfpflichtigen Sonderfälle.</td></tr>';
-  const infoHtml = infoRows.length ? '<details><summary>Info-Sonderfälle anzeigen (' + infoRows.length + ')</summary><div class="table-wrap dashboard-table"><table><thead><tr><th>Typ</th><th>Betreff</th><th>Details</th></tr></thead><tbody>' + infoRows.map(r => '<tr><td>' + escapeHtml(r.type) + '</td><td>' + escapeHtml(r.subject) + '</td><td>' + escapeHtml(r.detail) + '</td></tr>').join("") + '</tbody></table></div></details>' : '';
-  el.innerHTML = '<div class="special-watch-box ' + report.level + '"><div class="inline-titlebar"><div><strong>Sonderfall-Wächter: ' + escapeHtml(report.label) + '</strong><div class="small">' + escapeHtml(report.message) + '</div></div><span class="period-badge">' + report.errors + ' Fehler · ' + report.checks + ' prüfen · ' + report.hints + ' Hinweise</span></div>' +
-    '<div class="special-watch-grid"><div class="special-watch-pill"><strong>Abrechenbare Mieter</strong><br>' + report.billableCount + '</div><div class="special-watch-pill"><strong>Eigentümer/Privat</strong><br>' + report.privateCount + '</div><div class="special-watch-pill"><strong>Unterjährig/Wechsel</strong><br>' + report.underjaehrig + '</div><div class="special-watch-pill"><strong>Leerstand</strong><br>' + report.leerstand + '</div></div>' +
-    '<div class="table-wrap dashboard-table" style="margin-top:10px"><table><thead><tr><th>Status</th><th>Typ</th><th>Betreff</th><th>Details</th></tr></thead><tbody>' + rowsHtml + '</tbody></table></div>' + infoHtml + '</div>';
+  const rows = report.rows.slice(0, 12);
+  const rowsHtml = rows.length ? rows.map(r => '<li><span class="billing-special-case__icon" aria-hidden="true">i</span><span><strong>' + escapeHtml(r.type) + ':</strong> ' + escapeHtml(r.subject) + (r.detail ? ' · ' + escapeHtml(r.detail) : '') + '</span><span class="status ' + qualitySeverityClass(r.severity) + '">' + escapeHtml(r.severity) + '</span></li>').join("") : '<li><span class="billing-special-case__icon" aria-hidden="true">✓</span><span>Keine prüfpflichtigen Sonderfälle.</span></li>';
+  el.innerHTML = '<aside class="billing-special-case nk-ui-notice nk-ui-notice--info" aria-labelledby="billingSpecialCaseTitle"><div class="billing-special-case__header"><h2 id="billingSpecialCaseTitle">Hinweise zu Sonderfällen</h2><span class="nk-ui-status">' + report.rows.length + ' Hinweise</span></div><p>' + escapeHtml(report.message) + '</p><ul>' + rowsHtml + '</ul></aside>';
 }
+
 
 function settlementInfoForResult(...args) { return NK_PRO_MODULES.documentData.settlementInfoForResult(...args); }
 

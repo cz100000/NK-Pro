@@ -6330,3 +6330,72 @@ body:not(.document-print-window) #mieterverwaltung [data-page-save]:disabled,bod
 #start .billing-period-editor-sync:has(button[hidden]){display:none}
 .workflow-nav.archive-nav [data-nav-group-section="object"]{display:block!important}
 @media(max-width:620px){#start .billing-period-editor-grid{grid-template-columns:1fr}}
+
+
+/* AP22F7B – Nebenkosten abrechnen: Mietverhältnisse */
+#mieter .billing-tenant-page{display:grid;gap:16px;min-width:0}
+#mieter .billing-tenant-data-status{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding:18px 20px;border-left:4px solid var(--nk-color-primary,#0876d1)}
+#mieter .billing-tenant-data-status h2,#mieter .billing-tenant-card h2,#mieter .billing-special-case h2{margin:0;color:#123b65;font-size:1.15rem}
+#mieter .billing-tenant-data-status p{margin:5px 0 10px;color:#5f7184;font-size:.86rem;max-width:760px}
+#mieter .billing-tenant-inline-summary{display:flex;flex-wrap:wrap;gap:8px 20px;color:#52677b;font-size:.84rem}
+#mieter .billing-tenant-inline-summary strong{color:#123b65;margin-right:3px}
+#mieter .billing-tenant-data-status__actions{display:flex;align-items:flex-end;gap:10px;flex-direction:column;min-width:235px}
+#mieter #billingStammdatenStatus{display:flex;align-items:flex-end;gap:5px;flex-direction:column;text-align:right}
+#mieter #billingStammdatenStatus small{max-width:340px;color:#63778b}
+#mieter .billing-tenant-card{overflow:hidden;padding:0}
+#mieter .billing-tenant-card__header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:17px 20px;border-bottom:1px solid #d8e3ee}
+#mieter .billing-tenant-eyebrow{margin:0 0 3px;text-transform:uppercase;letter-spacing:.06em;font-size:.68rem;font-weight:700;color:#60788f}
+#mieter .billing-tenant-toolbar{display:flex;align-items:center;gap:8px;padding:12px 18px;border-bottom:1px solid #d8e3ee;min-width:0}
+#mieter .billing-tenant-toolbar .billing-tenant-search{flex:1 1 280px;min-width:180px}
+#mieter .billing-tenant-toolbar input,#mieter .billing-tenant-toolbar select{width:100%;min-height:38px}
+#mieter .billing-tenant-toolbar select{flex:0 1 220px;max-width:220px}
+#mieter .billing-tenant-results{margin-left:auto;white-space:nowrap;color:#617589;font-size:.82rem}
+#mieter .billing-tenant-table-shell{margin:10px 10px 0;max-width:calc(100% - 20px);overflow-x:auto;background:#fff}
+#mieter .billing-tenant-table{min-width:980px}
+#mieter .billing-unit-table{min-width:820px}
+#mieter .billing-tenant-table th,#mieter .billing-unit-table th{padding:0}
+#mieter .billing-tenant-sort{display:flex;width:100%;align-items:center;justify-content:space-between;gap:5px;border:0;background:transparent;padding:10px 11px;color:inherit;font:inherit;font-weight:700;text-align:left;cursor:pointer}
+#mieter .billing-tenant-sort:focus-visible{outline:2px solid #0876d1;outline-offset:-3px}
+#mieter .billing-tenant-table td strong,#mieter .billing-unit-table td strong{display:block;color:#123b65}
+#mieter .billing-tenant-table td small,#mieter .billing-unit-table td small{display:block;color:#6a7d90;margin-top:2px}
+#mieter .billing-tenant-detail-button{display:inline-flex;width:34px;height:34px;align-items:center;justify-content:center;border:1px solid #c9d9e8;border-radius:7px;background:#fff;color:#0876d1;cursor:pointer}
+#mieter .billing-tenant-detail-button svg{width:18px;height:18px}
+#mieter .billing-tenant-detail-button:hover,#mieter .billing-tenant-detail-button.is-active{border-color:#0876d1;background:#eef7ff}
+#mieter .billing-tenant-detail-button:focus-visible{outline:3px solid rgba(8,118,209,.28);outline-offset:2px}
+#mieter .billing-tenant-detail-row td{padding:8px;background:#f7fbff}
+#mieter .billing-tenant-detail{border:1px solid #c8def0;border-left:4px solid #0876d1;border-radius:10px;background:#fff;padding:15px}
+#mieter .billing-tenant-detail__heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding-bottom:12px;border-bottom:1px solid #e1eaf2}
+#mieter .billing-tenant-detail__heading strong,#mieter .billing-tenant-detail__heading small{display:block}
+#mieter .billing-tenant-detail__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px}
+#mieter .billing-tenant-detail__grid section{border:1px solid #d9e5ef;border-radius:8px;padding:12px;min-width:0}
+#mieter .billing-tenant-detail__grid h3{margin:0 0 10px;font-size:.88rem;color:#123b65}
+#mieter .billing-tenant-detail__grid dl{display:grid;grid-template-columns:max-content 1fr;gap:6px 12px;margin:0;font-size:.8rem}
+#mieter .billing-tenant-detail__grid dt{font-weight:700;color:#677b8e}
+#mieter .billing-tenant-detail__grid dd{margin:0;min-width:0;overflow-wrap:anywhere;color:#244b6e}
+#mieter .billing-tenant-card__footer{display:flex;justify-content:space-between;gap:12px;padding:10px 18px;color:#64788b;font-size:.78rem;border-top:1px solid #d8e3ee;background:#f8fbfd}
+#mieter .billing-tenant-empty{text-align:center;padding:28px!important;color:#697d90}
+#mieter .billing-special-case{display:block;padding:16px 18px;border-left:4px solid #0876d1}
+#mieter .billing-special-case__header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+#mieter .billing-special-case p{margin:5px 0 8px;color:#5e7387;font-size:.82rem}
+#mieter .billing-special-case ul{display:grid;gap:7px;list-style:none;margin:0;padding:0}
+#mieter .billing-special-case li{display:grid;grid-template-columns:20px 1fr auto;gap:8px;align-items:start;font-size:.82rem;color:#315775}
+#mieter .billing-special-case__icon{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:#dcedfb;color:#0876d1;font-weight:700}
+#mieter .nk-ui-empty-state--error{margin-top:0}
+@media(max-width:760px){
+  #mieter .billing-tenant-data-status{flex-direction:column}
+  #mieter .billing-tenant-data-status__actions{align-items:flex-start;min-width:0;width:100%}
+  #mieter #billingStammdatenStatus{align-items:flex-start;text-align:left}
+  #mieter .billing-tenant-toolbar{align-items:stretch;flex-direction:column}
+  #mieter .billing-tenant-toolbar .billing-tenant-search,#mieter .billing-tenant-toolbar select,#mieter .billing-tenant-toolbar button{flex:auto;max-width:none;width:100%}
+  #mieter .billing-tenant-results{margin-left:0}
+  #mieter .billing-tenant-card__header,#mieter .billing-tenant-card__footer{align-items:flex-start;flex-direction:column}
+  #mieter .billing-tenant-detail__grid{grid-template-columns:1fr}
+}
+
+#mieter .billing-tenant-card > .billing-tenant-card__header{background:#fff!important;color:#163f68!important;box-shadow:none!important}
+#mieter .billing-tenant-card__header h2 span{color:#6a7d90}
+#mieter .billing-tenant-table td,#mieter .billing-unit-table td{background-clip:padding-box}
+#mieter .billing-unit-table td select{background:#fff}
+
+#mieter .billing-tenant-detail-button{min-width:34px}
+#mieter .billing-tenant-detail-button svg{flex:0 0 18px;min-width:18px}

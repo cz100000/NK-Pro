@@ -1,3 +1,9 @@
+# Projektstand V99.4.42 – AP22F7B Mietverhältnisse Abrechnung
+
+Die technische Seite `mieter` unter `Nebenkosten abrechnen` entspricht dem freigegebenen Zielbild AP22F7A. Der bisherige Klappboxaufbau wurde durch einen flachen Seitenfluss ersetzt. Ein kompakter Datenstandsblock erläutert die periodengebundene Abrechnungskopie und die ausschließlich bewusste Übernahme des zentralen Bestands. Mietverhältnisse werden in einer 8-spaltigen Tabelle vor den Wohnungen angezeigt; Adresse, Kontakt, Briefanrede und Sonderfälle bleiben vollständig über Lesedetails erreichbar. Die nachgeordnete Wohnungstabelle verwendet sechs Spalten und lässt ausschließlich den vorhandenen periodenspezifischen Status bearbeiten.
+
+Navigation, Seitenkopf, Abrechnungskontext, Datenmodell, Datenschema 5, Snapshot-Grenzen, Fach- und Statuslogik, Speichern, Bestandsübernahme, Persistenz, Migration, Archivierung, Berechnung, Qualitätsregeln sowie Brief- und Drucksystem bleiben unverändert.
+
 # Projektstand V99.4.41 – AP22F6B Korrektur 1
 
 Die nach der Sichtprüfung festgelegten Korrekturen sind umgesetzt: Der Seitenkopf geht ohne leeren Statusbereich in die Abrechnungskarte über, die Zeitraum-Klappbox wurde durch eine klar bezeichnete Dialogaktion ersetzt, und `Objekt vorbereiten` bleibt bei archivierten Ansichten vollständig in der Navigation sichtbar. Die bestehenden Zeitraumfelder, Prüfungen und Schreibaktionen werden ausschließlich über ihre vorhandenen zentralen Wege verwendet.
@@ -113,3 +119,4 @@ Die produktive Anwendung bleibt technisch und visuell auf dem unveränderten Lau
 Die Referenzbibliothek wird direkt über `ui-reference/index.html` oder über einen lokalen statischen Server unter `/ui-reference/` geöffnet. Sie verwendet ausschließlich fiktive deutsche NK-Pro-Beispiele.
 
 Nächster Schritt ist kein ungeprüfter Seitenumbau. Für jeden zusammengehörigen Seitenbereich wird zuerst ein Vorschlag mit Bestandsanalyse, Redundanzen, Zielkomponenten, Mockup, Datei-Positivliste, Abnahmekriterien, Tests und Schutzbereichen vorgelegt. Erst nach Nutzerfreigabe erfolgt die technische Migration.
+

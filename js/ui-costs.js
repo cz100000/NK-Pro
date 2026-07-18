@@ -374,72 +374,83 @@ function renderEinstellungen() {
 function renderWohnungen() {
   renderBillingStammdatenStatus();
   renderSpecialCaseWatch();
+  try {
+    const error=document.getElementById("billingTenantError"); if (error) error.hidden=true;
+    const units=Array.isArray(state.wohnungen)?state.wohnungen.filter(w=>w&&w.id):[];
+    const visibleRows=visibleTenantRows();
+    const activeUnits=units.filter(w=>w.status==="aktiv");
+    const totals=visibleRows.reduce((t,m)=>{t.aktiveTage+=num(m.aktiveTage);t.personen+=num(m.personen);return t;},{aktiveTage:0,personen:0});
+    const summary=document.getElementById("tenantControlSummary");
+    if (summary) summary.innerHTML='<span><strong>'+units.length+'</strong> Wohnungen</span><span><strong>'+visibleRows.length+'</strong> Mietverhältnisse</span><span><strong>'+activeUnits.reduce((sum,w)=>sum+num(w.wohnflaeche),0).toLocaleString("de-DE")+' m²</strong> aktiv</span><span><strong>'+totals.personen.toLocaleString("de-DE")+'</strong> Personen</span>';
+    const tenantState=billingTenantUiState.tenants;
+    billingTenantSetSelectOptions(document.getElementById("billingTenantUnitFilter"),Array.from(new Set(visibleRows.map(m=>m.wohnung).filter(Boolean))).sort(billingTenantCompare),tenantState.unit,"Alle Wohnungen");
+    billingTenantSetSelectOptions(document.getElementById("billingTenantStatusFilter"),Array.from(new Set(visibleRows.map(tenantOpenStatus).filter(Boolean))).sort(billingTenantCompare),tenantState.status,"Alle Status");
+    const tenantSearch=tenantState.search.trim().toLocaleLowerCase("de-DE");
+    let filteredTenants=visibleRows.filter(m=>(tenantState.unit==="all"||String(m.wohnung)===tenantState.unit)&&(tenantState.status==="all"||tenantOpenStatus(m)===tenantState.status)&&(!tenantSearch||billingTenantSearchText([m.id,m.name,m.wohnung,billingTenantUnitName(m.wohnung),m.abrechnungRolle,m.strasse,m.plz,m.ort,m.telefon,m.email]).includes(tenantSearch)));
+    const tenantValue=(m,key)=>key==="unit"?billingTenantUnitName(m.wohnung):key==="period"?billingTenantPeriod(m):key==="status"?tenantOpenStatus(m):key==="people"?num(m.personen):key==="days"?num(m.aktiveTage):m[key];
+    if (tenantState.sortKey) filteredTenants.sort((x,y)=>{const cmp=billingTenantCompare(tenantValue(x,tenantState.sortKey),tenantValue(y,tenantState.sortKey));return tenantState.sortDirection==="asc"?cmp:-cmp;});
+    const eye=typeof ap22f5ActionIcon==="function"?ap22f5ActionIcon("view"):"&#128065;";
+    const tenantRows=filteredTenants.map(m=>{const expanded=billingTenantUiState.expandedTenant===m.originalIndex; const unit=billingTenantUnit(m.wohnung); return '<tr><td><strong>'+escapeHtml(m.name||"—")+'</strong><small>'+escapeHtml(tenantDisplayId(m))+'</small></td><td><strong>'+escapeHtml(m.wohnung||"—")+'</strong><small>'+escapeHtml(unit?(unit.bezeichnung||unit.lage||""):"")+'</small></td><td>'+escapeHtml(billingTenantPeriod(m))+'</td><td>'+escapeHtml(m.abrechnungRolle||"—")+'</td><td>'+escapeHtml(num(m.personen).toLocaleString("de-DE"))+'</td><td>'+escapeHtml(normalizeActiveDayValue(m.aktiveTage).toLocaleString("de-DE"))+'</td><td><span class="status '+(tenantOpenStatus(m)==="Aktiv"?"ok":"warn")+'">'+escapeHtml(tenantOpenStatus(m))+'</span></td><td><button class="billing-tenant-detail-button'+(expanded?' is-active':'')+'" type="button" title="'+(expanded?'Details schließen':'Details anzeigen')+'" aria-label="'+escapeHtml((m.name||tenantDisplayId(m))+' – '+(expanded?'Details schließen':'Details anzeigen'))+'" aria-expanded="'+(expanded?'true':'false')+'" data-ui-action="billingTenant.toggleDetail" data-ui-args="['+m.originalIndex+']">'+eye+'</button></td></tr>'+(expanded?billingTenantDetailHtml(m):'');}).join("");
+    const tenantTable=document.getElementById("mieterTable");
+    if (tenantTable) tenantTable.innerHTML='<thead><tr><th scope="col">'+billingTenantSortButton("tenants","name","Mieter")+'</th><th scope="col">'+billingTenantSortButton("tenants","unit","Wohnung")+'</th><th scope="col">'+billingTenantSortButton("tenants","period","Mietzeitraum")+'</th><th scope="col">'+billingTenantSortButton("tenants","abrechnungRolle","Rolle")+'</th><th scope="col">'+billingTenantSortButton("tenants","people","Personen")+'</th><th scope="col">'+billingTenantSortButton("tenants","days","Aktive Tage")+'</th><th scope="col">'+billingTenantSortButton("tenants","status","Status")+'</th><th scope="col">Details</th></tr></thead><tbody>'+(tenantRows||'<tr><td colspan="8" class="billing-tenant-empty">'+(visibleRows.length?'Keine Mietverhältnisse entsprechen der Suche oder den Filtern.':'Keine Mietverhältnisse für diese Abrechnungsperiode übernommen.')+'</td></tr>')+'</tbody>';
+    const tenantResult=filteredTenants.length+' von '+visibleRows.length+' Mietverhältnissen';
+    ["billingTenantResults","billingTenantFooterResults"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=tenantResult;});
+    const tenantHeading=document.getElementById("tenantRelationsHeadingCount"); if(tenantHeading)tenantHeading.textContent='('+visibleRows.length+')';
+    const tenantSearchInput=document.getElementById("billingTenantSearch"); if(tenantSearchInput&&tenantSearchInput.value!==tenantState.search)tenantSearchInput.value=tenantState.search;
 
-  const units = Array.isArray(state.wohnungen) ? state.wohnungen.filter(w => w && w.id) : [];
-  const activeUnits = units.filter(w => w.status === "aktiv");
-  const inactiveUnits = units.filter(w => w.status !== "aktiv");
-  const rows = units.map((w) =>
-    '<tr class="' + (w.status === "aktiv" ? "" : "inactive-row") + '"><td>' + unitIdCellHtml(w) + '</td>' +
-    '<td>' + escapeHtml(w.bezeichnung || "") + '</td>' +
-    '<td>' + escapeHtml(w.lage || "") + '</td>' +
-    '<td>' + escapeHtml(num(w.wohnflaeche).toLocaleString("de-DE")) + '</td>' +
-    '<td>' + escapeHtml(w.zimmer || "") + '</td>' +
-    '<td class="editable">' + selectHtml(w.status || "aktiv", ["aktiv","inaktiv"], "setBillingUnitStatus(" + units.indexOf(w) + ",this.value)") + '</td>' +
-    '<td>' + escapeHtml(w.bemerkung || "") + '</td></tr>').join("");
-  const unitsTable = document.getElementById("wohnungenTable");
-  if (unitsTable) unitsTable.innerHTML = '<thead><tr><th>Wohnungs-ID</th><th>Bezeichnung</th><th>Etage / Lage</th><th>Wohnfläche m²</th><th>Zimmer</th><th>Status</th><th>Bemerkung</th></tr></thead><tbody>' + (rows || '<tr><td colspan="7">Keine Wohnungen vorhanden.</td></tr>') + '</tbody>';
-
-  const visibleRows = visibleTenantRows();
-  const activeRelations = visibleRows.filter(m => tenantOpenStatus(m) === "Aktiv");
-  const openRelations = visibleRows.filter(m => tenantOpenStatus(m) !== "Aktiv");
-  const mieterTotals = visibleRows.reduce((totals,m) => {
-    totals.aktiveTage += num(m.aktiveTage);
-    totals.personen += num(m.personen);
-    return totals;
-  }, { aktiveTage:0, personen:0 });
-
-  const mrows = visibleRows.length ? visibleRows.map((m) =>
-    '<tr><td>' + tenantIdCellHtml(m) + '</td>' +
-    '<td>' + unitRefCellHtml(m.wohnung) + '</td>' +
-    '<td>' + escapeHtml(m.name || "") + '</td>' +
-    '<td>' + escapeHtml(m.abrechnungRolle || "") + '</td>' +
-    '<td>' + escapeHtml(m.geschlecht || "") + '</td>' +
-    '<td>' + escapeHtml(m.standardanrede || "") + '</td>' +
-    '<td>' + escapeHtml(m.strasse || "") + '</td>' +
-    '<td>' + escapeHtml(m.plz || "") + '</td>' +
-    '<td>' + escapeHtml(m.ort || "") + '</td>' +
-    '<td>' + escapeHtml(m.telefon || "") + '</td>' +
-    '<td>' + escapeHtml(m.email || "") + '</td>' +
-    '<td>' + escapeHtml(m.einzug || "") + '</td>' +
-    '<td>' + escapeHtml(m.auszug || "") + '</td>' +
-    '<td>' + specialCaseBadgesForTenant(m) + '</td>' +
-    '<td>' + escapeHtml(normalizeActiveDayValue(m.aktiveTage).toLocaleString("de-DE")) + '</td>' +
-    '<td>' + escapeHtml(num(m.personen).toLocaleString("de-DE")) + '</td>' +
-    '<td><span class="status ' + (tenantOpenStatus(m) === "Aktiv" ? "ok" : "warn") + '">' + escapeHtml(tenantOpenStatus(m)) + '</span></td></tr>').join("") +
-    '<tr class="total-row"><td colspan="14">Summe</td><td>' + mieterTotals.aktiveTage.toLocaleString("de-DE") + '</td><td>' + mieterTotals.personen.toLocaleString("de-DE") + '</td><td></td></tr>'
-    : '<tr><td colspan="17">Keine Mietverhältnisse für diese Abrechnungsperiode übernommen.</td></tr>';
-  const tenantTable = document.getElementById("mieterTable");
-  if (tenantTable) tenantTable.innerHTML =
-    '<thead><tr><th>Mieter-ID</th><th>Wohnungs-ID</th><th>Mietername</th><th>Rolle</th><th>Geschlecht</th><th>Standardanrede Brief</th><th>Straße</th><th>PLZ</th><th>Ort</th><th>Telefon</th><th>E-Mail</th><th>Einzug</th><th>Auszug</th><th>Sonderfall</th><th>Aktive Tage</th><th>Personen</th><th>Abrechnungsstatus</th></tr></thead><tbody>' + mrows + '</tbody>';
-
-  const unitBadge = document.getElementById("tenantUnitsBadge");
-  if (unitBadge) unitBadge.textContent = units.length + (units.length === 1 ? " Wohnung" : " Wohnungen");
-  const relationBadge = document.getElementById("tenantRelationsBadge");
-  if (relationBadge) relationBadge.textContent = visibleRows.length + (visibleRows.length === 1 ? " Mietverhältnis" : " Mietverhältnisse");
-
-  if (typeof renderOverviewForTab === "function") renderOverviewForTab("mieter");
-
-  const control = document.getElementById("tenantControlSummary");
-  if (control) control.innerHTML =
-    '<div class="tenant-control-item"><span>Wohnfläche aktiv</span><strong>' + activeUnits.reduce((sum,w) => sum + num(w.wohnflaeche), 0).toLocaleString("de-DE") + ' m²</strong></div>' +
-    '<div class="tenant-control-item"><span>Aktive Tage gesamt</span><strong>' + mieterTotals.aktiveTage.toLocaleString("de-DE") + '</strong></div>' +
-    '<div class="tenant-control-item"><span>Personen gesamt</span><strong>' + mieterTotals.personen.toLocaleString("de-DE") + '</strong></div>' +
-    '<div class="tenant-control-item"><span>Datenstatus</span><strong>' + (units.length && visibleRows.length ? "Vorhanden" : "Prüfen") + '</strong></div>';
+    const unitState=billingTenantUiState.units;
+    billingTenantSetSelectOptions(document.getElementById("billingUnitStatusFilter"),Array.from(new Set(units.map(w=>w.status||"aktiv"))).sort(billingTenantCompare),unitState.status,"Alle Status");
+    const unitSearch=unitState.search.trim().toLocaleLowerCase("de-DE");
+    let filteredUnits=units.filter(w=>(unitState.status==="all"||(w.status||"aktiv")===unitState.status)&&(!unitSearch||billingTenantSearchText([w.id,w.bezeichnung,w.lage,w.bemerkung]).includes(unitSearch)));
+    if (unitState.sortKey) filteredUnits.sort((x,y)=>{const cmp=billingTenantCompare(x[unitState.sortKey],y[unitState.sortKey]);return unitState.sortDirection==="asc"?cmp:-cmp;});
+    const unitRows=filteredUnits.map(w=>'<tr class="'+(w.status==="aktiv"?'':'inactive-row')+'"><td><strong>'+escapeHtml(w.bezeichnung||w.lage||w.id)+'</strong><small>'+escapeHtml(unitDisplayId(w))+'</small></td><td>'+escapeHtml(w.lage||"—")+'</td><td>'+escapeHtml(num(w.wohnflaeche).toLocaleString("de-DE"))+' m²</td><td>'+escapeHtml(w.zimmer||"—")+'</td><td>'+selectHtml(w.status||"aktiv",["aktiv","inaktiv"],"setBillingUnitStatus("+units.indexOf(w)+",this.value)")+'</td><td>'+escapeHtml(w.bemerkung||"")+'</td></tr>').join("");
+    const unitTable=document.getElementById("wohnungenTable");
+    if(unitTable)unitTable.innerHTML='<thead><tr><th scope="col">'+billingTenantSortButton("units","bezeichnung","Wohnung")+'</th><th scope="col">'+billingTenantSortButton("units","lage","Etage / Lage")+'</th><th scope="col">'+billingTenantSortButton("units","wohnflaeche","Wohnfläche")+'</th><th scope="col">'+billingTenantSortButton("units","zimmer","Zimmer")+'</th><th scope="col">'+billingTenantSortButton("units","status","Status")+'</th><th scope="col">'+billingTenantSortButton("units","bemerkung","Bemerkung")+'</th></tr></thead><tbody>'+(unitRows||'<tr><td colspan="6" class="billing-tenant-empty">'+(units.length?'Keine Wohnungen entsprechen der Suche oder den Filtern.':'Keine Wohnungen vorhanden.')+'</td></tr>')+'</tbody>';
+    const unitResult=filteredUnits.length+' von '+units.length+' Wohnungen';
+    ["billingUnitResults","billingUnitFooterResults"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=unitResult;});
+    const unitHeading=document.getElementById("tenantUnitsHeadingCount"); if(unitHeading)unitHeading.textContent='('+units.length+')';
+    const unitSearchInput=document.getElementById("billingUnitSearch"); if(unitSearchInput&&unitSearchInput.value!==unitState.search)unitSearchInput.value=unitState.search;
+    if(typeof renderOverviewForTab==="function")renderOverviewForTab("mieter");
+  } catch(error) {
+    const errorBox=document.getElementById("billingTenantError"); if(errorBox)errorBox.hidden=false;
+    if(typeof console!=="undefined"&&console.error)console.error("Mietverhältnisse konnten nicht dargestellt werden",error);
+  }
 }
 
 
+const billingTenantUiState = {
+  tenants:{ search:"", unit:"all", status:"all", sortKey:"", sortDirection:"asc" },
+  units:{ search:"", status:"all", sortKey:"", sortDirection:"asc" },
+  expandedTenant:null
+};
 
-
+function billingTenantText(value) { return String(value ?? "").trim(); }
+function billingTenantSearchText(values) { return values.map(billingTenantText).join(" ").toLocaleLowerCase("de-DE"); }
+function billingTenantCompare(a,b) { return String(a ?? "").localeCompare(String(b ?? ""),"de-DE",{numeric:true,sensitivity:"base"}); }
+function billingTenantUnit(id) { return (Array.isArray(state.wohnungen) ? state.wohnungen : []).find(w => String(w && w.id || "") === String(id || "")) || null; }
+function billingTenantUnitName(id) { const unit=billingTenantUnit(id); return unit ? (unit.bezeichnung || unit.lage || unit.id) : String(id || ""); }
+function billingTenantPeriod(m) { return billingTenantText(m.einzug || "offen") + " – " + billingTenantText(m.auszug || "offen"); }
+function billingTenantSortButton(kind,key,label) {
+  const statePart=billingTenantUiState[kind];
+  const active=statePart.sortKey===key;
+  const arrow=active ? (statePart.sortDirection==="asc" ? "↑" : "↓") : "↕";
+  return '<button class="billing-tenant-sort" type="button" data-ui-action="billingTenant.sort" data-ui-args=\'["'+kind+'","'+key+'"]\' aria-label="Nach '+escapeHtml(label)+' sortieren">'+escapeHtml(label)+' <span aria-hidden="true">'+arrow+'</span></button>';
+}
+function billingTenantSetSearch(kind,value) { if (!billingTenantUiState[kind]) return; billingTenantUiState[kind].search=String(value || ""); renderWohnungen(); }
+function billingTenantSetFilter(kind,key,value) { if (!billingTenantUiState[kind] || !Object.prototype.hasOwnProperty.call(billingTenantUiState[kind],key)) return; billingTenantUiState[kind][key]=String(value || "all"); renderWohnungen(); }
+function billingTenantReset(kind) { if (kind==="tenants") Object.assign(billingTenantUiState.tenants,{search:"",unit:"all",status:"all"}); if (kind==="units") Object.assign(billingTenantUiState.units,{search:"",status:"all"}); renderWohnungen(); }
+function billingTenantToggleDetail(index) { billingTenantUiState.expandedTenant=billingTenantUiState.expandedTenant===Number(index)?null:Number(index); renderWohnungen(); }
+function billingTenantSort(kind,key) { const part=billingTenantUiState[kind]; if (!part) return; if (part.sortKey===key) part.sortDirection=part.sortDirection==="asc"?"desc":"asc"; else { part.sortKey=key; part.sortDirection="asc"; } renderWohnungen(); }
+function billingTenantSetSelectOptions(select,options,current,allLabel) {
+  if (!select) return;
+  select.innerHTML='<option value="all">'+escapeHtml(allLabel)+'</option>'+options.map(value=>'<option value="'+escapeHtml(value)+'"'+(value===current?' selected':'')+'>'+escapeHtml(value)+'</option>').join("");
+}
+function billingTenantDetailHtml(m) {
+  const unit=billingTenantUnit(m.wohnung);
+  const address=[m.strasse,[m.plz,m.ort].filter(Boolean).join(" ")].filter(Boolean).join(", ") || "—";
+  const special=specialCaseBadgesForTenant(m);
+  return '<tr class="billing-tenant-detail-row"><td colspan="8"><div class="billing-tenant-detail"><div class="billing-tenant-detail__heading"><div><strong>'+escapeHtml(m.name || tenantDisplayId(m))+'</strong><small>'+escapeHtml(tenantDisplayId(m))+' · Abrechnungskopie · nur abrechnungsbezogene Prüfung</small></div><button class="secondary" type="button" data-ui-action="billingTenant.toggleDetail" data-ui-args="['+m.originalIndex+']">Detail schließen</button></div><div class="billing-tenant-detail__grid"><section><h3>Zuordnung und Zeitraum</h3><dl><dt>Wohnung</dt><dd>'+escapeHtml(m.wohnung || "—")+' · '+escapeHtml(unit ? (unit.bezeichnung || unit.lage || "") : "nicht im Bestand")+'</dd><dt>Einzug</dt><dd>'+escapeHtml(m.einzug || "offen")+'</dd><dt>Auszug</dt><dd>'+escapeHtml(m.auszug || "offen")+'</dd><dt>Aktive Tage</dt><dd>'+escapeHtml(normalizeActiveDayValue(m.aktiveTage).toLocaleString("de-DE"))+'</dd></dl></section><section><h3>Adresse und Kontakt</h3><dl><dt>Anschrift</dt><dd>'+escapeHtml(address)+'</dd><dt>Telefon</dt><dd>'+escapeHtml(m.telefon || "—")+'</dd><dt>E-Mail</dt><dd>'+escapeHtml(m.email || "—")+'</dd></dl></section><section><h3>Brief und Sonderfall</h3><dl><dt>Rolle</dt><dd>'+escapeHtml(m.abrechnungRolle || "—")+'</dd><dt>Anrede</dt><dd>'+escapeHtml(m.standardanrede || "—")+'</dd><dt>Geschlecht</dt><dd>'+escapeHtml(m.geschlecht || "—")+'</dd><dt>Hinweis</dt><dd>'+special+'</dd></dl></section></div></div></td></tr>';
+}
 function renderEinnahmen() {
   const einnahmenEl = document.getElementById("einnahmenTable");
   const vorausEl = document.getElementById("vorauszahlungenTable");

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="light">
-  <title>NK-Pro UI-/UX-Referenzbibliothek · AP22F6B</title>
+  <title>NK-Pro UI-/UX-Referenzbibliothek · AP22F7B</title>
   <link rel="stylesheet" href="reference.css">
 </head>
 <body>
@@ -193,6 +193,15 @@
         <footer class="billing-overview-reference__footer"><span>5 von 5 Abrechnungen</span><span>Sortierung: aktuell, danach Jahr absteigend</span></footer>
       </article>
       <p class="reference-rule"><strong>Verbindliche Aktionsregel:</strong> Jede verfügbare Zeilenaktion bleibt sichtbar und steht als quadratischer Symbolbutton mit Tooltip, eindeutigem <code>aria-label</code>, sichtbarem Tastaturfokus und deaktiviertem Zustand in genau einer nicht umbrechenden Gruppe. Kein Drei-Punkte-Menü und keine zusammengefassten Aktionen.</p>
+    </section>
+
+    <section id="billing-tenants-page" class="reference-section billing-tenants-reference" data-reference-group="billing-tenants-page">
+      <div class="section-heading"><div><p class="eyebrow">AP22F7B · verbindliche Zielkomponente</p><h2>Nebenkosten abrechnen – Mietverhältnisse</h2><p>Periodengebundene Abrechnungskopie mit kompaktem Datenstand, führender Mietverhältnistabelle und nachgeordneter Wohnungstabelle.</p></div><span class="badge badge--info">UI Referenz 1.0</span></div>
+      <article class="card billing-tenants-reference__status"><div><p class="eyebrow">Datenstand der Abrechnung</p><h3>5 Mietverhältnisse übernommen</h3><p>Änderungen im zentralen Bestand werden nicht automatisch synchronisiert.</p></div><button class="button button--secondary" type="button">Zentralen Bestand übernehmen</button></article>
+      <article class="card billing-tenants-reference__card"><header><div><p class="eyebrow">Periodengebundener Bestand</p><h3>Mietverhältnisse <span>(5)</span></h3></div><span class="status status--success">Abrechnungskopie</span></header><div class="toolbar"><input type="search" aria-label="Mieter oder Wohnung suchen" placeholder="Mieter oder Wohnung suchen …"><select><option>Alle Wohnungen</option></select><select><option>Alle Status</option></select><button class="button button--secondary" type="button">Zurücksetzen</button><small>5 von 5</small></div><div class="billing-tenants-reference__table-wrap"><table class="table"><thead><tr><th>Mieter</th><th>Wohnung</th><th>Mietzeitraum</th><th>Rolle</th><th>Nutzung</th><th>Brief</th><th>Status</th><th>Details</th></tr></thead><tbody><tr><td><strong>Cynthia Melzig</strong><small>M001</small></td><td>W001.EG-L</td><td>15.11.2022 – offen</td><td>Mieter</td><td>Wohnraum</td><td>Standard</td><td><span class="status status--success">Aktiv</span></td><td><button class="icon-button" type="button" title="Details anzeigen" aria-label="Details anzeigen"><svg class="svg-icon" aria-hidden="true"><use href="#icon-eye"></use></svg></button></td></tr><tr class="billing-tenants-reference__detail"><td colspan="8"><strong>Lesedetails</strong><span>Adresse · Kontakt · Briefanrede · Sonderfälle</span></td></tr></tbody></table></div><footer><span>5 von 5 Mietverhältnissen</span><span>Detailinformationen werden bei Bedarf aufgeklappt.</span></footer></article>
+      <article class="card billing-tenants-reference__card"><header><div><p class="eyebrow">Abrechnungsbezogene Einheiten</p><h3>Wohnungen <span>(4)</span></h3></div></header><div class="toolbar"><input type="search" aria-label="Wohnung suchen" placeholder="Wohnung suchen …"><select><option>Alle Status</option></select><button class="button button--secondary" type="button">Zurücksetzen</button><small>4 von 4</small></div><div class="billing-tenants-reference__table-wrap"><table class="table"><thead><tr><th>Wohnung</th><th>Bezeichnung</th><th>Fläche</th><th>Einheiten</th><th>Mietverhältnisse</th><th>Status</th></tr></thead><tbody><tr><td>W001.EG-L</td><td>EG links</td><td>74,50 m²</td><td>1</td><td>1</td><td><select aria-label="Periodenspezifischen Wohnungsstatus"><option>Aktiv</option></select></td></tr></tbody></table></div></article>
+      <div class="notice notice--warning"><svg class="svg-icon" aria-hidden="true"><use href="#icon-alert"></use></svg><span><strong>Hinweise zu Sonderfällen</strong><small>Bestehende Regeln und Severity bleiben unverändert; die Darstellung wird lediglich verdichtet.</small></span></div>
+      <p class="reference-rule"><strong>Verbindliche Abgrenzung:</strong> Keine neuen Datenfelder, Statuswerte, Prüfregeln oder Schreibwege. Kontakt-, Adress- und Briefdaten bleiben reine Lesedetails; nur der vorhandene periodenspezifische Wohnungsstatus ist editierbar.</p>
     </section>
 
     <section id="cards" class="reference-section" data-reference-group="cards">

@@ -134,3 +134,17 @@
 .billing-overview-reference__actions{display:inline-flex;align-items:center;justify-content:center;flex-wrap:nowrap;gap:6px;min-width:max-content;white-space:nowrap}.billing-overview-reference__actions .icon-button{width:34px;height:34px;min-width:34px}.billing-overview-reference__action--warning{color:var(--warning)}
 .billing-overview-reference__footer{display:flex;justify-content:space-between;gap:var(--s3);padding:var(--s3) var(--s4);border-top:1px solid var(--border);background:var(--surface-muted);color:var(--muted);font-size:12px}
 @media(max-width:720px){.billing-overview-reference__header{align-items:flex-start;flex-direction:column}.billing-overview-reference__segments{width:100%}.billing-overview-reference__segments button{flex:1}.billing-overview-reference__toolbar{align-items:stretch;flex-direction:column}.billing-overview-reference__toolbar>*{width:100%}.billing-overview-reference__toolbar small{margin-left:0}.billing-overview-reference__footer{align-items:flex-start;flex-direction:column}}
+
+
+/* AP22F7B – nicht produktive Referenz: Abrechnungs-Mietverhältnisse */
+.billing-tenants-reference{display:grid;gap:16px}
+.billing-tenants-reference__status,.billing-tenants-reference__card>header,.billing-tenants-reference__card>footer{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.billing-tenants-reference__status p,.billing-tenants-reference__card h3{margin:0}
+.billing-tenants-reference__card{padding:0;overflow:hidden}
+.billing-tenants-reference__card>header,.billing-tenants-reference__card>footer{padding:16px 18px}
+.billing-tenants-reference__card .toolbar{margin:0;border-inline:0}
+.billing-tenants-reference__table-wrap{overflow-x:auto}
+.billing-tenants-reference__table-wrap table{min-width:920px}
+.billing-tenants-reference__detail td{background:#f4f8fc}
+.billing-tenants-reference__detail span{display:block;margin-top:4px;color:#52677f}
+@media(max-width:620px){.billing-tenants-reference__status,.billing-tenants-reference__card>header,.billing-tenants-reference__card>footer{align-items:flex-start;flex-direction:column}.billing-tenants-reference__status .button{width:100%}}

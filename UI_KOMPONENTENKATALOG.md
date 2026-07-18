@@ -90,3 +90,8 @@ DUMMY-Komponenten dürfen keine produktiv wirkenden Aktionen oder Speicherwege v
 | Quadratischer Tabellen-Symbolbutton | migriert | Auge, Stift, Abschluss, Archiv und Archiv-Aktualisierung; `title` und `aria-label` vollständig |
 | Nicht umbrechende Aktionsgruppe | migriert | sämtliche je Datensatz verfügbaren Aktionen in bestehender Reihenfolge |
 | Interne responsive Tabellenhülle | migriert | 620 px, 390 px und Zoomäquivalent ohne Dokument-Overflow |
+
+
+## AP22F7B – verwendete Komponenten
+
+Datenstandsblock, kompakte Tabellenkarte, Tabellenwerkzeugleiste, interne Overflow-Hülle, quadratischer Lesedetail-Symbolbutton, Statusbadge, Notice und Leer-/Fehlerzustand.

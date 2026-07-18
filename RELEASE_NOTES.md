@@ -1,3 +1,9 @@
+# Release V99.4.42 – AP22F7B Mietverhältnisse Abrechnung
+
+Dieses Release migriert ausschließlich die periodengebundene Seite „Nebenkosten abrechnen – Mietverhältnisse“. Der zentrale Stammdatenbestand und die Abrechnungskopie bleiben fachlich strikt getrennt. Die vorhandene bestätigungspflichtige Übernahme, Speicherung und Wohnungsstatusänderung verwenden unverändert ihre bisherigen Handler.
+
+Neu ist ausschließlich die freigegebene kompakte Darstellung mit Datenstandsblock, 8-spaltiger Mietverhältnistabelle, aufklappbaren Lesedetails, 6-spaltiger Wohnungstabelle sowie Suche, Filtern, Sortieren und Ergebniszählungen. Datenmodell, Datenschema 5, Snapshot-Grenzen, Persistenz, Migration, Archivierung, Berechnung, Qualitätsregeln, Brief und Druck bleiben unverändert.
+
 # Release V99.4.41 – AP22F6B Korrektur 1
 
 Diese Korrektur bereinigt drei nach der Sichtprüfung festgestellte UI-Abweichungen. Die Übersicht beginnt ohne leeren Hinweisblock direkt im normalen Seitenraster. Die bisher unterhalb der Übersicht eingeblendete Klappbox „1. Abrechnungszeitraum“ entfällt; bei geöffneter Abrechnung steht stattdessen die eindeutig bezeichnete Aktion „Abrechnungszeitraum bearbeiten“ beziehungsweise im schreibgeschützten Zustand „Abrechnungszeitraum anzeigen“ zur Verfügung. Beim Ansehen einer archivierten Abrechnung bleibt der vollständige Navigationsabschnitt „Objekt vorbereiten“ sichtbar.

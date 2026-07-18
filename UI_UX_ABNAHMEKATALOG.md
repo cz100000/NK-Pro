@@ -155,3 +155,8 @@ Eine Seite ist nur migriert, wenn alle anwendbaren Punkte mit **bestanden**, **n
 - [x] Desktop, 620 px, 390 px und 200-Prozent-Zoomäquivalent besitzen keinen horizontalen Dokument-Overflow; bei Bedarf scrollt nur die Tabellenhülle.
 - [x] Positivliste, 392 geschützte Dateien und 25 geschützte Bereiche sind abgeglichen.
 - [x] Fach-, Status-, Speicher-, Lade-, Migrations-, Archivierungs-, Berechnungs-, Brief- und Drucklogik bleiben unverändert.
+
+
+## AP22F7B – Abnahme
+
+Mietverhältnisse vor Wohnungen, keine Klappboxen, keine Kennzahlenkarten, vollständige Lesedetails, 8/6 Zielspalten und interne Tabellen-Scrolls umgesetzt und geprüft.

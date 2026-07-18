@@ -573,14 +573,14 @@ function renderBillingStammdatenStatus() {
   const el = document.getElementById("billingStammdatenStatus");
   if (!el) return;
   if (isArchiveViewer()) {
-    el.innerHTML = '<strong>Archivansicht:</strong> Diese Abrechnung bleibt ein eingefrorener Stand. Der zentrale Bestand wird hier nicht in alte Abrechnungen übernommen.';
+    el.innerHTML = '<span class="nk-ui-status nk-ui-status--neutral">Archivstand</span><small>Die archivierte Abrechnung bleibt eingefroren.</small>';
     return;
   }
   const diff = NK_PRO_MODULES.masterDataActions.stammdatenBillingDiff();
   const applied = state.meta && state.meta.stammdatenAppliedAt ? " Letzte Übernahme: " + dateDe(state.meta.stammdatenAppliedAt) + "." : "";
   el.innerHTML = diff.same
-    ? '<strong>Synchron:</strong> Die Abrechnungskopie entspricht dem zentralen Mieter- und Wohnungsbestand.' + applied
-    : '<strong>Nicht synchron:</strong> Zentraler Bestand ' + diff.masterTenants + ' Mietverhältnisse / ' + diff.masterUnits + ' Wohnungen, Abrechnungskopie ' + diff.billingTenants + ' Mietverhältnisse / ' + diff.billingUnits + ' Wohnungen. Nutze den Button, wenn dieser Bestand die aktuelle Abrechnung überschreiben soll.' + applied;
+    ? '<span class="nk-ui-status nk-ui-status--success">Synchron</span><small>Die Abrechnungskopie entspricht dem zentralen Bestand.' + escapeHtml(applied) + '</small>'
+    : '<span class="nk-ui-status nk-ui-status--warning">Nicht synchron</span><small>Zentral: ' + diff.masterTenants + ' Mietverhältnisse / ' + diff.masterUnits + ' Wohnungen · Abrechnung: ' + diff.billingTenants + ' / ' + diff.billingUnits + '.' + escapeHtml(applied) + '</small>';
 }
 
 
