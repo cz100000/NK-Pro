@@ -1,3 +1,15 @@
+# V99.4.43 – AP22F8B Vorauszahlungen (2026-07-18)
+
+- Seite `einnahmen` als flachen Arbeitsbereich ohne Klappboxen migriert;
+- NK-Vorauszahlungen, Kaltmiete und Korrekturen/Gutschriften in drei klar getrennten Tabellen dargestellt;
+- alle Wohnungen, Mietverhältnisse, Eigentümer-/Privatfälle und Leerstände sichtbar gehalten;
+- nicht abrechenbare Fälle klar gekennzeichnet, gesperrt und aus Berechnung sowie Summen ausgeschlossen;
+- bestehende Gesamtsummen in neutralen Summenzeilen vollständig erhalten;
+- flächige gelbe Eingabehinterlegungen und grüne Summenflächen durch den neutralen Tabellenstandard ersetzt;
+- Suche, Statusfilter, Sortierung, Zurücksetzen und Ergebniszählung als reine UI-Zustände ergänzt;
+- Desktop, 620 px, 390 px und Zoomäquivalent mit ausschließlich internem Tabellen-Scroll abgesichert;
+- Release-, PWA- und Cachekennung auf V99.4.43 / `99.4.43-ap22f8b` fortgeschrieben.
+
 # V99.4.42 – AP22F7B Korrektur 3 (2026-07-18)
 
 - Sichtbaren rechten Tabellenrahmen zentral für alle `nk-ui-table`-Tabellen ergänzt.

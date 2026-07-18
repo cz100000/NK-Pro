@@ -187,3 +187,17 @@ Mietverhältnisse vor Wohnungen, keine Klappboxen, keine Kennzahlenkarten, volls
 - [x] Mietzeiträume auf „Nebenkosten abrechnen → Mietverhältnisse“ erscheinen als `TT.MM.JJJJ`.
 - [x] Sortierung und gespeicherte ISO-Datumswerte bleiben unverändert.
 
+
+
+## AP22F8B – Abnahme Vorauszahlungen
+
+- [x] Seite verwendet einen flachen Dokumentfluss ohne Klappboxen.
+- [x] NK-Vorauszahlungen, Kaltmiete und Korrekturen/Gutschriften stehen in drei getrennten Tabellen.
+- [x] Alle Wohnungen, Mietverhältnisse, Eigentümer-/Privatfälle und Leerstände sind sichtbar.
+- [x] Nicht abrechenbare Fälle sind eindeutig gekennzeichnet, nicht editierbar und aus Berechnung sowie Summen ausgeschlossen.
+- [x] Sämtliche vorhandenen Gesamtsummen bleiben in neutralen Summenzeilen erhalten.
+- [x] Tabellenflächen sind weiß beziehungsweise neutral hellgrau; keine flächig gelben Eingabezellen oder grünen Summenzeilen.
+- [x] Suche, Filter, Sortierung, Zurücksetzen und Ergebniszählung arbeiten rein darstellungsbezogen.
+- [x] Tabellen besitzen rechts den zentralen Abschluss und scrollen auf 620 px und 390 px ausschließlich intern.
+- [x] Schreibschutz sperrt Fachdatenfelder, ohne Suche, Filter und Lesbarkeit einzuschränken.
+- [x] Datenmodell, Berechnung, Persistenz, Migration, Archivierung, Brief und Druck bleiben unverändert.

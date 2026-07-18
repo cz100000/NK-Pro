@@ -1,3 +1,9 @@
+# Projektstand V99.4.43 – AP22F8B Vorauszahlungen
+
+Die technische Seite `einnahmen` entspricht dem freigegebenen und korrigierten AP22F8A-Zielbild. Der bisherige Klappboxaufbau ist durch einen flachen Seitenfluss mit drei getrennten Tabellen für NK-Vorauszahlungen, Kaltmiete sowie Korrekturen/Gutschriften ersetzt. Alle Wohnungen und Belegungsfälle bleiben sichtbar. Nicht abrechenbare Fälle sind gekennzeichnet und gesperrt, bleiben aber unverändert außerhalb von Berechnung und Summen. Sämtliche bestehenden Gesamtsummen sind in neutralen Summenzeilen erhalten.
+
+Navigation, Seitenkopf, Abrechnungskontext, Datenschema 5, Fachlogik, Berechnung, Speichern, Persistenz, Migration, Archivierung, Qualitätsregeln sowie Brief- und Drucksystem bleiben unverändert.
+
 # Projektstand V99.4.42 – AP22F7B Korrektur 3
 
 Der projektweite Tabellenabschluss ist umgesetzt: Alle 19 produktiven Standardtabellen füllen auf Desktop ihre jeweilige Tabellenhülle vollständig aus und besitzen rechts einen klaren Abschluss. Auf 620 px und 390 px bleibt horizontaler Überlauf auf die interne Tabellenhülle begrenzt. Die Änderung ist rein darstellungsbezogen; Fach-, Daten-, Speicher-, Migrations-, Archiv-, Berechnungs-, Brief- und Druckwege sind unverändert.

@@ -1,0 +1,60 @@
+"use strict";
+const assert=require("node:assert/strict");
+const fs=require("node:fs");
+const path=require("node:path");
+const root=path.resolve(__dirname,"..");
+const read=file=>fs.readFileSync(path.join(root,file),"utf8");
+const html=read("index.html");
+const css=read("assets/app.css");
+const costs=read("js/ui-costs.js");
+const controller=read("js/ui-page-controller.js");
+const bindings=read("js/ui-bindings.js");
+
+assert.match(html,/<section class="tab prepayment-page" id="einnahmen"/);
+assert.match(html,/<h1 class="page-header__title">Vorauszahlungen<\/h1>/);
+assert.equal((html.match(/id="incomePrepaymentSection"/g)||[]).length,1);
+assert.equal((html.match(/id="incomeRentSection"/g)||[]).length,1);
+assert.equal((html.match(/id="incomeCorrectionSection"/g)||[]).length,1);
+assert.match(html,/id="incomeCorrectionsTable"/);
+assert.doesNotMatch(html,/Korrektur hierher überführen/);
+assert.equal((html.slice(html.indexOf('<section class="tab prepayment-page" id="einnahmen"'),html.indexOf('</section>',html.indexOf('<section class="tab prepayment-page" id="einnahmen"'))+10).match(/<details\b/g)||[]).length,0);
+
+assert.match(costs,/function prepaymentDisplayCases\(\)/);
+assert.match(costs,/kind:"vacancy"/);
+assert.match(costs,/isPrivateTenant\(tenant\)/);
+assert.match(costs,/isBillableTenant\(tenant\)/);
+assert.match(costs,/Nicht abrechenbare Fälle werden nicht in Berechnung oder Summen einbezogen|Gesamtsumme abrechenbare Fälle/);
+assert.match(costs,/incomeCorrectionsTable/);
+assert.match(costs,/Gesamtsumme aller aktivierten Kostenarten/);
+assert.match(costs,/prepayment-nonbillable/);
+assert.match(bindings,/"cost\.prepaymentSetSearch":call\(handlers, "prepaymentSetSearch"\)/);
+assert.match(bindings,/"cost\.prepaymentSort":call\(handlers, "prepaymentSort"\)/);
+assert.match(controller,/einnahmen:\{title:"Vorauszahlungen",kicker:"Nebenkosten abrechnen",firstSection:null/);
+
+assert.match(css,/#einnahmen \.nk-ui-table td\.editable\{background:#fff!important\}/);
+assert.match(css,/#einnahmen \.prepayment-total-row td\{background:var\(--nk-ui-color-surface-muted\)!important/);
+assert.match(css,/#einnahmen \.prepayment-matrix\{min-width:1180px\}/);
+assert.doesNotMatch(css.slice(css.lastIndexOf("/* AP22F8B")),/background:\s*var\(--yellow\)|background:\s*#fff2cc|background:\s*#e2f0d9/i);
+
+console.log("AP22F8B static: PASS");
+
+const runtime=read("js/app-runtime-config.js");
+const worker=read("service-worker.js");
+const register=read("js/service-worker-register.js");
+const manifest=JSON.parse(read("manifest.webmanifest"));
+const project=JSON.parse(read("nk-pro-project.json"));
+const pkg=JSON.parse(read("package.json"));
+const lock=JSON.parse(read("package-lock.json"));
+assert.match(runtime,/const APP_VERSION = "V99\.4\.43";/);
+assert.match(runtime,/const APP_VERSION_NAME = "AP22F8B-Vorauszahlungen";/);
+assert.match(worker,/const CACHE_NAME = "nk-pro-v99-4-43-ap22f8b";/);
+assert.match(worker,/const BUILD_ID = "99\.4\.43-ap22f8b";/);
+assert.match(register,/const BUILD_ID = "99\.4\.43-ap22f8b";/);
+assert.equal(manifest.version,"99.4.43");
+assert.equal(project.appVersion,"99.4.43");
+assert.equal(project.runtimeBuildId,"99.4.43-ap22f8b");
+assert.equal(project.prepaymentPageMigrationVersion,1);
+assert.equal(pkg.version,"99.4.43");
+assert.equal(lock.version,pkg.version);
+assert.equal(lock.packages[""].version,pkg.version);
+console.log("AP22F8B release metadata: PASS");

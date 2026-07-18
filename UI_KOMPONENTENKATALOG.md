@@ -113,3 +113,17 @@ Für `mieterTable` und `wohnungenTable` wird keine eigene visuelle Tabellenkopfv
 
 Die zentrale Komponente `nk-ui-table` führt den rechten Tabellenabschluss verbindlich selbst: letzte Kopf- und Datenzelle mit sichtbarem rechten Rahmen, rechte Eckradien an Kopf und letzter Datenzeile. Der Standard gilt für alle bestehenden und künftigen Tabellenmigrationen. Mietzeiträume in der Abrechnungs-Mietverhältnistabelle werden als `TT.MM.JJJJ` dargestellt; die Sortierung bleibt auf ISO-Rohwerten.
 
+
+
+## AP22F8B – Ergänzte produktive Komponenten
+
+| Komponente | Produktiver Status | Einsatz |
+|---|---|---|
+| Vollständigkeitsblock für Wohnungs- und Belegungsbestand | migriert | transparente Anzahl aller, abrechenbarer und nicht abrechenbarer Fälle auf `einnahmen` |
+| Vorauszahlungsmatrix mit vollständigem Fallbestand | migriert | Kostenarten plus sämtliche Wohnungen/Belegungsfälle; nicht abrechenbare Zellen neutral gesperrt |
+| Kaltmiettabelle | migriert | vorhandene Kaltmietfelder, automatisch berechnete Werte und neutrale Gesamtsumme |
+| Korrektur-/Gutschriftentabelle | migriert | bestehendes Korrekturfeld als eigener Arbeitsbereich mit unveränderter Ergebnisdarstellung |
+| Neutrale Summenzeile | migriert | stärkere Typografie und Trennlinie ohne grüne Statusfläche |
+| Reine UI-Suche, Statusfilter und Sortierung | migriert | keine Mutation von Fachdaten oder Berechnungsgrundlagen |
+
+Nicht abrechenbare Fälle werden aus Gründen der Vollständigkeit angezeigt, begründen jedoch keine neue Fachlogik und fließen weiterhin nicht in Berechnung oder Summen ein.

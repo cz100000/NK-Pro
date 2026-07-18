@@ -1,7 +1,7 @@
 {
-  "name": "NK-Pro V99.4.42",
+  "name": "NK-Pro V99.4.43",
   "short_name": "NK-Pro",
-  "description": "Lokale Nebenkostenabrechnung mit AP22F7B: kompakte periodengebundene Mietverhältnisse, Lesedetails und unveränderte Bestandsübernahme.",
+  "description": "Lokale Nebenkostenabrechnung mit AP22F8B: vollständige Vorauszahlungsübersicht mit getrennten Tabellen und unveränderter Fachlogik.",
   "lang": "de-DE",
   "id": "./",
   "start_url": "./",
@@ -9,7 +9,7 @@
   "display": "standalone",
   "background_color": "#f4f6f9",
   "theme_color": "#031d41",
-  "version": "99.4.42",
+  "version": "99.4.43",
   "icons": [
     {
       "src": "./icons/icon-180.png",

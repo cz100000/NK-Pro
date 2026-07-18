@@ -1,5 +1,5 @@
-# Release V99.4.42 – AP22F7B Korrektur 3
+# Release V99.4.43 – AP22F8B Vorauszahlungen
 
-Diese Korrektur schließt den projektweiten Tabellenstandard ab. Alle zentralen Standardtabellen besitzen rechts einen sichtbaren Abschluss direkt an der letzten Spalte. Die Regel greift auch bei künftigen Seitenmigrationen automatisch, sofern die verbindliche Komponente `nk-ui-table` verwendet wird. Auf der Abrechnungsseite „Mietverhältnisse“ erscheint der Mietzeitraum im deutschen Format `TT.MM.JJJJ`.
+Die Seite „Nebenkosten abrechnen → Vorauszahlungen“ entspricht jetzt NK-Pro UI Referenz 1.0. Drei getrennte Tabellen führen NK-Vorauszahlungen, Kaltmiete und Korrekturen/Gutschriften. Der vollständige Wohnungs- und Belegungsbestand bleibt sichtbar, während nicht abrechenbare Fälle weiterhin fachlich ausgeschlossen sind. Bestehende Gesamtsummen bleiben erhalten und werden neutral dargestellt.
 
-Unverändert bleiben Datenschema 5, Navigation, Fachlogik, Sortierung, Speicher-, Migrations-, Archivierungs-, Berechnungs-, Brief- und Druckwege. Die Produktversion bleibt V99.4.42; die Cachekennung lautet `99.4.42-ap22f7b-k3`.
+Unverändert bleiben Datenschema 5, Navigation, Berechnungen, Datenwerte, Speicher-, Migrations-, Archivierungs-, Brief- und Druckwege. Die Produktversion lautet V99.4.43; die Cachekennung lautet `99.4.43-ap22f8b`.
