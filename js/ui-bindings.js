@@ -128,6 +128,14 @@
       "billing.setPrepaymentValue":appCall(applicationActions, "billing", "setPrepaymentValue"), "billing.setPrepaymentAdjustmentSetting":appCall(applicationActions, "billing", "setPrepaymentAdjustmentSetting"),
       "billing.showFinalReport":call(handlers, "showFinalBillingReport"), "billing.showAcceptanceProtocol":call(handlers, "showAcceptanceProtocol")
     });
+    registerController("billingReview", "Suche, Filter, Korrekturverweise und dokumentierte Differenzentscheidungen", {
+      "billingReview.setSearch":call(handlers, "billingReviewSetSearch"), "billingReview.setTenantStatus":call(handlers, "billingReviewSetTenantStatus"),
+      "billingReview.setDifferenceStatus":call(handlers, "billingReviewSetDifferenceStatus"), "billingReview.toggleHistory":call(handlers, "billingReviewToggleHistory"),
+      "billingReview.focusOpen":call(handlers, "billingReviewFocusOpen"), "billingReview.markCorrection":call(handlers, "billingReviewMarkCorrection"),
+      "billingReview.openAccept":call(handlers, "billingReviewOpenAccept"), "billingReview.closeAccept":call(handlers, "billingReviewCloseAccept"),
+      "billingReview.saveAcceptance":call(handlers, "billingReviewSaveAcceptance"), "billingReview.openDetail":call(handlers, "billingReviewOpenDetail"),
+      "billingReview.reopen":call(handlers, "billingReviewReopen")
+    });
     registerController("quality", "Zentrale Prüfinteraktion ohne parallele Abrechnungsberechnung", {
       "quality.jumpToIssue":call(handlers, "jumpToQualityIssue"), "quality.reopenIssue":call(handlers, "reopenQualityIssue"),
       "quality.acknowledgeIssue":call(handlers, "acknowledgeQualityIssue"), "quality.jumpFirstOpen":call(handlers, "jumpToFirstOpenQualityIssue"),

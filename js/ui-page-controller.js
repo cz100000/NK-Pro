@@ -28,6 +28,7 @@ function prepareStateForPersistence(reason = "manual") {
       ["Umlage-Eingaben", () => syncUmlageInputs()],
       ["Zählerstammdaten und Messperioden", () => synchronizeMeteringData(state)],
       ["Wasserzähler", () => applyWaterMetersToUmlage()],
+      ["Differenzentscheidungen", () => NK_PRO_MODULES.billingReview.reconcile(state)],
       ["Kostenstatus", () => state.kostenarten.forEach(k => k.status = NK_PRO_MODULES.costActions.kostenStatus(k))],
       ["Datenebenen und Snapshot-Grenzen", () => enforceWorkingStateDataContract(state)]
     ];

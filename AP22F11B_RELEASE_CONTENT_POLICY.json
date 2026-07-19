@@ -1,0 +1,22 @@
+{
+  "workPackage": "AP22F11B",
+  "targetVersion": "V99.4.61",
+  "schemaVersion": 5,
+  "include": [
+    "Produktquellen",
+    "bestehende Projektdokumentation",
+    "Tests",
+    "AP22F11B-Berichte",
+    "AP22F11B-Screenshots",
+    "getesteter Gesamtbestand",
+    "SHA256-Manifeste"
+  ],
+  "exclude": [
+    "node_modules",
+    "temporäre Browserprofile",
+    "test-results",
+    "Recovery-Daten",
+    "Arbeitsverzeichnisse"
+  ],
+  "base": "NK-Pro_V99_4_60_AP22F10G_B_Individuelle_Werte_Korrektur2.zip"
+}

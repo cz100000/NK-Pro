@@ -13,6 +13,7 @@
     "cost.configureFree","cost.setSetting","cost.prepaymentSetTenantValue","cost.openPriceEditor","cost.savePriceFromDialog","cost.resetPriceFromDialog","cost.openSelectionDialog","cost.createFreeRow","cost.deactivateSelected","cost.toggleAllRows","cost.toggleRowSelection","cost.toggleAllVisibleRows","cost.activateDefaultPrepayments","cost.deactivateAllPrepayments","cost.setTenantAllowed","cost.activateFromDialog",
     "billing.createFromModal","billing.confirmDelete","billing.finalize","billing.unlock","billing.setYear","billing.setPeriod","billing.syncPeriodYear","billing.resetAllocationInputs","billing.setManualInputMode","billing.setManualExternalValue","billing.setIndividualValuesImport","billing.resetIndividualValues","billing.setPrepaymentValue","billing.setPrepaymentAdjustmentSetting",
     "meter.setWaterValue","meter.setGenericValue","meter.setWaterSetting",
+    "review.markCorrection","review.accept","review.reopen",
     "document.setBriefSetting","document.refreshBrief",
     "archive.reopenForRework","archive.currentYear","archive.deleteAt","archive.importItems",
     "yearTransition.createBilling","yearTransition.prepareNextYear",

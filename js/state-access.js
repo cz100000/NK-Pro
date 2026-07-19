@@ -32,7 +32,8 @@
   function replace(nextState, options = {}) {
     const configured = requireAdapter();
     const result = configured.replaceState(nextState, options);
-    if (options.commit !== false && configured.commit) configured.commit(options);
+    const committed = options.commit !== false && configured.commit ? configured.commit(options) : true;
+    if (options.requireCommitSuccess && committed === false) throw new Error("Persistenz und Rückleseprüfung sind fehlgeschlagen.");
     if (options.render !== false && configured.render) configured.render(options);
     return result;
   }
@@ -43,7 +44,8 @@
     const state = configured.getState();
     const result = mutator(state);
     if (result && result !== state) configured.replaceState(result, options);
-    if (options.commit !== false && configured.commit) configured.commit(options);
+    const committed = options.commit !== false && configured.commit ? configured.commit(options) : true;
+    if (options.requireCommitSuccess && committed === false) throw new Error("Persistenz und Rückleseprüfung sind fehlgeschlagen.");
     if (options.render !== false && configured.render) configured.render(options);
     return result;
   }
@@ -61,11 +63,13 @@
         const report = options.validate(configured.getState());
         if (report === false || (report && report.ok === false)) throw new Error((report && report.message) || "State-Validierung fehlgeschlagen.");
       }
-      if (options.commit !== false && configured.commit) configured.commit(options);
+      const committed = options.commit !== false && configured.commit ? configured.commit(options) : true;
+      if (options.requireCommitSuccess && committed === false) throw new Error("Persistenz und Rückleseprüfung sind fehlgeschlagen.");
       if (options.render !== false && configured.render) configured.render(options);
       return result;
     } catch(error) {
       configured.replaceState(before, Object.assign({}, options, { commit:false, render:false }));
+      if (options.render !== false && configured.render) configured.render(Object.assign({}, options, { reason:(options.reason || "Transaktion") + " – Rollback" }));
       throw error;
     }
   }

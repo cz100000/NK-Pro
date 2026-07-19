@@ -1,7 +1,7 @@
 {
-  "name": "NK-Pro V99.4.60",
+  "name": "NK-Pro V99.4.61",
   "short_name": "NK-Pro",
-  "description": "Lokale Nebenkostenabrechnung mit AP22F10G-B Korrektur 2: Seitenbreite wie Gesamtkosten, desktopfüllende Tabellen ohne Horizontal-Scroll sowie geschützte Vorjahresanfangsstände.",
+  "description": "Lokale Nebenkostenabrechnung mit AP22F11B: vollständiges Abrechnungsergebnis, dokumentierte Differenzprüfung und signaturgebundene Prüfentscheidungen.",
   "lang": "de-DE",
   "id": "./",
   "start_url": "./",
@@ -9,7 +9,7 @@
   "display": "standalone",
   "background_color": "#f4f6f9",
   "theme_color": "#031d41",
-  "version": "99.4.60",
+  "version": "99.4.61",
   "icons": [
     {
       "src": "./icons/icon-180.png",
@@ -42,5 +42,5 @@
       "purpose": "maskable"
     }
   ],
-  "buildId": "99.4.60-ap22f10g-b-k2"
+  "buildId": "99.4.61-ap22f11b"
 }

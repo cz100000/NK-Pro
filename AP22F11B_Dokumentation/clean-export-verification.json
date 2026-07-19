@@ -1,0 +1,17 @@
+{
+  "ok": true,
+  "output": "nk-pro-gesamtbestand-2025-V99.4.61-AP22F11B-getestet.json",
+  "initial": {
+    "reviews": 0,
+    "diffs": 2,
+    "meter": 769
+  },
+  "roundtrip": {
+    "archives": 4,
+    "meters": 769,
+    "reviews": 0,
+    "diffs": 2
+  },
+  "runtimeErrors": [],
+  "generatedAt": "2026-07-19T19:36:08.188Z"
+}

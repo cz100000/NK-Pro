@@ -66,7 +66,6 @@
       text(a.messzeitraumBis) === text(b.messzeitraumBis) &&
       Number(a.wert) === Number(b.wert) &&
       text(a.einheit) === text(b.einheit) &&
-      text(a.ableseart) === text(b.ableseart) &&
       text(a.rolle) === text(b.rolle);
   }
 

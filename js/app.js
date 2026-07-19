@@ -31,6 +31,10 @@ function configureCoreOrchestrationModules() {
     umlageManual:UMLAGE_MANUAL, copyWorkingOperationalMeta,
     clearFinalization:data => NK_PRO_MODULES.billingWorkflow.clearCurrentBillingFinalization(data)
   });
+  NK_PRO_MODULES.billingReview.configure({
+    stateAccess:NK_PRO_MODULES.stateAccess, calculation:NK_PRO_MODULES.billingCalculation,
+    appVersion:APP_VERSION, now:() => new Date().toISOString()
+  });
   NK_PRO_MODULES.qualityAssurance.configure({
     stateAccess:NK_PRO_MODULES.stateAccess, clone, withIsolatedState,
     archiveActions:NK_PRO_MODULES.archiveActions, documentData:NK_PRO_MODULES.documentData, qualityRules:NK_PRO_MODULES.qualityRules
@@ -70,7 +74,7 @@ function configureCoreOrchestrationModules() {
     masterData:NK_PRO_MODULES.masterDataActions.describe(), cost:NK_PRO_MODULES.costActions.describe(),
     billing:NK_PRO_MODULES.billingWorkflow.describe(), archive:NK_PRO_MODULES.archiveActions.describe(),
     yearTransition:NK_PRO_MODULES.yearTransitionActions.describe(), quality:NK_PRO_MODULES.qualityAssurance.describe(),
-    diagnostics:NK_PRO_MODULES.diagnostics.describe()
+    diagnostics:NK_PRO_MODULES.diagnostics.describe(), review:NK_PRO_MODULES.billingReview.describe()
   });
 }
 
@@ -143,6 +147,7 @@ function configureApplicationActions() {
       specialCases:NK_PRO_MODULES.qualityAssurance.specialCases,
       finalBillingReadiness:NK_PRO_MODULES.qualityAssurance.finalBillingReadiness
     },
+    review:{ markCorrection:NK_PRO_MODULES.billingReview.markCorrection, accept:NK_PRO_MODULES.billingReview.accept, reopen:NK_PRO_MODULES.billingReview.reopen },
     meter:{ setWaterValue:setWaterMeterValue, setGenericValue:setGenericMeterValue, setWaterSetting:setWaterMeterSetting }
   });
 }
@@ -154,7 +159,7 @@ function startUiEvents() {
   return NK_PRO_MODULES.uiEvents.start({ root:document, onError(error, context) { setActionMessage("UI-Aktion fehlgeschlagen: " + errorMessage(error), "err"); renderActionFeedback(); if (typeof console !== "undefined" && console.error) console.error("NK-Pro UI-Controllerfehler", context, error); } });
 }
 function updateUiArchitectureAudit() {
-  const report = Object.freeze({ controllers:NK_PRO_MODULES.uiController.describe(), events:NK_PRO_MODULES.uiEvents.describe(), stateAccess:NK_PRO_MODULES.stateAccess.describe(), applicationActions:NK_PRO_MODULES.applicationActions.describe(), masterDataActions:NK_PRO_MODULES.masterDataActions.describe(), costActions:NK_PRO_MODULES.costActions.describe(), billingWorkflow:NK_PRO_MODULES.billingWorkflow.describe(), archiveActions:NK_PRO_MODULES.archiveActions.describe(), yearTransitionActions:NK_PRO_MODULES.yearTransitionActions.describe(), qualityAssurance:NK_PRO_MODULES.qualityAssurance.describe(), diagnostics:NK_PRO_MODULES.diagnostics.describe(), navigation:NK_PRO_MODULES.navigation.describe(), compatibility:NK_PRO_MODULES.compatibility.describe() });
+  const report = Object.freeze({ controllers:NK_PRO_MODULES.uiController.describe(), events:NK_PRO_MODULES.uiEvents.describe(), stateAccess:NK_PRO_MODULES.stateAccess.describe(), applicationActions:NK_PRO_MODULES.applicationActions.describe(), masterDataActions:NK_PRO_MODULES.masterDataActions.describe(), costActions:NK_PRO_MODULES.costActions.describe(), billingWorkflow:NK_PRO_MODULES.billingWorkflow.describe(), archiveActions:NK_PRO_MODULES.archiveActions.describe(), yearTransitionActions:NK_PRO_MODULES.yearTransitionActions.describe(), qualityAssurance:NK_PRO_MODULES.qualityAssurance.describe(), billingReview:NK_PRO_MODULES.billingReview.describe(), diagnostics:NK_PRO_MODULES.diagnostics.describe(), navigation:NK_PRO_MODULES.navigation.describe(), compatibility:NK_PRO_MODULES.compatibility.describe() });
   NK_PRO_MODULES.runtimeDiagnostics.setUiArchitecture(report); return report;
 }
 

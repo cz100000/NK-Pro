@@ -1,0 +1,33 @@
+{
+  "ok": true,
+  "startedAt": "2026-07-19T19:30:08.337Z",
+  "finishedAt": "2026-07-19T19:30:37.029Z",
+  "checks": [
+    "Gesamtbestand über den echten JSON-Importdialog importiert",
+    "Beide Echtdaten-Differenzen offen und ohne automatische Akzeptanz dargestellt",
+    "Mieter-, Privat- und Leerstandsfälle fachlich getrennt",
+    "Desktop 1440/1640, 125 %, schmale Ansicht und Tabellen-Scroll geprüft",
+    "Korrigieren führt zu Individuelle Werte und hebt den verursachenden Bereich hervor",
+    "Akzeptanzdialog per Tastatur geöffnet, fokussiert und mit Escape geschlossen",
+    "Akzeptanz mit Behandlung, Begründung, Zeit, Version und Signaturen persistent gespeichert",
+    "Akzeptanz nach neuem Browserzustand und Seitenwechsel erhalten",
+    "Änderung macht Akzeptanz ungültig; Rücksetzen reaktiviert sie nicht automatisch",
+    "Alle Differenzen bewusst geprüft; Gesamtstatus und Kontrollgleichung schließen auf 0,00 €",
+    "Simulierter Speicherfehler: keine Erfolgsmeldung, Rollback und sichtbarer Dialoginhalt",
+    "Zählersynchronisierung mehrfach idempotent; keine neuen Messwertdubletten",
+    "Gesamtexport und Reimport nach geleertem Browserzustand ohne Daten-, Archiv- oder Entscheidungsdubletten",
+    "Nur-Ansehen-/Archivkontext blockiert Schreibaktionen"
+  ],
+  "screenshots": [
+    "01_ergebnis_desktop_1440.png",
+    "02_ergebnis_desktop_1640.png",
+    "03_ergebnis_zoom_125.png",
+    "04_ergebnis_schmal.png",
+    "05_akzeptanzdialog.png",
+    "06_differenz_akzeptiert.png",
+    "07_akzeptanz_ungueltig.png",
+    "08_ergebnis_nur_ansehen.png"
+  ],
+  "runtimeErrors": [],
+  "baselineHash": "403e786c6b918d317c0cfc7a9a346a75177810da4b361931c4ae94a1a09d5f14"
+}

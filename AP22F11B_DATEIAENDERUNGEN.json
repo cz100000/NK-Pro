@@ -1,0 +1,104 @@
+{
+  "workPackage": "AP22F11B",
+  "baseVersion": "V99.4.60",
+  "targetVersion": "V99.4.61",
+  "productiveChanges": [
+    {
+      "file": "assets/app.css",
+      "change": "geändert",
+      "purpose": "Seitenspezifische Layout-, Tabellen-, Kachel-, Status-, Dialog- und Responsive-Stile für das Abrechnungsergebnis."
+    },
+    {
+      "file": "index.html",
+      "change": "geändert",
+      "purpose": "Neue Seitenstruktur, vier Kennzahlen, Ergebnis-/Vermieter-/Differenzbereiche, Gesamtabgleich und Akzeptanzdialog."
+    },
+    {
+      "file": "js/app-runtime-config.js",
+      "change": "geändert",
+      "purpose": "V99.4.61, neues Prüfmodul, Datenebenenfeld und Changelog."
+    },
+    {
+      "file": "js/app.js",
+      "change": "geändert",
+      "purpose": "Konfiguration und Registrierung des Prüfmoduls sowie der neuen Anwendungsaktionen."
+    },
+    {
+      "file": "js/billing-context.js",
+      "change": "geändert",
+      "purpose": "Freigabe der neuen Prüfaktionen im Abrechnungskontext."
+    },
+    {
+      "file": "js/billing-review.js",
+      "change": "neu",
+      "purpose": "Neues Fachmodul für generische Differenzerkennung, Status, Akzeptanzen, Signaturen, Historie und Ungültigwerden."
+    },
+    {
+      "file": "js/meter-readings.js",
+      "change": "geändert",
+      "purpose": "Stoppt weitere technisch identische Messwertversionen bei wiederholter Synchronisierung."
+    },
+    {
+      "file": "js/service-worker-register.js",
+      "change": "geändert",
+      "purpose": "Build-/Cachefortschreibung auf V99.4.61."
+    },
+    {
+      "file": "js/state-access.js",
+      "change": "geändert",
+      "purpose": "Commit-Erfolg kann verpflichtend geprüft werden; Transaktionen rollen bei Persistenzfehler zurück und rendern den Rollbackzustand."
+    },
+    {
+      "file": "js/ui-billing-allocation.js",
+      "change": "geändert",
+      "purpose": "Renderer, Filter, Direkteinstiege, Detail-/Akzeptanzabläufe und schreibgeschützte Ansicht der neuen Ergebnis-Seite."
+    },
+    {
+      "file": "js/ui-bindings.js",
+      "change": "geändert",
+      "purpose": "Registrierung der neuen UI-Aktionen."
+    },
+    {
+      "file": "js/ui-page-controller.js",
+      "change": "geändert",
+      "purpose": "Einbindung des neuen Seitenrenderers und Dialogzustands."
+    },
+    {
+      "file": "manifest.webmanifest",
+      "change": "geändert",
+      "purpose": "PWA-Version und Beschreibung V99.4.61."
+    },
+    {
+      "file": "nk-pro-project.json",
+      "change": "geändert",
+      "purpose": "Projekt-, Build- und Featuremetadaten V99.4.61."
+    },
+    {
+      "file": "package-lock.json",
+      "change": "geändert",
+      "purpose": "Paketname und Version V99.4.61."
+    },
+    {
+      "file": "package.json",
+      "change": "geändert",
+      "purpose": "Paketversion, Releaseprüfung und AP22F11B-Testskripte."
+    },
+    {
+      "file": "service-worker.js",
+      "change": "geändert",
+      "purpose": "Cachekennung und neues Prüfmodul in der App-Shell."
+    },
+    {
+      "file": "tests/ap22f11b-billing-result-browser.test.cjs",
+      "change": "neu",
+      "purpose": "Echtdaten-, Browser-, Persistenz-, Fehler-, Ungültigkeits-, Import-/Export- und Layoutprüfung."
+    },
+    {
+      "file": "tests/ap22f11b-billing-result.test.cjs",
+      "change": "neu",
+      "purpose": "Statische Struktur-, Versions-, Sonderlogik- und Schutzprüfung."
+    }
+  ],
+  "removedFiles": [],
+  "schemaVersion": 5
+}
