@@ -13,6 +13,8 @@
   let returnFocusSelector = "";
   let bound = false;
   let requestedFocus = null;
+  const pendingWater = new Map();
+  const pendingExternal = new Map();
 
   function esc(value) {
     if (typeof global.escapeHtml === "function") return global.escapeHtml(String(value == null ? "" : value));
@@ -74,13 +76,17 @@
       ? '<td class="individual-values-case-cell" rowspan="' + String(caseRow.rowSpan) + '"><strong>' + esc(caseRow.unitId || "Ohne Wohnung") + '</strong><span>' + esc(caseRow.label) + '</span>' + caseBadge(caseRow.role) + '<small>' + esc(formatDate(caseRow.start) + " – " + formatDate(caseRow.end)) + '</small></td>'
       : "";
     const typeClass = row.meterType === "hot-water" ? "hot" : "cold";
-    const button = readOnly ? '<span class="individual-values-no-action">–</span>' : '<button type="button" class="individual-values-icon-button" data-individual-water-edit="' + esc(row.meterId) + '" aria-label="Zähler ' + esc(row.meterNumber) + ' bearbeiten" title="Zählerstand bearbeiten"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 20 4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Z"></path><path d="m14 7 3 3"></path></svg></button>';
+    const endValue = row.endValue === "" || row.endValue === null || row.endValue === undefined ? "" : String(row.endValue).replace(".",",");
+    const endField = readOnly
+      ? '<strong>' + formatMeter(row.endValue) + '</strong>'
+      : '<input class="individual-values-inline-input number" inputmode="decimal" data-individual-water-end="' + esc(row.meterId) + '" value="' + esc(endValue) + '" aria-label="Endstand ' + esc(row.meterNumber) + '">';
+    const special = readOnly ? '<span class="individual-values-no-action">–</span>' : '<button type="button" class="individual-values-icon-button" data-individual-water-edit="' + esc(row.meterId) + '" aria-label="Sonderfall für ' + esc(row.meterNumber) + ' bearbeiten" title="Sonderfall / Anfangsstand bearbeiten"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 20 4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Z"></path><path d="m14 7 3 3"></path></svg></button>';
     return '<tr data-individual-water-row="' + esc(row.meterId) + '" data-individual-status="' + esc(row.status) + '">' + caseCell +
       '<td><span class="individual-values-meter-type is-' + typeClass + '"><span aria-hidden="true"></span>' + esc(row.typeLabel) + '</span></td>' +
       '<td><span class="individual-values-meter-number">' + esc(row.meterNumber) + '</span></td>' +
-      '<td class="number-cell">' + formatMeter(row.startValue) + '</td><td class="number-cell">' + formatMeter(row.endValue) + '</td><td class="number-cell"><strong>' + formatMeter(row.consumption) + '</strong></td>' +
+      '<td class="number-cell individual-values-readonly-value">' + formatMeter(row.startValue) + '</td><td class="number-cell individual-values-editable-cell">' + endField + '</td><td class="number-cell"><strong data-individual-water-consumption="' + esc(row.meterId) + '">' + formatMeter(row.consumption) + '</strong></td>' +
       '<td><span class="individual-values-prior is-' + esc(row.priorStatus) + '">' + esc(priorLabel(row)) + '</span></td>' +
-      '<td>' + statusHtml(row.status, row.status === "error" ? "Zählerstand prüfen" : statusText(row.status)) + '</td><td class="individual-values-actions-cell">' + button + '</td></tr>';
+      '<td>' + statusHtml(row.status, row.status === "error" ? "Zählerstand prüfen" : statusText(row.status)) + '</td><td class="individual-values-actions-cell">' + special + '</td></tr>';
   }
 
   function renderWater(summary, available = true) {
@@ -120,6 +126,15 @@
     document.querySelectorAll("[data-individual-period-end]").forEach(node => node.textContent = formatDate(end));
     const priorButton = section.querySelector("[data-individual-prior-open]");
     if (priorButton) priorButton.hidden = isReadOnly() || summary.totalMeters === 0;
+    let actionBar = section.querySelector("[data-individual-water-batch-actions]");
+    if (!actionBar) {
+      actionBar = document.createElement("div");
+      actionBar.className = "individual-values-batch-actions";
+      actionBar.dataset.individualWaterBatchActions = "";
+      comparison.before(actionBar);
+    }
+    actionBar.hidden = isReadOnly();
+    actionBar.innerHTML = '<button type="button" class="primary" data-individual-water-batch-save>Änderungen speichern</button><button type="button" class="secondary" data-individual-water-batch-discard>Verwerfen</button><button type="button" class="secondary" data-individual-prior-open>Fehlende Vorwerte übernehmen</button><span class="individual-values-batch-state" data-individual-water-batch-state>Keine ungespeicherten Änderungen</span>';
 
     comparison.className = "individual-values-comparison is-" + summary.status;
     comparison.innerHTML = comparisonMetrics([
@@ -150,19 +165,35 @@
     return { cost, input, rows, actual, expected, difference, status, tolerance:COST_TOLERANCE };
   }
 
-  function externalSectionHtml(assessment) {
-    const cost = assessment.cost;
+  function externalSectionHtml(assessments) {
     const readOnly = isReadOnly();
-    const rows = assessment.rows.map(row => {
-      const c = row.caseRow;
-      const entry = row.entry || {};
-      const provider = String(entry.provider || assessment.input.importSource || "–");
-      const recordedAt = String(entry.recordedAt || entry.updatedAt || assessment.input.importedAt || "").slice(0,10);
-      const button = readOnly ? '<span class="individual-values-no-action">–</span>' : '<button type="button" class="individual-values-icon-button" data-individual-external-edit="' + esc(cost.id) + '" data-individual-case-key="' + esc(c.caseKey) + '" aria-label="Einzelwert für ' + esc(c.unitId + " " + c.label) + ' bearbeiten" title="Einzelwert bearbeiten"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 20 4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Z"></path><path d="m14 7 3 3"></path></svg></button>';
-      return '<tr data-individual-external-row="' + esc(c.caseKey) + '" data-individual-status="' + esc(row.status) + '"><td class="individual-values-case-cell"><strong>' + esc(c.unitId) + '</strong><span>' + esc(c.label) + '</span>' + caseBadge(c.role) + '<small>' + esc(formatDate(c.start) + " – " + formatDate(c.end)) + '</small></td><td>' + esc(provider) + '</td><td class="number-cell"><strong>' + formatMoney(row.amount) + '</strong></td><td class="number-cell">' + (row.consumption ? formatNumber(row.consumption,0) : "–") + '</td><td>' + esc(recordedAt ? formatDate(recordedAt) : "–") + '</td><td>' + statusHtml(row.status) + '</td><td class="individual-values-actions-cell">' + button + '</td></tr>';
+    if (!assessments.length) return "";
+    const costA = assessments[0];
+    const costB = assessments[1] || null;
+    const byCase = new Map();
+    assessments.forEach(a => a.rows.forEach(row => {
+      if (!byCase.has(row.caseRow.caseKey)) byCase.set(row.caseRow.caseKey, { caseRow:row.caseRow, values:{} });
+      byCase.get(row.caseRow.caseKey).values[a.cost.id] = row;
+    }));
+    const rows = [...byCase.values()].map(group => {
+      const c = group.caseRow;
+      const cells = [costA, costB].filter(Boolean).map(a => {
+        const row = group.values[a.cost.id] || { amount:0, status:"open" };
+        const value = Math.abs(number(row.amount)) > 0.000001 ? String(number(row.amount)).replace(".",",") : "";
+        return '<td class="number-cell individual-values-editable-cell">' + (readOnly ? '<strong>' + formatMoney(row.amount) + '</strong>' : '<input class="individual-values-inline-input money" inputmode="decimal" data-individual-external-inline="' + esc(a.cost.id) + '" data-individual-case-key="' + esc(c.caseKey) + '" value="' + esc(value) + '" aria-label="' + esc(a.cost.kostenart + ' für ' + c.unitId) + '">') + '</td>';
+      }).join("");
+      const sum = [costA,costB].filter(Boolean).reduce((total,a)=>total+number((group.values[a.cost.id]||{}).amount),0);
+      const complete = [costA,costB].filter(Boolean).every(a=>Math.abs(number((group.values[a.cost.id]||{}).amount))>0.000001);
+      const special = readOnly ? '<span class="individual-values-no-action">–</span>' : '<button type="button" class="individual-values-icon-button" data-individual-external-edit="' + esc(costA.cost.id) + '" data-individual-case-key="' + esc(c.caseKey) + '" title="Details / Sonderfall bearbeiten" aria-label="Details für ' + esc(c.unitId) + ' bearbeiten"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m4 20 4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Z"></path><path d="m14 7 3 3"></path></svg></button>';
+      return '<tr data-individual-external-row="' + esc(c.caseKey) + '" data-individual-status="' + (complete?'complete':'open') + '"><td class="individual-values-case-cell"><strong>' + esc(c.unitId) + '</strong><span>' + esc(c.label) + '</span>' + caseBadge(c.role) + '<small>' + esc(formatDate(c.start) + " – " + formatDate(c.end)) + '</small></td><td>' + esc(c.tenantName || c.label || "–") + '</td>' + cells + '<td class="number-cell"><strong data-individual-external-sum="' + esc(c.caseKey) + '">' + formatMoney(sum) + '</strong></td><td>' + statusHtml(complete?'complete':'open', complete?'Vollständig':'Betrag fehlt') + '</td><td class="individual-values-actions-cell">' + special + '</td></tr>';
     }).join("");
-    const actions = readOnly ? "" : '<div class="individual-values-card__actions"><button type="button" class="secondary" data-individual-import-open="' + esc(cost.id) + '">Datei / Werte importieren</button><button type="button" class="secondary individual-values-icon-text" data-individual-reset="' + esc(cost.id) + '">Werte zurücksetzen</button><span class="individual-values-count">' + assessment.rows.length + ' Abrechnungsfälle</span></div>';
-    return '<section class="individual-values-card individual-values-external-card" data-individual-section="external" data-individual-cost="' + esc(cost.id) + '" data-individual-status="' + assessment.status + '"><header class="individual-values-card__header"><div class="individual-values-card__title"><span class="individual-values-section-icon individual-values-section-icon--heat" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13.2 2.5c.6 3.1-.7 4.7-2.1 6.2-1.5 1.6-3 3.2-3 6a4.1 4.1 0 0 0 8.2 0c0-1.5-.6-2.8-1.5-4 2.6 1.3 4.2 3.8 4.2 6.5A7 7 0 0 1 5 17.2c0-3.9 2.3-6.2 4.4-8.4 1.8-1.9 3.5-3.6 3.8-6.3Z"></path><path d="M12.1 12.2c1.4 1.2 2.2 2.5 2.2 4a2.3 2.3 0 1 1-4.6 0c0-1.4.9-2.7 2.4-4Z"></path></svg></span><h2>' + esc(cost.kostenart) + '</h2><span class="individual-values-status is-' + assessment.status + '">' + statusText(assessment.status) + '</span></div>' + actions + '</header><p class="individual-values-card__intro">Beträge aus der externen Einzelabrechnung werden Wohnungen, Leerstand und Privatanteil eindeutig zugeordnet.</p><div class="individual-values-table-wrap"><table class="individual-values-table individual-values-external-table"><thead><tr><th scope="col">Wohnung / Abrechnungsfall</th><th scope="col">Dienstleister / Abrechnung</th><th scope="col">Kosten (Brutto)</th><th scope="col">Verbrauch</th><th scope="col">Erfasst am</th><th scope="col">Status</th><th scope="col">Aktionen</th></tr></thead><tbody>' + (rows || '<tr><td colspan="7"><div class="individual-values-table-empty"><strong>Keine Abrechnungsfälle vorhanden</strong></div></td></tr>') + '<tr class="individual-values-subtotal"><th colspan="2" scope="row">Summe</th><td class="number-cell"><strong>' + formatMoney(assessment.actual) + '</strong></td><td class="number-cell">' + formatNumber(assessment.rows.reduce((sum,row)=>sum+number(row.consumption),0),0) + '</td><td colspan="3"></td></tr></tbody></table></div><div class="individual-values-comparison is-' + assessment.status + '">' + comparisonMetrics([["Individuell zugeordnet",formatMoney(assessment.actual)],["Gesamtkosten",assessment.expected > 0 ? formatMoney(assessment.expected) : "Nicht erfasst"],["Differenz",(assessment.difference >= 0 ? "" : "−") + formatMoney(Math.abs(assessment.difference)),assessment.status],["Abgleichsstatus",assessment.expected <= 0 ? "Gesamtkosten fehlen" : statusText(assessment.status),assessment.status]]) + '</div></section>';
+    const actualA = costA.actual, actualB = costB ? costB.actual : 0;
+    const expected = assessments.reduce((sum,a)=>sum+a.expected,0);
+    const actual = actualA + actualB;
+    const status = assessments.some(a=>a.status==='error')?'error':(assessments.every(a=>a.status==='complete')?'complete':'open');
+    const secondHead = costB ? '<th scope="col">' + esc(costB.cost.kostenart) + '</th>' : '';
+    const secondTotal = costB ? '<td class="number-cell"><strong>' + formatMoney(actualB) + '</strong></td>' : '';
+    return '<section class="individual-values-card individual-values-external-card" data-individual-section="external" data-individual-status="' + status + '"><header class="individual-values-card__header"><div class="individual-values-card__title"><span class="individual-values-section-icon individual-values-section-icon--heat" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13.2 2.5c.6 3.1-.7 4.7-2.1 6.2-1.5 1.6-3 3.2-3 6a4.1 4.1 0 0 0 8.2 0c0-1.5-.6-2.8-1.5-4 2.6 1.3 4.2 3.8 4.2 6.5A7 7 0 0 1 5 17.2c0-3.9 2.3-6.2 4.4-8.4 1.8-1.9 3.5-3.6 3.8-6.3Z"></path></svg></span><h2>Heiz- und Warmwasserzubereitungskosten erfassen</h2><span class="individual-values-status is-' + status + '">' + statusText(status) + '</span></div><span class="individual-values-count">' + byCase.size + ' Abrechnungsfälle</span></header><p class="individual-values-card__intro">Heiz- und Warmwasserzubereitungskosten werden direkt je Wohnung, Leerstand und Privatanteil erfasst. Der Stift bleibt Sonderfällen vorbehalten.</p><div class="individual-values-table-wrap"><table class="individual-values-table individual-values-external-table"><thead><tr><th scope="col">Wohnung / Bereich</th><th scope="col">Empfänger</th><th scope="col">' + esc(costA.cost.kostenart) + '</th>' + secondHead + '<th scope="col">Summe</th><th scope="col">Status</th><th scope="col">Aktionen</th></tr></thead><tbody>' + rows + '<tr class="individual-values-subtotal"><th colspan="2" scope="row">Summe</th><td class="number-cell"><strong>' + formatMoney(actualA) + '</strong></td>' + secondTotal + '<td class="number-cell"><strong>' + formatMoney(actual) + '</strong></td><td colspan="2"></td></tr></tbody></table></div>' + (readOnly?'':'<div class="individual-values-batch-actions"><button type="button" class="primary" data-individual-external-batch-save>Änderungen speichern</button><button type="button" class="secondary" data-individual-external-batch-discard>Verwerfen</button><span class="individual-values-batch-state" data-individual-external-batch-state>Keine ungespeicherten Änderungen</span></div>') + '<div class="individual-values-comparison is-' + status + '">' + comparisonMetrics([[costA.cost.kostenart,formatMoney(actualA)],[costB?costB.cost.kostenart:"Weitere Kosten",costB?formatMoney(actualB):"–"],["Zugeordnet gesamt",formatMoney(actual)],["Vorgabe aus Gesamtkosten",formatMoney(expected)],["Differenz",(actual-expected>=0?"":"−")+formatMoney(Math.abs(actual-expected)),status]]) + '</div></section>';
   }
 
   function updateKpis(water, externalAssessments) {
@@ -250,7 +281,7 @@
     renderWater(water, individualCosts.some(cost => cost.id === "K002"));
     const externalAssessments = individualCosts.filter(cost => cost.id !== "K002").map(externalAssessment);
     const externalRoot = document.getElementById("individualExternalSections");
-    if (externalRoot) externalRoot.innerHTML = externalAssessments.map(externalSectionHtml).join("");
+    if (externalRoot) externalRoot.innerHTML = externalSectionHtml(externalAssessments);
     updateKpis(water, externalAssessments);
     renderChecks(water, externalAssessments);
     applyFilter();
@@ -488,12 +519,40 @@
     returnFocus=trigger; render(); requestAnimationFrame(restoreDialogFocus);
   }
 
+  function updateBatchState(kind) {
+    const map = kind === "water" ? pendingWater : pendingExternal;
+    const node = document.querySelector(kind === "water" ? "[data-individual-water-batch-state]" : "[data-individual-external-batch-state]");
+    if (node) node.textContent = map.size ? map.size + " ungespeicherte Änderung(en)" : "Keine ungespeicherten Änderungen";
+  }
+  function saveWaterBatch() {
+    if (isReadOnly() || !pendingWater.size) return;
+    const changes = [...pendingWater.entries()];
+    pendingWater.clear();
+    changes.forEach(([meterId,value]) => execute("meter","setWaterValue",[meterId,"end",value,"number"]));
+    render();
+  }
+  function saveExternalBatch() {
+    if (isReadOnly() || !pendingExternal.size) return;
+    const changes = [...pendingExternal.values()];
+    pendingExternal.clear();
+    changes.forEach(change => execute("billing","setManualExternalValue",[change.costId,change.caseKey,change.value,"amount"]));
+    render();
+  }
+  function discardBatch(kind) {
+    if (kind === "water") pendingWater.clear(); else pendingExternal.clear();
+    render();
+  }
+
   function connect() {
     if (bound) return;
     bound = true;
     document.addEventListener("click", event => {
       const filter = event.target.closest("#manuellewerte [data-individual-filter]"); if (filter) { setFilter(filter.dataset.individualFilter); return; }
       const refresh = event.target.closest("#manuellewerte [data-individual-refresh]"); if (refresh) { render(); refresh.focus(); return; }
+      if (event.target.closest("#manuellewerte [data-individual-water-batch-save]")) { saveWaterBatch(); return; }
+      if (event.target.closest("#manuellewerte [data-individual-water-batch-discard]")) { discardBatch("water"); return; }
+      if (event.target.closest("#manuellewerte [data-individual-external-batch-save]")) { saveExternalBatch(); return; }
+      if (event.target.closest("#manuellewerte [data-individual-external-batch-discard]")) { discardBatch("external"); return; }
       const waterEdit = event.target.closest("#manuellewerte [data-individual-water-edit]"); if (waterEdit) { openWaterEditor(waterEdit.dataset.individualWaterEdit,waterEdit); return; }
       const externalEdit = event.target.closest("#manuellewerte [data-individual-external-edit]"); if (externalEdit) { openExternalEditor(externalEdit.dataset.individualExternalEdit,externalEdit.dataset.individualCaseKey,externalEdit); return; }
       const importOpen = event.target.closest("#manuellewerte [data-individual-import-open]"); if (importOpen) { openImportDialog(importOpen.dataset.individualImportOpen,importOpen); return; }
@@ -508,6 +567,22 @@
     });
     document.addEventListener("input", event => {
       if (["individualWaterStart","individualWaterEnd"].includes(event.target.id)) updateWaterPreview();
+      const water = event.target.closest("#manuellewerte [data-individual-water-end]");
+      if (water) {
+        pendingWater.set(water.dataset.individualWaterEnd, water.value);
+        const row = calculation().waterMeterRows(state).find(item => item.meterId === water.dataset.individualWaterEnd);
+        const parsed = number(String(water.value || "").replace(",","."));
+        const consumption = row && water.value !== "" ? parsed - number(row.startValue) : 0;
+        const output = document.querySelector('[data-individual-water-consumption="' + CSS.escape(water.dataset.individualWaterEnd) + '"]');
+        if (output) { output.textContent = water.value === "" ? "–" : formatMeter(consumption); output.classList.toggle("is-error", consumption < 0); }
+        updateBatchState("water");
+      }
+      const external = event.target.closest("#manuellewerte [data-individual-external-inline]");
+      if (external) {
+        const key = external.dataset.individualExternalInline + "::" + external.dataset.individualCaseKey;
+        pendingExternal.set(key,{ costId:external.dataset.individualExternalInline, caseKey:external.dataset.individualCaseKey, value:external.value });
+        updateBatchState("external");
+      }
     });
     document.addEventListener("change", event => {
       const file = event.target.closest("#manuellewerte [data-individual-import-file]");

@@ -6858,3 +6858,16 @@ body.billing-readonly-mode #einstellungen .nk-ui-table td.editable,body.billing-
 #start .billing-overview-action svg{width:16px;height:16px}
 .runtime-error-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .runtime-error-box li{overflow-wrap:anywhere}
+
+/* AP22F10F – zentrale Sammelerfassung Wasser und externe Heizkosten */
+.individual-values-inline-input{width:100%;min-width:92px;box-sizing:border-box;border:1px solid #cbd5e1;border-radius:6px;background:#fff;padding:.48rem .58rem;text-align:right;font:inherit;color:#0f172a}
+.individual-values-inline-input:focus{outline:2px solid rgba(23,92,173,.2);border-color:#175cad;box-shadow:0 0 0 1px #175cad}
+.individual-values-editable-cell{background:#fbfdff;padding:.35rem .5rem!important}
+.individual-values-readonly-value{color:#475569;background:#f8fafc}
+.individual-values-batch-actions{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;padding:.75rem .85rem;border-top:1px solid #dbe3ec;background:#f8fafc}
+.individual-values-batch-actions .primary,.individual-values-batch-actions .secondary{min-height:36px}
+.individual-values-batch-state{margin-left:auto;font-size:.82rem;color:#64748b}
+[data-individual-water-consumption].is-error{color:#b42318}
+.individual-values-external-table th:nth-last-child(1),.individual-values-external-table td:nth-last-child(1){width:64px}
+.individual-values-external-table .money{min-width:108px}
+@media (max-width:900px){.individual-values-batch-state{width:100%;margin-left:0}.individual-values-inline-input{min-width:84px}}
