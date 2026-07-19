@@ -164,10 +164,12 @@ async function layout(page, width, height = 1000) {
     const tenantText = await page.locator('#umlageSummaryTable').innerText();
     assert.ok(!tenantText.includes('Erik Zimmermann'), 'private case not displayed as tenant');
     assert.strictEqual(await page.locator('#umlageSummaryTable tbody tr').count(), 6, '4 tenants + 2 vacancy rows');
-    const landlordText = await page.locator('#billingResultLandlordTable').innerText();
+    const landlordText = await page.locator('#billingReviewTable').innerText();
     assert.match(landlordText, /Eigentümer-\/Privat/);
     assert.match(landlordText, /Leerstand/);
-    assert.match(landlordText, /4\.734,53\s*€/);
+    const landlordSummary = await page.locator('#billingLandlordVerifiedSummary').innerText();
+    assert.match(landlordSummary, /Vom Vermieter nach Prüfung tatsächlich zu tragen/);
+    assert.match(landlordSummary, /4\.734,53\s*€/);
     checks.push('Mieter-, Privat- und Leerstandsfälle fachlich getrennt');
 
     const desktop1440 = await layout(page, 1440);
@@ -211,7 +213,7 @@ async function layout(page, width, height = 1000) {
     await acceptViaUi(page, manual.id, 'accepted-other', 'Abweichung mit externer Abrechnung fachlich geprüft.');
     m = await model(page);
     assert.strictEqual(m.differences.find(row => row.id === manual.id).status, 'accepted');
-    assert.strictEqual(m.differences.find(row => row.id === manual.id).record.appVersion, 'V99.4.61');
+    assert.strictEqual(m.differences.find(row => row.id === manual.id).record.appVersion, 'V99.4.62');
     assert.strictEqual(m.summary.openCount, 1);
     await page.screenshot({ path:path.join(SHOTS, '06_differenz_akzeptiert.png'), fullPage:true });
     const entries = await page.evaluate(() => localStorage.__entries());

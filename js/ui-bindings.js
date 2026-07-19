@@ -134,7 +134,7 @@
       "billingReview.focusOpen":call(handlers, "billingReviewFocusOpen"), "billingReview.markCorrection":call(handlers, "billingReviewMarkCorrection"),
       "billingReview.openAccept":call(handlers, "billingReviewOpenAccept"), "billingReview.closeAccept":call(handlers, "billingReviewCloseAccept"),
       "billingReview.saveAcceptance":call(handlers, "billingReviewSaveAcceptance"), "billingReview.openDetail":call(handlers, "billingReviewOpenDetail"),
-      "billingReview.reopen":call(handlers, "billingReviewReopen")
+      "billingReview.closeDetail":call(handlers, "billingReviewCloseDetail"), "billingReview.reopen":call(handlers, "billingReviewReopen")
     });
     registerController("quality", "Zentrale Prüfinteraktion ohne parallele Abrechnungsberechnung", {
       "quality.jumpToIssue":call(handlers, "jumpToQualityIssue"), "quality.reopenIssue":call(handlers, "reopenQualityIssue"),

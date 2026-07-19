@@ -49,8 +49,8 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.61";
-const APP_VERSION_NAME = "AP22F11B-Abrechnungsergebnis";
+const APP_VERSION = "V99.4.62";
+const APP_VERSION_NAME = "AP22F11B-Korrektur1-Abrechnungsergebnis";
 const APP_RELEASE_DATE = "2026-07-19";
 if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – Ergebnis der Abrechnung";
 const DATA_SCHEMA_VERSION = 5;
@@ -118,7 +118,8 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
-  "V99.4.61 AP22F11B migriert Ergebnis der Abrechnung auf das freigegebene Zielbild: vier Kennzahlen, Mieterergebnisse, dokumentierte Vermieteranteile, vollständige Differenzprüfung mit Korrekturverweisen und bewusst bestätigten Akzeptanzen sowie dauerhaft nachvollziehbarer Gesamtabgleich. Akzeptanzen sind an Daten- und Berechnungssignaturen gebunden und werden bei Änderungen ungültig. Zusätzlich verhindert die Zählersynchronisierung technisch identische Messwertdubletten.",
+  "V99.4.62 AP22F11B Korrektur 1 behebt den responsiven Such- und Filterbereich der Mieterergebnisse, richtet alle tabellarischen Beträge rechtsbündig mit tabellarischen Ziffern aus, führt Vermieterkosten und Differenzprüfungen in einer gemeinsamen Kostenkontrolle zusammen, ergänzt den bestätigten Vermieteranteil nach Prüfung, erhält den vollständigen Gesamtabgleich und verlagert Prüfentscheidungsdetails vollständig in einen eigenen barrierearm bedienbaren Dialog.",
+  "V99.4.62 AP22F11B migriert Ergebnis der Abrechnung auf das freigegebene Zielbild: vier Kennzahlen, Mieterergebnisse, dokumentierte Vermieteranteile, vollständige Differenzprüfung mit Korrekturverweisen und bewusst bestätigten Akzeptanzen sowie dauerhaft nachvollziehbarer Gesamtabgleich. Akzeptanzen sind an Daten- und Berechnungssignaturen gebunden und werden bei Änderungen ungültig. Zusätzlich verhindert die Zählersynchronisierung technisch identische Messwertdubletten.",
   "V99.4.60 AP22F10G-B Korrektur 2 stellt für Individuelle Werte dieselbe breite Arbeitsfläche wie Gesamtkosten her und passt Verbrauchs- sowie manuelle Tabellen auf Desktop vollständig ohne horizontalen Tabellenlauf ein. Interner Horizontal-Scroll bleibt ausschließlich für schmale Ansichten erhalten; Tabelleninnenabstand, Zählerfarbmarkierung, Vorjahresstandschutz, Fachlogik und Daten bleiben unverändert.",
   "V99.4.59 AP22F10G-B Korrektur 1 ergänzt Tabelleninnenabstände, blaue und rote Zählerartmarker sowie einen geschützten, nur per Sonderfall freigebbaren Vorjahresanfangsstand. Die in Korrektur 1 zu schmal gesetzte Seitenbreite wird mit V99.4.60 korrigiert.",
   "V99.4.58 entwickelt die Seite Nebenkosten abrechnen – Individuelle Werte auf Basis von V99.4.52 vollständig neu: dynamische Steuerung ausschließlich über aktive Kostenarten und Umlageschlüssel aus Gesamtkosten, generische Verbrauchs- und manuelle Eingabebereiche, reguläre Abrechnungsfälle für Mietverhältnisse, Leerstand und Privatanteil, sichere Vorjahresübernahme ohne Dubletten sowie Persistenz mit Rückleseprüfung. Die verworfenen Produktstände V99.4.53 bis V99.4.57 wurden nicht übernommen.",

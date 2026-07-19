@@ -1,0 +1,19 @@
+{
+  "version": "V99.4.62",
+  "status": "passed",
+  "syntaxUnits": 56,
+  "fixtureCases": 6,
+  "browserGroups": 14,
+  "runtimeErrors": 0,
+  "checks": {
+    "syntax": "passed",
+    "fixtures": "passed",
+    "metering": "passed",
+    "ap22f11bStatic": "passed",
+    "ap22f11bCorrectionStatic": "passed",
+    "ap22f11bCorrectionBrowser": "passed",
+    "ap22f11bBrowser": "passed",
+    "selectedArchitectureRegression": "passed",
+    "realDataPreservation": "passed"
+  }
+}

@@ -1,7 +1,7 @@
 {
   "ok": true,
-  "startedAt": "2026-07-19T19:30:08.337Z",
-  "finishedAt": "2026-07-19T19:30:37.029Z",
+  "startedAt": "2026-07-19T21:13:16.224Z",
+  "finishedAt": "2026-07-19T21:13:45.133Z",
   "checks": [
     "Gesamtbestand über den echten JSON-Importdialog importiert",
     "Beide Echtdaten-Differenzen offen und ohne automatische Akzeptanz dargestellt",

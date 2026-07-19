@@ -1,0 +1,72 @@
+{
+  "ok": true,
+  "generatedAt": "2026-07-19T21:15:03.329455+00:00",
+  "sourceFile": "nk-pro-gesamtbestand-2025-V99.4.58-2026-07-19-16-16-12(3).json",
+  "exportFile": "nk-pro-gesamtbestand-2025-V99.4.62-AP22F11B-Korrektur1-getestet.json",
+  "sourceSha256": "b02a04881a45e8dbf7d190bc6d31a1ad788d44d8db3e04fd8654cd4ab9f36b09",
+  "exportSha256": "2989ea2ca897a18b2100ea3e2719a6cfe7961b73cae2a4320577c850a5891a85",
+  "checks": [
+    {
+      "name": "Wohnungen",
+      "ok": true,
+      "sourceHash": "b9b2435de7a643d6d44c6caae0351aaf64a38f69e87b6f380b786386df25f984",
+      "exportHash": "b9b2435de7a643d6d44c6caae0351aaf64a38f69e87b6f380b786386df25f984"
+    },
+    {
+      "name": "Mietverhältnisse",
+      "ok": true,
+      "sourceHash": "004e65bd612999f600c46708549da6a9287bc50aa40cb920dc8fa315e88e2863",
+      "exportHash": "004e65bd612999f600c46708549da6a9287bc50aa40cb920dc8fa315e88e2863"
+    },
+    {
+      "name": "Kostenarten-Kernwerte",
+      "ok": true,
+      "sourceHash": "6d34de954526b277769fb87ceb068f4afdb6eae16ea8bd7f3bfefe0ddc494003",
+      "exportHash": "6d34de954526b277769fb87ceb068f4afdb6eae16ea8bd7f3bfefe0ddc494003"
+    },
+    {
+      "name": "Vorauszahlungen",
+      "ok": true,
+      "sourceHash": "4ec15a3ca7780a58dba44619588f297dcb002f9431a9ac8c79ddf1905fcca45c",
+      "exportHash": "4ec15a3ca7780a58dba44619588f297dcb002f9431a9ac8c79ddf1905fcca45c"
+    },
+    {
+      "name": "Wasserstände",
+      "ok": true,
+      "sourceHash": "5460e1d8f549c7b39bd2aa9b186b106bea92393d43f80984508e3459d53d2ee7",
+      "exportHash": "5460e1d8f549c7b39bd2aa9b186b106bea92393d43f80984508e3459d53d2ee7"
+    },
+    {
+      "name": "Wasser-Einstellungen",
+      "ok": true,
+      "sourceHash": "d54ddc29c186d72b899ef9481e6b2cfa44bbff348c9cf845c4feaefe8119de3b",
+      "exportHash": "d54ddc29c186d72b899ef9481e6b2cfa44bbff348c9cf845c4feaefe8119de3b"
+    },
+    {
+      "name": "Manuelle/externe Umlagewerte",
+      "ok": true,
+      "sourceHash": "6c681a025cf8becc8d97fb5c64ca9d506faa7708c611a459ed481ab6ff822fff",
+      "exportHash": "6c681a025cf8becc8d97fb5c64ca9d506faa7708c611a459ed481ab6ff822fff"
+    },
+    {
+      "name": "Jahresarchive",
+      "ok": true,
+      "sourceHash": "9d67f36902138d37ebb477b8225da723de437325142673736525999afdb80ecb",
+      "exportHash": "9d67f36902138d37ebb477b8225da723de437325142673736525999afdb80ecb"
+    }
+  ],
+  "counts": {
+    "wohnungen": 7,
+    "mieter": 5,
+    "kostenarten": 41,
+    "jahresarchive": 4,
+    "waterRows": 20,
+    "meterMaster": 44,
+    "meterReadings": 769,
+    "meterPeriods": 10,
+    "reviewRecords": 0,
+    "reviewHistory": 0
+  },
+  "schemaVersion": 5,
+  "exportedWithAppVersion": "V99.4.62"
+}

@@ -1,5 +1,5 @@
-const CACHE_NAME = "nk-pro-v99-4-61-ap22f11b";
-const BUILD_ID = "99.4.61-ap22f11b";
+const CACHE_NAME = "nk-pro-v99-4-62-ap22f11b-k1";
+const BUILD_ID = "99.4.62-ap22f11b-k1";
 const CACHE_PREFIX = "nk-pro-";
 const APP_SHELL = [
   "./",
@@ -63,6 +63,7 @@ const APP_SHELL = [
   "./js/ui-metering.js",
   "./js/ui-metering.js?v=" + BUILD_ID,
   "./js/ui-billing-allocation.js",
+  "./js/ui-billing-allocation.js?v=" + BUILD_ID,
   "./js/ui-individual-values.js",
   "./js/ui-documents.js",
   "./js/ui-table-actions.js",

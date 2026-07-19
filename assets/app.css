@@ -6907,14 +6907,16 @@ body.billing-readonly-mode #einstellungen .nk-ui-table td.editable,body.billing-
 #umlage .billing-result-card__header h2{margin:0;color:#173454;font-size:16px;line-height:1.35}
 #umlage .billing-result-card__header p{margin:4px 0 0;color:#5a6e84;font-size:12px}
 #umlage .billing-result-card__header--actions{align-items:center}
-#umlage .billing-result-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 18px 12px}
-#umlage .billing-result-search{flex:1;max-width:530px}
+#umlage .billing-result-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 18px 12px;flex-wrap:wrap}
+#umlage .billing-result-search{flex:1 1 320px;min-width:220px;max-width:530px}
 #umlage .billing-result-search input{width:100%}
-#umlage .billing-result-toolbar select,#umlage .billing-review-toolbar select{min-width:170px}
+#umlage .billing-result-toolbar select{flex:0 0 210px;width:auto;min-width:170px;max-width:260px}
+#umlage .billing-review-toolbar select{width:auto;min-width:170px;max-width:260px}
 #umlage .billing-result-table-wrap{margin:0 12px 0;overflow-x:hidden;border:1px solid #dce4ed;border-radius:9px;background:#fff}
 #umlage .billing-result-table,#umlage .billing-result-landlord-table,#umlage .billing-review-table{width:100%;min-width:0;table-layout:fixed}
 #umlage .billing-result-table th,#umlage .billing-result-table td,#umlage .billing-result-landlord-table th,#umlage .billing-result-landlord-table td,#umlage .billing-review-table th,#umlage .billing-review-table td{padding:9px 8px;vertical-align:middle;font-size:11px;line-height:1.3;overflow-wrap:anywhere}
 #umlage .billing-result-table thead th,#umlage .billing-result-landlord-table thead th,#umlage .billing-review-table thead th{background:#f2f5f8;color:#263e59;font-size:10.5px;font-weight:700;white-space:normal}
+#umlage .billing-result-number{text-align:right;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
 #umlage .billing-result-table th:nth-child(1){width:5%}
 #umlage .billing-result-table th:nth-child(2){width:18%}
 #umlage .billing-result-table th:nth-child(3){width:9%}
@@ -6945,25 +6947,38 @@ body.billing-readonly-mode #einstellungen .nk-ui-table td.editable,body.billing-
 #umlage .billing-review-count.is-complete{background:#ebf8ef;color:#147440;border:1px solid #b9e3c8}
 #umlage .billing-review-table th:nth-child(1){width:13%}
 #umlage .billing-review-table th:nth-child(2){width:20%}
-#umlage .billing-review-table th:nth-child(3),#umlage .billing-review-table th:nth-child(4){width:9%}
-#umlage .billing-review-table th:nth-child(5){width:8%}
-#umlage .billing-review-table th:nth-child(6){width:6%}
-#umlage .billing-review-table th:nth-child(7){width:10%}
-#umlage .billing-review-table th:nth-child(8){width:12%}
-#umlage .billing-review-table th:nth-child(9){width:13%}
+#umlage .billing-review-table th:nth-child(3),#umlage .billing-review-table th:nth-child(4){width:10%}
+#umlage .billing-review-table th:nth-child(5){width:9%}
+#umlage .billing-review-table th:nth-child(6){width:18%}
+#umlage .billing-review-table th:nth-child(7){width:9%}
+#umlage .billing-review-table th:nth-child(8){width:11%}
 #umlage .billing-review-description span{display:block;margin-top:3px;color:#65788d;font-size:9.5px}
 #umlage .billing-review-actions{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
 #umlage .billing-review-actions button{min-height:29px;padding:4px 7px;font-size:10px;white-space:nowrap}
 #umlage .billing-review-readonly{color:#64778c;font-size:10px}
-#umlage .billing-review-detail{margin:12px 18px 16px;padding:13px;border:1px solid #74bd91;border-radius:8px;background:#f5fcf7}
-#umlage .billing-review-detail header{display:flex;justify-content:space-between;gap:12px;align-items:center}
-#umlage .billing-review-detail header strong,#umlage .billing-review-detail header span{display:block}
-#umlage .billing-review-detail header span{margin-top:2px;color:#526a5c;font-size:10px}
-#umlage .billing-review-detail dl{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:0;margin:12px 0 0}
-#umlage .billing-review-detail dl>div{min-width:0;padding:0 10px;border-left:1px solid #cce6d5}
-#umlage .billing-review-detail dl>div:first-child{padding-left:0;border-left:0}
-#umlage .billing-review-detail dt{font-size:9px;font-weight:700;color:#516b5a}
-#umlage .billing-review-detail dd{margin:3px 0 0;font-size:10px;overflow-wrap:anywhere}
+#umlage .billing-review-group th{position:static!important;padding:7px 9px!important;border-top:1px solid #d9e2ec!important;border-bottom:1px solid #d9e2ec!important;background:#f7f9fc!important;color:#28425d!important;font-size:10.5px!important;text-align:left!important;letter-spacing:.01em}
+#umlage .billing-review-group th span{display:inline-flex;margin-left:6px;padding:1px 6px;border-radius:999px;background:#fff;border:1px solid currentColor;font-size:9px;line-height:1.4}
+#umlage .billing-review-group--open th{border-left:3px solid #ef9b26!important;color:#9a5605!important;background:#fffaf1!important}
+#umlage .billing-review-group--landlord th{border-left:3px solid #27a15f!important;color:#176b40!important;background:#f3fbf6!important}
+#umlage .billing-review-group--accepted th{border-left:3px solid #2877d6!important;color:#1e5b9f!important;background:#f3f8ff!important}
+#umlage .billing-review-group--resolved th{border-left:3px solid #5b88bb!important;color:#395f88!important;background:#f5f8fb!important}
+#umlage .billing-review-group--invalid th{border-left:3px solid #8a6aaf!important;color:#68498e!important;background:#faf7fd!important}
+#umlage .billing-review-group--history th{border-left:3px solid #9aa8b7!important;color:#5d6d7e!important;background:#fafbfd!important}
+#umlage .billing-landlord-summary{margin:14px 12px 16px}
+#umlage .billing-landlord-summary__frame{overflow:hidden;border:1px solid #9ebee8;border-radius:9px;background:#fff}
+#umlage .billing-landlord-summary__frame>header{padding:10px 13px;border-bottom:1px solid #cbd9e8;background:#f3f7fd}
+#umlage .billing-landlord-summary__frame h3{margin:0;color:#164f9d;font-size:12px}
+#umlage .billing-landlord-summary__equation{display:flex;align-items:stretch;overflow-x:auto}
+#umlage .billing-landlord-summary__equation>b{display:grid;place-items:center;flex:0 0 28px;color:#26425f;font-size:16px}
+#umlage .billing-landlord-summary__term{display:flex;flex:1 1 150px;min-width:128px;flex-direction:column;justify-content:center;gap:6px;padding:13px 10px;border-right:1px solid #e0e7ef;text-align:center}
+#umlage .billing-landlord-summary__term span{color:#52677f;font-size:9.5px;line-height:1.3}
+#umlage .billing-landlord-summary__term strong{color:#163a61;font-size:15px;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1;white-space:nowrap}
+#umlage .billing-landlord-summary__term.is-total{min-width:190px;border-right:0;background:#eef5ff}
+#umlage .billing-landlord-summary__term.is-total span,#umlage .billing-landlord-summary__term.is-total strong{color:#0f4a9a;font-weight:800}
+#umlage .billing-landlord-summary__status{display:flex;align-items:center;gap:8px;padding:9px 13px;border-top:1px solid #e0e7ef;font-size:10px}
+#umlage .billing-landlord-summary__status>span{display:grid;place-items:center;width:18px;height:18px;border:1px solid currentColor;border-radius:50%;font-weight:800}
+#umlage .billing-landlord-summary__status.is-preliminary{background:#fff9ef;color:#9a5a0a}
+#umlage .billing-landlord-summary__status.is-final{background:#f2fbf5;color:#177344}
 #umlage .billing-control-equation{display:flex;align-items:stretch;justify-content:center;gap:10px;padding:5px 18px 18px;overflow-x:auto}
 #umlage .billing-control-equation>b{align-self:center;color:#26425f;font-size:17px}
 #umlage .billing-control-term{display:flex;flex:1 1 135px;min-width:115px;max-width:180px;flex-direction:column;justify-content:center;gap:4px;padding:12px;border:1px solid #cbd6e3;border-radius:8px;background:#fbfcfe;text-align:center}
@@ -6998,6 +7013,19 @@ body.billing-readonly-mode #einstellungen .nk-ui-table td.editable,body.billing-
 .billing-review-dialog__difference{display:grid;gap:3px;padding:11px;border:1px solid #d5e0eb;border-radius:8px;background:#f7f9fc}
 .billing-review-dialog__difference span{font-size:10px;color:#5b6e82}
 .billing-review-dialog__difference b{color:#b62c37;font-size:12px}
+.billing-review-detail-dialog{width:min(680px,calc(100vw - 32px));max-width:680px}
+.billing-review-detail-dialog__body{gap:16px}
+.billing-review-detail-summary{display:grid;grid-template-columns:1fr auto;gap:4px 12px;padding:13px;border:1px solid #cbd8e5;border-radius:9px;background:#f7f9fc}
+.billing-review-detail-summary strong{font-size:13px;color:#173a5d}
+.billing-review-detail-summary span{grid-column:1/2;color:#5a6f84;font-size:10.5px}
+.billing-review-detail-summary b{grid-column:2/3;grid-row:1/4;align-self:center;white-space:nowrap}
+.billing-review-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;margin:0;border:1px solid #dce4ed;border-radius:9px;overflow:hidden}
+.billing-review-detail-grid>div{min-width:0;padding:12px;border-right:1px solid #e1e7ee;border-bottom:1px solid #e1e7ee;background:#fff}
+.billing-review-detail-grid>div:nth-child(2n){border-right:0}
+.billing-review-detail-grid>div:nth-last-child(-n+2){border-bottom:0}
+.billing-review-detail-grid__wide{grid-column:1/-1;border-right:0!important}
+.billing-review-detail-grid dt{font-size:9.5px;font-weight:700;color:#52677f}
+.billing-review-detail-grid dd{margin:4px 0 0;color:#173454;font-size:11px;line-height:1.45;overflow-wrap:anywhere}
 .billing-review-confirm{grid-template-columns:auto 1fr!important;align-items:start;font-weight:500!important;line-height:1.4}
 .billing-review-confirm input{width:auto!important;margin-top:2px}
 .billing-review-dialog__error{padding:9px 11px;border:1px solid #eca7ac;border-radius:7px;background:#fff1f2;color:#9c2530;font-size:11px}
@@ -7006,16 +7034,23 @@ body.billing-readonly-mode #einstellungen .nk-ui-table td.editable,body.billing-
   #umlage .billing-result-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
   #umlage .billing-result-status-grid{grid-template-columns:1fr 1fr}
   #umlage .billing-result-status-grid>.billing-result-card:last-child{grid-column:1/-1}
-  #umlage .billing-review-detail dl{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:12px}
-  #umlage .billing-review-detail dl>div:nth-child(4){border-left:0;padding-left:0}
 }
 @media(max-width:980px){
   #umlage .billing-result-table-wrap{overflow-x:auto}
   #umlage .billing-result-table{min-width:1040px;table-layout:auto}
   #umlage .billing-result-landlord-table{min-width:850px;table-layout:auto}
   #umlage .billing-review-table{min-width:1120px;table-layout:auto}
+  #umlage .billing-landlord-summary__equation{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  #umlage .billing-landlord-summary__equation>b{display:none}
+  #umlage .billing-landlord-summary__term{min-width:0;border-bottom:1px solid #e0e7ef}
+  #umlage .billing-landlord-summary__term.is-total{grid-column:1/-1;min-width:0;border-bottom:0}
   #umlage .billing-result-table thead th,#umlage .billing-result-landlord-table thead th,#umlage .billing-review-table thead th{white-space:nowrap;width:auto!important}
   #umlage .billing-control-equation{justify-content:flex-start}
+}
+@media(max-width:840px){
+  #umlage .billing-result-toolbar{align-items:stretch;flex-direction:column}
+  #umlage .billing-result-search{flex:0 0 auto;width:100%;min-width:0;max-width:none}
+  #umlage .billing-result-toolbar select{flex:0 0 auto;width:100%;min-width:0;max-width:none}
 }
 @media(max-width:720px){
   #umlage .billing-result-kpis,#umlage .billing-result-status-grid{grid-template-columns:1fr}
@@ -7023,9 +7058,13 @@ body.billing-readonly-mode #einstellungen .nk-ui-table td.editable,body.billing-
   #umlage .billing-result-card__header,#umlage .billing-result-card__header--actions,#umlage .billing-result-toolbar{align-items:stretch;flex-direction:column}
   #umlage .billing-review-toolbar{justify-content:flex-start}
   #umlage .billing-result-search{max-width:none}
-  #umlage .billing-review-detail dl{grid-template-columns:1fr}
-  #umlage .billing-review-detail dl>div{padding:8px 0;border-left:0;border-top:1px solid #cce6d5}
-  #umlage .billing-review-detail dl>div:first-child{border-top:0}
+  .billing-review-detail-grid{grid-template-columns:1fr}
+  .billing-review-detail-grid>div{border-right:0;border-bottom:1px solid #e1e7ee!important}
+  .billing-review-detail-grid>div:last-child{border-bottom:0!important}
+  .billing-review-detail-summary{grid-template-columns:1fr}
+  .billing-review-detail-summary b{grid-column:1;grid-row:auto;justify-self:start}
+  #umlage .billing-landlord-summary__equation{grid-template-columns:1fr}
+  #umlage .billing-landlord-summary__term.is-total{grid-column:1}
 }
 
 /* AP22F11B – project-wide neutral card and table surface overrides. */
@@ -7050,6 +7089,5 @@ body:not(.document-print-window) .billing-review-dialog__header .page-header__ki
 #umlage .billing-review-target-flash{animation:billing-review-target-flash 2.2s ease-out}
 @keyframes billing-review-target-flash{0%,35%{box-shadow:0 0 0 4px rgba(20,95,215,.22)}100%{box-shadow:none}}
 @media(max-width:1180px) and (min-width:981px){
-  #umlage .billing-review-table th:nth-child(2){width:20%}
   #umlage .billing-review-actions{flex-direction:column;align-items:stretch}
 }

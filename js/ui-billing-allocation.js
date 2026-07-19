@@ -76,14 +76,39 @@ function billingResultCostTreatmentIsLandlord(cost) {
 }
 function billingResultLandlordRows(model) {
   const rows=[];
-  model.calculation.costResults.forEach(row => {
-    const cost=row.cost || {};
-    if (Math.abs(num(row.privateShare)) > 0.005) rows.push({ category:"Privatanteil", description:(cost.kostenart || "Kostenart")+" · Eigentümer-/Privatfall", amount:num(row.privateShare), treatment:"Vermieter trägt – Privatanteil", status:"Geprüft", costId:cost.id || "" });
-    if (Math.abs(num(row.vacancyShare)) > 0.005) rows.push({ category:"Leerstandskosten", description:(cost.kostenart || "Kostenart")+" · leerstehende Wohnungen", amount:num(row.vacancyShare), treatment:"Vermieter trägt – Leerstand", status:"Geprüft", costId:cost.id || "" });
-    const intentional = billingResultCostTreatmentIsLandlord(cost) ? Math.max(0, num(row.ownerShare)-num(row.documentedOwnerShare)) : 0;
-    if (intentional > 0.005) rows.push({ category:"Nicht umlagefähige Kosten", description:cost.kostenart || "Kostenart", amount:intentional, treatment:"Vermieter trägt – nicht umlagefähig", status:"Geprüft", costId:cost.id || "" });
+  model.calculation.costResults.forEach(allocation => {
+    const cost=allocation.cost || {};
+    const costId=String(cost.id || "");
+    const costName=cost.kostenart || "Kostenart";
+    if (Math.abs(num(allocation.privateShare)) > 0.005) rows.push({
+      id:"LANDLORD-PRIVATE-"+costId, kind:"private", area:"Privatanteil", description:costName+" · Eigentümer-/Privatfall",
+      source:"Abrechnungsrolle Eigentümer/Privat", amount:num(allocation.privateShare), treatment:"Vermieter trägt – Privatanteil",
+      status:"Geprüft", statusClass:"ok", targetTab:"mieterverwaltung", costId
+    });
+    if (Math.abs(num(allocation.vacancyShare)) > 0.005) rows.push({
+      id:"LANDLORD-VACANCY-"+costId, kind:"vacancy", area:"Leerstandskosten", description:costName+" · leerstehende Wohnungen",
+      source:"Abrechnungsfälle mit Rolle Leerstand", amount:num(allocation.vacancyShare), treatment:"Vermieter trägt – Leerstand",
+      status:"Geprüft", statusClass:"ok", targetTab:"manuellewerte", costId
+    });
+    const intentional=billingResultCostTreatmentIsLandlord(cost) ? Math.max(0,num(allocation.ownerShare)-num(allocation.documentedOwnerShare)) : 0;
+    if (intentional > 0.005) rows.push({
+      id:"LANDLORD-NONALLOCABLE-"+costId, kind:"nonallocable", area:"Nicht umlagefähige Kosten", description:costName,
+      source:"Behandlung der Kostenart unter Gesamtkosten", amount:intentional, treatment:"Vermieter trägt – nicht umlagefähig",
+      status:"Geprüft", statusClass:"ok", targetTab:"einstellungen", costId
+    });
   });
-  model.differences.filter(row => row.status === NK_PRO_MODULES.billingReview.STATUS.LANDLORD).forEach(row => rows.push({ category:"Bestätigter Vermieteranteil", description:row.area+" · "+row.description, amount:row.monetaryAmount, treatment:row.record && row.record.treatmentLabel || "Vermieter trägt", status:"Vermieter trägt", differenceId:row.id }));
+  const treatmentKinds={
+    "landlord-private":"private",
+    "landlord-vacancy":"vacancy",
+    "landlord-non-allocable":"nonallocable",
+    "landlord-other":"other"
+  };
+  model.differences.filter(row => row.status === NK_PRO_MODULES.billingReview.STATUS.LANDLORD).forEach(row => rows.push({
+    id:"LANDLORD-DECISION-"+row.id, kind:treatmentKinds[row.record && row.record.treatment] || "other", area:row.area,
+    description:row.description, source:row.source, amount:row.monetaryAmount,
+    treatment:row.record && row.record.treatmentLabel || "Vermieter trägt – sonstiger Anteil",
+    status:"Vermieter trägt", statusClass:"ok", differenceId:row.id, decisionRow:row, record:row.record
+  }));
   return rows;
 }
 function billingResultVacancyRows(model) {
@@ -100,25 +125,71 @@ function billingResultVacancyRows(model) {
 function billingResultKpiHtml(label, value, icon, tone, detail) {
   return '<article class="billing-result-kpi billing-result-kpi--'+tone+'"><span class="billing-result-kpi__icon">'+billingResultIcon(icon)+'</span><div><span class="billing-result-kpi__label">'+escapeHtml(label)+'</span><strong>'+escapeHtml(value)+'</strong>'+(detail?'<span class="billing-result-kpi__detail">'+escapeHtml(detail)+'</span>':'')+'</div></article>';
 }
+function billingResultDifferenceActions(row, readOnly) {
+  const historyRow=row.isHistory===true;
+  if (readOnly) return '<span class="billing-review-readonly">Nur ansehen</span>';
+  if (historyRow || row.isResolved) return '<div class="billing-review-actions"><button class="secondary" type="button"'+billingReviewActionAttributes("billingReview.openDetail",[row.id])+'>Details</button></div>';
+  if ([NK_PRO_MODULES.billingReview.STATUS.OPEN,NK_PRO_MODULES.billingReview.STATUS.INVALID,NK_PRO_MODULES.billingReview.STATUS.IN_CORRECTION].includes(row.status)) {
+    return '<div class="billing-review-actions"><button class="secondary" type="button"'+billingReviewActionAttributes("billingReview.markCorrection",[row.id])+'><span aria-hidden="true">✎</span> Korrigieren</button><button class="secondary" type="button"'+billingReviewActionAttributes("billingReview.openAccept",[row.id])+'><span aria-hidden="true">✓</span> Akzeptieren</button></div>';
+  }
+  return '<div class="billing-review-actions"><button class="secondary" type="button"'+billingReviewActionAttributes("billingReview.openDetail",[row.id])+'>Details</button><button class="secondary" type="button"'+billingReviewActionAttributes("billingReview.openAccept",[row.id])+'>Ändern</button></div>';
+}
+function billingResultDifferenceTreatment(row) {
+  if (row.status === NK_PRO_MODULES.billingReview.STATUS.IN_CORRECTION) return "Korrektur auf Ursprungsseite begonnen";
+  if (row.status === NK_PRO_MODULES.billingReview.STATUS.INVALID) return (row.record && row.record.treatmentLabel ? row.record.treatmentLabel+" – ungültig" : "Erneute Prüfung erforderlich");
+  if (row.status === NK_PRO_MODULES.billingReview.STATUS.RESOLVED) return "Durch Korrektur erledigt";
+  return row.record && row.record.treatmentLabel || "Noch keine Entscheidung";
+}
 function billingResultDifferenceRow(row, readOnly) {
   const statusClass=billingReviewStatusClass(row.status);
   const historyRow=row.isHistory===true;
-  let actions='';
-  if (readOnly) actions='<span class="billing-review-readonly">Nur ansehen</span>';
-  else if (historyRow) actions='<div class="billing-review-actions"><button class="secondary" type="button"'+billingReviewActionAttributes("billingReview.openDetail",[row.id])+'>Details</button></div>';
-  else if ([NK_PRO_MODULES.billingReview.STATUS.OPEN,NK_PRO_MODULES.billingReview.STATUS.INVALID,NK_PRO_MODULES.billingReview.STATUS.IN_CORRECTION].includes(row.status)) {
-    actions='<div class="billing-review-actions"><button class="secondary" type="button"'+billingReviewActionAttributes("billingReview.markCorrection",[row.id])+'><span aria-hidden="true">✎</span> Korrigieren</button><button class="secondary" type="button"'+billingReviewActionAttributes("billingReview.openAccept",[row.id])+'><span aria-hidden="true">✓</span> Akzeptieren</button></div>';
-  } else {
-    actions='<div class="billing-review-actions"><button class="secondary" type="button"'+billingReviewActionAttributes("billingReview.openDetail",[row.id])+'>Details</button><button class="secondary" type="button"'+billingReviewActionAttributes("billingReview.openAccept",[row.id])+'>Ändern</button></div>';
-  }
-  return '<tr data-review-id="'+escapeHtml(row.id)+'"'+(historyRow?' data-review-history="true"':'')+'><td>'+escapeHtml(row.area)+(historyRow?'<span class="billing-review-history-label">Prüfverlauf</span>':'')+'</td><td class="billing-review-description">'+escapeHtml(row.description)+'<span>'+escapeHtml(row.source)+'</span></td><td>'+billingReviewFormat(row.calculatedValue,row.unit)+'</td><td>'+billingReviewFormat(row.controlValue,row.unit)+'</td><td><strong>'+billingReviewFormat(row.difference,row.unit,true)+'</strong></td><td>'+escapeHtml(row.unit || "–")+'</td><td><span class="status '+statusClass+'">'+escapeHtml(row.label)+'</span></td><td>'+escapeHtml(row.record && row.record.reason || "–")+'</td><td>'+actions+'</td></tr>';
+  const actions=billingResultDifferenceActions(row,readOnly);
+  return '<tr data-review-id="'+escapeHtml(row.id)+'"'+(historyRow?' data-review-history="true"':'')+'><td><strong>'+escapeHtml(row.area)+'</strong>'+(historyRow?'<span class="billing-review-history-label">Prüfverlauf</span>':'')+'</td><td class="billing-review-description">'+escapeHtml(row.description)+'<span>'+escapeHtml(row.source || "–")+'</span></td><td class="billing-result-number">'+billingReviewFormat(row.calculatedValue,row.unit)+'</td><td class="billing-result-number">'+billingReviewFormat(row.controlValue,row.unit)+'</td><td class="billing-result-number"><strong>'+billingReviewFormat(row.difference,row.unit,true)+'</strong></td><td>'+escapeHtml(billingResultDifferenceTreatment(row))+'</td><td><span class="status '+statusClass+'">'+escapeHtml(row.label)+'</span></td><td>'+actions+'</td></tr>';
+}
+function billingResultLandlordRow(row, readOnly) {
+  let action='<span class="billing-review-readonly">Nur ansehen</span>';
+  if (row.differenceId) action='<div class="billing-review-actions"><button class="secondary" type="button"'+billingReviewActionAttributes("billingReview.openDetail",[row.differenceId])+'>Details</button>'+(readOnly?'':'<button class="secondary" type="button"'+billingReviewActionAttributes("billingReview.openAccept",[row.differenceId])+'>Ändern</button>')+'</div>';
+  else if (!readOnly || row.targetTab) action='<button class="ui-button--icon" aria-label="Ursprungsseite öffnen" title="Ursprungsseite öffnen" type="button"'+billingReviewActionAttributes("navigation.switchTab",[row.targetTab || "umlage"])+'>↗</button>';
+  return '<tr data-landlord-row="'+escapeHtml(row.id)+'"'+(row.differenceId?' data-review-id="'+escapeHtml(row.differenceId)+'"':'')+'><td><strong>'+escapeHtml(row.area)+'</strong></td><td class="billing-review-description">'+escapeHtml(row.description)+'<span>'+escapeHtml(row.source || "–")+'</span></td><td class="billing-result-number">'+fmtMoney(row.amount)+'</td><td class="billing-result-number">'+fmtMoney(row.amount)+'</td><td class="billing-result-number"><strong>'+fmtMoney(0)+'</strong></td><td>'+escapeHtml(row.treatment)+'</td><td><span class="status '+escapeHtml(row.statusClass || "ok")+'">'+escapeHtml(row.status)+'</span></td><td>'+action+'</td></tr>';
+}
+function billingResultResolvedRows(model) {
+  const currentIds=new Set(model.differences.map(row => row.id));
+  return Object.values(model.records || {}).filter(record => record && record.status === NK_PRO_MODULES.billingReview.STATUS.RESOLVED && !currentIds.has(record.differenceId)).map(record => ({
+    id:record.differenceId || record.recordId || "", area:record.area || "Prüfbereich",
+    description:"Ursprüngliche Differenz wurde durch eine Korrektur der Ursprungsdaten beseitigt.", source:"Korrektur auf der verursachenden Eingabeseite",
+    calculatedValue:0, controlValue:0, difference:0, unit:record.unit || "€", status:NK_PRO_MODULES.billingReview.STATUS.RESOLVED,
+    label:record.statusLabel || NK_PRO_MODULES.billingReview.statusLabel(NK_PRO_MODULES.billingReview.STATUS.RESOLVED), record, isResolved:true
+  }));
 }
 function billingResultHistoryRows(model) {
   if (!billingResultUiState.showHistory) return [];
-  const currentIds=new Set(model.differences.map(row => row.id));
-  return Object.values(model.records || {}).filter(record => record && !currentIds.has(record.differenceId)).concat(model.history || []).slice(-30).reverse().map(record => ({
-    id:record.differenceId || record.recordId || "", area:record.area || "Prüfverlauf", description:record.historyNote || record.treatmentLabel || "Dokumentierte Prüfentscheidung", source:"Historie", calculatedValue:record.originalDifference || 0, controlValue:0, difference:record.originalDifference || 0, unit:record.unit || "€", status:record.status || NK_PRO_MODULES.billingReview.STATUS.RESOLVED, label:record.statusLabel || NK_PRO_MODULES.billingReview.statusLabel(record.status), record, isHistory:true
+  return (model.history || []).slice(-30).reverse().map((record,index) => ({
+    id:"HIST-"+(record.recordId || record.differenceId || index)+"-"+index, originalDifferenceId:record.differenceId || "",
+    area:record.area || "Prüfverlauf", description:record.historyNote || record.treatmentLabel || "Dokumentierte Prüfentscheidung", source:"Historie",
+    calculatedValue:record.originalDifference || 0, controlValue:0, difference:record.originalDifference || 0, unit:record.unit || "€",
+    status:record.status || NK_PRO_MODULES.billingReview.STATUS.RESOLVED, label:record.statusLabel || NK_PRO_MODULES.billingReview.statusLabel(record.status), record, isHistory:true
   }));
+}
+function billingResultReviewGroup(title, tone, rows, readOnly, rowRenderer) {
+  if (!rows.length) return "";
+  return '<tr class="billing-review-group billing-review-group--'+tone+'"><th colspan="8">'+escapeHtml(title)+' <span>'+rows.length+'</span></th></tr>'+rows.map(row => rowRenderer(row,readOnly)).join("");
+}
+function billingResultLandlordBreakdown(model, landlordRows) {
+  const totals={ private:0, vacancy:0, nonallocable:0, other:0 };
+  landlordRows.forEach(row => { totals[row.kind] = num(totals[row.kind]) + num(row.amount); });
+  const categorized=totals.private+totals.vacancy+totals.nonallocable+totals.other;
+  const residual=num(model.summary.landlordTotal)-categorized;
+  if (Math.abs(residual) > 0.005) totals.other += residual;
+  totals.total=totals.private+totals.vacancy+totals.nonallocable+totals.other;
+  return totals;
+}
+function billingResultLandlordSummaryHtml(model, landlordRows) {
+  const totals=billingResultLandlordBreakdown(model,landlordRows);
+  const open=model.summary.openCount>0;
+  const term=(label,value,emphasis=false) => '<div class="billing-landlord-summary__term'+(emphasis?' is-total':'')+'"><span>'+escapeHtml(label)+'</span><strong>'+fmtMoney(value)+'</strong></div>';
+  return '<section class="billing-landlord-summary__frame" aria-labelledby="billingLandlordVerifiedTitle"><header><h3 id="billingLandlordVerifiedTitle">Vom Vermieter nach Prüfung tatsächlich zu tragen</h3></header><div class="billing-landlord-summary__equation">'+
+    term("Privatanteil",totals.private)+'<b>+</b>'+term("Leerstand",totals.vacancy)+'<b>+</b>'+term("Nicht umlagefähig",totals.nonallocable)+'<b>+</b>'+term("Sonstige bestätigte Anteile",totals.other)+'<b>=</b>'+term("Vom Vermieter tatsächlich zu tragen",totals.total,true)+
+    '</div><footer class="billing-landlord-summary__status '+(open?'is-preliminary':'is-final')+'"><span aria-hidden="true">'+(open?'!':'✓')+'</span><strong>'+(open?'Vorläufiger Betrag – noch nicht alle Differenzen sind geprüft.':'Endgültiger Vermieteranteil nach vollständiger Prüfung.')+'</strong></footer></section>';
 }
 function renderUmlage() {
   const model=NK_PRO_MODULES.billingReview.currentModel(state);
@@ -141,39 +212,54 @@ function renderUmlage() {
   const tenantHtml=allResultRows.map(row => {
     if (row.type === "leerstand") {
       const item=row.entry;
-      return '<tr class="billing-result-vacancy-row"><td>'+String(row.index).padStart(2,"0")+'</td><td><strong>'+escapeHtml(item.caseRow.unitLabel || item.caseRow.unitId)+'</strong><span class="billing-result-subline">Leerstand</span></td><td>Leerstand</td><td>'+fmtMoney(item.costShare)+'</td><td>0,00 €</td><td>0,00 €</td><td>–</td><td><span class="status neutral">Leerstand</span></td><td><button class="ui-button--icon" aria-label="Mietverhältnisse öffnen" type="button"'+billingReviewActionAttributes("navigation.switchTab",["mieter"])+'>↗</button></td></tr>';
+      return '<tr class="billing-result-vacancy-row"><td>'+String(row.index).padStart(2,"0")+'</td><td><strong>'+escapeHtml(item.caseRow.unitLabel || item.caseRow.unitId)+'</strong><span class="billing-result-subline">Leerstand</span></td><td>Leerstand</td><td class="billing-result-number">'+fmtMoney(item.costShare)+'</td><td class="billing-result-number">0,00 €</td><td class="billing-result-number">0,00 €</td><td class="billing-result-number">–</td><td><span class="status neutral">Leerstand</span></td><td><button class="ui-button--icon" aria-label="Mietverhältnisse öffnen" type="button"'+billingReviewActionAttributes("navigation.switchTab",["mieter"])+'>↗</button></td></tr>';
     }
     const result=row.result;
     const isPayment=result.balance>=0;
-    return '<tr><td>'+String(row.index).padStart(2,"0")+'</td><td><strong>'+escapeHtml(result.tenant.wohnung || "–")+'</strong><span class="billing-result-subline">'+escapeHtml(result.tenant.name || result.tenant.id)+'</span></td><td>Wohnung</td><td>'+fmtMoney(result.costShare)+'</td><td>'+fmtMoney(result.prepayments)+'</td><td>'+fmtMoney(result.correction || 0)+'</td><td class="billing-result-balance '+(isPayment?'is-payment':'is-credit')+'"><strong>'+fmtMoney(Math.abs(result.balance))+'</strong><span>'+(isPayment?'Nachzahlung':'Guthaben')+'</span></td><td><span class="status ok">Abgerechnet</span></td><td><button class="ui-button--icon" aria-label="Mietverhältnis öffnen" type="button"'+billingReviewActionAttributes("navigation.switchTab",["mieter"])+'>↗</button></td></tr>';
+    return '<tr><td>'+String(row.index).padStart(2,"0")+'</td><td><strong>'+escapeHtml(result.tenant.wohnung || "–")+'</strong><span class="billing-result-subline">'+escapeHtml(result.tenant.name || result.tenant.id)+'</span></td><td>Wohnung</td><td class="billing-result-number">'+fmtMoney(result.costShare)+'</td><td class="billing-result-number">'+fmtMoney(result.prepayments)+'</td><td class="billing-result-number">'+fmtMoney(result.correction || 0)+'</td><td class="billing-result-number billing-result-balance '+(isPayment?'is-payment':'is-credit')+'"><strong>'+fmtMoney(Math.abs(result.balance))+'</strong><span>'+(isPayment?'Nachzahlung':'Guthaben')+'</span></td><td><span class="status ok">Abgerechnet</span></td><td><button class="ui-button--icon" aria-label="Mietverhältnis öffnen" type="button"'+billingReviewActionAttributes("navigation.switchTab",["mieter"])+'>↗</button></td></tr>';
   }).join("");
   const summaryTable=document.getElementById("umlageSummaryTable");
-  if (summaryTable) summaryTable.innerHTML='<thead><tr><th>Nr.</th><th>Wohnung / Mieter</th><th>Nutzungsart</th><th>Kostenanteil</th><th>Vorauszahlungen</th><th>Korrekturen / Gutschriften</th><th>Ergebnis</th><th>Status</th><th>Aktionen</th></tr></thead><tbody>'+(tenantHtml || '<tr><td colspan="9">Keine passenden Abrechnungsfälle.</td></tr>')+'</tbody><tfoot><tr><td colspan="3">Summe Mieter</td><td>'+fmtMoney(summary.tenantShare)+'</td><td>'+fmtMoney(model.totals.prepayments)+'</td><td>'+fmtMoney(model.totals.corrections)+'</td><td>'+fmtMoney(Math.abs(model.totals.balance))+'</td><td colspan="2"></td></tr></tfoot>';
+  if (summaryTable) summaryTable.innerHTML='<thead><tr><th>Nr.</th><th>Wohnung / Mieter</th><th>Nutzungsart</th><th class="billing-result-number">Kostenanteil</th><th class="billing-result-number">Vorauszahlungen</th><th class="billing-result-number">Korrekturen / Gutschriften</th><th class="billing-result-number">Ergebnis</th><th>Status</th><th>Aktionen</th></tr></thead><tbody>'+(tenantHtml || '<tr><td colspan="9">Keine passenden Abrechnungsfälle.</td></tr>')+'</tbody><tfoot><tr><td colspan="3">Summe Mieter</td><td class="billing-result-number">'+fmtMoney(summary.tenantShare)+'</td><td class="billing-result-number">'+fmtMoney(model.totals.prepayments)+'</td><td class="billing-result-number">'+fmtMoney(model.totals.corrections)+'</td><td class="billing-result-number">'+fmtMoney(Math.abs(model.totals.balance))+'</td><td colspan="2"></td></tr></tfoot>';
   const tenantFooter=document.getElementById("billingResultTenantFooter"); if (tenantFooter) tenantFooter.textContent=allResultRows.length+" von "+(tenantRows.length+vacancyRows.length)+" Einträgen";
   const searchInput=document.getElementById("billingResultSearch"); if (searchInput && searchInput.value!==billingResultUiState.tenantSearch) searchInput.value=billingResultUiState.tenantSearch;
   const tenantFilter=document.getElementById("billingResultStatusFilter"); if (tenantFilter) tenantFilter.value=billingResultUiState.tenantStatus;
 
   const landlordRows=billingResultLandlordRows(model);
-  const landlordTable=document.getElementById("billingResultLandlordTable");
-  if (landlordTable) landlordTable.innerHTML='<thead><tr><th>Kategorie</th><th>Beschreibung</th><th>Betrag</th><th>Behandlung</th><th>Status</th><th>Aktionen</th></tr></thead><tbody>'+(landlordRows.map(row => '<tr><td><strong>'+escapeHtml(row.category)+'</strong></td><td>'+escapeHtml(row.description)+'</td><td>'+fmtMoney(row.amount)+'</td><td><span class="billing-result-treatment">'+escapeHtml(row.treatment)+'</span></td><td><span class="status ok">'+escapeHtml(row.status)+'</span></td><td>'+(row.differenceId?'<button class="ui-button--icon" aria-label="Prüfdetails öffnen" type="button"'+billingReviewActionAttributes("billingReview.openDetail",[row.differenceId])+'>◉</button>':'<button class="ui-button--icon" aria-label="Individuelle Werte öffnen" type="button"'+billingReviewActionAttributes("navigation.switchTab",["manuellewerte"])+'>◉</button>')+'</td></tr>').join("") || '<tr><td colspan="6">Keine Vermieteranteile vorhanden.</td></tr>')+'</tbody><tfoot><tr><td colspan="2">Summe vom Vermieter zu tragen</td><td>'+fmtMoney(summary.landlordTotal)+'</td><td colspan="3"></td></tr></tfoot>';
-  const landlordFooter=document.getElementById("billingResultLandlordFooter"); if (landlordFooter) landlordFooter.textContent=landlordRows.length+" Einträge · alle Beträge mit Ursache und Behandlung";
-
-  const allDifferences=model.differences.concat(billingResultHistoryRows(model));
-  const filteredDifferences=allDifferences.filter(row => {
-    const status=row.status;
-    if (billingResultUiState.differenceStatus==="all") return true;
-    if (billingResultUiState.differenceStatus==="open") return [NK_PRO_MODULES.billingReview.STATUS.OPEN,NK_PRO_MODULES.billingReview.STATUS.INVALID].includes(status);
-    if (billingResultUiState.differenceStatus==="accepted") return status===NK_PRO_MODULES.billingReview.STATUS.ACCEPTED;
-    if (billingResultUiState.differenceStatus==="landlord") return status===NK_PRO_MODULES.billingReview.STATUS.LANDLORD;
-    if (billingResultUiState.differenceStatus==="correction") return status===NK_PRO_MODULES.billingReview.STATUS.IN_CORRECTION;
-    return true;
+  const currentDifferences=model.differences.slice();
+  const resolvedRows=billingResultResolvedRows(model);
+  const historyRows=billingResultHistoryRows(model);
+  const filter=billingResultUiState.differenceStatus;
+  const openRows=currentDifferences.filter(row => [NK_PRO_MODULES.billingReview.STATUS.OPEN,NK_PRO_MODULES.billingReview.STATUS.IN_CORRECTION].includes(row.status) && (filter!=="correction" || row.status===NK_PRO_MODULES.billingReview.STATUS.IN_CORRECTION));
+  const acceptedRows=currentDifferences.filter(row => row.status===NK_PRO_MODULES.billingReview.STATUS.ACCEPTED);
+  const invalidRows=currentDifferences.filter(row => row.status===NK_PRO_MODULES.billingReview.STATUS.INVALID);
+  const visibleOpen=(filter==="all" || filter==="open" || filter==="correction") ? openRows : [];
+  const visibleLandlord=(filter==="all" || filter==="landlord") ? landlordRows : [];
+  const visibleAccepted=(filter==="all" || filter==="accepted") ? acceptedRows : [];
+  const visibleResolved=(filter==="all" || filter==="resolved") ? resolvedRows : [];
+  const visibleInvalid=(filter==="all" || filter==="invalid") ? invalidRows : [];
+  const visibleHistory=filter==="all" ? historyRows : historyRows.filter(row => {
+    if (filter==="accepted") return row.status===NK_PRO_MODULES.billingReview.STATUS.ACCEPTED;
+    if (filter==="landlord") return row.status===NK_PRO_MODULES.billingReview.STATUS.LANDLORD;
+    if (filter==="correction") return row.status===NK_PRO_MODULES.billingReview.STATUS.IN_CORRECTION;
+    if (filter==="resolved") return row.status===NK_PRO_MODULES.billingReview.STATUS.RESOLVED;
+    if (filter==="invalid") return row.status===NK_PRO_MODULES.billingReview.STATUS.INVALID;
+    if (filter==="open") return [NK_PRO_MODULES.billingReview.STATUS.OPEN,NK_PRO_MODULES.billingReview.STATUS.IN_CORRECTION,NK_PRO_MODULES.billingReview.STATUS.INVALID].includes(row.status);
+    return false;
   });
+  const groupedRows=
+    billingResultReviewGroup("Noch zu prüfen","open",visibleOpen,readOnly,billingResultDifferenceRow)+
+    billingResultReviewGroup("Geprüft und dem Vermieter zugeordnet","landlord",visibleLandlord,readOnly,billingResultLandlordRow)+
+    billingResultReviewGroup("Sonstige fachlich akzeptierte Differenzen","accepted",visibleAccepted,readOnly,billingResultDifferenceRow)+
+    billingResultReviewGroup("Erledigt","resolved",visibleResolved,readOnly,billingResultDifferenceRow)+
+    billingResultReviewGroup("Ungültig gewordene Entscheidungen","invalid",visibleInvalid,readOnly,billingResultDifferenceRow)+
+    billingResultReviewGroup("Prüfverlauf","history",visibleHistory,readOnly,billingResultDifferenceRow);
   const reviewTable=document.getElementById("billingReviewTable");
-  if (reviewTable) reviewTable.innerHTML='<thead><tr><th>Bereich / Kostenart</th><th>Beschreibung / Datenquelle</th><th>Berechneter Wert</th><th>Kontrollwert</th><th>Differenz</th><th>Einheit</th><th>Status</th><th>Begründung</th><th>Aktionen</th></tr></thead><tbody>'+(filteredDifferences.map(row => billingResultDifferenceRow(row,readOnly)).join("") || '<tr><td colspan="9">Keine Differenzen für diesen Filter.</td></tr>')+'</tbody>';
+  if (reviewTable) reviewTable.innerHTML='<thead><tr><th>Prüfbereich / Kostenart</th><th>Ursache / Datenquelle</th><th class="billing-result-number">Berechnet</th><th class="billing-result-number">Kontrollwert</th><th class="billing-result-number">Differenz</th><th>Behandlung / Vermieteranteil</th><th>Status</th><th>Aktionen</th></tr></thead><tbody>'+(groupedRows || '<tr><td colspan="8">Keine Einträge für diesen Filter.</td></tr>')+'</tbody>';
+  const landlordSummary=document.getElementById("billingLandlordVerifiedSummary");
+  if (landlordSummary) landlordSummary.innerHTML=billingResultLandlordSummaryHtml(model,landlordRows);
   const badge=document.getElementById("billingReviewOpenBadge"); if (badge) { badge.textContent=summary.openCount+" offen"; badge.className="billing-review-count "+(summary.openCount?"is-open":"is-complete"); }
   const reviewFilter=document.getElementById("billingReviewStatusFilter"); if (reviewFilter) reviewFilter.value=billingResultUiState.differenceStatus;
   const historyToggle=document.getElementById("billingReviewHistoryToggle"); if (historyToggle) historyToggle.textContent=billingResultUiState.showHistory?"Verlauf ausblenden":"Verlauf anzeigen";
-  renderBillingReviewDetail(model);
 
   const equation=document.getElementById("billingControlEquation");
   if (equation) equation.innerHTML=
@@ -209,6 +295,7 @@ function billingReviewMarkCorrection(id) {
   },80);
 }
 function billingReviewOpenAccept(id) {
+  billingReviewCloseDetail();
   const model=NK_PRO_MODULES.billingReview.currentModel(state);
   const row=model.differences.find(item => item.id===id);
   if (!row) throw new Error("Die Differenz ist nicht mehr vorhanden.");
@@ -240,18 +327,50 @@ function billingReviewSaveAcceptance() {
     error.textContent=errorMessage(failure); error.hidden=false; document.getElementById("billingReviewReason").focus();
   }
 }
-function billingReviewOpenDetail(id) { billingResultUiState.selectedDifferenceId=id; renderUmlage(); const detail=document.getElementById("billingReviewDetail"); if (detail) detail.scrollIntoView({behavior:"smooth",block:"nearest"}); }
-function billingReviewReopen(id) { NK_PRO_MODULES.applicationActions.execute("review","reopen",[id]); billingResultUiState.selectedDifferenceId=""; renderUmlage(); }
-function renderBillingReviewDetail(model) {
-  const detail=document.getElementById("billingReviewDetail"); if (!detail) return;
-  const id=billingResultUiState.selectedDifferenceId;
-  const row=model.differences.find(item => item.id===id);
-  const record=row && row.record || (model.records && model.records[id]);
-  if (!record) { detail.hidden=true; detail.innerHTML=""; return; }
-  detail.hidden=false;
-  const canChange=!!row && !((typeof isArchiveViewer === "function" && isArchiveViewer()) || (NK_PRO_MODULES.billingContext && NK_PRO_MODULES.billingContext.isReadOnly()));
-  detail.innerHTML='<header><div><strong>Prüfentscheidung – Details</strong><span>'+escapeHtml(record.area || row && row.area || "Differenz")+'</span></div>'+(canChange?'<button class="secondary" type="button"'+billingReviewActionAttributes("billingReview.openAccept",[id])+'>Ändern</button>':'')+'</header><dl><div><dt>Differenz</dt><dd>'+billingReviewFormat(record.originalDifference,record.unit,true)+'</dd></div><div><dt>Behandlung</dt><dd>'+escapeHtml(record.treatmentLabel || "–")+'</dd></div><div><dt>Begründung</dt><dd>'+escapeHtml(record.reason || "–")+'</dd></div><div><dt>Akzeptiert von</dt><dd>'+escapeHtml(record.acceptedBy || "–")+'</dd></div><div><dt>Akzeptiert am</dt><dd>'+escapeHtml(record.acceptedAt ? new Date(record.acceptedAt).toLocaleString("de-DE") : "–")+'</dd></div><div><dt>App-Version</dt><dd>'+escapeHtml(record.appVersion || "–")+'</dd></div></dl>';
+function billingReviewOpenDetail(id) {
+  const model=NK_PRO_MODULES.billingReview.currentModel(state);
+  const currentRow=model.differences.find(item => item.id===id);
+  const resolvedRow=billingResultResolvedRows(model).find(item => item.id===id);
+  const historyRow=billingResultHistoryRows(model).find(item => item.id===id);
+  const row=currentRow || resolvedRow || historyRow;
+  const decisionId=row && row.originalDifferenceId || id;
+  const record=row && row.record || (model.records && model.records[decisionId]);
+  if (!record) throw new Error("Für diese Prüfentscheidung sind keine Details vorhanden.");
+  billingResultUiState.selectedDifferenceId=decisionId;
+  const dialog=document.getElementById("billingReviewDetailDialog");
+  const body=document.getElementById("billingReviewDetailBody");
+  const editButton=document.getElementById("billingReviewDetailEditButton");
+  const canChange=!!currentRow && !((typeof isArchiveViewer === "function" && isArchiveViewer()) || (NK_PRO_MODULES.billingContext && NK_PRO_MODULES.billingContext.isReadOnly()));
+  const rowStatus=row && row.status || record.status;
+  const status=record.statusLabel || row && row.label || NK_PRO_MODULES.billingReview.statusLabel(rowStatus);
+  const acceptedAt=record.acceptedAt ? new Date(record.acceptedAt).toLocaleString("de-DE") : "–";
+  const invalidatedAt=(record.invalidatedAt || record.invalidatedAcceptanceAt) ? new Date(record.invalidatedAt || record.invalidatedAcceptanceAt).toLocaleString("de-DE") : "–";
+  const source=row && row.source || record.source || "–";
+  const description=row && row.description || record.description || "–";
+  const unit=row && row.unit || record.currentUnit || record.unit || "€";
+  const calculatedValue=row ? row.calculatedValue : num(record.currentDifference || record.originalDifference);
+  const controlValue=row ? row.controlValue : 0;
+  const differenceValue=row ? row.difference : num(record.currentDifference !== undefined ? record.currentDifference : record.originalDifference);
+  const treatmentLabel=record.treatmentLabel || (rowStatus===NK_PRO_MODULES.billingReview.STATUS.RESOLVED ? "Durch Korrektur erledigt" : "–");
+  const invalidationHint=record.invalidationReason || (rowStatus===NK_PRO_MODULES.billingReview.STATUS.INVALID ? "Zugrunde liegende Daten oder Berechnung haben sich geändert; eine erneute bewusste Prüfung ist erforderlich." : "–");
+  body.innerHTML='<div class="billing-review-detail-summary"><strong>'+escapeHtml(record.area || row && row.area || "Differenz")+'</strong><span>'+escapeHtml(description)+'</span><span>'+escapeHtml(source)+'</span><b class="status '+billingReviewStatusClass(rowStatus)+'">'+escapeHtml(status || "–")+'</b></div><dl class="billing-review-detail-grid">'+
+    '<div><dt>Berechneter Wert</dt><dd class="billing-result-number">'+billingReviewFormat(calculatedValue,unit)+'</dd></div><div><dt>Kontrollwert</dt><dd class="billing-result-number">'+billingReviewFormat(controlValue,unit)+'</dd></div>'+
+    '<div><dt>Differenz</dt><dd class="billing-result-number">'+billingReviewFormat(differenceValue,unit,true)+'</dd></div><div><dt>Einheit</dt><dd>'+escapeHtml(unit || "–")+'</dd></div>'+
+    '<div><dt>Aktueller Prüfstatus</dt><dd>'+escapeHtml(status || "–")+'</dd></div><div><dt>Behandlung</dt><dd>'+escapeHtml(treatmentLabel)+'</dd></div>'+
+    '<div class="billing-review-detail-grid__wide"><dt>Begründung</dt><dd>'+escapeHtml(record.reason || "–")+'</dd></div>'+
+    '<div><dt>Bestätigt von</dt><dd>'+escapeHtml(record.acceptedBy || "–")+'</dd></div><div><dt>Bestätigt am</dt><dd>'+escapeHtml(acceptedAt)+'</dd></div>'+
+    '<div><dt>Ungültig seit</dt><dd>'+escapeHtml(invalidatedAt)+'</dd></div><div><dt>App-Version</dt><dd>'+escapeHtml(record.appVersion || "–")+'</dd></div>'+
+    '<div class="billing-review-detail-grid__wide"><dt>Hinweis</dt><dd>'+escapeHtml(invalidationHint)+'</dd></div>'+
+    '<div class="billing-review-detail-grid__wide"><dt>Prüfkennung</dt><dd>'+escapeHtml(record.differenceId || decisionId)+'</dd></div></dl>';
+  if (editButton) {
+    editButton.hidden=!canChange;
+    editButton.onclick=canChange ? () => billingReviewOpenAccept(decisionId) : null;
+  }
+  if (dialog && typeof dialog.showModal === "function" && !dialog.open) dialog.showModal();
+  setTimeout(() => { const close=dialog && dialog.querySelector('[data-ui-action="billingReview.closeDetail"]'); if (close) close.focus(); },0);
 }
+function billingReviewCloseDetail() { const dialog=document.getElementById("billingReviewDetailDialog"); if (dialog && dialog.open) dialog.close(); }
+function billingReviewReopen(id) { billingReviewCloseDetail(); NK_PRO_MODULES.applicationActions.execute("review","reopen",[id]); billingResultUiState.selectedDifferenceId=""; renderUmlage(); }
 
 
 function todayIso() {

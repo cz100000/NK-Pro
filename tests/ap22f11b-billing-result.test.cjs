@@ -13,20 +13,20 @@ const sw = read('service-worker.js');
 const pkg = JSON.parse(read('package.json'));
 const project = JSON.parse(read('nk-pro-project.json'));
 
-assert.strictEqual(pkg.version, '99.4.61', 'package version');
-assert.strictEqual(project.appVersion, '99.4.61', 'project app version');
-assert.match(html, /V99\.4\.61/);
-assert.match(html, /id="umlage"[^>]*data-release="NK-Pro V99\.4\.61"/);
+assert.strictEqual(pkg.version, '99.4.62', 'package version');
+assert.strictEqual(project.appVersion, '99.4.62', 'project app version');
+assert.match(html, /V99\.4\.62/);
+assert.match(html, /id="umlage"[^>]*data-release="NK-Pro V99\.4\.62"/);
 assert.match(html, /src="\.\/js\/billing-review\.js"/);
 assert.match(sw, /billing-review\.js/);
 
 [
-  'billingResultKpis','umlageSummaryTable','billingResultLandlordTable','billingReviewTable',
+  'billingResultKpis','umlageSummaryTable','billingReviewTable','billingLandlordVerifiedSummary',
   'billingControlEquation','billingResultOverallStatus','billingReviewAcceptDialog'
 ].forEach(id => assert.match(html, new RegExp(`id="${id}"`), `missing ${id}`));
 
 ['Gesamtkosten','Auf Mieter umgelegt','Vom Vermieter zu tragen','Noch zu klären',
- 'Korrigieren','Akzeptieren','Einheit','Begründung','Prüfentscheidung speichern'
+ 'Korrigieren','Akzeptieren','Behandlung / Vermieteranteil','Begründung','Prüfentscheidung speichern'
 ].forEach(text => assert.ok(html.includes(text) || ui.includes(text), `missing label ${text}`));
 
 ['Offen','In Korrektur','Akzeptiert','Vermieter trägt','Erledigt durch Korrektur','Akzeptanz ungültig – erneut prüfen']
@@ -55,8 +55,8 @@ for (const forbidden of ['K002','K006','Wasserversorgung','Heiz- und Warmwasserk
 assert.match(css, /#umlage[\s\S]*thead th\{background:#f2f5f8/);
 assert.match(css, /#umlage \.billing-result-table-wrap\{[^}]*overflow-x:hidden/);
 assert.match(css, /@media[^}]*max-width:[^}]*[\s\S]*#umlage \.billing-result-table-wrap\{overflow-x:auto/);
-assert.match(ui, /<th>Einheit<\/th>/);
-assert.match(ui, /colspan="9"/);
+assert.match(ui, /Behandlung \/ Vermieteranteil/);
+assert.match(ui, /colspan=\"8\"/);
 
 const eq = meter.match(/function readingEquivalent\(a, b\) \{([\s\S]*?)\n  \}/);
 assert.ok(eq, 'readingEquivalent missing');
