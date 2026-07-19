@@ -140,12 +140,10 @@ function normalizeText(text){return String(text||"").replace(/\s+/g," ").trim();
       assert.ok((await page.locator('[data-meter-row^="Z-WASSER-WW-"]').count())>=5);
     });
     await check(8,"490,00 → 564,00 = 74,00",async()=>{
-      await fillChange(page,'[data-meter-id="Z-WASSER-KW-W000.UG"][data-field="start"]',"490,00");
       await fillChange(page,'[data-meter-id="Z-WASSER-KW-W000.UG"][data-field="end"]',"564,00");
       assert.match(normalizeText(await page.locator('[data-meter-row="Z-WASSER-KW-W000.UG"] [data-meter-consumption] strong').textContent()),/74,00/);
     });
     await check(9,"280,00 → 312,42 = 32,42",async()=>{
-      await fillChange(page,'[data-meter-id="Z-WASSER-WW-W000.UG"][data-field="start"]',"280,00");
       await fillChange(page,'[data-meter-id="Z-WASSER-WW-W000.UG"][data-field="end"]',"312,42");
       assert.match(normalizeText(await page.locator('[data-meter-row="Z-WASSER-WW-W000.UG"] [data-meter-consumption] strong').textContent()),/32,42/);
     });
@@ -153,12 +151,10 @@ function normalizeText(text){return String(text||"").replace(/\s+/g," ").trim();
       assert.match(normalizeText(await page.locator('[data-meter-row="Z-WASSER-KW-W000.UG"] [data-case-total] strong').textContent()),/106,42/);
     });
     await check(11,"266,00 → 297,74 = 31,74",async()=>{
-      await fillChange(page,'[data-meter-id="Z-WASSER-KW-W001.EG-L"][data-field="start"]',"266.00");
       await fillChange(page,'[data-meter-id="Z-WASSER-KW-W001.EG-L"][data-field="end"]',"297,74");
       assert.match(normalizeText(await page.locator('[data-meter-row="Z-WASSER-KW-W001.EG-L"] [data-meter-consumption] strong').textContent()),/31,74/);
     });
     await check(12,"108,00 → 119,28 = 11,28",async()=>{
-      await fillChange(page,'[data-meter-id="Z-WASSER-WW-W001.EG-L"][data-field="start"]',"108,00");
       await fillChange(page,'[data-meter-id="Z-WASSER-WW-W001.EG-L"][data-field="end"]',"119.28");
       assert.match(normalizeText(await page.locator('[data-meter-row="Z-WASSER-WW-W001.EG-L"] [data-meter-consumption] strong').textContent()),/11,28/);
     });
@@ -166,8 +162,16 @@ function normalizeText(text){return String(text||"").replace(/\s+/g," ").trim();
       assert.match(normalizeText(await page.locator('[data-meter-row="Z-WASSER-KW-W001.EG-L"] [data-case-total] strong').textContent()),/43,02/);
     });
     await check(14,"Fehlender Teilwert zeigt keine falsche Wohnungssumme",async()=>{
+      const originalEnd=await page.evaluate(()=>{
+        const row=NKProBillingCalculation.meterRowsForCost(state,"K002").find(item=>item.meterId==="Z-WASSER-WW-W002.EG-R");
+        const value=row&&row.endValue;
+        NKProMeteringDraft.setValue("Z-WASSER-WW-W002.EG-R","end","","number");
+        renderIndividualValues();
+        return value;
+      });
       const total=normalizeText(await page.locator('[data-meter-row="Z-WASSER-KW-W002.EG-R"] [data-case-total]').textContent());
       assert.match(total,/–/);assert.match(total,/Unvollständig/);
+      await page.evaluate(value=>{NKProMeteringDraft.setValue("Z-WASSER-WW-W002.EG-R","end",value,"number");renderIndividualValues();},originalEnd);
     });
     await check(15,"Komma- und Punkteingabe",async()=>{
       const values=await page.evaluate(()=>({comma:NKProIndividualValues.parseLocaleNumber("1.234,56"),dot:NKProIndividualValues.parseLocaleNumber("1234.56")}));
@@ -279,11 +283,11 @@ function normalizeText(text){return String(text||"").replace(/\s+/g," ").trim();
     await page.screenshot({path:path.join(screenshotDir,"04_vorjahresuebernahme_dialog.png"),fullPage:true});
     await page.locator('#individualPriorTransferDialog [data-individual-dialog-close]').first().click();
     assert.deepEqual(runtimeErrors,[]);
-    const report={workPackage:"AP22F10G-B",appVersion:"V99.4.58",referenceMode:sourceMode,referenceFile:path.basename(sourcePath),chromiumPath:process.env.CHROMIUM_PATH||"/usr/bin/chromium",generatedAt:new Date().toISOString(),summary:{passed:checks.filter(row=>row.status==="PASS").length,failed:checks.filter(row=>row.status==="FAIL").length,total:checks.length},checks,runtimeErrors,screenshots:fs.readdirSync(screenshotDir).sort()};
+    const report={workPackage:"AP22F10G-B",appVersion:"V99.4.59",referenceMode:sourceMode,referenceFile:path.basename(sourcePath),chromiumPath:process.env.CHROMIUM_PATH||"/usr/bin/chromium",generatedAt:new Date().toISOString(),summary:{passed:checks.filter(row=>row.status==="PASS").length,failed:checks.filter(row=>row.status==="FAIL").length,total:checks.length},checks,runtimeErrors,screenshots:fs.readdirSync(screenshotDir).sort()};
     fs.writeFileSync(reportFile,JSON.stringify(report,null,2)+"\n");
     console.log(`AP22F10G-B browser checks: PASS (${report.summary.passed}/${report.summary.total}, ${sourceMode})`);
   } catch(error) {
-    const report={workPackage:"AP22F10G-B",appVersion:"V99.4.58",referenceMode:sourceMode,referenceFile:path.basename(sourcePath),generatedAt:new Date().toISOString(),summary:{passed:checks.filter(row=>row.status==="PASS").length,failed:checks.filter(row=>row.status==="FAIL").length,total:checks.length},checks,runtimeErrors};
+    const report={workPackage:"AP22F10G-B",appVersion:"V99.4.59",referenceMode:sourceMode,referenceFile:path.basename(sourcePath),generatedAt:new Date().toISOString(),summary:{passed:checks.filter(row=>row.status==="PASS").length,failed:checks.filter(row=>row.status==="FAIL").length,total:checks.length},checks,runtimeErrors};
     fs.writeFileSync(reportFile,JSON.stringify(report,null,2)+"\n");
     try{await page.screenshot({path:path.join(screenshotDir,"99_fehlerzustand.png"),fullPage:true});}catch(_){ }
     throw error;

@@ -446,8 +446,8 @@
 
   function meterTypeLabel(meter) {
     const type = normalizedIndividualKey(meter && (meter.meterType || meter.zaehlerTyp || meter.type));
-    if (type === "cold-water") return "Kaltwasser";
-    if (type === "hot-water") return "Warmwasser";
+    if (type === "cold-water") return "Kaltwasserzähler";
+    if (type === "hot-water") return "Warmwasserzähler";
     return String(meter && (meter.bezeichnung || meter.zaehlerTyp || meter.meterType || "Zähler") || "Zähler");
   }
 

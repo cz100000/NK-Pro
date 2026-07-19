@@ -1,0 +1,103 @@
+{
+  "generatedAt": "2026-07-19T16:39:16.162Z",
+  "appVersion": "V99.4.59",
+  "sourceFile": "nk-pro-gesamtbestand-2025-V99.4.58-2026-07-19-16-16-12.json",
+  "summary": {
+    "passed": 15,
+    "failed": 0,
+    "total": 15
+  },
+  "checks": [
+    {
+      "number": 1,
+      "name": "Kompakte Standard-Seitenbreite",
+      "status": "PASS",
+      "durationMs": 45
+    },
+    {
+      "number": 2,
+      "name": "Tabellen besitzen linken und rechten Innenabstand",
+      "status": "PASS",
+      "durationMs": 10
+    },
+    {
+      "number": 3,
+      "name": "Kaltwasserzähler mit blauem Punkt",
+      "status": "PASS",
+      "durationMs": 20
+    },
+    {
+      "number": 4,
+      "name": "Warmwasserzähler mit rotem Punkt",
+      "status": "PASS",
+      "durationMs": 55
+    },
+    {
+      "number": 5,
+      "name": "Übernommener Anfangsstand ist gesperrt und ausgegraut",
+      "status": "PASS",
+      "durationMs": 20
+    },
+    {
+      "number": 6,
+      "name": "Endstand bleibt regulär bearbeitbar",
+      "status": "PASS",
+      "durationMs": 3
+    },
+    {
+      "number": 7,
+      "name": "Sonderfallaktion verlangt bewusste Freigabe",
+      "status": "PASS",
+      "durationMs": 185
+    },
+    {
+      "number": 8,
+      "name": "Sonderfallfreigabe entsperrt ausschließlich den gewählten Anfangsstand",
+      "status": "PASS",
+      "durationMs": 233
+    },
+    {
+      "number": 9,
+      "name": "Freigegebener Sonderfall kann geändert und gespeichert werden",
+      "status": "PASS",
+      "durationMs": 1381
+    },
+    {
+      "number": 10,
+      "name": "Freigabe und Wert bestehen nach Browser-Neuladen fort",
+      "status": "PASS",
+      "durationMs": 1829
+    },
+    {
+      "number": 11,
+      "name": "Wiederholte Sonderfallaktion erzeugt keine Dublette",
+      "status": "PASS",
+      "durationMs": 183
+    },
+    {
+      "number": 12,
+      "name": "Reale manuelle Einzelwerte bleiben erhalten",
+      "status": "PASS",
+      "durationMs": 8
+    },
+    {
+      "number": 13,
+      "name": "Gesamtbestand und Jahresarchiv bleiben vorhanden",
+      "status": "PASS",
+      "durationMs": 2
+    },
+    {
+      "number": 14,
+      "name": "Schmale Ansicht scrollt nur innerhalb der Tabelle horizontal",
+      "status": "PASS",
+      "durationMs": 685
+    },
+    {
+      "number": 15,
+      "name": "Browserzoom 125 Prozent bleibt ohne globalen Horizontalversatz",
+      "status": "PASS",
+      "durationMs": 1219
+    }
+  ],
+  "runtimeErrors": []
+}

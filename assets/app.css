@@ -6561,8 +6561,8 @@ body:not(.document-print-window) #einnahmen .nk-ui-table thead th.sortable:hover
   #einnahmen .prepayment-summary-grid{grid-template-columns:1fr}
 }
 
-/* AP22F10G-B – Individuelle Werte: dynamische, durchgehende Arbeitsseite. */
-#manuellewerte .individual-values-page{display:grid;gap:16px;min-width:0;max-width:100%;overflow:visible}
+/* AP22F10G-B Korrektur 1 – kompakte Seitenbreite, Tabellenabstand, Zählerfarben und geschützte Vorjahresstände. */
+#manuellewerte .individual-values-page{display:grid;gap:16px;min-width:0;max-width:var(--nk-ui-shell-max-default,1180px);overflow:visible}
 #manuellewerte .individual-values-steering-note{display:flex;align-items:flex-start;gap:12px;padding:13px 15px;border:1px solid #b8d7ef;border-radius:11px;background:#f0f8ff;color:#19486f}
 #manuellewerte .individual-values-steering-note>span{display:grid;place-items:center;flex:0 0 28px;width:28px;height:28px}
 #manuellewerte .individual-values-steering-note svg{width:24px;height:24px}
@@ -6598,7 +6598,7 @@ body:not(.document-print-window) #einnahmen .nk-ui-table thead th.sortable:hover
 #manuellewerte .individual-values-status.is-error{background:#fff0ef;color:#b42318}
 #manuellewerte .individual-values-status.is-open{background:#fff6df;color:#8a5b00}
 #manuellewerte .individual-values-status.is-neutral{background:#edf2f7;color:#51677b}
-#manuellewerte .individual-values-table-wrap{width:auto;max-width:calc(100% - 20px);margin:10px;border:1px solid var(--nk-ui-color-border,var(--app-border));border-radius:10px;background:#fff;overflow-x:auto;overflow-y:hidden;scrollbar-gutter:auto}
+#manuellewerte .individual-values-table-wrap{width:calc(100% - 32px);max-width:calc(100% - 32px);margin:14px 16px!important;border:1px solid var(--nk-ui-color-border,var(--app-border));border-radius:10px;background:#fff;overflow-x:auto;overflow-y:hidden;scrollbar-gutter:auto}
 #manuellewerte .individual-values-table{width:100%;max-width:none;border-collapse:separate;border-spacing:0;table-layout:auto;font-size:11px}
 #manuellewerte .individual-values-consumption-table{min-width:1180px}
 #manuellewerte .individual-values-manual-table{min-width:980px}
@@ -6617,7 +6617,10 @@ body:not(.document-print-window) #einnahmen .nk-ui-table thead th.sortable:hover
 #manuellewerte .individual-values-case-badge.is-tenant{background:#eaf3ff;color:#175b95}
 #manuellewerte .individual-values-case-badge.is-private{background:#f4eefe;color:#6d3ca4}
 #manuellewerte .individual-values-case-badge.is-vacancy{background:#fff1df;color:#915300}
-#manuellewerte .individual-values-meter-type{display:inline-flex;align-items:center;min-width:88px;font-weight:700;color:#294d6d}
+#manuellewerte .individual-values-meter-type{display:inline-flex;align-items:center;gap:7px;min-width:128px;font-weight:700;color:#294d6d}
+#manuellewerte .individual-values-meter-dot{display:inline-block;flex:0 0 9px;width:9px;height:9px;border-radius:50%;box-shadow:0 0 0 2px rgba(255,255,255,.9),0 0 0 3px currentColor}
+#manuellewerte .individual-values-meter-dot.is-cold-water{color:#1976c8;background:#1976c8}
+#manuellewerte .individual-values-meter-dot.is-hot-water{color:#d5282f;background:#d5282f}
 #manuellewerte .individual-values-meter-number{display:block;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#173e66}
 #manuellewerte .number-cell{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 #manuellewerte .number-cell strong{color:#173e66}
@@ -6625,6 +6628,11 @@ body:not(.document-print-window) #einnahmen .nk-ui-table thead th.sortable:hover
 #manuellewerte .individual-values-total-cell strong{display:block;font-size:13px}
 #manuellewerte .individual-values-input-wrap{display:grid;gap:3px;min-width:104px}
 #manuellewerte .individual-values-number-input{width:104px;min-height:34px;padding:6px 8px;text-align:right;font-variant-numeric:tabular-nums;background:#fff}
+#manuellewerte .individual-values-input-wrap.is-transferred .individual-values-number-input{border-color:#c8d1da;background:#eef1f4;color:#68798a;cursor:not-allowed;box-shadow:inset 0 0 0 1px rgba(100,116,139,.04)}
+#manuellewerte .individual-values-input-wrap.is-start-override .individual-values-number-input{border-color:#d7aa55;background:#fffaf0}
+#manuellewerte .individual-values-carried-forward,#manuellewerte .individual-values-start-override-note{display:block;margin-top:1px!important;font-size:8px!important;font-weight:700;line-height:1.2}
+#manuellewerte .individual-values-carried-forward{color:#6c7c8c!important}
+#manuellewerte .individual-values-start-override-note{color:#8a5b00!important}
 #manuellewerte .individual-values-note-input{width:100%;min-width:170px;min-height:34px;padding:6px 8px;background:#fff}
 #manuellewerte .individual-values-input-wrap.is-error input{border-color:#d92d20;background:#fff5f4}
 #manuellewerte .individual-values-field-error{color:#b42318!important;font-size:8px!important}
@@ -6637,7 +6645,7 @@ body:not(.document-print-window) #einnahmen .nk-ui-table thead th.sortable:hover
 #manuellewerte .individual-values-icon-button:hover{border-color:#6ca5cf;background:#eef7ff}
 #manuellewerte .individual-values-icon-button svg{width:17px;height:17px}
 #manuellewerte .individual-values-icon-button:disabled{opacity:.45;cursor:not-allowed}
-#manuellewerte .individual-values-control{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin:0 10px 10px;border:1px solid var(--nk-ui-color-border,var(--app-border));border-radius:10px;overflow:hidden}
+#manuellewerte .individual-values-control{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin:0 16px 14px;border:1px solid var(--nk-ui-color-border,var(--app-border));border-radius:10px;overflow:hidden}
 #manuellewerte .individual-values-control>div{display:grid;gap:4px;padding:11px 13px;border-right:1px solid var(--nk-ui-color-border,var(--app-border));background:#f8fafc}
 #manuellewerte .individual-values-control>div:last-child{border-right:0}
 #manuellewerte .individual-values-control span{color:#6d8092;font-size:9px;font-weight:750;text-transform:uppercase}
@@ -6664,7 +6672,7 @@ body:not(.document-print-window) #einnahmen .nk-ui-table thead th.sortable:hover
 #manuellewerte .individual-values-dialog--wide{width:min(980px,calc(100vw - 32px))}
 #manuellewerte .individual-values-dialog::backdrop{background:rgba(12,29,45,.52)}
 #manuellewerte .individual-values-dialog__frame{display:grid;grid-template-rows:auto minmax(0,1fr) auto;max-height:calc(100vh - 40px);margin:0}
-#manuellewerte .individual-values-dialog header{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:15px 17px;border-bottom:1px solid var(--nk-ui-color-border,var(--app-border))}
+#manuellewerte .individual-values-dialog header{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:15px 17px;border-bottom:1px solid var(--nk-ui-color-border,var(--app-border));background:#fff!important;color:#173e66!important;box-shadow:none}
 #manuellewerte .individual-values-dialog header h2{margin:2px 0 0;color:#173e66;font-size:18px}
 #manuellewerte .dialog-close{display:grid;place-items:center;width:32px;min-width:32px;height:32px;padding:0;border:0;background:transparent;color:#63798c;font-size:24px;box-shadow:none}
 #manuellewerte .individual-values-dialog__body{display:grid;gap:14px;min-height:0;padding:17px;overflow:auto}
@@ -6672,8 +6680,13 @@ body:not(.document-print-window) #einnahmen .nk-ui-table thead th.sortable:hover
 #manuellewerte .individual-values-dialog__body label{display:grid;gap:6px}
 #manuellewerte .individual-values-dialog__body label span{font-size:11px;font-weight:750;color:#35546f}
 #manuellewerte .individual-values-dialog textarea{width:100%;resize:vertical}
+#manuellewerte .individual-values-start-override{display:grid;gap:7px;padding:12px 13px;border:1px solid #e2c17d;border-radius:9px;background:#fffaf0}
+#manuellewerte .individual-values-start-override label{display:flex!important;grid-template-columns:none!important;align-items:flex-start;gap:9px!important;min-width:0;font-weight:700;color:#604817}
+#manuellewerte .individual-values-start-override input{flex:0 0 16px!important;width:16px!important;min-width:16px!important;height:16px!important;min-height:0!important;margin-top:2px;padding:0!important}
+#manuellewerte .individual-values-start-override label span{display:block;flex:1 1 auto;min-width:0;line-height:1.35}
+#manuellewerte .individual-values-start-override small{color:#725f39;font-size:10px;line-height:1.4}
 #manuellewerte .individual-values-dialog footer{display:flex;justify-content:flex-end;gap:9px;padding:12px 17px;border-top:1px solid var(--nk-ui-color-border,var(--app-border));background:#f8fafc}
-#manuellewerte .individual-values-dialog .individual-values-table-wrap{max-width:100%;margin:0}
+#manuellewerte .individual-values-dialog .individual-values-table-wrap{max-width:100%;margin:0!important}
 #manuellewerte :is(button,input,textarea,select):focus-visible,#manuellewerte .individual-values-table-wrap:focus-visible{outline:3px solid color-mix(in srgb,var(--nk-ui-color-focus,var(--app-focus)) 28%,transparent);outline-offset:2px}
 #manuellewerte [hidden]{display:none!important}
 @media(max-width:1100px){

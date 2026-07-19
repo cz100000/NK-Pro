@@ -1,0 +1,91 @@
+{
+  "release": "V99.4.59",
+  "basedOn": "V99.4.58",
+  "changes": [
+    {
+      "path": "assets/app.css",
+      "type": "modified",
+      "reason": "Seitenbreite, Tabelleninnenabstand, Zählermarker, Sperr- und Sonderfalldarstellung"
+    },
+    {
+      "path": "index.html",
+      "type": "modified",
+      "reason": "Standard-Seitenrahmen, Sonderfallfreigabe, V99.4.59-Build"
+    },
+    {
+      "path": "js/ui-individual-values.js",
+      "type": "modified",
+      "reason": "Zählermarker und Schutz übernommener Anfangsstände"
+    },
+    {
+      "path": "js/billing-calculation.js",
+      "type": "modified",
+      "reason": "Bezeichnungen Kaltwasserzähler und Warmwasserzähler"
+    },
+    {
+      "path": "js/app-runtime-config.js",
+      "type": "modified",
+      "reason": "V99.4.59"
+    },
+    {
+      "path": "js/service-worker-register.js",
+      "type": "modified",
+      "reason": "Build-ID V99.4.59"
+    },
+    {
+      "path": "service-worker.js",
+      "type": "modified",
+      "reason": "Cache- und Build-ID V99.4.59"
+    },
+    {
+      "path": "manifest.webmanifest",
+      "type": "modified",
+      "reason": "Version und Beschreibung"
+    },
+    {
+      "path": "package.json",
+      "type": "modified",
+      "reason": "Version und Korrektur-Testskripte"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "modified",
+      "reason": "Paketversion"
+    },
+    {
+      "path": "nk-pro-project.json",
+      "type": "modified",
+      "reason": "Release- und Korrekturmetadaten"
+    },
+    {
+      "path": "tests/ap22f10g-individual-values.test.cjs",
+      "type": "modified",
+      "reason": "Releasekennung V99.4.59"
+    },
+    {
+      "path": "tests/ap22f10g-individual-values-browser.test.cjs",
+      "type": "modified",
+      "reason": "Regression mit vollständig befülltem realem Wasserbestand"
+    },
+    {
+      "path": "tests/ap22f10g-korrektur1.test.cjs",
+      "type": "added",
+      "reason": "Statische Korrekturprüfung"
+    },
+    {
+      "path": "tests/ap22f10g-korrektur1-browser.test.cjs",
+      "type": "added",
+      "reason": "Browserprüfung mit realem Gesamtbestand"
+    },
+    {
+      "path": "AP22F10G_B_Korrektur1_Dokumentation/",
+      "type": "added",
+      "reason": "Abschluss- und Testnachweise"
+    },
+    {
+      "path": "AP22F10G_B_Korrektur1_Screenshots/",
+      "type": "added",
+      "reason": "Visuelle Nachweise"
+    }
+  ]
+}

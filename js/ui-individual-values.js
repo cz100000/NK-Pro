@@ -52,6 +52,31 @@
     return Number.isFinite(parsed) ? { ok:true, empty:false, value:parsed } : { ok:false, empty:false, value:null };
   }
   function fieldKey(kind, costId, rowId, field) { return [kind, costId, rowId, field].join("|"); }
+  function priorTransferForMeter(meterId) {
+    const rows = state && state.meta && Array.isArray(state.meta.individualValuesPriorTransfers) ? state.meta.individualValuesPriorTransfers : [];
+    return rows.slice().reverse().find(row => String(row && row.meterId || "") === String(meterId || "")) || null;
+  }
+  function startOverrideForMeter(meterId) {
+    const rows = state && state.meta && Array.isArray(state.meta.individualValuesStartOverrides) ? state.meta.individualValuesStartOverrides : [];
+    return rows.slice().reverse().find(row => String(row && row.meterId || "") === String(meterId || "")) || null;
+  }
+  function hasStartOverride(meterId) { return !!startOverrideForMeter(meterId); }
+  function authorizeStartOverride(meterId, note) {
+    const transfer = priorTransferForMeter(meterId);
+    if (!transfer || hasStartOverride(meterId)) return false;
+    if (!state.meta || typeof state.meta !== "object") state.meta = {};
+    if (!Array.isArray(state.meta.individualValuesStartOverrides)) state.meta.individualValuesStartOverrides = [];
+    state.meta.individualValuesStartOverrides.push({
+      meterId:String(meterId || ""),
+      sourceYear:String(transfer.sourceYear || ""),
+      transferredValue:transfer.previousEnd,
+      authorizedAt:new Date().toISOString(),
+      authorization:"Benutzerbestätigter Sonderfall",
+      note:String(note || "")
+    });
+    markDirty();
+    return true;
+  }
   function draftValue(key, fallback) { return draftText.has(key) ? draftText.get(key) : displayInput(fallback); }
   function statusText(status) {
     if (status === "complete") return "Stimmt überein";
@@ -100,11 +125,25 @@
     return [...groupMap.values()];
   }
 
+  function meterTypeBadge(row) {
+    const type = String(row && row.meterType || "");
+    const markerClass = type === "cold-water" ? " is-cold-water" : (type === "hot-water" ? " is-hot-water" : "");
+    const marker = markerClass ? '<span class="individual-values-meter-dot' + markerClass + '" aria-hidden="true"></span>' : "";
+    return '<span class="individual-values-meter-type' + markerClass + '">' + marker + esc(row.typeLabel) + '</span>';
+  }
+
   function meterInput(summary, row, field) {
     const key = fieldKey("meter", summary.cost.id, row.meterId, field);
     const error = fieldErrors.get(key);
     const value = draftValue(key, field === "start" ? row.startValue : row.endValue);
-    return '<div class="individual-values-input-wrap' + (error ? ' is-error' : '') + '"><input class="individual-values-number-input" inputmode="decimal" autocomplete="off" value="' + esc(value) + '" data-individual-meter-input data-cost-id="' + esc(summary.cost.id) + '" data-meter-id="' + esc(row.meterId) + '" data-field="' + field + '" aria-label="' + esc((field === "start" ? "Anfangsstand" : "Endstand") + " " + row.meterNumber) + '"' + (isReadOnly() ? " disabled" : "") + '>' + (error ? '<small class="individual-values-field-error">' + esc(error) + '</small>' : '') + '</div>';
+    const transferred = field === "start" && !!priorTransferForMeter(row.meterId);
+    const overridden = transferred && hasStartOverride(row.meterId);
+    const locked = transferred && !overridden;
+    const disabled = isReadOnly() || locked;
+    const stateClass = locked ? " is-transferred" : (overridden ? " is-start-override" : "");
+    const hint = locked ? '<small class="individual-values-carried-forward">Aus Vorjahr übernommen</small>' : (overridden ? '<small class="individual-values-start-override-note">Sonderfall freigegeben</small>' : "");
+    const title = locked ? ' title="Aus dem Vorjahr übernommen. Änderung nur über die Sonderfallaktion."' : "";
+    return '<div class="individual-values-input-wrap' + stateClass + (error ? ' is-error' : '') + '"><input class="individual-values-number-input" inputmode="decimal" autocomplete="off" value="' + esc(value) + '" data-individual-meter-input data-cost-id="' + esc(summary.cost.id) + '" data-meter-id="' + esc(row.meterId) + '" data-field="' + field + '" aria-label="' + esc((field === "start" ? "Anfangsstand" : "Endstand") + " " + row.meterNumber) + '"' + (locked ? ' aria-readonly="true" data-individual-transferred-start="true"' : "") + title + (disabled ? " disabled" : "") + '>' + hint + (error ? '<small class="individual-values-field-error">' + esc(error) + '</small>' : '') + '</div>';
   }
 
   function consumptionSection(summary) {
@@ -118,7 +157,7 @@
         const totalDetail = group.complete ? row.unit : "Unvollständig";
         body += '<tr data-individual-row-status="' + esc(row.status) + '" data-meter-row="' + esc(row.meterId) + '">' +
           (index === 0 ? caseCell(group.caseRow, Math.max(1,rows.length)) : "") +
-          '<td><span class="individual-values-meter-type">' + esc(row.typeLabel) + '</span></td>' +
+          '<td>' + meterTypeBadge(row) + '</td>' +
           '<td><strong class="individual-values-meter-number">' + esc(row.meterNumber || row.meterId) + '</strong><small>' + esc(row.meterId) + '</small></td>' +
           '<td>' + meterInput(summary,row,"start") + '</td><td>' + meterInput(summary,row,"end") + '</td>' +
           '<td class="number-cell" data-meter-consumption="' + esc(row.meterId) + '"><strong>' + (row.status === "complete" ? formatNumber(row.consumption,2) : "–") + '</strong><small>' + esc(row.unit) + '</small></td>' +
@@ -348,24 +387,39 @@
     const title = dialog.querySelector("[data-individual-special-title]");
     const context = dialog.querySelector("[data-individual-special-context]");
     const note = dialog.querySelector("[data-individual-special-note]");
+    const overridePanel = dialog.querySelector("[data-individual-start-override-panel]");
+    const overrideCheckbox = dialog.querySelector("[data-individual-start-override]");
+    const overrideHelp = dialog.querySelector("[data-individual-start-override-help]");
     if (selectedSpecial.kind === "meter") {
       const meter = findMeter(selectedSpecial.rowId) || {};
+      const transfer = priorTransferForMeter(selectedSpecial.rowId);
+      const overridden = hasStartOverride(selectedSpecial.rowId);
       title.textContent = "Zähler-Sonderfall";
       context.textContent = [meter.zaehlernummer || selectedSpecial.rowId, meter.einheitId || ""].filter(Boolean).join(" · ");
       note.value = String(meter.bemerkung || "");
+      if (overridePanel) overridePanel.hidden = !transfer;
+      if (overrideCheckbox) { overrideCheckbox.checked = overridden; overrideCheckbox.disabled = overridden; }
+      if (overrideHelp) overrideHelp.textContent = overridden
+        ? "Der übernommene Anfangsstand ist bereits als Sonderfall zur Bearbeitung freigegeben."
+        : "Die Freigabe ist bewusst zu bestätigen. Danach kann der Anfangsstand geändert und mit dem Bereich gespeichert werden.";
     } else {
       const caseRow = calc().individualValueCases(state).find(row => row.caseKey === selectedSpecial.rowId) || {};
       title.textContent = "Abrechnungsfall-Sonderfall";
       context.textContent = [caseRow.unitLabel || caseRow.unitId,caseRow.label].filter(Boolean).join(" · ");
       note.value = String(manualRecord(selectedSpecial.costId,selectedSpecial.rowId).note || "");
+      if (overridePanel) overridePanel.hidden = true;
+      if (overrideCheckbox) { overrideCheckbox.checked = false; overrideCheckbox.disabled = false; }
     }
     openDialog(dialog,trigger,"[data-individual-special-note]");
   }
   function saveSpecial() {
     if (!selectedSpecial || isReadOnly()) return;
     const note = document.querySelector("[data-individual-special-note]").value;
-    if (selectedSpecial.kind === "meter") global.NKProMeteringDraft.setValue(selectedSpecial.rowId,"note",note,"text");
-    else {
+    if (selectedSpecial.kind === "meter") {
+      global.NKProMeteringDraft.setValue(selectedSpecial.rowId,"note",note,"text");
+      const overrideCheckbox = document.querySelector("[data-individual-start-override]");
+      if (overrideCheckbox && overrideCheckbox.checked) authorizeStartOverride(selectedSpecial.rowId,note);
+    } else {
       const input = ensureManualInput(selectedSpecial.costId);
       const existing = input.caseValues[selectedSpecial.rowId] && typeof input.caseValues[selectedSpecial.rowId] === "object" ? input.caseValues[selectedSpecial.rowId] : {};
       input.caseValues[selectedSpecial.rowId] = { ...existing, amount:Object.prototype.hasOwnProperty.call(existing,"amount") ? existing.amount : "", value:Object.prototype.hasOwnProperty.call(existing,"value") ? existing.value : "", note, source:existing.source || "manual", updatedAt:new Date().toISOString() };
@@ -450,7 +504,7 @@
   }
   function describe() {
     const pageModel = state && calc() ? model() : { cases:[],consumptionCosts:[],manualCosts:[] };
-    return Object.freeze({ cases:pageModel.cases.length, consumptionAreas:pageModel.consumptionCosts.length, manualAreas:pageModel.manualCosts.length, drafts:draftText.size, errors:fieldErrors.size, dynamic:true });
+    return Object.freeze({ cases:pageModel.cases.length, consumptionAreas:pageModel.consumptionCosts.length, manualAreas:pageModel.manualCosts.length, drafts:draftText.size, errors:fieldErrors.size, startOverrides:state && state.meta && Array.isArray(state.meta.individualValuesStartOverrides) ? state.meta.individualValuesStartOverrides.length : 0, dynamic:true });
   }
 
   connect();

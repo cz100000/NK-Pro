@@ -48,10 +48,10 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.58";
-const APP_VERSION_NAME = "AP22F10G-B-Individuelle-Werte-Neuentwicklung";
+const APP_VERSION = "V99.4.59";
+const APP_VERSION_NAME = "AP22F10G-B-Korrektur1-Individuelle-Werte";
 const APP_RELEASE_DATE = "2026-07-19";
-if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – AP22F10G-B Individuelle Werte";
+if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – AP22F10G-B Korrektur 1";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
 const ARCHIVE_SNAPSHOT_SCOPE = "billingSnapshot";

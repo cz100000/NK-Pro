@@ -1,7 +1,7 @@
 {
-  "name": "NK-Pro V99.4.58",
+  "name": "NK-Pro V99.4.59",
   "short_name": "NK-Pro",
-  "description": "Lokale Nebenkostenabrechnung mit AP22F10G-B: dynamisch aus Gesamtkosten gesteuerte Verbrauchs- und manuelle Einzelwerte.",
+  "description": "Lokale Nebenkostenabrechnung mit AP22F10G-B Korrektur 1: kompakte Individuelle-Werte-Seite, Zählerfarbmarkierung und geschützte Vorjahresanfangsstände.",
   "lang": "de-DE",
   "id": "./",
   "start_url": "./",
@@ -9,7 +9,7 @@
   "display": "standalone",
   "background_color": "#f4f6f9",
   "theme_color": "#031d41",
-  "version": "99.4.58",
+  "version": "99.4.59",
   "icons": [
     {
       "src": "./icons/icon-180.png",
@@ -42,5 +42,5 @@
       "purpose": "maskable"
     }
   ],
-  "buildId": "99.4.58-ap22f10g-b"
+  "buildId": "99.4.59-ap22f10g-b-k1"
 }
