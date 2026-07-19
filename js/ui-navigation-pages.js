@@ -921,11 +921,18 @@ function confirmDeleteBilling() {
   if (!confirmRiskyDataAction(index === "current" ? "Offene Abrechnung löschen" : "Archivdatensatz löschen", index === "current" ? "Alle Arbeitsdaten dieser offenen Abrechnung werden verworfen." : "Diese Abrechnung wird endgültig aus dem lokalen Jahresarchiv entfernt.")) return;
   let result;
   if(index === "current") {
-    NK_PRO_MODULES.archiveActions.closeAfterArchive(state,{periodId:"deleted|"+Date.now()});
-    state.meta.currentBillingDeletedAt=new Date().toISOString();
-    state.meta.currentBillingDeletedReason="Vom Nutzer verworfen";
-    saveState();
-    result={changed:true,targetTab:"start",message:"Die offene Abrechnung wurde gelöscht."};
+    result = NK_PRO_MODULES.stateAccess.transact(next => {
+      const deletedYear = String(next.meta && next.meta.abrechnungsjahr || currentAbrechnungsjahr());
+      const deletedStart = String(next.meta && next.meta.abrechnungsbeginn || (deletedYear + "-01-01"));
+      const deletedEnd = String(next.meta && next.meta.abrechnungsende || (deletedYear + "-12-31"));
+      NK_PRO_MODULES.yearTransitionActions.resetAnnualValues(next, deletedYear, deletedStart, deletedEnd);
+      NK_PRO_MODULES.archiveActions.closeAfterArchive(next,{periodId:"deleted|"+Date.now()});
+      next.meta.currentBillingDeletedAt=new Date().toISOString();
+      next.meta.currentBillingDeletedYear=deletedYear;
+      next.meta.currentBillingDeletedReason="Vom Nutzer verworfen";
+      NK_PRO_MODULES.billingWorkflow.clearCurrentBillingFinalization(next);
+      return {changed:true,targetTab:"start",message:"Die offene Abrechnung " + deletedYear + " wurde vollständig gelöscht. Objektstammdaten und Archiv bleiben erhalten."};
+    }, { reason:"Offene Abrechnung löschen", render:false, allowFinalizationWrite:true });
   } else {
     const execution = NK_PRO_MODULES.applicationActions.execute("archive", "deleteAt", [index, { confirmed:true }]);
     result = execution.value;
