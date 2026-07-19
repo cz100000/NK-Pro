@@ -48,7 +48,7 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.55";
+const APP_VERSION = "V99.4.56";
 const APP_VERSION_NAME = "AP22F10E-Stabilisierung-Abrechnungsuebersicht";
 const APP_RELEASE_DATE = "2026-07-19";
 if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – AP22F10F Sammelerfassung Wasser und Heizkosten";
@@ -116,7 +116,7 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
-  "V99.4.55 korrigiert die Altstandsübernahme: Vorjahresendstände werden auch ohne eingebettetes Vorjahresarchiv aus der gespeicherten Wasserzählerhistorie ermittelt, in die aktuelle Messperiode geschrieben und trotz veralteter Übernahmeprotokolle erneut nachgezogen, solange der Anfangsstand leer ist. Datenschema 5, Persistenz, Migration, Backup, Restore, Archiv, Navigation, Brief und Druck bleiben geschützt.",
+  "V99.4.56 korrigiert die Wasser-Altstandsanzeige umfassend: Einzelne aktive Anfangsablesungen werden in der Sammelerfassung auch ohne bereits gebildete Messperiode angezeigt. Messperioden entstehen weiterhin erst mit einem Endstand. Vorperiodenprotokolle werden je Zähler und Quelljahr dedupliziert, Legacy- und Standarddaten bleiben synchron. Geprüft mit dem realen Gesamtbestand V99.4.55. Datenschema 5, Persistenz, Migration, Backup, Restore, Archiv, Navigation, Brief und Druck bleiben geschützt.",
   "V99.4.44 migriert ausschließlich Nebenkosten abrechnen – Gesamtkosten auf NK-Pro UI Referenz 1.0: vier bestandsbasierte Kennzahlenkacheln, drei flache Arbeitsbereiche, lokale Kostenartensuche, vollständige 15-spaltige Haupttabelle, neutraler Summenabschluss und interner Tabellen-Scroll. Datenschema, Fachlogik, Berechnungen, Persistenz, Migration, Archiv, Brief und Druck bleiben unverändert.",
   "V99.4.43 migriert ausschließlich Nebenkosten abrechnen – Vorauszahlungen auf NK-Pro UI Referenz 1.0: flacher Seitenfluss mit getrennten Tabellen für NK-Vorauszahlungen, Kaltmiete und Korrekturen/Gutschriften, vollständiger Wohnungs- und Belegungsbestand einschließlich nicht abrechenbarer Fälle, neutrale Tabellenflächen und vollständig erhaltene Gesamtsummen. Berechnung, Datenmodell, Persistenz und Fachlogik bleiben unverändert.",
   "V99.4.42 AP22F7B Korrektur 3 ergänzt den verbindlichen sichtbaren rechten Rahmen an allen zentralen Standardtabellen und schreibt diesen Standard für künftige Tabellenmigrationen fest. Auf Nebenkosten abrechnen – Mietverhältnisse werden Mietzeiträume im deutschen Format TT.MM.JJJJ angezeigt; Sortierung, Datenwerte und Fachlogik bleiben unverändert.",

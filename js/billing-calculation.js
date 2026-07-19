@@ -453,8 +453,29 @@
       const replacement = !!String(meter.vorgaengerZaehlerId || "") || (data && data.zaehlerDaten && Array.isArray(data.zaehlerDaten.zaehlerwechsel) && data.zaehlerDaten.zaehlerwechsel.some(row => String(row.neuerZaehlerId || "") === meterId));
       const transfers = data && data.meta && Array.isArray(data.meta.individualValuesPriorTransfers) ? data.meta.individualValuesPriorTransfers : [];
       const transfer = transfers.slice().reverse().find(row => String(row.meterId || "") === meterId);
-      const startValue = first && first.anfangsstand !== undefined ? first.anfangsstand : "";
-      const endValue = last && last.endstand !== undefined ? last.endstand : "";
+      // AP22F10F Korrektur 3: Eine einzelne Anfangsablesung erzeugt fachlich noch
+      // keine Messperiode. Die Sammelerfassung muss sie trotzdem anzeigen. Daher
+      // werden Anfangs- und Endstand zusätzlich direkt aus den aktiven Messwerten
+      // des aktuellen Abrechnungszeitraums gelesen. Sobald ein Endstand existiert,
+      // bleibt die abgeleitete Messperiode die führende Quelle.
+      const activeReading = row => {
+        const status = String(row && row.status || "").toLowerCase();
+        return !["cancelled","storniert","corrected","ersetzt","replaced","documented-only"].includes(status);
+      };
+      const currentReadings = data && data.zaehlerDaten && Array.isArray(data.zaehlerDaten.messwerte)
+        ? data.zaehlerDaten.messwerte.filter(row => String(row && (row.zaehlerId || row.meterId) || "") === meterId && activeReading(row) && periodOverlaps({ beginn:row.messzeitraumVon || row.ablesedatum, ende:row.messzeitraumBis || row.ablesedatum }, period))
+        : [];
+      const latestRoleReading = role => currentReadings.filter(row => String(row && row.rolle || "") === role && Number.isFinite(Number(row.wert)))
+        .sort((a,b) => String(b.erfasstAm || "").localeCompare(String(a.erfasstAm || "")) || String(b.ablesedatum || "").localeCompare(String(a.ablesedatum || "")))[0] || null;
+      const startReading = latestRoleReading("start");
+      const endReading = latestRoleReading("end");
+      const startValue = first && first.anfangsstand !== undefined ? first.anfangsstand : (startReading ? Number(startReading.wert) : "");
+      const endValue = last && last.endstand !== undefined ? last.endstand : (endReading ? Number(endReading.wert) : "");
+      const effectiveStartDate = first && first.beginn ? first.beginn : (startReading && startReading.ablesedatum || period.start || "");
+      const effectiveEndDate = last && last.ende ? last.ende : (endReading && endReading.ablesedatum || period.end || "");
+      const hasStartValue = startValue !== "" && startValue !== null && startValue !== undefined && Number.isFinite(Number(startValue));
+      const hasEndValue = endValue !== "" && endValue !== null && endValue !== undefined && Number.isFinite(Number(endValue));
+      const directConsumption = hasStartValue && hasEndValue ? Number(endValue) - Number(startValue) : 0;
       return {
         meterId,
         meterNumber:String(meter.zaehlernummer || meter.meterNumber || meterId),
@@ -464,12 +485,12 @@
         caseKey:linkedCase && linkedCase.caseKey || "",
         caseRole:linkedCase && linkedCase.role || "unassigned",
         caseLabel:linkedCase && linkedCase.label || "Zuordnung prüfen",
-        startDate:String(first && first.beginn || period.start || ""),
-        endDate:String(last && last.ende || period.end || ""),
+        startDate:String(effectiveStartDate),
+        endDate:String(effectiveEndDate),
         startValue,
         endValue,
-        consumption:valid.reduce((sum,row) => sum + num(row.verbrauch), 0),
-        status:invalid ? "error" : (!rows.length || endValue === "" || endValue === null || endValue === undefined ? "open" : "complete"),
+        consumption:valid.length ? valid.reduce((sum,row) => sum + num(row.verbrauch), 0) : directConsumption,
+        status:invalid || directConsumption < 0 ? "error" : (endValue === "" || endValue === null || endValue === undefined ? "open" : "complete"),
         priorStatus:replacement ? "replacement" : (transfer ? "transferred" : (startValue === "" || startValue === null || startValue === undefined ? "missing" : "available")),
         replacement,
         periods:rows.length

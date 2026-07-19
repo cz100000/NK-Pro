@@ -1,5 +1,5 @@
-const CACHE_NAME = "nk-pro-v99-4-55-ap22f10f-k2";
-const BUILD_ID = "99.4.55-ap22f10f-k2";
+const CACHE_NAME = "nk-pro-v99-4-56-ap22f10f-k3";
+const BUILD_ID = "99.4.56-ap22f10f-k3";
 const CACHE_PREFIX = "nk-pro-";
 const APP_SHELL = [
   "./",

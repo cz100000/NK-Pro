@@ -261,7 +261,15 @@
     if (!records.length) return Object.freeze({ changed:false, copied:0, sourceYear:plan.sourceYear, candidates:plan.candidates.length });
     if (!data.meta) data.meta = {};
     if (!Array.isArray(data.meta.individualValuesPriorTransfers)) data.meta.individualValuesPriorTransfers = [];
-    data.meta.individualValuesPriorTransfers.push(...records);
+    const merged = data.meta.individualValuesPriorTransfers.concat(records);
+    const latestByKey = new Map();
+    merged.forEach(entry => {
+      const key = [String(entry && entry.meterId || ""), String(entry && entry.sourceYear || "")].join("|");
+      const previous = latestByKey.get(key);
+      if (!previous || String(entry && entry.confirmedAt || "") >= String(previous && previous.confirmedAt || "")) latestByKey.set(key, entry);
+    });
+    data.meta.individualValuesPriorTransfers = [...latestByKey.values()];
+    if (global.NKProMeterValidation && typeof global.NKProMeterValidation.synchronizeMeteringData === "function") global.NKProMeterValidation.synchronizeMeteringData(data);
     return Object.freeze({ changed:true, copied:records.length, sourceYear:plan.sourceYear, candidates:plan.candidates.length });
   }
 

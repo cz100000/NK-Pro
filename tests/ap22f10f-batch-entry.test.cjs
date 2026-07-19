@@ -14,5 +14,5 @@ assert.ok(ui.includes('Heiz- und Warmwasserzubereitungskosten erfassen'));
 assert.ok(ui.includes('pendingWater'));
 assert.ok(ui.includes('pendingExternal'));
 assert.ok(css.includes('AP22F10F'));
-assert.ok(html.includes('99.4.53-ap22f10f'));
+assert.ok(html.includes('V99.4.56'));
 console.log('AP22F10F Sammelerfassung static: PASS');
