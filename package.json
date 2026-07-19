@@ -1,8 +1,8 @@
 {
-  "name": "nk-pro-v99-4-49",
-  "version": "99.4.49",
+  "name": "nk-pro-v99-4-50",
+  "version": "99.4.50",
   "private": true,
-  "description": "AP22F10C – Leerstandserfassung für individuelle Werte",
+  "description": "AP22F10D Korrektur 2 – eindeutige Abrechnungsaktionen und Speicherdiagnose",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
     "test:fixtures": "node tools/check-fixtures.cjs",
@@ -99,7 +99,8 @@
     "test:ap22f10b": "npm run test:ap22f10b:static && npm run test:ap22f10b:browser",
     "test:ap22f10b:regression": "node tests/ap22f9b-total-costs-browser.test.cjs && node tests/ap22f8b-korrektur1-browser.test.cjs && node tests/ap22f8b-prepayments-browser.test.cjs && npm run test:metering:ap21b1 && npm run test:architecture:ap22f8b",
     "test:ap22f10c:static": "node tests/ap22f10c-vacancy.test.cjs && node tests/ap22f10b-individual-values.test.cjs",
-    "test:ap22f10c": "npm run test:ap22f10c:static"
+    "test:ap22f10c": "npm run test:ap22f10c:static",
+    "test:ap22f10d:k2": "node tests/ap22f10d-korrektur2.test.cjs && node tests/ap22f10d-korrektur2-browser.test.cjs"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1"

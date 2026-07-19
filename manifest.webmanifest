@@ -1,5 +1,5 @@
 {
-  "name": "NK-Pro V99.4.49",
+  "name": "NK-Pro V99.4.50",
   "short_name": "NK-Pro",
   "description": "Lokale Nebenkostenabrechnung mit AP22F10B: migrierte Seite Individuelle Werte mit Wasserzählern, externen Einzelwerten und getrennten Abgleichen.",
   "lang": "de-DE",
@@ -9,7 +9,7 @@
   "display": "standalone",
   "background_color": "#f4f6f9",
   "theme_color": "#031d41",
-  "version": "99.4.49",
+  "version": "99.4.50",
   "icons": [
     {
       "src": "./icons/icon-180.png",
@@ -42,5 +42,5 @@
       "purpose": "maskable"
     }
   ],
-  "buildId": "99.4.49-ap22f10b"
+  "buildId": "99.4.50-ap22f10d-k2"
 }

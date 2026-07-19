@@ -217,14 +217,35 @@ function ensureWaterMeterHistory(data) {
   return data;
 }
 
+function storageErrorDetails(error) {
+  const name = String(error && error.name || "");
+  const message = String(error && error.message || error || "");
+  const text = (name + " " + message).toLowerCase();
+  let type = "Interner Speicherfehler";
+  let advice = "Bitte Gesamt-JSON herunterladen und die technische Fehlermeldung prüfen.";
+  if (name === "QuotaExceededError" || text.includes("quota") || text.includes("exceeded")) {
+    type = "Browserspeicher voll";
+    advice = "Der lokale Speicher reicht für Arbeitsstand und Recovery-Kopie nicht aus. Bitte Gesamt-JSON herunterladen und anschließend den lokalen Speicher bereinigen.";
+  } else if (name === "SecurityError" || text.includes("denied") || text.includes("access") || text.includes("blocked")) {
+    type = "Speicherzugriff blockiert";
+    advice = "Der Browser verhindert den Zugriff auf den lokalen Speicher. Bitte Website-Speicher zulassen und immer dieselbe App-Adresse verwenden.";
+  } else if (name === "SyntaxError" || text.includes("json") || text.includes("integrit")) {
+    type = "Gespeicherter Datensatz nicht lesbar";
+    advice = "Bitte Gesamt-JSON sichern und den letzten gültigen Sicherungsstand prüfen.";
+  }
+  const usage = NK_PRO_MODULES.persistence && typeof NK_PRO_MODULES.persistence.totalStorageUsageBytes === "function"
+    ? NK_PRO_MODULES.persistence.totalStorageUsageBytes(persistenceModuleOptions()) : 0;
+  return { type, advice, technical:(name ? name + ": " : "") + (message || "Unbekannter Fehler"), usage };
+}
+
 function notifyStorageProblem(message, error) {
   if (error) console.warn("NK-Pro: " + message, error);
   else console.warn("NK-Pro: " + message);
-  pendingStorageWarning = message;
-  if (!storageWarningShown && typeof window !== "undefined" && typeof window.setTimeout === "function" && typeof alert === "function") {
-    storageWarningShown = true;
-    window.setTimeout(() => alert(message), 0);
-  }
+  const details = storageErrorDetails(error);
+  const usageText = details.usage ? " Aktuell belegter lokaler Speicher: " + (details.usage / 1024 / 1024).toFixed(2).replace(".", ",") + " MB." : "";
+  const combined = details.type + ": " + message + " " + details.advice + usageText + " Technisch: " + details.technical;
+  if (pendingStorageWarning !== combined) pendingStorageWarning = combined;
+  storageWarningShown = true;
 }
 
 function integrityHash(text) {
@@ -802,9 +823,9 @@ function renderSystemMessages() {
     el.innerHTML = "";
     return;
   }
-  el.innerHTML = '<div class="hint runtime-error-box"><strong>Systemhinweis:</strong> Die Daten wurden nicht gelöscht. Ein Teil der App konnte nicht sauber geladen oder angezeigt werden.<ul>' +
+  el.innerHTML = '<div class="hint runtime-error-box" role="alert"><strong>Systemhinweis:</strong> Die Daten wurden nicht gelöscht. Ein Teil der App konnte nicht sauber geladen oder gespeichert werden.<ul>' +
     items.map(item => '<li>' + escapeHtml(item) + '</li>').join("") +
-    '</ul><p class="small">Bitte JSON-Sicherung prüfen und diese Meldung nicht ignorieren.</p></div>';
+    '</ul><div class="runtime-error-actions"><button class="primary" type="button" data-ui-action="export.downloadFullJson">Gesamt-JSON herunterladen</button><button class="secondary" type="button" data-ui-action="navigation.switchTab" data-ui-args="[&quot;sicherung&quot;]">Datensicherung öffnen</button></div></div>';
 }
 
 function setActionMessage(message, level="ok") {

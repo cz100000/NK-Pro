@@ -6850,3 +6850,11 @@ body.billing-readonly-mode #einstellungen .nk-ui-table td.editable,body.billing-
   #start .billing-overview-table-shell{overflow-x:auto!important}
   #start .billing-overview-table{min-width:920px!important}
 }
+
+/* AP22F10D Korrektur 2 */
+#start .billing-overview-actions-cell{padding-left:4px!important;padding-right:4px!important}
+#start .billing-actions{display:flex;flex-wrap:nowrap;gap:3px;align-items:center;justify-content:flex-start;white-space:nowrap}
+#start .billing-overview-action{width:30px;height:30px;min-width:30px;padding:0}
+#start .billing-overview-action svg{width:16px;height:16px}
+.runtime-error-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.runtime-error-box li{overflow-wrap:anywhere}

@@ -1,0 +1,16 @@
+"use strict";
+const assert=require("node:assert/strict");
+const fs=require("node:fs");
+const path=require("node:path");
+const root=path.resolve(__dirname,"..");
+const nav=fs.readFileSync(path.join(root,"js/ui-navigation-pages.js"),"utf8");
+const persistence=fs.readFileSync(path.join(root,"js/app-state-persistence.js"),"utf8");
+assert.match(nav,/Abrechnung bearbeiten[\s\S]*billing\.openCurrentEdit/);
+assert.match(nav,/Abrechnungszeitraum ändern[\s\S]*billing\.openPeriodEditor/);
+assert.match(nav,/Abrechnung ansehen[\s\S]*billing\.openCurrentView/);
+assert.match(nav,/Korrektur der archivierten Abrechnung starten[\s\S]*archive\.reopenForRework/);
+assert.match(nav,/calendar:/);
+assert.match(persistence,/QuotaExceededError/);
+assert.match(persistence,/Gesamt-JSON herunterladen/);
+assert.doesNotMatch(persistence,/setTimeout\(\(\) => alert\(message\)/);
+console.log("AP22F10D Korrektur 2 static: PASS");

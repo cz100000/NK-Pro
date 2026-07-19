@@ -686,7 +686,8 @@ function billingOverviewIcon(name) {
     finalize:'<circle cx="12" cy="12" r="9"></circle><path d="m8 12 2.7 2.7L16.5 9"></path>',
     archive:'<path d="M3 6h18M5 6v15h14V6M8 3h8l2 3H6l2-3M9 11h6"></path>',
     refresh:'<path d="M3 6h18M5 6v15h14V6M8 3h8l2 3H6l2-3"></path><path d="M9 14a4 4 0 0 1 6.8-2.8L18 13"></path><path d="M18 9v4h-4"></path>',
-    delete:'<path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"></path>'
+    delete:'<path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"></path>',
+    calendar:'<rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18"></path><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"></path>'
   };
   return '<svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">' + (paths[name] || paths.view) + '</svg>';
 }
@@ -696,8 +697,9 @@ function billingOverviewActionButton(label, icon, action, args, tone="") {
 function billingOverviewCurrentActionsHtml() {
   const finalized = NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized();
   return '<div class="billing-actions" role="group" aria-label="Aktionen für die aktuelle Abrechnung">' +
-    billingOverviewActionButton("Abrechnungszeitraum bearbeiten", "edit", "billing.openPeriodEditor") +
-    billingOverviewActionButton("Ansehen", "view", "billing.openCurrentView") +
+    billingOverviewActionButton("Abrechnung bearbeiten", "edit", "billing.openCurrentEdit") +
+    billingOverviewActionButton("Abrechnungszeitraum ändern", "calendar", "billing.openPeriodEditor") +
+    billingOverviewActionButton("Abrechnung ansehen", "view", "billing.openCurrentView") +
     (finalized
       ? billingOverviewActionButton("Archiv aktualisieren", "refresh", "archive.currentYear")
       : billingOverviewActionButton("Abschließen", "finalize", "billing.finalize") + billingOverviewActionButton("Archivieren", "archive", "archive.currentYear") + billingOverviewActionButton("Abrechnung löschen", "delete", "billing.openDeleteModal", ["current"], "danger")) +
@@ -705,8 +707,8 @@ function billingOverviewCurrentActionsHtml() {
 }
 function billingOverviewArchiveActionsHtml(index) {
   return '<div class="billing-actions" role="group" aria-label="Aktionen für die archivierte Abrechnung">' +
-    billingOverviewActionButton("Ansehen", "view", "archive.openYear", [index]) +
-    billingOverviewActionButton("Zur Korrektur öffnen", "edit", "archive.reopenForRework", [index], "warning") +
+    billingOverviewActionButton("Archivierte Abrechnung ansehen", "view", "archive.openYear", [index]) +
+    billingOverviewActionButton("Korrektur der archivierten Abrechnung starten", "refresh", "archive.reopenForRework", [index], "warning") +
   '</div>';
 }
 function billingOverviewDateTimeHtml(value) {
