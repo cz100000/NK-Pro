@@ -122,7 +122,10 @@
     const costs = Array.isArray(data && data.kostenarten) ? data.kostenarten : [];
     const waterSourceKeys = new Set(result.map(row => text(row.legacySourceKey)));
     const hasWaterContext = waterRows.length > 0 || costs.some(cost => text(cost && cost.id) === "K002");
-    const activeUnits = hasWaterContext ? (Array.isArray(data && data.wohnungen) ? data.wohnungen : []).filter(unit => unit && text(unit.id) && text(unit.status || "aktiv").toLowerCase() !== "inaktiv") : [];
+    // AP22F10C Korrektur 1: Der Wohnungsstatus ist kein Ausschlusskriterium für
+    // physische Wasserzähler. Auch eine vollständig leer stehende und deshalb
+    // als inaktiv gekennzeichnete Wohnung benötigt Kalt- und Warmwasserzähler.
+    const activeUnits = hasWaterContext ? (Array.isArray(data && data.wohnungen) ? data.wohnungen : []).filter(unit => unit && text(unit.id)) : [];
     activeUnits.forEach((unit, unitIndex) => {
       const unitId = text(unit.id);
       for (const channel of [
