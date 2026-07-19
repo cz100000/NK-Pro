@@ -1,3 +1,11 @@
+# Release V99.4.64 – AP22F11B Korrektur 3
+
+Die bisherige Seite „Prüfung & Freigabe“ wurde als handlungsorientierte Seite **„Prüfen und abschließen“** neu gestaltet. Blockierende Fehler, offene Prüfungen, Hinweise und Abschlussstatus werden als Kennzahlen dargestellt. Offene Punkte führen direkt zur verursachenden Eingabeseite; erledigte Prüfungen bleiben einblendbar. Der Abschlussbereich zeigt die Voraussetzungen und deaktiviert die Finalisierung sichtbar, solange Blocker bestehen.
+
+Das vollständige Regelinventar wurde unverändert als neue rein lesende Seite unter **Analyse → Regelinventar** eingeordnet. Suche, Fachbereichs- und Statusfilter sowie Regeldetails bleiben verfügbar. Datenschema, Regeldefinitionen, Regelkennungen, Fachlogik, Persistenz, Archiv und Schreibschutz sind unverändert.
+
+---
+
 # Release V99.4.43 – AP22F8B Vorauszahlungen Korrektur 1
 
 Die Vorauszahlungsseite besitzt vier kompakte Übersichts­kacheln. Alle fallbezogenen Spalten der NK-Vorauszahlungsmatrix sind gleich breit. NK-Vorauszahlungs-Korrekturen und Kaltmietkorrekturen werden getrennt erfasst, summiert und unmittelbar in den zugehörigen „nach Korrektur“-Werten berücksichtigt. Der Brief weist beide Kategorien getrennt aus; nur die NK-Korrektur beeinflusst das Nebenkostenabrechnungsergebnis. Der sichtbare Bereich „Prüfung und Hinweise“ zeigt die zentralen Vorauszahlungsprüfungen einschließlich der neuen Trennungsprüfung.

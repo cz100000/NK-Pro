@@ -143,7 +143,8 @@
       "quality.showOnlyErrors":call(handlers, "showOnlyQualityErrors"), "quality.render":call(handlers, "renderQuality"),
       "quality.setFilter":call(handlers, "qualitySetFilter"), "quality.openDetail":call(handlers, "openQualityDetail"),
       "quality.confirmIssue":call(handlers, "saveQualityConfirmation"), "quality.markNotApplicable":call(handlers, "markQualityNotApplicable"),
-      "quality.openPageIssues":call(handlers, "openPageQualityIssues")
+      "quality.openPageIssues":call(handlers, "openPageQualityIssues"), "quality.toggleOpenOnly":call(handlers, "toggleQualityOpenOnly"),
+      "quality.toggleCompleted":call(handlers, "toggleQualityCompleted"), "quality.filterRegistry":call(handlers, "filterQualityRegistry")
     });
     registerController("meter", "UI-Adapter auf Zählerstammdaten, Messwerte und Messperioden aus AP5", {
       "meter.previewWaterValue":context => requireHandler(handlers, "updateWaterMeterPreview")(context.element),

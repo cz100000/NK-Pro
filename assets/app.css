@@ -7281,3 +7281,129 @@ body:not(.document-print-window) #auswertungen table thead th{
 @media(max-width:900px){
   #vorauszahlungsanpassung .prepayment-rule-card--forecast .prepayment-forecast-table{min-width:720px;table-layout:auto}
 }
+
+/* AP22F11B Korrektur 3: Prüfen und abschließen + Regelinventar */
+.quality-legacy-compat{display:none!important}
+.quality-finalization-content,.rule-inventory-content{display:grid;gap:16px;padding-bottom:24px}
+.quality-finalization-kpis,.rule-inventory-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.quality-finalization-kpi{position:relative;min-height:132px;border:1px solid var(--nk-ui-color-border,#d6e0e9);border-radius:var(--nk-ui-radius-lg,12px);background:#fff;padding:18px;display:grid;grid-template-columns:46px minmax(0,1fr) auto;gap:14px;align-items:start;text-align:left;box-shadow:var(--shadow-sm);color:var(--nk-ui-color-text,#102a43)}
+.quality-finalization-kpi:not(:disabled){cursor:pointer}
+.quality-finalization-kpi:disabled{opacity:1;cursor:default}
+.quality-finalization-kpi__icon{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;font-size:1.35rem;font-weight:800;background:#eef4fa;color:#1b5c98}
+.quality-finalization-kpi.is-err .quality-finalization-kpi__icon{background:#fff0ef;color:#c0392b}
+.quality-finalization-kpi.is-warn .quality-finalization-kpi__icon{background:#fff6e6;color:#bd7a00}
+.quality-finalization-kpi.is-info .quality-finalization-kpi__icon{background:#eef5ff;color:#1d65a6}
+.quality-finalization-kpi.is-ok .quality-finalization-kpi__icon{background:#eef9f1;color:#208347}
+.quality-finalization-kpi__body{display:flex;flex-direction:column;gap:5px;min-width:0}
+.quality-finalization-kpi__body>span{font-weight:800;color:#173b5a}
+.quality-finalization-kpi__body strong{font-size:2rem;line-height:1;color:#102f53}
+.quality-finalization-kpi__body strong.is-text{font-size:1.28rem;line-height:1.18;color:#1e7a43}
+.quality-finalization-kpi__body small{color:#617184;line-height:1.35}
+.quality-finalization-kpi__arrow{align-self:center;color:#456682;font-size:1.6rem}
+.quality-finalization-card,.rule-inventory-card,.quality-completion-card{overflow:hidden;border:1px solid var(--nk-ui-color-border,#d6e0e9);border-radius:var(--nk-ui-radius-lg,12px);background:#fff;box-shadow:var(--shadow-sm)}
+.quality-finalization-card__header,.rule-inventory-card__header{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;padding:16px 18px;border-bottom:1px solid #dde5ec;background:#fff}
+.quality-finalization-card__header--compact{padding-bottom:13px}
+.quality-finalization-card__header h2,.rule-inventory-card__header h2{margin:0;color:#173b5a;font-size:1.13rem}
+.quality-finalization-card__header p,.rule-inventory-card__header p{margin:4px 0 0;color:#657486;font-size:.84rem}
+.quality-finalization-toolbar{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap}
+.quality-toggle-button{display:inline-flex;align-items:center;gap:8px;border:0;background:transparent;color:#173b5a;font-weight:700;padding:7px 4px}
+.quality-toggle-control{position:relative;width:36px;height:20px;border-radius:999px;background:#9aa9b7;transition:.2s ease}
+.quality-toggle-control:after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.24);transition:.2s ease}
+.quality-toggle-button.is-active .quality-toggle-control{background:#1769c2}
+.quality-toggle-button.is-active .quality-toggle-control:after{transform:translateX(16px)}
+.quality-finalization-table-wrap,.rule-inventory-table-wrap{overflow:auto;margin:0 10px 10px;border:1px solid #d9e2ea;border-radius:9px;background:#fff}
+.quality-finalization-table,.quality-completed-table,.rule-inventory-table{width:100%;min-width:920px}
+.quality-finalization-table th:nth-child(1){width:16%}
+.quality-finalization-table th:nth-child(2){width:29%}
+.quality-finalization-table th:nth-child(3){width:11%}
+.quality-finalization-table th:nth-child(4){width:31%}
+.quality-finalization-table th:nth-child(5){width:13%}
+.quality-finalization-table td,.quality-completed-table td,.rule-inventory-table td{vertical-align:middle}
+.quality-finalization-table .actions-cell,.rule-inventory-table .actions-cell{text-align:right;white-space:nowrap}
+.quality-area-label{font-weight:700;color:#294d6d}
+.quality-task-title{text-align:left;font-weight:800}
+.quality-finalization-card__footer,.rule-inventory-card__footer{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:0 18px 15px;color:#5e6e80;font-size:.82rem}
+.quality-finalization-lower-grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(340px,.95fr);gap:16px;align-items:stretch}
+.quality-completed-result{display:inline-flex;align-items:center;gap:6px;color:#1e7a43;font-weight:700}
+.quality-completed-result>span{display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#e8f6ed;color:#1e7a43}
+.quality-completion-card{padding:20px;border-color:#b9d3f2;background:linear-gradient(180deg,#fbfdff,#f4f9ff)}
+.quality-completion-card header{display:flex;align-items:center;gap:12px}
+.quality-completion-card h2{margin:2px 0 0;color:#123f73}
+.quality-completion-eyebrow{margin:0;color:#47729b;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;font-weight:800}
+.quality-completion-icon{display:grid;place-items:center;width:44px;height:44px;border:2px solid #1769c2;border-radius:12px;color:#1769c2;font-size:1.35rem;font-weight:900;background:#fff}
+.quality-completion-card>p{color:#53677b;line-height:1.5}
+.quality-completion-card ul{list-style:none;margin:16px 0 20px;padding:0;display:grid;gap:10px}
+.quality-completion-card li{display:flex;gap:9px;align-items:center;color:#344d63}
+.quality-completion-card li>span:first-child{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;font-weight:900;font-size:.77rem}
+.quality-completion-card li.is-done>span:first-child{background:#e7f6ec;color:#1c7c43}
+.quality-completion-card li.is-open>span:first-child{background:#fff4df;color:#b57200}
+.quality-completion-action{width:100%;min-height:46px;font-weight:800}
+.quality-completion-finalized{display:flex;justify-content:space-between;gap:12px;margin-top:12px;padding-top:12px;border-top:1px solid #cfe0f2;color:#1d6b3c}
+.quality-finalization-bottom{display:flex;justify-content:space-between;align-items:stretch;gap:14px}
+.quality-last-run-note{flex:1;display:flex;gap:8px;align-items:center;margin:0}
+.quality-empty-state{display:flex;flex-direction:column;gap:4px}
+.rule-inventory-kpi{min-height:112px;border:1px solid #d7e1ea;border-radius:11px;background:#fff;padding:16px 18px;display:flex;flex-direction:column;gap:5px;box-shadow:var(--shadow-sm)}
+.rule-inventory-kpi>span{font-weight:800;color:#294d6d}
+.rule-inventory-kpi>strong{font-size:1.9rem;color:#123f73}
+.rule-inventory-kpi>small{color:#687789}
+.rule-inventory-kpi.is-green{border-top:4px solid #3a9560}
+.rule-inventory-kpi.is-blue{border-top:4px solid #2b6ca8}
+.rule-inventory-kpi.is-orange{border-top:4px solid #d49123}
+.rule-inventory-kpi.is-gray{border-top:4px solid #7f8f9d}
+.rule-inventory-toolbar{display:grid;grid-template-columns:minmax(280px,1fr) 240px 210px;gap:12px;padding:14px 18px;align-items:end}
+.rule-inventory-toolbar label{display:grid;gap:5px;color:#435970;font-weight:700;font-size:.78rem}
+.rule-inventory-toolbar input,.rule-inventory-toolbar select{width:100%}
+.rule-inventory-table{min-width:1120px}
+.rule-inventory-table th:nth-child(1){width:25%}
+.rule-inventory-table th:nth-child(2){width:17%}
+.rule-inventory-table th:nth-child(3){width:22%}
+.rule-inventory-table th:nth-child(4){width:24%}
+.rule-inventory-table th:nth-child(5){width:9%}
+.rule-inventory-result{white-space:normal;line-height:1.4}
+.rule-inventory-table code{font-size:.75rem;color:#5f6f80}
+
+@media (max-width:1180px){
+  .quality-finalization-kpis,.rule-inventory-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .quality-finalization-lower-grid{grid-template-columns:1fr}
+  .rule-inventory-toolbar{grid-template-columns:1fr 1fr}
+  .rule-inventory-search{grid-column:1/-1}
+}
+@media (max-width:760px){
+  .quality-finalization-kpis,.rule-inventory-kpis{grid-template-columns:1fr}
+  .quality-finalization-kpi{min-height:0}
+  .quality-finalization-card__header,.rule-inventory-card__header,.quality-finalization-bottom{flex-direction:column;align-items:stretch}
+  .quality-finalization-toolbar{justify-content:flex-start}
+  .rule-inventory-toolbar{grid-template-columns:1fr}
+  .rule-inventory-search{grid-column:auto}
+  .quality-finalization-card__footer,.rule-inventory-card__footer{align-items:flex-start;flex-direction:column}
+}
+
+/* AP22F11B Korrektur 3 – visuelle Feinkorrekturen */
+.quality-task-title,.quality-completed-table .link-button{border:0!important;background:transparent!important;padding:0!important;box-shadow:none!important;text-align:left;color:#174f86}
+.quality-task-title:hover,.quality-completed-table .link-button:hover{text-decoration:underline}
+.quality-completion-card header{display:flex!important;align-items:center!important;gap:12px!important;padding:0!important;border:0!important;background:transparent!important;color:#123f73!important;min-height:0!important}
+.quality-completion-card header h2{color:#123f73!important}
+.quality-completion-action:disabled{background:#dbe3ea!important;color:#718092!important;border-color:#c9d4de!important;cursor:not-allowed!important;box-shadow:none!important;opacity:1!important}
+@media (max-width:760px){
+  .quality-finalization-table-wrap,.rule-inventory-table-wrap{width:calc(100% - 20px);max-width:calc(100% - 20px);box-sizing:border-box}
+  .quality-finalization-table,.quality-completed-table{min-width:920px!important;width:920px!important}
+  .rule-inventory-table{min-width:1120px!important;width:1120px!important}
+}
+body:not(.document-print-window) #qualitaet .quality-completion-card .quality-completion-action.nk-ui-button:disabled,
+body:not(.document-print-window) #qualitaet .quality-completion-card .quality-completion-action.nk-ui-button[aria-disabled="true"]{
+  background:#dbe3ea!important;color:#718092!important;border-color:#c9d4de!important;cursor:not-allowed!important;box-shadow:none!important;opacity:1!important
+}
+body:not(.document-print-window) #qualitaet .quality-task-title.nk-ui-button,
+body:not(.document-print-window) #qualitaet .quality-completed-table .link-button.nk-ui-button{
+  min-height:0!important;border:0!important;background:transparent!important;padding:0!important;box-shadow:none!important;text-align:left!important;color:#174f86!important;border-radius:0!important
+}
+#qualitaet .quality-finalization-table thead th,
+#qualitaet .quality-completed-table thead th,
+#regelinventar .rule-inventory-table thead th{
+  background:#f1f4f7!important;color:#173b5a!important;border-color:#d7e0e8!important
+}
+body:not(.document-print-window) section#qualitaet table#qualityOpenTasksTable.nk-ui-table thead th,
+body:not(.document-print-window) section#qualitaet table#qualityAcknowledgedTable.nk-ui-table thead th,
+body:not(.document-print-window) section#regelinventar table#qualityRuleRegistryTable.nk-ui-table thead th{
+  background:#f1f4f7!important;color:#173b5a!important;border-color:#d7e0e8!important
+}

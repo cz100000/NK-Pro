@@ -1,8 +1,8 @@
 {
-  "name": "nk-pro-v99-4-63",
-  "version": "99.4.63",
+  "name": "nk-pro-v99-4-64",
+  "version": "99.4.64",
   "private": true,
-  "description": "AP22F11B Korrektur 2 – Vorauszahlungsanpassung mit Basis- und Preisprognose sowie neuer Analyse-Navigation",
+  "description": "AP22F11B Korrektur 3 – Prüfen und abschließen sowie Regelinventar unter Analyse",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
     "test:fixtures": "node tools/check-fixtures.cjs",
@@ -10,7 +10,7 @@
     "test:browser": "playwright test",
     "test": "npm run test:syntax && npm run test:fixtures && npm run test:metering && npm run test:architecture && npm run test:contents && npm run test:release && npm run test:browser",
     "test:report": "playwright show-report",
-    "test:release": "npm run test:ap22f10g:static",
+    "test:release": "npm run test:ap22f11b:k3:static",
     "test:metering": "node tests/metering-domain.test.cjs && node tests/ap20-meter-start-regression.test.cjs && node tests/ap20-meter-calculation-regression.test.cjs && node tests/ap20-asset-refresh-regression.test.cjs",
     "test:architecture": "node tests/ap6-modularization.test.cjs && node tests/ap7-ui-integration.test.cjs && node tests/ap8-application-actions.test.cjs && node tests/ap9-core-orchestration.test.cjs && node tests/ap10-archive-year-quality-diagnostics.test.cjs && node tests/ap11-navigation.test.cjs && node tests/ap12-app-decoupling.test.cjs && node tests/ap13-letter-layout.test.cjs && node tests/ap14-ui-navigation.test.cjs && node tests/ap15-integration-release.test.cjs && node tests/ap17-area-dashboards.test.cjs && node tests/ap18-ui-ux-polish.test.cjs && node tests/ap19-billing-context-dashboards.test.cjs && node tests/ap20-central-quality-system.test.cjs && node tests/ap21-rule-audit.test.cjs && node tests/ap21a-ui-consolidation.test.cjs && node tests/ap21b1-navigation.test.cjs",
     "test:visual": "playwright test --project=ap11-navigation --grep \"Visuelle AP11-Referenzen\" --workers=1",
@@ -18,7 +18,7 @@
     "test:ap14": "node tests/ap14-ui-navigation.test.cjs && playwright test --project=ap14-ui-navigation --workers=1",
     "test:contents": "node tests/ap22e-ui-design-contract.test.cjs",
     "test:ap15": "node tests/ap15-integration-release.test.cjs && playwright test --project=ap15-integration-release --workers=1",
-    "release:check": "npm run test:syntax && npm run test:fixtures && npm run test:ap22f11b:static && npm run test:ap22f11b:k1:static && npm run test:ap22f11b:k2:static && node tools/check-release-contents.cjs --ignore-node-modules --strict",
+    "release:check": "npm run test:syntax && npm run test:fixtures && npm run test:ap22f11b:static && npm run test:ap22f11b:k3:static && node tools/check-release-contents.cjs --ignore-node-modules --strict",
     "test:ap17": "node tests/ap17-area-dashboards.test.cjs && playwright test --project=ap17-area-dashboards --workers=1",
     "test:ap18": "node tests/ap18-ui-ux-polish.test.cjs && playwright test --project=ap18-ui-ux-polish --workers=1",
     "test:ap19": "node tests/ap19-billing-context-dashboards.test.cjs && playwright test --project=ap19-billing-context-dashboards --workers=1",
@@ -120,7 +120,11 @@
     "test:ap22f11b:k2:static": "node tests/ap22f11b-korrektur2.test.cjs",
     "test:ap22f11b:k2:browser": "node tests/ap22f11b-korrektur2-browser.test.cjs",
     "test:ap22f11b:k2": "npm run test:ap22f11b:k2:static && npm run test:ap22f11b:k2:browser && npm run test:ap22f11b:k2:data",
-    "test:ap22f11b:k2:data": "node tests/ap22f11b-korrektur2-data-roundtrip.test.cjs"
+    "test:ap22f11b:k2:data": "node tests/ap22f11b-korrektur2-data-roundtrip.test.cjs",
+    "test:ap22f11b:k3:static": "node tests/ap22f11b-korrektur3.test.cjs",
+    "test:ap22f11b:k3:browser": "node tests/ap22f11b-korrektur3-browser.test.cjs",
+    "test:ap22f11b:k3:data": "node tests/ap22f11b-korrektur3-data-roundtrip.test.cjs",
+    "test:ap22f11b:k3": "npm run test:ap22f11b:k3:static && npm run test:ap22f11b:k3:browser && npm run test:ap22f11b:k3:data"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1"

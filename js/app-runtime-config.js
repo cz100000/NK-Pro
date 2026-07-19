@@ -49,10 +49,10 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.63";
-const APP_VERSION_NAME = "AP22F11B-Korrektur2-Vorauszahlungsanpassung-Analyse";
-const APP_RELEASE_DATE = "2026-07-19";
-if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – Vorauszahlungen anpassen";
+const APP_VERSION = "V99.4.64";
+const APP_VERSION_NAME = "AP22F11B-Korrektur3-Pruefen-Abschliessen-Regelinventar";
+const APP_RELEASE_DATE = "2026-07-20";
+if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – Prüfen und abschließen";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
 const ARCHIVE_SNAPSHOT_SCOPE = "billingSnapshot";
@@ -118,6 +118,7 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
+  "V99.4.64 AP22F11B Korrektur 3 gestaltet Prüfung & Freigabe als handlungsorientierte Seite Prüfen und abschließen neu, trennt offene und erledigte Prüfpunkte, bündelt den finalen Abschluss in einem klaren Abschlussbereich und verschiebt die vollständige Regelregistry als rein lesendes Regelinventar unter Analyse. Datenschema, Regel-IDs, Prüf- und Finalisierungslogik, Persistenz und Archive bleiben unverändert.",
   "V99.4.63 AP22F11B Korrektur 2 führt den Navigationseintrag Vorauszahlungen anpassen wieder ein, migriert die Seite auf den verbindlichen NK-Pro-Designstandard, trennt die Anpassung aus aktueller Abrechnung von einer optionalen Preisprognose und ergänzt den neuen Navigationsbereich Analyse mit einer rein lesenden Auswertungsübersicht. Datenschema 5, bestehende Abrechnungswerte, Archive und Schreibschutz bleiben erhalten.",
   "V99.4.62 AP22F11B Korrektur 1 behebt den responsiven Such- und Filterbereich der Mieterergebnisse, richtet alle tabellarischen Beträge rechtsbündig mit tabellarischen Ziffern aus, führt Vermieterkosten und Differenzprüfungen in einer gemeinsamen Kostenkontrolle zusammen, ergänzt den bestätigten Vermieteranteil nach Prüfung, erhält den vollständigen Gesamtabgleich und verlagert Prüfentscheidungsdetails vollständig in einen eigenen barrierearm bedienbaren Dialog.",
   "V99.4.62 AP22F11B migriert Ergebnis der Abrechnung auf das freigegebene Zielbild: vier Kennzahlen, Mieterergebnisse, dokumentierte Vermieteranteile, vollständige Differenzprüfung mit Korrekturverweisen und bewusst bestätigten Akzeptanzen sowie dauerhaft nachvollziehbarer Gesamtabgleich. Akzeptanzen sind an Daten- und Berechnungssignaturen gebunden und werden bei Änderungen ungültig. Zusätzlich verhindert die Zählersynchronisierung technisch identische Messwertdubletten.",
@@ -340,7 +341,7 @@ const UNIT_ID_ALIASES = {
 let state = null;
 let archiveReturnState = null;
 const START_NAV_TABS = ["landing","objektuebersicht","objekt","mieterverwaltung","wohnungsverwaltung","wasser","start","archiv","sicherung"];
-const BILLING_NAV_TABS = ["mieter","einnahmen","einstellungen","manuellewerte","umlage","vorauszahlungsanpassung","qualitaet","briefe","export","auswertungen"];
+const BILLING_NAV_TABS = ["mieter","einnahmen","einstellungen","manuellewerte","umlage","vorauszahlungsanpassung","qualitaet","briefe","export","auswertungen","regelinventar"];
 let appUiMode = ARCHIVE_VIEW_MODE ? "billing" : "start";
 let billingContextOpen = false;
 let navigationInitialized = false;

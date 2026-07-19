@@ -101,8 +101,8 @@
       },
       {
         "tab": "qualitaet",
-        "label": "Prüfung & Freigabe",
-        "ariaLabel": "Prüfung & Freigabe",
+        "label": "Prüfen und abschließen",
+        "ariaLabel": "Prüfen und abschließen",
         "requiresBilling": true,
         "icon": "<span aria-hidden=\"true\" class=\"nav-item-icon\"><svg aria-hidden=\"true\" class=\"nav-icon-svg\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.8\" viewbox=\"0 0 24 24\"><path d=\"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10M8.5 12l2.2 2.2 4.8-5.4\"></path></svg></span>"
       },
@@ -128,6 +128,13 @@
         "ariaLabel": "Auswertungen",
         "requiresBilling": true,
         "icon": '<span aria-hidden="true" class="nav-item-icon"><svg aria-hidden="true" class="nav-icon-svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path><path d="m4 8 6-5 6 7 5-4"></path></svg></span>'
+      },
+      {
+        "tab": "regelinventar",
+        "label": "Regelinventar",
+        "ariaLabel": "Regelinventar",
+        "requiresBilling": true,
+        "icon": '<span aria-hidden="true" class="nav-item-icon"><svg aria-hidden="true" class="nav-icon-svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M5 4h14v16H5z"></path><path d="M8 8h8M8 12h8M8 16h5"></path><path d="m16 15 1.5 1.5L20 14"></path></svg></span>'
       }
     ]
   },
@@ -151,9 +158,9 @@
     return Object.freeze(Object.assign({}, group, {items:Object.freeze(group.items.map(function (item) { return Object.freeze(item); }))}));
   }));
   const GROUP_KEYS = Object.freeze(NAVIGATION_GROUPS.map(function (group) { return group.storageKey; }));
-  const BILLING_CONTEXT_TABS = Object.freeze(["start","mieter","einnahmen","einstellungen","manuellewerte","umlage","vorauszahlungsanpassung","qualitaet","briefe","export","auswertungen","archiv"]);
+  const BILLING_CONTEXT_TABS = Object.freeze(["start","mieter","einnahmen","einstellungen","manuellewerte","umlage","vorauszahlungsanpassung","qualitaet","briefe","export","auswertungen","regelinventar","archiv"]);
   const COMPATIBILITY_TAB_PATHS = Object.freeze({
-    objektuebersicht:"group-object", verbraeuche:"group-billing", vorauszahlungsanpassung:"group-billing", export:"group-billing", sicherung:"group-billing", auswertungen:"group-analysis"
+    objektuebersicht:"group-object", verbraeuche:"group-billing", vorauszahlungsanpassung:"group-billing", export:"group-billing", sicherung:"group-billing", auswertungen:"group-analysis", regelinventar:"group-analysis"
   });
   const TAB_PATHS = Object.freeze(Object.assign({}, COMPATIBILITY_TAB_PATHS, NAVIGATION_GROUPS.reduce(function (paths, group) {
     group.items.forEach(function (item) { paths[item.tab] = group.storageKey; });

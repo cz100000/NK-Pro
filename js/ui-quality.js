@@ -510,3 +510,230 @@ function renderDashboard() {
     '</tbody>';
   renderWorkflowDashboard();
 }
+
+// AP22F11B Korrektur 3: handlungsorientierte Abschlussprüfung und separates Regelinventar.
+let qualityHideHints = true;
+let qualityCompletedExpanded = false;
+
+function qualityOpenRows(report) {
+  return (report && Array.isArray(report.results) ? report.results : [])
+    .filter(row => row.ruleId !== "NKP-FACH-019")
+    .filter(row => ["Blockiert","Zu prüfen","Hinweis","Technischer Fehler"].includes(row.status));
+}
+
+function qualityCompletedRows(report) {
+  return (report && Array.isArray(report.results) ? report.results : [])
+    .filter(row => row.ruleId !== "NKP-FACH-019")
+    .filter(row => ["Erledigt","Nicht anwendbar"].includes(row.status));
+}
+
+function qualityTaskActionLabel(row) {
+  const tab = String(row && row.targetTab || "");
+  if (["manuellewerte","verbraeuche","wasser","mieter","mieterverwaltung","einnahmen","einstellungen"].includes(tab)) return "Zur Eingabe";
+  if (tab === "umlage") return "Zum Ergebnis";
+  if (tab === "briefe") return "Zu Briefen";
+  if (tab === "vorauszahlungsanpassung") return "Zur Anpassung";
+  if (tab === "start") return "Zur Übersicht";
+  if (tab === "qualitaet" || !tab) return "Details";
+  return "Zum Bereich";
+}
+
+function qualityTaskActionHtml(row) {
+  if (!row || !row.targetTab || row.targetTab === "qualitaet") {
+    return qualityActionButton("Details", "quality.openDetail", [qualityEncoded(row.instanceId)], "secondary");
+  }
+  return qualityActionButton(qualityTaskActionLabel(row), "quality.jumpToIssue", [row.targetTab, qualityEncoded(row.instanceId)], "secondary");
+}
+
+function qualityOpenTaskRowHtml(row) {
+  return '<tr class="quality-finalization-task-row"><td><span class="quality-area-label">' + escapeHtml(row.groupLabel) + '</span></td>' +
+    '<td><button type="button" class="link-button quality-task-title"' + uiActionAttributes("quality.openDetail", [qualityEncoded(row.instanceId)]) + '>' + escapeHtml(row.title) + '</button><div class="small">' + escapeHtml(row.entityLabel || "") + '</div></td>' +
+    '<td><span class="status ' + qualityStatusClass(row.status) + '">' + escapeHtml(row.status === "Blockiert" ? "Fehler" : row.status) + '</span></td>' +
+    '<td class="quality-task-detail">' + escapeHtml(row.details || row.resultText || "–") + '</td>' +
+    '<td class="actions-cell">' + qualityTaskActionHtml(row) + '</td></tr>';
+}
+
+function qualityCompletedRowHtml(row, generatedAt) {
+  const at = row.confirmation && row.confirmation.at ? row.confirmation.at : generatedAt;
+  let checkedAt = "Automatisch geprüft";
+  try { if (at) checkedAt = new Date(at).toLocaleString("de-DE", {dateStyle:"short", timeStyle:"short"}); } catch (_) {}
+  const result = row.status === "Nicht anwendbar" ? "Nicht anwendbar" : (row.confirmation ? "Bestätigt" : "Bestanden");
+  return '<tr><td>' + escapeHtml(row.groupLabel) + '</td><td><button type="button" class="link-button"' + uiActionAttributes("quality.openDetail", [qualityEncoded(row.instanceId)]) + '>' + escapeHtml(row.title) + '</button></td><td><span class="quality-completed-result"><span aria-hidden="true">✓</span>' + escapeHtml(result) + '</span></td><td>' + escapeHtml(checkedAt) + '</td></tr>';
+}
+
+function qualityGroupReady(report, groupId) {
+  const group = report && Array.isArray(report.groups) ? report.groups.find(item => item.id === groupId) : null;
+  return !!group && !group.counts.blocked && !group.counts.review;
+}
+
+function qualityCompletionChecklistItem(ok, label) {
+  return '<li class="' + (ok ? "is-done" : "is-open") + '"><span aria-hidden="true">' + (ok ? "✓" : "!") + '</span><span>' + escapeHtml(label) + '</span></li>';
+}
+
+function renderQualityCompletionCard(report) {
+  const el = document.getElementById("qualityCompletionCard");
+  if (!el) return;
+  const finalized = !!(NK_PRO_MODULES.billingWorkflow && NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized && NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized());
+  const readOnly = qualityIsReadOnly();
+  const ready = report.readiness.level === "ok";
+  const action = finalized
+    ? '<button class="secondary quality-completion-action" data-ui-action="billing.unlock" type="button"' + (isArchiveViewer() ? ' disabled aria-disabled="true"' : '') + '>Zur Bearbeitung öffnen</button>'
+    : '<button class="primary quality-completion-action" data-ui-action="billing.finalize" type="button"' + (!ready || readOnly ? ' disabled aria-disabled="true"' : '') + '>Abrechnung abschließen</button>';
+  const message = finalized
+    ? "Die Abrechnung ist abgeschlossen und gegen unbeabsichtigte Änderungen geschützt."
+    : ready
+      ? "Alle blockierenden Fehler und offenen Plausibilitätsprüfungen sind erledigt. Die Abrechnung kann abgeschlossen werden."
+      : "Erst wenn alle blockierenden Fehler und offenen Prüfungen erledigt sind, kann die Abrechnung abgeschlossen werden.";
+  el.innerHTML = '<header><span class="quality-completion-icon" aria-hidden="true">✓</span><div><p class="quality-completion-eyebrow">Finaler Schritt</p><h2 id="qualityCompletionTitle">Abrechnung abschließen</h2></div></header>' +
+    '<p>' + escapeHtml(message) + '</p><ul>' +
+    qualityCompletionChecklistItem(!report.counts.blocked, "Alle Pflichtdaten vollständig erfasst") +
+    qualityCompletionChecklistItem(!report.counts.review, "Plausibilitätsprüfungen bearbeitet") +
+    qualityCompletionChecklistItem(qualityGroupReady(report,"allocation"), "Umlage und Differenzen behandelt") +
+    qualityCompletionChecklistItem(qualityGroupReady(report,"letters"), "Briefe können erzeugt werden") +
+    '</ul>' + action +
+    (finalized ? '<div class="quality-completion-finalized"><strong>Abgeschlossen</strong><span>Schreibschutz aktiv</span></div>' : '');
+}
+
+function renderQualityStatusCards(report) {
+  const el = document.getElementById("qualityStatusCards");
+  if (!el) return;
+  const finalized = !!(NK_PRO_MODULES.billingWorkflow && NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized && NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized());
+  const statusLabel = finalized ? "Abgeschlossen" : (report.readiness.level === "ok" ? "Bereit zum Abschluss" : "Nicht abgeschlossen");
+  const cards = [
+    {label:"Blockierende Fehler", value:report.counts.blocked, status:"err", hint:report.counts.blocked ? "Abschluss derzeit nicht möglich" : "Keine Blocker", filter:"blocked", icon:"×"},
+    {label:"Offene Prüfungen", value:report.counts.review, status:"warn", hint:report.counts.review ? "Fachliche Prüfung notwendig" : "Keine offenen Prüfungen", filter:"review", icon:"!"},
+    {label:"Hinweise", value:report.counts.hints, status:"info", hint:"Zur Kenntnis und Kontrolle", filter:"hints", icon:"i"},
+    {label:"Abschlussstatus", value:statusLabel, status:finalized || report.readiness.level === "ok" ? "ok" : "neutral", hint:finalized ? "Abrechnung ist schreibgeschützt" : "Abrechnung kann noch bearbeitet werden", filter:"", icon:"✓"}
+  ];
+  el.innerHTML = cards.map(card => '<button type="button" class="quality-finalization-kpi is-' + card.status + '"' + (card.filter ? uiActionAttributes("quality.setFilter",[card.filter]) : ' disabled aria-disabled="true"') + '><span class="quality-finalization-kpi__icon" aria-hidden="true">' + escapeHtml(card.icon) + '</span><span class="quality-finalization-kpi__body"><span>' + escapeHtml(card.label) + '</span><strong' + (typeof card.value === "string" ? ' class="is-text"' : '') + '>' + escapeHtml(String(card.value)) + '</strong><small>' + escapeHtml(card.hint) + '</small></span><span class="quality-finalization-kpi__arrow" aria-hidden="true">›</span></button>').join("");
+}
+
+function qualitySetFilter(mode) {
+  const requested = mode || "open";
+  if (requested === "hints") qualityHideHints = false;
+  if (requested === "blocked" || requested === "review") qualityHideHints = true;
+  renderQuality(requested);
+  const table = document.getElementById("qualityOpenTasksTable");
+  if (table) table.scrollIntoView({behavior:"smooth",block:"center"});
+}
+
+function toggleQualityOpenOnly() {
+  qualityHideHints = !qualityHideHints;
+  renderQuality(qualityCurrentFilter);
+}
+
+function toggleQualityCompleted() {
+  qualityCompletedExpanded = !qualityCompletedExpanded;
+  renderQuality(qualityCurrentFilter);
+}
+
+function renderQuality(filterMode) {
+  qualityCurrentFilter = filterMode || qualityCurrentFilter || "open";
+  qualityLastReport = null;
+  const report = qualityReport(true);
+  renderQualityStatusCards(report);
+
+  let openRows = qualityOpenRows(report);
+  if (qualityCurrentFilter === "blocked") openRows = openRows.filter(row => row.status === "Blockiert");
+  else if (qualityCurrentFilter === "review") openRows = openRows.filter(row => row.status === "Zu prüfen");
+  else if (qualityCurrentFilter === "hints") openRows = openRows.filter(row => row.status === "Hinweis");
+  else if (qualityHideHints) openRows = openRows.filter(row => row.status !== "Hinweis");
+
+  const allOpenCount = qualityOpenRows(report).length;
+  const countEl = document.getElementById("qualityOpenTaskCount");
+  const openTable = document.getElementById("qualityOpenTasksTable");
+  if (countEl) countEl.textContent = "(" + openRows.length + (openRows.length !== allOpenCount ? " von " + allOpenCount : "") + ")";
+  if (openTable) openTable.innerHTML = '<thead><tr><th>Bereich</th><th>Prüfpunkt</th><th>Status</th><th>Details</th><th>Aktion</th></tr></thead><tbody>' + (openRows.length ? openRows.map(qualityOpenTaskRowHtml).join("") : '<tr><td colspan="5"><div class="quality-empty-state"><strong>Keine Punkte für diese Ansicht.</strong><span>' + (allOpenCount ? "Weitere Hinweise können über den Schalter eingeblendet werden." : "Alle zentralen Prüfpunkte sind erledigt.") + '</span></div></td></tr>') + '</tbody>';
+
+  const toggle = document.getElementById("qualityOpenOnlyToggle");
+  if (toggle) {
+    toggle.classList.toggle("is-active", qualityHideHints);
+    toggle.setAttribute("aria-pressed", qualityHideHints ? "true" : "false");
+    toggle.lastChild.textContent = qualityHideHints ? "Hinweise ausblenden" : "Hinweise einblenden";
+  }
+
+  const completed = qualityCompletedRows(report);
+  const completedVisible = qualityCompletedExpanded ? completed : completed.slice(0, 6);
+  const completedCount = document.getElementById("qualityCompletedCount");
+  if (completedCount) completedCount.textContent = "(" + completed.length + ")";
+  const completedTable = document.getElementById("qualityAcknowledgedTable");
+  if (completedTable) completedTable.innerHTML = '<thead><tr><th>Bereich</th><th>Prüfpunkt</th><th>Ergebnis</th><th>Geprüft am</th></tr></thead><tbody>' + (completedVisible.length ? completedVisible.map(row => qualityCompletedRowHtml(row,report.generatedAt)).join("") : '<tr><td colspan="4">Noch keine erledigten Prüfpunkte.</td></tr>') + '</tbody>';
+  const completedToggle = document.getElementById("qualityCompletedToggle");
+  if (completedToggle) completedToggle.textContent = qualityCompletedExpanded ? "Erledigte Prüfungen einklappen" : "Alle erledigten Prüfungen anzeigen (" + completed.length + ")";
+
+  renderQualityCompletionCard(report);
+  const note = document.getElementById("qualityLastRunNote");
+  if (note) {
+    let when = "gerade eben";
+    try { when = new Date(report.generatedAt).toLocaleString("de-DE"); } catch (_) {}
+    note.innerHTML = '<strong>Automatische Abschlussprüfung</strong><span>Die Prüfung wird bei relevanten Änderungen aktualisiert. Letzte Prüfung: ' + escapeHtml(when) + '.</span>';
+  }
+  if (qualityIsReadOnly()) document.querySelectorAll('[data-ui-action="quality.confirmIssue"],[data-ui-action="quality.markNotApplicable"],[data-ui-action="quality.reopenIssue"]').forEach(button => { button.disabled = true; button.setAttribute("aria-disabled", "true"); button.title = "Im Ansichtsmodus nicht verfügbar"; });
+  if (typeof renderOverviewForTab === "function") renderOverviewForTab("qualitaet");
+}
+
+function qualityRegistryPriority(status) {
+  return ({"Technischer Fehler":6,"Blockiert":5,"Zu prüfen":4,"Hinweis":3,"Nicht anwendbar":2,"Erledigt":1})[status] || 0;
+}
+
+function qualityRegistryAggregate(rule, report) {
+  const results = (report.results || []).concat(report.technicalResults || []).filter(row => row.ruleId === rule.id);
+  const worst = results.slice().sort((a,b) => qualityRegistryPriority(b.status) - qualityRegistryPriority(a.status))[0] || null;
+  return {rule,results,worst,status:worst ? worst.status : "Nicht ausgeführt"};
+}
+
+function renderRuleInventoryKpis(rows) {
+  const el = document.getElementById("ruleInventoryKpis");
+  if (!el) return;
+  const applied = rows.filter(row => row.results.length).length;
+  const findings = rows.filter(row => ["Technischer Fehler","Blockiert","Zu prüfen","Hinweis"].includes(row.status)).length;
+  const notApplicable = rows.filter(row => row.status === "Nicht anwendbar").length;
+  const cards = [
+    ["Regeln insgesamt",rows.length,"Registry"],
+    ["Aktuell angewendet",applied,"Im geöffneten Abrechnungsstand"],
+    ["Auffälligkeiten",findings,"Fehler, Prüfungen und Hinweise"],
+    ["Nicht anwendbar",notApplicable,"Fachlich dokumentiert"]
+  ];
+  el.innerHTML = cards.map((card,index) => '<article class="rule-inventory-kpi is-' + ["blue","green","orange","gray"][index] + '"><span>' + escapeHtml(card[0]) + '</span><strong>' + escapeHtml(String(card[1])) + '</strong><small>' + escapeHtml(card[2]) + '</small></article>').join("");
+}
+
+function populateRuleInventoryGroups() {
+  const select = document.getElementById("ruleInventoryGroupFilter");
+  if (!select || select.options.length > 1) return;
+  NKProQualityRules.GROUPS.forEach(group => {
+    const option = document.createElement("option");
+    option.value = group.id;
+    option.textContent = group.label;
+    select.appendChild(option);
+  });
+}
+
+function renderRuleInventory(existingReport) {
+  qualityLastReport = null;
+  const report = existingReport || qualityReport(true);
+  populateRuleInventoryGroups();
+  const allRows = NKProQualityRules.REGISTRY.map(rule => qualityRegistryAggregate(rule,report));
+  renderRuleInventoryKpis(allRows);
+  const search = String((document.getElementById("ruleInventorySearch") || {}).value || "").trim().toLocaleLowerCase("de-DE");
+  const group = String((document.getElementById("ruleInventoryGroupFilter") || {}).value || "all");
+  const status = String((document.getElementById("ruleInventoryStatusFilter") || {}).value || "all");
+  const filtered = allRows.filter(item => {
+    if (group !== "all" && item.rule.group !== group) return false;
+    if (status !== "all" && item.status !== status) return false;
+    if (!search) return true;
+    const groupLabel = (NKProQualityRules.GROUPS.find(entry => entry.id === item.rule.group) || {}).label || item.rule.group;
+    return [item.rule.id,item.rule.title,item.rule.category,item.rule.dataSource,groupLabel,item.status].join(" ").toLocaleLowerCase("de-DE").includes(search);
+  });
+  const table = document.getElementById("qualityRuleRegistryTable");
+  if (table) table.innerHTML = '<thead><tr><th>Fachliche Regel</th><th>Fachbereich</th><th>Datenquelle</th><th>Aktuelles Ergebnis</th><th>Status</th><th>Details</th></tr></thead><tbody>' + (filtered.length ? filtered.map(item => {
+    const groupLabel = (NKProQualityRules.GROUPS.find(entry => entry.id === item.rule.group) || {}).label || item.rule.group;
+    const resultText = item.worst ? (item.worst.details || item.worst.resultText || "Ausgeführt") : "Im aktuellen Zustand nicht ausgeführt";
+    const detail = item.worst ? '<button type="button" class="ui-button ui-button--icon secondary" aria-label="Regeldetails öffnen"' + uiActionAttributes("quality.openDetail",[qualityEncoded(item.worst.instanceId)]) + '>i</button>' : '<span class="small">–</span>';
+    return '<tr><td><strong>' + escapeHtml(item.rule.title) + '</strong><div class="small"><code>' + escapeHtml(item.rule.id) + '</code> · Version ' + escapeHtml(String(item.rule.version)) + '</div></td><td>' + escapeHtml(groupLabel) + '<div class="small">' + escapeHtml(item.rule.category) + '</div></td><td>' + escapeHtml(item.rule.dataSource) + '</td><td class="rule-inventory-result">' + escapeHtml(resultText) + '</td><td><span class="status ' + qualityStatusClass(item.status) + '">' + escapeHtml(item.status) + '</span></td><td class="actions-cell">' + detail + '</td></tr>';
+  }).join("") : '<tr><td colspan="6"><div class="quality-empty-state"><strong>Keine passenden Regeln gefunden.</strong><span>Suchbegriff oder Filter anpassen.</span></div></td></tr>') + '</tbody>';
+  const count = document.getElementById("ruleInventoryResultCount");
+  if (count) count.textContent = filtered.length + " von " + allRows.length + " Regeln";
+  if (typeof renderOverviewForTab === "function") renderOverviewForTab("regelinventar");
+}
+
+function filterQualityRegistry() { renderRuleInventory(); }

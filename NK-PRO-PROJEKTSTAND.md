@@ -1,3 +1,11 @@
+# Projektstand V99.4.64 – AP22F11B Korrektur 3
+
+Die Abschlussprüfung ist in zwei klar abgegrenzte Arbeitsbereiche getrennt. **„Prüfen und abschließen“** dient als operative letzte Kontroll- und Abschlussstelle. **„Regelinventar“** unter Analyse dokumentiert sämtliche fachlichen und technischen Regeln einschließlich Datenquelle, aktuellem Ergebnis und Status.
+
+Die Umsetzung ist rein strukturell und visuell. Datenschema 5, zentrale Regelregistry, Berechnung, Finalisierung, Entsperrung, Persistenz, Import/Export, Archive und Schreibschutz bleiben unverändert. Der geprüfte V99.4.64-Gesamtbestand enthält weiterhin 769 Messwerte und vier Jahresarchive.
+
+---
+
 # Projektstand V99.4.43 – AP22F8B Korrektur 1
 
 Die Vorauszahlungsseite führt vier kompakte Übersichts­kacheln. Die Fallspalten der NK-Vorauszahlungsmatrix besitzen eine einheitliche Breite. Korrekturen/Gutschriften werden fachlich und visuell zwischen NK-Vorauszahlung und Kaltmiete getrennt, separat summiert und unmittelbar in den jeweiligen Nach-Korrektur-Werten aktualisiert.

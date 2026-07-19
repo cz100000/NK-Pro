@@ -1,3 +1,15 @@
+# NK-Pro V99.4.64 – AP22F11B Korrektur 3
+
+Die Abschlussseite unter **Nebenkosten abrechnen → Prüfen und abschließen** zeigt ausschließlich handlungsrelevante offene Punkte, erledigte Prüfungen und den finalen Abschlussstatus. Das vollständige Regelinventar ist rein lesend unter **Analyse → Regelinventar** erreichbar.
+
+Datenschema 5, Regel-IDs, Berechnungen, Persistenz, Archive und Schreibschutz bleiben unverändert. Die Cache- und Buildkennung lautet `99.4.64-ap22f11b-k3`.
+
+## Start
+
+Die Anwendung ist eine statische lokale PWA. `index.html` über einen statischen Webserver öffnen.
+
+---
+
 # NK-Pro V99.4.43 – AP22F8B Vorauszahlungen Korrektur 1
 
 Die Seite **„Nebenkosten abrechnen → Vorauszahlungen“** entspricht dem verbindlichen Standard **NK-Pro UI Referenz 1.0** und enthält vier kompakte Bestands- und Finanzkacheln sowie drei getrennte Tabellen für NK-Vorauszahlungen, Kaltmiete und Korrekturen/Gutschriften.

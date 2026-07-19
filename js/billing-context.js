@@ -6,7 +6,7 @@
 
   const MODES = Object.freeze({ CLOSED:"closed", EDIT:"edit", VIEW:"view" });
   const LAST_STEP_STORAGE_KEY = "nkpro.billingLastSteps.v1";
-  const VALID_STEPS = Object.freeze(["mieter","einnahmen","einstellungen","manuellewerte","umlage","vorauszahlungsanpassung","qualitaet","briefe","export","auswertungen"]);
+  const VALID_STEPS = Object.freeze(["mieter","einnahmen","einstellungen","manuellewerte","umlage","vorauszahlungsanpassung","qualitaet","briefe","export","auswertungen","regelinventar"]);
   const WRITE_ACTIONS = Object.freeze([
     "application.save","application.reset","state.setNested",
     "object.addMasterTenancy","object.applyMasterDataToBilling","object.archiveMasterTenancy","object.restoreMasterTenancy","object.setBillingUnitStatus","object.setMasterNested",

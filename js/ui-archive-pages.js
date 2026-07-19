@@ -295,7 +295,7 @@ function downloadArchiveYear(index) {
   ensureYearData();
   const item = state.jahresArchiv[index];
   if (!item) {
-    alert("Dieser Archivdatensatz wurde nicht gefunden. Bitte die Archivliste neu laden oder die Qualitätsprüfung öffnen.");
+    alert("Dieser Archivdatensatz wurde nicht gefunden. Bitte die Archivliste neu laden oder die Abschlussprüfung öffnen.");
     return;
   }
   const validation = NK_PRO_MODULES.archiveActions.validateItem(item);

@@ -1,3 +1,12 @@
+# V99.4.64 – AP22F11B Korrektur 3
+
+- Navigationseintrag „Prüfung & Freigabe“ in „Prüfen und abschließen“ umbenannt.
+- Abschlussseite auf offene Aufgaben, erledigte Prüfungen und finalen Abschlussstatus konzentriert.
+- Direkteinstiege zu verursachenden Eingabeseiten beibehalten.
+- Vollständiges Regelinventar als rein lesende Seite unter Analyse eingeordnet.
+- Tabellenköpfe neutral hellgrau und schmale Tabellen intern scrollbar.
+- Datenschema 5 sowie Regel-, Berechnungs-, Persistenz-, Archiv- und Schreibschutzlogik unverändert.
+
 # V99.4.43 – AP22F8B Korrektur 1 (2026-07-18)
 
 - vier kompakte Kacheln für Bestand, NK-Vorauszahlungen, Kaltmieteinnahmen und Korrekturen/Gutschriften ergänzt;

@@ -213,7 +213,7 @@ async function layout(page, width, height = 1000) {
     await acceptViaUi(page, manual.id, 'accepted-other', 'Abweichung mit externer Abrechnung fachlich geprüft.');
     m = await model(page);
     assert.strictEqual(m.differences.find(row => row.id === manual.id).status, 'accepted');
-    assert.strictEqual(m.differences.find(row => row.id === manual.id).record.appVersion, 'V99.4.63');
+    assert.strictEqual(m.differences.find(row => row.id === manual.id).record.appVersion, 'V99.4.64');
     assert.strictEqual(m.summary.openCount, 1);
     await page.screenshot({ path:path.join(SHOTS, '06_differenz_akzeptiert.png'), fullPage:true });
     const entries = await page.evaluate(() => localStorage.__entries());

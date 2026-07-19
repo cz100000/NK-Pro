@@ -119,9 +119,10 @@ const TAB_DEFINITIONS = {
   verbraeuche:{title:"Individuelle Werte und Verbräuche erfassen",kicker:"Nebenkosten abrechnen",firstSection:null,nextTab:"umlage",renderContent:()=>renderIndividualValues()},
   umlage:{title:"Ergebnis der Abrechnung",kicker:"Nebenkosten abrechnen",firstSection:"allocationTenantResultSection",nextTab:"vorauszahlungsanpassung",renderContent:()=>renderUmlage()},
   vorauszahlungsanpassung:{title:"Vorauszahlungen anpassen",kicker:"Nebenkosten abrechnen",firstSection:"prepaymentRulesSection",nextTab:"qualitaet",renderContent:()=>renderPrepaymentAdjustment()},
-  qualitaet:{title:"Abrechnung prüfen und freigeben",kicker:"Nebenkosten abrechnen",firstSection:"qualityOverviewSection",nextTab:"briefe",renderContent:()=>renderQuality()},
+  qualitaet:{title:"Prüfen und abschließen",kicker:"Nebenkosten abrechnen",firstSection:null,nextTab:"briefe",renderContent:()=>renderQuality()},
   briefe:{title:"Abrechnungsbriefe erstellen",kicker:"Nebenkosten abrechnen",firstSection:"lettersEditorSection",nextTab:"export",renderContent:()=>renderBrief()},
-  auswertungen:{title:"Auswertungen",kicker:"Analyse",firstSection:null,nextTab:"archiv",renderContent:()=>renderAnalyticsOverview()},
+  auswertungen:{title:"Auswertungen",kicker:"Analyse",firstSection:null,nextTab:"regelinventar",renderContent:()=>renderAnalyticsOverview()},
+  regelinventar:{title:"Regelinventar",kicker:"Analyse",firstSection:null,nextTab:"archiv",renderContent:()=>renderRuleInventory()},
   export:{title:"Abrechnung exportieren",kicker:"Sicherung",firstSection:"exportActionsSection",nextTab:"qualitaet",renderContent:null}
 };
 
@@ -400,7 +401,7 @@ const AP22F1A_PAGE_SHELL_VARIANTS = Object.freeze({
   objektuebersicht:"default", objekt:"default", wasser:"default",
   archiv:"wide", start:"wide", mieterverwaltung:"wide", wohnungsverwaltung:"wide", sicherung:"wide",
   qualitaet:"wide", einstellungen:"wide", mieter:"wide", einnahmen:"wide", manuellewerte:"wide",
-  umlage:"wide", vorauszahlungsanpassung:"wide", briefe:"wide", export:"wide", auswertungen:"wide"
+  umlage:"wide", vorauszahlungsanpassung:"wide", briefe:"wide", export:"wide", auswertungen:"wide", regelinventar:"wide"
 });
 function ensureGlobalPageShellsAndHeaders() {
   const landing=document.querySelector("#landing > .landing-page");

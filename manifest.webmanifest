@@ -1,7 +1,7 @@
 {
-  "name": "NK-Pro V99.4.63",
+  "name": "NK-Pro V99.4.64",
   "short_name": "NK-Pro",
-  "description": "Lokale Nebenkostenabrechnung mit AP22F11B Korrektur 2: neu gestaltete Vorauszahlungsanpassung mit Basis- und Preisprognose sowie Analyse-Navigation.",
+  "description": "Lokale Nebenkostenabrechnung mit handlungsorientierter Abschlussprüfung und transparentem Regelinventar unter Analyse.",
   "lang": "de-DE",
   "id": "./",
   "start_url": "./",
@@ -9,7 +9,7 @@
   "display": "standalone",
   "background_color": "#f4f6f9",
   "theme_color": "#031d41",
-  "version": "99.4.63",
+  "version": "99.4.64",
   "icons": [
     {
       "src": "./icons/icon-180.png",
@@ -42,5 +42,5 @@
       "purpose": "maskable"
     }
   ],
-  "buildId": "99.4.63-ap22f11b-k2"
+  "buildId": "99.4.64-ap22f11b-k3"
 }
