@@ -637,6 +637,7 @@ function currentBillingRecordRowHtml() {
     '<td data-label="Kurzcode"><span class="record-code">'+escapeHtml(recordObjectCode(state))+'</span></td>'+
     '<td data-label="Jahr">'+escapeHtml(currentAbrechnungsjahr())+'</td>'+
     '<td data-label="Zeitraum">'+escapeHtml(periodLabelShort())+'</td>'+
+    '<td data-label="Herkunft">'+billingOverviewOriginHtml(origin)+'</td>'+
     '<td data-label="Status"><span class="status '+status.className+'">'+escapeHtml(status.label)+'</span></td>'+
     '<td data-label="Bearbeitungsstand">'+escapeHtml(currentBillingProgressText())+'</td>'+
     '<td data-label="Zuletzt bearbeitet">'+escapeHtml(billingDateTimeLabel(lastEdited))+'</td>'+
@@ -657,6 +658,7 @@ function archiveRecordRowsHtml(options={}) {
         '<td data-label="Kurzcode"><span class="record-code">'+escapeHtml(recordObjectCode(data))+'</span></td>'+
         '<td data-label="Jahr">'+escapeHtml(item&&item.year!==undefined?item.year:"")+'</td>'+
         '<td data-label="Zeitraum">'+escapeHtml(NK_PRO_MODULES.archiveActions.periodLabel(item))+'</td>'+
+        '<td data-label="Herkunft">'+billingOverviewOriginHtml(origin)+'</td>'+
         '<td data-label="Status"><span class="status neutral">Archiviert</span></td>'+
         '<td data-label="Bearbeitungsstand">'+escapeHtml(archiveProgressText(item))+'</td>'+
         '<td data-label="Zuletzt bearbeitet">'+escapeHtml(billingDateTimeLabel(lastEdited))+'</td>'+
@@ -683,7 +685,8 @@ function billingOverviewIcon(name) {
     edit:'<path d="m4 20 4.5-1 10-10a2 2 0 0 0-3-3l-10 10L4 20Z"></path><path d="m14 7 3 3"></path>',
     finalize:'<circle cx="12" cy="12" r="9"></circle><path d="m8 12 2.7 2.7L16.5 9"></path>',
     archive:'<path d="M3 6h18M5 6v15h14V6M8 3h8l2 3H6l2-3M9 11h6"></path>',
-    refresh:'<path d="M3 6h18M5 6v15h14V6M8 3h8l2 3H6l2-3"></path><path d="M9 14a4 4 0 0 1 6.8-2.8L18 13"></path><path d="M18 9v4h-4"></path>'
+    refresh:'<path d="M3 6h18M5 6v15h14V6M8 3h8l2 3H6l2-3"></path><path d="M9 14a4 4 0 0 1 6.8-2.8L18 13"></path><path d="M18 9v4h-4"></path>',
+    delete:'<path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"></path>'
   };
   return '<svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">' + (paths[name] || paths.view) + '</svg>';
 }
@@ -693,11 +696,11 @@ function billingOverviewActionButton(label, icon, action, args, tone="") {
 function billingOverviewCurrentActionsHtml() {
   const finalized = NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized();
   return '<div class="billing-actions" role="group" aria-label="Aktionen für die aktuelle Abrechnung">' +
-    billingOverviewActionButton("Bearbeiten", "edit", "billing.openCurrentEdit") +
+    billingOverviewActionButton("Abrechnungszeitraum bearbeiten", "edit", "billing.openPeriodEditor") +
     billingOverviewActionButton("Ansehen", "view", "billing.openCurrentView") +
     (finalized
       ? billingOverviewActionButton("Archiv aktualisieren", "refresh", "archive.currentYear")
-      : billingOverviewActionButton("Abschließen", "finalize", "billing.finalize") + billingOverviewActionButton("Archivieren", "archive", "archive.currentYear")) +
+      : billingOverviewActionButton("Abschließen", "finalize", "billing.finalize") + billingOverviewActionButton("Archivieren", "archive", "archive.currentYear") + billingOverviewActionButton("Abrechnung löschen", "delete", "billing.openDeleteModal", ["current"], "danger")) +
   '</div>';
 }
 function billingOverviewArchiveActionsHtml(index) {
@@ -715,6 +718,17 @@ function billingOverviewObjectDisplayLabel(value) {
   const label=String(value||"Objekt").trim();
   return label.split(",")[0].trim()||label;
 }
+
+function billingOverviewOrigin(data, item) {
+  const meta=(item&&item.meta)||(data&&data.meta)||{};
+  const source=String(meta.billingOrigin||meta.importSource||meta.dataSource||archiveDataSource(item)||"").toLocaleLowerCase("de-DE");
+  if (source.includes("import") || meta.legacyImport || meta.importedAt) return {key:"imported",label:"Importiert",detail:"Nicht mit NK-Pro erstellt"};
+  if (source.includes("ueber") || source.includes("über") || meta.preparedFromPreviousYear) return {key:"carried",label:"Übernommen",detail:"Aus Vorjahr übernommen"};
+  return {key:"nkpro",label:"NK-Pro",detail:"Mit NK-Pro erstellt"};
+}
+function billingOverviewOriginHtml(origin){
+  return '<span class="billing-origin billing-origin--'+escapeHtml(origin.key)+'"><span aria-hidden="true">'+(origin.key==="imported"?'⇩':origin.key==="carried"?'⧉':'▣')+'</span>'+escapeHtml(origin.label)+'</span><span class="billing-overview-secondary-value">'+escapeHtml(origin.detail)+'</span>';
+}
 function billingOverviewCurrentRowHtml() {
   if (!NK_PRO_MODULES.archiveActions.hasActiveCurrentBilling()) return "";
   const status=currentBillingLifecycleStatus();
@@ -726,9 +740,11 @@ function billingOverviewCurrentRowHtml() {
   const lastEdited=(state.meta&& (state.meta.lastSavedAt||state.meta.currentBillingFinalizedAt||state.meta.currentBillingCreatedAt))||"";
   const search=[year,period,object,code,status.label,progress,billingDateTimeLabel(lastEdited),"aktuell"].join(" ");
   const active=NK_PRO_MODULES.billingContext.isOpen()&&!isArchiveViewer();
-  return '<tr class="current-record-row billing-overview-record' + (active ? ' is-open-context' : '') + '" data-billing-record="true" data-record-kind="current" data-search="' + escapeHtml(search.toLocaleLowerCase("de-DE")) + '">' +
+  const origin=billingOverviewOrigin(state,null);
+  return '<tr class="current-record-row billing-overview-record' + (active ? ' is-open-context' : '') + '" data-billing-record="true" data-record-kind="current" data-origin="'+origin.key+'" data-search="' + escapeHtml(search.toLocaleLowerCase("de-DE")) + '">' +
     '<td data-label="Abrechnung"><span class="billing-overview-primary-value billing-overview-year">'+escapeHtml(year)+'</span><span class="billing-overview-secondary-value">'+escapeHtml(period)+'</span></td>'+
     '<td data-label="Objekt"><span class="billing-overview-primary-value">'+escapeHtml(billingOverviewObjectDisplayLabel(object))+'</span><span class="billing-overview-secondary-value">'+escapeHtml(code)+'</span></td>'+
+    '<td data-label="Herkunft">'+billingOverviewOriginHtml(origin)+'</td>'+
     '<td data-label="Status"><span class="status '+status.className+'">'+escapeHtml(status.label)+'</span></td>'+
     '<td data-label="Arbeitsstand"><span class="billing-overview-primary-value">'+escapeHtml(progress.split(" · ")[0] || progress)+'</span><span class="billing-overview-secondary-value">'+escapeHtml(progress.split(" · ").slice(1).join(" · "))+'</span></td>'+
     '<td data-label="Zuletzt bearbeitet">'+billingOverviewDateTimeHtml(lastEdited)+'</td>'+
@@ -750,10 +766,12 @@ function billingOverviewArchiveRowsHtml() {
       const progress=archiveProgressText(item);
       const lastEdited=(item&&item.archivedAt)||(item&&item.meta&&item.meta.archivedAt)||(data.meta&&data.meta.lastSavedAt)||"";
       const saldoLabel=(saldo>=0?'Nachzahlung ':'Guthaben ')+fmtMoney(Math.abs(saldo));
-      const search=[year,period,object,code,"Archiviert",progress,billingDateTimeLabel(lastEdited),saldoLabel,"archiv"].join(" ");
-      return '<tr class="archive-record-row billing-overview-record" data-billing-record="true" data-record-kind="archive" data-search="'+escapeHtml(search.toLocaleLowerCase("de-DE"))+'">'+
+      const origin=billingOverviewOrigin(data,item);
+      const search=[year,period,object,code,origin.label,origin.detail,"Archiviert",progress,billingDateTimeLabel(lastEdited),saldoLabel,"archiv"].join(" ");
+      return '<tr class="archive-record-row billing-overview-record" data-billing-record="true" data-record-kind="archive" data-origin="'+origin.key+'" data-search="'+escapeHtml(search.toLocaleLowerCase("de-DE"))+'">'+
         '<td data-label="Abrechnung"><span class="billing-overview-primary-value billing-overview-year">'+escapeHtml(year)+'</span><span class="billing-overview-secondary-value">'+escapeHtml(period)+'</span></td>'+
         '<td data-label="Objekt"><span class="billing-overview-primary-value">'+escapeHtml(billingOverviewObjectDisplayLabel(object))+'</span><span class="billing-overview-secondary-value">'+escapeHtml(code)+'</span></td>'+
+        '<td data-label="Herkunft">'+billingOverviewOriginHtml(origin)+'</td>'+
         '<td data-label="Status"><span class="status neutral">Archiviert</span></td>'+
         '<td data-label="Arbeitsstand"><span class="billing-overview-primary-value">'+escapeHtml(progress.split(" · ")[0] || progress)+'</span><span class="billing-overview-secondary-value">'+escapeHtml(progress.split(" · ").slice(1).join(" · "))+'</span></td>'+
         '<td data-label="Zuletzt bearbeitet">'+billingOverviewDateTimeHtml(lastEdited)+'</td>'+
@@ -764,7 +782,7 @@ function billingOverviewArchiveRowsHtml() {
 }
 function billingOverviewGroupBody(kind, label, rows, count) {
   if (!rows) return "";
-  return '<tbody class="billing-overview-group" data-billing-group="'+kind+'"><tr class="billing-overview-group-row"><th colspan="7" scope="rowgroup">'+escapeHtml(label)+' · '+count+'</th></tr>'+rows+'</tbody>';
+  return '<tbody class="billing-overview-group" data-billing-group="'+kind+'"><tr class="billing-overview-group-row"><th colspan="8" scope="rowgroup">'+escapeHtml(label)+' · '+count+'</th></tr>'+rows+'</tbody>';
 }
 function buildBillingRecordsTableHtml() {
   ensureYearData();
@@ -773,12 +791,12 @@ function buildBillingRecordsTableHtml() {
   const currentCount=currentRows?1:0;
   const archiveCount=(archiveRows.match(/data-billing-record="true"/g)||[]).length;
   const total=currentCount+archiveCount;
-  const head='<thead><tr><th scope="col">Abrechnung ↕</th><th scope="col">Objekt ↕</th><th scope="col">Status ↕</th><th scope="col">Arbeitsstand ↕</th><th scope="col">Zuletzt bearbeitet ↕</th><th class="money" scope="col">Saldo</th><th class="billing-overview-actions-heading" scope="col">Aktionen</th></tr></thead>';
-  if (!total) return head+'<tbody class="billing-overview-empty"><tr><td colspan="7"><div class="nk-ui-state nk-ui-state--empty"><strong>Noch keine Abrechnung angelegt</strong><span>Lege die erste Abrechnung über die vorhandene Neuanlage an.</span><button class="primary" data-ui-action="billing.openCreateModal" type="button">+ Neue Abrechnung</button></div></td></tr></tbody>';
+  const head='<thead><tr><th scope="col">Abrechnung ↕</th><th scope="col">Objekt ↕</th><th scope="col">Herkunft</th><th scope="col">Status ↕</th><th scope="col">Arbeitsstand ↕</th><th scope="col">Zuletzt bearbeitet ↕</th><th class="money" scope="col">Saldo</th><th class="billing-overview-actions-heading" scope="col">Aktionen</th></tr></thead>';
+  if (!total) return head+'<tbody class="billing-overview-empty"><tr><td colspan="8"><div class="nk-ui-state nk-ui-state--empty"><strong>Noch keine Abrechnung angelegt</strong><span>Lege die erste Abrechnung über die vorhandene Neuanlage an.</span><button class="primary" data-ui-action="billing.openCreateModal" type="button">+ Neue Abrechnung</button></div></td></tr></tbody>';
   return head+
     billingOverviewGroupBody("current","Aktuelle Abrechnung",currentRows,currentCount)+
     billingOverviewGroupBody("archive","Archivierte Abrechnungen",archiveRows,archiveCount)+
-    '<tbody class="billing-overview-no-results" hidden><tr><td colspan="7"><div class="nk-ui-state nk-ui-state--empty"><strong>Keine passenden Abrechnungen</strong><span>Suche oder Filter liefern keine Treffer.</span><button class="secondary" data-billing-overview-empty-reset="true" type="button">Filter zurücksetzen</button></div></td></tr></tbody>';
+    '<tbody class="billing-overview-no-results" hidden><tr><td colspan="8"><div class="nk-ui-state nk-ui-state--empty"><strong>Keine passenden Abrechnungen</strong><span>Suche oder Filter liefern keine Treffer.</span><button class="secondary" data-billing-overview-empty-reset="true" type="button">Filter zurücksetzen</button></div></td></tr></tbody>';
 }
 function applyBillingOverviewFilters() {
   const page=document.querySelector('#start .billing-overview-card');
@@ -787,13 +805,14 @@ function applyBillingOverviewFilters() {
   if (!page||!table||!search) return;
   const query=String(search.value||"").trim().toLocaleLowerCase("de-DE");
   const filter=page.dataset.billingFilter||"all";
+  const originFilter=page.dataset.billingOriginFilter||"all";
   const rows=Array.from(table.querySelectorAll('tr[data-billing-record="true"]'));
   const counts={all:rows.length,current:rows.filter(row=>row.dataset.recordKind==="current").length,archive:rows.filter(row=>row.dataset.recordKind==="archive").length};
   let visible=0;
   rows.forEach(row=>{
     const kind=row.dataset.recordKind||"";
     const haystack=(row.dataset.search||row.textContent||"").toLocaleLowerCase("de-DE");
-    const matches=(filter==="all"||kind===filter)&&(!query||haystack.includes(query));
+    const matches=(filter==="all"||kind===filter)&&(originFilter==="all"||row.dataset.origin===originFilter)&&(!query||haystack.includes(query));
     row.hidden=!matches;
     if(matches) visible+=1;
   });
@@ -811,6 +830,7 @@ function applyBillingOverviewFilters() {
   if(result) result.textContent=text;
   if(footer) footer.textContent=text;
   document.querySelectorAll('#start [data-billing-overview-filter]').forEach(button=>button.setAttribute('aria-pressed',button.dataset.billingOverviewFilter===filter?'true':'false'));
+  document.querySelectorAll('#start [data-billing-origin-filter]').forEach(button=>button.setAttribute('aria-pressed',button.dataset.billingOriginFilter===originFilter?'true':'false'));
 }
 
 
@@ -850,9 +870,10 @@ function openDeleteBillingModal(index) {
     return;
   }
   ensureYearData();
-  const item = state.jahresArchiv[index];
+  const currentTarget = index === "current";
+  const item = currentTarget ? {year:currentAbrechnungsjahr(),meta:state.meta,data:state} : state.jahresArchiv[index];
   if (!item) return;
-  deleteBillingTargetIndex = index;
+  deleteBillingTargetIndex = currentTarget ? "current" : index;
   deleteBillingCode = randomDeleteCode();
   const meta = NK_PRO_MODULES.archiveActions.meta(item);
   const title = String(item.year || meta.abrechnungsjahr || "");
@@ -861,7 +882,7 @@ function openDeleteBillingModal(index) {
   const codeEl = document.getElementById("deleteBillingCodeDisplay");
   const inputEl = document.getElementById("deleteBillingCodeInput");
   const modal = document.getElementById("billingDeleteModal");
-  if (textEl) textEl.innerHTML = "Diese archivierte Nebenkostenabrechnung wird dauerhaft aus diesem lokalen Datensatz gelöscht:<br><strong>" + escapeHtml(title) + "</strong> · " + escapeHtml(period) + "<br><span class=\"small\">Empfehlung: Vorher das Jahresarchiv als JSON herunterladen.</span>";
+  if (textEl) textEl.innerHTML = (currentTarget ? "Diese offene Nebenkostenabrechnung wird dauerhaft verworfen:" : "Diese archivierte Nebenkostenabrechnung wird dauerhaft aus diesem lokalen Datensatz gelöscht:") + "<br><strong>" + escapeHtml(title) + "</strong> · " + escapeHtml(period) + "<br><span class=\"small\">Empfehlung: Vorher eine Datensicherung erstellen.</span>";
   if (codeEl) codeEl.textContent = deleteBillingCode;
   if (inputEl) {
     inputEl.value = "";
@@ -886,13 +907,22 @@ function confirmDeleteBilling() {
     return;
   }
   const index = deleteBillingTargetIndex;
-  if (index === null || index < 0 || index >= state.jahresArchiv.length) {
+  if (index === null || (index !== "current" && (index < 0 || index >= state.jahresArchiv.length))) {
     closeDeleteBillingModal();
     return;
   }
-  if (!confirmRiskyDataAction("Archivdatensatz löschen", "Diese Abrechnung wird nach korrekter Code-Eingabe jetzt endgültig aus dem lokalen Jahresarchiv entfernt.")) return;
-  const execution = NK_PRO_MODULES.applicationActions.execute("archive", "deleteAt", [index, { confirmed:true }]);
-  const result = execution.value;
+  if (!confirmRiskyDataAction(index === "current" ? "Offene Abrechnung löschen" : "Archivdatensatz löschen", index === "current" ? "Alle Arbeitsdaten dieser offenen Abrechnung werden verworfen." : "Diese Abrechnung wird endgültig aus dem lokalen Jahresarchiv entfernt.")) return;
+  let result;
+  if(index === "current") {
+    NK_PRO_MODULES.archiveActions.closeAfterArchive(state,{periodId:"deleted|"+Date.now()});
+    state.meta.currentBillingDeletedAt=new Date().toISOString();
+    state.meta.currentBillingDeletedReason="Vom Nutzer verworfen";
+    saveState();
+    result={changed:true,targetTab:"start",message:"Die offene Abrechnung wurde gelöscht."};
+  } else {
+    const execution = NK_PRO_MODULES.applicationActions.execute("archive", "deleteAt", [index, { confirmed:true }]);
+    result = execution.value;
+  }
   closeDeleteBillingModal();
   if (result && result.message) alert(result.message);
   if (result && result.changed) switchToTab(result.targetTab || "archiv");
@@ -1023,6 +1053,7 @@ function openBillingPeriodEditor() {
   else modal.classList.add("show");
 }
 
+function openBillingPeriodEditorFromOverview(){ openBillingPeriodEditor(); }
 function closeBillingPeriodEditor() {
   const modal = document.getElementById("billingPeriodSection");
   if (!modal) return;
@@ -1123,7 +1154,7 @@ function renderStart() {
     tableEl.removeAttribute("aria-busy");
   } catch (error) {
     tableEl.removeAttribute("aria-busy");
-    tableEl.innerHTML = '<tbody><tr><td colspan="7"><div class="nk-ui-notice nk-ui-notice--error billing-overview-render-error" role="alert"><strong>Abrechnungen konnten nicht dargestellt werden.</strong><span>Es wurden keine Daten gelöscht. Bitte prüfe die JSON-Sicherung oder öffne die Systemdiagnose.</span><button type="button" class="secondary" data-ui-action="navigation.switchTab" data-ui-args="[&quot;sicherung&quot;]">Systemdiagnose öffnen</button></div></td></tr></tbody>';
+    tableEl.innerHTML = '<tbody><tr><td colspan="8"><div class="nk-ui-notice nk-ui-notice--error billing-overview-render-error" role="alert"><strong>Abrechnungen konnten nicht dargestellt werden.</strong><span>Es wurden keine Daten gelöscht. Bitte prüfe die JSON-Sicherung oder öffne die Systemdiagnose.</span><button type="button" class="secondary" data-ui-action="navigation.switchTab" data-ui-args="[&quot;sicherung&quot;]">Systemdiagnose öffnen</button></div></td></tr></tbody>';
   }
 
   if (searchEl.dataset.billingOverviewBound !== "true") {
@@ -1135,6 +1166,7 @@ function renderStart() {
     resetEl.addEventListener("click", () => {
       searchEl.value = "";
       card.dataset.billingFilter = "all";
+      card.dataset.billingOriginFilter = "all";
       applyBillingOverviewFilters();
       searchEl.focus();
     });
@@ -1147,10 +1179,19 @@ function renderStart() {
       applyBillingOverviewFilters();
     });
   });
+  card.querySelectorAll('[data-billing-origin-filter]').forEach(button => {
+    if (button.dataset.billingOriginBound === "true") return;
+    button.dataset.billingOriginBound = "true";
+    button.addEventListener("click", () => {
+      card.dataset.billingOriginFilter = button.dataset.billingOriginFilter || "all";
+      applyBillingOverviewFilters();
+    });
+  });
   card.querySelectorAll('[data-billing-overview-empty-reset]').forEach(button => {
     button.addEventListener("click", () => {
       searchEl.value = "";
       card.dataset.billingFilter = "all";
+      card.dataset.billingOriginFilter = "all";
       applyBillingOverviewFilters();
       searchEl.focus();
     }, {once:true});
@@ -1274,7 +1315,7 @@ function renderStartTenantManagement() {
   };
   const archiveDetailRow = row => {
     const value = entry => escapeHtml(String(entry || "—"));
-    return '<tr class="tenant-management-detail-row tenant-management-detail-row--archive" data-tenant-detail-row="' + row.originalIndex + '"><td colspan="7"><div class="tenant-detail-panel tenant-detail-panel--readonly" role="region" aria-label="Archivdetails zu ' + escapeHtml(row.name || tenantDisplayId(row)) + '">' +
+    return '<tr class="tenant-management-detail-row tenant-management-detail-row--archive" data-tenant-detail-row="' + row.originalIndex + '"><td colspan="8"><div class="tenant-detail-panel tenant-detail-panel--readonly" role="region" aria-label="Archivdetails zu ' + escapeHtml(row.name || tenantDisplayId(row)) + '">' +
       '<div class="tenant-detail-panel__header"><div><strong>' + escapeHtml(row.name || "Archiviertes Mietverhältnis") + '</strong><small>Schreibgeschützter Archivdatensatz</small></div><button type="button" class="secondary tenant-detail-close" data-tenant-toggle="' + escapeHtml(String(row.originalIndex)) + '">Detail schließen</button></div>' +
       '<dl class="tenant-archive-detail-grid">' +
         '<div><dt>Mieter-ID</dt><dd>' + value(tenantDisplayId(row)) + '</dd></div><div><dt>Wohnung</dt><dd>' + value(row.wohnung) + '</dd></div><div><dt>Mietzeitraum</dt><dd>' + periodText(row) + '</dd></div><div><dt>Rolle</dt><dd>' + roleText(row) + '</dd></div>' +
@@ -1288,7 +1329,7 @@ function renderStartTenantManagement() {
       const restoreAction = '<button class="tenant-management-row-action tenant-management-row-action--restore" type="button" aria-label="' + escapeHtml((row.name || tenantDisplayId(row)) + ' reaktivieren') + '"' + (readOnly ? ' disabled aria-disabled="true"' : uiActionAttributes("object.restoreMasterTenancy", [row.originalIndex])) + '>' + ap22f5ActionIcon("restore") + '</button>';
       const summary = '<tr class="tenant-management-summary-row" data-tenant-row="' + row.originalIndex + '"><td>' + summaryPerson(row) + '</td><td>' + unitRefCellHtml(row.wohnung) + '</td><td>' + periodText(row) + '</td><td>' + roleText(row) + '</td><td>' + escapeHtml(row.archivedAt || "—") + '</td><td><span class="status info">Archiviert</span></td><td class="tenant-management-action-cell"><div class="tenant-management-actions">' + toggleButton(row, true) + restoreAction + '</div></td></tr>';
       return summary + (expanded ? archiveDetailRow(row) : "");
-    }).join("") : '<tr><td class="tenant-management-empty" colspan="7">Keine archivierten Mietverhältnisse entsprechen der aktuellen Suche oder Filterung.</td></tr>';
+    }).join("") : '<tr><td class="tenant-management-empty" colspan="8">Keine archivierten Mietverhältnisse entsprechen der aktuellen Suche oder Filterung.</td></tr>';
     tableEl.innerHTML = '<thead><tr><th>Mieter</th><th>Wohnung</th><th>Mietzeitraum</th><th>Rolle</th><th>Archiviert am</th><th>Status</th><th class="tenant-management-action-heading">Aktionen</th></tr></thead><tbody>' + body + '</tbody>';
   } else {
     const body = filteredActiveRows.length ? filteredActiveRows.map(row => {

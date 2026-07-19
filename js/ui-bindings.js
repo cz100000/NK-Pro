@@ -119,7 +119,7 @@
       "billing.openCurrent":call(handlers, "openCurrentBilling"), "billing.openCurrentEdit":call(handlers, "openCurrentBillingForEdit"), "billing.openCurrentView":call(handlers, "openCurrentBillingForView"),
       "billing.switchToEdit":call(handlers, "switchCurrentBillingToEdit"), "billing.closeContext":call(handlers, "closeBillingContext"), "billing.openCreateModal":call(handlers, "openCreateBillingModal"),
       "billing.closeCreateModal":call(handlers, "closeCreateBillingModal"), "billing.createFromModal":call(handlers, "createNewBillingFromModal"),
-      "billing.openDeleteModal":call(handlers, "openDeleteBillingModal"), "billing.closeDeleteModal":call(handlers, "closeDeleteBillingModal"),
+      "billing.openDeleteModal":call(handlers, "openDeleteBillingModal"), "billing.openPeriodEditor":call(handlers, "openBillingPeriodEditorFromOverview"), "billing.closeDeleteModal":call(handlers, "closeDeleteBillingModal"),
       "billing.confirmDelete":call(handlers, "confirmDeleteBilling"), "billing.handleDeleteKey":context => requireHandler(handlers, "handleDeleteBillingKey")(context.key),
       "billing.finalize":interactiveAppCall(applicationActions, "billing", "finalize", handlers), "billing.unlock":interactiveAppCall(applicationActions, "billing", "unlock", handlers),
       "billing.openLatestYear":call(handlers, "openLatestKnownYear"), "billing.setYear":appCall(applicationActions, "billing", "setYear"),
