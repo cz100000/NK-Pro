@@ -20,7 +20,29 @@
     if (typeof global.escapeHtml === "function") return global.escapeHtml(String(value == null ? "" : value));
     return String(value == null ? "" : value).replace(/[&<>"']/g, character => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[character]));
   }
-  function number(value) { return typeof global.num === "function" ? global.num(value) : Number(value || 0); }
+  function parseLocalizedNumber(value) {
+    if (value === null || value === undefined || String(value).trim() === "") return "";
+    if (typeof value === "number") return Number.isFinite(value) ? value : "";
+    let source = String(value).trim().replace(/\s+/g, "");
+    const comma = source.lastIndexOf(",");
+    const dot = source.lastIndexOf(".");
+    if (comma >= 0 && dot >= 0) {
+      if (comma > dot) source = source.replace(/\./g, "").replace(",", ".");
+      else source = source.replace(/,/g, "");
+    } else if (comma >= 0) {
+      const parts = source.split(",");
+      source = parts.length > 2 ? parts.slice(0, -1).join("") + "." + parts.at(-1) : source.replace(",", ".");
+    } else if (dot >= 0) {
+      const parts = source.split(".");
+      if (parts.length > 2) source = parts.slice(0, -1).join("") + "." + parts.at(-1);
+    }
+    const parsed = Number(source);
+    return Number.isFinite(parsed) ? parsed : "";
+  }
+  function number(value) {
+    const parsed = parseLocalizedNumber(value);
+    return parsed === "" ? 0 : parsed;
+  }
   function formatNumber(value, digits = 2) { return Number(value || 0).toLocaleString("de-DE", { minimumFractionDigits:digits, maximumFractionDigits:digits }); }
   function formatMeter(value) { return value === "" || value === null || value === undefined ? "–" : Number(value).toLocaleString("de-DE", { minimumFractionDigits:2, maximumFractionDigits:3 }); }
   function formatMoney(value) { return Number(value || 0).toLocaleString("de-DE", { style:"currency", currency:"EUR" }); }
@@ -81,7 +103,7 @@
       ? '<strong>' + formatMeter(row.endValue) + '</strong>'
       : '<input class="individual-values-inline-input number" inputmode="decimal" data-individual-water-end="' + esc(row.meterId) + '" value="' + esc(endValue) + '" aria-label="Endstand ' + esc(row.meterNumber) + '">';
     const special = readOnly ? '<span class="individual-values-no-action">–</span>' : '<button type="button" class="individual-values-icon-button" data-individual-water-edit="' + esc(row.meterId) + '" aria-label="Sonderfall für ' + esc(row.meterNumber) + ' bearbeiten" title="Sonderfall / Anfangsstand bearbeiten"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 20 4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Z"></path><path d="m14 7 3 3"></path></svg></button>';
-    return '<tr data-individual-water-row="' + esc(row.meterId) + '" data-individual-status="' + esc(row.status) + '">' + caseCell +
+    return '<tr data-individual-water-row="' + esc(row.meterId) + '" data-individual-case-key="' + esc(row.caseKey || ("unassigned:" + row.unitId)) + '" data-live-consumption="' + esc(row.consumption) + '" data-individual-status="' + esc(row.status) + '">' + caseCell +
       '<td><span class="individual-values-meter-type is-' + typeClass + '"><span aria-hidden="true"></span>' + esc(row.typeLabel) + '</span></td>' +
       '<td><span class="individual-values-meter-number">' + esc(row.meterNumber) + '</span></td>' +
       '<td class="number-cell individual-values-readonly-value">' + formatMeter(row.startValue) + '</td><td class="number-cell individual-values-editable-cell">' + endField + '</td><td class="number-cell"><strong data-individual-water-consumption="' + esc(row.meterId) + '">' + formatMeter(row.consumption) + '</strong></td>' +
@@ -109,7 +131,7 @@
     [...grouped.values()].forEach(group => {
       group.caseRow.rowSpan = Math.max(1, group.rows.length);
       group.rows.forEach((row,index) => { body += waterRowHtml(row, group.caseRow, index === 0); });
-      body += '<tr class="individual-values-subtotal"><th colspan="5" scope="row">Summe ' + esc(group.caseRow.unitId + " · " + group.caseRow.label) + '</th><td class="number-cell"><strong>' + formatMeter(group.total.total) + '</strong></td><td colspan="3">Wohnungsbezogener Gesamtverbrauch</td></tr>';
+      body += '<tr class="individual-values-subtotal" data-individual-water-subtotal="' + esc(group.caseRow.caseKey) + '"><th colspan="5" scope="row">Summe ' + esc(group.caseRow.unitId + " · " + group.caseRow.label) + '</th><td class="number-cell"><strong data-individual-water-subtotal-value>' + formatMeter(group.total.total) + '</strong></td><td colspan="3">Wohnungsbezogener Gesamtverbrauch</td></tr>';
     });
     if (!body) body = '<tr><td colspan="9"><div class="individual-values-table-empty"><strong>Keine abrechnungsrelevanten Wasserzähler vorhanden</strong><span>Zählerstammdaten werden unter „Objekt vorbereiten → Zähler“ gepflegt.</span></div></td></tr>';
     tableBody.innerHTML = body;
@@ -519,6 +541,22 @@
     returnFocus=trigger; render(); requestAnimationFrame(restoreDialogFocus);
   }
 
+
+  function updateWaterLiveSummaries() {
+    const table = document.getElementById("individualWaterTable");
+    if (!table) return;
+    const totals = new Map();
+    table.querySelectorAll("[data-individual-water-row]").forEach(rowNode => {
+      const key = rowNode.dataset.individualCaseKey || "";
+      const value = Number(rowNode.dataset.liveConsumption || 0);
+      totals.set(key, (totals.get(key) || 0) + (Number.isFinite(value) && value >= 0 ? value : 0));
+    });
+    totals.forEach((total,key) => {
+      const subtotal = table.querySelector('[data-individual-water-subtotal="' + CSS.escape(key) + '"] [data-individual-water-subtotal-value]');
+      if (subtotal) subtotal.textContent = formatMeter(total);
+    });
+  }
+
   function updateBatchState(kind) {
     const map = kind === "water" ? pendingWater : pendingExternal;
     const node = document.querySelector(kind === "water" ? "[data-individual-water-batch-state]" : "[data-individual-external-batch-state]");
@@ -569,12 +607,24 @@
       if (["individualWaterStart","individualWaterEnd"].includes(event.target.id)) updateWaterPreview();
       const water = event.target.closest("#manuellewerte [data-individual-water-end]");
       if (water) {
-        pendingWater.set(water.dataset.individualWaterEnd, water.value);
+        const parsed = parseLocalizedNumber(water.value);
+        pendingWater.set(water.dataset.individualWaterEnd, parsed === "" ? "" : parsed);
         const row = calculation().waterMeterRows(state).find(item => item.meterId === water.dataset.individualWaterEnd);
-        const parsed = number(String(water.value || "").replace(",","."));
-        const consumption = row && water.value !== "" ? parsed - number(row.startValue) : 0;
+        const hasValue = parsed !== "";
+        const consumption = row && hasValue ? parsed - number(row.startValue) : 0;
+        const rowNode = water.closest("[data-individual-water-row]");
         const output = document.querySelector('[data-individual-water-consumption="' + CSS.escape(water.dataset.individualWaterEnd) + '"]');
-        if (output) { output.textContent = water.value === "" ? "–" : formatMeter(consumption); output.classList.toggle("is-error", consumption < 0); }
+        if (output) { output.textContent = hasValue ? formatMeter(consumption) : "–"; output.classList.toggle("is-error", hasValue && consumption < 0); }
+        if (rowNode) {
+          rowNode.dataset.liveConsumption = hasValue && consumption >= 0 ? String(consumption) : "0";
+          const status = rowNode.querySelector(".individual-values-row-status");
+          if (status) {
+            const key = !hasValue ? "open" : (consumption < 0 ? "error" : "complete");
+            status.className = "individual-values-row-status is-" + key;
+            status.innerHTML = '<span aria-hidden="true">' + statusIcon(key) + '</span>' + esc(key === "error" ? "Zählerstand prüfen" : statusText(key));
+          }
+        }
+        updateWaterLiveSummaries();
         updateBatchState("water");
       }
       const external = event.target.closest("#manuellewerte [data-individual-external-inline]");
