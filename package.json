@@ -1,8 +1,8 @@
 {
-  "name": "nk-pro-v99-4-45",
-  "version": "99.4.45",
+  "name": "nk-pro-v99-4-46",
+  "version": "99.4.46",
   "private": true,
-  "description": "AP22F10B – Individuelle Werte mit Wasserzählern, externen Einzelwerten und getrennten Abgleichen",
+  "description": "AP22F10C – Leerstandserfassung für individuelle Werte",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
     "test:fixtures": "node tools/check-fixtures.cjs",
@@ -97,7 +97,9 @@
     "test:ap22f10b:static": "node tests/ap22f10b-individual-values.test.cjs && node tests/ap22f10b-protected-areas.test.cjs && node tests/ap22f10b-release.test.cjs",
     "test:ap22f10b:browser": "node tests/ap22f10b-individual-values-browser.test.cjs",
     "test:ap22f10b": "npm run test:ap22f10b:static && npm run test:ap22f10b:browser",
-    "test:ap22f10b:regression": "node tests/ap22f9b-total-costs-browser.test.cjs && node tests/ap22f8b-korrektur1-browser.test.cjs && node tests/ap22f8b-prepayments-browser.test.cjs && npm run test:metering:ap21b1 && npm run test:architecture:ap22f8b"
+    "test:ap22f10b:regression": "node tests/ap22f9b-total-costs-browser.test.cjs && node tests/ap22f8b-korrektur1-browser.test.cjs && node tests/ap22f8b-prepayments-browser.test.cjs && npm run test:metering:ap21b1 && npm run test:architecture:ap22f8b",
+    "test:ap22f10c:static": "node tests/ap22f10c-vacancy.test.cjs && node tests/ap22f10b-individual-values.test.cjs",
+    "test:ap22f10c": "npm run test:ap22f10c:static"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1"

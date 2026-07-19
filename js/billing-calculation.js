@@ -324,8 +324,9 @@
         const interval = intervalIntersection(tenant.einzug || period.start, tenant.auszug || period.end, period.start, period.end);
         return interval ? { tenant, ...interval } : null;
       }).filter(Boolean).sort((a,b) => a.start.localeCompare(b.start) || a.end.localeCompare(b.end));
-      const unitActive = String(unit.status || "aktiv").toLocaleLowerCase("de-DE") !== "inaktiv";
-      if (!unitActive && !rows.length) return;
+      // AP22F10C: Auch vollständig leer stehende Wohnungen ohne Mietverhältnis
+      // bleiben abrechnungsrelevante Abrechnungsfälle. Der Wohnungsstatus darf
+      // ihre Erfassung nicht unterdrücken; es wird kein künstlicher Mieter erzeugt.
       rows.forEach(item => {
         const tenant = item.tenant;
         const role = isPrivateTenant(tenant) ? "private" : "tenant";

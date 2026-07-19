@@ -1,0 +1,11 @@
+"use strict";
+const assert=require("node:assert/strict");
+const fs=require("node:fs");
+const path=require("node:path");
+const root=path.resolve(__dirname,"..");
+const calc=fs.readFileSync(path.join(root,"js/billing-calculation.js"),"utf8");
+assert.match(calc,/AP22F10C: Auch vollständig leer stehende Wohnungen/);
+assert.doesNotMatch(calc,/if \(!unitActive && !rows\.length\) return/);
+assert.match(calc,/caseKey:\["vacancy", unitId, cursor, period\.end\]\.join\(":"\)/);
+assert.match(calc,/Leerstand wird ausdrücklich nicht als künstlicher Mieter angelegt/);
+console.log("AP22F10C Leerstandserfassung static: PASS");
