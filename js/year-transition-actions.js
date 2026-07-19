@@ -155,20 +155,45 @@
     return { endValue:Number(value), endDate:String(date || ""), method:"legacy-unit-type", sourceLabel:unitLabel(previousUnits[index]) };
   }
 
+
+  // Fallback für Altbestände: Die historische Wasserzählerreihe liegt im
+  // Arbeitszustand unter waterMeterHistory und nicht zwingend in einem Jahresarchiv.
+  function rootHistoryPriorReadingForRow(data, row, previousYear) {
+    const history = data && data.waterMeterHistory;
+    const units = history && Array.isArray(history.units) ? history.units : [];
+    if (!units.length) return null;
+    const currentUnits = Array.isArray(data && data.wohnungen) ? data.wohnungen : [];
+    const currentUnit = currentUnits.find(unit => String(unit && (unit.id || unit.einheitId) || "") === String(row.unitId || ""));
+    const currentLabel = normalizedIdentityText(unitLabel(currentUnit) || row.caseLabel);
+    let matches = units.filter(unit => String(unit && (unit.wohnung || unit.id || unit.einheitId) || "") === String(row.unitId || ""));
+    if (!matches.length && currentLabel) matches = units.filter(unit => normalizedIdentityText(unitLabel(unit)) === currentLabel);
+    if (matches.length !== 1) return null;
+    const readings = Array.isArray(matches[0].readings) ? matches[0].readings : [];
+    const reading = readings.find(item => yearNumber(item && item.jahr) === yearNumber(previousYear));
+    if (!reading) return null;
+    const hot = String(row.meterType || "") === "hot-water";
+    const value = hot ? reading.ww : reading.kw;
+    if (value === "" || value === null || value === undefined || !Number.isFinite(Number(value))) return null;
+    return { endValue:Number(value), endDate:String(previousYear) + "-12-31", method:"root-history-unit-type", sourceLabel:unitLabel(matches[0]) };
+  }
+
   // Sichere Vorbereitung der Vorjahresübernahme. Reihenfolge:
   // 1. stabile Zähler-ID, 2. Zählernummer + Wohnung + Art,
   // 3. historisches wohnungsbezogenes Archivformat + Zählerart.
   function prepareIndividualPriorReadingTransfer(data = current()) {
     const calculation = global.NKProBillingCalculation;
     const currentRows = calculation && typeof calculation.waterMeterRows === "function" ? calculation.waterMeterRows(data) : [];
+    const currentYear = yearNumber(data && data.meta && data.meta.abrechnungsjahr || requireDeps().currentYear());
+    const previousYear = currentYear - 1;
     const source = previousYearArchiveData(data);
-    if (!source || !source.data) return Object.freeze({ sourceYear:"", candidates:Object.freeze(currentRows.map(row => Object.freeze({ meterId:row.meterId, meterNumber:row.meterNumber, caseLabel:row.caseLabel, status:"missing-prior-year", eligible:false, selected:false, previousEnd:"", previousDate:"", reason:"Kein Vorjahresdatensatz vorhanden." }))) });
-    let previousData = source.data;
-    try {
-      previousData = JSON.parse(JSON.stringify(source.data));
-      if (global.NKProMeterValidation && typeof global.NKProMeterValidation.synchronizeMeteringData === "function") global.NKProMeterValidation.synchronizeMeteringData(previousData);
-    } catch (_) { previousData = source.data; }
-    const previousRows = calculation && typeof calculation.waterMeterRows === "function" ? calculation.waterMeterRows(previousData) : [];
+    let previousData = source && source.data ? source.data : null;
+    if (previousData) {
+      try {
+        previousData = JSON.parse(JSON.stringify(source.data));
+        if (global.NKProMeterValidation && typeof global.NKProMeterValidation.synchronizeMeteringData === "function") global.NKProMeterValidation.synchronizeMeteringData(previousData);
+      } catch (_) { previousData = source.data; }
+    }
+    const previousRows = previousData && calculation && typeof calculation.waterMeterRows === "function" ? calculation.waterMeterRows(previousData) : [];
     const audit = data && data.meta && Array.isArray(data.meta.individualValuesPriorTransfers) ? data.meta.individualValuesPriorTransfers : [];
     const candidates = currentRows.map(row => {
       const exact = previousRows.filter(previous => previous.meterId === row.meterId);
@@ -176,7 +201,7 @@
       let matches = exact.length ? exact : fallback;
       let previous = matches.length === 1 ? matches[0] : null;
       let matchMethod = exact.length === 1 ? "stable-meter-id" : (fallback.length === 1 ? "meter-number-unit-type" : "");
-      if (!previous && !matches.length) {
+      if (!previous && !matches.length && previousData) {
         const legacy = legacyPriorReadingForRow(previousData, data, row);
         if (legacy) {
           previous = { endValue:legacy.endValue, endDate:legacy.endDate, unitId:row.unitId, meterType:row.meterType };
@@ -184,8 +209,18 @@
           matchMethod = legacy.method;
         }
       }
-      const alreadyTransferred = audit.some(entry => String(entry && entry.meterId || "") === row.meterId && String(entry && entry.sourceYear || "") === String(source.year || ""));
-      let status = "ready", reason = matchMethod === "stable-meter-id" ? "Stabile Zähler-ID stimmt mit der Vorperiode überein." : (matchMethod === "meter-number-unit-type" ? "Über Zählernummer, Wohnung und Zählerart eindeutig zugeordnet." : "Über historischen Wohnungsdatensatz und Zählerart eindeutig zugeordnet.");
+      if (!previous && !matches.length) {
+        const historical = rootHistoryPriorReadingForRow(data, row, previousYear);
+        if (historical) {
+          previous = { endValue:historical.endValue, endDate:historical.endDate, unitId:row.unitId, meterType:row.meterType };
+          matches = [previous];
+          matchMethod = historical.method;
+        }
+      }
+      const sourceYear = source && source.year ? source.year : previousYear;
+      const hasCurrentStart = row.startValue !== "" && row.startValue !== null && row.startValue !== undefined;
+      const alreadyTransferred = hasCurrentStart && audit.some(entry => String(entry && entry.meterId || "") === row.meterId && String(entry && entry.sourceYear || "") === String(sourceYear || ""));
+      let status = "ready", reason = matchMethod === "stable-meter-id" ? "Stabile Zähler-ID stimmt mit der Vorperiode überein." : (matchMethod === "meter-number-unit-type" ? "Über Zählernummer, Wohnung und Zählerart eindeutig zugeordnet." : (matchMethod === "root-history-unit-type" ? "Über die gespeicherte Wasserzählerhistorie und Zählerart eindeutig zugeordnet." : "Über historischen Wohnungsdatensatz und Zählerart eindeutig zugeordnet."));
       if (row.replacement) { status = "replacement"; reason = "Zählerwechsel muss separat bestätigt werden."; }
       else if (alreadyTransferred) { status = "already-transferred"; reason = "Die Übernahme wurde für diesen Zähler bereits bestätigt dokumentiert."; }
       else if (!matches.length) { status = "missing-prior-value"; reason = "Kein eindeutiger Vorjahreswert gefunden."; }
@@ -198,11 +233,11 @@
       return Object.freeze({
         meterId:row.meterId, meterNumber:row.meterNumber, meterType:row.meterType, caseKey:row.caseKey,
         caseLabel:[row.unitId, row.caseLabel].filter(Boolean).join(" · "), currentStart:row.startValue,
-        previousEnd, previousDate:previous && previous.endDate || "", sourceYear:String(source.year || ""), matchMethod,
+        previousEnd, previousDate:previous && previous.endDate || "", sourceYear:String(sourceYear || ""), matchMethod,
         status, eligible, selected:eligible, reason
       });
     });
-    return Object.freeze({ sourceYear:String(source.year || ""), candidates:Object.freeze(candidates) });
+    return Object.freeze({ sourceYear:String(source && source.year || previousYear || ""), candidates:Object.freeze(candidates) });
   }
 
   // Eindeutige Vorwerte werden bei der Datenaufbereitung automatisch übernommen.
@@ -215,7 +250,8 @@
     const periodStart = periodDateStartForData(data);
     const records = [];
     selected.forEach(row => {
-      const meterPeriods = periods.filter(period => String(period && (period.zaehlerId || period.meterId) || "") === String(row.meterId || "")).sort((a,b) => String(a.beginn || "").localeCompare(String(b.beginn || "")));
+      const periodEnd = periodDateEndForData(data);
+      const meterPeriods = periods.filter(period => String(period && (period.zaehlerId || period.meterId) || "") === String(row.meterId || "") && (!period.beginn || !period.ende || (String(period.beginn) <= periodEnd && String(period.ende) >= periodStart))).sort((a,b) => String(a.beginn || "").localeCompare(String(b.beginn || "")));
       const target = meterPeriods[0];
       if (!target) return;
       target.anfangsstand = Number(row.previousEnd);
