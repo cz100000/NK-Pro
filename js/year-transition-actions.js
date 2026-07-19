@@ -123,8 +123,41 @@
     }
   }
 
-  // AP22F10B: sichere, rein lesende Vorbereitung der Vorjahresübernahme.
-  // Es wird ausschließlich bei identischer Zähler-ID automatisch vorgeschlagen.
+  function normalizedIdentityText(value) {
+    return String(value || "").trim().toLocaleLowerCase("de-DE").replace(/[^a-z0-9äöüß]+/g, "");
+  }
+
+  function unitLabel(unit) {
+    return String(unit && (unit.bezeichnung || unit.lage || unit.name || unit.id || unit.einheitId) || "");
+  }
+
+  // Historische Archive bis einschließlich AP22F10E speichern Wasserwerte teilweise
+  // wohnungsweise in waterMeters.readings statt als Zählerstamm/Messperiode.
+  function legacyPriorReadingForRow(previousData, currentData, row) {
+    const container = previousData && previousData.waterMeters;
+    const readings = container && Array.isArray(container.readings) ? container.readings : [];
+    if (!readings.length) return null;
+    const previousUnits = Array.isArray(previousData.wohnungen) ? previousData.wohnungen : [];
+    const currentUnits = Array.isArray(currentData && currentData.wohnungen) ? currentData.wohnungen : [];
+    const currentUnit = currentUnits.find(unit => String(unit && (unit.id || unit.einheitId) || "") === String(row.unitId || ""));
+    const currentLabel = normalizedIdentityText(unitLabel(currentUnit) || row.caseLabel);
+    let index = previousUnits.findIndex(unit => String(unit && (unit.id || unit.einheitId) || "") === String(row.unitId || ""));
+    if (index < 0 && currentLabel) {
+      const labelMatches = previousUnits.map((unit, i) => ({ unit, i })).filter(item => normalizedIdentityText(unitLabel(item.unit)) === currentLabel);
+      if (labelMatches.length === 1) index = labelMatches[0].i;
+    }
+    if (index < 0 || index >= readings.length) return null;
+    const reading = readings[index] || {};
+    const hot = String(row.meterType || "") === "hot-water";
+    const value = hot ? reading.wwEnd : reading.kwEnd;
+    const date = hot ? reading.wwEndDate : reading.kwEndDate;
+    if (value === "" || value === null || value === undefined || !Number.isFinite(Number(value))) return null;
+    return { endValue:Number(value), endDate:String(date || ""), method:"legacy-unit-type", sourceLabel:unitLabel(previousUnits[index]) };
+  }
+
+  // Sichere Vorbereitung der Vorjahresübernahme. Reihenfolge:
+  // 1. stabile Zähler-ID, 2. Zählernummer + Wohnung + Art,
+  // 3. historisches wohnungsbezogenes Archivformat + Zählerart.
   function prepareIndividualPriorReadingTransfer(data = current()) {
     const calculation = global.NKProBillingCalculation;
     const currentRows = calculation && typeof calculation.waterMeterRows === "function" ? calculation.waterMeterRows(data) : [];
@@ -140,15 +173,23 @@
     const candidates = currentRows.map(row => {
       const exact = previousRows.filter(previous => previous.meterId === row.meterId);
       const fallback = previousRows.filter(previous => previous.meterNumber === row.meterNumber && previous.unitId === row.unitId && previous.meterType === row.meterType);
-      const matches = exact.length ? exact : fallback;
-      const previous = matches.length === 1 ? matches[0] : null;
+      let matches = exact.length ? exact : fallback;
+      let previous = matches.length === 1 ? matches[0] : null;
+      let matchMethod = exact.length === 1 ? "stable-meter-id" : (fallback.length === 1 ? "meter-number-unit-type" : "");
+      if (!previous && !matches.length) {
+        const legacy = legacyPriorReadingForRow(previousData, data, row);
+        if (legacy) {
+          previous = { endValue:legacy.endValue, endDate:legacy.endDate, unitId:row.unitId, meterType:row.meterType };
+          matches = [previous];
+          matchMethod = legacy.method;
+        }
+      }
       const alreadyTransferred = audit.some(entry => String(entry && entry.meterId || "") === row.meterId && String(entry && entry.sourceYear || "") === String(source.year || ""));
-      let status = "ready", reason = "Zähleridentität und Zuordnung sind eindeutig.";
+      let status = "ready", reason = matchMethod === "stable-meter-id" ? "Stabile Zähler-ID stimmt mit der Vorperiode überein." : (matchMethod === "meter-number-unit-type" ? "Über Zählernummer, Wohnung und Zählerart eindeutig zugeordnet." : "Über historischen Wohnungsdatensatz und Zählerart eindeutig zugeordnet.");
       if (row.replacement) { status = "replacement"; reason = "Zählerwechsel muss separat bestätigt werden."; }
       else if (alreadyTransferred) { status = "already-transferred"; reason = "Die Übernahme wurde für diesen Zähler bereits bestätigt dokumentiert."; }
       else if (!matches.length) { status = "missing-prior-value"; reason = "Kein eindeutiger Vorjahreswert gefunden."; }
       else if (matches.length > 1) { status = "ambiguous"; reason = "Mehrere Vorjahreszähler passen zur aktuellen Identität."; }
-      else if (!exact.length) { status = "identity-changed"; reason = "Zählernummer passt, die stabile Zähler-ID ist jedoch abweichend."; }
       else if (previous && (previous.unitId !== row.unitId || previous.meterType !== row.meterType)) { status = "assignment-changed"; reason = "Zählerart oder Wohnungszuordnung weicht vom Vorjahr ab."; }
       else if (row.startValue !== "" && row.startValue !== null && row.startValue !== undefined) { status = "already-set"; reason = "Ein Anfangsstand ist bereits vorhanden."; }
       const previousEnd = previous && previous.endValue !== "" && previous.endValue !== null && previous.endValue !== undefined ? Number(previous.endValue) : "";
@@ -157,11 +198,35 @@
       return Object.freeze({
         meterId:row.meterId, meterNumber:row.meterNumber, meterType:row.meterType, caseKey:row.caseKey,
         caseLabel:[row.unitId, row.caseLabel].filter(Boolean).join(" · "), currentStart:row.startValue,
-        previousEnd, previousDate:previous && previous.endDate || "", sourceYear:String(source.year || ""),
+        previousEnd, previousDate:previous && previous.endDate || "", sourceYear:String(source.year || ""), matchMethod,
         status, eligible, selected:eligible, reason
       });
     });
     return Object.freeze({ sourceYear:String(source.year || ""), candidates:Object.freeze(candidates) });
+  }
+
+  // Eindeutige Vorwerte werden bei der Datenaufbereitung automatisch übernommen.
+  // Manuelle Anfangsstände, Zählerwechsel und mehrdeutige Fälle bleiben unangetastet.
+  function ensureIndividualPriorReadingTransfer(data = current()) {
+    const plan = prepareIndividualPriorReadingTransfer(data);
+    const selected = plan.candidates.filter(row => row.eligible);
+    if (!selected.length) return Object.freeze({ changed:false, copied:0, sourceYear:plan.sourceYear, candidates:plan.candidates.length });
+    const periods = data && data.zaehlerDaten && Array.isArray(data.zaehlerDaten.messperioden) ? data.zaehlerDaten.messperioden : [];
+    const periodStart = periodDateStartForData(data);
+    const records = [];
+    selected.forEach(row => {
+      const meterPeriods = periods.filter(period => String(period && (period.zaehlerId || period.meterId) || "") === String(row.meterId || "")).sort((a,b) => String(a.beginn || "").localeCompare(String(b.beginn || "")));
+      const target = meterPeriods[0];
+      if (!target) return;
+      target.anfangsstand = Number(row.previousEnd);
+      if (!target.beginn) target.beginn = periodStart;
+      records.push({ meterId:String(row.meterId), previousEnd:Number(row.previousEnd), previousDate:String(row.previousDate || ""), caseKey:String(row.caseKey || ""), sourceYear:String(plan.sourceYear || ""), confirmedAt:new Date().toISOString(), confirmation:"Automatisch-eindeutig", method:String(row.matchMethod || "stable-meter-id") });
+    });
+    if (!records.length) return Object.freeze({ changed:false, copied:0, sourceYear:plan.sourceYear, candidates:plan.candidates.length });
+    if (!data.meta) data.meta = {};
+    if (!Array.isArray(data.meta.individualValuesPriorTransfers)) data.meta.individualValuesPriorTransfers = [];
+    data.meta.individualValuesPriorTransfers.push(...records);
+    return Object.freeze({ changed:true, copied:records.length, sourceYear:plan.sourceYear, candidates:plan.candidates.length });
   }
 
   function recordIndividualPriorReadingTransfer(records, sourceYear) {
@@ -545,7 +610,7 @@
 
   global.NKProYearTransitionActions = Object.freeze({
     configure, describe, yearNumber, normalizeIsoDateValue, periodDateStartForData, periodDateEndForData,
-    activeMonthStartsForData, monthTotalForCarryForward, previousYearArchiveData, prepareIndividualPriorReadingTransfer, recordIndividualPriorReadingTransfer, findPreviousTenantIndex,
+    activeMonthStartsForData, monthTotalForCarryForward, previousYearArchiveData, prepareIndividualPriorReadingTransfer, ensureIndividualPriorReadingTransfer, recordIndividualPriorReadingTransfer, findPreviousTenantIndex,
     prepaymentAdjustmentWasPrinted, effectivePrepaymentIso, activePrepaymentMatrixHasValues,
     carryForwardPrepayments, ensurePrepaymentCarryForward, carryMeterEndToStart,
     periodStartForData, periodEndForData, numericMeterValueEquals, isNewCurrentBillingData,

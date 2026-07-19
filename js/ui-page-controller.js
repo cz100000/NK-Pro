@@ -27,6 +27,7 @@ function prepareStateForPersistence(reason = "manual") {
       ["Mieter-Vorauszahlungen", () => NK_PRO_MODULES.costActions.updateTenantPrepaymentTotals()],
       ["Umlage-Eingaben", () => syncUmlageInputs()],
       ["Zählerstammdaten und Messperioden", () => synchronizeMeteringData(state)],
+      ["Wasser-Vorperiodenübernahme", () => NK_PRO_MODULES.yearTransitionActions.ensureIndividualPriorReadingTransfer(state)],
       ["Wasserzähler", () => applyWaterMetersToUmlage()],
       ["Kostenstatus", () => state.kostenarten.forEach(k => k.status = NK_PRO_MODULES.costActions.kostenStatus(k))],
       ["Datenebenen und Snapshot-Grenzen", () => enforceWorkingStateDataContract(state)]
