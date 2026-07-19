@@ -1,0 +1,10 @@
+
+Running 5 tests using 1 worker
+
+  ✓  1 [ap10-orchestration] › tests/ap10-orchestration.spec.js:6:1 › Qualitäts- und Diagnoseorchestrierung bleibt vollständig seiteneffektfrei (2.8s)
+  ✓  2 [ap10-orchestration] › tests/ap10-orchestration.spec.js:33:1 › Archivierung nutzt genau einen Commit und rendert nicht aus dem Anwendungsmodul (1.9s)
+  ✓  3 [ap10-orchestration] › tests/ap10-orchestration.spec.js:66:1 › Fehlgeschlagener Archivimport rollt alle Teiländerungen ohne Commit zurück (1.8s)
+  ✓  4 [ap10-orchestration] › tests/ap10-orchestration.spec.js:98:1 › Jahreswechsel ist atomar, erhält unbekannte Felder und den Stromzähler-Dummy (2.2s)
+  ✓  5 [ap10-orchestration] › tests/ap10-orchestration.spec.js:135:1 › Fehlgeschlagener Jahreswechsel stellt den vollständigen Ausgangszustand wieder her (1.3s)
+
+  5 passed (11.7s)

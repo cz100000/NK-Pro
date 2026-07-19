@@ -1,0 +1,28 @@
+{
+  "release": "NK-Pro V99.4.45",
+  "workPackage": "AP22F10B",
+  "overall": "PASS",
+  "date": "2026-07-19",
+  "checks": {
+    "javascriptSyntax": { "status": "PASS", "units": 55 },
+    "fixtures": { "status": "PASS", "cases": 6 },
+    "meteringDomain": { "status": "PASS" },
+    "architecture": { "status": "PASS" },
+    "ap22f10bStatic": { "status": "PASS" },
+    "protectedAreas": { "status": "PASS", "fullHashes": 12, "partialAreas": 4 },
+    "releaseMetadata": { "status": "PASS" },
+    "releaseContents": { "status": "PASS" },
+    "ap22f10bBrowser": { "status": "PASS", "screenshots": 17 },
+    "documentExport": { "status": "PASS", "passed": 2 },
+    "migrationRestore": { "status": "PASS", "passed": 6 },
+    "persistenceBackupArchive": { "status": "PASS", "passed": 5 },
+    "referenceCases": { "status": "PASS", "passed": 6 },
+    "orchestration": { "status": "PASS", "passed": 5 },
+    "ap22f9bBrowser": { "status": "PASS" },
+    "ap22f8bCorrection1Browser": { "status": "PASS" },
+    "ap22f8bBrowser": { "status": "PASS" },
+    "ap22f6bOverviewBrowser": { "status": "PASS" },
+    "ap22f6bCorrection1Browser": { "status": "PASS" }
+  },
+  "knownProductDeviations": []
+}

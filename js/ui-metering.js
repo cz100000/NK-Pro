@@ -309,20 +309,98 @@ function setWaterMeterSetting(key, value) {
   commitStateChange({ reason:"Benutzereingabe" });
 }
 
+function canonicalWaterField(channel, key) {
+  const prefix = channel === "water-hot" ? "ww" : "kw";
+  const map = { start:prefix + "Start", startDate:prefix + "StartDate", end:prefix + "End", endDate:prefix + "EndDate", note:"bemerkung" };
+  return map[key] || key;
+}
+
+let ap22f10bManualReadingSequence = 0;
+
+function activeManualCanonicalReading(container, meterId, role) {
+  const periodKey = [String(state.meta && state.meta.abrechnungsbeginn || ""), String(state.meta && state.meta.abrechnungsende || "")].join("|");
+  const sourceKey = ["ap22f10b-manual", meterId, role, periodKey].join(":");
+  return (container && Array.isArray(container.messwerte) ? container.messwerte : []).filter(row => row && row.sourceKey === sourceKey && row.status !== "cancelled" && row.status !== "corrected").sort((a,b) => String(b.erfasstAm || "").localeCompare(String(a.erfasstAm || "")))[0] || null;
+}
+
+function setManualCanonicalReading(meter, role, value, valueType, dateOverride) {
+  synchronizeMeteringData(state);
+  const container = state.zaehlerDaten;
+  if (!container || !meter) return false;
+  const meterId = String(meter.meterId || meter.zaehlerId || meter.id || "");
+  const periodKey = [String(state.meta && state.meta.abrechnungsbeginn || ""), String(state.meta && state.meta.abrechnungsende || "")].join("|");
+  const sourceKey = ["ap22f10b-manual", meterId, role, periodKey].join(":");
+  const existing = (container.messwerte || []).filter(row => row && row.sourceKey === sourceKey && row.status !== "cancelled").sort((a,b) => String(b.erfasstAm || "").localeCompare(String(a.erfasstAm || "")))[0] || null;
+  if (existing) {
+    existing.status = "corrected";
+    existing.korrigiertAm = new Date().toISOString();
+    existing.plausibilitaetsstatus = "ersetzt";
+  }
+  if (value === "" || value === null || value === undefined) return true;
+  const readingDate = String(dateOverride || (role === "start" ? periodStart() : periodEnd()) || "");
+  const numericValue = valueType === "number" ? parseMeterNumberInput(value) : Number(value);
+  if (!Number.isFinite(Number(numericValue)) || !readingDate) return false;
+  const timestamp = new Date().toISOString();
+  const record = {
+    messwertId:"MW-AP22F10B-" + meterId.replace(/[^A-Za-z0-9_-]/g,"-") + "-" + role.toUpperCase() + "-" + Date.now() + "-" + (++ap22f10bManualReadingSequence),
+    measurementId:"", id:"", meterId, zaehlerId:meterId, sourceKey,
+    ablesedatum:readingDate, messzeitraumVon:periodStart(), messzeitraumBis:periodEnd(),
+    wert:Number(numericValue), einheit:String(meter.einheit || "m³"),
+    ableseart:role === "start" ? "Anfangsablesung" : "Endablesung",
+    herkunft:"ap22f10b-manual", rolle:role, status:"active", erfasstAm:timestamp,
+    plausibilitaetsstatus:"ungeprüft", ersetztMesswertId:existing ? String(existing.messwertId || "") : ""
+  };
+  record.measurementId = record.messwertId;
+  record.id = record.messwertId;
+  container.messwerte.push(record);
+  return true;
+}
+
 function setWaterMeterValue(index, key, value, type="text") {
   ensureWaterMeterData();
-  if (!state.waterMeters.readings[index]) state.waterMeters.readings[index] = {};
-  state.waterMeters.readings[index][key] = type === "number" ? parseMeterNumberInput(value) : value;
-  if (["kwEnd","wwEnd"].includes(key)) {
-    if (!state.meta) state.meta = {};
-    state.meta.meterNumericEndValuesTouchedForYear = currentAbrechnungsjahr();
-  } else if (["kwEndDate","wwEndDate"].includes(key)) {
-    if (!state.meta) state.meta = {};
-    state.meta.meterEndDateFieldsTouchedForYear = currentAbrechnungsjahr();
+  const numericIndex = typeof index === "number" || /^\d+$/.test(String(index || "")) ? Number(index) : -1;
+  if (numericIndex >= 0) {
+    if (!state.waterMeters.readings[numericIndex]) state.waterMeters.readings[numericIndex] = {};
+    state.waterMeters.readings[numericIndex][key] = type === "number" ? parseMeterNumberInput(value) : value;
+    if (["kwEnd","wwEnd"].includes(key)) {
+      if (!state.meta) state.meta = {};
+      state.meta.meterNumericEndValuesTouchedForYear = currentAbrechnungsjahr();
+    } else if (["kwEndDate","wwEndDate"].includes(key)) {
+      if (!state.meta) state.meta = {};
+      state.meta.meterEndDateFieldsTouchedForYear = currentAbrechnungsjahr();
+    }
+  } else {
+    synchronizeMeteringData(state);
+    const meterId = String(index || "");
+    const meter = state.zaehlerDaten && Array.isArray(state.zaehlerDaten.zaehler) ? state.zaehlerDaten.zaehler.find(row => String(row && (row.meterId || row.zaehlerId || row.id) || "") === meterId) : null;
+    if (!meter) return Object.freeze({ changed:false, reason:"meter-not-found", meterId });
+    const binding = Array.isArray(meter.legacyBindings) ? meter.legacyBindings.find(row => row && ["water-cold","water-hot"].includes(String(row.channel || ""))) : null;
+    if (binding && Number.isInteger(Number(binding.index))) {
+      const rowIndex = Number(binding.index);
+      if (!state.waterMeters.readings[rowIndex]) state.waterMeters.readings[rowIndex] = {};
+      const legacyKey = canonicalWaterField(String(binding.channel || ""), key);
+      state.waterMeters.readings[rowIndex][legacyKey] = type === "number" ? parseMeterNumberInput(value) : value;
+    } else if (["start","end"].includes(key)) {
+      const dateKey = key === "start" ? "startDate" : "endDate";
+      const row = globalThis.NKProBillingCalculation && globalThis.NKProBillingCalculation.waterMeterRows ? globalThis.NKProBillingCalculation.waterMeterRows(state).find(item => item.meterId === meterId) : null;
+      setManualCanonicalReading(meter, key, value, type, row && row[dateKey]);
+    } else if (["startDate","endDate"].includes(key)) {
+      const role = key === "startDate" ? "start" : "end";
+      const currentReading = activeManualCanonicalReading(state.zaehlerDaten, meterId, role);
+      if (currentReading && Number.isFinite(Number(currentReading.wert))) setManualCanonicalReading(meter, role, currentReading.wert, "number", value);
+    } else if (key === "note") {
+      meter.bemerkung = String(value || "");
+    }
+    if (["end","endDate"].includes(key)) {
+      if (!state.meta) state.meta = {};
+      state.meta.meterNumericEndValuesTouchedForYear = currentAbrechnungsjahr();
+      if (key === "endDate") state.meta.meterEndDateFieldsTouchedForYear = currentAbrechnungsjahr();
+    }
   }
   syncUmlageInputs();
   applyWaterMetersToUmlage();
-  commitStateChange({ reason:"Benutzereingabe" });
+  commitStateChange({ reason:"Benutzereingabe", tabId:"manuellewerte" });
+  return Object.freeze({ changed:true, meterId:numericIndex >= 0 ? "" : String(index || ""), index:numericIndex, key });
 }
 
 function setGenericMeterValue(costId, index, key, value, type="text") {

@@ -1,0 +1,11 @@
+
+Running 6 tests using 1 worker
+
+  ✓  1 [reference-cases] › tests/reference-cases.spec.js:6:1 › Referenzfall Standard bleibt vollständig und berechenbar (3.7s)
+  ✓  2 [reference-cases] › tests/reference-cases.spec.js:32:1 › Referenzfall Mieterwechsel erhält zwei Perioden auf derselben Wohnung (3.4s)
+  ✓  3 [reference-cases] › tests/reference-cases.spec.js:46:1 › Referenzfall Leerstand erkennt eine aktive Wohnung ohne Mietverhältnis (3.3s)
+  ✓  4 [reference-cases] › tests/reference-cases.spec.js:62:1 › Referenzfall M000 bleibt in der Umlage und außerhalb der Mieterbriefe (3.4s)
+  ✓  5 [reference-cases] › tests/reference-cases.spec.js:82:1 › Referenzfall trennt alle vier Eingabequellen eindeutig (3.8s)
+  ✓  6 [reference-cases] › tests/reference-cases.spec.js:112:1 › Referenzfall Altdaten wird kontrolliert auf Schema 5 migriert (2.9s)
+
+  6 passed (21.9s)

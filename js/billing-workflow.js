@@ -301,6 +301,7 @@
         input.art = input.mode;
         if (!Array.isArray(input.values)) input.values = [];
         while (input.values.length < tenantCount) input.values.push(0);
+        if (!input.caseValues || typeof input.caseValues !== "object" || Array.isArray(input.caseValues)) input.caseValues = {};
       }
     });
     return data.umlageInputs;
@@ -313,7 +314,9 @@
     const currentInput = data.umlageInputs && data.umlageInputs[costId];
     const currentCost = Array.isArray(data.kostenarten) ? data.kostenarten.find(row => row.id === costId) : null;
     if (!currentCost || !modes.includes(mode)) return Object.freeze({ changed:false, reason:"invalid-input" });
-    const hasValues = currentInput && Array.isArray(currentInput.values) && currentInput.values.some(value => Math.abs(d.num(value)) > 0.000001);
+    const hasLegacyValues = currentInput && Array.isArray(currentInput.values) && currentInput.values.some(value => Math.abs(d.num(value)) > 0.000001);
+    const hasCaseValues = currentInput && currentInput.caseValues && Object.values(currentInput.caseValues).some(value => Math.abs(d.num(value && typeof value === "object" ? (value.amount !== undefined ? value.amount : value.value) : value)) > 0.000001);
+    const hasValues = hasLegacyValues || hasCaseValues;
     if (hasValues && currentInput.mode !== mode && options.confirmed !== true) {
       return Object.freeze({
         changed:false,
@@ -340,30 +343,70 @@
     }, { reason:"Benutzereingabe", tabId:"manuellewerte" });
   }
 
-  function setManualExternalValue(costId, index, value) {
+  function setManualExternalValue(costId, indexOrCaseKey, value, field = "amount") {
     const d = requireDeps();
-    const numericIndex = Number(index);
+    const caseKey = typeof indexOrCaseKey === "string" && !/^\d+$/.test(indexOrCaseKey.trim()) ? String(indexOrCaseKey) : "";
+    const numericIndex = caseKey ? -1 : Number(indexOrCaseKey);
+    const allowedFields = ["amount", "consumption", "provider", "recordedAt", "note"];
+    const normalizedField = allowedFields.includes(String(field || "")) ? String(field) : "amount";
     return d.stateAccess.transact(data => {
       syncUmlageInputs(data);
       const input = data.umlageInputs[costId];
       if (!input) return Object.freeze({ changed:false, reason:"missing-input" });
-      input.values[numericIndex] = d.num(value);
-      return Object.freeze({ changed:true, costId, index:numericIndex });
+      const storedValue = ["amount", "consumption"].includes(normalizedField) ? d.num(value) : String(value || "");
+      if (caseKey) {
+        if (!input.caseValues || typeof input.caseValues !== "object" || Array.isArray(input.caseValues)) input.caseValues = {};
+        const previous = input.caseValues[caseKey] && typeof input.caseValues[caseKey] === "object" ? input.caseValues[caseKey] : {};
+        input.caseValues[caseKey] = Object.assign({}, previous, {
+          [normalizedField]:storedValue,
+          source:String(previous.source || "manual"),
+          updatedAt:new Date().toISOString()
+        });
+        const calculation = global.NKProBillingCalculation;
+        const cases = calculation && typeof calculation.individualValueCases === "function" ? calculation.individualValueCases(data) : [];
+        const target = cases.find(row => row.caseKey === caseKey);
+        if (target && target.originalIndex >= 0 && normalizedField === "amount") input.values[target.originalIndex] = d.num(storedValue);
+      } else if (Number.isInteger(numericIndex) && numericIndex >= 0) {
+        input.values[numericIndex] = d.num(storedValue);
+        const calculation = global.NKProBillingCalculation;
+        const cases = calculation && typeof calculation.individualValueCases === "function" ? calculation.individualValueCases(data).filter(row => row.originalIndex === numericIndex) : [];
+        if (cases.length === 1) input.caseValues[cases[0].caseKey] = { amount:d.num(storedValue), source:"legacy-projection", updatedAt:new Date().toISOString() };
+      } else return Object.freeze({ changed:false, reason:"invalid-case" });
+      return Object.freeze({ changed:true, costId, index:numericIndex, caseKey, field:normalizedField });
     }, { reason:"Benutzereingabe", tabId:"manuellewerte" });
   }
 
   function setIndividualValuesImport(costId, values, metadata = {}) {
     const d = requireDeps();
     const normalizedValues = Array.isArray(values) ? values.map(value => d.num(value)) : [];
+    const importedCaseValues = metadata.caseValues && typeof metadata.caseValues === "object" && !Array.isArray(metadata.caseValues) ? metadata.caseValues : {};
     return d.stateAccess.transact(data => {
       syncUmlageInputs(data);
       const input = data.umlageInputs && data.umlageInputs[costId];
       if (!input) return Object.freeze({ changed:false, reason:"missing-input" });
       while (input.values.length < normalizedValues.length) input.values.push(0);
       normalizedValues.forEach((value,index) => { input.values[index] = value; });
+      if (!input.caseValues || typeof input.caseValues !== "object" || Array.isArray(input.caseValues)) input.caseValues = {};
+      Object.entries(importedCaseValues).forEach(([caseKey, raw]) => {
+        const amount = d.num(raw && typeof raw === "object" ? (raw.amount !== undefined ? raw.amount : raw.value) : raw);
+        input.caseValues[caseKey] = {
+          amount,
+          consumption:d.num(raw && typeof raw === "object" ? raw.consumption : 0),
+          provider:String(raw && typeof raw === "object" && raw.provider || ""),
+          recordedAt:String(raw && typeof raw === "object" && raw.recordedAt || metadata.importedAt || new Date().toISOString()).slice(0,10),
+          source:String(metadata.source || raw && raw.source || "import"),
+          updatedAt:String(metadata.importedAt || new Date().toISOString()),
+          note:String(raw && typeof raw === "object" && raw.note || "")
+        };
+      });
+      const calculation = global.NKProBillingCalculation;
+      const cases = calculation && typeof calculation.individualValueCases === "function" ? calculation.individualValueCases(data) : [];
+      cases.forEach(row => {
+        if (row.originalIndex >= 0 && input.caseValues[row.caseKey]) input.values[row.originalIndex] = d.num(input.caseValues[row.caseKey].amount);
+      });
       input.importSource = String(metadata.source || input.importSource || "");
       input.importedAt = String(metadata.importedAt || new Date().toISOString());
-      input.importFormat = String(metadata.format || "Zuordnung nach Mietverhältnis/Wohnung");
+      input.importFormat = String(metadata.format || "Zuordnung nach Abrechnungsfall/Wohnung");
       input.importErrors = Array.isArray(metadata.errors) ? metadata.errors.slice(0,100) : [];
       input.mode = metadata.mode === "Externe Einzelabrechnung" ? "Externe Einzelabrechnung" : (input.mode || "Externe Einzelabrechnung");
       input.art = input.mode;
@@ -372,7 +415,7 @@
         cost.umlageschluessel = d.umlageManual;
         cost.berechnungsart = "Manuell je Mieter";
       }
-      return Object.freeze({ changed:true, costId, imported:normalizedValues.length, errorCount:input.importErrors.length });
+      return Object.freeze({ changed:true, costId, imported:normalizedValues.length + Object.keys(importedCaseValues).length, errorCount:input.importErrors.length });
     }, { reason:"Externe Einzelwerte importiert", tabId:"manuellewerte" });
   }
 
@@ -387,6 +430,7 @@
       if (!input) return Object.freeze({ changed:false, reason:"missing-input" });
       if (input.mode === "Zählerstände") return Object.freeze({ changed:false, reason:"central-meter-source", message:"Automatische Zählerwerte werden an der zentralen Zählerquelle korrigiert." });
       input.values = input.values.map(() => 0);
+      input.caseValues = {};
       input.importSource = "";
       input.importedAt = "";
       input.importFormat = "";

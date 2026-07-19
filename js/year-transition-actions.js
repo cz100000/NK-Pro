@@ -123,6 +123,63 @@
     }
   }
 
+  // AP22F10B: sichere, rein lesende Vorbereitung der Vorjahresübernahme.
+  // Es wird ausschließlich bei identischer Zähler-ID automatisch vorgeschlagen.
+  function prepareIndividualPriorReadingTransfer(data = current()) {
+    const calculation = global.NKProBillingCalculation;
+    const currentRows = calculation && typeof calculation.waterMeterRows === "function" ? calculation.waterMeterRows(data) : [];
+    const source = previousYearArchiveData(data);
+    if (!source || !source.data) return Object.freeze({ sourceYear:"", candidates:Object.freeze(currentRows.map(row => Object.freeze({ meterId:row.meterId, meterNumber:row.meterNumber, caseLabel:row.caseLabel, status:"missing-prior-year", eligible:false, selected:false, previousEnd:"", previousDate:"", reason:"Kein Vorjahresdatensatz vorhanden." }))) });
+    let previousData = source.data;
+    try {
+      previousData = JSON.parse(JSON.stringify(source.data));
+      if (global.NKProMeterValidation && typeof global.NKProMeterValidation.synchronizeMeteringData === "function") global.NKProMeterValidation.synchronizeMeteringData(previousData);
+    } catch (_) { previousData = source.data; }
+    const previousRows = calculation && typeof calculation.waterMeterRows === "function" ? calculation.waterMeterRows(previousData) : [];
+    const audit = data && data.meta && Array.isArray(data.meta.individualValuesPriorTransfers) ? data.meta.individualValuesPriorTransfers : [];
+    const candidates = currentRows.map(row => {
+      const exact = previousRows.filter(previous => previous.meterId === row.meterId);
+      const fallback = previousRows.filter(previous => previous.meterNumber === row.meterNumber && previous.unitId === row.unitId && previous.meterType === row.meterType);
+      const matches = exact.length ? exact : fallback;
+      const previous = matches.length === 1 ? matches[0] : null;
+      const alreadyTransferred = audit.some(entry => String(entry && entry.meterId || "") === row.meterId && String(entry && entry.sourceYear || "") === String(source.year || ""));
+      let status = "ready", reason = "Zähleridentität und Zuordnung sind eindeutig.";
+      if (row.replacement) { status = "replacement"; reason = "Zählerwechsel muss separat bestätigt werden."; }
+      else if (alreadyTransferred) { status = "already-transferred"; reason = "Die Übernahme wurde für diesen Zähler bereits bestätigt dokumentiert."; }
+      else if (!matches.length) { status = "missing-prior-value"; reason = "Kein eindeutiger Vorjahreswert gefunden."; }
+      else if (matches.length > 1) { status = "ambiguous"; reason = "Mehrere Vorjahreszähler passen zur aktuellen Identität."; }
+      else if (!exact.length) { status = "identity-changed"; reason = "Zählernummer passt, die stabile Zähler-ID ist jedoch abweichend."; }
+      else if (previous && (previous.unitId !== row.unitId || previous.meterType !== row.meterType)) { status = "assignment-changed"; reason = "Zählerart oder Wohnungszuordnung weicht vom Vorjahr ab."; }
+      else if (row.startValue !== "" && row.startValue !== null && row.startValue !== undefined) { status = "already-set"; reason = "Ein Anfangsstand ist bereits vorhanden."; }
+      const previousEnd = previous && previous.endValue !== "" && previous.endValue !== null && previous.endValue !== undefined ? Number(previous.endValue) : "";
+      if (status === "ready" && previousEnd === "") { status = "missing-prior-value"; reason = "Der Vorjahresendstand fehlt."; }
+      const eligible = status === "ready";
+      return Object.freeze({
+        meterId:row.meterId, meterNumber:row.meterNumber, meterType:row.meterType, caseKey:row.caseKey,
+        caseLabel:[row.unitId, row.caseLabel].filter(Boolean).join(" · "), currentStart:row.startValue,
+        previousEnd, previousDate:previous && previous.endDate || "", sourceYear:String(source.year || ""),
+        status, eligible, selected:eligible, reason
+      });
+    });
+    return Object.freeze({ sourceYear:String(source.year || ""), candidates:Object.freeze(candidates) });
+  }
+
+  function recordIndividualPriorReadingTransfer(records, sourceYear) {
+    const d = requireDeps();
+    const normalized = (Array.isArray(records) ? records : []).filter(row => row && row.meterId).map(row => ({
+      meterId:String(row.meterId), previousEnd:d.num(row.previousEnd), previousDate:String(row.previousDate || ""),
+      caseKey:String(row.caseKey || ""), sourceYear:String(sourceYear || row.sourceYear || ""),
+      confirmedAt:d.nowIso(), confirmation:"Benutzerbestätigt", method:"stable-meter-id"
+    }));
+    if (!normalized.length) return Object.freeze({ changed:false, recorded:0 });
+    return d.stateAccess.transact(data => {
+      if (!data.meta) data.meta = {};
+      if (!Array.isArray(data.meta.individualValuesPriorTransfers)) data.meta.individualValuesPriorTransfers = [];
+      data.meta.individualValuesPriorTransfers.push(...normalized);
+      return Object.freeze({ changed:true, recorded:normalized.length });
+    }, { reason:"Vorjahresendstände bestätigt übernommen", tabId:"manuellewerte" });
+  }
+
   function previousTenantRoleIsPrivate(tenant) {
     const role = String(tenant && (tenant.abrechnungRolle || tenant.rolle || "") || "").toLocaleLowerCase("de-DE");
     return role.includes("eigent") || role.includes("privat");
@@ -250,40 +307,23 @@
   function carryMeterEndToStart(data = current(), snapshot = null) {
     const d = requireDeps();
     d.ensureWaterMeterData();
-    const sourceSnapshot = snapshot || d.masterDataActions.captureMeterReadingsSnapshot(data);
     const startDate = d.periodStart() || (String(data.meta && data.meta.abrechnungsjahr || d.currentYear()) + "-01-01");
     const endDate = d.periodEnd() || (String(data.meta && data.meta.abrechnungsjahr || d.currentYear()) + "-12-31");
-    const warnings = [];
     const count = Math.max(20, Array.isArray(data.mieter) ? data.mieter.length : 0);
     if (!data.waterMeters) data.waterMeters = { settings:{}, readings:[] };
-    data.waterMeters.readings = Array(count).fill(null).map(() => ({}));
-    (Array.isArray(data.mieter) ? data.mieter : []).forEach((tenant, index) => {
-      const source = d.masterDataActions.meterSnapshotRowForTenant(sourceSnapshot.water, tenant) || {};
-      const label = tenant.wohnung || tenant.id || ("Datensatz " + (index + 1));
-      if (!d.hasEnteredMeterValue(source.kwEnd)) warnings.push("Kaltwasser-Endstand fehlt bei " + label);
-      if (!d.hasEnteredMeterValue(source.wwEnd)) warnings.push("Warmwasser-Endstand fehlt bei " + label);
-      data.waterMeters.readings[index] = {
-        kwStart:d.hasEnteredMeterValue(source.kwEnd) ? d.num(source.kwEnd) : (d.hasEnteredMeterValue(source.kwStart) ? d.num(source.kwStart) : ""),
-        kwStartDate:startDate, kwEnd:"", kwEndDate:endDate,
-        wwStart:d.hasEnteredMeterValue(source.wwEnd) ? d.num(source.wwEnd) : (d.hasEnteredMeterValue(source.wwStart) ? d.num(source.wwStart) : ""),
-        wwStartDate:startDate, wwEnd:"", wwEndDate:endDate, bemerkung:""
-      };
-    });
+    data.waterMeters.readings = Array(count).fill(null).map(() => ({
+      kwStart:"", kwStartDate:startDate, kwEnd:"", kwEndDate:endDate,
+      wwStart:"", wwStartDate:startDate, wwEnd:"", wwEndDate:endDate, bemerkung:""
+    }));
     if (!data.meterReadings) data.meterReadings = { readings:{} };
     if (!data.meterReadings.readings) data.meterReadings.readings = {};
-    const costIds = new Set(Object.keys(sourceSnapshot.generic || {}).concat(Object.keys(data.meterReadings.readings || {})));
-    costIds.forEach(costId => {
-      const rows = Array(count).fill(null).map(() => ({}));
-      (Array.isArray(data.mieter) ? data.mieter : []).forEach((tenant, index) => {
-        const source = d.masterDataActions.meterSnapshotRowForTenant(sourceSnapshot.generic && sourceSnapshot.generic[costId], tenant) || {};
-        const label = tenant.wohnung || tenant.id || ("Datensatz " + (index + 1));
-        if (!d.hasEnteredMeterValue(source.end)) warnings.push("Endstand fehlt bei " + costId + " / " + label);
-        rows[index] = { start:d.hasEnteredMeterValue(source.end) ? d.num(source.end) : (d.hasEnteredMeterValue(source.start) ? d.num(source.start) : ""), startDate, end:"", endDate, bemerkung:"" };
-      });
-      data.meterReadings.readings[costId] = rows;
+    Object.keys(data.meterReadings.readings).forEach(costId => {
+      data.meterReadings.readings[costId] = Array(count).fill(null).map(() => ({ start:"", startDate, end:"", endDate, bemerkung:"" }));
     });
     if (!data.meta) data.meta = {};
-    data.meta.meterCarryForwardWarnings = Array.from(new Set(warnings));
+    data.meta.meterCarryForwardWarnings = ["Vorjahresendstände wurden nicht automatisch übernommen. Die erstmalige Übernahme muss auf „Individuelle Werte“ bestätigt werden."];
+    data.meta.individualValuesPriorTransferPending = true;
+    data.meta.individualValuesPriorTransferRequestedForYear = String(data.meta.abrechnungsjahr || d.currentYear());
     return data.meta.meterCarryForwardWarnings;
   }
 
@@ -505,7 +545,7 @@
 
   global.NKProYearTransitionActions = Object.freeze({
     configure, describe, yearNumber, normalizeIsoDateValue, periodDateStartForData, periodDateEndForData,
-    activeMonthStartsForData, monthTotalForCarryForward, previousYearArchiveData, findPreviousTenantIndex,
+    activeMonthStartsForData, monthTotalForCarryForward, previousYearArchiveData, prepareIndividualPriorReadingTransfer, recordIndividualPriorReadingTransfer, findPreviousTenantIndex,
     prepaymentAdjustmentWasPrinted, effectivePrepaymentIso, activePrepaymentMatrixHasValues,
     carryForwardPrepayments, ensurePrepaymentCarryForward, carryMeterEndToStart,
     periodStartForData, periodEndForData, numericMeterValueEquals, isNewCurrentBillingData,

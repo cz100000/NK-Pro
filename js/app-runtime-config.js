@@ -48,10 +48,10 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.44";
-const APP_VERSION_NAME = "AP22F9B-Gesamtkosten";
-const APP_RELEASE_DATE = "2026-07-18";
-if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – AP22F9B Gesamtkosten";
+const APP_VERSION = "V99.4.45";
+const APP_VERSION_NAME = "AP22F10B-Individuelle-Werte";
+const APP_RELEASE_DATE = "2026-07-19";
+if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – AP22F10B Individuelle Werte";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
 const ARCHIVE_SNAPSHOT_SCOPE = "billingSnapshot";
@@ -116,6 +116,7 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
+  "V99.4.45 migriert Nebenkosten abrechnen – Individuelle Werte auf NK-Pro UI Referenz 1.0: genau vier abgeleitete Kennzahlenkacheln, Kalt- und Warmwasser je physischem Zähler, wohnungsbezogene Summen einschließlich Leerstand und Privatanteil, bestätigte Vorjahresübernahme, additive externe Einzelwerte sowie getrennte Mengen- und Kostenabgleiche mit 0,01-Toleranz. Datenschema 5, Persistenz, Migration, Backup, Restore, Archiv, Navigation, Brief und Druck bleiben geschützt.",
   "V99.4.44 migriert ausschließlich Nebenkosten abrechnen – Gesamtkosten auf NK-Pro UI Referenz 1.0: vier bestandsbasierte Kennzahlenkacheln, drei flache Arbeitsbereiche, lokale Kostenartensuche, vollständige 15-spaltige Haupttabelle, neutraler Summenabschluss und interner Tabellen-Scroll. Datenschema, Fachlogik, Berechnungen, Persistenz, Migration, Archiv, Brief und Druck bleiben unverändert.",
   "V99.4.43 migriert ausschließlich Nebenkosten abrechnen – Vorauszahlungen auf NK-Pro UI Referenz 1.0: flacher Seitenfluss mit getrennten Tabellen für NK-Vorauszahlungen, Kaltmiete und Korrekturen/Gutschriften, vollständiger Wohnungs- und Belegungsbestand einschließlich nicht abrechenbarer Fälle, neutrale Tabellenflächen und vollständig erhaltene Gesamtsummen. Berechnung, Datenmodell, Persistenz und Fachlogik bleiben unverändert.",
   "V99.4.42 AP22F7B Korrektur 3 ergänzt den verbindlichen sichtbaren rechten Rahmen an allen zentralen Standardtabellen und schreibt diesen Standard für künftige Tabellenmigrationen fest. Auf Nebenkosten abrechnen – Mietverhältnisse werden Mietzeiträume im deutschen Format TT.MM.JJJJ angezeigt; Sortierung, Datenwerte und Fachlogik bleiben unverändert.",

@@ -1,0 +1,77 @@
+OK: js/ui-preferences.js
+OK: js/billing-context.js
+OK: js/state-access.js
+OK: js/application-actions.js
+OK: js/master-data-actions.js
+OK: js/cost-actions.js
+OK: js/billing-workflow.js
+OK: js/ui-controller.js
+OK: js/ui-bindings.js
+OK: js/ui-events.js
+OK: js/navigation.js
+OK: js/modal-events.js
+OK: js/persistence.js
+OK: js/migration.js
+OK: js/backup-recovery.js
+OK: js/meter-master.js
+OK: js/meter-readings.js
+OK: js/meter-periods.js
+OK: js/meter-validation.js
+OK: js/object-standard.js
+OK: js/billing-snapshot.js
+OK: js/archive.js
+OK: js/archive-actions.js
+OK: js/year-transition-actions.js
+OK: js/quality-rules.js
+OK: js/quality-assurance.js
+OK: js/diagnostics.js
+OK: js/billing-calculation.js
+OK: js/document-data.js
+OK: js/document-renderer.js
+OK: js/export-service.js
+OK: js/ui-table-tools.js
+OK: js/ui-design-system.js
+OK: js/app-bootstrap.js
+OK: js/compatibility.js
+OK: js/default-seed.js
+OK: js/runtime-diagnostics.js
+OK: js/app-runtime-config.js
+OK: js/app-state-persistence.js
+OK: js/ui-master-data.js
+OK: js/ui-quality.js
+OK: js/ui-costs.js
+OK: js/ui-navigation-pages.js
+OK: js/ui-archive-pages.js
+OK: js/browser-io.js
+OK: js/ui-metering.js
+OK: js/ui-billing-allocation.js
+OK: js/ui-individual-values.js
+OK: js/ui-documents.js
+OK: js/ui-table-actions.js
+OK: js/ui-diagnostics.js
+OK: js/ui-page-controller.js
+OK: js/app.js
+OK: js/service-worker-register.js
+OK: service-worker.js
+Syntaxprüfung abgeschlossen: 55 JavaScript-Einheiten fehlerfrei.
+OK: standardfall.json (0 Patch-Operationen)
+OK: mieterwechsel.json (26 Patch-Operationen)
+OK: leerstand.json (3 Patch-Operationen)
+OK: eigentuemer-m000.json (2 Patch-Operationen)
+OK: alle-eingabequellen.json (25 Patch-Operationen)
+OK: altdaten-migration.json (16 Patch-Operationen)
+Referenzdatenprüfung abgeschlossen: 6 logische Fälle semantisch unverändert.
+Zählerstandard-Prüfung abgeschlossen: Migration, stabile IDs, getrennte Messwerte, Messperioden, Korrekturen, Wechsel, zeitabhängige Zuordnungen, Snapshot-Projektion und Dummy-Ausschluss sind konsistent.
+AP20-Zählerstartregression bestanden: Datensatz bleibt ladbar und NKP-PLAU-005 zeigt die rückläufige Messperiode als 'Zu prüfen'.
+AP20-Korrekturregression Zählerberechnung: Dezimalkomma, Dezimalpunkt, Live-Vorschau und Enter-Commit sind statisch abgesichert.
+AP6-Architekturprüfung abgeschlossen: app.js 240 Zeilen, feste Modulschnittstellen, reine Berechnung, zentralisierte Speicherzugriffe und geordneter Start sind konsistent.
+AP8-Anwendungsaktionsprüfung abgeschlossen: explizite Anwendungsschicht, kontrollierte UI-Anbindung und DOM-/Speicherfreiheit sind konsistent.
+AP9-Kernorchestrierungsprüfung abgeschlossen: 32 Implementierungen physisch verschoben, 28 Übergangsweiterleitungen entfernt, drei DOM-/speicherfreie Module, atomare Einzelcommits und Rollback sind konsistent.
+AP13-Strukturprüfung abgeschlossen: gemeinsames DIN-A4-Dokumentmodell, kontrollierte Seitenlogik und vollständige Textfelder sind vorhanden.
+AP21 Regelprüfung 1 bestanden: NKP-FACH-001 prüft echte ISO-Kalenderdaten, Reihenfolge und Endjahr; Teil- und jahresübergreifende Perioden bleiben zulässig.
+AP21B2-Strukturprüfung bestanden: Navigation, Reihenfolge, Direkteinstiege und Diagnose besitzen eine zentrale Quelle.
+AP22F10B Individuelle Werte static: PASS
+AP22F10B Schutzbereiche: PASS (12 Vollhashes + 4 Teilbereiche)
+AP22F10B Release-Metadaten: PASS
+ZIP-Inhaltsprüfung bestanden: 631 Dateien geprüft.
+HINWEIS [installed-dependencies] node_modules: Installierte Abhängigkeiten gehören nicht in die Arbeits-ZIP.

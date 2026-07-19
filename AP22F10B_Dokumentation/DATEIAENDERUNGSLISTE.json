@@ -1,0 +1,32 @@
+{
+  "release": "NK-Pro V99.4.45",
+  "workPackage": "AP22F10B",
+  "date": "2026-07-19",
+  "schemaVersion": 5,
+  "modified": [
+    "assets/app.css",
+    "index.html",
+    "js/app-runtime-config.js",
+    "js/billing-calculation.js",
+    "js/billing-workflow.js",
+    "js/meter-master.js",
+    "js/quality-rules.js",
+    "js/service-worker-register.js",
+    "js/ui-individual-values.js",
+    "js/ui-metering.js",
+    "js/year-transition-actions.js",
+    "manifest.webmanifest",
+    "nk-pro-project.json",
+    "package-lock.json",
+    "package.json",
+    "service-worker.js"
+  ],
+  "newTests": [
+    "tests/ap22f10b-individual-values-browser.test.cjs",
+    "tests/ap22f10b-individual-values.test.cjs",
+    "tests/ap22f10b-protected-areas.test.cjs",
+    "tests/ap22f10b-release.test.cjs"
+  ],
+  "newScreenshotCount": 17,
+  "removed": []
+}

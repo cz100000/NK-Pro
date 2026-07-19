@@ -1,0 +1,10 @@
+
+Running 5 tests using 1 worker
+
+  ✓  1 [persistence-backup] › tests/persistence-backup.spec.js:6:1 › Speichern und erneutes Laden erhalten den Datenstand samt Prüfsumme (5.3s)
+  ✓  2 [persistence-backup] › tests/persistence-backup.spec.js:41:1 › Beschädigte Hauptdaten werden aus dem letzten gültigen Rückfallstand geladen (2.3s)
+  ✓  3 [persistence-backup] › tests/persistence-backup.spec.js:69:1 › Archiv-Snapshots besitzen feste Grenzen und bleiben idempotent (1.7s)
+  ✓  4 [persistence-backup] › tests/persistence-backup.spec.js:128:1 › Wiederbearbeitung übernimmt die Abrechnung und behält aktuelle Stammdaten (2.1s)
+  ✓  5 [persistence-backup] › tests/persistence-backup.spec.js:157:1 › Aktuelle Abrechnung übersteht JSON-Export-, Validierungs- und Import-Rundlauf (1.9s)
+
+  5 passed (15.5s)

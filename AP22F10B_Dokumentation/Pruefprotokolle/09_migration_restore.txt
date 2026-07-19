@@ -1,0 +1,11 @@
+
+Running 6 tests using 1 worker
+
+  ✓  1 [migration-restore] › tests/migration-restore-foundation.spec.js:9:1 › Migrationsregistry liefert den vollständigen Pfad und migriert atomar (2.6s)
+  ✓  2 [migration-restore] › tests/migration-restore-foundation.spec.js:57:1 › Fehlgeschlagene Migration bricht ohne Teiländerung ab (1.3s)
+  ✓  3 [migration-restore] › tests/migration-restore-foundation.spec.js:96:1 › Vor-Migrationssicherung besitzt unveränderliche Metadaten und erkennt Manipulation (2.2s)
+  ✓  4 [migration-restore] › tests/migration-restore-foundation.spec.js:136:1 › Anwendungsstart sichert Altdaten vor der Migration extern exportierbar (2.0s)
+  ✓  5 [migration-restore] › tests/migration-restore-foundation.spec.js:173:1 › Archivmigration bleibt bei bereits aktuellem Arbeitsstand atomar (1.6s)
+  ✓  6 [migration-restore] › tests/migration-restore-foundation.spec.js:206:1 › Extern heruntergeladene Sicherung ist über den JSON-Import restorable und rollbackfähig (2.5s)
+
+  6 passed (14.2s)

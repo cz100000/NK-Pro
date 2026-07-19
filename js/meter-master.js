@@ -116,8 +116,45 @@
       }
     });
 
-    const generic = data && data.meterReadings && data.meterReadings.readings && typeof data.meterReadings.readings === "object" ? data.meterReadings.readings : {};
+    // AP22F10B/F1-F2: Jede aktive Wohnung besitzt einen Kalt- und einen
+    // Warmwasserzähler. Für Leerstand werden unit-bezogene Zählerstämme ohne
+    // künstlichen Mieterdatensatz und ohne Legacy-Arraybindung ergänzt.
     const costs = Array.isArray(data && data.kostenarten) ? data.kostenarten : [];
+    const waterSourceKeys = new Set(result.map(row => text(row.legacySourceKey)));
+    const hasWaterContext = waterRows.length > 0 || costs.some(cost => text(cost && cost.id) === "K002");
+    const activeUnits = hasWaterContext ? (Array.isArray(data && data.wohnungen) ? data.wohnungen : []).filter(unit => unit && text(unit.id) && text(unit.status || "aktiv").toLowerCase() !== "inaktiv") : [];
+    activeUnits.forEach((unit, unitIndex) => {
+      const unitId = text(unit.id);
+      for (const channel of [
+        { type:"cold-water", label:"Kaltwasser", key:"water-cold" },
+        { type:"hot-water", label:"Warmwasser", key:"water-hot" }
+      ]) {
+        const sourceKey = channel.key + ":" + unitId;
+        if (waterSourceKeys.has(sourceKey)) continue;
+        waterSourceKeys.add(sourceKey);
+        result.push({
+          legacySourceKey:sourceKey,
+          canonicalId:canonicalLegacyMeterId(channel.type, unitId, "K002", unitIndex),
+          meterType:channel.type,
+          zaehlerTyp:channel.type,
+          bezeichnung:channel.label + " " + unitId,
+          einheit:"m³",
+          kostenId:"K002",
+          objektId:objectId,
+          gebaeudeId:buildingId,
+          einheitId:unitId,
+          verbrauchsstelleId:"VS-" + safeId(unitId + "-" + channel.key),
+          standortbeschreibung:text(unit.lage || unit.bezeichnung || unitId),
+          abrechnungsrelevant:true,
+          billingRole:"billing",
+          status:"aktiv",
+          sourcePath:"derived-active-unit",
+          legacyBindings:[]
+        });
+      }
+    });
+
+    const generic = data && data.meterReadings && data.meterReadings.readings && typeof data.meterReadings.readings === "object" ? data.meterReadings.readings : {};
     Object.keys(generic).sort().forEach(costId => {
       const rows = Array.isArray(generic[costId]) ? generic[costId] : [];
       const cost = costs.find(item => text(item && item.id) === costId) || {};
