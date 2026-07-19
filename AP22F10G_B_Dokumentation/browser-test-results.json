@@ -1,10 +1,10 @@
 {
   "workPackage": "AP22F10G-B",
-  "appVersion": "V99.4.58",
+  "appVersion": "V99.4.60",
   "referenceMode": "realer Gesamtbestand",
-  "referenceFile": "nk-pro-gesamtbestand-2025-V99.4.55-2026-07-19-13-20-22(1)(1).json",
+  "referenceFile": "nk-pro-gesamtbestand-2025-V99.4.58-2026-07-19-16-16-12.json",
   "chromiumPath": "/usr/bin/chromium",
-  "generatedAt": "2026-07-19T15:56:38.338Z",
+  "generatedAt": "2026-07-19T16:57:56.682Z",
   "summary": {
     "passed": 28,
     "failed": 0,
@@ -15,55 +15,55 @@
       "number": 1,
       "name": "Kostenart in Gesamtkosten deaktivieren",
       "status": "PASS",
-      "durationMs": 1383
+      "durationMs": 2180
     },
     {
       "number": 2,
       "name": "Automatischer Umlageschlüssel erzeugt keinen Bereich",
       "status": "PASS",
-      "durationMs": 6
+      "durationMs": 7
     },
     {
       "number": 3,
       "name": "Beliebige Kostenart auf Verbrauch stellen",
       "status": "PASS",
-      "durationMs": 75
+      "durationMs": 117
     },
     {
       "number": 4,
       "name": "Kostenart auf manuellen Umlageschlüssel stellen",
       "status": "PASS",
-      "durationMs": 90
+      "durationMs": 120
     },
     {
       "number": 5,
       "name": "Umlageschlüssel nachträglich ändern",
       "status": "PASS",
-      "durationMs": 1447
+      "durationMs": 2316
     },
     {
       "number": 6,
       "name": "Keine K002-Sonderlogik erforderlich",
       "status": "PASS",
-      "durationMs": 1421
+      "durationMs": 1990
     },
     {
       "number": 7,
       "name": "Reale Kalt- und Warmwasserzähler geladen",
       "status": "PASS",
-      "durationMs": 12
+      "durationMs": 8
     },
     {
       "number": 8,
       "name": "490,00 → 564,00 = 74,00",
       "status": "PASS",
-      "durationMs": 496
+      "durationMs": 255
     },
     {
       "number": 9,
       "name": "280,00 → 312,42 = 32,42",
       "status": "PASS",
-      "durationMs": 456
+      "durationMs": 175
     },
     {
       "number": 10,
@@ -75,37 +75,37 @@
       "number": 11,
       "name": "266,00 → 297,74 = 31,74",
       "status": "PASS",
-      "durationMs": 427
+      "durationMs": 177
     },
     {
       "number": 12,
       "name": "108,00 → 119,28 = 11,28",
       "status": "PASS",
-      "durationMs": 414
+      "durationMs": 248
     },
     {
       "number": 13,
       "name": "Gesamtverbrauch EG-Links = 43,02",
       "status": "PASS",
-      "durationMs": 7
+      "durationMs": 4
     },
     {
       "number": 14,
       "name": "Fehlender Teilwert zeigt keine falsche Wohnungssumme",
       "status": "PASS",
-      "durationMs": 5
+      "durationMs": 144
     },
     {
       "number": 15,
       "name": "Komma- und Punkteingabe",
       "status": "PASS",
-      "durationMs": 2
+      "durationMs": 34
     },
     {
       "number": 16,
       "name": "Neu-Rendern erhält Werte",
       "status": "PASS",
-      "durationMs": 61
+      "durationMs": 71
     },
     {
       "number": 17,
@@ -117,67 +117,67 @@
       "number": 18,
       "name": "Filterwechsel erhält Werte",
       "status": "PASS",
-      "durationMs": 127
+      "durationMs": 163
     },
     {
       "number": 19,
       "name": "Seitenwechsel erhält Werte",
       "status": "PASS",
-      "durationMs": 184
+      "durationMs": 292
     },
     {
       "number": 20,
       "name": "Browser-Neuladen nach Speicherung",
       "status": "PASS",
-      "durationMs": 2005
+      "durationMs": 2757
     },
     {
       "number": 21,
       "name": "Simulierter Speicherfehler lässt Wert sichtbar",
       "status": "PASS",
-      "durationMs": 1612
+      "durationMs": 2112
     },
     {
       "number": 22,
       "name": "Vorjahresübernahme",
       "status": "PASS",
-      "durationMs": 971
+      "durationMs": 1363
     },
     {
       "number": 23,
       "name": "Wiederholte Vorjahresübernahme ohne Dubletten",
       "status": "PASS",
-      "durationMs": 106
+      "durationMs": 107
     },
     {
       "number": 24,
       "name": "Summenkontrolle manueller Kostenarten",
       "status": "PASS",
-      "durationMs": 1609
+      "durationMs": 1916
     },
     {
       "number": 25,
       "name": "Leerstand und Privatanteil als reguläre Fälle",
       "status": "PASS",
-      "durationMs": 18
+      "durationMs": 6
     },
     {
       "number": 26,
       "name": "Desktop-Sichtprüfung",
       "status": "PASS",
-      "durationMs": 573
+      "durationMs": 668
     },
     {
       "number": 27,
       "name": "Schmale Ansicht mit internem Tabellen-Scroll",
       "status": "PASS",
-      "durationMs": 509
+      "durationMs": 545
     },
     {
       "number": 28,
       "name": "Browserzoom 125 Prozent",
       "status": "PASS",
-      "durationMs": 765
+      "durationMs": 376
     }
   ],
   "runtimeErrors": [],

@@ -1,8 +1,8 @@
 {
-  "name": "nk-pro-v99-4-59",
-  "version": "99.4.59",
+  "name": "nk-pro-v99-4-60",
+  "version": "99.4.60",
   "private": true,
-  "description": "AP22F10G-B Korrektur 1 – kompakte Seite Individuelle Werte mit geschützten Vorjahresanfangsständen",
+  "description": "AP22F10G-B Korrektur 2 – Individuelle Werte in Gesamtkosten-Breite und ohne Desktop-Tabellenscroll",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
     "test:fixtures": "node tools/check-fixtures.cjs",
@@ -18,7 +18,7 @@
     "test:ap14": "node tests/ap14-ui-navigation.test.cjs && playwright test --project=ap14-ui-navigation --workers=1",
     "test:contents": "node tests/ap22e-ui-design-contract.test.cjs",
     "test:ap15": "node tests/ap15-integration-release.test.cjs && playwright test --project=ap15-integration-release --workers=1",
-    "release:check": "npm run test:syntax && npm run test:fixtures && npm run test:ap22f10g:static && npm run test:ap22f10g:k1:static && node tools/check-release-contents.cjs --ignore-node-modules --strict",
+    "release:check": "npm run test:syntax && npm run test:fixtures && npm run test:ap22f10g:static && npm run test:ap22f10g:k1:static && npm run test:ap22f10g:k2:static && node tools/check-release-contents.cjs --ignore-node-modules --strict",
     "test:ap17": "node tests/ap17-area-dashboards.test.cjs && playwright test --project=ap17-area-dashboards --workers=1",
     "test:ap18": "node tests/ap18-ui-ux-polish.test.cjs && playwright test --project=ap18-ui-ux-polish --workers=1",
     "test:ap19": "node tests/ap19-billing-context-dashboards.test.cjs && playwright test --project=ap19-billing-context-dashboards --workers=1",
@@ -107,7 +107,10 @@
     "test:ap22f10g": "npm run test:ap22f10g:static && npm run test:ap22f10g:browser",
     "test:ap22f10g:k1:static": "node tests/ap22f10g-korrektur1.test.cjs",
     "test:ap22f10g:k1:browser": "node tests/ap22f10g-korrektur1-browser.test.cjs",
-    "test:ap22f10g:k1": "npm run test:ap22f10g:k1:static && npm run test:ap22f10g:k1:browser"
+    "test:ap22f10g:k1": "npm run test:ap22f10g:k1:static && npm run test:ap22f10g:k1:browser",
+    "test:ap22f10g:k2:static": "node tests/ap22f10g-korrektur2.test.cjs",
+    "test:ap22f10g:k2:browser": "node tests/ap22f10g-korrektur2-browser.test.cjs",
+    "test:ap22f10g:k2": "npm run test:ap22f10g:k2:static && npm run test:ap22f10g:k2:browser"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1"

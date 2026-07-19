@@ -46,6 +46,6 @@ assert.match(persistence,/storageIntegrityChecksum/);
 assert.match(css,/AP22F10G-B/);
 assert.match(css,/#manuellewerte \.individual-values-table-wrap[\s\S]*overflow-x:auto/);
 assert.match(css,/#manuellewerte \.individual-values-table thead th[^{]*\{[^}]*background:[^;]+!important/);
-assert.match(html,/99\.4\.59-ap22f10g-b-k1/);
-assert.match(read("service-worker.js"),/99\.4\.59-ap22f10g-b-k1/);
+assert.match(html,/99\.4\.60-ap22f10g-b-k2/);
+assert.match(read("service-worker.js"),/99\.4\.60-ap22f10g-b-k2/);
 console.log("AP22F10G-B static checks: PASS");

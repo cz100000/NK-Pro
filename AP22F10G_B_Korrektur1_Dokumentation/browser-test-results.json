@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-07-19T16:39:16.162Z",
-  "appVersion": "V99.4.59",
+  "generatedAt": "2026-07-19T16:56:21.830Z",
+  "appVersion": "V99.4.60",
   "sourceFile": "nk-pro-gesamtbestand-2025-V99.4.58-2026-07-19-16-16-12.json",
   "summary": {
     "passed": 15,
@@ -10,69 +10,69 @@
   "checks": [
     {
       "number": 1,
-      "name": "Kompakte Standard-Seitenbreite",
+      "name": "Breite Standard-Seitenschale",
       "status": "PASS",
-      "durationMs": 45
+      "durationMs": 49
     },
     {
       "number": 2,
       "name": "Tabellen besitzen linken und rechten Innenabstand",
       "status": "PASS",
-      "durationMs": 10
+      "durationMs": 15
     },
     {
       "number": 3,
       "name": "Kaltwasserzähler mit blauem Punkt",
       "status": "PASS",
-      "durationMs": 20
+      "durationMs": 43
     },
     {
       "number": 4,
       "name": "Warmwasserzähler mit rotem Punkt",
       "status": "PASS",
-      "durationMs": 55
+      "durationMs": 16
     },
     {
       "number": 5,
       "name": "Übernommener Anfangsstand ist gesperrt und ausgegraut",
       "status": "PASS",
-      "durationMs": 20
+      "durationMs": 18
     },
     {
       "number": 6,
       "name": "Endstand bleibt regulär bearbeitbar",
       "status": "PASS",
-      "durationMs": 3
+      "durationMs": 4
     },
     {
       "number": 7,
       "name": "Sonderfallaktion verlangt bewusste Freigabe",
       "status": "PASS",
-      "durationMs": 185
+      "durationMs": 190
     },
     {
       "number": 8,
       "name": "Sonderfallfreigabe entsperrt ausschließlich den gewählten Anfangsstand",
       "status": "PASS",
-      "durationMs": 233
+      "durationMs": 236
     },
     {
       "number": 9,
       "name": "Freigegebener Sonderfall kann geändert und gespeichert werden",
       "status": "PASS",
-      "durationMs": 1381
+      "durationMs": 1439
     },
     {
       "number": 10,
       "name": "Freigabe und Wert bestehen nach Browser-Neuladen fort",
       "status": "PASS",
-      "durationMs": 1829
+      "durationMs": 1806
     },
     {
       "number": 11,
       "name": "Wiederholte Sonderfallaktion erzeugt keine Dublette",
       "status": "PASS",
-      "durationMs": 183
+      "durationMs": 195
     },
     {
       "number": 12,
@@ -90,13 +90,13 @@
       "number": 14,
       "name": "Schmale Ansicht scrollt nur innerhalb der Tabelle horizontal",
       "status": "PASS",
-      "durationMs": 685
+      "durationMs": 721
     },
     {
       "number": 15,
       "name": "Browserzoom 125 Prozent bleibt ohne globalen Horizontalversatz",
       "status": "PASS",
-      "durationMs": 1219
+      "durationMs": 778
     }
   ],
   "runtimeErrors": []

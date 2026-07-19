@@ -1,0 +1,31 @@
+{
+  "release": "V99.4.60",
+  "workPackage": "AP22F10G-B Korrektur 2",
+  "schemaVersion": 5,
+  "migrationRequired": false,
+  "tests": {
+    "syntax": {
+      "passed": 55,
+      "failed": 0
+    },
+    "fixtures": {
+      "passed": 6,
+      "failed": 0
+    },
+    "mainBrowser": {
+      "passed": 28,
+      "failed": 0,
+      "total": 28
+    },
+    "correction1Browser": {
+      "passed": 15,
+      "failed": 0,
+      "total": 15
+    },
+    "correction2Browser": {
+      "passed": 9,
+      "failed": 0,
+      "total": 9
+    }
+  }
+}

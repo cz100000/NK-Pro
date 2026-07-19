@@ -1,11 +1,11 @@
 {
-  "appVersion": "99.4.59",
-  "displayVersion": "V99.4.59",
-  "versionName": "AP22F10G-B – Individuelle Werte Korrektur 1",
+  "appVersion": "99.4.60",
+  "displayVersion": "V99.4.60",
+  "versionName": "AP22F10G-B – Individuelle Werte Korrektur 2",
   "schemaVersion": 5,
   "dataLayerContractVersion": 1,
   "snapshotScope": "billingSnapshot",
-  "basedOn": "99.4.58-AP22F10G-B",
+  "basedOn": "99.4.59-AP22F10G-B-Korrektur1",
   "releaseDate": "2026-07-19",
   "runtime": [
     "HTML",
@@ -33,7 +33,7 @@
   "documentLayoutVersion": 4,
   "uiVisualSystemVersion": 4,
   "meterInventoryDummyVersion": 2,
-  "pwaCacheName": "nk-pro-v99-4-59-ap22f10g-b-k1",
+  "pwaCacheName": "nk-pro-v99-4-60-ap22f10g-b-k2",
   "releaseHardeningVersion": 1,
   "releaseContentPolicyVersion": 1,
   "transientUiResetVersion": 1,
@@ -57,7 +57,7 @@
   "meterInputLocaleNumberVersion": 1,
   "assetCacheBustVersion": 1,
   "serviceWorkerForcedUpdateVersion": 1,
-  "runtimeBuildId": "99.4.59-ap22f10g-b-k1",
+  "runtimeBuildId": "99.4.60-ap22f10g-b-k2",
   "uiConsolidationVersion": 1,
   "individualValuesPageVersion": 5,
   "navigationTerminologyVersion": 1,
@@ -86,7 +86,7 @@
   "projectWideTableWidthCorrectionVersion": 1,
   "prepaymentPageMigrationVersion": 1,
   "prepaymentPageCorrectionVersion": 1,
-  "description": "AP22F10G-B Korrektur 1 – kompakte Individuelle-Werte-Seite mit Tabelleninnenabstand, Kalt-/Warmwasser-Markern und geschützten Vorjahresanfangsständen",
+  "description": "AP22F10G-B Korrektur 2 – Inhaltsbreite wie Gesamtkosten und auf Desktop vollständig eingepasste Tabellen; Korrektur-1-Marker und Vorjahresstandschutz bleiben erhalten",
   "totalCostsPageMigrationVersion": 1,
   "individualValuesPageMigrationVersion": 1,
   "individualValuesCaseValuesVersion": 1,
@@ -94,6 +94,7 @@
   "individualValuesWaterComparisonVersion": 1,
   "individualValuesDynamicControlVersion": 1,
   "individualValuesPersistenceReadbackVersion": 1,
-  "individualValuesPageCorrectionVersion": 1,
-  "individualValuesTransferredStartProtectionVersion": 1
+  "individualValuesPageCorrectionVersion": 2,
+  "individualValuesTransferredStartProtectionVersion": 1,
+  "individualValuesDesktopTableFitVersion": 1
 }

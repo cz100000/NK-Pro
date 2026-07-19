@@ -48,10 +48,10 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.59";
-const APP_VERSION_NAME = "AP22F10G-B-Korrektur1-Individuelle-Werte";
+const APP_VERSION = "V99.4.60";
+const APP_VERSION_NAME = "AP22F10G-B-Korrektur2-Individuelle-Werte";
 const APP_RELEASE_DATE = "2026-07-19";
-if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – AP22F10G-B Korrektur 1";
+if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – AP22F10G-B Korrektur 2";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
 const ARCHIVE_SNAPSHOT_SCOPE = "billingSnapshot";
@@ -116,6 +116,8 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
+  "V99.4.60 AP22F10G-B Korrektur 2 stellt für Individuelle Werte dieselbe breite Arbeitsfläche wie Gesamtkosten her und passt Verbrauchs- sowie manuelle Tabellen auf Desktop vollständig ohne horizontalen Tabellenlauf ein. Interner Horizontal-Scroll bleibt ausschließlich für schmale Ansichten erhalten; Tabelleninnenabstand, Zählerfarbmarkierung, Vorjahresstandschutz, Fachlogik und Daten bleiben unverändert.",
+  "V99.4.59 AP22F10G-B Korrektur 1 ergänzt Tabelleninnenabstände, blaue und rote Zählerartmarker sowie einen geschützten, nur per Sonderfall freigebbaren Vorjahresanfangsstand. Die in Korrektur 1 zu schmal gesetzte Seitenbreite wird mit V99.4.60 korrigiert.",
   "V99.4.58 entwickelt die Seite Nebenkosten abrechnen – Individuelle Werte auf Basis von V99.4.52 vollständig neu: dynamische Steuerung ausschließlich über aktive Kostenarten und Umlageschlüssel aus Gesamtkosten, generische Verbrauchs- und manuelle Eingabebereiche, reguläre Abrechnungsfälle für Mietverhältnisse, Leerstand und Privatanteil, sichere Vorjahresübernahme ohne Dubletten sowie Persistenz mit Rückleseprüfung. Die verworfenen Produktstände V99.4.53 bis V99.4.57 wurden nicht übernommen.",
   "V99.4.52 migriert Nebenkosten abrechnen – Individuelle Werte auf NK-Pro UI Referenz 1.0: genau vier abgeleitete Kennzahlenkacheln, Kalt- und Warmwasser je physischem Zähler, wohnungsbezogene Summen einschließlich Leerstand und Privatanteil, bestätigte Vorjahresübernahme, additive externe Einzelwerte sowie getrennte Mengen- und Kostenabgleiche mit 0,01-Toleranz. Datenschema 5, Persistenz, Migration, Backup, Restore, Archiv, Navigation, Brief und Druck bleiben geschützt.",
   "V99.4.44 migriert ausschließlich Nebenkosten abrechnen – Gesamtkosten auf NK-Pro UI Referenz 1.0: vier bestandsbasierte Kennzahlenkacheln, drei flache Arbeitsbereiche, lokale Kostenartensuche, vollständige 15-spaltige Haupttabelle, neutraler Summenabschluss und interner Tabellen-Scroll. Datenschema, Fachlogik, Berechnungen, Persistenz, Migration, Archiv, Brief und Druck bleiben unverändert.",

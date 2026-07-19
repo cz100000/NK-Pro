@@ -1,0 +1,67 @@
+{
+  "generatedAt": "2026-07-19T16:55:31.935Z",
+  "appVersion": "V99.4.60",
+  "sourceFile": "nk-pro-gesamtbestand-2025-V99.4.58-2026-07-19-16-16-12.json",
+  "summary": {
+    "passed": 9,
+    "failed": 0,
+    "total": 9
+  },
+  "checks": [
+    {
+      "number": 1,
+      "name": "Individuelle Werte verwendet dieselbe breite Seitenschale wie Gesamtkosten",
+      "status": "PASS",
+      "durationMs": 403
+    },
+    {
+      "number": 2,
+      "name": "Verbrauchstabelle benötigt auf 1440-Pixel-Desktop keinen Horizontal-Scroll",
+      "status": "PASS",
+      "durationMs": 13
+    },
+    {
+      "number": 3,
+      "name": "Manuelle Tabelle benötigt auf 1440-Pixel-Desktop keinen Horizontal-Scroll",
+      "status": "PASS",
+      "durationMs": 8
+    },
+    {
+      "number": 4,
+      "name": "Tabellen behalten links und rechts den freigegebenen Innenabstand",
+      "status": "PASS",
+      "durationMs": 8
+    },
+    {
+      "number": 5,
+      "name": "Zählerfarbmarkierungen bleiben erhalten",
+      "status": "PASS",
+      "durationMs": 24
+    },
+    {
+      "number": 6,
+      "name": "Übernommene Anfangsstände bleiben gesperrt",
+      "status": "PASS",
+      "durationMs": 7
+    },
+    {
+      "number": 7,
+      "name": "Realer Datenbestand bleibt vollständig erhalten",
+      "status": "PASS",
+      "durationMs": 5
+    },
+    {
+      "number": 8,
+      "name": "Breiter Desktop bleibt ebenfalls ohne Horizontal-Scroll",
+      "status": "PASS",
+      "durationMs": 122
+    },
+    {
+      "number": 9,
+      "name": "Schmale Ansicht verwendet weiterhin nur internen Tabellen-Scroll",
+      "status": "PASS",
+      "durationMs": 662
+    }
+  ],
+  "runtimeErrors": []
+}

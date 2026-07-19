@@ -275,7 +275,7 @@ function normalizeText(text){return String(text||"").replace(/\s+/g," ").trim();
     await check(28,"Browserzoom 125 Prozent",async()=>{
       await page.setViewportSize({width:1440,height:1000});
       const session=await context.newCDPSession(page);await session.send("Emulation.setPageScaleFactor",{pageScaleFactor:1.25});await page.waitForTimeout(120);
-      await page.screenshot({path:path.join(screenshotDir,"03_browserzoom_125_prozent.png"),fullPage:true});
+      await page.screenshot({path:path.join(screenshotDir,"03_browserzoom_125_prozent.png"),fullPage:false});
       const visible=await page.locator('#manuellewerte .individual-values-page').isVisible();assert.equal(visible,true);
       await session.send("Emulation.setPageScaleFactor",{pageScaleFactor:1});
     });
@@ -283,11 +283,11 @@ function normalizeText(text){return String(text||"").replace(/\s+/g," ").trim();
     await page.screenshot({path:path.join(screenshotDir,"04_vorjahresuebernahme_dialog.png"),fullPage:true});
     await page.locator('#individualPriorTransferDialog [data-individual-dialog-close]').first().click();
     assert.deepEqual(runtimeErrors,[]);
-    const report={workPackage:"AP22F10G-B",appVersion:"V99.4.59",referenceMode:sourceMode,referenceFile:path.basename(sourcePath),chromiumPath:process.env.CHROMIUM_PATH||"/usr/bin/chromium",generatedAt:new Date().toISOString(),summary:{passed:checks.filter(row=>row.status==="PASS").length,failed:checks.filter(row=>row.status==="FAIL").length,total:checks.length},checks,runtimeErrors,screenshots:fs.readdirSync(screenshotDir).sort()};
+    const report={workPackage:"AP22F10G-B",appVersion:"V99.4.60",referenceMode:sourceMode,referenceFile:path.basename(sourcePath),chromiumPath:process.env.CHROMIUM_PATH||"/usr/bin/chromium",generatedAt:new Date().toISOString(),summary:{passed:checks.filter(row=>row.status==="PASS").length,failed:checks.filter(row=>row.status==="FAIL").length,total:checks.length},checks,runtimeErrors,screenshots:fs.readdirSync(screenshotDir).sort()};
     fs.writeFileSync(reportFile,JSON.stringify(report,null,2)+"\n");
     console.log(`AP22F10G-B browser checks: PASS (${report.summary.passed}/${report.summary.total}, ${sourceMode})`);
   } catch(error) {
-    const report={workPackage:"AP22F10G-B",appVersion:"V99.4.59",referenceMode:sourceMode,referenceFile:path.basename(sourcePath),generatedAt:new Date().toISOString(),summary:{passed:checks.filter(row=>row.status==="PASS").length,failed:checks.filter(row=>row.status==="FAIL").length,total:checks.length},checks,runtimeErrors};
+    const report={workPackage:"AP22F10G-B",appVersion:"V99.4.60",referenceMode:sourceMode,referenceFile:path.basename(sourcePath),generatedAt:new Date().toISOString(),summary:{passed:checks.filter(row=>row.status==="PASS").length,failed:checks.filter(row=>row.status==="FAIL").length,total:checks.length},checks,runtimeErrors};
     fs.writeFileSync(reportFile,JSON.stringify(report,null,2)+"\n");
     try{await page.screenshot({path:path.join(screenshotDir,"99_fehlerzustand.png"),fullPage:true});}catch(_){ }
     throw error;

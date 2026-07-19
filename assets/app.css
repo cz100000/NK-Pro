@@ -6846,3 +6846,45 @@ body.billing-readonly-mode #einstellungen .nk-ui-table td.editable,body.billing-
 #start .billing-overview-action svg{width:16px;height:16px}
 .runtime-error-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .runtime-error-box li{overflow-wrap:anywhere}
+
+/* AP22F10G-B Korrektur 2 – gleiche Arbeitsbreite wie Gesamtkosten und kein Desktop-Tabellenscroll. */
+#manuellewerte .individual-values-page{max-width:var(--nk-ui-shell-max-wide,1440px)}
+#manuellewerte .individual-values-consumption-table,
+#manuellewerte .individual-values-manual-table{min-width:0;table-layout:fixed}
+#manuellewerte .individual-values-table thead th{white-space:normal;line-height:1.2}
+#manuellewerte .individual-values-consumption-table th:nth-child(1){width:17%}
+#manuellewerte .individual-values-consumption-table th:nth-child(2){width:12%}
+#manuellewerte .individual-values-consumption-table th:nth-child(3){width:10%}
+#manuellewerte .individual-values-consumption-table th:nth-child(4),
+#manuellewerte .individual-values-consumption-table th:nth-child(5){width:10%}
+#manuellewerte .individual-values-consumption-table th:nth-child(6){width:8%}
+#manuellewerte .individual-values-consumption-table th:nth-child(7){width:11%}
+#manuellewerte .individual-values-consumption-table th:nth-child(8){width:8%}
+#manuellewerte .individual-values-consumption-table th:nth-child(9){width:6%}
+#manuellewerte .individual-values-manual-table th:nth-child(1){width:22%}
+#manuellewerte .individual-values-manual-table th:nth-child(2){width:18%}
+#manuellewerte .individual-values-manual-table th:nth-child(3){width:16%}
+#manuellewerte .individual-values-manual-table th:nth-child(4){width:27%}
+#manuellewerte .individual-values-manual-table th:nth-child(5){width:10%}
+#manuellewerte .individual-values-manual-table th:nth-child(6){width:7%}
+#manuellewerte .individual-values-case-cell{min-width:0}
+#manuellewerte .individual-values-meter-type{min-width:0;white-space:normal}
+#manuellewerte .individual-values-meter-number{max-width:100%;white-space:normal;overflow-wrap:anywhere}
+#manuellewerte .individual-values-total-cell{min-width:0}
+#manuellewerte .individual-values-input-wrap{min-width:0}
+#manuellewerte .individual-values-number-input{width:100%;min-width:0}
+#manuellewerte .individual-values-note-input{min-width:0}
+#manuellewerte .individual-values-actions-cell{width:auto}
+@media(max-width:980px){
+  #manuellewerte .individual-values-consumption-table{min-width:1080px;table-layout:auto}
+  #manuellewerte .individual-values-manual-table{min-width:920px;table-layout:auto}
+  #manuellewerte .individual-values-table thead th{white-space:nowrap}
+  #manuellewerte .individual-values-case-cell{min-width:184px}
+  #manuellewerte .individual-values-meter-type{min-width:128px;white-space:nowrap}
+  #manuellewerte .individual-values-meter-number{max-width:150px;white-space:nowrap}
+  #manuellewerte .individual-values-total-cell{min-width:130px}
+  #manuellewerte .individual-values-input-wrap{min-width:104px}
+  #manuellewerte .individual-values-number-input{width:104px;min-width:104px}
+  #manuellewerte .individual-values-note-input{min-width:170px}
+  #manuellewerte .individual-values-actions-cell{width:60px}
+}
