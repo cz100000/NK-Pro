@@ -13,10 +13,10 @@ const sw = read('service-worker.js');
 const pkg = JSON.parse(read('package.json'));
 const project = JSON.parse(read('nk-pro-project.json'));
 
-assert.strictEqual(pkg.version, '99.4.62', 'package version');
-assert.strictEqual(project.appVersion, '99.4.62', 'project app version');
-assert.match(html, /V99\.4\.62/);
-assert.match(html, /id="umlage"[^>]*data-release="NK-Pro V99\.4\.62"/);
+assert.strictEqual(pkg.version, '99.4.63', 'package version');
+assert.strictEqual(project.appVersion, '99.4.63', 'project app version');
+assert.match(html, /V99\.4\.63/);
+assert.match(html, /id="umlage"[^>]*data-release="NK-Pro V99\.4\.63"/);
 assert.match(html, /src="\.\/js\/billing-review\.js"/);
 assert.match(sw, /billing-review\.js/);
 

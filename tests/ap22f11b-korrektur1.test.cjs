@@ -10,8 +10,8 @@ const bindings = read('js/ui-bindings.js');
 const pkg = JSON.parse(read('package.json'));
 const project = JSON.parse(read('nk-pro-project.json'));
 
-assert.strictEqual(pkg.version, '99.4.62');
-assert.strictEqual(project.appVersion, '99.4.62');
+assert.strictEqual(pkg.version, '99.4.63');
+assert.strictEqual(project.appVersion, '99.4.63');
 assert.strictEqual(project.billingResultPageCorrectionVersion, 1);
 
 assert.match(html, /2\. Kostenkontrolle und Prüfungen/);

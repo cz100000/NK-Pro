@@ -3,8 +3,8 @@
 
   const preferences = global.NKProUiPreferences;
   if (!preferences) throw new Error("NK-Pro UI-Einstellungsspeicher fehlt.");
-  const NAV_GROUP_STORAGE_KEY = "nkpro.workflowNavigation.v6";
-  const LEGACY_NAV_GROUP_STORAGE_KEYS = ["nkpro.workflowNavigation.v5", "nkpro.workflowNavigation.v3"];
+  const NAV_GROUP_STORAGE_KEY = "nkpro.workflowNavigation.v7";
+  const LEGACY_NAV_GROUP_STORAGE_KEYS = ["nkpro.workflowNavigation.v6", "nkpro.workflowNavigation.v5", "nkpro.workflowNavigation.v3"];
   const NAVIGATION_GROUPS = Object.freeze([
   {
     "key": "object",
@@ -93,6 +93,13 @@
         "icon": "<span aria-hidden=\"true\" class=\"nav-item-icon\"><svg aria-hidden=\"true\" class=\"nav-icon-svg\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.8\" viewbox=\"0 0 24 24\"><circle cx=\"18\" cy=\"5\" r=\"3\"></circle><circle cx=\"6\" cy=\"12\" r=\"3\"></circle><circle cx=\"18\" cy=\"19\" r=\"3\"></circle><path d=\"m8.6 10.5 6.8-4M8.6 13.5l6.8 4\"></path></svg></span>"
       },
       {
+        "tab": "vorauszahlungsanpassung",
+        "label": "Vorauszahlungen anpassen",
+        "ariaLabel": "Vorauszahlungen anpassen",
+        "requiresBilling": true,
+        "icon": '<span aria-hidden="true" class="nav-item-icon"><svg aria-hidden="true" class="nav-icon-svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M5 4h14v16H5z"></path><path d="M8 8h8M8 12h3M13 12h3M8 16h3M13 16h3"></path><path d="m17 3 2 2-2 2"></path></svg></span>'
+      },
+      {
         "tab": "qualitaet",
         "label": "Prüfung & Freigabe",
         "ariaLabel": "Prüfung & Freigabe",
@@ -105,6 +112,22 @@
         "ariaLabel": "Briefe",
         "requiresBilling": true,
         "icon": "<span aria-hidden=\"true\" class=\"nav-item-icon\"><svg aria-hidden=\"true\" class=\"nav-icon-svg\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.8\" viewbox=\"0 0 24 24\"><rect height=\"14\" rx=\"2\" width=\"18\" x=\"3\" y=\"5\"></rect><path d=\"m3 7 9 6 9-6\"></path></svg></span>"
+      }
+    ]
+  },
+  {
+    "key": "analysis",
+    "storageKey": "group-analysis",
+    "panelId": "nav-group-analysis",
+    "label": "Analyse",
+    "icon": "",
+    "items": [
+      {
+        "tab": "auswertungen",
+        "label": "Auswertungen",
+        "ariaLabel": "Auswertungen",
+        "requiresBilling": true,
+        "icon": '<span aria-hidden="true" class="nav-item-icon"><svg aria-hidden="true" class="nav-icon-svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path><path d="m4 8 6-5 6 7 5-4"></path></svg></span>'
       }
     ]
   },
@@ -128,9 +151,9 @@
     return Object.freeze(Object.assign({}, group, {items:Object.freeze(group.items.map(function (item) { return Object.freeze(item); }))}));
   }));
   const GROUP_KEYS = Object.freeze(NAVIGATION_GROUPS.map(function (group) { return group.storageKey; }));
-  const BILLING_CONTEXT_TABS = Object.freeze(["start","mieter","einnahmen","einstellungen","manuellewerte","umlage","qualitaet","vorauszahlungsanpassung","briefe","export","archiv"]);
+  const BILLING_CONTEXT_TABS = Object.freeze(["start","mieter","einnahmen","einstellungen","manuellewerte","umlage","vorauszahlungsanpassung","qualitaet","briefe","export","auswertungen","archiv"]);
   const COMPATIBILITY_TAB_PATHS = Object.freeze({
-    objektuebersicht:"group-object", verbraeuche:"group-billing", vorauszahlungsanpassung:"group-billing", export:"group-billing", sicherung:"group-billing"
+    objektuebersicht:"group-object", verbraeuche:"group-billing", vorauszahlungsanpassung:"group-billing", export:"group-billing", sicherung:"group-billing", auswertungen:"group-analysis"
   });
   const TAB_PATHS = Object.freeze(Object.assign({}, COMPATIBILITY_TAB_PATHS, NAVIGATION_GROUPS.reduce(function (paths, group) {
     group.items.forEach(function (item) { paths[item.tab] = group.storageKey; });
@@ -185,10 +208,10 @@
       for (const legacyKey of LEGACY_NAV_GROUP_STORAGE_KEYS) {
         const legacy = preferences.get(legacyKey);
         if (!legacy) continue;
-        if (legacyKey.endsWith(".v5")) {
+        if (legacyKey.endsWith(".v6") || legacyKey.endsWith(".v5")) {
           const parsed = JSON.parse(legacy);
           const values = Array.isArray(parsed) ? parsed : Object.keys(parsed || {}).filter(key => parsed[key]);
-          return new Set([...values.filter(key => GROUP_KEYS.includes(key)), "group-archive"]);
+          return new Set([...values.filter(key => GROUP_KEYS.includes(key)), "group-analysis", "group-archive"]);
         }
         if (GROUP_KEYS.includes(legacy)) return new Set([legacy, "group-archive"]);
       }

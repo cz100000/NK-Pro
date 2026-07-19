@@ -130,7 +130,8 @@ function configureApplicationActions() {
       setManualInputMode:NK_PRO_MODULES.billingWorkflow.setManualInputMode,
       setManualExternalValue:NK_PRO_MODULES.billingWorkflow.setManualExternalValue,
       setPrepaymentValue:NK_PRO_MODULES.billingWorkflow.setPrepaymentValue,
-      setPrepaymentAdjustmentSetting:NK_PRO_MODULES.billingWorkflow.setPrepaymentAdjustmentSetting
+      setPrepaymentAdjustmentSetting:NK_PRO_MODULES.billingWorkflow.setPrepaymentAdjustmentSetting,
+      setPrepaymentCostForecastSetting:NK_PRO_MODULES.billingWorkflow.setPrepaymentCostForecastSetting
     },
     archive:{
       currentYear:NK_PRO_MODULES.archiveActions.archiveCurrent,

@@ -25,59 +25,123 @@ function prepaymentAdjustmentStatusClass(value) {
   return num(value) > 0 ? "warn" : "ok";
 }
 
+function prepaymentPercent(value, signed = false) {
+  const n = num(value);
+  const prefix = signed && n > 0.0001 ? "+" : "";
+  return prefix + n.toLocaleString("de-DE", { minimumFractionDigits:1, maximumFractionDigits:1 }) + " %";
+}
+
+function prepaymentSelect(value, options, action, key) {
+  return '<select ' + uiActionAttributes(action, [key,"$value"], "change") + '>' + options.map(option => '<option value="' + escapeHtml(option) + '"' + (String(option) === String(value) ? ' selected' : '') + '>' + escapeHtml(option) + '</option>').join('') + '</select>';
+}
+
 function renderPrepaymentAdjustment() {
   const settingsEl = document.getElementById("vorauszahlungAdjustSettings");
+  const kpisEl = document.getElementById("vorauszahlungAdjustKpis");
+  const costTableEl = document.getElementById("vorauszahlungAdjustCostTable");
   const summaryEl = document.getElementById("vorauszahlungAdjustSummaryTable");
-  const detailEl = document.getElementById("vorauszahlungAdjustDetailTable");
-  if (!settingsEl || !summaryEl || !detailEl) return;
+  const noteEl = document.getElementById("vorauszahlungAdjustCalculationNote");
+  if (!settingsEl || !kpisEl || !costTableEl || !summaryEl) return;
 
   const data = prepaymentAdjustmentData();
   const s = data.settings;
   const printModeOptions = ["Nicht drucken","Berechnete Werte drucken","Manuelle Werte drucken"];
-  settingsEl.innerHTML =
-    '<label class="prepayment-setting"><span>Anpassung gilt ab</span><input value="' + escapeHtml(s.effectiveFrom) + '" ' + uiActionAttributes("billing.setPrepaymentAdjustmentSetting", ["effectiveFrom","$value"], "change") + '></label>' +
-    '<label class="prepayment-setting"><span>Sicherheitszuschlag in %</span><input class="number" value="' + escapeHtml(s.safetyBufferPercent) + '" ' + uiActionAttributes("billing.setPrepaymentAdjustmentSetting", ["safetyBufferPercent","$value"], "change") + '></label>' +
-    '<label class="prepayment-setting"><span>Rundung der monatlichen Vorauszahlung</span>' + selectHtml(s.roundingMode, ["Auf 1 € runden","Auf 5 € runden","Auf 10 € runden"], "setPrepaymentAdjustmentSetting('roundingMode',this.value)") + '</label>' +
-    '<label class="prepayment-setting"><span>Mindeständerung monatlich</span><input class="money" value="' + escapeHtml(s.minimumMonthlyChange) + '" ' + uiActionAttributes("billing.setPrepaymentAdjustmentSetting", ["minimumMonthlyChange","$value"], "change") + '></label>' +
-    '<label class="prepayment-setting"><span>Unterjährige Mietzeiten hochrechnen?</span>' + selectHtml(s.annualizePartialTenants, ["Ja","Nein"], "setPrepaymentAdjustmentSetting('annualizePartialTenants',this.value)") + '</label>' +
-    '<label class="prepayment-setting"><span>Änderungslogik</span>' + selectHtml(s.changePolicy, ["Erhöhungen und Senkungen","Nur Erhöhungen","Nur Senkungen"], "setPrepaymentAdjustmentSetting('changePolicy',this.value)") + '</label>' +
-    '<label class="prepayment-setting prepayment-setting--wide"><span>Vorauszahlungsanpassung im Brief ausgeben?</span>' + selectHtml(s.letterPrintMode, printModeOptions, "setPrepaymentAdjustmentSetting('letterPrintMode',this.value)") + '</label>' +
-    '<div class="prepayment-settings-note">„Nicht drucken“ lässt den normalen Abrechnungsbrief unverändert. „Berechnete Werte drucken“ übernimmt die aktuelle Empfehlung.</div>';
+  const priceEnabled = s.priceForecastEnabled === "Ja";
+  const changeClass = Math.abs(data.totals.changeMonthly) < 0.005 ? "is-neutral" : (data.totals.changeMonthly > 0 ? "is-warning" : "is-success");
+  const kpiIcon = path => '<span class="prepayment-adjustment-kpi__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + path + '</svg></span>';
 
-  if (typeof renderOverviewForTab === "function") renderOverviewForTab("vorauszahlungsanpassung");
+  kpisEl.innerHTML =
+    '<article class="prepayment-adjustment-kpi">' + kpiIcon('<rect x="4" y="3" width="16" height="18" rx="2"></rect><path d="M8 7h8M8 11h3M13 11h3M8 15h3M13 15h3"></path>') + '<span><small>Aktuelle monatliche Vorauszahlungen</small><strong>' + fmtMoney(data.totals.oldMonthly) + '</strong><em>Summe aller Mietverhältnisse</em></span></article>' +
+    '<article class="prepayment-adjustment-kpi is-success">' + kpiIcon('<path d="M4 18 10 12l4 4 6-8"></path><path d="M15 8h5v5"></path>') + '<span><small>Empfohlene monatliche Vorauszahlungen</small><strong>' + fmtMoney(data.totals.recommendedMonthly) + '</strong><em>Nach Basis, Prognose und Regeln</em></span></article>' +
+    '<article class="prepayment-adjustment-kpi ' + changeClass + '">' + kpiIcon('<path d="M12 3v18M7 8l5-5 5 5M7 16l5 5 5-5"></path>') + '<span><small>Veränderung monatlich</small><strong>' + fmtMoneySigned(data.totals.changeMonthly) + '</strong><em>' + prepaymentPercent(data.totals.changePercent, true) + ' gegenüber bisher</em></span></article>' +
+    '<article class="prepayment-adjustment-kpi is-date">' + kpiIcon('<rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18"></path>') + '<span><small>Anpassung gilt ab</small><strong>' + escapeHtml(s.effectiveFrom || '–') + '</strong><em>Für den kommenden Abrechnungszeitraum</em></span></article>';
 
-  const summaryRows = data.summaries.map(row => {
-    const badgeClass = prepaymentAdjustmentStatusClass(row.changeTotal);
+  const forecastRows = data.costs.map(row => {
+    const configured = s.priceForecastByCost && s.priceForecastByCost[row.cost.id] && typeof s.priceForecastByCost[row.cost.id] === "object" ? s.priceForecastByCost[row.cost.id] : {};
+    const percentValue = configured.percent === undefined || configured.percent === null || configured.percent === "" ? "" : configured.percent;
+    const sourceValue = configured.source || "";
+    const dateValue = configured.effectiveFrom || s.effectiveFrom || "";
     return '<tr>' +
-      '<td>' + tenantIdCellHtml(row.tenant) + '</td>' +
-      '<td>' + unitRefCellHtml(row.tenant.wohnung) + '</td>' +
-      '<td>' + escapeHtml(row.tenant.name || '') + '</td>' +
-      '<td class="money">' + fmtMoney(row.oldMonthlyTotal) + '</td>' +
-      '<td class="money">' + fmtMoney(row.recommendedTenantMonthly) + '</td>' +
-      '<td class="money">' + fmtMoneySigned(row.changeTotal) + '</td>' +
-      '<td class="money">' + fmtMoney(row.kaltMonthly) + '</td>' +
-      '<td class="money">' + fmtMoney(row.warmMonthly) + '</td>' +
-      '<td><span class="status ' + badgeClass + '">' + escapeHtml(row.status) + '</span></td>' +
-      '<td class="center">' + (row.annualizationFactor > 1.01 ? escapeHtml(row.annualizationFactor.toFixed(2).replace('.', ',')) + 'x' : '–') + '</td>' +
+      '<td><strong>' + escapeHtml(row.cost.kostenart || row.cost.id) + '</strong><small>' + escapeHtml(row.cost.id || '') + '</small></td>' +
+      '<td class="numeric"><input class="prepayment-forecast-percent" inputmode="decimal" value="' + escapeHtml(percentValue) + '" placeholder="' + escapeHtml(s.generalPriceChangePercent || 0) + '" ' + uiActionAttributes("billing.setPrepaymentCostForecastSetting", [row.cost.id,"percent","$value"], "change") + ' aria-label="Preisänderung ' + escapeHtml(row.cost.kostenart || row.cost.id) + ' in Prozent"></td>' +
+      '<td><input value="' + escapeHtml(dateValue) + '" ' + uiActionAttributes("billing.setPrepaymentCostForecastSetting", [row.cost.id,"effectiveFrom","$value"], "change") + ' aria-label="Gültig ab ' + escapeHtml(row.cost.kostenart || row.cost.id) + '"></td>' +
+      '<td><input value="' + escapeHtml(sourceValue) + '" placeholder="z. B. Versorgerinformation" ' + uiActionAttributes("billing.setPrepaymentCostForecastSetting", [row.cost.id,"source","$value"], "change") + ' aria-label="Begründung oder Quelle ' + escapeHtml(row.cost.kostenart || row.cost.id) + '"></td>' +
       '</tr>';
-  }).join('') || '<tr><td colspan="10">Keine abrechenbaren Mieter vorhanden.</td></tr>';
+  }).join('') || '<tr><td colspan="4" class="prepayment-adjustment-empty">Keine vorauszahlungsrelevanten Kostenarten vorhanden.</td></tr>';
 
-  summaryEl.innerHTML = '<thead><tr><th>Mieter-ID</th><th>Wohnung</th><th>Name</th><th class="money">Bisher NK mtl.</th><th class="money">Empfohlen NK mtl.</th><th class="money">Änderung mtl.</th><th class="money">Kaltmiete mtl.</th><th class="money">Neue Warmmiete mtl.</th><th>Status</th><th>Hochrechnung</th></tr></thead><tbody>' + summaryRows + '</tbody>';
+  settingsEl.innerHTML =
+    '<section class="prepayment-rule-card"><header><span>A.</span><div><h3>Basisanpassung</h3><p>Grundlage ist die aktuelle Abrechnung beziehungsweise der individuelle Kostenanteil.</p></div></header><div class="prepayment-rule-fields">' +
+      '<label><span>Unterjährige Mietzeiten hochrechnen</span>' + prepaymentSelect(s.annualizePartialTenants, ["Ja","Nein"], "billing.setPrepaymentAdjustmentSetting", "annualizePartialTenants") + '</label>' +
+      '<label><span>Sicherheitszuschlag in %</span><input class="number" inputmode="decimal" value="' + escapeHtml(s.safetyBufferPercent) + '" ' + uiActionAttributes("billing.setPrepaymentAdjustmentSetting", ["safetyBufferPercent","$value"], "change") + '></label>' +
+      '<label><span>Rundung der monatlichen Vorauszahlung</span>' + prepaymentSelect(s.roundingMode, ["Auf 1 € runden","Auf 5 € runden","Auf 10 € runden"], "billing.setPrepaymentAdjustmentSetting", "roundingMode") + '</label>' +
+      '<label><span>Mindeständerung monatlich</span><input class="money" inputmode="decimal" value="' + escapeHtml(s.minimumMonthlyChange) + '" ' + uiActionAttributes("billing.setPrepaymentAdjustmentSetting", ["minimumMonthlyChange","$value"], "change") + '></label>' +
+      '<label class="prepayment-rule-field--wide"><span>Änderungslogik</span>' + prepaymentSelect(s.changePolicy, ["Erhöhungen und Senkungen","Nur Erhöhungen","Nur Senkungen"], "billing.setPrepaymentAdjustmentSetting", "changePolicy") + '</label>' +
+    '</div></section>' +
+    '<section class="prepayment-rule-card prepayment-rule-card--forecast"><header><span>B.</span><div><h3>Preisprognose</h3><p>Erwartete allgemeine Preisänderungen für den kommenden Zeitraum werden getrennt vom Verbrauchseffekt ausgewiesen.</p></div></header><div class="prepayment-forecast-controls">' +
+      '<label><span>Preisprognose aktivieren</span>' + prepaymentSelect(s.priceForecastEnabled, ["Nein","Ja"], "billing.setPrepaymentAdjustmentSetting", "priceForecastEnabled") + '</label>' +
+      '<label><span>Allgemeine Preisänderung in %</span><input class="number" inputmode="decimal" value="' + escapeHtml(s.generalPriceChangePercent) + '" ' + uiActionAttributes("billing.setPrepaymentAdjustmentSetting", ["generalPriceChangePercent","$value"], "change") + ' ' + (priceEnabled ? '' : 'disabled') + '></label>' +
+      '<p class="prepayment-forecast-hint">Ein leerer Kostenartwert übernimmt den allgemeinen Prozentsatz. Ein eingetragener Wert gilt nur für diese Kostenart.</p>' +
+    '</div><div class="nk-ui-table-wrap prepayment-forecast-table-wrap"><table class="nk-ui-table nk-ui-table--compact prepayment-forecast-table"><thead><tr><th>Kostenart</th><th class="numeric">Preisänderung in %</th><th>Gültig ab</th><th>Begründung / Quelle</th></tr></thead><tbody>' + forecastRows + '</tbody></table></div></section>' +
+    '<section class="prepayment-rule-card"><header><span>C.</span><div><h3>Ausgabe im Brief</h3><p>Steuert ausschließlich die Darstellung der Vorauszahlungsanpassung im Abrechnungsbrief.</p></div></header><div class="prepayment-rule-fields">' +
+      '<label><span>Anpassung gilt ab</span><input value="' + escapeHtml(s.effectiveFrom) + '" ' + uiActionAttributes("billing.setPrepaymentAdjustmentSetting", ["effectiveFrom","$value"], "change") + '></label>' +
+      '<label class="prepayment-rule-field--wide"><span>Vorauszahlungsanpassung im Brief</span>' + prepaymentSelect(s.letterPrintMode, printModeOptions, "billing.setPrepaymentAdjustmentSetting", "letterPrintMode") + '</label>' +
+    '</div></section>';
 
-  const detailRows = data.details.map(d => '<tr>' +
-    '<td>' + tenantIdCellHtml(d.tenant) + '</td>' +
-    '<td>' + escapeHtml(d.tenant.name || '') + '</td>' +
-    '<td>' + escapeHtml(d.cost.id || '') + '</td>' +
-    '<td>' + escapeHtml(d.cost.kostenart || '') + '</td>' +
-    '<td class="money">' + fmtMoney(d.costShare) + '</td>' +
-    '<td class="money">' + fmtMoney(d.annualBasis) + '</td>' +
-    '<td class="money">' + fmtMoney(d.oldMonthly) + '</td>' +
-    '<td class="money">' + fmtMoney(d.recommendedMonthly) + '</td>' +
-    '<td class="money">' + fmtMoneySigned(d.change) + '</td>' +
-    '<td>' + escapeHtml(d.label) + '</td>' +
-    '</tr>').join('') || '<tr><td colspan="10">Keine Detailwerte vorhanden.</td></tr>';
+  if (!priceEnabled) settingsEl.querySelectorAll('.prepayment-rule-card--forecast tbody input').forEach(input => input.disabled = true);
 
-  detailEl.innerHTML = '<thead><tr><th>Mieter-ID</th><th>Name</th><th>Kosten-ID</th><th>Kostenart</th><th class="money">Kostenanteil akt. Periode</th><th class="money">Jahresbasis</th><th class="money">Bisher mtl.</th><th class="money">Neu mtl.</th><th class="money">Änderung mtl.</th><th>Briefzeile</th></tr></thead><tbody>' + detailRows + '</tbody>';
+  const costRows = data.costs.map(row => '<tr>' +
+    '<td><strong>' + escapeHtml(row.cost.kostenart || row.cost.id) + '</strong><small>' + escapeHtml(row.cost.id || '') + '</small></td>' +
+    '<td class="money">' + fmtMoney(row.oldAnnual) + '</td>' +
+    '<td class="money">' + fmtMoney(row.basisAnnual) + '</td>' +
+    '<td class="numeric">' + prepaymentPercent(row.priceChangePercent, true) + '</td>' +
+    '<td class="money">' + fmtMoney(row.priceAdjustedAnnual) + '</td>' +
+    '<td class="numeric">' + prepaymentPercent(row.safetyBufferPercent, true) + '</td>' +
+    '<td class="money">' + fmtMoney(row.recommendedAnnual) + '</td>' +
+    '<td class="numeric">' + prepaymentPercent(row.changePercent, true) + '</td>' +
+    '</tr>').join('') || '<tr><td colspan="8" class="prepayment-adjustment-empty">Keine vorauszahlungsrelevanten Kostenarten vorhanden.</td></tr>';
+
+  costTableEl.innerHTML = '<thead><tr><th>Kostenart</th><th class="money">Aktuelle Vorauszahlungen jährlich</th><th class="money">Basis aus aktueller Abrechnung</th><th class="numeric">Preisänderung</th><th class="money">Prognose nach Preisänderung</th><th class="numeric">Sicherheitszuschlag</th><th class="money">Empfohlene Vorauszahlungen jährlich</th><th class="numeric">Anpassung</th></tr></thead><tbody>' + costRows + '</tbody><tfoot><tr><td>Summe</td><td class="money">' + fmtMoney(data.totals.oldAnnual) + '</td><td class="money">' + fmtMoney(data.totals.basisAnnual) + '</td><td class="numeric">–</td><td class="money">' + fmtMoney(data.totals.priceAdjustedMonthly * 12) + '</td><td class="numeric">' + prepaymentPercent(s.safetyBufferPercent, true) + '</td><td class="money">' + fmtMoney(data.totals.recommendedAnnual) + '</td><td class="numeric">' + prepaymentPercent(data.totals.changePercent, true) + '</td></tr></tfoot>';
+
+  const summaryRows = data.summaries.map(row => '<tr>' +
+    '<td>' + unitRefCellHtml(row.tenant.wohnung) + '<small>' + escapeHtml(row.tenant.name || '') + '</small></td>' +
+    '<td>' + escapeHtml(row.tenant.abrechnungRolle || 'Mieter') + '</td>' +
+    '<td class="money">' + fmtMoney(row.oldMonthlyTotal) + '</td>' +
+    '<td class="money">' + fmtMoney(row.basisMonthlyTotal) + '</td>' +
+    '<td class="numeric">' + prepaymentPercent(row.effectivePriceChangePercent, true) + '</td>' +
+    '<td class="money">' + fmtMoney(row.recommendedTenantMonthly) + '</td>' +
+    '<td class="money">' + fmtMoneySigned(row.changeTotal) + '</td>' +
+    '<td class="numeric">' + prepaymentPercent(row.changePercent, true) + '</td>' +
+    '</tr>').join('') || '<tr><td colspan="8" class="prepayment-adjustment-empty">Keine abrechenbaren Mietverhältnisse vorhanden.</td></tr>';
+
+  summaryEl.innerHTML = '<thead><tr><th>Wohnung / Mieter</th><th>Nutzungsart</th><th class="money">Aktuelle Vorauszahlung mtl.</th><th class="money">Basis nach Abrechnung mtl.</th><th class="numeric">Preiseffekt</th><th class="money">Empfohlene Vorauszahlung mtl.</th><th class="money">Veränderung mtl.</th><th class="numeric">Veränderung</th></tr></thead><tbody>' + summaryRows + '</tbody><tfoot><tr><td colspan="2">Summe monatlich</td><td class="money">' + fmtMoney(data.totals.oldMonthly) + '</td><td class="money">' + fmtMoney(data.totals.basisMonthly) + '</td><td class="numeric">–</td><td class="money">' + fmtMoney(data.totals.recommendedMonthly) + '</td><td class="money">' + fmtMoneySigned(data.totals.changeMonthly) + '</td><td class="numeric">' + prepaymentPercent(data.totals.changePercent, true) + '</td></tr></tfoot>';
+
+  if (noteEl) noteEl.innerHTML = '<strong>Berechnungsreihenfolge:</strong> Kostenanteil aus aktueller Abrechnung → gegebenenfalls auf zwölf Monate hochrechnen → Preisprognose anwenden → Sicherheitszuschlag anwenden → Monatsbetrag bilden → Rundungsregel anwenden → Änderungslogik und Mindeständerung prüfen.';
+  if (typeof renderOverviewForTab === "function") renderOverviewForTab("vorauszahlungsanpassung");
+}
+
+
+function renderAnalyticsOverview() {
+  const kpisEl = document.getElementById("analyticsOverviewKpis");
+  const tableEl = document.getElementById("analyticsTenantTable");
+  const noteEl = document.getElementById("analyticsOverviewNote");
+  if (!kpisEl || !tableEl) return;
+  const calc = calculateUmlage();
+  const totals = umlageTotals(calc);
+  const reviewModel = globalThis.NKProBillingReview && typeof globalThis.NKProBillingReview.currentModel === "function" ? globalThis.NKProBillingReview.currentModel(state) : null;
+  const reviewSummary = reviewModel && reviewModel.summary ? reviewModel.summary : {};
+  const totalCosts = Number.isFinite(Number(reviewSummary.totalCosts)) ? num(reviewSummary.totalCosts) : totals.totalCosts;
+  const tenantShare = Number.isFinite(Number(reviewSummary.tenantShare)) ? num(reviewSummary.tenantShare) : totals.billableShare;
+  const landlordShare = Number.isFinite(Number(reviewSummary.landlordTotal)) ? num(reviewSummary.landlordTotal) : totals.ownerShare;
+  const tenantBalance = calc.tenantResults.reduce((sum, row) => sum + num(row.balance), 0);
+  const kpi = (label, value, note) => '<article class="analytics-kpi"><small>' + escapeHtml(label) + '</small><strong>' + value + '</strong><span>' + escapeHtml(note) + '</span></article>';
+  kpisEl.innerHTML =
+    kpi("Gesamtkosten", fmtMoney(totalCosts), "Aktive Kostenarten") +
+    kpi("Auf Mieter umgelegt", fmtMoney(tenantShare), calc.tenantResults.length + " Mietverhältnisse") +
+    kpi("Vom Vermieter zu tragen", fmtMoney(landlordShare), "Privat-, Leerstands- und bestätigte Eigentümeranteile") +
+    kpi("Saldo der Mieterabrechnungen", fmtMoneySigned(tenantBalance), tenantBalance >= 0 ? "Nachzahlungen gesamt" : "Guthaben gesamt");
+  const rows = calc.tenantResults.map(row => '<tr><td>' + unitRefCellHtml(row.tenant.wohnung) + '<small>' + escapeHtml(row.tenant.name || '') + '</small></td><td class="money">' + fmtMoney(row.costShare) + '</td><td class="money">' + fmtMoney(row.prepayments) + '</td><td class="money">' + fmtMoney(row.correction) + '</td><td class="money">' + fmtMoneySigned(row.balance) + '</td></tr>').join('') || '<tr><td colspan="5" class="prepayment-adjustment-empty">Keine Abrechnungsdaten vorhanden.</td></tr>';
+  tableEl.innerHTML = '<thead><tr><th>Wohnung / Mieter</th><th class="money">Kostenanteil</th><th class="money">Vorauszahlungen</th><th class="money">Korrekturen</th><th class="money">Saldo</th></tr></thead><tbody>' + rows + '</tbody>';
+  if (noteEl) noteEl.textContent = "Diese erste Auswertungsübersicht ist rein lesend. Weitere Zeitreihen und Kostenentwicklungen können in einem späteren Arbeitsschritt ergänzt werden.";
 }
 
 

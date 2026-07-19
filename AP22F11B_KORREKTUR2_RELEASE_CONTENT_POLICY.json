@@ -1,0 +1,13 @@
+{
+  "targetVersion": "V99.4.63",
+  "workPackage": "AP22F11B Korrektur 2",
+  "releaseName": "Vorauszahlungsanpassung und Analyse",
+  "schemaVersion": 5,
+  "allowedNewTopLevelPatterns": [
+    "AP22F11B_KORREKTUR2_*",
+    "AP22F11B_Korrektur2_Dokumentation/*",
+    "AP22F11B_Korrektur2_Screenshots/*",
+    "tests/ap22f11b-korrektur2*"
+  ],
+  "excluded": ["node_modules", "test-results", "playwright-report", "debug.png"]
+}

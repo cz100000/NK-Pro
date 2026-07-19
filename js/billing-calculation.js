@@ -869,14 +869,28 @@
     const costRows = calc.costResults.filter(row => row && row.cost && row.cost.vorauszahlung === "Ja" && row.cost.id !== "K040");
     const summaries = [];
     const details = [];
-  
+    const priceForecastByCost = settings.priceForecastByCost && typeof settings.priceForecastByCost === "object" ? settings.priceForecastByCost : {};
+    const forecastEnabled = settings.priceForecastEnabled === "Ja";
+
+    function forecastForCost(cost) {
+      const entry = priceForecastByCost[cost.id] && typeof priceForecastByCost[cost.id] === "object" ? priceForecastByCost[cost.id] : {};
+      const percent = forecastEnabled ? (entry.percent === undefined || entry.percent === null || entry.percent === "" ? num(settings.generalPriceChangePercent) : num(entry.percent)) : 0;
+      return {
+        percent,
+        source:String(entry.source || "").trim(),
+        effectiveFrom:String(entry.effectiveFrom || settings.effectiveFrom || "").trim()
+      };
+    }
+
     calc.tenantResults.forEach(result => {
       const tenant = result.tenant;
       const factor = tenantAnnualizationFactor(tenant, settings);
       let oldMonthlyTotal = 0;
+      let basisAnnualTotal = 0;
+      let priceAdjustedAnnualTotal = 0;
       let recommendedMonthlyTotal = 0;
       const tenantDetails = [];
-  
+
       costRows.forEach(row => {
         if (!isCostAllowedForTenant(row.cost.id, tenant)) return;
         const group = adjustmentGroupForCost(row.cost);
@@ -885,7 +899,9 @@
         const oldAnnual = vorauszahlungByCostAndTenant(row.cost.id, tenant.originalIndex) + additionalWaterPrepay;
         const oldMonthly = oldAnnual / 12;
         const annualBasis = costShare * factor;
-        const bufferedAnnual = annualBasis * (1 + num(settings.safetyBufferPercent) / 100);
+        const forecast = forecastForCost(row.cost);
+        const priceAdjustedAnnual = annualBasis * (1 + forecast.percent / 100);
+        const bufferedAnnual = priceAdjustedAnnual * (1 + num(settings.safetyBufferPercent) / 100);
         let recommendedMonthly = roundMonthlyPrepayment(bufferedAnnual / 12, settings);
         if (settings.changePolicy === "Nur Erhöhungen") recommendedMonthly = Math.max(oldMonthly, recommendedMonthly);
         if (settings.changePolicy === "Nur Senkungen") recommendedMonthly = Math.min(oldMonthly, recommendedMonthly);
@@ -895,6 +911,8 @@
           change = 0;
         }
         oldMonthlyTotal += oldMonthly;
+        basisAnnualTotal += annualBasis;
+        priceAdjustedAnnualTotal += priceAdjustedAnnual;
         recommendedMonthlyTotal += recommendedMonthly;
         const d = {
           tenant,
@@ -903,6 +921,11 @@
           changeKey:group.changeKey,
           costShare,
           annualBasis,
+          priceChangePercent:forecast.percent,
+          priceForecastSource:forecast.source,
+          priceForecastEffectiveFrom:forecast.effectiveFrom,
+          priceAdjustedAnnual,
+          bufferedAnnual,
           oldAnnual,
           oldMonthly,
           recommendedMonthly,
@@ -912,20 +935,25 @@
         tenantDetails.push(d);
         details.push(d);
       });
-  
+
       const currentTenantMonthly = num(result.prepayments) / 12;
       const recommendedTenantMonthly = recommendedMonthlyTotal;
       const changeTotal = recommendedTenantMonthly - oldMonthlyTotal;
       const kaltMonthly = num(tenant.kaltSoll) / 12;
       const warmMonthly = kaltMonthly + recommendedTenantMonthly;
       const status = Math.abs(changeTotal) < 0.005 ? "Keine Änderung" : (changeTotal > 0 ? "Erhöhung" : "Senkung");
+      const effectivePriceChangePercent = basisAnnualTotal ? ((priceAdjustedAnnualTotal / basisAnnualTotal) - 1) * 100 : 0;
       summaries.push({
         tenant,
         result,
         currentTenantMonthly,
         oldMonthlyTotal,
+        basisMonthlyTotal:basisAnnualTotal / 12,
+        priceAdjustedMonthlyTotal:priceAdjustedAnnualTotal / 12,
+        effectivePriceChangePercent,
         recommendedTenantMonthly,
         changeTotal,
+        changePercent:oldMonthlyTotal ? (changeTotal / oldMonthlyTotal) * 100 : 0,
         kaltMonthly,
         warmMonthly,
         status,
@@ -933,15 +961,40 @@
         details:tenantDetails
       });
     });
-  
+
+    const costs = costRows.map(row => {
+      const rows = details.filter(detail => detail.cost.id === row.cost.id);
+      const forecast = forecastForCost(row.cost);
+      const oldAnnual = rows.reduce((sum, detail) => sum + num(detail.oldAnnual), 0);
+      const basisAnnual = rows.reduce((sum, detail) => sum + num(detail.annualBasis), 0);
+      const priceAdjustedAnnual = rows.reduce((sum, detail) => sum + num(detail.priceAdjustedAnnual), 0);
+      const recommendedAnnual = rows.reduce((sum, detail) => sum + num(detail.recommendedMonthly) * 12, 0);
+      return {
+        cost:row.cost,
+        oldAnnual,
+        basisAnnual,
+        priceChangePercent:forecast.percent,
+        priceForecastSource:forecast.source,
+        priceForecastEffectiveFrom:forecast.effectiveFrom,
+        priceAdjustedAnnual,
+        safetyBufferPercent:num(settings.safetyBufferPercent),
+        recommendedAnnual,
+        changePercent:oldAnnual ? ((recommendedAnnual / oldAnnual) - 1) * 100 : 0
+      };
+    });
+
     const totals = {
       oldMonthly: summaries.reduce((s,r) => s + num(r.oldMonthlyTotal), 0),
+      basisMonthly: summaries.reduce((s,r) => s + num(r.basisMonthlyTotal), 0),
+      priceAdjustedMonthly: summaries.reduce((s,r) => s + num(r.priceAdjustedMonthlyTotal), 0),
       recommendedMonthly: summaries.reduce((s,r) => s + num(r.recommendedTenantMonthly), 0),
       changeMonthly: summaries.reduce((s,r) => s + num(r.changeTotal), 0),
       oldAnnual: summaries.reduce((s,r) => s + num(r.oldMonthlyTotal) * 12, 0),
+      basisAnnual: summaries.reduce((s,r) => s + num(r.basisMonthlyTotal) * 12, 0),
       recommendedAnnual: summaries.reduce((s,r) => s + num(r.recommendedTenantMonthly) * 12, 0)
     };
-    return { settings, calc, costRows, summaries, details, totals };
+    totals.changePercent = totals.oldMonthly ? (totals.changeMonthly / totals.oldMonthly) * 100 : 0;
+    return { settings, calc, costRows, costs, summaries, details, totals };
   }
 
   function calculatedMonthlyPrepaymentRowsForTenant(tenant) {

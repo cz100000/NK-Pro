@@ -49,10 +49,10 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.62";
-const APP_VERSION_NAME = "AP22F11B-Korrektur1-Abrechnungsergebnis";
+const APP_VERSION = "V99.4.63";
+const APP_VERSION_NAME = "AP22F11B-Korrektur2-Vorauszahlungsanpassung-Analyse";
 const APP_RELEASE_DATE = "2026-07-19";
-if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – Ergebnis der Abrechnung";
+if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – Vorauszahlungen anpassen";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
 const ARCHIVE_SNAPSHOT_SCOPE = "billingSnapshot";
@@ -118,6 +118,7 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
+  "V99.4.63 AP22F11B Korrektur 2 führt den Navigationseintrag Vorauszahlungen anpassen wieder ein, migriert die Seite auf den verbindlichen NK-Pro-Designstandard, trennt die Anpassung aus aktueller Abrechnung von einer optionalen Preisprognose und ergänzt den neuen Navigationsbereich Analyse mit einer rein lesenden Auswertungsübersicht. Datenschema 5, bestehende Abrechnungswerte, Archive und Schreibschutz bleiben erhalten.",
   "V99.4.62 AP22F11B Korrektur 1 behebt den responsiven Such- und Filterbereich der Mieterergebnisse, richtet alle tabellarischen Beträge rechtsbündig mit tabellarischen Ziffern aus, führt Vermieterkosten und Differenzprüfungen in einer gemeinsamen Kostenkontrolle zusammen, ergänzt den bestätigten Vermieteranteil nach Prüfung, erhält den vollständigen Gesamtabgleich und verlagert Prüfentscheidungsdetails vollständig in einen eigenen barrierearm bedienbaren Dialog.",
   "V99.4.62 AP22F11B migriert Ergebnis der Abrechnung auf das freigegebene Zielbild: vier Kennzahlen, Mieterergebnisse, dokumentierte Vermieteranteile, vollständige Differenzprüfung mit Korrekturverweisen und bewusst bestätigten Akzeptanzen sowie dauerhaft nachvollziehbarer Gesamtabgleich. Akzeptanzen sind an Daten- und Berechnungssignaturen gebunden und werden bei Änderungen ungültig. Zusätzlich verhindert die Zählersynchronisierung technisch identische Messwertdubletten.",
   "V99.4.60 AP22F10G-B Korrektur 2 stellt für Individuelle Werte dieselbe breite Arbeitsfläche wie Gesamtkosten her und passt Verbrauchs- sowie manuelle Tabellen auf Desktop vollständig ohne horizontalen Tabellenlauf ein. Interner Horizontal-Scroll bleibt ausschließlich für schmale Ansichten erhalten; Tabelleninnenabstand, Zählerfarbmarkierung, Vorjahresstandschutz, Fachlogik und Daten bleiben unverändert.",
@@ -339,7 +340,7 @@ const UNIT_ID_ALIASES = {
 let state = null;
 let archiveReturnState = null;
 const START_NAV_TABS = ["landing","objektuebersicht","objekt","mieterverwaltung","wohnungsverwaltung","wasser","start","archiv","sicherung"];
-const BILLING_NAV_TABS = ["mieter","einnahmen","einstellungen","manuellewerte","umlage","qualitaet","vorauszahlungsanpassung","briefe","export"];
+const BILLING_NAV_TABS = ["mieter","einnahmen","einstellungen","manuellewerte","umlage","vorauszahlungsanpassung","qualitaet","briefe","export","auswertungen"];
 let appUiMode = ARCHIVE_VIEW_MODE ? "billing" : "start";
 let billingContextOpen = false;
 let navigationInitialized = false;

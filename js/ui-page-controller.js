@@ -117,10 +117,11 @@ const TAB_DEFINITIONS = {
   wasser:{title:"Zähler",kicker:"Objekt vorbereiten",firstSection:null,nextTab:"mieterverwaltung",renderContent:()=>renderMeterInventoryDummyPage()},
   manuellewerte:{title:"Individuelle Werte und Verbräuche erfassen",kicker:"Nebenkosten abrechnen",firstSection:null,nextTab:"umlage",renderContent:()=>renderIndividualValues()},
   verbraeuche:{title:"Individuelle Werte und Verbräuche erfassen",kicker:"Nebenkosten abrechnen",firstSection:null,nextTab:"umlage",renderContent:()=>renderIndividualValues()},
-  umlage:{title:"Ergebnis der Abrechnung",kicker:"Nebenkosten abrechnen",firstSection:"allocationTenantResultSection",nextTab:"qualitaet",renderContent:()=>renderUmlage()},
-  vorauszahlungsanpassung:{title:"Vorauszahlungen für das Folgejahr anpassen",kicker:"Nebenkosten abrechnen",firstSection:"prepaymentRulesSection",nextTab:"briefe",renderContent:()=>renderPrepaymentAdjustment()},
-  qualitaet:{title:"Abrechnung prüfen und freigeben",kicker:"Nebenkosten abrechnen",firstSection:"qualityOverviewSection",nextTab:"vorauszahlungsanpassung",renderContent:()=>renderQuality()},
+  umlage:{title:"Ergebnis der Abrechnung",kicker:"Nebenkosten abrechnen",firstSection:"allocationTenantResultSection",nextTab:"vorauszahlungsanpassung",renderContent:()=>renderUmlage()},
+  vorauszahlungsanpassung:{title:"Vorauszahlungen anpassen",kicker:"Nebenkosten abrechnen",firstSection:"prepaymentRulesSection",nextTab:"qualitaet",renderContent:()=>renderPrepaymentAdjustment()},
+  qualitaet:{title:"Abrechnung prüfen und freigeben",kicker:"Nebenkosten abrechnen",firstSection:"qualityOverviewSection",nextTab:"briefe",renderContent:()=>renderQuality()},
   briefe:{title:"Abrechnungsbriefe erstellen",kicker:"Nebenkosten abrechnen",firstSection:"lettersEditorSection",nextTab:"export",renderContent:()=>renderBrief()},
+  auswertungen:{title:"Auswertungen",kicker:"Analyse",firstSection:null,nextTab:"archiv",renderContent:()=>renderAnalyticsOverview()},
   export:{title:"Abrechnung exportieren",kicker:"Sicherung",firstSection:"exportActionsSection",nextTab:"qualitaet",renderContent:null}
 };
 
@@ -399,7 +400,7 @@ const AP22F1A_PAGE_SHELL_VARIANTS = Object.freeze({
   objektuebersicht:"default", objekt:"default", wasser:"default",
   archiv:"wide", start:"wide", mieterverwaltung:"wide", wohnungsverwaltung:"wide", sicherung:"wide",
   qualitaet:"wide", einstellungen:"wide", mieter:"wide", einnahmen:"wide", manuellewerte:"wide",
-  umlage:"wide", vorauszahlungsanpassung:"wide", briefe:"wide", export:"wide"
+  umlage:"wide", vorauszahlungsanpassung:"wide", briefe:"wide", export:"wide", auswertungen:"wide"
 });
 function ensureGlobalPageShellsAndHeaders() {
   const landing=document.querySelector("#landing > .landing-page");

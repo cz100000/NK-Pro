@@ -98,16 +98,17 @@
       if (!table.id) return;
       ensureTableTools(table);
   
+      const sortable = table.dataset.nkUiSortable !== "false";
       table.querySelectorAll("thead th").forEach((th, idx) => {
-        th.classList.add("sortable");
-        th.onclick = () => sortTable(table.id, idx);
+        th.classList.toggle("sortable", sortable);
+        th.classList.remove("sort-asc", "sort-desc");
+        th.onclick = sortable ? () => sortTable(table.id, idx) : null;
       });
   
-      const sortState = tableSortState[table.id];
+      const sortState = sortable ? tableSortState[table.id] : null;
       if (sortState && sortState.columnIndex !== undefined) {
         const headers = table.querySelectorAll("thead th");
         headers.forEach((th, idx) => {
-          th.classList.remove("sort-asc", "sort-desc");
           if (idx === sortState.columnIndex) th.classList.add(sortState.direction === "asc" ? "sort-asc" : "sort-desc");
         });
       }

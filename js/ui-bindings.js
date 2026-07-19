@@ -126,6 +126,7 @@
       "billing.setPeriod":appCall(applicationActions, "billing", "setPeriod"), "billing.syncPeriodYear":appCall(applicationActions, "billing", "syncPeriodYear"), "billing.resetAllocationInputs":interactiveAppCall(applicationActions, "billing", "resetAllocationInputs", handlers),
       "billing.setManualInputMode":interactiveAppCall(applicationActions, "billing", "setManualInputMode", handlers), "billing.setManualExternalValue":appCall(applicationActions, "billing", "setManualExternalValue"),
       "billing.setPrepaymentValue":appCall(applicationActions, "billing", "setPrepaymentValue"), "billing.setPrepaymentAdjustmentSetting":appCall(applicationActions, "billing", "setPrepaymentAdjustmentSetting"),
+      "billing.setPrepaymentCostForecastSetting":appCall(applicationActions, "billing", "setPrepaymentCostForecastSetting"),
       "billing.showFinalReport":call(handlers, "showFinalBillingReport"), "billing.showAcceptanceProtocol":call(handlers, "showAcceptanceProtocol")
     });
     registerController("billingReview", "Suche, Filter, Korrekturverweise und dokumentierte Differenzentscheidungen", {

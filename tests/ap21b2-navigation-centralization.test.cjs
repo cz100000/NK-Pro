@@ -16,6 +16,7 @@ const labels=[...navigation.matchAll(/"label":\s*"([^"]+)"/g)].map(match=>match[
 assert(JSON.stringify(labels)===JSON.stringify([
   "Objekt vorbereiten","Objektdaten","Wohnungen","Zähler","Mietverhältnisse",
   "Nebenkosten abrechnen","Übersicht","Mietverhältnisse","Vorauszahlungen","Gesamtkosten",
-  "Individuelle Werte","Abrechnungsergebnis","Prüfung & Freigabe","Briefe","Archiv","Archivübersicht"
+  "Individuelle Werte","Abrechnungsergebnis","Vorauszahlungen anpassen","Prüfung & Freigabe","Briefe",
+  "Analyse","Auswertungen","Archiv","Archivübersicht"
 ]),"Zentrale Gruppen- und Eintragsreihenfolge ist falsch.");
 process.stdout.write("AP21B2-Strukturprüfung bestanden: Navigation, Reihenfolge, Direkteinstiege und Diagnose besitzen eine zentrale Quelle.\n");

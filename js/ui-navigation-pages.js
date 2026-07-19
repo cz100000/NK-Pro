@@ -227,6 +227,7 @@ function switchToTab(tabId) {
     closeAllTabAccordions(target);
     if (tabId === "start") { const records=document.getElementById("startRecordsSection"); if (records) records.open=true; }
     if (tabId === "archiv") { const records=document.getElementById("archiveRecordsSection"); if (records) records.open=true; }
+    if (tabId === "vorauszahlungsanpassung") { const rules=document.querySelector("#prepaymentRulesSection details"); if (rules) rules.open=true; }
   }, 0);
   const previousTab = document.querySelector('.tab.active');
   if (previousTab) closeAllTabAccordions(previousTab);

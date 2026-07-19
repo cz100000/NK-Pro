@@ -485,7 +485,10 @@
       minimumMonthlyChange:1,
       annualizePartialTenants:"Ja",
       changePolicy:"Erhöhungen und Senkungen",
-      letterPrintMode:"Nicht drucken"
+      letterPrintMode:"Nicht drucken",
+      priceForecastEnabled:"Nein",
+      generalPriceChangePercent:0,
+      priceForecastByCost:{}
     };
   }
 
@@ -520,7 +523,7 @@
     return d.stateAccess.transact(data => {
       const settings = ensurePrepaymentAdjustmentSettings(data);
       let normalizedValue = value;
-      if (["safetyBufferPercent", "minimumMonthlyChange"].includes(key)) normalizedValue = d.num(value);
+      if (["safetyBufferPercent", "minimumMonthlyChange", "generalPriceChangePercent"].includes(key)) normalizedValue = d.num(value);
       settings[key] = normalizedValue;
       const briefSettings = ensureBriefSettingsForAdjustment(data);
       if (key === "effectiveFrom") briefSettings.vorauszahlungAb = normalizedValue;
@@ -533,15 +536,31 @@
     }, { reason:"Vorauszahlungsanpassung", tabId:"vorauszahlungsanpassung", includeCommon:false, includeNavigation:false });
   }
 
+  function setPrepaymentCostForecastSetting(costId, key, value) {
+    const d = requireDeps();
+    return d.stateAccess.transact(data => {
+      const settings = ensurePrepaymentAdjustmentSettings(data);
+      if (!settings.priceForecastByCost || typeof settings.priceForecastByCost !== "object" || Array.isArray(settings.priceForecastByCost)) settings.priceForecastByCost = {};
+      const id = String(costId || "").trim();
+      if (!id) return Object.freeze({ changed:false });
+      const row = settings.priceForecastByCost[id] && typeof settings.priceForecastByCost[id] === "object" ? settings.priceForecastByCost[id] : {};
+      let normalizedValue = value;
+      if (key === "percent") normalizedValue = String(value ?? "").trim() === "" ? "" : d.num(value);
+      row[key] = normalizedValue;
+      settings.priceForecastByCost[id] = row;
+      return Object.freeze({ changed:true, costId:id, key, value:normalizedValue });
+    }, { reason:"Preisprognose Vorauszahlungsanpassung", tabId:"vorauszahlungsanpassung", includeCommon:false, includeNavigation:false });
+  }
+
   function describe() {
     return Object.freeze({
       configured:!!deps,
       responsibility:"Laufender Abrechnungsstatus, Periode, manuelle Werte und Vorauszahlungen",
-      actionCount:13,
+      actionCount:14,
       actions:Object.freeze([
         "createSnapshot", "finalize", "unlock", "setYear", "setPeriod", "syncPeriodYear", "resetAllocationInputs",
         "setManualInputMode", "setManualExternalValue", "setIndividualValuesImport", "resetIndividualValues",
-        "setPrepaymentValue", "setPrepaymentAdjustmentSetting"
+        "setPrepaymentValue", "setPrepaymentAdjustmentSetting", "setPrepaymentCostForecastSetting"
       ])
     });
   }
@@ -568,6 +587,7 @@
     setPrepaymentValue,
     defaultPrepaymentAdjustmentSettings,
     ensurePrepaymentAdjustmentSettings,
-    setPrepaymentAdjustmentSetting
+    setPrepaymentAdjustmentSetting,
+    setPrepaymentCostForecastSetting
   });
 })(globalThis);

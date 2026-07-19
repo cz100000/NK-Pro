@@ -7091,3 +7091,193 @@ body:not(.document-print-window) .billing-review-dialog__header .page-header__ki
 @media(max-width:1180px) and (min-width:981px){
   #umlage .billing-review-actions{flex-direction:column;align-items:stretch}
 }
+
+/* AP22F11B Korrektur 2 – Vorauszahlungsanpassung und Analyse-Navigation */
+#vorauszahlungsanpassung .prepayment-adjustment-content,
+#auswertungen .analytics-content{display:grid;gap:16px;min-width:0}
+#vorauszahlungsanpassung .prepayment-adjustment-kpis,
+#auswertungen .analytics-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--nk-ui-space-md)}
+#vorauszahlungsanpassung .prepayment-adjustment-kpi{display:flex;align-items:center;gap:14px;min-width:0;padding:18px;border:1px solid var(--nk-ui-color-border);border-radius:var(--nk-ui-radius-lg);background:var(--nk-ui-color-surface);box-shadow:var(--nk-ui-shadow-sm)}
+#vorauszahlungsanpassung .prepayment-adjustment-kpi__icon{display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;color:var(--nk-ui-color-accent)}
+#vorauszahlungsanpassung .prepayment-adjustment-kpi__icon svg{width:31px;height:31px}
+#vorauszahlungsanpassung .prepayment-adjustment-kpi.is-success .prepayment-adjustment-kpi__icon{color:var(--nk-ui-color-success)}
+#vorauszahlungsanpassung .prepayment-adjustment-kpi.is-warning .prepayment-adjustment-kpi__icon{color:var(--nk-ui-color-warning)}
+#vorauszahlungsanpassung .prepayment-adjustment-kpi.is-date .prepayment-adjustment-kpi__icon{color:#6b45c6}
+#vorauszahlungsanpassung .prepayment-adjustment-kpi>span:last-child{display:grid;gap:3px;min-width:0}
+#vorauszahlungsanpassung .prepayment-adjustment-kpi small{color:var(--nk-ui-color-text-muted);font-size:11px;font-weight:800;line-height:1.25;text-transform:uppercase;letter-spacing:.025em}
+#vorauszahlungsanpassung .prepayment-adjustment-kpi strong{color:var(--nk-ui-color-text);font-size:21px;line-height:1.12;white-space:nowrap;font-variant-numeric:tabular-nums}
+#vorauszahlungsanpassung .prepayment-adjustment-kpi em{overflow:hidden;color:var(--nk-ui-color-text-muted);font-size:12px;font-style:normal;white-space:nowrap;text-overflow:ellipsis}
+#vorauszahlungsanpassung .prepayment-adjustment-card{overflow:hidden;padding:0}
+#vorauszahlungsanpassung .prepayment-adjustment-card__header,
+#auswertungen .analytics-card__header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:17px 20px;border-bottom:1px solid var(--nk-ui-color-border);background:#fff}
+#vorauszahlungsanpassung .prepayment-adjustment-card__header h2,
+#auswertungen .analytics-card__header h2{margin:0;color:#123b65;font-size:1.05rem}
+#vorauszahlungsanpassung .prepayment-adjustment-card__header p,
+#auswertungen .analytics-card__header p{margin:4px 0 0;color:var(--nk-ui-color-text-muted);font-size:.82rem}
+#vorauszahlungsanpassung .prepayment-adjustment-rules>summary{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 20px;cursor:pointer;list-style:none;border-bottom:1px solid var(--nk-ui-color-border);background:#fff}
+#vorauszahlungsanpassung .prepayment-adjustment-rules>summary::-webkit-details-marker{display:none}
+#vorauszahlungsanpassung .prepayment-adjustment-rules>summary>span:first-child{display:grid;gap:3px}
+#vorauszahlungsanpassung .prepayment-adjustment-rules>summary strong{color:#123b65;font-size:1.05rem}
+#vorauszahlungsanpassung .prepayment-adjustment-rules>summary small{color:var(--nk-ui-color-text-muted)}
+#vorauszahlungsanpassung .prepayment-rules-chevron{font-size:20px;color:var(--nk-ui-color-accent);transition:transform .18s ease}
+#vorauszahlungsanpassung .prepayment-adjustment-rules:not([open]) .prepayment-rules-chevron{transform:rotate(-90deg)}
+#vorauszahlungsanpassung .prepayment-adjustment-settings{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1.55fr) minmax(0,1fr);gap:12px;padding:14px;background:var(--nk-ui-color-surface-muted)}
+#vorauszahlungsanpassung .prepayment-rule-card{min-width:0;padding:14px;border:1px solid var(--nk-ui-color-border);border-radius:var(--nk-ui-radius-md);background:#fff}
+#vorauszahlungsanpassung .prepayment-rule-card header{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+#vorauszahlungsanpassung .prepayment-rule-card header>span{display:grid;place-items:center;flex:0 0 26px;width:26px;height:26px;border-radius:7px;background:var(--nk-ui-color-accent-soft);color:var(--nk-ui-color-accent);font-weight:900}
+#vorauszahlungsanpassung .prepayment-rule-card h3{margin:0;color:#123b65;font-size:.9rem}
+#vorauszahlungsanpassung .prepayment-rule-card header p{margin:3px 0 0;color:var(--nk-ui-color-text-muted);font-size:.72rem;line-height:1.35}
+#vorauszahlungsanpassung .prepayment-rule-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#vorauszahlungsanpassung .prepayment-rule-fields label,
+#vorauszahlungsanpassung .prepayment-forecast-controls label{display:grid;gap:5px;min-width:0;color:#173b5a;font-size:11px;font-weight:800}
+#vorauszahlungsanpassung .prepayment-rule-field--wide{grid-column:1/-1}
+#vorauszahlungsanpassung .prepayment-rule-fields input,
+#vorauszahlungsanpassung .prepayment-rule-fields select,
+#vorauszahlungsanpassung .prepayment-forecast-controls input,
+#vorauszahlungsanpassung .prepayment-forecast-controls select,
+#vorauszahlungsanpassung .prepayment-forecast-table input{width:100%;min-width:0;min-height:34px;box-sizing:border-box}
+#vorauszahlungsanpassung .prepayment-forecast-controls{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-bottom:10px}
+#vorauszahlungsanpassung .prepayment-forecast-hint{grid-column:1/-1;margin:0;padding:8px 9px;border-radius:7px;background:#f5f8fc;color:var(--nk-ui-color-text-muted);font-size:11px;line-height:1.35}
+#vorauszahlungsanpassung .prepayment-forecast-table-wrap{max-height:255px;border:1px solid var(--nk-ui-color-border);border-radius:var(--nk-ui-radius-sm)}
+#vorauszahlungsanpassung .prepayment-forecast-table{min-width:660px}
+#vorauszahlungsanpassung .prepayment-forecast-table th,
+#vorauszahlungsanpassung .prepayment-forecast-table td{padding:7px 8px}
+#vorauszahlungsanpassung .prepayment-forecast-table td:first-child strong,
+#vorauszahlungsanpassung .prepayment-adjustment-table-wrap td:first-child strong{display:block;color:#123b65}
+#vorauszahlungsanpassung .prepayment-forecast-table td:first-child small,
+#vorauszahlungsanpassung .prepayment-adjustment-table-wrap td:first-child small,
+#vorauszahlungsanpassung #vorauszahlungAdjustSummaryTable td:first-child small{display:block;margin-top:2px;color:var(--nk-ui-color-text-muted);font-weight:500}
+#vorauszahlungsanpassung .prepayment-forecast-percent{text-align:right;font-variant-numeric:tabular-nums}
+#vorauszahlungsanpassung .prepayment-adjustment-table-wrap{margin:10px;max-width:calc(100% - 20px);background:#fff}
+#vorauszahlungsanpassung #vorauszahlungAdjustCostTable{min-width:1120px}
+#vorauszahlungsanpassung #vorauszahlungAdjustSummaryTable{min-width:980px}
+#vorauszahlungsanpassung .money,
+#vorauszahlungsanpassung .numeric,
+#vorauszahlungsanpassung th.money,
+#vorauszahlungsanpassung th.numeric{text-align:right;font-variant-numeric:tabular-nums}
+#vorauszahlungsanpassung table tfoot td{background:var(--nk-ui-color-surface-muted)!important;color:var(--nk-ui-color-text)!important;font-weight:800}
+#vorauszahlungsanpassung .prepayment-adjustment-empty{text-align:center;color:var(--nk-ui-color-text-muted);padding:24px!important}
+#vorauszahlungsanpassung .prepayment-adjustment-note{margin:0;padding:12px 14px;line-height:1.45}
+#vorauszahlungsanpassung .prepayment-adjustment-actions{display:flex;justify-content:flex-end;padding:0 0 4px}
+#vorauszahlungsanpassung input:disabled,
+#vorauszahlungsanpassung select:disabled{cursor:not-allowed;opacity:.58;background:#eef2f6}
+
+#auswertungen .analytics-kpi{display:grid;gap:4px;min-width:0;padding:18px;border:1px solid var(--nk-ui-color-border);border-radius:var(--nk-ui-radius-lg);background:#fff;box-shadow:var(--nk-ui-shadow-sm)}
+#auswertungen .analytics-kpi small{color:var(--nk-ui-color-text-muted);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.025em}
+#auswertungen .analytics-kpi strong{color:#123b65;font-size:22px;font-variant-numeric:tabular-nums}
+#auswertungen .analytics-kpi span{overflow:hidden;color:var(--nk-ui-color-text-muted);font-size:12px;white-space:nowrap;text-overflow:ellipsis}
+#auswertungen .analytics-card{overflow:hidden;padding:0}
+#auswertungen .analytics-table-wrap{margin:10px;max-width:calc(100% - 20px)}
+#auswertungen .analytics-table-wrap table{min-width:760px}
+#auswertungen .money,#auswertungen th.money{text-align:right;font-variant-numeric:tabular-nums}
+#auswertungen #analyticsTenantTable td:first-child small{display:block;margin-top:2px;color:var(--nk-ui-color-text-muted)}
+
+@media(max-width:1200px){
+  #vorauszahlungsanpassung .prepayment-adjustment-kpis,
+  #auswertungen .analytics-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #vorauszahlungsanpassung .prepayment-adjustment-settings{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #vorauszahlungsanpassung .prepayment-rule-card--forecast{grid-column:1/-1}
+}
+@media(max-width:760px){
+  #vorauszahlungsanpassung .prepayment-adjustment-kpis,
+  #auswertungen .analytics-kpis,
+  #vorauszahlungsanpassung .prepayment-adjustment-settings{grid-template-columns:1fr}
+  #vorauszahlungsanpassung .prepayment-rule-card--forecast{grid-column:auto}
+  #vorauszahlungsanpassung .prepayment-rule-fields,
+  #vorauszahlungsanpassung .prepayment-forecast-controls{grid-template-columns:1fr}
+  #vorauszahlungsanpassung .prepayment-rule-field--wide,
+  #vorauszahlungsanpassung .prepayment-forecast-hint{grid-column:auto}
+  #vorauszahlungsanpassung .prepayment-adjustment-kpi{align-items:flex-start}
+}
+
+/* AP22F11B K2 – Desktop-Tabellenabschluss und neutrale Kopfzeilen */
+body:not(.document-print-window) #vorauszahlungsanpassung table thead th,
+body:not(.document-print-window) #auswertungen table thead th{
+  background:var(--nk-ui-color-surface-muted)!important;
+  border-color:var(--nk-ui-color-border)!important;
+  color:var(--nk-ui-color-text)!important;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:0;
+  text-transform:none;
+  white-space:normal;
+  line-height:1.25;
+}
+#vorauszahlungsanpassung #vorauszahlungAdjustCostTable,
+#vorauszahlungsanpassung #vorauszahlungAdjustSummaryTable{width:100%;min-width:100%;table-layout:fixed}
+#vorauszahlungsanpassung #vorauszahlungAdjustCostTable th:nth-child(1),
+#vorauszahlungsanpassung #vorauszahlungAdjustCostTable td:nth-child(1){width:17%}
+#vorauszahlungsanpassung #vorauszahlungAdjustCostTable th:nth-child(2),
+#vorauszahlungsanpassung #vorauszahlungAdjustCostTable td:nth-child(2){width:13%}
+#vorauszahlungsanpassung #vorauszahlungAdjustCostTable th:nth-child(3),
+#vorauszahlungsanpassung #vorauszahlungAdjustCostTable td:nth-child(3){width:13%}
+#vorauszahlungsanpassung #vorauszahlungAdjustCostTable th:nth-child(4),
+#vorauszahlungsanpassung #vorauszahlungAdjustCostTable td:nth-child(4){width:9%}
+#vorauszahlungsanpassung #vorauszahlungAdjustCostTable th:nth-child(5),
+#vorauszahlungsanpassung #vorauszahlungAdjustCostTable td:nth-child(5){width:13%}
+#vorauszahlungsanpassung #vorauszahlungAdjustCostTable th:nth-child(6),
+#vorauszahlungsanpassung #vorauszahlungAdjustCostTable td:nth-child(6){width:10%}
+#vorauszahlungsanpassung #vorauszahlungAdjustCostTable th:nth-child(7),
+#vorauszahlungsanpassung #vorauszahlungAdjustCostTable td:nth-child(7){width:15%}
+#vorauszahlungsanpassung #vorauszahlungAdjustCostTable th:nth-child(8),
+#vorauszahlungsanpassung #vorauszahlungAdjustCostTable td:nth-child(8){width:10%}
+#vorauszahlungsanpassung #vorauszahlungAdjustSummaryTable th:nth-child(1),
+#vorauszahlungsanpassung #vorauszahlungAdjustSummaryTable td:nth-child(1){width:19%}
+#vorauszahlungsanpassung #vorauszahlungAdjustSummaryTable th:nth-child(2),
+#vorauszahlungsanpassung #vorauszahlungAdjustSummaryTable td:nth-child(2){width:10%}
+#vorauszahlungsanpassung #vorauszahlungAdjustSummaryTable th:nth-child(3),
+#vorauszahlungsanpassung #vorauszahlungAdjustSummaryTable td:nth-child(3){width:13%}
+#vorauszahlungsanpassung #vorauszahlungAdjustSummaryTable th:nth-child(4),
+#vorauszahlungsanpassung #vorauszahlungAdjustSummaryTable td:nth-child(4){width:13%}
+#vorauszahlungsanpassung #vorauszahlungAdjustSummaryTable th:nth-child(5),
+#vorauszahlungsanpassung #vorauszahlungAdjustSummaryTable td:nth-child(5){width:10%}
+#vorauszahlungsanpassung #vorauszahlungAdjustSummaryTable th:nth-child(6),
+#vorauszahlungsanpassung #vorauszahlungAdjustSummaryTable td:nth-child(6){width:15%}
+#vorauszahlungsanpassung #vorauszahlungAdjustSummaryTable th:nth-child(7),
+#vorauszahlungsanpassung #vorauszahlungAdjustSummaryTable td:nth-child(7){width:11%}
+#vorauszahlungsanpassung #vorauszahlungAdjustSummaryTable th:nth-child(8),
+#vorauszahlungsanpassung #vorauszahlungAdjustSummaryTable td:nth-child(8){width:9%}
+#vorauszahlungsanpassung #vorauszahlungAdjustCostTable td,
+#vorauszahlungsanpassung #vorauszahlungAdjustSummaryTable td{padding:8px 7px;overflow-wrap:anywhere}
+@media(max-width:900px){
+  #vorauszahlungsanpassung #vorauszahlungAdjustCostTable{min-width:1120px;table-layout:auto}
+  #vorauszahlungsanpassung #vorauszahlungAdjustSummaryTable{min-width:980px;table-layout:auto}
+}
+
+/* AP22F11B K2 – Berechnungsregeln lesbar und Preisprognose über volle Breite */
+@media(min-width:1201px){
+  #vorauszahlungsanpassung .prepayment-adjustment-settings{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    grid-template-areas:"basis brief" "forecast forecast";
+  }
+  #vorauszahlungsanpassung .prepayment-adjustment-settings>.prepayment-rule-card:nth-child(1){grid-area:basis}
+  #vorauszahlungsanpassung .prepayment-adjustment-settings>.prepayment-rule-card:nth-child(2){grid-area:forecast}
+  #vorauszahlungsanpassung .prepayment-adjustment-settings>.prepayment-rule-card:nth-child(3){grid-area:brief}
+}
+#vorauszahlungsanpassung .prepayment-rule-card>header{
+  display:flex!important;
+  align-items:flex-start!important;
+  justify-content:flex-start!important;
+  min-height:0!important;
+  margin:0 0 12px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:var(--nk-ui-color-text)!important;
+}
+#vorauszahlungsanpassung .prepayment-rule-card>header h3{color:#123b65!important}
+#vorauszahlungsanpassung .prepayment-rule-card>header p{color:var(--nk-ui-color-text-muted)!important}
+#vorauszahlungsanpassung .prepayment-rule-card--forecast .prepayment-forecast-table{min-width:100%;width:100%;table-layout:fixed}
+#vorauszahlungsanpassung .prepayment-rule-card--forecast .prepayment-forecast-table th:nth-child(1),
+#vorauszahlungsanpassung .prepayment-rule-card--forecast .prepayment-forecast-table td:nth-child(1){width:24%}
+#vorauszahlungsanpassung .prepayment-rule-card--forecast .prepayment-forecast-table th:nth-child(2),
+#vorauszahlungsanpassung .prepayment-rule-card--forecast .prepayment-forecast-table td:nth-child(2){width:17%}
+#vorauszahlungsanpassung .prepayment-rule-card--forecast .prepayment-forecast-table th:nth-child(3),
+#vorauszahlungsanpassung .prepayment-rule-card--forecast .prepayment-forecast-table td:nth-child(3){width:17%}
+#vorauszahlungsanpassung .prepayment-rule-card--forecast .prepayment-forecast-table th:nth-child(4),
+#vorauszahlungsanpassung .prepayment-rule-card--forecast .prepayment-forecast-table td:nth-child(4){width:42%}
+@media(max-width:900px){
+  #vorauszahlungsanpassung .prepayment-rule-card--forecast .prepayment-forecast-table{min-width:720px;table-layout:auto}
+}
