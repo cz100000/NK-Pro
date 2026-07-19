@@ -790,6 +790,7 @@ function billingOverviewGroupBody(kind, label, rows, count) {
   if (!rows) return "";
   return '<tbody class="billing-overview-group" data-billing-group="'+kind+'"><tr class="billing-overview-group-row"><th colspan="8" scope="rowgroup">'+escapeHtml(label)+' · '+count+'</th></tr>'+rows+'</tbody>';
 }
+// AP22F10E: zentraler, deterministischer Tabellenaufbau der Abrechnungsübersicht.
 function buildBillingRecordsTableHtml() {
   ensureYearData();
   const currentRows=billingOverviewCurrentRowHtml();
@@ -797,7 +798,7 @@ function buildBillingRecordsTableHtml() {
   const currentCount=currentRows?1:0;
   const archiveCount=(archiveRows.match(/data-billing-record="true"/g)||[]).length;
   const total=currentCount+archiveCount;
-  const head='<thead><tr><th scope="col">Abrechnung ↕</th><th scope="col">Objekt ↕</th><th scope="col">Herkunft</th><th scope="col">Status ↕</th><th scope="col">Arbeitsstand ↕</th><th scope="col">Zuletzt bearbeitet ↕</th><th class="money" scope="col">Saldo</th><th class="billing-overview-actions-heading" scope="col">Aktionen</th></tr></thead>';
+  const head='<thead><tr><th scope="col">Abrechnung</th><th scope="col">Objekt</th><th scope="col">Herkunft</th><th scope="col">Status</th><th scope="col">Arbeitsstand</th><th scope="col">Zuletzt bearbeitet</th><th class="money" scope="col">Saldo</th><th class="billing-overview-actions-heading" scope="col">Aktionen</th></tr></thead>';
   if (!total) return head+'<tbody class="billing-overview-empty"><tr><td colspan="8"><div class="nk-ui-state nk-ui-state--empty"><strong>Noch keine Abrechnung angelegt</strong><span>Lege die erste Abrechnung über die vorhandene Neuanlage an.</span><button class="primary" data-ui-action="billing.openCreateModal" type="button">+ Neue Abrechnung</button></div></td></tr></tbody>';
   return head+
     billingOverviewGroupBody("current","Aktuelle Abrechnung",currentRows,currentCount)+

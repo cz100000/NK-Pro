@@ -784,7 +784,12 @@ function loadInitialState() {
     return loaded;
   } catch(error) {
     recordStartupError("Datenstart", error);
-    notifyStorageProblem("Die App konnte den gespeicherten Datensatz nicht vollständig initialisieren. Die Daten wurden nicht gelöscht; bitte JSON-Sicherung prüfen oder neu laden.", error);
+    const message = errorMessage(error);
+    if (/QuotaExceededError|localStorage|Speicher|storage/i.test(message)) {
+      notifyStorageProblem("Die App konnte den gespeicherten Datensatz nicht vollständig initialisieren. Die Daten wurden nicht gelöscht; bitte JSON-Sicherung prüfen oder neu laden.", error);
+    } else {
+      startupErrors.push({ area:"Datenprüfung", message:"Der gespeicherte Datensatz konnte nicht vollständig migriert werden. Die Daten wurden nicht gelöscht." });
+    }
     try {
       const fallback = normalizeLegacyData(clone(SEED));
       fallback.meta.startupFallback = true;

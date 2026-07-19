@@ -2,7 +2,11 @@
   "use strict";
 
   const METERING_STANDARD_VERSION = 1;
-  const STARTUP_SAFE_VALIDATION_CODES = Object.freeze(new Set(["METER_READING_REVERSED"]));
+  const STARTUP_SAFE_VALIDATION_CODES = Object.freeze(new Set([
+    "METER_READING_REVERSED",
+    "MEASUREMENT_PERIOD_ASSIGNMENT_MISSING",
+    "METER_PERIOD_MISSING"
+  ]));
 
   function cloneWith(options, value) {
     return options && typeof options.clone === "function" ? options.clone(value) : JSON.parse(JSON.stringify(value));
@@ -221,7 +225,10 @@
       const validation = validateMeteringData(working, { ...options, billingReadiness:false });
       const fatalErrors = validation.errors.filter(item => !STARTUP_SAFE_VALIDATION_CODES.has(item.code));
       const startupSafeFindings = validation.errors.filter(item => STARTUP_SAFE_VALIDATION_CODES.has(item.code));
-      if (fatalErrors.length) throw new Error("Zählerstandard-Nachprüfung fehlgeschlagen: " + fatalErrors.map(item => item.message).join(" "));
+      if (fatalErrors.length) {
+        const uniqueMessages = [...new Set(fatalErrors.map(item => item.message))];
+        throw new Error("Zählerstandard-Nachprüfung fehlgeschlagen: " + uniqueMessages.join(" "));
+      }
       if (!working.meta || typeof working.meta !== "object") working.meta = {};
       if (required) {
         if (!Array.isArray(working.meta.standardMigrations)) working.meta.standardMigrations = [];
