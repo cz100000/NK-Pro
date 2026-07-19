@@ -6819,3 +6819,34 @@ body.billing-readonly-mode #einstellungen .nk-ui-table td.editable,body.billing-
 #start .billing-overview-table-shell{margin-left:var(--nk-ui-space-md)!important;margin-right:var(--nk-ui-space-md)!important}
 #start .billing-overview-table-shell::before,#start .billing-overview-table-shell::after{content:"";display:block;height:0}
 @media(max-width:620px){#start .billing-overview-table-shell{margin-left:var(--nk-ui-space-md)!important;margin-right:var(--nk-ui-space-md)!important}#start .billing-overview-filter-groups{width:100%;justify-content:flex-start}}
+
+/* AP22F10D Korrektur 1 – kompakte Abrechnungsübersicht ohne horizontalen Desktop-Scroll */
+#start .billing-overview-table-shell{overflow-x:hidden!important}
+#start .billing-overview-table{width:100%!important;min-width:0!important;max-width:100%!important;table-layout:fixed!important}
+#start .billing-overview-table th,#start .billing-overview-table td{padding-left:8px!important;padding-right:8px!important}
+#start .billing-overview-table thead th:nth-child(1){width:12%!important}
+#start .billing-overview-table thead th:nth-child(2){width:7%!important}
+#start .billing-overview-table thead th:nth-child(3){width:9%!important}
+#start .billing-overview-table thead th:nth-child(4){width:11%!important}
+#start .billing-overview-table thead th:nth-child(5){width:18%!important}
+#start .billing-overview-table thead th:nth-child(6){width:11%!important}
+#start .billing-overview-table thead th:nth-child(7){width:10%!important}
+#start .billing-overview-table thead th:nth-child(8){width:180px!important}
+#start .billing-overview-table th:nth-child(4),#start .billing-overview-table td:nth-child(4),#start .billing-overview-table th:nth-child(7),#start .billing-overview-table td:nth-child(7){padding-right:6px!important}
+#start .billing-overview-object-code{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#start .billing-origin{gap:4px;padding:3px 7px;font-size:10.5px;white-space:nowrap}
+#start .billing-actions{width:100%;min-width:0;gap:4px}
+#start .billing-overview-action{width:30px!important;height:30px!important;min-width:30px!important}
+#start .billing-overview-action svg{width:15px;height:15px}
+#start .billing-overview-actions-cell{padding-left:5px!important;padding-right:5px!important;overflow:hidden}
+#start .billing-overview-actions-heading{padding-left:5px!important;padding-right:5px!important}
+@media(max-width:1100px){
+  #start .billing-overview-table th,#start .billing-overview-table td{padding-left:6px!important;padding-right:6px!important;font-size:11px}
+  #start .billing-overview-table thead th:nth-child(8){width:174px!important}
+  #start .billing-overview-action{width:29px!important;height:29px!important;min-width:29px!important}
+  #start .billing-actions{gap:3px}
+}
+@media(max-width:760px){
+  #start .billing-overview-table-shell{overflow-x:auto!important}
+  #start .billing-overview-table{min-width:920px!important}
+}

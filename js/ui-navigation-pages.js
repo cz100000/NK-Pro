@@ -722,18 +722,22 @@ function billingOverviewObjectDisplayLabel(value) {
 function billingOverviewOrigin(data, item) {
   const meta=(item&&item.meta)||(data&&data.meta)||{};
   const source=String(meta.billingOrigin||meta.importSource||meta.dataSource||archiveDataSource(item)||"").toLocaleLowerCase("de-DE");
-  if (source.includes("import") || meta.legacyImport || meta.importedAt) return {key:"imported",label:"Importiert",detail:"Nicht mit NK-Pro erstellt"};
-  if (source.includes("ueber") || source.includes("über") || meta.preparedFromPreviousYear) return {key:"carried",label:"Übernommen",detail:"Aus Vorjahr übernommen"};
-  return {key:"nkpro",label:"NK-Pro",detail:"Mit NK-Pro erstellt"};
+  if (source.includes("import") || source.includes("ueber") || source.includes("über") || meta.legacyImport || meta.importedAt || meta.preparedFromPreviousYear) {
+    return {key:"imported",label:"Importiert"};
+  }
+  return {key:"nkpro",label:"NK-Pro"};
 }
 function billingOverviewOriginHtml(origin){
-  return '<span class="billing-origin billing-origin--'+escapeHtml(origin.key)+'"><span aria-hidden="true">'+(origin.key==="imported"?'⇩':origin.key==="carried"?'⧉':'▣')+'</span>'+escapeHtml(origin.label)+'</span><span class="billing-overview-secondary-value">'+escapeHtml(origin.detail)+'</span>';
+  return '<span class="billing-origin billing-origin--'+escapeHtml(origin.key)+'"><span aria-hidden="true">'+(origin.key==="imported"?'⇩':'▣')+'</span>'+escapeHtml(origin.label)+'</span>';
+}
+function billingOverviewPeriodLabel(value){
+  return String(value||"").replace(/\s*\(Einzelperioden\)\s*$/i,"").trim();
 }
 function billingOverviewCurrentRowHtml() {
   if (!NK_PRO_MODULES.archiveActions.hasActiveCurrentBilling()) return "";
   const status=currentBillingLifecycleStatus();
   const year=String(currentAbrechnungsjahr() || "");
-  const period=periodLabelShort();
+  const period=billingOverviewPeriodLabel(periodLabelShort());
   const object=recordObjectLabel(state);
   const code=recordObjectCode(state);
   const progress=currentBillingProgressText();
@@ -743,7 +747,7 @@ function billingOverviewCurrentRowHtml() {
   const origin=billingOverviewOrigin(state,null);
   return '<tr class="current-record-row billing-overview-record' + (active ? ' is-open-context' : '') + '" data-billing-record="true" data-record-kind="current" data-origin="'+origin.key+'" data-search="' + escapeHtml(search.toLocaleLowerCase("de-DE")) + '">' +
     '<td data-label="Abrechnung"><span class="billing-overview-primary-value billing-overview-year">'+escapeHtml(year)+'</span><span class="billing-overview-secondary-value">'+escapeHtml(period)+'</span></td>'+
-    '<td data-label="Objekt"><span class="billing-overview-primary-value">'+escapeHtml(billingOverviewObjectDisplayLabel(object))+'</span><span class="billing-overview-secondary-value">'+escapeHtml(code)+'</span></td>'+
+    '<td data-label="Objekt"><span class="billing-overview-primary-value billing-overview-object-code">'+escapeHtml(code||billingOverviewObjectDisplayLabel(object))+'</span></td>'+
     '<td data-label="Herkunft">'+billingOverviewOriginHtml(origin)+'</td>'+
     '<td data-label="Status"><span class="status '+status.className+'">'+escapeHtml(status.label)+'</span></td>'+
     '<td data-label="Arbeitsstand"><span class="billing-overview-primary-value">'+escapeHtml(progress.split(" · ")[0] || progress)+'</span><span class="billing-overview-secondary-value">'+escapeHtml(progress.split(" · ").slice(1).join(" · "))+'</span></td>'+
@@ -760,17 +764,17 @@ function billingOverviewArchiveRowsHtml() {
       const saldo=NK_PRO_MODULES.archiveActions.recordSaldo(item);
       const data=item&&item.data?item.data:{};
       const year=String(item&&item.year!==undefined?item.year:"");
-      const period=NK_PRO_MODULES.archiveActions.periodLabel(item);
+      const period=billingOverviewPeriodLabel(NK_PRO_MODULES.archiveActions.periodLabel(item));
       const object=recordObjectLabel(data);
       const code=recordObjectCode(data);
       const progress=archiveProgressText(item);
       const lastEdited=(item&&item.archivedAt)||(item&&item.meta&&item.meta.archivedAt)||(data.meta&&data.meta.lastSavedAt)||"";
       const saldoLabel=(saldo>=0?'Nachzahlung ':'Guthaben ')+fmtMoney(Math.abs(saldo));
       const origin=billingOverviewOrigin(data,item);
-      const search=[year,period,object,code,origin.label,origin.detail,"Archiviert",progress,billingDateTimeLabel(lastEdited),saldoLabel,"archiv"].join(" ");
+      const search=[year,period,object,code,origin.label,"Archiviert",progress,billingDateTimeLabel(lastEdited),saldoLabel,"archiv"].join(" ");
       return '<tr class="archive-record-row billing-overview-record" data-billing-record="true" data-record-kind="archive" data-origin="'+origin.key+'" data-search="'+escapeHtml(search.toLocaleLowerCase("de-DE"))+'">'+
         '<td data-label="Abrechnung"><span class="billing-overview-primary-value billing-overview-year">'+escapeHtml(year)+'</span><span class="billing-overview-secondary-value">'+escapeHtml(period)+'</span></td>'+
-        '<td data-label="Objekt"><span class="billing-overview-primary-value">'+escapeHtml(billingOverviewObjectDisplayLabel(object))+'</span><span class="billing-overview-secondary-value">'+escapeHtml(code)+'</span></td>'+
+        '<td data-label="Objekt"><span class="billing-overview-primary-value billing-overview-object-code">'+escapeHtml(code||billingOverviewObjectDisplayLabel(object))+'</span></td>'+
         '<td data-label="Herkunft">'+billingOverviewOriginHtml(origin)+'</td>'+
         '<td data-label="Status"><span class="status neutral">Archiviert</span></td>'+
         '<td data-label="Arbeitsstand"><span class="billing-overview-primary-value">'+escapeHtml(progress.split(" · ")[0] || progress)+'</span><span class="billing-overview-secondary-value">'+escapeHtml(progress.split(" · ").slice(1).join(" · "))+'</span></td>'+
