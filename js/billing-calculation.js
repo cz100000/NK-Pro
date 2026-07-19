@@ -222,7 +222,6 @@
   function inferManualInputMode(k, input, data = state) {
     if (k && (k.umlageschluessel === UMLAGE_MANUAL || k.berechnungsart === "Manuell je Mieter")) return "Direkter Eurobetrag";
     if (k && k.umlageschluessel === "Verbrauch") {
-      if (String(k.id || "") === "K002") return "Zählerstände";
       const values = input && Array.isArray(input.values) ? input.values : [];
       const hasLegacyValues = values.some(v => Math.abs(num(v)) > 0.000001);
       const genericRows = data && data.meterReadings && data.meterReadings.readings && Array.isArray(data.meterReadings.readings[k.id]) ? data.meterReadings.readings[k.id] : [];
@@ -389,20 +388,48 @@
     return 0;
   }
 
-  function isIndividualValueCost(cost, data = state) {
-    if (!cost || cost.inNK !== "Ja" || !cost.id || !cost.kostenart) return false;
-    if (String(cost.id) === "K002") return true;
-    const input = data && data.umlageInputs && data.umlageInputs[cost.id];
-    const explicitMode = input && ["Direkter Eurobetrag", "Externe Einzelabrechnung", "Verbrauchsmenge"].includes(String(input.mode || ""));
-    if (explicitMode || cost.berechnungsart === "Manuell je Mieter" || cost.umlageschluessel === UMLAGE_MANUAL) return true;
-    if (cost.umlageschluessel !== "Verbrauch") return false;
-    const meters = data && data.zaehlerDaten && Array.isArray(data.zaehlerDaten.zaehler) ? data.zaehlerDaten.zaehler : [];
-    const generic = data && data.meterReadings && data.meterReadings.readings && Array.isArray(data.meterReadings.readings[cost.id]) ? data.meterReadings.readings[cost.id] : [];
-    return meters.some(row => row && row.abrechnungsrelevant !== false && String(row.kostenId || "") === String(cost.id)) || generic.some(row => row && (hasEnteredMeterValue(row.start) || hasEnteredMeterValue(row.end)));
+  function normalizedIndividualKey(value) {
+    return String(value === undefined || value === null ? "" : value)
+      .trim().toLocaleLowerCase("de-DE")
+      .replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss")
+      .replace(/\s+/g, " ");
+  }
+
+  function isActiveIndividualCost(cost) {
+    if (!cost || !cost.id || !String(cost.kostenart || "").trim()) return false;
+    if (String(cost.inNK || "") !== "Ja") return false;
+    return normalizedIndividualKey(cost.status) !== "nicht bestandteil der nk-abrechnung";
+  }
+
+  function isManualIndividualKey(cost) {
+    const key = normalizedIndividualKey([cost && cost.umlageschluessel, cost && cost.berechnungsart].join(" "));
+    return key.includes("manuell") || key.includes("individuell") || key.includes("direkter eurobetrag");
+  }
+
+  function individualValueCostKind(cost) {
+    if (!isActiveIndividualCost(cost)) return "inactive";
+    if (normalizedIndividualKey(cost.umlageschluessel) === "verbrauch") return "consumption";
+    if (isManualIndividualKey(cost)) return "manual";
+    return "automatic";
+  }
+
+  function isIndividualValueCost(cost) {
+    const kind = individualValueCostKind(cost);
+    return kind === "consumption" || kind === "manual";
   }
 
   function individualValueCosts(data = state) {
-    return (Array.isArray(data && data.kostenarten) ? data.kostenarten : []).filter(cost => isIndividualValueCost(cost, data));
+    return (Array.isArray(data && data.kostenarten) ? data.kostenarten : [])
+      .filter(isIndividualValueCost)
+      .map(cost => Object.assign({}, cost, { individualValueKind:individualValueCostKind(cost) }));
+  }
+
+  function individualConsumptionCosts(data = state) {
+    return individualValueCosts(data).filter(cost => cost.individualValueKind === "consumption");
+  }
+
+  function individualManualCosts(data = state) {
+    return individualValueCosts(data).filter(cost => cost.individualValueKind === "manual");
   }
 
   function periodOverlaps(row, period) {
@@ -413,14 +440,29 @@
     return (!end || end >= period.start) && (!start || start <= period.end);
   }
 
-  function waterMetersForData(data = state) {
+  function meterIdOf(row) {
+    return String(row && (row.meterId || row.zaehlerId || row.id) || "");
+  }
+
+  function meterTypeLabel(meter) {
+    const type = normalizedIndividualKey(meter && (meter.meterType || meter.zaehlerTyp || meter.type));
+    if (type === "cold-water") return "Kaltwasser";
+    if (type === "hot-water") return "Warmwasser";
+    return String(meter && (meter.bezeichnung || meter.zaehlerTyp || meter.meterType || "Zähler") || "Zähler");
+  }
+
+  function metersForIndividualCost(data = state, costId = "") {
+    const period = periodForData(data);
+    const caseUnits = new Set(individualValueCases(data).map(row => String(row.unitId || "")).filter(Boolean));
     const meters = data && data.zaehlerDaten && Array.isArray(data.zaehlerDaten.zaehler) ? data.zaehlerDaten.zaehler : [];
-    const relevantUnits = new Set(individualValueCases(data).map(row => String(row.unitId || "")).filter(Boolean));
     return meters.filter(meter => {
-      const unitId = String(meter && (meter.einheitId || meter.unitId) || "");
-      return meter && unitId && relevantUnits.has(unitId) && meter.abrechnungsrelevant !== false && String(meter.billingRole || "billing") !== "excluded" && (
-        String(meter.kostenId || "") === "K002" || ["cold-water", "hot-water"].includes(String(meter.meterType || meter.zaehlerTyp || ""))
-      );
+      if (!meter || String(meter.kostenId || "") !== String(costId || "")) return false;
+      if (meter.abrechnungsrelevant === false || String(meter.billingRole || "billing") === "excluded") return false;
+      const status = normalizedIndividualKey(meter.status);
+      if (status === "inaktiv" || status === "stillgelegt") return false;
+      if (!periodOverlaps({ beginn:meter.einbaudatum, ende:meter.ausbaudatum }, period)) return false;
+      const unitId = String(meter.einheitId || meter.unitId || "");
+      return !!unitId && caseUnits.has(unitId);
     });
   }
 
@@ -436,107 +478,156 @@
     return unitCases.find(row => row.role === "vacancy") || unitCases[0] || null;
   }
 
-  function waterMeterRows(data = state) {
+  function meterRowsForCost(data = state, costId = "") {
+    const cost = (Array.isArray(data && data.kostenarten) ? data.kostenarten : []).find(row => row && String(row.id || "") === String(costId || ""));
+    if (individualValueCostKind(cost) !== "consumption") return [];
     const period = periodForData(data);
     const cases = individualValueCases(data);
     const periods = data && data.zaehlerDaten && Array.isArray(data.zaehlerDaten.messperioden) ? data.zaehlerDaten.messperioden : [];
-    return waterMetersForData(data).map(meter => {
-      const meterId = String(meter.meterId || meter.zaehlerId || meter.id || "");
-      const rows = periods.filter(row => String(row && (row.zaehlerId || row.meterId) || "") === meterId && row.abrechnungsrelevant !== false && periodOverlaps(row, period))
+    return metersForIndividualCost(data, costId).map(meter => {
+      const meterId = meterIdOf(meter);
+      const rows = periods.filter(row => meterIdOf(row) === meterId && row.abrechnungsrelevant !== false && periodOverlaps(row, period))
         .sort((a,b) => String(a.beginn || "").localeCompare(String(b.beginn || "")) || String(a.ende || "").localeCompare(String(b.ende || "")));
-      const valid = rows.filter(row => row.status === "valid" && Number.isFinite(Number(row.verbrauch)));
       const first = rows[0] || null;
       const last = rows.at(-1) || null;
+      const readings = data && data.zaehlerDaten && Array.isArray(data.zaehlerDaten.messwerte) ? data.zaehlerDaten.messwerte : [];
+      const activeReadings = readings.filter(reading => meterIdOf(reading) === meterId && !["corrected","cancelled","storniert"].includes(normalizedIndividualKey(reading && reading.status)))
+        .sort((a,b) => String(a.erfasstAm || a.ablesedatum || "").localeCompare(String(b.erfasstAm || b.ablesedatum || "")));
+      const readingForRole = role => activeReadings.slice().reverse().find(reading => normalizedIndividualKey(reading && (reading.rolle || reading.role || reading.ableseart)).includes(role));
+      const startReading = readingForRole("start") || readingForRole("anfang");
+      const endReading = readingForRole("end") || readingForRole("ende");
+      const startValue = first && first.anfangsstand !== undefined ? first.anfangsstand : (startReading && startReading.wert !== undefined ? startReading.wert : "");
+      const endValue = last && last.endstand !== undefined ? last.endstand : (endReading && endReading.wert !== undefined ? endReading.wert : "");
+      const startEntered = hasEnteredMeterValue(startValue);
+      const endEntered = hasEnteredMeterValue(endValue);
+      const invalid = rows.some(row => row.status === "invalid") || (startEntered && endEntered && num(endValue) < num(startValue));
+      const complete = startEntered && endEntered && !invalid;
+      const validRows = rows.filter(row => row.status === "valid" && Number.isFinite(Number(row.verbrauch)));
+      const calculated = complete ? (validRows.length ? validRows.reduce((sum,row) => sum + num(row.verbrauch), 0) : num(endValue) - num(startValue)) : null;
       const shares = rows.flatMap(row => (Array.isArray(row.zuordnungsanteile) ? row.zuordnungsanteile.map(share => ({ share, period:row })) : []));
-      const linkedCase = shares.map(item => caseForMeterShare(cases, meter, item.share, item.period)).find(Boolean) || cases.find(row => row.unitId === String(meter.einheitId || "")) || null;
-      const invalid = rows.some(row => row.status === "invalid" || (Number.isFinite(Number(row.anfangsstand)) && Number.isFinite(Number(row.endstand)) && Number(row.endstand) < Number(row.anfangsstand)));
-      const replacement = !!String(meter.vorgaengerZaehlerId || "") || (data && data.zaehlerDaten && Array.isArray(data.zaehlerDaten.zaehlerwechsel) && data.zaehlerDaten.zaehlerwechsel.some(row => String(row.neuerZaehlerId || "") === meterId));
+      const linkedCase = shares.map(item => caseForMeterShare(cases, meter, item.share, item.period)).find(Boolean)
+        || cases.find(row => row.tenantId && row.tenantId === String(meter.nutzerId || "") && row.unitId === String(meter.einheitId || ""))
+        || cases.find(row => row.unitId === String(meter.einheitId || "")) || null;
       const transfers = data && data.meta && Array.isArray(data.meta.individualValuesPriorTransfers) ? data.meta.individualValuesPriorTransfers : [];
       const transfer = transfers.slice().reverse().find(row => String(row.meterId || "") === meterId);
-      // AP22F10F Korrektur 3: Eine einzelne Anfangsablesung erzeugt fachlich noch
-      // keine Messperiode. Die Sammelerfassung muss sie trotzdem anzeigen. Daher
-      // werden Anfangs- und Endstand zusätzlich direkt aus den aktiven Messwerten
-      // des aktuellen Abrechnungszeitraums gelesen. Sobald ein Endstand existiert,
-      // bleibt die abgeleitete Messperiode die führende Quelle.
-      const activeReading = row => {
-        const status = String(row && row.status || "").toLowerCase();
-        return !["cancelled","storniert","corrected","ersetzt","replaced","documented-only"].includes(status);
-      };
-      const currentReadings = data && data.zaehlerDaten && Array.isArray(data.zaehlerDaten.messwerte)
-        ? data.zaehlerDaten.messwerte.filter(row => String(row && (row.zaehlerId || row.meterId) || "") === meterId && activeReading(row) && periodOverlaps({ beginn:row.messzeitraumVon || row.ablesedatum, ende:row.messzeitraumBis || row.ablesedatum }, period))
-        : [];
-      const latestRoleReading = role => currentReadings.filter(row => String(row && row.rolle || "") === role && Number.isFinite(Number(row.wert)))
-        .sort((a,b) => String(b.erfasstAm || "").localeCompare(String(a.erfasstAm || "")) || String(b.ablesedatum || "").localeCompare(String(a.ablesedatum || "")))[0] || null;
-      const startReading = latestRoleReading("start");
-      const endReading = latestRoleReading("end");
-      const startValue = first && first.anfangsstand !== undefined ? first.anfangsstand : (startReading ? Number(startReading.wert) : "");
-      const endValue = last && last.endstand !== undefined ? last.endstand : (endReading ? Number(endReading.wert) : "");
-      const effectiveStartDate = first && first.beginn ? first.beginn : (startReading && startReading.ablesedatum || period.start || "");
-      const effectiveEndDate = last && last.ende ? last.ende : (endReading && endReading.ablesedatum || period.end || "");
-      const hasStartValue = startValue !== "" && startValue !== null && startValue !== undefined && Number.isFinite(Number(startValue));
-      const hasEndValue = endValue !== "" && endValue !== null && endValue !== undefined && Number.isFinite(Number(endValue));
-      const directConsumption = hasStartValue && hasEndValue ? Number(endValue) - Number(startValue) : 0;
+      const replacement = !!String(meter.vorgaengerZaehlerId || "") || !!(data && data.zaehlerDaten && Array.isArray(data.zaehlerDaten.zaehlerwechsel) && data.zaehlerDaten.zaehlerwechsel.some(row => String(row.neuerZaehlerId || "") === meterId));
       return {
-        meterId,
+        costId:String(costId || ""), meterId,
         meterNumber:String(meter.zaehlernummer || meter.meterNumber || meterId),
         meterType:String(meter.meterType || meter.zaehlerTyp || ""),
-        typeLabel:String(meter.meterType || meter.zaehlerTyp || "") === "hot-water" ? "Warmwasser" : "Kaltwasser",
-        unitId:String(meter.einheitId || (linkedCase && linkedCase.unitId) || ""),
-        caseKey:linkedCase && linkedCase.caseKey || "",
-        caseRole:linkedCase && linkedCase.role || "unassigned",
+        typeLabel:meterTypeLabel(meter), unit:String(meter.einheit || "Einheit"),
+        unitId:String(meter.einheitId || linkedCase && linkedCase.unitId || ""),
+        caseKey:linkedCase && linkedCase.caseKey || "", caseRole:linkedCase && linkedCase.role || "unassigned",
         caseLabel:linkedCase && linkedCase.label || "Zuordnung prüfen",
-        startDate:String(effectiveStartDate),
-        endDate:String(effectiveEndDate),
-        startValue,
-        endValue,
-        consumption:valid.length ? valid.reduce((sum,row) => sum + num(row.verbrauch), 0) : directConsumption,
-        status:invalid || directConsumption < 0 ? "error" : (endValue === "" || endValue === null || endValue === undefined ? "open" : "complete"),
-        priorStatus:replacement ? "replacement" : (transfer ? "transferred" : (startValue === "" || startValue === null || startValue === undefined ? "missing" : "available")),
-        replacement,
-        periods:rows.length
+        startDate:String(first && first.beginn || startReading && startReading.ablesedatum || period.start || ""), endDate:String(last && last.ende || endReading && endReading.ablesedatum || period.end || ""),
+        startValue, endValue, consumption:calculated,
+        status:invalid ? "error" : (complete ? "complete" : "open"),
+        priorStatus:replacement ? "replacement" : (transfer ? "transferred" : (startEntered ? "available" : "missing")),
+        replacement, periods:rows.length
       };
-    }).sort((a,b) => a.unitId.localeCompare(b.unitId, "de", {numeric:true}) || a.typeLabel.localeCompare(b.typeLabel, "de") || a.meterId.localeCompare(b.meterId, "de"));
+    }).sort((a,b) => a.unitId.localeCompare(b.unitId, "de", { numeric:true }) || a.typeLabel.localeCompare(b.typeLabel, "de") || a.meterId.localeCompare(b.meterId, "de"));
   }
 
-  function waterCaseTotals(data = state) {
-    const cases = individualValueCases(data);
-    const period = periodForData(data);
-    const meters = waterMetersForData(data);
-    const meterById = new Map(meters.map(row => [String(row.meterId || row.zaehlerId || row.id || ""), row]));
-    const totals = new Map(cases.map(row => [row.caseKey, { caseRow:row, cold:0, hot:0, total:0 }]));
-    const periods = data && data.zaehlerDaten && Array.isArray(data.zaehlerDaten.messperioden) ? data.zaehlerDaten.messperioden : [];
-    periods.filter(row => row && row.abrechnungsrelevant !== false && row.status === "valid" && periodOverlaps(row, period) && meterById.has(String(row.zaehlerId || row.meterId || ""))).forEach(row => {
-      const meter = meterById.get(String(row.zaehlerId || row.meterId || ""));
-      const type = String(meter.meterType || meter.zaehlerTyp || "") === "hot-water" ? "hot" : "cold";
-      const shares = Array.isArray(row.zuordnungsanteile) && row.zuordnungsanteile.length ? row.zuordnungsanteile : [{ einheitId:meter.einheitId, nutzerId:meter.nutzerId, verbrauch:num(row.verbrauch), beginn:row.beginn, ende:row.ende }];
-      shares.forEach(share => {
-        const target = caseForMeterShare(cases, meter, share, row);
-        if (!target || !totals.has(target.caseKey)) return;
-        const amount = Number.isFinite(Number(share.verbrauch)) ? num(share.verbrauch) : num(row.verbrauch);
-        const entry = totals.get(target.caseKey);
-        entry[type] += amount;
-        entry.total += amount;
+  function consumptionCaseTotalsForCost(data = state, costId = "") {
+    const rows = meterRowsForCost(data, costId);
+    const casesByKey = new Map(individualValueCases(data).map(row => [row.caseKey, row]));
+    const grouped = new Map();
+    rows.forEach(row => {
+      const key = row.caseKey || ("unassigned:" + row.unitId + ":" + row.meterId);
+      if (!grouped.has(key)) grouped.set(key, { caseRow:casesByKey.get(key) || { caseKey:key, role:row.caseRole, unitId:row.unitId, label:row.caseLabel }, rows:[] });
+      grouped.get(key).rows.push(row);
+    });
+    return [...grouped.values()].map(group => {
+      const complete = group.rows.length > 0 && group.rows.every(row => row.status === "complete");
+      const invalid = group.rows.some(row => row.status === "error");
+      return Object.assign(group, {
+        complete, invalid,
+        total:complete ? group.rows.reduce((sum,row) => sum + num(row.consumption), 0) : null,
+        status:invalid ? "error" : (complete ? "complete" : "open")
       });
     });
-    return [...totals.values()];
   }
 
-  function waterConsumptionSummary(data = state) {
-    const rows = waterMeterRows(data);
-    const cases = waterCaseTotals(data);
-    const cost = (Array.isArray(data && data.kostenarten) ? data.kostenarten : []).find(row => row && String(row.id) === "K002") || {};
-    const actual = rows.reduce((sum,row) => sum + (row.status === "complete" ? num(row.consumption) : 0), 0);
-    const expected = num(cost.gesamtverbrauch);
+  function consumptionSummaryForCost(data = state, costId = "") {
+    const cost = (Array.isArray(data && data.kostenarten) ? data.kostenarten : []).find(row => row && String(row.id || "") === String(costId || "")) || {};
+    const rows = meterRowsForCost(data, costId);
+    const cases = consumptionCaseTotalsForCost(data, costId);
+    const actual = rows.filter(row => row.status === "complete").reduce((sum,row) => sum + num(row.consumption), 0);
+    const expectedPresent = cost.gesamtverbrauch !== "" && cost.gesamtverbrauch !== null && cost.gesamtverbrauch !== undefined && Number.isFinite(Number(String(cost.gesamtverbrauch).replace(",", ".")));
+    const expected = expectedPresent ? num(cost.gesamtverbrauch) : 0;
+    const difference = actual - expected;
+    const tolerance = 0.01;
+    const allComplete = cases.length > 0 && cases.every(row => row.status === "complete");
+    const status = rows.some(row => row.status === "error") ? "error" : (!allComplete || !expectedPresent ? "open" : (Math.abs(difference) <= tolerance ? "complete" : "error"));
+    return {
+      cost, rows, cases, actual, expected, expectedPresent, difference, tolerance, status,
+      captured:rows.filter(row => row.status === "complete").length,
+      totalMeters:rows.length, invalid:rows.filter(row => row.status === "error").length,
+      open:rows.filter(row => row.status === "open").length,
+      unit:String(rows[0] && rows[0].unit || "Einheit")
+    };
+  }
+
+  function manualCostSummary(data = state, costId = "") {
+    const cost = (Array.isArray(data && data.kostenarten) ? data.kostenarten : []).find(row => row && String(row.id || "") === String(costId || "")) || {};
+    const input = data && data.umlageInputs && data.umlageInputs[costId] || { values:[], caseValues:{} };
+    const caseValues = input.caseValues && typeof input.caseValues === "object" && !Array.isArray(input.caseValues) ? input.caseValues : {};
+    const rows = individualValueCases(data).map(caseRow => {
+      const hasCaseRecord = Object.prototype.hasOwnProperty.call(caseValues, caseRow.caseKey);
+      const raw = hasCaseRecord ? caseValues[caseRow.caseKey] : null;
+      const rawAmount = raw && typeof raw === "object" && !Array.isArray(raw) ? (raw.amount !== undefined ? raw.amount : raw.value) : raw;
+      const hasCaseValue = hasCaseRecord && rawAmount !== "" && rawAmount !== null && rawAmount !== undefined && Number.isFinite(Number(String(rawAmount).replace(",", ".")));
+      const normalized = normalizeIndividualCaseValue(raw);
+      const legacyRaw = caseRow.originalIndex >= 0 && Array.isArray(input.values) ? input.values[caseRow.originalIndex] : "";
+      const hasLegacyValue = !hasCaseValue && legacyRaw !== "" && legacyRaw !== null && legacyRaw !== undefined && Math.abs(num(legacyRaw)) > 0.000001;
+      const amount = hasCaseValue ? normalized.amount : (hasLegacyValue ? num(legacyRaw) : 0);
+      const sourceObject = raw && typeof raw === "object" ? raw : {};
+      return {
+        caseRow, caseKey:caseRow.caseKey, amount, hasValue:hasCaseValue || hasLegacyValue,
+        note:String(sourceObject.note || sourceObject.provider || ""), source:String(sourceObject.source || (hasLegacyValue ? "legacy" : "")),
+        status:(hasCaseValue || hasLegacyValue) ? "complete" : "open"
+      };
+    });
+    const actual = rows.reduce((sum,row) => sum + num(row.amount), 0);
+    const expected = num(cost.gesamtbetrag);
     const difference = actual - expected;
     const tolerance = 0.01;
     return {
-      rows, cases, actual, expected, difference, tolerance,
-      status:expected <= 0 ? "open" : (Math.abs(difference) <= tolerance ? "complete" : "error"),
-      captured:rows.filter(row => row.status === "complete").length,
-      totalMeters:rows.length,
-      invalid:rows.filter(row => row.status === "error").length,
-      open:rows.filter(row => row.status === "open").length
+      cost, input, rows, actual, expected, difference, tolerance,
+      status:rows.length && rows.every(row => row.status === "complete") && Math.abs(difference) <= tolerance ? "complete" : (rows.length && rows.every(row => row.status === "complete") ? "error" : "open")
     };
+  }
+
+  function individualValuePageModel(data = state) {
+    const consumptionCosts = individualConsumptionCosts(data).map(cost => consumptionSummaryForCost(data, cost.id));
+    const manualCosts = individualManualCosts(data).map(cost => manualCostSummary(data, cost.id));
+    return { cases:individualValueCases(data), consumptionCosts, manualCosts };
+  }
+
+  // Kompatibilitätswrapper für bestehende Qualitäts- und Historienprüfungen.
+  // Die Auswahl erfolgt ausschließlich über aktive Verbrauchskostenarten und deren zugeordnete Zählerarten.
+  function legacyWaterConsumptionCost(data = state) {
+    return individualConsumptionCosts(data).find(cost => metersForIndividualCost(data, cost.id).some(meter => ["cold-water", "hot-water"].includes(String(meter.meterType || meter.zaehlerTyp || "")))) || null;
+  }
+
+  function waterMetersForData(data = state) {
+    const cost = legacyWaterConsumptionCost(data);
+    return cost ? metersForIndividualCost(data, cost.id) : [];
+  }
+
+  function waterMeterRows(data = state) {
+    const cost = legacyWaterConsumptionCost(data);
+    return cost ? meterRowsForCost(data, cost.id) : [];
+  }
+
+  function waterCaseTotals(data = state) {
+    const cost = legacyWaterConsumptionCost(data);
+    return cost ? consumptionCaseTotalsForCost(data, cost.id).map(group => ({ caseRow:group.caseRow, cold:group.rows.filter(row => row.meterType === "cold-water" && row.status === "complete").reduce((sum,row) => sum + num(row.consumption), 0), hot:group.rows.filter(row => row.meterType === "hot-water" && row.status === "complete").reduce((sum,row) => sum + num(row.consumption), 0), total:group.total, status:group.status })) : [];
+  }
+
+  function waterConsumptionSummary(data = state) {
+    const cost = legacyWaterConsumptionCost(data);
+    return cost ? consumptionSummaryForCost(data, cost.id) : { cost:{}, rows:[], cases:[], actual:0, expected:0, expectedPresent:false, difference:0, tolerance:0.01, status:"open", captured:0, totalMeters:0, invalid:0, open:0, unit:"m³" };
   }
 
   function finalizeCostAllocationResult(k, tenants, allocations, ownerShare, basisTotal, inputSum, status, extra = {}) {
@@ -909,8 +1000,17 @@
     individualValueCases,
     normalizeIndividualCaseValue,
     individualCaseValue,
+    individualValueCostKind,
     isIndividualValueCost,
     individualValueCosts,
+    individualConsumptionCosts,
+    individualManualCosts,
+    metersForIndividualCost,
+    meterRowsForCost,
+    consumptionCaseTotalsForCost,
+    consumptionSummaryForCost,
+    manualCostSummary,
+    individualValuePageModel,
     waterMeterRows,
     waterCaseTotals,
     waterConsumptionSummary,

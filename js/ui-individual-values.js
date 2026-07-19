@@ -1,76 +1,80 @@
 "use strict";
 
-// AP22F10B: operative Arbeitsoberfläche für Wasserzähler und externe Einzelwerte.
+// AP22F10G-B: vollständig dynamische Arbeitsseite für individuelle Werte.
+// Sichtbarkeit und Art jedes Bereichs werden ausschließlich durch aktive
+// Kostenarten und deren Umlageschlüssel in „Gesamtkosten“ bestimmt.
 (function (global) {
-  const WATER_TOLERANCE = 0.01;
-  const COST_TOLERANCE = 0.01;
-  let activeFilter = "all";
-  let selectedWaterMeter = null;
-  let selectedExternal = null;
-  let selectedImportCost = null;
-  let importPreview = null;
+  const draftText = new Map();
+  const fieldErrors = new Map();
+  const filters = new Map();
+  let selectedSpecial = null;
   let returnFocus = null;
-  let returnFocusSelector = "";
   let bound = false;
-  let requestedFocus = null;
-  const pendingWater = new Map();
-  const pendingExternal = new Map();
 
   function esc(value) {
     if (typeof global.escapeHtml === "function") return global.escapeHtml(String(value == null ? "" : value));
     return String(value == null ? "" : value).replace(/[&<>"']/g, character => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[character]));
   }
-  function parseLocalizedNumber(value) {
-    if (value === null || value === undefined || String(value).trim() === "") return "";
-    if (typeof value === "number") return Number.isFinite(value) ? value : "";
+  function calc() { return global.NKProBillingCalculation; }
+  function model() { return calc().individualValuePageModel(state); }
+  function isReadOnly() { return !!(global.NKProBillingContext && global.NKProBillingContext.isReadOnly()); }
+  function markDirty() { if (global.NKProBillingContext) global.NKProBillingContext.markDirty(true); }
+  function num(value) { return typeof global.num === "function" ? global.num(value) : Number(value || 0); }
+  function formatNumber(value, digits = 2) {
+    if (value === null || value === undefined || value === "" || !Number.isFinite(Number(value))) return "–";
+    return Number(value).toLocaleString("de-DE", { minimumFractionDigits:digits, maximumFractionDigits:digits });
+  }
+  function formatMoney(value) { return Number(value || 0).toLocaleString("de-DE", { style:"currency", currency:"EUR" }); }
+  function formatDate(value) {
+    const source = String(value || "");
+    return /^\d{4}-\d{2}-\d{2}$/.test(source) ? source.slice(8,10) + "." + source.slice(5,7) + "." + source.slice(0,4) : (source || "–");
+  }
+  function displayInput(value) {
+    if (value === "" || value === null || value === undefined) return "";
+    const number = Number(value);
+    return Number.isFinite(number) ? number.toLocaleString("de-DE", { useGrouping:false, maximumFractionDigits:6 }) : String(value);
+  }
+  function parseLocaleNumber(value) {
+    if (value === null || value === undefined || String(value).trim() === "") return { ok:true, empty:true, value:"" };
     let source = String(value).trim().replace(/\s+/g, "");
     const comma = source.lastIndexOf(",");
     const dot = source.lastIndexOf(".");
     if (comma >= 0 && dot >= 0) {
-      if (comma > dot) source = source.replace(/\./g, "").replace(",", ".");
-      else source = source.replace(/,/g, "");
+      source = comma > dot ? source.replace(/\./g, "").replace(",", ".") : source.replace(/,/g, "");
     } else if (comma >= 0) {
       const parts = source.split(",");
-      source = parts.length > 2 ? parts.slice(0, -1).join("") + "." + parts.at(-1) : source.replace(",", ".");
+      source = parts.length > 2 ? parts.slice(0,-1).join("") + "." + parts.at(-1) : source.replace(",", ".");
     } else if (dot >= 0) {
       const parts = source.split(".");
-      if (parts.length > 2) source = parts.slice(0, -1).join("") + "." + parts.at(-1);
+      if (parts.length > 2) source = parts.slice(0,-1).join("") + "." + parts.at(-1);
     }
     const parsed = Number(source);
-    return Number.isFinite(parsed) ? parsed : "";
+    return Number.isFinite(parsed) ? { ok:true, empty:false, value:parsed } : { ok:false, empty:false, value:null };
   }
-  function number(value) {
-    const parsed = parseLocalizedNumber(value);
-    return parsed === "" ? 0 : parsed;
+  function fieldKey(kind, costId, rowId, field) { return [kind, costId, rowId, field].join("|"); }
+  function draftValue(key, fallback) { return draftText.has(key) ? draftText.get(key) : displayInput(fallback); }
+  function statusText(status) {
+    if (status === "complete") return "Stimmt überein";
+    if (status === "error") return "Abweichung";
+    return "Unvollständig";
   }
-  function formatNumber(value, digits = 2) { return Number(value || 0).toLocaleString("de-DE", { minimumFractionDigits:digits, maximumFractionDigits:digits }); }
-  function formatMeter(value) { return value === "" || value === null || value === undefined ? "–" : Number(value).toLocaleString("de-DE", { minimumFractionDigits:2, maximumFractionDigits:3 }); }
-  function formatMoney(value) { return Number(value || 0).toLocaleString("de-DE", { style:"currency", currency:"EUR" }); }
-  function formatDate(value) {
-    const source = String(value || "");
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(source)) return source || "–";
-    return source.slice(8,10) + "." + source.slice(5,7) + "." + source.slice(0,4);
+  function rowStatusText(status) { return status === "complete" ? "Vollständig" : (status === "error" ? "Prüfen" : "Offen"); }
+  function statusPill(status, text) {
+    return '<span class="individual-values-row-status is-' + esc(status) + '"><span aria-hidden="true">' + (status === "complete" ? "✓" : (status === "error" ? "!" : "○")) + '</span>' + esc(text || rowStatusText(status)) + '</span>';
   }
-  function todayIso() { return new Date().toISOString().slice(0,10); }
-  function isReadOnly() { return !!(global.NKProBillingContext && global.NKProBillingContext.isReadOnly()); }
-  function calculation() { return global.NKProBillingCalculation; }
-  function cases() { return calculation().individualValueCases(state); }
-  function costs() { return calculation().individualValueCosts(state); }
-  function inputFor(costId) { return state.umlageInputs && state.umlageInputs[costId] || { values:[], caseValues:{} }; }
-  function costFor(costId) { return (state.kostenarten || []).find(row => row && row.id === costId) || null; }
-  function caseEntry(costId, caseKey) {
-    const input = inputFor(costId);
-    const raw = input.caseValues && input.caseValues[caseKey];
-    if (raw && typeof raw === "object") return raw;
-    const row = cases().find(item => item.caseKey === caseKey);
-    return { amount:row && row.originalIndex >= 0 ? number(input.values && input.values[row.originalIndex]) : number(raw), consumption:0, provider:"", recordedAt:"", source:raw === undefined ? "" : "legacy" };
+  function roleLabel(role) { return role === "private" ? "Eigentümer/Privat" : (role === "vacancy" ? "Leerstand" : "Mieter"); }
+  function roleBadge(role) { return '<span class="individual-values-case-badge is-' + esc(role) + '">' + esc(roleLabel(role)) + '</span>'; }
+  function caseCell(caseRow, rowspan) {
+    const unit = caseRow.unitLabel || caseRow.unitId || "Ohne Wohnung";
+    const name = caseRow.label || caseRow.tenantName || roleLabel(caseRow.role);
+    return '<td class="individual-values-case-cell" rowspan="' + rowspan + '"><strong>' + esc(unit) + '</strong><span>' + esc(name) + '</span>' + roleBadge(caseRow.role) + '<small>' + esc(formatDate(caseRow.start) + " – " + formatDate(caseRow.end)) + '</small></td>';
   }
-  function statusText(key) { return key === "complete" ? "Vollständig" : (key === "error" ? "Fehlerhaft" : "Offen"); }
-  function statusIcon(key) { return key === "complete" ? "✓" : (key === "error" ? "!" : "○"); }
-  function statusHtml(key, label) { return '<span class="individual-values-row-status is-' + key + '"><span aria-hidden="true">' + statusIcon(key) + '</span>' + esc(label || statusText(key)) + '</span>'; }
-  function caseRoleLabel(role) { return role === "private" ? "Privatanteil" : (role === "vacancy" ? "Leerstand" : "Mietverhältnis"); }
-  function caseBadge(role) { return '<span class="individual-values-case-badge is-' + esc(role) + '">' + esc(caseRoleLabel(role)) + '</span>'; }
-  function execute(domain, action, args) { return global.NKProApplicationActions.execute(domain, action, args || []); }
+  function iconSvg(kind) {
+    if (kind === "consumption") return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5s6.5 6.8 6.5 11.2a6.5 6.5 0 1 1-13 0C5.5 9.3 12 2.5 12 2.5Z"></path><path d="M9 15a3.4 3.4 0 0 0 3 2"></path></svg>';
+    if (kind === "manual") return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13.2 2.5c.6 3.1-.7 4.7-2.1 6.2-1.5 1.6-3 3.2-3 6a4.1 4.1 0 0 0 8.2 0c0-1.5-.6-2.8-1.5-4 2.6 1.3 4.2 3.8 4.2 6.5A7 7 0 0 1 5 17.2c0-3.9 2.3-6.2 4.4-8.4 1.8-1.9 3.5-3.6 3.8-6.3Z"></path><path d="M12.1 12.2c1.4 1.2 2.2 2.5 2.2 4a2.3 2.3 0 1 1-4.6 0c0-1.4.9-2.7 2.4-4Z"></path></svg>';
+    if (kind === "check") return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"></path><circle cx="12" cy="12" r="9"></circle></svg>';
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4z"></path><path d="M8 9h8M8 13h5"></path></svg>';
+  }
 
   function synchronizeForView() {
     if (typeof global.ensureWaterMeterData === "function") global.ensureWaterMeterData();
@@ -79,578 +83,378 @@
     if (typeof global.applyWaterMetersToUmlage === "function") global.applyWaterMetersToUmlage();
   }
 
-  function waterStatus(summary) {
-    if (summary.invalid > 0 || summary.status === "error") return "error";
-    if (summary.totalMeters > 0 && summary.captured === summary.totalMeters && summary.status === "complete") return "complete";
-    return "open";
+  function filterControl(costId) {
+    const selected = filters.get(costId) || "all";
+    return '<label class="individual-values-filter"><span>Status</span><select data-individual-filter="' + esc(costId) + '"><option value="all"' + (selected === "all" ? " selected" : "") + '>Alle</option><option value="open"' + (selected === "open" ? " selected" : "") + '>Offen</option><option value="complete"' + (selected === "complete" ? " selected" : "") + '>Vollständig</option><option value="error"' + (selected === "error" ? " selected" : "") + '>Prüfen</option></select></label>';
   }
 
-  function priorLabel(row) {
-    if (row.priorStatus === "replacement") return "Wechsel bestätigt";
-    if (row.priorStatus === "transferred") return "Bestätigt übernommen";
-    if (row.priorStatus === "missing") return "Fehlt";
-    return "Vorhanden";
-  }
-
-  function waterRowHtml(row, caseRow, firstInGroup) {
-    const readOnly = isReadOnly();
-    const caseCell = firstInGroup
-      ? '<td class="individual-values-case-cell" rowspan="' + String(caseRow.rowSpan) + '"><strong>' + esc(caseRow.unitId || "Ohne Wohnung") + '</strong><span>' + esc(caseRow.label) + '</span>' + caseBadge(caseRow.role) + '<small>' + esc(formatDate(caseRow.start) + " – " + formatDate(caseRow.end)) + '</small></td>'
-      : "";
-    const typeClass = row.meterType === "hot-water" ? "hot" : "cold";
-    const endValue = row.endValue === "" || row.endValue === null || row.endValue === undefined ? "" : String(row.endValue).replace(".",",");
-    const endField = readOnly
-      ? '<strong>' + formatMeter(row.endValue) + '</strong>'
-      : '<input class="individual-values-inline-input number" inputmode="decimal" data-individual-water-end="' + esc(row.meterId) + '" value="' + esc(endValue) + '" aria-label="Endstand ' + esc(row.meterNumber) + '">';
-    const special = readOnly ? '<span class="individual-values-no-action">–</span>' : '<button type="button" class="individual-values-icon-button" data-individual-water-edit="' + esc(row.meterId) + '" aria-label="Sonderfall für ' + esc(row.meterNumber) + ' bearbeiten" title="Sonderfall / Anfangsstand bearbeiten"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 20 4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Z"></path><path d="m14 7 3 3"></path></svg></button>';
-    return '<tr data-individual-water-row="' + esc(row.meterId) + '" data-individual-case-key="' + esc(row.caseKey || ("unassigned:" + row.unitId)) + '" data-live-consumption="' + esc(row.consumption) + '" data-individual-status="' + esc(row.status) + '">' + caseCell +
-      '<td><span class="individual-values-meter-type is-' + typeClass + '"><span aria-hidden="true"></span>' + esc(row.typeLabel) + '</span></td>' +
-      '<td><span class="individual-values-meter-number">' + esc(row.meterNumber) + '</span></td>' +
-      '<td class="number-cell individual-values-readonly-value">' + formatMeter(row.startValue) + '</td><td class="number-cell individual-values-editable-cell">' + endField + '</td><td class="number-cell"><strong data-individual-water-consumption="' + esc(row.meterId) + '">' + formatMeter(row.consumption) + '</strong></td>' +
-      '<td><span class="individual-values-prior is-' + esc(row.priorStatus) + '">' + esc(priorLabel(row)) + '</span></td>' +
-      '<td>' + statusHtml(row.status, row.status === "error" ? "Zählerstand prüfen" : statusText(row.status)) + '</td><td class="individual-values-actions-cell">' + special + '</td></tr>';
-  }
-
-  function renderWater(summary, available = true) {
-    const section = document.getElementById("individualWaterSection");
-    const tableBody = document.querySelector("#individualWaterTable tbody");
-    const comparison = document.getElementById("individualWaterComparison");
-    if (!section || !tableBody || !comparison) return;
-    section.dataset.individualAvailable = available ? "true" : "false";
-    const caseMap = new Map(summary.cases.map(entry => [entry.caseRow.caseKey, entry]));
-    const grouped = new Map();
+  function consumptionGroups(summary) {
+    const groupMap = new Map(summary.cases.map(group => [group.caseRow.caseKey, group]));
+    const loose = new Map();
     summary.rows.forEach(row => {
-      const key = row.caseKey || ("unassigned:" + row.unitId);
-      if (!grouped.has(key)) {
-        const total = caseMap.get(key);
-        grouped.set(key, { caseRow:total ? total.caseRow : { caseKey:key, unitId:row.unitId, label:row.caseLabel, role:row.caseRole || "tenant", start:row.startDate, end:row.endDate }, total:total || { cold:0, hot:0, total:row.consumption }, rows:[] });
-      }
-      grouped.get(key).rows.push(row);
+      const key = row.caseKey || ("unassigned:" + row.unitId + ":" + row.meterId);
+      if (!loose.has(key)) loose.set(key, { caseRow:{ caseKey:key, role:row.caseRole, unitId:row.unitId, unitLabel:row.unitId, label:row.caseLabel, start:row.startDate, end:row.endDate }, rows:[], complete:false, invalid:false, total:null, status:row.status });
+      loose.get(key).rows.push(row);
     });
+    loose.forEach((value,key) => { if (!groupMap.has(key)) groupMap.set(key,value); });
+    return [...groupMap.values()];
+  }
+
+  function meterInput(summary, row, field) {
+    const key = fieldKey("meter", summary.cost.id, row.meterId, field);
+    const error = fieldErrors.get(key);
+    const value = draftValue(key, field === "start" ? row.startValue : row.endValue);
+    return '<div class="individual-values-input-wrap' + (error ? ' is-error' : '') + '"><input class="individual-values-number-input" inputmode="decimal" autocomplete="off" value="' + esc(value) + '" data-individual-meter-input data-cost-id="' + esc(summary.cost.id) + '" data-meter-id="' + esc(row.meterId) + '" data-field="' + field + '" aria-label="' + esc((field === "start" ? "Anfangsstand" : "Endstand") + " " + row.meterNumber) + '"' + (isReadOnly() ? " disabled" : "") + '>' + (error ? '<small class="individual-values-field-error">' + esc(error) + '</small>' : '') + '</div>';
+  }
+
+  function consumptionSection(summary) {
+    const selected = filters.get(summary.cost.id) || "all";
+    const groups = consumptionGroups(summary).filter(group => selected === "all" || group.status === selected);
     let body = "";
-    [...grouped.values()].forEach(group => {
-      group.caseRow.rowSpan = Math.max(1, group.rows.length);
-      group.rows.forEach((row,index) => { body += waterRowHtml(row, group.caseRow, index === 0); });
-      body += '<tr class="individual-values-subtotal" data-individual-water-subtotal="' + esc(group.caseRow.caseKey) + '"><th colspan="5" scope="row">Summe ' + esc(group.caseRow.unitId + " · " + group.caseRow.label) + '</th><td class="number-cell"><strong data-individual-water-subtotal-value>' + formatMeter(group.total.total) + '</strong></td><td colspan="3">Wohnungsbezogener Gesamtverbrauch</td></tr>';
+    groups.forEach(group => {
+      const rows = group.rows || [];
+      rows.forEach((row,index) => {
+        const total = group.complete ? formatNumber(group.total,2) : "–";
+        const totalDetail = group.complete ? row.unit : "Unvollständig";
+        body += '<tr data-individual-row-status="' + esc(row.status) + '" data-meter-row="' + esc(row.meterId) + '">' +
+          (index === 0 ? caseCell(group.caseRow, Math.max(1,rows.length)) : "") +
+          '<td><span class="individual-values-meter-type">' + esc(row.typeLabel) + '</span></td>' +
+          '<td><strong class="individual-values-meter-number">' + esc(row.meterNumber || row.meterId) + '</strong><small>' + esc(row.meterId) + '</small></td>' +
+          '<td>' + meterInput(summary,row,"start") + '</td><td>' + meterInput(summary,row,"end") + '</td>' +
+          '<td class="number-cell" data-meter-consumption="' + esc(row.meterId) + '"><strong>' + (row.status === "complete" ? formatNumber(row.consumption,2) : "–") + '</strong><small>' + esc(row.unit) + '</small></td>' +
+          (index === 0 ? '<td class="number-cell individual-values-total-cell" rowspan="' + Math.max(1,rows.length) + '" data-case-total="' + esc(group.caseRow.caseKey) + '"><strong>' + total + '</strong><small>' + esc(totalDetail) + '</small></td>' : "") +
+          '<td>' + statusPill(row.status, row.status === "error" ? "Zählerstand prüfen" : rowStatusText(row.status)) + '</td>' +
+          '<td class="individual-values-actions-cell"><button type="button" class="individual-values-icon-button" data-individual-special data-kind="meter" data-cost-id="' + esc(summary.cost.id) + '" data-row-id="' + esc(row.meterId) + '" aria-label="Sonderfall für Zähler bearbeiten" title="Sonderfall bearbeiten"' + (isReadOnly() ? " disabled" : "") + '><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5M12 17h.01"></path><path d="M10.3 3.7 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.7a2 2 0 0 0-3.4 0Z"></path></svg></button></td></tr>';
+      });
     });
-    if (!body) body = '<tr><td colspan="9"><div class="individual-values-table-empty"><strong>Keine abrechnungsrelevanten Wasserzähler vorhanden</strong><span>Zählerstammdaten werden unter „Objekt vorbereiten → Zähler“ gepflegt.</span></div></td></tr>';
-    tableBody.innerHTML = body;
-
-    const sectionStatus = waterStatus(summary);
-    section.dataset.individualStatus = sectionStatus;
-    const status = section.querySelector("[data-individual-water-status]");
-    if (status) { status.className = "individual-values-status is-" + sectionStatus; status.textContent = statusText(sectionStatus); }
-    const count = section.querySelector("[data-individual-water-count]");
-    if (count) count.textContent = summary.totalMeters + " Zähler · " + grouped.size + " Abrechnungsfälle";
-    const start = calculation().periodForData(state).start;
-    const end = calculation().periodForData(state).end;
-    document.querySelectorAll("[data-individual-period-start]").forEach(node => node.textContent = formatDate(start));
-    document.querySelectorAll("[data-individual-period-end]").forEach(node => node.textContent = formatDate(end));
-    const priorButton = section.querySelector("[data-individual-prior-open]");
-    if (priorButton) priorButton.hidden = isReadOnly() || summary.totalMeters === 0;
-    let actionBar = section.querySelector("[data-individual-water-batch-actions]");
-    if (!actionBar) {
-      actionBar = document.createElement("div");
-      actionBar.className = "individual-values-batch-actions";
-      actionBar.dataset.individualWaterBatchActions = "";
-      comparison.before(actionBar);
-    }
-    actionBar.hidden = isReadOnly();
-    actionBar.innerHTML = '<button type="button" class="primary" data-individual-water-batch-save>Änderungen speichern</button><button type="button" class="secondary" data-individual-water-batch-discard>Verwerfen</button><button type="button" class="secondary" data-individual-prior-open>Fehlende Vorwerte übernehmen</button><span class="individual-values-batch-state" data-individual-water-batch-state>Keine ungespeicherten Änderungen</span>';
-
-    comparison.className = "individual-values-comparison is-" + summary.status;
-    comparison.innerHTML = comparisonMetrics([
-      ["Individuell erfasst", formatNumber(summary.actual,2) + " m³"],
-      ["Gesamtverbrauch · Gesamtkosten", summary.expected > 0 ? formatNumber(summary.expected,2) + " m³" : "Nicht erfasst"],
-      ["Differenz", (summary.difference >= 0 ? "" : "−") + formatNumber(Math.abs(summary.difference),2) + " m³", summary.status],
-      ["Abgleichsstatus", summary.expected <= 0 ? "Gesamtverbrauch fehlt" : statusText(summary.status), summary.status]
-    ]);
+    if (!body) body = '<tr><td colspan="9"><div class="individual-values-table-empty"><strong>Keine passenden Zählerzeilen</strong><span>Prüfe Filter, Zählerzuordnung und Kostenartsteuerung.</span></div></td></tr>';
+    const countText = summary.totalMeters + " Zähler · " + summary.cases.length + " Abrechnungsfälle";
+    return '<section class="individual-values-card" data-individual-section="consumption" data-cost-id="' + esc(summary.cost.id) + '"><header class="individual-values-card__header"><div class="individual-values-card__title"><span class="individual-values-section-icon is-consumption" aria-hidden="true">' + iconSvg("consumption") + '</span><div><p class="individual-values-card__eyebrow">Verbrauchskostenart</p><h2>' + esc(summary.cost.kostenart) + '</h2><p>Umlageschlüssel: ' + esc(summary.cost.umlageschluessel) + '</p></div></div><div class="individual-values-card__tools">' + filterControl(summary.cost.id) + '<span class="individual-values-status is-' + esc(summary.status) + '">' + esc(statusText(summary.status)) + '</span></div></header>' +
+      '<div class="individual-values-table-wrap" tabindex="0" aria-label="Verbrauchstabelle horizontal verschiebbar"><table class="individual-values-table individual-values-consumption-table"><thead><tr><th>Wohnung / Abrechnungsfall</th><th>Zählerart</th><th>Zählernummer</th><th>Anfangsstand</th><th>Endstand</th><th>Verbrauch</th><th>Gesamtverbrauch Wohnung</th><th>Status</th><th>Sonderfallaktion</th></tr></thead><tbody>' + body + '</tbody></table></div>' +
+      '<div class="individual-values-control is-' + esc(summary.status) + '"><div><span>Gesamtverbrauch laut „Gesamtkosten“</span><strong>' + (summary.expectedPresent ? formatNumber(summary.expected,2) + " " + esc(summary.unit) : "Nicht erfasst") + '</strong></div><div><span>Summe vollständiger Einzelverbräuche</span><strong>' + formatNumber(summary.actual,2) + " " + esc(summary.unit) + '</strong></div><div><span>Differenz</span><strong>' + formatNumber(summary.difference,2) + " " + esc(summary.unit) + '</strong></div><div><span>Status</span><strong>' + esc(statusText(summary.status)) + '</strong></div></div>' +
+      '<footer class="individual-values-card__footer"><span>' + esc(countText) + '</span><button type="button" class="primary" data-individual-save-section="consumption" data-cost-id="' + esc(summary.cost.id) + '"' + (isReadOnly() ? " disabled" : "") + '>Bereich speichern</button></footer></section>';
   }
 
-  function comparisonMetrics(rows) {
-    return rows.map(item => '<div class="individual-values-comparison__metric' + (item[2] ? ' is-' + item[2] : '') + '"><span>' + esc(item[0]) + '</span><strong>' + esc(item[1]) + '</strong></div>').join("");
+  function manualRecord(costId, caseKey) {
+    const input = state.umlageInputs && state.umlageInputs[costId];
+    const raw = input && input.caseValues && input.caseValues[caseKey];
+    return raw && typeof raw === "object" && !Array.isArray(raw) ? raw : {};
+  }
+  function manualInput(summary, row, field) {
+    const key = fieldKey("manual", summary.cost.id, row.caseKey, field);
+    const error = fieldErrors.get(key);
+    const fallback = field === "amount" ? (row.hasValue ? row.amount : "") : (manualRecord(summary.cost.id,row.caseKey).note || row.note || "");
+    const value = draftValue(key, fallback);
+    if (field === "amount") return '<div class="individual-values-input-wrap' + (error ? ' is-error' : '') + '"><input class="individual-values-number-input" inputmode="decimal" autocomplete="off" value="' + esc(value) + '" data-individual-manual-input data-cost-id="' + esc(summary.cost.id) + '" data-case-key="' + esc(row.caseKey) + '" data-field="amount" aria-label="Einzelbetrag ' + esc(row.caseRow.unitLabel || row.caseRow.unitId) + '"' + (isReadOnly() ? " disabled" : "") + '>' + (error ? '<small class="individual-values-field-error">' + esc(error) + '</small>' : '') + '</div>';
+    return '<input class="individual-values-note-input" value="' + esc(value) + '" data-individual-manual-input data-cost-id="' + esc(summary.cost.id) + '" data-case-key="' + esc(row.caseKey) + '" data-field="note" aria-label="Quelle oder Bemerkung ' + esc(row.caseRow.unitLabel || row.caseRow.unitId) + '"' + (isReadOnly() ? " disabled" : "") + '>';
   }
 
-  function externalAssessment(cost) {
-    const input = inputFor(cost.id);
-    const rows = cases().map(caseRow => {
-      const entry = caseEntry(cost.id, caseRow.caseKey);
-      const amount = calculation().individualCaseValue(input, caseRow, "amount");
-      const consumption = entry && entry.consumption !== undefined ? number(entry.consumption) : 0;
-      return { caseRow, entry, amount, consumption, status:Math.abs(amount) > 0.000001 ? "complete" : "open" };
-    });
-    const actual = rows.reduce((sum,row) => sum + number(row.amount), 0);
-    const expected = number(cost.gesamtbetrag);
-    const difference = actual - expected;
-    const invalid = rows.some(row => !Number.isFinite(row.amount));
-    const status = invalid || (expected > 0 && Math.abs(difference) > COST_TOLERANCE) ? "error" : (expected > 0 && rows.every(row => row.status === "complete") && Math.abs(difference) <= COST_TOLERANCE ? "complete" : "open");
-    return { cost, input, rows, actual, expected, difference, status, tolerance:COST_TOLERANCE };
+  function manualSection(summary) {
+    const selected = filters.get(summary.cost.id) || "all";
+    const visibleRows = summary.rows.filter(row => selected === "all" || row.status === selected);
+    const body = visibleRows.map(row => {
+      const c = row.caseRow;
+      return '<tr data-individual-row-status="' + esc(row.status) + '" data-manual-row="' + esc(row.caseKey) + '"><td class="individual-values-case-cell"><strong>' + esc(c.unitLabel || c.unitId) + '</strong><span>' + esc(c.label) + '</span>' + roleBadge(c.role) + '<small>' + esc(formatDate(c.start) + " – " + formatDate(c.end)) + '</small></td><td><strong>' + esc(roleLabel(c.role)) + '</strong><small>' + esc(c.tenantName || c.label) + '</small></td><td>' + manualInput(summary,row,"amount") + '</td><td>' + manualInput(summary,row,"note") + '</td><td>' + statusPill(row.status) + '</td><td class="individual-values-actions-cell"><button type="button" class="individual-values-icon-button" data-individual-special data-kind="manual" data-cost-id="' + esc(summary.cost.id) + '" data-row-id="' + esc(row.caseKey) + '" aria-label="Sonderfall für Abrechnungsfall bearbeiten" title="Sonderfall bearbeiten"' + (isReadOnly() ? " disabled" : "") + '><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5M12 17h.01"></path><path d="M10.3 3.7 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.7a2 2 0 0 0-3.4 0Z"></path></svg></button></td></tr>';
+    }).join("") || '<tr><td colspan="6"><div class="individual-values-table-empty"><strong>Keine passenden Abrechnungsfälle</strong><span>Prüfe den Statusfilter.</span></div></td></tr>';
+    return '<section class="individual-values-card" data-individual-section="manual" data-cost-id="' + esc(summary.cost.id) + '"><header class="individual-values-card__header"><div class="individual-values-card__title"><span class="individual-values-section-icon is-manual" aria-hidden="true">' + iconSvg("manual") + '</span><div><p class="individual-values-card__eyebrow">Manuell zuzuordnende Kostenart</p><h2>' + esc(summary.cost.kostenart) + '</h2><p>Umlageschlüssel: ' + esc(summary.cost.umlageschluessel) + '</p></div></div><div class="individual-values-card__tools">' + filterControl(summary.cost.id) + '<span class="individual-values-status is-' + esc(summary.status) + '">' + esc(statusText(summary.status)) + '</span></div></header>' +
+      '<div class="individual-values-table-wrap" tabindex="0" aria-label="Tabelle manueller Einzelwerte horizontal verschiebbar"><table class="individual-values-table individual-values-manual-table"><thead><tr><th>Wohnung / Abrechnungsfall</th><th>Rolle / Empfänger</th><th>Einzelbetrag / individueller Wert</th><th>Quelle / Bemerkung</th><th>Status</th><th>Sonderfallaktion</th></tr></thead><tbody>' + body + '</tbody></table></div>' +
+      '<div class="individual-values-control is-' + esc(summary.status) + '"><div><span>Gesamtkosten laut „Gesamtkosten“</span><strong>' + formatMoney(summary.expected) + '</strong></div><div><span>Summe der erfassten Einzelwerte</span><strong>' + formatMoney(summary.actual) + '</strong></div><div><span>Differenz</span><strong>' + formatMoney(summary.difference) + '</strong></div><div><span>Status</span><strong>' + esc(statusText(summary.status)) + '</strong></div></div>' +
+      '<footer class="individual-values-card__footer"><span>' + summary.rows.length + ' reguläre Abrechnungsfälle</span><button type="button" class="primary" data-individual-save-section="manual" data-cost-id="' + esc(summary.cost.id) + '"' + (isReadOnly() ? " disabled" : "") + '>Bereich speichern</button></footer></section>';
   }
 
-  function externalSectionHtml(assessments) {
-    const readOnly = isReadOnly();
-    if (!assessments.length) return "";
-    const costA = assessments[0];
-    const costB = assessments[1] || null;
-    const byCase = new Map();
-    assessments.forEach(a => a.rows.forEach(row => {
-      if (!byCase.has(row.caseRow.caseKey)) byCase.set(row.caseRow.caseKey, { caseRow:row.caseRow, values:{} });
-      byCase.get(row.caseRow.caseKey).values[a.cost.id] = row;
-    }));
-    const rows = [...byCase.values()].map(group => {
-      const c = group.caseRow;
-      const cells = [costA, costB].filter(Boolean).map(a => {
-        const row = group.values[a.cost.id] || { amount:0, status:"open" };
-        const value = Math.abs(number(row.amount)) > 0.000001 ? String(number(row.amount)).replace(".",",") : "";
-        return '<td class="number-cell individual-values-editable-cell">' + (readOnly ? '<strong>' + formatMoney(row.amount) + '</strong>' : '<input class="individual-values-inline-input money" inputmode="decimal" data-individual-external-inline="' + esc(a.cost.id) + '" data-individual-case-key="' + esc(c.caseKey) + '" value="' + esc(value) + '" aria-label="' + esc(a.cost.kostenart + ' für ' + c.unitId) + '">') + '</td>';
-      }).join("");
-      const sum = [costA,costB].filter(Boolean).reduce((total,a)=>total+number((group.values[a.cost.id]||{}).amount),0);
-      const complete = [costA,costB].filter(Boolean).every(a=>Math.abs(number((group.values[a.cost.id]||{}).amount))>0.000001);
-      const special = readOnly ? '<span class="individual-values-no-action">–</span>' : '<button type="button" class="individual-values-icon-button" data-individual-external-edit="' + esc(costA.cost.id) + '" data-individual-case-key="' + esc(c.caseKey) + '" title="Details / Sonderfall bearbeiten" aria-label="Details für ' + esc(c.unitId) + ' bearbeiten"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m4 20 4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10L4 20Z"></path><path d="m14 7 3 3"></path></svg></button>';
-      return '<tr data-individual-external-row="' + esc(c.caseKey) + '" data-individual-status="' + (complete?'complete':'open') + '"><td class="individual-values-case-cell"><strong>' + esc(c.unitId) + '</strong><span>' + esc(c.label) + '</span>' + caseBadge(c.role) + '<small>' + esc(formatDate(c.start) + " – " + formatDate(c.end)) + '</small></td><td>' + esc(c.tenantName || c.label || "–") + '</td>' + cells + '<td class="number-cell"><strong data-individual-external-sum="' + esc(c.caseKey) + '">' + formatMoney(sum) + '</strong></td><td>' + statusHtml(complete?'complete':'open', complete?'Vollständig':'Betrag fehlt') + '</td><td class="individual-values-actions-cell">' + special + '</td></tr>';
-    }).join("");
-    const actualA = costA.actual, actualB = costB ? costB.actual : 0;
-    const expected = assessments.reduce((sum,a)=>sum+a.expected,0);
-    const actual = actualA + actualB;
-    const status = assessments.some(a=>a.status==='error')?'error':(assessments.every(a=>a.status==='complete')?'complete':'open');
-    const secondHead = costB ? '<th scope="col">' + esc(costB.cost.kostenart) + '</th>' : '';
-    const secondTotal = costB ? '<td class="number-cell"><strong>' + formatMoney(actualB) + '</strong></td>' : '';
-    return '<section class="individual-values-card individual-values-external-card" data-individual-section="external" data-individual-status="' + status + '"><header class="individual-values-card__header"><div class="individual-values-card__title"><span class="individual-values-section-icon individual-values-section-icon--heat" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13.2 2.5c.6 3.1-.7 4.7-2.1 6.2-1.5 1.6-3 3.2-3 6a4.1 4.1 0 0 0 8.2 0c0-1.5-.6-2.8-1.5-4 2.6 1.3 4.2 3.8 4.2 6.5A7 7 0 0 1 5 17.2c0-3.9 2.3-6.2 4.4-8.4 1.8-1.9 3.5-3.6 3.8-6.3Z"></path></svg></span><h2>Heiz- und Warmwasserzubereitungskosten erfassen</h2><span class="individual-values-status is-' + status + '">' + statusText(status) + '</span></div><span class="individual-values-count">' + byCase.size + ' Abrechnungsfälle</span></header><p class="individual-values-card__intro">Heiz- und Warmwasserzubereitungskosten werden direkt je Wohnung, Leerstand und Privatanteil erfasst. Der Stift bleibt Sonderfällen vorbehalten.</p><div class="individual-values-table-wrap"><table class="individual-values-table individual-values-external-table"><thead><tr><th scope="col">Wohnung / Bereich</th><th scope="col">Empfänger</th><th scope="col">' + esc(costA.cost.kostenart) + '</th>' + secondHead + '<th scope="col">Summe</th><th scope="col">Status</th><th scope="col">Aktionen</th></tr></thead><tbody>' + rows + '<tr class="individual-values-subtotal"><th colspan="2" scope="row">Summe</th><td class="number-cell"><strong>' + formatMoney(actualA) + '</strong></td>' + secondTotal + '<td class="number-cell"><strong>' + formatMoney(actual) + '</strong></td><td colspan="2"></td></tr></tbody></table></div>' + (readOnly?'':'<div class="individual-values-batch-actions"><button type="button" class="primary" data-individual-external-batch-save>Änderungen speichern</button><button type="button" class="secondary" data-individual-external-batch-discard>Verwerfen</button><span class="individual-values-batch-state" data-individual-external-batch-state>Keine ungespeicherten Änderungen</span></div>') + '<div class="individual-values-comparison is-' + status + '">' + comparisonMetrics([[costA.cost.kostenart,formatMoney(actualA)],[costB?costB.cost.kostenart:"Weitere Kosten",costB?formatMoney(actualB):"–"],["Zugeordnet gesamt",formatMoney(actual)],["Vorgabe aus Gesamtkosten",formatMoney(expected)],["Differenz",(actual-expected>=0?"":"−")+formatMoney(Math.abs(actual-expected)),status]]) + '</div></section>';
-  }
-
-  function updateKpis(water, externalAssessments) {
-    const externalActual = externalAssessments.reduce((sum,row) => sum + row.actual, 0);
-    const externalExpected = externalAssessments.reduce((sum,row) => sum + row.expected, 0);
-    const externalDifference = externalActual - externalExpected;
-    const values = {
-      "water-total":formatNumber(water.actual,2) + " m³",
-      "water-meters":water.captured + " von " + water.totalMeters,
-      "external-total":formatMoney(externalActual),
-      "cost-match":formatMoney(externalActual) + " / " + formatMoney(externalExpected)
-    };
-    const details = {
-      "water-total":water.expected > 0 ? "Differenz " + (water.difference >= 0 ? "" : "−") + formatNumber(Math.abs(water.difference),2) + " m³" : "Gesamtverbrauch in Gesamtkosten fehlt",
-      "water-meters":water.invalid ? water.invalid + " Zähler fehlerhaft" : (water.open ? water.open + " Zähler offen" : "Kalt- und Warmwasser vollständig"),
-      "external-total":"Individuell zugeordnet, inkl. Leerstand und Privatanteil",
-      "cost-match":externalExpected > 0 ? "Verbleibende Differenz: " + (externalDifference >= 0 ? "" : "−") + formatMoney(Math.abs(externalDifference)) : "Gesamtkosten fehlen"
-    };
-    Object.entries(values).forEach(([key,value]) => { const node=document.querySelector('[data-individual-kpi-value="'+key+'"]'); if(node) node.textContent=value; });
-    Object.entries(details).forEach(([key,value]) => { const node=document.querySelector('[data-individual-kpi-detail="'+key+'"]'); if(node) node.textContent=value; });
-    const statuses = {
-      "water-total":water.status,
-      "water-meters":water.invalid ? "error" : (water.totalMeters && water.captured === water.totalMeters ? "complete" : "open"),
-      "external-total":externalAssessments.length && externalAssessments.every(row=>row.rows.every(item=>item.status==="complete")) ? "complete" : "open",
-      "cost-match":externalAssessments.length && externalAssessments.every(row=>row.status==="complete") ? "complete" : (externalAssessments.some(row=>row.status==="error") ? "error" : "open")
-    };
-    Object.entries(statuses).forEach(([key,value]) => { const card=document.querySelector('[data-individual-kpi="'+key+'"]'); if(card) card.dataset.status=value; });
-  }
-
-  function checkCard(key, title, detail) {
-    return '<article class="individual-values-check is-' + key + '"><span aria-hidden="true">' + statusIcon(key) + '</span><div><strong>' + esc(title) + '</strong><small>' + esc(detail) + '</small></div></article>';
-  }
-
-  function renderChecks(water, externalAssessments) {
-    const root = document.querySelector("[data-individual-check-list]");
+  function renderKpis(pageModel) {
+    const root = document.getElementById("individualKpis");
     if (!root) return;
-    const meterKey = water.invalid ? "error" : (water.totalMeters && water.captured === water.totalMeters ? "complete" : "open");
-    const comparisonKey = water.status;
-    const externalKey = !externalAssessments.length ? "open" : (externalAssessments.some(row=>row.status==="error") ? "error" : (externalAssessments.every(row=>row.status==="complete") ? "complete" : "open"));
-    const transfers = state.meta && Array.isArray(state.meta.individualValuesPriorTransfers) ? state.meta.individualValuesPriorTransfers : [];
-    const priorKey = water.rows.some(row=>row.priorStatus==="missing" || row.priorStatus==="replacement") ? "open" : "complete";
-    root.innerHTML = [
-      checkCard(meterKey,"Wasserzähler vollständig",meterKey==="complete" ? "Alle erforderlichen Kalt- und Warmwasserzähler besitzen Anfangs- und Endstände." : water.open + " offen, " + water.invalid + " fehlerhaft."),
-      checkCard(comparisonKey,"Wasserverbrauch abgeglichen",water.expected > 0 ? "Individuelle Summe und Gesamtverbrauch unter „Gesamtkosten“ werden mit 0,01 m³ Toleranz verglichen." : "Gesamtverbrauch der Wasserkostenart fehlt."),
-      checkCard(externalKey,"Externe Kosten abgeglichen",externalKey==="complete" ? "Alle Beträge einschließlich Leerstand und Privatanteil sind vollständig zugeordnet." : "Einzelwerte oder Gesamtkosten weisen noch offene Differenzen auf."),
-      checkCard(priorKey,"Vorjahresbezug dokumentiert",transfers.length ? transfers.length + " Wert(e) wurden bestätigt übernommen; Wechsel und unklare Identitäten bleiben gesperrt." : "Noch keine bestätigte Vorjahresübernahme dokumentiert.")
-    ].join("");
+    const consumptionAreas = pageModel.consumptionCosts.length;
+    const meterTotal = pageModel.consumptionCosts.reduce((sum,row) => sum + row.totalMeters,0);
+    const meterComplete = pageModel.consumptionCosts.reduce((sum,row) => sum + row.captured,0);
+    const manualAreas = pageModel.manualCosts.length;
+    const assignedTotal = pageModel.manualCosts.reduce((sum,row) => sum + row.actual,0);
+    const completeAreas = [...pageModel.consumptionCosts,...pageModel.manualCosts].filter(row => row.status === "complete").length;
+    const allAreas = consumptionAreas + manualAreas;
+    const cards = [
+      ["consumption","Verbrauchsbereiche",String(consumptionAreas),meterTotal + " zugeordnete Zähler"],
+      ["document","Erfasste Zähler",meterComplete + " von " + meterTotal,meterTotal && meterComplete === meterTotal ? "Alle Endstände vollständig" : "Offene Endstände vorhanden"],
+      ["manual","Manuelle Kostenarten",String(manualAreas),formatMoney(assignedTotal) + " zugeordnet"],
+      ["check","Gesamtstatus",completeAreas + " von " + allAreas,allAreas && completeAreas === allAreas ? "Alle Bereiche stimmen überein" : "Prüfung noch nicht abgeschlossen"]
+    ];
+    root.innerHTML = cards.map(card => '<article class="individual-values-kpi"><span class="individual-values-kpi__icon is-' + card[0] + '" aria-hidden="true">' + iconSvg(card[0]) + '</span><div><span>' + esc(card[1]) + '</span><strong>' + esc(card[2]) + '</strong><small>' + esc(card[3]) + '</small></div></article>').join("");
   }
 
-  function removeWaterTableSorting() {
-    const table = document.getElementById("individualWaterTable");
-    if (!table) return;
-    table.querySelectorAll("thead th").forEach(cell => {
-      cell.classList.remove("sortable", "sort-asc", "sort-desc");
-      cell.removeAttribute("aria-sort");
-      cell.onclick = null;
-    });
-  }
-
-  function applyFilter() {
-    const sections = [...document.querySelectorAll("#individualValuesWorkspace [data-individual-section='water'], #individualValuesWorkspace [data-individual-section='external']")];
-    let visible = 0;
-    sections.forEach(section => {
-      const available = section.dataset.individualAvailable !== "false";
-      const show = available && (activeFilter === "all" || section.dataset.individualStatus === activeFilter);
-      section.hidden = !show;
-      if (show) visible += 1;
-    });
-    const checks = document.getElementById("individualValuesChecks");
-    if (checks) checks.hidden = visible === 0 && activeFilter !== "all";
-    const empty = document.getElementById("individualValuesEmpty");
-    if (empty) empty.hidden = visible > 0;
-    document.querySelectorAll("[data-individual-filter]").forEach(button => {
-      const selected = button.dataset.individualFilter === activeFilter;
-      button.classList.toggle("is-active", selected);
-      button.setAttribute("aria-pressed", selected ? "true" : "false");
-    });
+  function renderBottom(pageModel) {
+    const plan = global.NKProYearTransitionActions && global.NKProYearTransitionActions.prepareIndividualPriorReadingTransfer ? global.NKProYearTransitionActions.prepareIndividualPriorReadingTransfer(state) : { sourceYear:"", candidates:[] };
+    const ready = plan.candidates.filter(row => row.eligible).length;
+    const already = plan.candidates.filter(row => row.status === "already-transferred" || row.status === "already-set").length;
+    const history = document.getElementById("individualHistorySummary");
+    if (history) history.innerHTML = '<div><span>Vorjahr</span><strong>' + esc(plan.sourceYear || "Nicht vorhanden") + '</strong></div><div><span>Übernahmefähig</span><strong>' + ready + '</strong></div><div><span>Bereits vorhanden / übernommen</span><strong>' + already + '</strong></div>';
+    const all = [...pageModel.consumptionCosts,...pageModel.manualCosts];
+    const complete = all.filter(row => row.status === "complete").length;
+    const errors = all.filter(row => row.status === "error").length;
+    const open = all.length - complete - errors;
+    const summary = document.getElementById("individualSummary");
+    if (summary) summary.innerHTML = '<div><span>Dynamische Bereiche</span><strong>' + all.length + '</strong></div><div><span>Stimmt überein</span><strong>' + complete + '</strong></div><div><span>Offen</span><strong>' + open + '</strong></div><div><span>Abweichung / Fehler</span><strong>' + errors + '</strong></div>';
+    const status = document.querySelector("[data-individual-summary-status]");
+    const key = all.length && complete === all.length ? "complete" : (errors ? "error" : "open");
+    if (status) { status.className = "individual-values-status is-" + key; status.textContent = statusText(key); }
+    const historyStatus = document.querySelector("[data-individual-history-status]");
+    if (historyStatus) { historyStatus.className = "individual-values-status " + (ready ? "is-open" : "is-neutral"); historyStatus.textContent = ready ? ready + " verfügbar" : "Keine offenen Übernahmen"; }
   }
 
   function render() {
-    if (typeof state === "undefined" || !state || !document.getElementById("individualValuesWorkspace")) return;
+    const root = document.getElementById("individualDynamicSections");
+    if (!root || !state || !calc()) return;
     synchronizeForView();
-    const individualCosts = costs();
-    const water = calculation().waterConsumptionSummary(state);
-    renderWater(water, individualCosts.some(cost => cost.id === "K002"));
-    const externalAssessments = individualCosts.filter(cost => cost.id !== "K002").map(externalAssessment);
-    const externalRoot = document.getElementById("individualExternalSections");
-    if (externalRoot) externalRoot.innerHTML = externalSectionHtml(externalAssessments);
-    updateKpis(water, externalAssessments);
-    renderChecks(water, externalAssessments);
-    applyFilter();
-    removeWaterTableSorting();
-    requestAnimationFrame(removeWaterTableSorting);
-    connect();
-    if (requestedFocus) {
-      const selector = requestedFocus.source === "automatic" ? "#individualWaterSection" : (requestedFocus.costId ? '[data-individual-cost="' + CSS.escape(requestedFocus.costId) + '"]' : "#individualValuesWorkspace");
-      const target = document.querySelector(selector);
-      if (target) requestAnimationFrame(() => target.scrollIntoView({ block:"start" }));
-      requestedFocus = null;
+    const pageModel = model();
+    renderKpis(pageModel);
+    let html = pageModel.consumptionCosts.map(consumptionSection).join("") + pageModel.manualCosts.map(manualSection).join("");
+    if (!html) html = '<section class="individual-values-card individual-values-empty"><span class="individual-values-section-icon">' + iconSvg("document") + '</span><div><h2>Keine individuellen Eingaben erforderlich</h2><p>Aktive Kostenarten verwenden derzeit ausschließlich automatische Umlageschlüssel oder sind nicht abrechnungsrelevant.</p></div></section>';
+    root.innerHTML = html;
+    renderBottom(pageModel);
+  }
+
+  function ensureManualInput(costId) {
+    if (!state.umlageInputs) state.umlageInputs = {};
+    if (!state.umlageInputs[costId]) {
+      const cost = (state.kostenarten || []).find(row => row && row.id === costId) || {};
+      state.umlageInputs[costId] = { kostenId:costId, kostenart:String(cost.kostenart || ""), art:"Direkter Eurobetrag", mode:"Direkter Eurobetrag", values:[], caseValues:{} };
     }
+    const input = state.umlageInputs[costId];
+    if (!Array.isArray(input.values)) input.values = [];
+    if (!input.caseValues || typeof input.caseValues !== "object" || Array.isArray(input.caseValues)) input.caseValues = {};
+    return input;
   }
 
-  function setFilter(filter) {
-    activeFilter = ["all","open","error","complete"].includes(filter) ? filter : "all";
-    applyFilter();
+  function applyMeterInput(element) {
+    const key = fieldKey("meter", element.dataset.costId, element.dataset.meterId, element.dataset.field);
+    draftText.set(key, element.value);
+    const parsed = parseLocaleNumber(element.value);
+    if (!parsed.ok) { fieldErrors.set(key,"Ungültige Zahl"); return false; }
+    fieldErrors.delete(key);
+    const result = global.NKProMeteringDraft && global.NKProMeteringDraft.setValue(element.dataset.meterId, element.dataset.field, parsed.empty ? "" : parsed.value, "number");
+    if (!result || !result.changed) { fieldErrors.set(key,"Zählerwert konnte nicht übernommen werden"); return false; }
+    markDirty();
+    return true;
   }
 
-  function triggerFocusSelector(trigger) {
-    if (!trigger || !trigger.dataset) return trigger && trigger.id ? "#" + CSS.escape(trigger.id) : "";
-    if (trigger.dataset.individualWaterEdit) return '[data-individual-water-edit="' + CSS.escape(trigger.dataset.individualWaterEdit) + '"]';
-    if (trigger.dataset.individualExternalEdit) return '[data-individual-external-edit="' + CSS.escape(trigger.dataset.individualExternalEdit) + '"][data-individual-case-key="' + CSS.escape(trigger.dataset.individualCaseKey || "") + '"]';
-    if (trigger.dataset.individualImportOpen) return '[data-individual-import-open="' + CSS.escape(trigger.dataset.individualImportOpen) + '"]';
-    if (trigger.dataset.individualPriorOpen !== undefined) return "[data-individual-prior-open]";
-    return trigger.id ? "#" + CSS.escape(trigger.id) : "";
+  function applyManualInput(element) {
+    const costId = element.dataset.costId;
+    const caseKey = element.dataset.caseKey;
+    const field = element.dataset.field;
+    const key = fieldKey("manual",costId,caseKey,field);
+    draftText.set(key,element.value);
+    const input = ensureManualInput(costId);
+    const existing = input.caseValues[caseKey] && typeof input.caseValues[caseKey] === "object" ? input.caseValues[caseKey] : {};
+    if (field === "amount") {
+      const parsed = parseLocaleNumber(element.value);
+      if (!parsed.ok) { fieldErrors.set(key,"Ungültige Zahl"); return false; }
+      fieldErrors.delete(key);
+      if (parsed.empty) {
+        if (existing.note) input.caseValues[caseKey] = { ...existing, amount:"", value:"", source:existing.source || "manual", updatedAt:new Date().toISOString() };
+        else delete input.caseValues[caseKey];
+      } else {
+        input.caseValues[caseKey] = { ...existing, amount:parsed.value, value:parsed.value, source:existing.source || "manual", updatedAt:new Date().toISOString() };
+        const caseRow = calc().individualValueCases(state).find(row => row.caseKey === caseKey);
+        if (caseRow && caseRow.originalIndex >= 0) {
+          while (input.values.length <= caseRow.originalIndex) input.values.push(0);
+          input.values[caseRow.originalIndex] = parsed.value;
+        }
+      }
+    } else {
+      fieldErrors.delete(key);
+      const amountValue = Object.prototype.hasOwnProperty.call(existing,"amount") ? existing.amount : "";
+      if (!element.value && (amountValue === "" || amountValue === null || amountValue === undefined)) delete input.caseValues[caseKey];
+      else input.caseValues[caseKey] = { ...existing, amount:amountValue, value:amountValue, note:element.value, source:existing.source || "manual", updatedAt:new Date().toISOString() };
+    }
+    markDirty();
+    return true;
   }
 
-  function focusReturnedTarget(target, selector) {
-    const focusTarget = target && target.isConnected ? target : (selector ? document.querySelector(selector) : null);
-    if (focusTarget && typeof focusTarget.focus === "function") focusTarget.focus();
+  function applyElement(element) {
+    if (element.matches("[data-individual-meter-input]")) return applyMeterInput(element);
+    if (element.matches("[data-individual-manual-input]")) return applyManualInput(element);
+    return true;
   }
 
-  function openDialog(dialog, trigger, focusSelector) {
-    if (!dialog || isReadOnly()) return;
+  function showNotice(text, kind = "ok") {
+    const node = document.getElementById("individualSaveNotice");
+    if (!node) return;
+    node.hidden = false;
+    node.className = "individual-values-save-notice is-" + kind;
+    node.textContent = text;
+  }
+
+  function clearSectionDrafts(kind,costId) {
+    [...draftText.keys()].filter(key => key.startsWith(kind + "|" + costId + "|")).forEach(key => draftText.delete(key));
+    [...fieldErrors.keys()].filter(key => key.startsWith(kind + "|" + costId + "|")).forEach(key => fieldErrors.delete(key));
+  }
+
+  function persistedSectionMatches(kind,costId) {
+    if (typeof readStoredDataResult !== "function" || typeof STORAGE_KEY === "undefined") return false;
+    const stored = readStoredDataResult(STORAGE_KEY);
+    if (!stored || !stored.valid || !stored.data) return false;
+    if (kind === "consumption") {
+      const currentRows = calc().meterRowsForCost(state,costId);
+      const storedRows = calc().meterRowsForCost(stored.data,costId);
+      return currentRows.length === storedRows.length && currentRows.every(row => {
+        const found = storedRows.find(item => item.meterId === row.meterId);
+        return found && String(found.startValue) === String(row.startValue) && String(found.endValue) === String(row.endValue);
+      });
+    }
+    const current = state.umlageInputs && state.umlageInputs[costId] || {};
+    const saved = stored.data.umlageInputs && stored.data.umlageInputs[costId] || {};
+    return JSON.stringify(current.caseValues || {}) === JSON.stringify(saved.caseValues || {}) && JSON.stringify(current.values || []) === JSON.stringify(saved.values || []);
+  }
+
+  function saveSection(kind,costId,button) {
+    if (isReadOnly()) return false;
+    const section = button && button.closest("[data-individual-section]") || document.querySelector('[data-individual-section="' + CSS.escape(kind) + '"][data-cost-id="' + CSS.escape(costId) + '"]');
+    let valid = true;
+    (section ? [...section.querySelectorAll("[data-individual-meter-input],[data-individual-manual-input]")] : []).forEach(element => { if (!applyElement(element)) valid = false; });
+    if (!valid || [...fieldErrors.keys()].some(key => key.startsWith(kind + "|" + costId + "|"))) {
+      showNotice("Der Bereich enthält ungültige Eingaben. Die sichtbaren Werte bleiben erhalten.","error");
+      render();
+      return false;
+    }
+    const saved = typeof global.saveData === "function" ? global.saveData() : (typeof saveData === "function" ? saveData() : false);
+    if (!saved || !persistedSectionMatches(kind,costId)) {
+      showNotice("Speichern fehlgeschlagen. Die eingegebenen Werte bleiben sichtbar und können erneut gespeichert werden.","error");
+      return false;
+    }
+    clearSectionDrafts(kind,costId);
+    showNotice("Bereich erfolgreich gespeichert und aus dem Browser-Speicher zurückgelesen.","ok");
+    render();
+    return true;
+  }
+
+  function openDialog(dialog,trigger,focusSelector) {
+    if (!dialog) return;
     returnFocus = trigger || document.activeElement;
-    returnFocusSelector = triggerFocusSelector(returnFocus);
-    if (typeof dialog.showModal === "function") dialog.showModal(); else dialog.setAttribute("open", "");
-    requestAnimationFrame(() => { const target = dialog.querySelector(focusSelector || "input,button,select,textarea"); if (target) target.focus(); });
+    if (typeof dialog.showModal === "function") dialog.showModal(); else dialog.setAttribute("open","");
+    requestAnimationFrame(() => { const target = focusSelector ? dialog.querySelector(focusSelector) : null; if (target) target.focus(); });
   }
-
   function closeDialog(dialog) {
     if (!dialog) return;
-    if (dialog.open && typeof dialog.close === "function") dialog.close(); else dialog.removeAttribute("open");
+    if (typeof dialog.close === "function" && dialog.open) dialog.close(); else dialog.removeAttribute("open");
+    if (returnFocus && typeof returnFocus.focus === "function") requestAnimationFrame(() => returnFocus.focus());
   }
 
-  function restoreDialogFocus() {
-    const target = returnFocus;
-    const selector = returnFocusSelector;
-    returnFocus = null;
-    returnFocusSelector = "";
-    focusReturnedTarget(target, selector);
+  function findMeter(meterId) {
+    return state.zaehlerDaten && Array.isArray(state.zaehlerDaten.zaehler) ? state.zaehlerDaten.zaehler.find(row => String(row && (row.meterId || row.zaehlerId || row.id) || "") === String(meterId || "")) : null;
   }
-
-  function closeDialogAndRender(dialog) {
-    const target = returnFocus;
-    const selector = returnFocusSelector;
-    returnFocus = null;
-    returnFocusSelector = "";
-    closeDialog(dialog);
-    render();
-    requestAnimationFrame(() => focusReturnedTarget(target, selector));
-  }
-
-  function updateWaterPreview() {
-    const start = number(document.getElementById("individualWaterStart") && document.getElementById("individualWaterStart").value.replace(",","."));
-    const endInput = document.getElementById("individualWaterEnd");
-    const endText = endInput ? endInput.value.trim() : "";
-    const preview = document.querySelector("[data-individual-water-preview]");
-    if (!preview) return;
-    if (!endText) { preview.className="individual-values-inline-result is-open"; preview.textContent="Der Endstand fehlt; der Verbrauch ist noch offen."; return; }
-    const end = number(endText.replace(",","."));
-    const invalid = end < start;
-    preview.className="individual-values-inline-result " + (invalid ? "is-error" : "is-complete");
-    preview.textContent = invalid ? "Endstand liegt unter dem Anfangsstand. Zählerwechsel oder Eingabe prüfen." : "Verbrauch: " + formatNumber(end-start,3) + " m³";
-  }
-
-  function openWaterEditor(meterId, trigger) {
-    const row = calculation().waterMeterRows(state).find(item => item.meterId === meterId);
-    if (!row) return;
-    selectedWaterMeter = row;
-    const dialog = document.getElementById("individualWaterEditDialog");
-    const title = document.getElementById("individualWaterDialogTitle");
-    if (title) title.textContent = row.replacement ? "Zählerwechsel prüfen" : "Zählerstand bearbeiten";
-    const context = dialog && dialog.querySelector("[data-individual-water-dialog-context]");
-    if (context) context.innerHTML = '<strong>' + esc(row.unitId + " · " + row.caseLabel) + '</strong><span>' + esc(row.typeLabel + " · " + row.meterNumber) + '</span>' + (row.replacement ? '<label class="individual-values-replacement-confirm"><input type="checkbox" data-individual-replacement-confirm> Zählerwechsel und getrennte Teilperiode wurden geprüft.</label>' : '');
-    document.getElementById("individualWaterStart").value = row.startValue === "" ? "" : String(row.startValue).replace(".",",");
-    document.getElementById("individualWaterEnd").value = row.endValue === "" ? "" : String(row.endValue).replace(".",",");
-    document.getElementById("individualWaterStartDate").value = row.startDate || calculation().periodForData(state).start;
-    document.getElementById("individualWaterEndDate").value = row.endDate || calculation().periodForData(state).end;
-    updateWaterPreview();
-    openDialog(dialog, trigger, "#individualWaterStart");
-  }
-
-  function saveWaterEditor() {
-    if (!selectedWaterMeter || isReadOnly()) return;
-    const dialog = document.getElementById("individualWaterEditDialog");
-    if (selectedWaterMeter.replacement) {
-      const checkbox = dialog.querySelector("[data-individual-replacement-confirm]");
-      if (!checkbox || !checkbox.checked) { checkbox && checkbox.focus(); return; }
+  function openSpecial(trigger) {
+    if (isReadOnly()) return;
+    selectedSpecial = { kind:trigger.dataset.kind, costId:trigger.dataset.costId, rowId:trigger.dataset.rowId };
+    const dialog = document.getElementById("individualSpecialDialog");
+    const title = dialog.querySelector("[data-individual-special-title]");
+    const context = dialog.querySelector("[data-individual-special-context]");
+    const note = dialog.querySelector("[data-individual-special-note]");
+    if (selectedSpecial.kind === "meter") {
+      const meter = findMeter(selectedSpecial.rowId) || {};
+      title.textContent = "Zähler-Sonderfall";
+      context.textContent = [meter.zaehlernummer || selectedSpecial.rowId, meter.einheitId || ""].filter(Boolean).join(" · ");
+      note.value = String(meter.bemerkung || "");
+    } else {
+      const caseRow = calc().individualValueCases(state).find(row => row.caseKey === selectedSpecial.rowId) || {};
+      title.textContent = "Abrechnungsfall-Sonderfall";
+      context.textContent = [caseRow.unitLabel || caseRow.unitId,caseRow.label].filter(Boolean).join(" · ");
+      note.value = String(manualRecord(selectedSpecial.costId,selectedSpecial.rowId).note || "");
     }
-    const meterId = selectedWaterMeter.meterId;
-    const values = [
-      ["start", document.getElementById("individualWaterStart").value, "number"],
-      ["startDate", document.getElementById("individualWaterStartDate").value, "date"],
-      ["end", document.getElementById("individualWaterEnd").value, "number"],
-      ["endDate", document.getElementById("individualWaterEndDate").value, "date"]
-    ];
-    values.forEach(item => execute("meter","setWaterValue",[meterId,item[0],item[1],item[2]]));
-    selectedWaterMeter = null;
-    closeDialogAndRender(dialog);
+    openDialog(dialog,trigger,"[data-individual-special-note]");
   }
-
-  function openExternalEditor(costId, caseKey, trigger) {
-    const cost = costFor(costId);
-    const caseRow = cases().find(row => row.caseKey === caseKey);
-    if (!cost || !caseRow) return;
-    selectedExternal = { costId, caseKey, caseRow };
-    const entry = caseEntry(costId, caseKey);
-    const dialog = document.getElementById("individualExternalEditDialog");
-    const context = dialog.querySelector("[data-individual-external-dialog-context]");
-    context.innerHTML = '<strong>' + esc(cost.kostenart) + '</strong><span>' + esc(caseRow.unitId + " · " + caseRow.label + " · " + caseRoleLabel(caseRow.role)) + '</span>';
-    document.getElementById("individualExternalProvider").value = entry.provider || inputFor(costId).importSource || "";
-    document.getElementById("individualExternalAmount").value = entry.amount === undefined ? "" : String(number(entry.amount)).replace(".",",");
-    document.getElementById("individualExternalConsumption").value = entry.consumption ? String(number(entry.consumption)).replace(".",",") : "";
-    document.getElementById("individualExternalDate").value = String(entry.recordedAt || entry.updatedAt || todayIso()).slice(0,10);
-    openDialog(dialog, trigger, "#individualExternalAmount");
-  }
-
-  function saveExternalEditor() {
-    if (!selectedExternal || isReadOnly()) return;
-    const { costId, caseKey } = selectedExternal;
-    execute("billing","setManualExternalValue",[costId,caseKey,document.getElementById("individualExternalAmount").value,"amount"]);
-    execute("billing","setManualExternalValue",[costId,caseKey,document.getElementById("individualExternalConsumption").value,"consumption"]);
-    execute("billing","setManualExternalValue",[costId,caseKey,document.getElementById("individualExternalProvider").value,"provider"]);
-    execute("billing","setManualExternalValue",[costId,caseKey,document.getElementById("individualExternalDate").value,"recordedAt"]);
-    selectedExternal = null;
-    closeDialogAndRender(document.getElementById("individualExternalEditDialog"));
-  }
-
-  function parseImportText(text) {
-    const sourceCases = cases();
-    const rows = String(text || "").split(/\r?\n/).map(line=>line.trim()).filter(Boolean).map((line,index) => {
-      const separator = line.includes("\t") ? "\t" : ";";
-      const parts = line.split(separator).map(value=>value.trim().replace(/^"|"$/g,""));
-      const key = parts[0] || "";
-      const normalizedKey = key.toLocaleLowerCase("de-DE");
-      let matches = sourceCases.filter(row => [row.caseKey,row.unitId,row.tenantId,row.tenantName].some(value => String(value||"").toLocaleLowerCase("de-DE") === normalizedKey));
-      if (/leerstand/.test(normalizedKey)) matches = sourceCases.filter(row => row.role === "vacancy" && normalizedKey.includes(row.unitId.toLocaleLowerCase("de-DE")));
-      if (/privat|eigent/.test(normalizedKey)) matches = sourceCases.filter(row => row.role === "private" && (!row.unitId || normalizedKey.includes(row.unitId.toLocaleLowerCase("de-DE"))));
-      const amountText = String(parts[1] || "").replace(/\s/g,"").replace(/\.(?=\d{3}(?:\D|$))/g,"").replace(",",".");
-      const consumptionText = String(parts[2] || "").replace(/\s/g,"").replace(/\.(?=\d{3}(?:\D|$))/g,"").replace(",",".");
-      const amount = Number(amountText);
-      const consumption = consumptionText ? Number(consumptionText) : 0;
-      let error = "";
-      if (matches.length !== 1) error = matches.length ? "Zuordnung nicht eindeutig" : "Abrechnungsfall nicht gefunden";
-      else if (!Number.isFinite(amount)) error = "Betrag ist ungültig";
-      else if (consumptionText && !Number.isFinite(consumption)) error = "Verbrauch ist ungültig";
-      return { line:index+1, key, caseRow:matches[0] || null, amount:Number.isFinite(amount)?amount:0, consumption:Number.isFinite(consumption)?consumption:0, provider:parts[3] || "", recordedAt:parts[4] && /^\d{4}-\d{2}-\d{2}$/.test(parts[4]) ? parts[4] : todayIso(), error };
-    });
-    const validCounts = new Map();
-    rows.filter(row=>!row.error&&row.caseRow).forEach(row=>validCounts.set(row.caseRow.caseKey,(validCounts.get(row.caseRow.caseKey)||0)+1));
-    rows.forEach(row=>{if(!row.error&&row.caseRow&&validCounts.get(row.caseRow.caseKey)>1)row.error="Abrechnungsfall mehrfach enthalten";});
-    return rows;
-  }
-
-  function renderImportPreview() {
-    const root = document.querySelector("[data-individual-import-preview-result]");
-    const confirm = document.querySelector("[data-individual-import-confirm]");
-    if (!root) return;
-    const rows = importPreview || [];
-    if (!rows.length) { root.innerHTML='<div class="individual-values-import-empty">Noch keine Vorschau erstellt.</div>'; if(confirm) confirm.disabled=true; return; }
-    root.innerHTML='<div class="individual-values-table-wrap"><table class="individual-values-table"><thead><tr><th>Zeile</th><th>Zuordnung</th><th>Betrag</th><th>Verbrauch</th><th>Ergebnis</th></tr></thead><tbody>' + rows.map(row=>'<tr class="' + (row.error?'is-error':'is-valid') + '"><td>'+row.line+'</td><td>'+esc(row.caseRow ? row.caseRow.unitId+' · '+row.caseRow.label : row.key)+'</td><td class="number-cell">'+formatMoney(row.amount)+'</td><td class="number-cell">'+formatNumber(row.consumption,0)+'</td><td>'+(row.error?esc(row.error):statusHtml('complete','Zugeordnet'))+'</td></tr>').join('') + '</tbody></table></div>';
-    if (confirm) confirm.disabled = rows.every(row=>row.error);
-  }
-
-  function openImportDialog(costId, trigger) {
-    selectedImportCost = costId;
-    importPreview = null;
-    const dialog = document.getElementById("individualExternalImportDialog");
-    const cost = costFor(costId);
-    dialog.querySelector("[data-individual-import-context]").innerHTML='<strong>'+esc(cost&&cost.kostenart||costId)+'</strong><span>Format: Abrechnungsfall; Betrag; Verbrauch; Dienstleister; Erfasst am</span>';
-    dialog.querySelector("[data-individual-import-text]").value="";
-    dialog.querySelector("[data-individual-import-file]").value="";
-    renderImportPreview();
-    openDialog(dialog, trigger, "[data-individual-import-file]");
-  }
-
-  function createImportPreview() {
-    const text = document.querySelector("[data-individual-import-text]").value;
-    importPreview = parseImportText(text);
-    renderImportPreview();
-  }
-
-  function confirmImport() {
-    if (!selectedImportCost || !importPreview || isReadOnly()) return;
-    const valid = importPreview.filter(row=>!row.error);
-    const caseValues = {};
-    valid.forEach(row => { caseValues[row.caseRow.caseKey] = { amount:row.amount, consumption:row.consumption, provider:row.provider, recordedAt:row.recordedAt, source:"import" }; });
-    const errors = importPreview.filter(row=>row.error).map(row=>"Zeile "+row.line+": "+row.error);
-    global.NKProBillingWorkflow.setIndividualValuesImport(selectedImportCost,[],{ source:"Datei / eingefügte Werte", importedAt:new Date().toISOString(), format:"Abrechnungsfall; Betrag; Verbrauch; Dienstleister; Datum", errors, mode:"Externe Einzelabrechnung", caseValues });
-    selectedImportCost=null; importPreview=null;
-    closeDialogAndRender(document.getElementById("individualExternalImportDialog"));
+  function saveSpecial() {
+    if (!selectedSpecial || isReadOnly()) return;
+    const note = document.querySelector("[data-individual-special-note]").value;
+    if (selectedSpecial.kind === "meter") global.NKProMeteringDraft.setValue(selectedSpecial.rowId,"note",note,"text");
+    else {
+      const input = ensureManualInput(selectedSpecial.costId);
+      const existing = input.caseValues[selectedSpecial.rowId] && typeof input.caseValues[selectedSpecial.rowId] === "object" ? input.caseValues[selectedSpecial.rowId] : {};
+      input.caseValues[selectedSpecial.rowId] = { ...existing, amount:Object.prototype.hasOwnProperty.call(existing,"amount") ? existing.amount : "", value:Object.prototype.hasOwnProperty.call(existing,"value") ? existing.value : "", note, source:existing.source || "manual", updatedAt:new Date().toISOString() };
+      draftText.set(fieldKey("manual",selectedSpecial.costId,selectedSpecial.rowId,"note"),note);
+      markDirty();
+    }
+    selectedSpecial = null;
+    closeDialog(document.getElementById("individualSpecialDialog"));
+    render();
   }
 
   function openPriorDialog(trigger) {
-    const plan = global.NKProYearTransitionActions.prepareIndividualPriorReadingTransfer(state);
     const dialog = document.getElementById("individualPriorTransferDialog");
-    dialog.dataset.sourceYear = plan.sourceYear || "";
-    const body = dialog.querySelector("[data-individual-prior-list]");
-    body.innerHTML = plan.candidates.map((row,index) => '<tr data-prior-index="'+index+'"><td><input type="checkbox" data-prior-select="'+esc(row.meterId)+'" '+(row.selected?'checked':'')+' '+(!row.eligible?'disabled':'')+' aria-label="Vorjahreswert für '+esc(row.meterNumber)+' übernehmen"></td><td><strong>'+esc(row.meterNumber)+'</strong><small>'+esc(row.meterId)+'</small></td><td>'+esc(row.caseLabel)+'</td><td class="number-cell">'+(row.previousEnd===""?'–':formatMeter(row.previousEnd)+' m³')+'</td><td>'+statusHtml(row.eligible?'complete':(row.status==='already-set'?'complete':'open'),row.reason)+'</td></tr>').join("");
+    const plan = global.NKProYearTransitionActions.prepareIndividualPriorReadingTransfer(state);
     dialog._priorPlan = plan;
-    openDialog(dialog, trigger, "input:not([disabled])");
+    dialog.querySelector("[data-individual-prior-list]").innerHTML = plan.candidates.map((row,index) => '<tr><td><input type="checkbox" data-prior-select="' + index + '"' + (row.selected ? " checked" : "") + (!row.eligible ? " disabled" : "") + ' aria-label="Vorjahreswert auswählen"></td><td><strong>' + esc(row.costName || row.costId || "Verbrauchskostenart") + '</strong><span>' + esc(row.meterNumber || row.meterId) + '</span><small>' + esc(row.meterId) + '</small></td><td>' + esc(row.caseLabel) + '</td><td class="number-cell">' + (row.previousEnd === "" ? "–" : formatNumber(row.previousEnd,2)) + '</td><td>' + statusPill(row.eligible ? "complete" : "open",row.reason) + '</td></tr>').join("") || '<tr><td colspan="5">Keine Vorjahresdaten vorhanden.</td></tr>';
+    openDialog(dialog,trigger,"input:not([disabled])");
   }
 
   function confirmPriorTransfer() {
     const dialog = document.getElementById("individualPriorTransferDialog");
     const plan = dialog._priorPlan;
     if (!plan || isReadOnly()) return;
-    const selected = plan.candidates.filter(row => row.eligible && dialog.querySelector('[data-prior-select="'+CSS.escape(row.meterId)+'"]')?.checked);
-    const currentStart = calculation().periodForData(state).start;
-    selected.forEach(row => {
-      execute("meter","setWaterValue",[row.meterId,"start",row.previousEnd,"number"]);
-      execute("meter","setWaterValue",[row.meterId,"startDate",currentStart,"date"]);
-    });
-    if (selected.length) global.NKProYearTransitionActions.recordIndividualPriorReadingTransfer(selected,plan.sourceYear);
-    closeDialogAndRender(dialog);
-  }
-
-  function resetExternal(costId, trigger) {
-    if (isReadOnly()) return;
-    const cost = costFor(costId);
-    if (!global.confirm("Alle individuellen Werte für „" + (cost&&cost.kostenart||costId) + "“ zurücksetzen? Zentrale Wasserzähler bleiben unverändert.")) return;
-    global.NKProBillingWorkflow.resetIndividualValues(costId,{confirmed:true});
-    returnFocus=trigger; render(); requestAnimationFrame(restoreDialogFocus);
-  }
-
-
-  function updateWaterLiveSummaries() {
-    const table = document.getElementById("individualWaterTable");
-    if (!table) return;
-    const totals = new Map();
-    table.querySelectorAll("[data-individual-water-row]").forEach(rowNode => {
-      const key = rowNode.dataset.individualCaseKey || "";
-      const value = Number(rowNode.dataset.liveConsumption || 0);
-      totals.set(key, (totals.get(key) || 0) + (Number.isFinite(value) && value >= 0 ? value : 0));
-    });
-    totals.forEach((total,key) => {
-      const subtotal = table.querySelector('[data-individual-water-subtotal="' + CSS.escape(key) + '"] [data-individual-water-subtotal-value]');
-      if (subtotal) subtotal.textContent = formatMeter(total);
-    });
-  }
-
-  function updateBatchState(kind) {
-    const map = kind === "water" ? pendingWater : pendingExternal;
-    const node = document.querySelector(kind === "water" ? "[data-individual-water-batch-state]" : "[data-individual-external-batch-state]");
-    if (node) node.textContent = map.size ? map.size + " ungespeicherte Änderung(en)" : "Keine ungespeicherten Änderungen";
-  }
-  function saveWaterBatch() {
-    if (isReadOnly() || !pendingWater.size) return;
-    const changes = [...pendingWater.entries()];
-    pendingWater.clear();
-    changes.forEach(([meterId,value]) => execute("meter","setWaterValue",[meterId,"end",value,"number"]));
-    render();
-  }
-  function saveExternalBatch() {
-    if (isReadOnly() || !pendingExternal.size) return;
-    const changes = [...pendingExternal.values()];
-    pendingExternal.clear();
-    changes.forEach(change => execute("billing","setManualExternalValue",[change.costId,change.caseKey,change.value,"amount"]));
-    render();
-  }
-  function discardBatch(kind) {
-    if (kind === "water") pendingWater.clear(); else pendingExternal.clear();
-    render();
+    const selected = plan.candidates.filter((row,index) => row.eligible && dialog.querySelector('[data-prior-select="' + index + '"]')?.checked);
+    const period = calc().periodForData(state);
+    try {
+      selected.forEach(row => {
+        const resultValue = global.NKProMeteringDraft.setValue(row.meterId,"start",row.previousEnd,"number");
+        const resultDate = global.NKProMeteringDraft.setValue(row.meterId,"startDate",period.start,"text");
+        if (!resultValue.changed || !resultDate.changed) throw new Error("Zählerwert konnte nicht übernommen werden.");
+      });
+      const result = selected.length ? global.NKProYearTransitionActions.recordIndividualPriorReadingTransfer(selected,plan.sourceYear) : { recorded:0, skipped:0 };
+      if (selected.length && (!result || result.recorded + result.skipped !== selected.length)) throw new Error("Übernahme konnte nicht vollständig dokumentiert werden.");
+      if (selected.length && typeof readStoredDataResult === "function" && typeof STORAGE_KEY !== "undefined") {
+        const readBack = readStoredDataResult(STORAGE_KEY);
+        if (!readBack.valid) throw new Error("Rückleseprüfung nach Vorjahresübernahme fehlgeschlagen.");
+      }
+      closeDialog(dialog);
+      showNotice(selected.length ? (result.recorded + " Vorjahreswerte übernommen; " + result.skipped + " bereits vorhanden.") : "Keine Werte ausgewählt.","ok");
+      render();
+    } catch(error) {
+      showNotice("Vorjahresübernahme fehlgeschlagen: " + String(error && error.message || error),"error");
+    }
   }
 
   function connect() {
     if (bound) return;
     bound = true;
-    document.addEventListener("click", event => {
-      const filter = event.target.closest("#manuellewerte [data-individual-filter]"); if (filter) { setFilter(filter.dataset.individualFilter); return; }
-      const refresh = event.target.closest("#manuellewerte [data-individual-refresh]"); if (refresh) { render(); refresh.focus(); return; }
-      if (event.target.closest("#manuellewerte [data-individual-water-batch-save]")) { saveWaterBatch(); return; }
-      if (event.target.closest("#manuellewerte [data-individual-water-batch-discard]")) { discardBatch("water"); return; }
-      if (event.target.closest("#manuellewerte [data-individual-external-batch-save]")) { saveExternalBatch(); return; }
-      if (event.target.closest("#manuellewerte [data-individual-external-batch-discard]")) { discardBatch("external"); return; }
-      const waterEdit = event.target.closest("#manuellewerte [data-individual-water-edit]"); if (waterEdit) { openWaterEditor(waterEdit.dataset.individualWaterEdit,waterEdit); return; }
-      const externalEdit = event.target.closest("#manuellewerte [data-individual-external-edit]"); if (externalEdit) { openExternalEditor(externalEdit.dataset.individualExternalEdit,externalEdit.dataset.individualCaseKey,externalEdit); return; }
-      const importOpen = event.target.closest("#manuellewerte [data-individual-import-open]"); if (importOpen) { openImportDialog(importOpen.dataset.individualImportOpen,importOpen); return; }
-      const reset = event.target.closest("#manuellewerte [data-individual-reset]"); if (reset) { resetExternal(reset.dataset.individualReset,reset); return; }
-      const priorOpen = event.target.closest("#manuellewerte [data-individual-prior-open]"); if (priorOpen) { openPriorDialog(priorOpen); return; }
-      const close = event.target.closest("#manuellewerte [data-individual-dialog-close]"); if (close) { closeDialog(close.closest("dialog")); return; }
-      if (event.target.closest("#manuellewerte [data-individual-water-save]")) { saveWaterEditor(); return; }
-      if (event.target.closest("#manuellewerte [data-individual-external-save]")) { saveExternalEditor(); return; }
-      if (event.target.closest("#manuellewerte [data-individual-import-preview]")) { createImportPreview(); return; }
-      if (event.target.closest("#manuellewerte [data-individual-import-confirm]")) { confirmImport(); return; }
-      if (event.target.closest("#manuellewerte [data-individual-prior-confirm]")) { confirmPriorTransfer(); }
-    });
     document.addEventListener("input", event => {
-      if (["individualWaterStart","individualWaterEnd"].includes(event.target.id)) updateWaterPreview();
-      const water = event.target.closest("#manuellewerte [data-individual-water-end]");
-      if (water) {
-        const parsed = parseLocalizedNumber(water.value);
-        pendingWater.set(water.dataset.individualWaterEnd, parsed === "" ? "" : parsed);
-        const row = calculation().waterMeterRows(state).find(item => item.meterId === water.dataset.individualWaterEnd);
-        const hasValue = parsed !== "";
-        const consumption = row && hasValue ? parsed - number(row.startValue) : 0;
-        const rowNode = water.closest("[data-individual-water-row]");
-        const output = document.querySelector('[data-individual-water-consumption="' + CSS.escape(water.dataset.individualWaterEnd) + '"]');
-        if (output) { output.textContent = hasValue ? formatMeter(consumption) : "–"; output.classList.toggle("is-error", hasValue && consumption < 0); }
-        if (rowNode) {
-          rowNode.dataset.liveConsumption = hasValue && consumption >= 0 ? String(consumption) : "0";
-          const status = rowNode.querySelector(".individual-values-row-status");
-          if (status) {
-            const key = !hasValue ? "open" : (consumption < 0 ? "error" : "complete");
-            status.className = "individual-values-row-status is-" + key;
-            status.innerHTML = '<span aria-hidden="true">' + statusIcon(key) + '</span>' + esc(key === "error" ? "Zählerstand prüfen" : statusText(key));
-          }
-        }
-        updateWaterLiveSummaries();
-        updateBatchState("water");
-      }
-      const external = event.target.closest("#manuellewerte [data-individual-external-inline]");
-      if (external) {
-        const key = external.dataset.individualExternalInline + "::" + external.dataset.individualCaseKey;
-        pendingExternal.set(key,{ costId:external.dataset.individualExternalInline, caseKey:external.dataset.individualCaseKey, value:external.value });
-        updateBatchState("external");
-      }
+      const element = event.target.closest && event.target.closest("#manuellewerte [data-individual-meter-input], #manuellewerte [data-individual-manual-input]");
+      if (!element) return;
+      const kind = element.matches("[data-individual-meter-input]") ? "meter" : "manual";
+      const key = kind === "meter" ? fieldKey("meter",element.dataset.costId,element.dataset.meterId,element.dataset.field) : fieldKey("manual",element.dataset.costId,element.dataset.caseKey,element.dataset.field);
+      draftText.set(key,element.value);
+      markDirty();
     });
     document.addEventListener("change", event => {
-      const file = event.target.closest("#manuellewerte [data-individual-import-file]");
-      if (file && file.files && file.files[0]) {
-        const reader = new FileReader();
-        reader.onload = () => { document.querySelector("[data-individual-import-text]").value=String(reader.result||""); createImportPreview(); };
-        reader.readAsText(file.files[0]);
-      }
+      const element = event.target.closest && event.target.closest("#manuellewerte [data-individual-meter-input], #manuellewerte [data-individual-manual-input]");
+      if (element) { applyElement(element); render(); return; }
+      const filter = event.target.closest && event.target.closest("#manuellewerte [data-individual-filter]");
+      if (filter) { filters.set(filter.dataset.individualFilter,filter.value); render(); }
     });
-    document.querySelectorAll("#manuellewerte dialog").forEach(dialog => dialog.addEventListener("close", restoreDialogFocus));
+    document.addEventListener("click", event => {
+      const save = event.target.closest("#manuellewerte [data-individual-save-section]");
+      if (save) { saveSection(save.dataset.individualSaveSection,save.dataset.costId,save); return; }
+      const special = event.target.closest("#manuellewerte [data-individual-special]");
+      if (special) { openSpecial(special); return; }
+      if (event.target.closest("#manuellewerte [data-individual-special-save]")) { saveSpecial(); return; }
+      const prior = event.target.closest("#manuellewerte [data-individual-prior-open]");
+      if (prior) { openPriorDialog(prior); return; }
+      if (event.target.closest("#manuellewerte [data-individual-prior-confirm]")) { confirmPriorTransfer(); return; }
+      const close = event.target.closest("#manuellewerte [data-individual-dialog-close]");
+      if (close) closeDialog(close.closest("dialog"));
+    });
   }
 
-  function requestFocus(options = {}) { requestedFocus = options || {}; }
-  function sourceType(cost) { return cost && cost.id === "K002" ? "automatic" : (calculation().isIndividualValueCost(cost,state) ? "external" : "none"); }
-  function assessment(cost) { return cost && cost.id === "K002" ? calculation().waterConsumptionSummary(state) : externalAssessment(cost); }
-  function describe() { return Object.freeze({ filter:activeFilter, costs:costs().length, cases:cases().length, waterTolerance:WATER_TOLERANCE, costTolerance:COST_TOLERANCE }); }
+  function requestFocus() { requestAnimationFrame(() => document.querySelector("#manuellewerte input:not([disabled])")?.focus()); }
+  function sourceType(cost) { return calc().individualValueCostKind(cost); }
+  function assessment(cost) {
+    const kind = sourceType(cost);
+    return kind === "consumption" ? calc().consumptionSummaryForCost(state,cost.id) : (kind === "manual" ? calc().manualCostSummary(state,cost.id) : null);
+  }
+  function describe() {
+    const pageModel = state && calc() ? model() : { cases:[],consumptionCosts:[],manualCosts:[] };
+    return Object.freeze({ cases:pageModel.cases.length, consumptionAreas:pageModel.consumptionCosts.length, manualAreas:pageModel.manualCosts.length, drafts:draftText.size, errors:fieldErrors.size, dynamic:true });
+  }
 
-  global.NKProIndividualValues = Object.freeze({ render, setFilter, requestFocus, assessment, sourceType, describe });
+  connect();
+  global.NKProIndividualValues = Object.freeze({ render, requestFocus, sourceType, assessment, describe, parseLocaleNumber, saveSection });
 })(globalThis);
 
 function renderIndividualValues() { return globalThis.NKProIndividualValues.render(); }

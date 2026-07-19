@@ -150,6 +150,16 @@ function saveData(options = {}) {
     }
     state.meta.storageRole = "working";
     const protectedState = writeProtectedStorage(STORAGE_KEY, state);
+    const readBack = readStoredDataResult(STORAGE_KEY);
+    if (!readBack || !readBack.valid || !readBack.data || !readBack.data.meta) {
+      throw new Error("Rückleseprüfung der gespeicherten Abrechnung fehlgeschlagen.");
+    }
+    if (String(readBack.data.meta.storageIntegrityChecksum || "") !== String(protectedState.meta.storageIntegrityChecksum || "")) {
+      throw new Error("Rückleseprüfung: Integritätsprüfsumme stimmt nicht überein.");
+    }
+    if (String(readBack.data.meta.lastSavedAt || "") !== String(state.meta.lastSavedAt || "")) {
+      throw new Error("Rückleseprüfung: gespeicherter Stand ist nicht der aktuelle Arbeitsstand.");
+    }
     state.meta.storageIntegrityAlgorithm = protectedState.meta.storageIntegrityAlgorithm;
     state.meta.storageIntegrityChecksum = protectedState.meta.storageIntegrityChecksum;
     state.meta.storageIntegrityProtectedAt = protectedState.meta.storageIntegrityProtectedAt;

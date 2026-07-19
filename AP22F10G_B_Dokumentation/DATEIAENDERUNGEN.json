@@ -1,0 +1,99 @@
+{
+  "workPackage": "AP22F10G-B",
+  "appVersion": "V99.4.58",
+  "baseVersion": "V99.4.52",
+  "schemaVersion": 5,
+  "changed": [
+    {
+      "path": "assets/app.css",
+      "description": "Vollständiges responsives Seitenlayout, Kennzahlenkacheln, dynamische Karten, Tabellen, Status-, Dialog- und Hinweiszustände."
+    },
+    {
+      "path": "index.html",
+      "description": "Neuer durchgehender Seitenaufbau ohne Reiter; Steuerungshinweis, Kennzahlen, dynamische Bereiche, Historie, Prüfung und Dialoge."
+    },
+    {
+      "path": "js/app-runtime-config.js",
+      "description": "Versions- und Release-Metadaten auf V99.4.58/AP22F10G-B."
+    },
+    {
+      "path": "js/billing-calculation.js",
+      "description": "Generische Klassifikation aktiver Kostenarten; Verbrauchs-/manuelle Modelle, Zählerzuordnung, Fall- und Summenberechnung ohne K002-Sonderlogik."
+    },
+    {
+      "path": "js/service-worker-register.js",
+      "description": "Build-ID für kontrollierte Aktivierung des neuen App-Caches."
+    },
+    {
+      "path": "js/ui-individual-values.js",
+      "description": "Vollständige Neuentwicklung der Seite mit Entwurfsstabilität, Validierung, Bereichsspeicherung, Rückleseprüfung, Dialogen und Vorjahresübernahme."
+    },
+    {
+      "path": "js/ui-master-data.js",
+      "description": "Persistenz-Rückleseprüfung über Integritätsprüfsumme und Zeitstempel."
+    },
+    {
+      "path": "js/ui-metering.js",
+      "description": "Generische Zählerentwurfs-Schnittstelle für alle Verbrauchskostenarten; kanonische Messwerte und Legacy-Wasserbindung."
+    },
+    {
+      "path": "js/year-transition-actions.js",
+      "description": "Vorjahresübernahme für alle Verbrauchskostenarten; kostenartbezogene, dublettenfreie Auditierung."
+    },
+    {
+      "path": "manifest.webmanifest",
+      "description": "PWA-Version, Beschreibung und Build-ID auf V99.4.58."
+    },
+    {
+      "path": "nk-pro-project.json",
+      "description": "Projekt-, Cache-, Funktions- und Folge-AP-Metadaten."
+    },
+    {
+      "path": "package.json",
+      "description": "Releaseversion und AP22F10G-B-Testskripte."
+    },
+    {
+      "path": "package-lock.json",
+      "description": "Paketmetadaten auf V99.4.58 synchronisiert."
+    },
+    {
+      "path": "service-worker.js",
+      "description": "Cache- und Build-ID auf V99.4.58."
+    },
+    {
+      "path": "RELEASE_INHALTSMANIFEST_SHA256.txt",
+      "description": "Neu erzeugtes SHA256-Inhaltsmanifest des vollständigen Releasebestands."
+    }
+  ],
+  "addedTests": [
+    {
+      "path": "tests/ap22f10g-individual-values.test.cjs",
+      "description": "Statische Schutz- und Strukturprüfung der dynamischen Steuerung."
+    },
+    {
+      "path": "tests/ap22f10g-individual-values-browser.test.cjs",
+      "description": "Browserstrecke mit 28 verbindlichen Prüfungen und Screenshot-Erzeugung."
+    }
+  ],
+  "addedDocumentation": [
+    "AP22F10G_B_Dokumentation/README.md",
+    "AP22F10G_B_Dokumentation/ABSCHLUSS.md",
+    "AP22F10G_B_Dokumentation/UMSETZUNGSBERICHT.md",
+    "AP22F10G_B_Dokumentation/TESTBERICHT.md",
+    "AP22F10G_B_Dokumentation/BASELINEBERICHT.md",
+    "AP22F10G_B_Dokumentation/UMLAGESCHLUESSEL_ANALYSE.md",
+    "AP22F10G_B_Dokumentation/DATEIAENDERUNGEN.md",
+    "AP22F10G_B_Dokumentation/DATEIAENDERUNGEN.json",
+    "AP22F10G_B_Dokumentation/DATENMIGRATIONEN.md",
+    "AP22F10G_B_Dokumentation/SCREENSHOTS.md",
+    "AP22F10G_B_Dokumentation/browser-test-results.json"
+  ],
+  "addedScreenshots": [
+    "AP22F10G_B_Screenshots/01_desktop_realer_gesamtbestand.png",
+    "AP22F10G_B_Screenshots/02_schmale_ansicht_tabellenscroll.png",
+    "AP22F10G_B_Screenshots/03_browserzoom_125_prozent.png",
+    "AP22F10G_B_Screenshots/04_vorjahresuebernahme_dialog.png",
+    "AP22F10G_B_Screenshots/05_speicherfehler_wert_bleibt_sichtbar.png"
+  ],
+  "removed": []
+}

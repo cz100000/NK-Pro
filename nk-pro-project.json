@@ -1,11 +1,11 @@
 {
-  "appVersion": "99.4.47",
-  "displayVersion": "V99.4.47",
-  "versionName": "AP22F10B – Individuelle Werte",
+  "appVersion": "99.4.58",
+  "displayVersion": "V99.4.58",
+  "versionName": "AP22F10G-B – Individuelle Werte",
   "schemaVersion": 5,
   "dataLayerContractVersion": 1,
   "snapshotScope": "billingSnapshot",
-  "basedOn": "99.4.44-AP22F9B-Korrektur1",
+  "basedOn": "99.4.52-AP22F10E-Korrektur1",
   "releaseDate": "2026-07-19",
   "runtime": [
     "HTML",
@@ -14,7 +14,7 @@
   ],
   "framework": null,
   "buildSystem": null,
-  "nextWorkPackage": "AP22F11A – Planung der nächsten Seitenmigration",
+  "nextWorkPackage": "AP22F11A – Planung der Migration der Seite Ergebnis der Abrechnung",
   "objectStandardVersion": 1,
   "billingSnapshotVersion": 2,
   "meterMasterStandardVersion": 1,
@@ -33,7 +33,7 @@
   "documentLayoutVersion": 4,
   "uiVisualSystemVersion": 4,
   "meterInventoryDummyVersion": 2,
-  "pwaCacheName": "nk-pro-v99-4-47-ap22f10c",
+  "pwaCacheName": "nk-pro-v99-4-58-ap22f10g-b",
   "releaseHardeningVersion": 1,
   "releaseContentPolicyVersion": 1,
   "transientUiResetVersion": 1,
@@ -57,7 +57,7 @@
   "meterInputLocaleNumberVersion": 1,
   "assetCacheBustVersion": 1,
   "serviceWorkerForcedUpdateVersion": 1,
-  "runtimeBuildId": "99.4.47-ap22f10b",
+  "runtimeBuildId": "99.4.58-ap22f10g-b",
   "uiConsolidationVersion": 1,
   "individualValuesPageVersion": 4,
   "navigationTerminologyVersion": 1,
@@ -90,6 +90,8 @@
   "totalCostsPageMigrationVersion": 1,
   "individualValuesPageMigrationVersion": 1,
   "individualValuesCaseValuesVersion": 1,
-  "individualValuesPriorTransferVersion": 1,
-  "individualValuesWaterComparisonVersion": 1
+  "individualValuesPriorTransferVersion": 2,
+  "individualValuesWaterComparisonVersion": 1,
+  "individualValuesDynamicControlVersion": 1,
+  "individualValuesPersistenceReadbackVersion": 1
 }

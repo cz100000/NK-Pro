@@ -319,7 +319,7 @@ let ap22f10bManualReadingSequence = 0;
 
 function activeManualCanonicalReading(container, meterId, role) {
   const periodKey = [String(state.meta && state.meta.abrechnungsbeginn || ""), String(state.meta && state.meta.abrechnungsende || "")].join("|");
-  const sourceKey = ["ap22f10b-manual", meterId, role, periodKey].join(":");
+  const sourceKey = ["individual-values-manual", meterId, role, periodKey].join(":");
   return (container && Array.isArray(container.messwerte) ? container.messwerte : []).filter(row => row && row.sourceKey === sourceKey && row.status !== "cancelled" && row.status !== "corrected").sort((a,b) => String(b.erfasstAm || "").localeCompare(String(a.erfasstAm || "")))[0] || null;
 }
 
@@ -329,7 +329,7 @@ function setManualCanonicalReading(meter, role, value, valueType, dateOverride) 
   if (!container || !meter) return false;
   const meterId = String(meter.meterId || meter.zaehlerId || meter.id || "");
   const periodKey = [String(state.meta && state.meta.abrechnungsbeginn || ""), String(state.meta && state.meta.abrechnungsende || "")].join("|");
-  const sourceKey = ["ap22f10b-manual", meterId, role, periodKey].join(":");
+  const sourceKey = ["individual-values-manual", meterId, role, periodKey].join(":");
   const existing = (container.messwerte || []).filter(row => row && row.sourceKey === sourceKey && row.status !== "cancelled").sort((a,b) => String(b.erfasstAm || "").localeCompare(String(a.erfasstAm || "")))[0] || null;
   if (existing) {
     existing.status = "corrected";
@@ -342,18 +342,57 @@ function setManualCanonicalReading(meter, role, value, valueType, dateOverride) 
   if (!Number.isFinite(Number(numericValue)) || !readingDate) return false;
   const timestamp = new Date().toISOString();
   const record = {
-    messwertId:"MW-AP22F10B-" + meterId.replace(/[^A-Za-z0-9_-]/g,"-") + "-" + role.toUpperCase() + "-" + Date.now() + "-" + (++ap22f10bManualReadingSequence),
+    messwertId:"MW-IV-" + meterId.replace(/[^A-Za-z0-9_-]/g,"-") + "-" + role.toUpperCase() + "-" + Date.now() + "-" + (++ap22f10bManualReadingSequence),
     measurementId:"", id:"", meterId, zaehlerId:meterId, sourceKey,
     ablesedatum:readingDate, messzeitraumVon:periodStart(), messzeitraumBis:periodEnd(),
     wert:Number(numericValue), einheit:String(meter.einheit || "m³"),
     ableseart:role === "start" ? "Anfangsablesung" : "Endablesung",
-    herkunft:"ap22f10b-manual", rolle:role, status:"active", erfasstAm:timestamp,
+    herkunft:"individual-values-manual", rolle:role, status:"active", erfasstAm:timestamp,
     plausibilitaetsstatus:"ungeprüft", ersetztMesswertId:existing ? String(existing.messwertId || "") : ""
   };
   record.measurementId = record.messwertId;
   record.id = record.messwertId;
   container.messwerte.push(record);
   return true;
+}
+
+
+function setIndividualMeterDraftValue(meterId, key, value, type="text") {
+  ensureWaterMeterData();
+  synchronizeMeteringData(state);
+  const id = String(meterId || "");
+  const meter = state.zaehlerDaten && Array.isArray(state.zaehlerDaten.zaehler)
+    ? state.zaehlerDaten.zaehler.find(row => String(row && (row.meterId || row.zaehlerId || row.id) || "") === id)
+    : null;
+  if (!meter) return Object.freeze({ changed:false, reason:"meter-not-found", meterId:id });
+  const binding = Array.isArray(meter.legacyBindings) ? meter.legacyBindings.find(row => row && ["water-cold","water-hot"].includes(String(row.channel || ""))) : null;
+  if (binding && Number.isInteger(Number(binding.index))) {
+    const rowIndex = Number(binding.index);
+    if (!state.waterMeters.readings[rowIndex]) state.waterMeters.readings[rowIndex] = {};
+    const legacyKey = canonicalWaterField(String(binding.channel || ""), key);
+    if (legacyKey) state.waterMeters.readings[rowIndex][legacyKey] = type === "number" ? parseMeterNumberInput(value) : value;
+  } else if (["start","end"].includes(key)) {
+    const periodRow = globalThis.NKProBillingCalculation && globalThis.NKProBillingCalculation.meterRowsForCost
+      ? globalThis.NKProBillingCalculation.meterRowsForCost(state, String(meter.kostenId || "")).find(item => item.meterId === id)
+      : null;
+    setManualCanonicalReading(meter, key, value, type, periodRow && periodRow[key === "start" ? "startDate" : "endDate"]);
+  } else if (["startDate","endDate"].includes(key)) {
+    const role = key === "startDate" ? "start" : "end";
+    const currentReading = activeManualCanonicalReading(state.zaehlerDaten, id, role);
+    if (currentReading && Number.isFinite(Number(currentReading.wert))) setManualCanonicalReading(meter, role, currentReading.wert, "number", value);
+  } else if (key === "note") {
+    meter.bemerkung = String(value || "");
+  } else return Object.freeze({ changed:false, reason:"unsupported-field", meterId:id, key });
+  if (["end","endDate"].includes(key)) {
+    if (!state.meta) state.meta = {};
+    state.meta.meterNumericEndValuesTouchedForYear = currentAbrechnungsjahr();
+    if (key === "endDate") state.meta.meterEndDateFieldsTouchedForYear = currentAbrechnungsjahr();
+  }
+  synchronizeMeteringData(state);
+  syncUmlageInputs();
+  applyWaterMetersToUmlage();
+  if (NK_PRO_MODULES.billingContext) NK_PRO_MODULES.billingContext.markDirty(true);
+  return Object.freeze({ changed:true, meterId:id, key });
 }
 
 function setWaterMeterValue(index, key, value, type="text") {
@@ -738,3 +777,6 @@ function renderWaterMeters() {
 
 
 const MANUAL_INPUT_MODES = ["Zählerstände","Verbrauchsmenge","Direkter Eurobetrag","Externe Einzelabrechnung"];
+
+
+globalThis.NKProMeteringDraft = Object.freeze({ setValue:setIndividualMeterDraftValue });
