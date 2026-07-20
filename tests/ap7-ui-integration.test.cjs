@@ -48,8 +48,8 @@ function main() {
   uiContext.NKProUiBindings.register({ handlers, modules:{ exportService:new Proxy({}, { get:() => noop }), applicationActions:uiContext.NKProApplicationActions } });
   const definitions = uiContext.NKProUiController.describe();
   const actionNames = definitions.flatMap(definition => definition.actionNames);
-  assert(definitions.length === 13, `Erwartet wurden 13 Controller, gefunden ${definitions.length}.`);
-  assert(actionNames.length === 116 && new Set(actionNames).size === 116, `UI-Aktionsregister ist unvollständig oder doppelt (${actionNames.length}).`);
+  assert(definitions.length === 15, `Erwartet wurden 15 Controller, gefunden ${definitions.length}.`);
+  assert(actionNames.length === 146 && new Set(actionNames).size === 146, `UI-Aktionsregister ist unvollständig oder doppelt (${actionNames.length}).`);
   ["meter.previewWaterValue", "meter.previewGenericValue", "meter.setWaterValue", "billing.setPrepaymentValue", "document.printCurrentBrief", "export.downloadBillingPackage", "recovery.restorePreMigration"].forEach(action => assert(uiContext.NKProUiController.hasAction(action), `Pflichtaktion fehlt: ${action}`));
 
   const scripts = [...html.matchAll(/<script\s+defer(?:="")?\s+src="([^"]+)"><\/script>/g)].map(match => match[1].split("?")[0]);
@@ -58,7 +58,7 @@ function main() {
     assert(scripts.includes(script) && scripts.indexOf(script) < appIndex, `UI-Modul fehlt oder wird zu spät geladen: ${script}`);
   });
 
-  process.stdout.write(`AP7-UI-Architekturprüfung abgeschlossen: 130 Inline-Handler entfernt, 13 Controller, 116 eindeutige Aktionen, zentraler 5-Ereignis-Vertrag und keine DOM-Ereignisregistrierung in app.js.\n`);
+  process.stdout.write(`AP7-UI-Architekturprüfung abgeschlossen: 130 Inline-Handler entfernt, 15 Controller, 146 eindeutige Aktionen, zentraler 5-Ereignis-Vertrag und keine DOM-Ereignisregistrierung in app.js.\n`);
 }
 
 try { main(); } catch(error) { process.stderr.write(`FEHLER: ${error.message}\n`); process.exit(1); }

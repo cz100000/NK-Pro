@@ -729,7 +729,7 @@ function prepaymentSetTenantValue(index,key,value) {
   renderPrepaymentQualitySummary();
 }
 function prepaymentQualityClass(status) {
-  if(status==='Blockiert')return 'err';
+  if(status==='Blockiert'||status==='Kritischer Abrechnungsmangel')return 'err';
   if(status==='Zu prüfen')return 'warn';
   if(status==='Hinweis')return 'info';
   return 'ok';

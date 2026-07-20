@@ -308,9 +308,9 @@ function printHardeningReport(calc, result) {
   const items = [];
   function add(level, label, detail) { items.push({ level, label, detail: detail || "" }); }
   const preflight = briefPreflightReport(calc, result);
-  if (preflight.errors) add("err", "Brief-Preflight", preflight.errors + " blockierende Fehler vor Druck/PDF.");
+  if (preflight.errors) add("err", "Brief-Preflight", preflight.errors + " kritische Abrechnungsmängel vor Druck/PDF.");
   else if (preflight.warnings) add("warn", "Brief-Preflight", preflight.warnings + " Hinweise vor Versand prüfen.");
-  else add("ok", "Brief-Preflight", "Kein blockierender Punkt für den aktuellen Brief.");
+  else add("ok", "Brief-Preflight", "Kein kritischer Abrechnungsmangel für den aktuellen Brief.");
 
   const styles = briefPrintStyles();
   if (styles.includes("@page{size:A4;margin:0") && styles.includes("width:210mm") && styles.includes("height:297mm")) add("ok", "A4-Seite", "Feste 210 × 297 mm Druckseite vorhanden.");

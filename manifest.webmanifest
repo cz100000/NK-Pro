@@ -1,7 +1,7 @@
 {
-  "name": "NK-Pro V99.4.64",
+  "name": "NK-Pro V99.4.65",
   "short_name": "NK-Pro",
-  "description": "Lokale Nebenkostenabrechnung mit handlungsorientierter Abschlussprüfung und transparentem Regelinventar unter Analyse.",
+  "description": "Lokale Nebenkostenabrechnung mit konsolidierter fallbezogener Abschlussprüfung und vollständigem produktivem Regelinventar.",
   "lang": "de-DE",
   "id": "./",
   "start_url": "./",
@@ -9,7 +9,7 @@
   "display": "standalone",
   "background_color": "#f4f6f9",
   "theme_color": "#031d41",
-  "version": "99.4.64",
+  "version": "99.4.65",
   "icons": [
     {
       "src": "./icons/icon-180.png",
@@ -42,5 +42,5 @@
       "purpose": "maskable"
     }
   ],
-  "buildId": "99.4.64-ap22f11b-k3"
+  "buildId": "99.4.65-ap22f11b-k4"
 }

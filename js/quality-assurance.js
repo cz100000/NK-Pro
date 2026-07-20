@@ -60,7 +60,7 @@
     const warnings=source.results.filter(row=>row.status===d.qualityRules.STATUS.REVIEW);
     const hints=source.results.filter(row=>row.status===d.qualityRules.STATUS.HINT);
     const readiness=source.readiness||{};
-    return {level:readiness.level||(errors.length?"err":warnings.length?"warn":"ok"),label:readiness.label||(errors.length?"Nicht abschließbar":warnings.length?"Fachlich zu prüfen":"Abschlussbereit"),message:readiness.message||(errors.length?"Die Abrechnung kann noch nicht abgeschlossen werden.":warnings.length?"Keine blockierenden Fehler. Es bestehen noch unbestätigte Plausibilitätsauffälligkeiten.":"Die Abrechnung ist abschlussbereit."),errors,warnings,hints};
+    return {level:readiness.level||(errors.length?"err":warnings.length?"warn":"ok"),label:readiness.label||(errors.length?"Nicht abschließbar":warnings.length?"Fachlich zu prüfen":"Abschlussbereit"),message:readiness.message||(errors.length?"Die Abrechnung kann noch nicht abgeschlossen werden.":warnings.length?"Keine kritischen Abrechnungsmängel. Es bestehen noch offene fachliche Entscheidungen.":"Die Abrechnung ist abschlussbereit."),errors,warnings,hints};
   }
 
   function describe() { return {name:"NKProQualityAssurance",responsibility:"Seiteneffektfreie Orchestrierung der zentralen AP20-Regelregistry",mutatesState:false,commits:false,persists:false,renders:false,publicActions:["inspect","centralReport","registry","specialCases","technicalDiagnostics","finalBillingReadiness"],ruleCount:d.qualityRules.REGISTRY.length}; }

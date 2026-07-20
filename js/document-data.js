@@ -25,8 +25,8 @@
   function finalBillingReadiness(report) {
     const results = report && Array.isArray(report.results) ? report.results : [];
     const issues = report && Array.isArray(report.issues) ? report.issues : [];
-    const errors = results.length ? results.filter(row => row.status === "Blockiert") : issues.filter(row => row.severity === "Fehler");
-    const warnings = results.length ? results.filter(row => row.status === "Zu prüfen") : issues.filter(row => row.severity === "Prüfen");
+    const errors = results.length ? results.filter(row => row.status === "Kritischer Abrechnungsmangel") : issues.filter(row => row.severity === "Fehler");
+    const warnings = results.length ? results.filter(row => row.status === "Entscheidung erforderlich") : issues.filter(row => row.severity === "Prüfen");
     const hints = results.length ? results.filter(row => row.status === "Hinweis") : issues.filter(row => row.severity === "Hinweis");
     const central = report && report.readiness;
     if (central) return { level:central.level, label:central.label, message:central.message, errors, warnings, hints };
@@ -34,7 +34,7 @@
     return {
       level,
       label:level === "err" ? "Nicht abschließbar" : (level === "warn" ? "Fachlich zu prüfen" : "Abschlussbereit"),
-      message:level === "err" ? "Die Abrechnung kann noch nicht abgeschlossen werden." : (level === "warn" ? "Keine blockierenden Fehler. Es bestehen noch unbestätigte Plausibilitätsauffälligkeiten." : "Die Abrechnung ist abschlussbereit."),
+      message:level === "err" ? "Die Abrechnung kann noch nicht abgeschlossen werden." : (level === "warn" ? "Keine kritischen Abrechnungsmängel. Es bestehen noch offene fachliche Entscheidungen." : "Die Abrechnung ist abschlussbereit."),
       errors, warnings, hints
     };
   }
@@ -193,7 +193,7 @@
       infos,
       level: errors ? "err" : (warnings ? "warn" : "ok"),
       label: errors ? "Nicht druckbereit" : (warnings ? "Druck mit Prüfung" : "Druckbereit"),
-      message: errors ? "Bitte Fehler vor Druck/PDF beheben." : (warnings ? "Keine blockierenden Fehler, aber Hinweise vor Versand prüfen." : "Der ausgewählte Brief ist formal druckbereit.")
+      message: errors ? "Bitte Fehler vor Druck/PDF beheben." : (warnings ? "Keine kritischen Abrechnungsmängel; Hinweise vor Versand prüfen." : "Der ausgewählte Brief ist formal druckbereit.")
     };
   }
 

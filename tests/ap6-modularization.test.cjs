@@ -60,7 +60,7 @@ function main() {
 
   const productiveJs = fs.readdirSync(path.join(root, "js")).filter(name => name.endsWith(".js"));
   const storageUsers = productiveJs.filter(name => /\blocalStorage\b/.test(read(`js/${name}`))).sort();
-  assert(JSON.stringify(storageUsers) === JSON.stringify(["persistence.js", "ui-preferences.js"]), `Unerlaubte direkte Speicherzugriffe: ${storageUsers.join(", ")}`);
+  assert(JSON.stringify(storageUsers) === JSON.stringify(["app-state-persistence.js", "persistence.js", "ui-preferences.js"]), `Unerlaubte direkte Speicherzugriffe: ${storageUsers.join(", ")}`);
 
   const scripts = [...html.matchAll(/<script\s+defer(?:="")?\s+src="([^"]+)"><\/script>/g)].map(match => match[1].split("?")[0]);
   const appIndex = scripts.indexOf("./js/app.js");

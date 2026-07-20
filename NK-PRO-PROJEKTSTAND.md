@@ -1,4 +1,11 @@
-# Projektstand V99.4.64 – AP22F11B Korrektur 3
+# NK-Pro Projektstand
+
+## Aktueller Release-Kandidat
+
+- **V99.4.65 – AP22F11B Korrektur 4 – Prüf- und Regelsystem**
+- Datenschema 5, keine Schemamigration
+- Release-Kandidat bis zur fachlichen und visuellen Freigabe
+- Neue technische Basis erst nach ausdrücklicher Freigabe
 
 Die Abschlussprüfung ist in zwei klar abgegrenzte Arbeitsbereiche getrennt. **„Prüfen und abschließen“** dient als operative letzte Kontroll- und Abschlussstelle. **„Regelinventar“** unter Analyse dokumentiert sämtliche fachlichen und technischen Regeln einschließlich Datenquelle, aktuellem Ergebnis und Status.
 
@@ -156,4 +163,3 @@ Nächster Schritt ist kein ungeprüfter Seitenumbau. Für jeden zusammengehörig
 ## AP22F7B Korrektur 3
 
 Der zentrale Tabellenstandard verlangt für jede bestehende und künftige `nk-ui-table` einen sichtbaren rechten Rahmen an der letzten Kopf- und Datenzelle sowie standardgerechte rechte Eckradien. Die Tabellen füllen auf Desktop weiterhin die verfügbare Inhaltsbreite; auf schmalen Ansichten scrollt ausschließlich die Tabellenhülle. Mietzeiträume auf „Nebenkosten abrechnen → Mietverhältnisse“ werden sichtbar als `TT.MM.JJJJ` dargestellt, während Sortierung und gespeicherte ISO-Werte unverändert bleiben.
-

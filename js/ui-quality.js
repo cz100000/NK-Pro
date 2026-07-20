@@ -236,8 +236,8 @@ let qualityCurrentFilter = "open";
 let qualityLastReport = null;
 
 function qualityStatusClass(status) {
-  if (status === "Blockiert" || status === "Technischer Fehler") return "err";
-  if (status === "Zu prüfen") return "warn";
+  if (status === "Kritischer Abrechnungsmangel" || status === "Technischer Fehler") return "err";
+  if (status === "Entscheidung erforderlich") return "warn";
   if (status === "Hinweis") return "info";
   if (status === "Nicht anwendbar") return "neutral";
   return "ok";
@@ -269,7 +269,7 @@ function qualityItemActions(row) {
   const actions = [qualityActionButton("Details", "quality.openDetail", [qualityEncoded(row.instanceId)], "secondary")];
   if (row.targetTab) actions.push(qualityActionButton("Zur Ursache", "quality.jumpToIssue", [row.targetTab, qualityEncoded(row.instanceId)], "secondary"));
   if (row.confirmation) actions.push(qualityActionButton("Bestätigung zurücknehmen", "quality.reopenIssue", [qualityEncoded(row.instanceId)]));
-  else if (!row.blocking && row.confirmAllowed && row.status === "Zu prüfen") {
+  else if (!row.blocking && row.confirmAllowed && row.status === "Entscheidung erforderlich") {
     actions.push(qualityActionButton("Als geprüft bestätigen", "quality.confirmIssue", [qualityEncoded(row.instanceId)]));
     if (row.allowNotApplicable) actions.push(qualityActionButton("Nicht anwendbar", "quality.markNotApplicable", [qualityEncoded(row.instanceId)]));
   } else if (!row.blocking && row.confirmAllowed && row.status === "Hinweis") actions.push(qualityActionButton("Als gelesen markieren", "quality.confirmIssue", [qualityEncoded(row.instanceId), "read"]));
@@ -378,7 +378,7 @@ function jumpToQualityIssue(tab, encodedId) {
 
 function jumpToFirstOpenQualityIssue() {
   const report = qualityReport(true);
-  const first = report.results.find(row => row.status === "Blockiert") || report.results.find(row => row.status === "Zu prüfen") || report.results.find(row => row.status === "Hinweis");
+  const first = report.results.find(row => row.status === "Kritischer Abrechnungsmangel") || report.results.find(row => row.status === "Entscheidung erforderlich") || report.results.find(row => row.status === "Hinweis");
   if (!first) return alert("Keine offenen Prüfpunkte vorhanden.");
   jumpToQualityIssue(first.targetTab, qualityEncoded(first.instanceId));
 }
@@ -388,33 +388,33 @@ function showOnlyQualityErrors() { switchToTab("qualitaet"); renderQuality("bloc
 function qualitySetFilter(mode) { renderQuality(mode || "open"); }
 
 function qualityFilterRows(rows, mode) {
-  if (mode === "blocked") return rows.filter(row => row.status === "Blockiert");
-  if (mode === "review") return rows.filter(row => row.status === "Zu prüfen");
+  if (mode === "blocked") return rows.filter(row => row.status === "Kritischer Abrechnungsmangel");
+  if (mode === "review") return rows.filter(row => row.status === "Entscheidung erforderlich");
   if (mode === "hints") return rows.filter(row => row.status === "Hinweis");
-  if (mode === "done") return rows.filter(row => row.status === "Erledigt" || row.status === "Nicht anwendbar");
+  if (mode === "done") return rows.filter(row => row.status === "Bestanden" || row.status === "Nicht anwendbar");
   if (mode === "all") return rows;
-  return rows.filter(row => ["Blockiert","Zu prüfen","Hinweis"].includes(row.status));
+  return rows.filter(row => ["Kritischer Abrechnungsmangel","Entscheidung erforderlich","Hinweis"].includes(row.status));
 }
 
 function qualityResultRowHtml(row) {
-  return '<tr class="quality-task-row ' + (row.status === "Erledigt" ? "acknowledged" : "") + '"><td><span class="status ' + qualityStatusClass(row.status) + '">' + escapeHtml(row.status) + '</span><div class="small">' + escapeHtml(qualityProcessingLabel(row)) + '</div></td><td><strong>' + escapeHtml(row.title) + '</strong><div class="small">' + escapeHtml(row.ruleId) + ' · ' + escapeHtml(row.entityLabel) + '</div></td><td class="quality-task-detail">' + escapeHtml(row.details || row.notApplicableReason || "–") + '</td><td class="actions-cell">' + qualityItemActions(row) + '</td></tr>';
+  return '<tr class="quality-task-row ' + (row.status === "Bestanden" ? "acknowledged" : "") + '"><td><span class="status ' + qualityStatusClass(row.status) + '">' + escapeHtml(row.status) + '</span><div class="small">' + escapeHtml(qualityProcessingLabel(row)) + '</div></td><td><strong>' + escapeHtml(row.title) + '</strong><div class="small">' + escapeHtml(row.ruleId) + ' · ' + escapeHtml(row.entityLabel) + '</div></td><td class="quality-task-detail">' + escapeHtml(row.details || row.notApplicableReason || "–") + '</td><td class="actions-cell">' + qualityItemActions(row) + '</td></tr>';
 }
 
 function qualityGroupHtml(group, filterMode) {
   const rows = qualityFilterRows(group.results, filterMode);
   const counts = group.counts;
-  const status = counts.blocked ? "Blockiert" : (counts.review ? "Zu prüfen" : (counts.hints ? "Hinweis" : "Erledigt"));
-  return '<details class="quality-area-card"' + (rows.length && ["blocked","review","hints"].includes(filterMode) ? ' open' : '') + '><summary><span class="quality-area-card__order">' + group.order + '</span><span class="quality-area-card__title"><strong>' + escapeHtml(group.label) + '</strong><small>' + counts.blocked + ' blockiert · ' + counts.review + ' zu prüfen · ' + counts.hints + ' Hinweise · ' + counts.done + ' erledigt</small></span><span class="status ' + qualityStatusClass(status) + '">' + escapeHtml(status) + '</span></summary><div class="quality-area-card__body">' + (rows.length ? '<div class="table-wrap dashboard-table"><table><thead><tr><th>Status</th><th>Prüfpunkt</th><th>Ergebnis</th><th>Aktion</th></tr></thead><tbody>' + rows.map(qualityResultRowHtml).join("") + '</tbody></table></div>' : '<div class="quality-empty-state">Keine Punkte für den gewählten Filter.</div>') + '</div></details>';
+  const status = counts.blocked ? "Kritischer Abrechnungsmangel" : (counts.review ? "Entscheidung erforderlich" : (counts.hints ? "Hinweis" : "Bestanden"));
+  return '<details class="quality-area-card"' + (rows.length && ["blocked","review","hints"].includes(filterMode) ? ' open' : '') + '><summary><span class="quality-area-card__order">' + group.order + '</span><span class="quality-area-card__title"><strong>' + escapeHtml(group.label) + '</strong><small>' + counts.blocked + ' kritisch · ' + counts.review + ' zu prüfen · ' + counts.hints + ' Hinweise · ' + counts.done + ' erledigt</small></span><span class="status ' + qualityStatusClass(status) + '">' + escapeHtml(status) + '</span></summary><div class="quality-area-card__body">' + (rows.length ? '<div class="table-wrap dashboard-table"><table><thead><tr><th>Status</th><th>Prüfpunkt</th><th>Ergebnis</th><th>Aktion</th></tr></thead><tbody>' + rows.map(qualityResultRowHtml).join("") + '</tbody></table></div>' : '<div class="quality-empty-state">Keine Punkte für den gewählten Filter.</div>') + '</div></details>';
 }
 
 function renderQualityStatusCards(report) {
   const el = document.getElementById("qualityStatusCards");
   if (!el) return;
   const cards = [
-    ["Blockiert",report.counts.blocked,"blocked","Verhindert den Abschluss"],
-    ["Zu prüfen",report.counts.review,"review","Fachlich bewerten und bestätigen"],
+    ["Kritischer Abrechnungsmangel",report.counts.blocked,"blocked","Verhindert den Abschluss"],
+    ["Entscheidung erforderlich",report.counts.review,"review","Fachlich bewerten und bestätigen"],
     ["Hinweise",report.counts.hints,"hints","Sonderfälle und Informationen"],
-    ["Erledigt",report.counts.done,"done","Bestanden, behoben oder bestätigt"]
+    ["Bestanden",report.counts.done,"done","Bestanden, behoben oder bestätigt"]
   ];
   el.innerHTML = cards.map(([label,count,filter,hint]) => '<button type="button" class="quality-status-card quality-status-card--' + qualityStatusClass(label === "Hinweise" ? "Hinweis" : label) + (qualityCurrentFilter === filter ? ' is-active' : '') + '"' + uiActionAttributes("quality.setFilter",[filter]) + '><span>' + escapeHtml(label) + '</span><strong>' + count + '</strong><small>' + escapeHtml(hint) + '</small></button>').join("");
 }
@@ -440,7 +440,7 @@ function renderQuality(filterMode) {
   const ready = report.readiness.level === "ok";
   const action = report.counts.blocked ? qualityActionButton("Zum ersten blockierenden Punkt","quality.jumpFirstOpen",[],"primary") : (report.counts.review ? qualityActionButton("Offene Plausibilitäten anzeigen","quality.setFilter",["review"],"primary") : '<button class="primary" data-ui-action="billing.finalize" type="button"' + (qualityIsReadOnly() ? ' disabled aria-disabled="true"' : '') + '>Abrechnung abschließen</button>');
   summaryEl.innerHTML = '<div class="quality-cockpit-hero ' + escapeHtml(report.readiness.level) + '"><div><h3>' + escapeHtml(report.readiness.label) + '</h3><p>' + escapeHtml(report.readiness.message) + '</p><div class="small">' + report.results.length + ' konkrete Ergebnisse aus ' + NKProQualityRules.REGISTRY.filter(r=>r.category!==NKProQualityRules.CATEGORY.TECHNICAL).length + ' zentralen fachlichen Regeln.</div></div><div class="quality-cockpit-actions">' + action + '<button class="secondary" data-ui-action="quality.render" type="button">Erneut prüfen</button><button data-ui-action="billing.showAcceptanceProtocol" type="button">Abnahmeprotokoll</button></div></div>';
-  if (filterEl) filterEl.innerHTML = [["open","Offen"],["blocked","Blockiert"],["review","Zu prüfen"],["hints","Hinweise"],["done","Erledigt / nicht anwendbar"],["all","Alle"]].map(([key,label])=>'<button type="button" class="' + (qualityCurrentFilter===key?'primary':'secondary') + '"' + uiActionAttributes("quality.setFilter",[key]) + '>' + escapeHtml(label) + '</button>').join("");
+  if (filterEl) filterEl.innerHTML = [["open","Offen"],["blocked","Kritischer Abrechnungsmangel"],["review","Entscheidung erforderlich"],["hints","Hinweise"],["done","Erledigt / nicht anwendbar"],["all","Alle"]].map(([key,label])=>'<button type="button" class="' + (qualityCurrentFilter===key?'primary':'secondary') + '"' + uiActionAttributes("quality.setFilter",[key]) + '>' + escapeHtml(label) + '</button>').join("");
   groupedEl.innerHTML = report.groups.map(group => qualityGroupHtml(group, qualityCurrentFilter)).join("");
   if (acknowledgedEl) {
     const completed = report.results.filter(row => (row.confirmation || row.status === "Nicht anwendbar") && !row.passed);
@@ -462,7 +462,7 @@ function renderQuality(filterMode) {
 function contextualRowsForTab(report, tabId) {
   const aliases={mieter:["mieter","mieterverwaltung","wohnungsverwaltung"],einstellungen:["einstellungen"],einnahmen:["einnahmen","vorauszahlungsanpassung"],verbraeuche:["verbraeuche","wasser"],wasser:["verbraeuche","wasser"],umlage:["umlage","manuellewerte"],briefe:["briefe"],export:["briefe","export"],objekt:["wohnungsverwaltung","mieterverwaltung","einstellungen"]};
   const targets=aliases[tabId]||[tabId];
-  return report.results.filter(row=>targets.includes(row.targetTab)&&["Blockiert","Zu prüfen","Hinweis"].includes(row.status));
+  return report.results.filter(row=>targets.includes(row.targetTab)&&["Kritischer Abrechnungsmangel","Entscheidung erforderlich","Hinweis"].includes(row.status));
 }
 
 function renderContextualQualitySummaries(existingReport) {
@@ -471,8 +471,8 @@ function renderContextualQualitySummaries(existingReport) {
     const tab=section.closest('section.tab'); if(!tab||tab.id==="qualitaet")return;
     const body=section.querySelector('.page-section__body'); if(!body)return;
     if(tab.id==="einnahmen"&&typeof renderPrepaymentQualitySummary==="function"){renderPrepaymentQualitySummary();return;}
-    const rows=contextualRowsForTab(report,tab.id),blocked=rows.filter(r=>r.status==="Blockiert").length,review=rows.filter(r=>r.status==="Zu prüfen").length,hints=rows.filter(r=>r.status==="Hinweis").length;
-    body.innerHTML='<div class="context-quality-summary '+(blocked?'err':review?'warn':hints?'info':'ok')+'"><div><strong>Auf dieser Seite: '+blocked+' blockiert · '+review+' zu prüfen · '+hints+' Hinweise</strong><p class="small">Die Werte stammen aus der zentralen AP20-Regelregistry.</p></div><button type="button" class="secondary"'+uiActionAttributes("quality.openPageIssues",[tab.id])+'>Details anzeigen</button></div>'+(rows.length?'<ul class="context-quality-list">'+rows.slice(0,4).map(row=>'<li><span class="status '+qualityStatusClass(row.status)+'">'+escapeHtml(row.status)+'</span><button type="button" class="link-button"'+uiActionAttributes("quality.openDetail",[qualityEncoded(row.instanceId)])+'>'+escapeHtml(row.title)+'</button></li>').join('')+'</ul>':'');
+    const rows=contextualRowsForTab(report,tab.id),blocked=rows.filter(r=>r.status==="Kritischer Abrechnungsmangel").length,review=rows.filter(r=>r.status==="Entscheidung erforderlich").length,hints=rows.filter(r=>r.status==="Hinweis").length;
+    body.innerHTML='<div class="context-quality-summary '+(blocked?'err':review?'warn':hints?'info':'ok')+'"><div><strong>Auf dieser Seite: '+blocked+' kritisch · '+review+' zu prüfen · '+hints+' Hinweise</strong><p class="small">Die Werte stammen aus der zentralen AP20-Regelregistry.</p></div><button type="button" class="secondary"'+uiActionAttributes("quality.openPageIssues",[tab.id])+'>Details anzeigen</button></div>'+(rows.length?'<ul class="context-quality-list">'+rows.slice(0,4).map(row=>'<li><span class="status '+qualityStatusClass(row.status)+'">'+escapeHtml(row.status)+'</span><button type="button" class="link-button"'+uiActionAttributes("quality.openDetail",[qualityEncoded(row.instanceId)])+'>'+escapeHtml(row.title)+'</button></li>').join('')+'</ul>':'');
   });
 }
 
@@ -493,7 +493,7 @@ function renderSystemDiagnostics(existingReport) {
 function renderDashboard() {
   const aktiveKosten = (Array.isArray(state.kostenarten) ? state.kostenarten : []).filter(k => k && k.kostenart && k.inNK === "Ja");
   const report = qualityReport(true);
-  const issueRows = report.results.filter(row => ["Blockiert","Zu prüfen","Hinweis"].includes(row.status));
+  const issueRows = report.results.filter(row => ["Kritischer Abrechnungsmangel","Entscheidung erforderlich","Hinweis"].includes(row.status));
 
   if (typeof renderOverviewForTab === "function") renderOverviewForTab("dashboard");
 
@@ -518,13 +518,13 @@ let qualityCompletedExpanded = false;
 function qualityOpenRows(report) {
   return (report && Array.isArray(report.results) ? report.results : [])
     .filter(row => row.ruleId !== "NKP-FACH-019")
-    .filter(row => ["Blockiert","Zu prüfen","Hinweis","Technischer Fehler"].includes(row.status));
+    .filter(row => ["Kritischer Abrechnungsmangel","Entscheidung erforderlich","Hinweis","Technischer Fehler"].includes(row.status));
 }
 
 function qualityCompletedRows(report) {
   return (report && Array.isArray(report.results) ? report.results : [])
     .filter(row => row.ruleId !== "NKP-FACH-019")
-    .filter(row => ["Erledigt","Nicht anwendbar"].includes(row.status));
+    .filter(row => ["Bestanden","Nicht anwendbar"].includes(row.status));
 }
 
 function qualityTaskActionLabel(row) {
@@ -548,7 +548,7 @@ function qualityTaskActionHtml(row) {
 function qualityOpenTaskRowHtml(row) {
   return '<tr class="quality-finalization-task-row"><td><span class="quality-area-label">' + escapeHtml(row.groupLabel) + '</span></td>' +
     '<td><button type="button" class="link-button quality-task-title"' + uiActionAttributes("quality.openDetail", [qualityEncoded(row.instanceId)]) + '>' + escapeHtml(row.title) + '</button><div class="small">' + escapeHtml(row.entityLabel || "") + '</div></td>' +
-    '<td><span class="status ' + qualityStatusClass(row.status) + '">' + escapeHtml(row.status === "Blockiert" ? "Fehler" : row.status) + '</span></td>' +
+    '<td><span class="status ' + qualityStatusClass(row.status) + '">' + escapeHtml(row.status === "Kritischer Abrechnungsmangel" ? "Fehler" : row.status) + '</span></td>' +
     '<td class="quality-task-detail">' + escapeHtml(row.details || row.resultText || "–") + '</td>' +
     '<td class="actions-cell">' + qualityTaskActionHtml(row) + '</td></tr>';
 }
@@ -582,8 +582,8 @@ function renderQualityCompletionCard(report) {
   const message = finalized
     ? "Die Abrechnung ist abgeschlossen und gegen unbeabsichtigte Änderungen geschützt."
     : ready
-      ? "Alle blockierenden Fehler und offenen Plausibilitätsprüfungen sind erledigt. Die Abrechnung kann abgeschlossen werden."
-      : "Erst wenn alle blockierenden Fehler und offenen Prüfungen erledigt sind, kann die Abrechnung abgeschlossen werden.";
+      ? "Alle kritischen Abrechnungsmängel und offenen Plausibilitätsprüfungen sind erledigt. Die Abrechnung kann abgeschlossen werden."
+      : "Erst wenn alle kritischen Abrechnungsmängel und offenen Prüfungen erledigt sind, kann die Abrechnung abgeschlossen werden.";
   el.innerHTML = '<header><span class="quality-completion-icon" aria-hidden="true">✓</span><div><p class="quality-completion-eyebrow">Finaler Schritt</p><h2 id="qualityCompletionTitle">Abrechnung abschließen</h2></div></header>' +
     '<p>' + escapeHtml(message) + '</p><ul>' +
     qualityCompletionChecklistItem(!report.counts.blocked, "Alle Pflichtdaten vollständig erfasst") +
@@ -600,7 +600,7 @@ function renderQualityStatusCards(report) {
   const finalized = !!(NK_PRO_MODULES.billingWorkflow && NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized && NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized());
   const statusLabel = finalized ? "Abgeschlossen" : (report.readiness.level === "ok" ? "Bereit zum Abschluss" : "Nicht abgeschlossen");
   const cards = [
-    {label:"Blockierende Fehler", value:report.counts.blocked, status:"err", hint:report.counts.blocked ? "Abschluss derzeit nicht möglich" : "Keine Blocker", filter:"blocked", icon:"×"},
+    {label:"Kritische Mängel", value:report.counts.blocked, status:"err", hint:report.counts.blocked ? "Abschluss derzeit nicht möglich" : "Keine kritischen Mängel", filter:"blocked", icon:"×"},
     {label:"Offene Prüfungen", value:report.counts.review, status:"warn", hint:report.counts.review ? "Fachliche Prüfung notwendig" : "Keine offenen Prüfungen", filter:"review", icon:"!"},
     {label:"Hinweise", value:report.counts.hints, status:"info", hint:"Zur Kenntnis und Kontrolle", filter:"hints", icon:"i"},
     {label:"Abschlussstatus", value:statusLabel, status:finalized || report.readiness.level === "ok" ? "ok" : "neutral", hint:finalized ? "Abrechnung ist schreibgeschützt" : "Abrechnung kann noch bearbeitet werden", filter:"", icon:"✓"}
@@ -634,8 +634,8 @@ function renderQuality(filterMode) {
   renderQualityStatusCards(report);
 
   let openRows = qualityOpenRows(report);
-  if (qualityCurrentFilter === "blocked") openRows = openRows.filter(row => row.status === "Blockiert");
-  else if (qualityCurrentFilter === "review") openRows = openRows.filter(row => row.status === "Zu prüfen");
+  if (qualityCurrentFilter === "blocked") openRows = openRows.filter(row => row.status === "Kritischer Abrechnungsmangel");
+  else if (qualityCurrentFilter === "review") openRows = openRows.filter(row => row.status === "Entscheidung erforderlich");
   else if (qualityCurrentFilter === "hints") openRows = openRows.filter(row => row.status === "Hinweis");
   else if (qualityHideHints) openRows = openRows.filter(row => row.status !== "Hinweis");
 
@@ -673,7 +673,7 @@ function renderQuality(filterMode) {
 }
 
 function qualityRegistryPriority(status) {
-  return ({"Technischer Fehler":6,"Blockiert":5,"Zu prüfen":4,"Hinweis":3,"Nicht anwendbar":2,"Erledigt":1})[status] || 0;
+  return ({"Technischer Fehler":6,"Kritischer Abrechnungsmangel":5,"Entscheidung erforderlich":4,"Hinweis":3,"Nicht anwendbar":2,"Bestanden":1})[status] || 0;
 }
 
 function qualityRegistryAggregate(rule, report) {
@@ -686,7 +686,7 @@ function renderRuleInventoryKpis(rows) {
   const el = document.getElementById("ruleInventoryKpis");
   if (!el) return;
   const applied = rows.filter(row => row.results.length).length;
-  const findings = rows.filter(row => ["Technischer Fehler","Blockiert","Zu prüfen","Hinweis"].includes(row.status)).length;
+  const findings = rows.filter(row => ["Technischer Fehler","Kritischer Abrechnungsmangel","Entscheidung erforderlich","Hinweis"].includes(row.status)).length;
   const notApplicable = rows.filter(row => row.status === "Nicht anwendbar").length;
   const cards = [
     ["Regeln insgesamt",rows.length,"Registry"],

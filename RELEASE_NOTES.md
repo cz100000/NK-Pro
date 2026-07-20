@@ -1,4 +1,13 @@
-# Release V99.4.64 – AP22F11B Korrektur 3
+# Release Notes
+
+## V99.4.65 – AP22F11B Korrektur 4 (Release-Kandidat)
+
+- Konsolidiertes Prüf- und Regelsystem auf zwei getrennten Seiten.
+- Moderne Statuslogik mit „Kritischer Abrechnungsmangel“ und „Entscheidung erforderlich“.
+- 87 produktive Regeln vollständig inventarisiert.
+- Bestehende finanzielle Differenzentscheidungen auf beiden Seiten konsistent.
+- Abschluss, Brieffreigabe und Schreibschutz an nachweisbare Produktlogik gebunden.
+- Datenschema 5 unverändert; keine Schemamigration.
 
 Die bisherige Seite „Prüfung & Freigabe“ wurde als handlungsorientierte Seite **„Prüfen und abschließen“** neu gestaltet. Blockierende Fehler, offene Prüfungen, Hinweise und Abschlussstatus werden als Kennzahlen dargestellt. Offene Punkte führen direkt zur verursachenden Eingabeseite; erledigte Prüfungen bleiben einblendbar. Der Abschlussbereich zeigt die Voraussetzungen und deaktiviert die Finalisierung sichtbar, solange Blocker bestehen.
 

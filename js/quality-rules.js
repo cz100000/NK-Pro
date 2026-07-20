@@ -8,7 +8,7 @@
     TECHNICAL:"Technische Systemprüfung"
   });
   const STATUS = Object.freeze({
-    BLOCKED:"Blockiert", REVIEW:"Zu prüfen", HINT:"Hinweis", DONE:"Erledigt",
+    BLOCKED:"Kritischer Abrechnungsmangel", REVIEW:"Entscheidung erforderlich", HINT:"Hinweis", DONE:"Bestanden",
     NOT_APPLICABLE:"Nicht anwendbar", TECHNICAL_ERROR:"Technischer Fehler"
   });
   const GROUPS = Object.freeze([
@@ -401,8 +401,8 @@
 
   function evaluateCompletion(data, currentResults) {
     const blocking=currentResults.filter(row=>row.blocking&&row.status===STATUS.BLOCKED); const review=currentResults.filter(row=>row.findingStatus===STATUS.REVIEW&&row.status===STATUS.REVIEW);
-    if(blocking.length)return result("NKP-FACH-019",{details:"Abschluss durch "+blocking.length+" blockierende Prüfpunkte verhindert.",values:{blocking:blocking.map(x=>x.instanceId),openReviews:review.map(x=>x.instanceId)}},data);
-    if(review.length)return result("NKP-FACH-019",{blocking:false,severity:"Prüfen",confirmAllowed:false,details:"Keine Blocker, aber "+review.length+" unbestätigte Plausibilitätsauffälligkeiten.",values:{blocking:[],openReviews:review.map(x=>x.instanceId)}},data);
+    if(blocking.length)return result("NKP-FACH-019",{details:"Abschluss durch "+blocking.length+" kritische Abrechnungsmängel verhindert.",values:{blocking:blocking.map(x=>x.instanceId),openReviews:review.map(x=>x.instanceId)}},data);
+    if(review.length)return result("NKP-FACH-019",{blocking:false,severity:"Prüfen",confirmAllowed:false,details:"Keine kritischen Abrechnungsmängel, aber "+review.length+" offene fachliche Entscheidungen.",values:{blocking:[],openReviews:review.map(x=>x.instanceId)}},data);
     return passed("NKP-FACH-019","Alle Pflichtprüfungen bestanden und alle relevanten Auffälligkeiten bearbeitet.",{blocking:0,openReviews:0},data);
   }
 
@@ -425,7 +425,7 @@
     const counts={blocked:0,review:0,hints:0,done:0,notApplicable:0,technicalErrors:0};
     results.forEach(row=>{if(row.status===STATUS.BLOCKED)counts.blocked++;else if(row.status===STATUS.REVIEW)counts.review++;else if(row.status===STATUS.HINT)counts.hints++;else if(row.status===STATUS.DONE)counts.done++;else if(row.status===STATUS.NOT_APPLICABLE)counts.notApplicable++;else if(row.status===STATUS.TECHNICAL_ERROR)counts.technicalErrors++;});
     const groups=GROUPS.map(group=>{const rows=visible.filter(row=>row.group===group.id);return Object.assign({},group,{results:rows,counts:{blocked:rows.filter(r=>r.status===STATUS.BLOCKED).length,review:rows.filter(r=>r.status===STATUS.REVIEW).length,hints:rows.filter(r=>r.status===STATUS.HINT).length,done:rows.filter(r=>r.status===STATUS.DONE).length,notApplicable:rows.filter(r=>r.status===STATUS.NOT_APPLICABLE).length}});});
-    const readiness=counts.blocked?{level:"err",label:"Nicht abschließbar",message:"Die Abrechnung kann noch nicht abgeschlossen werden."}:counts.review?{level:"warn",label:"Fachlich zu prüfen",message:"Keine blockierenden Fehler. Es bestehen noch unbestätigte Plausibilitätsauffälligkeiten."}:{level:"ok",label:"Abschlussbereit",message:"Die Abrechnung ist abschlussbereit."};
+    const readiness=counts.blocked?{level:"err",label:"Nicht abschließbar",message:"Die Abrechnung kann noch nicht abgeschlossen werden."}:counts.review?{level:"warn",label:"Fachlich zu prüfen",message:"Keine kritischen Abrechnungsmängel. Es bestehen noch offene fachliche Entscheidungen."}:{level:"ok",label:"Abschlussbereit",message:"Die Abrechnung ist abschlussbereit."};
     return {counts,groups,readiness};
   }
 

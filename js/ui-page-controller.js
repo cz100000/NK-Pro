@@ -174,9 +174,9 @@ function dashboardStats() {
   const objectValidation=safeOverviewCall(()=>validateObjectStandard(state),{valid:false,errors:[],warnings:[],infos:[]});
   const quality=safeOverviewCall(()=>NK_PRO_MODULES.qualityAssurance.inspect({scope:"currentBilling"}),null);
   const centralResults=quality && Array.isArray(quality.results) ? quality.results : [];
-  const qualityIssues=centralResults.filter(row=>["Blockiert","Zu prüfen","Hinweis"].includes(row.status));
-  const qualityErrors=centralResults.filter(row=>row.status === "Blockiert");
-  const qualityWarnings=centralResults.filter(row=>row.status === "Zu prüfen" || row.status === "Hinweis");
+  const qualityIssues=centralResults.filter(row=>["Kritischer Abrechnungsmangel","Entscheidung erforderlich","Hinweis","Noch nicht ausgeführt"].includes(row.status));
+  const qualityErrors=centralResults.filter(row=>row.status === "Kritischer Abrechnungsmangel");
+  const qualityWarnings=centralResults.filter(row=>row.status === "Entscheidung erforderlich" || row.status === "Hinweis" || row.status === "Noch nicht ausgeführt");
   const centralGroup=id=>quality && Array.isArray(quality.groups) ? quality.groups.find(group=>group.id===id) : null;
   const groupRule=(key,label,id,target)=>{const group=centralGroup(id)||{counts:{blocked:0,review:0,hints:0},results:[]};const counts=group.counts||{};return {key,label,complete:!counts.blocked&&!counts.review,blocked:counts.blocked>0,target,groupId:id};};
   const activeBilling=safeOverviewCall(()=>NK_PRO_MODULES.archiveActions.hasActiveCurrentBilling(),false);

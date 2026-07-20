@@ -1,4 +1,20 @@
-# V99.4.64 – AP22F11B Korrektur 3
+# Changelog
+
+## V99.4.65 – 20.07.2026
+
+### Hinzugefügt
+- Vollständige K4-Projektion und UI für Prüfresultate und Regelinventar.
+- Vollständiges maschinenlesbares und lesbares Regel-/Prüfinventar.
+- K4-Statik-, Browser- und Echtdaten-Roundtriptests.
+
+### Geändert
+- Alte Qualitätsstatusbegriffe vollständig auf die freigegebene Statuslogik umgestellt.
+- Zentrale Navigation als einzige Sortierquelle beider Seiten.
+- Bestehende Differenzentscheidungen mit der Prüfseite verbunden.
+- Version/PWA-Build auf V99.4.65.
+
+### Unverändert geschützt
+- Datenschema 5, Berechnung, Persistenz, Export/Import, Archiv und Snapshot.
 
 - Navigationseintrag „Prüfung & Freigabe“ in „Prüfen und abschließen“ umbenannt.
 - Abschlussseite auf offene Aufgaben, erledigte Prüfungen und finalen Abschlussstatus konzentriert.

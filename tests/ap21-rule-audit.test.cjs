@@ -47,22 +47,22 @@ function main(){
   assert(rule.dataSource.includes("abrechnungsjahr"),"Abrechnungsjahr fehlt in der Regel-Datenquelle.");
 
   let row=fach001(api,{abrechnungsjahr:"2025",abrechnungsbeginn:"2025-02-30",abrechnungsende:"2025-12-31"});
-  assert(row.status==="Blockiert"&&row.details.includes("kein existierendes Kalenderdatum"),"Unmögliche Kalendertage werden nicht blockiert.");
+  assert(row.status==="Kritischer Abrechnungsmangel"&&row.details.includes("kein existierendes Kalenderdatum"),"Unmögliche Kalendertage werden nicht blockiert.");
 
   row=fach001(api,{abrechnungsjahr:"2025",abrechnungsbeginn:"01.01.2025",abrechnungsende:"2025-12-31"});
-  assert(row.status==="Blockiert"&&row.details.includes("Format YYYY-MM-DD"),"Formatabweichungen werden nicht eindeutig erkannt.");
+  assert(row.status==="Kritischer Abrechnungsmangel"&&row.details.includes("Format YYYY-MM-DD"),"Formatabweichungen werden nicht eindeutig erkannt.");
 
   row=fach001(api,{abrechnungsjahr:"2025",abrechnungsbeginn:"2025-12-31",abrechnungsende:"2025-01-01"});
-  assert(row.status==="Blockiert"&&row.details.includes("Ende liegt vor dem Beginn"),"Umgekehrte Perioden werden nicht blockiert.");
+  assert(row.status==="Kritischer Abrechnungsmangel"&&row.details.includes("Ende liegt vor dem Beginn"),"Umgekehrte Perioden werden nicht blockiert.");
 
   row=fach001(api,{abrechnungsjahr:"2024",abrechnungsbeginn:"2025-01-01",abrechnungsende:"2025-12-31"});
-  assert(row.status==="Blockiert"&&row.details.includes("entspricht nicht dem Endjahr 2025"),"Jahresinkonsistenz wird nicht blockiert.");
+  assert(row.status==="Kritischer Abrechnungsmangel"&&row.details.includes("entspricht nicht dem Endjahr 2025"),"Jahresinkonsistenz wird nicht blockiert.");
 
   row=fach001(api,{abrechnungsjahr:"2025",abrechnungsbeginn:"2025-02-01",abrechnungsende:"2025-02-28"});
-  assert(row.status==="Erledigt"&&row.values.durationDays===28,"Gültige Teilperioden werden nicht akzeptiert.");
+  assert(row.status==="Bestanden"&&row.values.durationDays===28,"Gültige Teilperioden werden nicht akzeptiert.");
 
   row=fach001(api,{abrechnungsjahr:"2025",abrechnungsbeginn:"2024-12-15",abrechnungsende:"2025-01-14"});
-  assert(row.status==="Erledigt"&&row.values.durationDays===31,"Gültige jahresübergreifende Perioden werden nicht akzeptiert.");
+  assert(row.status==="Bestanden"&&row.values.durationDays===31,"Gültige jahresübergreifende Perioden werden nicht akzeptiert.");
 
   assert(html.includes('id="billingPeriodSection"')&&html.includes('id="billingPeriodSettings"'),"Periodenbereich auf der Abrechnungsübersicht fehlt.");
   assert(ui.includes("function renderBillingPeriodSettings()")&&ui.includes('data-ui-action="billing.syncPeriodYear"'),"Periodenbereich oder Jahresabgleich wird nicht gerendert.");

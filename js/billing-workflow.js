@@ -142,7 +142,7 @@
         reason:"validation-errors",
         errorCount:info.readiness.errors.length,
         targetTab:"qualitaet",
-        message:"Finalisierung nicht möglich. Es gibt noch blockierende Fehler im finalen Abrechnungscheck."
+        message:"Finalisierung nicht möglich. Es bestehen kritische Abrechnungsmängel im finalen Abrechnungscheck."
       });
     }
     if (info.readiness.warnings.length) {
@@ -151,7 +151,7 @@
         reason:"open-plausibility",
         warningCount:info.readiness.warnings.length,
         targetTab:"qualitaet",
-        message:"Keine blockierenden Fehler. Es bestehen noch unbestätigte Plausibilitätsauffälligkeiten. Bitte bearbeiten oder fachlich bestätigen."
+        message:"Keine kritischen Abrechnungsmängel. Es bestehen noch offene fachliche Entscheidungen. Bitte korrigieren oder zulässig entscheiden."
       });
     }
     const year = d.currentYear();

@@ -53,7 +53,7 @@ const data = {
 const report = sandbox.NKProQualityRules.evaluate(data, { includeTechnical:false });
 const finding = report.results.find(row => row.ruleId === "NKP-PLAU-005" && !row.passed);
 assert.ok(finding, "Die zentrale Regel NKP-PLAU-005 muss die rückläufige Messperiode erkennen.");
-assert.equal(finding.status, "Zu prüfen");
+assert.equal(finding.status, "Entscheidung erforderlich");
 assert.equal(finding.blocking, false);
 assert.equal(finding.confirmAllowed, true);
 assert.equal(finding.values.meterId, "Z1");
@@ -63,4 +63,4 @@ assert.match(finding.details, /Endstand 90/);
 assert.match(finding.details, /Anfangsstand 100/);
 assert.match(finding.entityLabel, /Kaltwasser/);
 
-process.stdout.write("AP20-Zählerstartregression bestanden: Datensatz bleibt ladbar und NKP-PLAU-005 zeigt die rückläufige Messperiode als 'Zu prüfen'.\n");
+process.stdout.write("AP20-Zählerstartregression bestanden: Datensatz bleibt ladbar und NKP-PLAU-005 zeigt die rückläufige Messperiode als 'Entscheidung erforderlich'.\n");
