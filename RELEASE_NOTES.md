@@ -1,5 +1,9 @@
 # Release Notes
 
+## V99.4.66 – Wohnflächenkorrektur
+
+Die sieben bestätigten Wohnflächen sind dauerhaft im Ausgangsbestand hinterlegt. Bestehende lokale Arbeitsstände werden beim ersten Start einmalig anhand der stabilen Wohnungs-IDs korrigiert. Die aktuelle Abrechnungskopie und zugehörige Mietverhältnisse werden synchronisiert; historische Jahresarchive und Abrechnungssnapshots bleiben unverändert. Gesamtwohnfläche: 391,5 m².
+
 ## V99.4.65 – AP22F11B Korrektur 4 (Release-Kandidat)
 
 - Konsolidiertes Prüf- und Regelsystem auf zwei getrennten Seiten.

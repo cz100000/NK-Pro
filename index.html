@@ -3,10 +3,10 @@
 <html lang="de">
 <head>
 <meta charset="utf-8"/>
-<meta content="99.4.65-ap22f11b-k4" name="nk-pro-build"/>
+<meta content="99.4.66-wohnflaechen" name="nk-pro-build"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>NK-Pro V99.4.63 – Vorauszahlungen anpassen</title>
-<link href="./assets/app.css?v=99.4.65-ap22f11b-k4" rel="stylesheet"/>
+<link href="./assets/app.css?v=99.4.66-wohnflaechen" rel="stylesheet"/>
 <meta content="#031d41" name="theme-color"/>
 <meta content="yes" name="mobile-web-app-capable"/>
 <meta content="yes" name="apple-mobile-web-app-capable"/>
@@ -67,7 +67,7 @@
 </div>
 </section>
 
-<section class="tab rule-inventory-page rule-inventory-page--k4" id="regelinventar" data-release="NK-Pro V99.4.65">
+<section class="tab rule-inventory-page rule-inventory-page--k4" id="regelinventar" data-release="NK-Pro V99.4.66">
 <div class="app-page nk-ui-page-shell nk-ui-page-shell--wide" data-page-tab="regelinventar" data-page-shell="wide">
 <header class="page-header nk-ui-page-header" data-page-header="regelinventar"><div class="page-header__identity"><p class="page-header__kicker">Analyse</p><h1 class="page-header__title">Regelinventar</h1><p class="page-header__description">Alle produktiven Prüfungen, Validierungen und Plausibilitätsregeln mit tatsächlichem Prüfungsort, Logik und Abschlusswirkung nachvollziehen.</p></div><div class="page-header__actions"></div></header>
 <div class="rule-inventory-content rule-inventory-content--k4">
@@ -140,7 +140,7 @@
 <button class="warn" data-ui-action="application.reset">Gesamtdaten zurücksetzen</button>
 </div>
 </div></div></details><details class="page-section nk-ui-accordion" id="backupVersionSection"><summary class="page-section__summary"><span class="page-section__number">2.</span><span class="page-section__title">Version und technische Informationen</span><span class="page-section__badge nk-ui-status">Version</span><span aria-hidden="true" class="page-section__chevron"><svg aria-hidden="true" class="page-section__chevron-svg" fill="none" viewbox="0 0 24 24"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span></summary><div class="page-section__body nk-ui-accordion__body"><div class="start-box" id="versionBox"><div id="versionInfo"></div></div></div></details><details class="page-section nk-ui-accordion" id="systemDiagnosticsSection"><summary class="page-section__summary"><span class="page-section__number">3.</span><span class="page-section__title">Systemdiagnose</span><span class="page-section__badge nk-ui-status">Technik</span><span aria-hidden="true" class="page-section__chevron"><svg aria-hidden="true" class="page-section__chevron-svg" fill="none" viewbox="0 0 24 24"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span></summary><div class="page-section__body nk-ui-accordion__body"><div class="hint">Technische Systemprüfungen sind von der fachlichen Abrechnungskontrolle getrennt. Interne Regressionstests werden nur bei Bedarf ausgeführt.</div><div id="systemDiagnosticsSummary"></div><div class="toolbar"><button class="secondary" data-ui-action="system.runSelfTest" type="button">App-Selbsttest ausführen</button><button data-ui-action="system.showReleaseAudit" type="button">Release-Audit anzeigen</button><button data-ui-action="system.downloadReleaseAudit" type="button">Release-Audit herunterladen</button></div><div id="releaseAuditSummary"></div></div></details></div></div></section>
-<section class="tab quality-finalization-page quality-finalization-page--k4" id="qualitaet" data-release="NK-Pro V99.4.65">
+<section class="tab quality-finalization-page quality-finalization-page--k4" id="qualitaet" data-release="NK-Pro V99.4.66">
 <div class="app-page nk-ui-page-shell nk-ui-page-shell--wide" data-page-tab="qualitaet" data-page-shell="wide">
 <header class="page-header nk-ui-page-header" data-page-header="qualitaet">
   <div class="page-header__identity"><p class="page-header__kicker">Nebenkosten abrechnen</p><h1 class="page-header__title">Prüfen und abschließen</h1><p class="page-header__description">Alle konkreten Ergebnisse der geöffneten Abrechnung prüfen, Abweichungen an einer gemeinsamen Entscheidungsquelle bearbeiten und den versandbereiten Stand fachlich abschließen.</p></div>
@@ -395,12 +395,13 @@
 <script defer="" src="./js/cost-actions.js"></script>
 <script defer="" src="./js/billing-workflow.js"></script>
 <script defer="" src="./js/ui-controller.js"></script>
-<script defer="" src="./js/ui-bindings.js?v=99.4.65-ap22f11b-k4"></script>
-<script defer="" src="./js/ui-events.js?v=99.4.65-ap22f11b-k4"></script>
+<script defer="" src="./js/ui-bindings.js?v=99.4.66-wohnflaechen"></script>
+<script defer="" src="./js/ui-events.js?v=99.4.66-wohnflaechen"></script>
 <script defer="" src="./js/navigation.js"></script>
 <script defer="" src="./js/modal-events.js"></script>
 <script defer="" src="./js/persistence.js"></script>
 <script defer="" src="./js/migration.js"></script>
+<script defer="" src="./js/apartment-area-correction.js?v=99.4.66-wohnflaechen"></script>
 <script defer="" src="./js/backup-recovery.js"></script>
 <script defer="" src="./js/meter-master.js"></script>
 <script defer="" src="./js/meter-readings.js"></script>
@@ -416,12 +417,12 @@
 <script defer="" src="./js/diagnostics.js"></script>
 <script defer="" src="./js/billing-calculation.js"></script>
 <script defer="" src="./js/billing-review.js"></script>
-<script defer="" src="./js/quality-system-k4.js?v=99.4.65-ap22f11b-k4"></script>
+<script defer="" src="./js/quality-system-k4.js?v=99.4.66-wohnflaechen"></script>
 <script defer="" src="./js/document-data.js"></script>
 <script defer="" src="./js/document-renderer.js"></script>
 <script defer="" src="./js/export-service.js"></script>
 <script defer="" src="./js/ui-table-tools.js"></script>
-<script defer="" src="./js/ui-design-system.js?v=99.4.65-ap22f11b-k4"></script>
+<script defer="" src="./js/ui-design-system.js?v=99.4.66-wohnflaechen"></script>
 <script defer="" src="./js/app-bootstrap.js"></script>
 <script defer="" src="./js/compatibility.js"></script>
 <script defer="" src="./js/default-seed.js"></script>
@@ -434,14 +435,14 @@
 <script defer="" src="./js/ui-navigation-pages.js"></script>
 <script defer="" src="./js/ui-archive-pages.js"></script>
 <script defer="" src="./js/browser-io.js"></script>
-<script defer="" src="./js/ui-metering.js?v=99.4.65-ap22f11b-k4"></script>
-<script defer="" src="./js/ui-billing-allocation.js?v=99.4.65-ap22f11b-k4"></script><script defer="" src="./js/ui-individual-values.js?v=99.4.65-ap22f11b-k4"></script>
-<script defer="" src="./js/ui-quality-k4.js?v=99.4.65-ap22f11b-k4"></script>
+<script defer="" src="./js/ui-metering.js?v=99.4.66-wohnflaechen"></script>
+<script defer="" src="./js/ui-billing-allocation.js?v=99.4.66-wohnflaechen"></script><script defer="" src="./js/ui-individual-values.js?v=99.4.66-wohnflaechen"></script>
+<script defer="" src="./js/ui-quality-k4.js?v=99.4.66-wohnflaechen"></script>
 <script defer="" src="./js/ui-documents.js"></script>
 <script defer="" src="./js/ui-table-actions.js"></script>
 <script defer="" src="./js/ui-diagnostics.js"></script>
 <script defer="" src="./js/ui-page-controller.js"></script>
 <script defer="" src="./js/app.js"></script>
-<script defer="" src="./js/service-worker-register.js?v=99.4.65-ap22f11b-k4"></script>
+<script defer="" src="./js/service-worker-register.js?v=99.4.66-wohnflaechen"></script>
 </body>
 </html>

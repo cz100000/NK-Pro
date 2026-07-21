@@ -760,6 +760,23 @@ function recordStartupError(area, error) {
   if (typeof console !== "undefined" && console.error) console.error("NK-Pro Startfehler: " + area, error);
 }
 
+function persistStartupApartmentAreaCorrection(data) {
+  const marker = data && data.meta && data.meta[NK_PRO_MODULES.apartmentAreaCorrection.META_KEY];
+  if (!marker || !marker.pendingPersistence || ARCHIVE_VIEW_MODE) return;
+  try {
+    marker.pendingPersistence = false;
+    marker.persistedAt = new Date().toISOString();
+    marker.persistedWithAppVersion = APP_VERSION;
+    enforceWorkingStateDataContract(data);
+    writeProtectedStorage(STORAGE_KEY, data);
+  } catch(e) {
+    marker.pendingPersistence = true;
+    delete marker.persistedAt;
+    delete marker.persistedWithAppVersion;
+    notifyStorageProblem("Die Wohnflächenkorrektur wurde im aktuellen Fenster angewendet, konnte aber nicht dauerhaft gespeichert werden. Bitte Gesamt-JSON sichern.", e);
+  }
+}
+
 function persistStartupMeterRepair(data, cleared) {
   if (!cleared || !data || ARCHIVE_VIEW_MODE) return;
   try {
@@ -781,6 +798,7 @@ function loadInitialState() {
     const loaded = normalizeLoadedData(rawLoaded);
     const cleared = NK_PRO_MODULES.yearTransitionActions.clearAutofilledMeterEndValues(loaded, { repairExistingNewBilling:true });
     persistStartupMeterRepair(loaded, cleared);
+    persistStartupApartmentAreaCorrection(loaded);
     return loaded;
   } catch(error) {
     recordStartupError("Datenstart", error);
@@ -948,7 +966,10 @@ function normalizeLegacyData(data, options = {}) {
   }
   ensureUnifiedBillingFields(data, { includeArchives:false });
   migrateDataSchema(data, { includeArchives:false });
-  if (!snapshotMode) NK_PRO_MODULES.masterDataActions.ensureStammdatenData(data);
+  if (!snapshotMode) {
+    NK_PRO_MODULES.masterDataActions.ensureStammdatenData(data);
+    NK_PRO_MODULES.apartmentAreaCorrection.apply(data, { appVersion:APP_VERSION });
+  }
   if (!data.objektStandard || typeof data.objektStandard !== "object") normalizeObjectStandard(data, { legacySnapshot:snapshotMode });
   const meteringMigration = migrateMeteringData(data, { legacySnapshot:snapshotMode });
   if (meteringMigration.status === "failed") throw meteringMigration.error;

@@ -1,5 +1,5 @@
-const CACHE_NAME = "nk-pro-v99-4-65-ap22f11b-k4";
-const BUILD_ID = "99.4.65-ap22f11b-k4";
+const CACHE_NAME = "nk-pro-v99-4-66-wohnflaechen";
+const BUILD_ID = "99.4.66-wohnflaechen";
 const CACHE_PREFIX = "nk-pro-";
 const APP_SHELL = [
   "./",
@@ -27,6 +27,7 @@ const APP_SHELL = [
   "./js/modal-events.js",
   "./js/persistence.js",
   "./js/migration.js",
+  "./js/apartment-area-correction.js?v=" + BUILD_ID,
   "./js/backup-recovery.js",
   "./js/meter-master.js",
   "./js/meter-readings.js",

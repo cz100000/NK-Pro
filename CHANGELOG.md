@@ -231,6 +231,13 @@
 
 # Änderungsprotokoll
 
+## V99.4.66 – 21.07.2026
+
+- Bestätigte Wohnflächen für alle sieben Wohnungen ID-basiert hinterlegt.
+- Einmalige Korrektur vorhandener Stammdaten- und aktueller Abrechnungskopien ergänzt.
+- Historische Jahresarchive und Snapshots bleiben unverändert.
+- Produkt-, PWA- und Buildversion auf V99.4.66 fortgeschrieben; Datenschema 5 bleibt unverändert.
+
 ## V99.4.23 – AP20 – 14.07.2026
 
 - 176 vorhandene Prüfstellen vollständig inventarisiert und bewertet.

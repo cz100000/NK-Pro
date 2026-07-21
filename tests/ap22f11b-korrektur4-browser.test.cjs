@@ -18,8 +18,10 @@ if(!process.env.NKPRO_K4_BROWSER_ATTEMPT){
 }
 
 const ROOT=path.resolve(__dirname,"..");
-const DATA="/mnt/data/ap22f11b_k4_work/input/nk-pro-gesamtbestand-2025-V99.4.64-AP22F11B-Korrektur3-getestet.json";
-const ORIGIN="http://nkpro-ap22f11b-k4.test";
+const DATA=path.join(ROOT,"nk-pro-gesamtbestand-2025-V99.4.66-2026-07-21-Wohnflaechen-korrigiert.json");
+const DATA_SOURCE=JSON.parse(fs.readFileSync(DATA,"utf8"));
+const EXPECTED_METER_VALUES=DATA_SOURCE.zaehlerDaten.messwerte.length;
+const ORIGIN="http://nkpro-v99-4-66.test";
 const SHOTS=path.join(ROOT,"AP22F11B_Korrektur4_Screenshots");
 const DOCS=path.join(ROOT,"AP22F11B_Korrektur4_Dokumentation");
 const REPORT=path.join(DOCS,"browser-test-result.json");
@@ -56,7 +58,7 @@ async function mount(browser,viewport={width:1440,height:1000}){
 
 async function importData(page){
   await page.setInputFiles("#jsonImport",DATA);
-  await page.waitForFunction(()=>state?.meta?.abrechnungsjahr==="2025"&&state?.zaehlerDaten?.messwerte?.length===769);
+  await page.waitForFunction(expected=>state?.meta?.abrechnungsjahr==="2025"&&state?.zaehlerDaten?.messwerte?.length===expected&&state?.wohnungen?.reduce((sum,row)=>sum+Number(row.wohnflaeche||0),0)===391.5,EXPECTED_METER_VALUES);
   await page.waitForTimeout(450);
 }
 
@@ -213,7 +215,7 @@ async function layout(page,tab){
     await page.waitForFunction(()=>state.meta.currentBillingFinalized===true);
     const finalized=await page.evaluate(()=>({finalized:state.meta.currentBillingFinalized,at:state.meta.currentBillingFinalizedAt,version:state.meta.currentBillingFinalizedWithAppVersion,readOnly:NKProBillingWorkflow.isCurrentBillingFinalized(),letterCount:(calculateUmlage().tenantResults||[]).filter(row=>row?.tenant&&isBillableTenant(row.tenant)&&tenantRelevantForCurrentBilling(row.tenant)).length}));
     assert.strictEqual(finalized.finalized,true);
-    assert.strictEqual(finalized.version,"V99.4.65");
+    assert.strictEqual(finalized.version,"V99.4.66");
     assert.ok(finalized.at);
     assert.strictEqual(finalized.readOnly,true);
     assert.ok(finalized.letterCount>0);

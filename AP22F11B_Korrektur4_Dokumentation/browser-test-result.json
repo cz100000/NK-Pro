@@ -1,31 +1,8 @@
 {
-  "ok": true,
-  "startedAt": "2026-07-20T02:00:01.523Z",
-  "finishedAt": "2026-07-20T02:00:30.836Z",
-  "checks": [
-    "Kritischer Abrechnungsmangel kann nicht akzeptiert werden und verhindert den Abschluss",
-    "Korrigieren führt zur verursachenden Eingabeseite und fokussiert den Bereich",
-    "Dieselbe finanzielle Entscheidung ist auf Abrechnungsergebnis und Prüfen/Abschließen konsistent",
-    "Änderung der Ursprungsdaten invalidiert die Entscheidung über die bestehende Signatur",
-    "Fachlicher Abschluss erst nach erledigten Prüfungen; geprüfter Stand wird eingefroren",
-    "Alle fallbezogenen Ergebnisse einschließlich Bestanden, Nicht anwendbar und Entscheidungen sichtbar",
-    "Gruppierung folgt exakt der zentralen Navigationsdefinition",
-    "Kennzahlenkarten und Statuschips filtern dezent und konsistent",
-    "Ergebnis- und Regeldetails enthalten die geforderten fachlichen Angaben",
-    "Qualitätsseite bei 1440, 1640 und 125-%-Äquivalent ohne Dokumentüberlauf",
-    "Regelinventar mit 87 ausschließlich produktiven Regeln und vollständigen Metadaten geprüft",
-    "Beide Seiten schmal ohne Dokumentüberlauf und mit internem Tabellen-Scroll"
-  ],
-  "screenshots": [
-    "01_pruefen_und_abschliessen_desktop_1440.png",
-    "02_pruefen_und_abschliessen_desktop_1640.png",
-    "03_pruefen_und_abschliessen_125_prozent.png",
-    "04_regelinventar_desktop_1440.png",
-    "05_regelinventar_desktop_1640.png",
-    "06_pruefen_und_abschliessen_schmal_760.png",
-    "07_regelinventar_schmal_760.png"
-  ],
-  "runtimeErrors": [],
-  "registryCount": 87,
-  "schemaVersion": 5
+  "ok": false,
+  "startedAt": "2026-07-21T17:34:40.104Z",
+  "finishedAt": "2026-07-21T17:34:41.529Z",
+  "checks": [],
+  "error": "page.setContent: Target page, context or browser has been closed\nCall log:\n  - setting frame content, waiting until \"load\"\n\n    at mount (/mnt/data/nkpro_work/tests/ap22f11b-korrektur4-browser.test.cjs:54:14)\n    at async /mnt/data/nkpro_work/tests/ap22f11b-korrektur4-browser.test.cjs:140:19",
+  "runtimeErrors": []
 }

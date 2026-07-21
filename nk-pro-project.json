@@ -1,12 +1,12 @@
 {
-  "appVersion": "99.4.65",
-  "displayVersion": "V99.4.65",
-  "versionName": "AP22F11B Korrektur 4 – Prüf- und Regelsystem",
+  "appVersion": "99.4.66",
+  "displayVersion": "V99.4.66",
+  "versionName": "Wohnflächenkorrektur – Objekt 001",
   "schemaVersion": 5,
   "dataLayerContractVersion": 1,
   "snapshotScope": "billingSnapshot",
-  "basedOn": "99.4.64-AP22F11B-Korrektur3",
-  "releaseDate": "2026-07-20",
+  "basedOn": "99.4.65-AP22F11B-Korrektur4",
+  "releaseDate": "2026-07-21",
   "runtime": [
     "HTML",
     "CSS",
@@ -33,7 +33,7 @@
   "documentLayoutVersion": 4,
   "uiVisualSystemVersion": 4,
   "meterInventoryDummyVersion": 2,
-  "pwaCacheName": "nk-pro-v99-4-65-ap22f11b-k4",
+  "pwaCacheName": "nk-pro-v99-4-66-wohnflaechen",
   "releaseHardeningVersion": 1,
   "releaseContentPolicyVersion": 1,
   "transientUiResetVersion": 1,
@@ -57,7 +57,7 @@
   "meterInputLocaleNumberVersion": 1,
   "assetCacheBustVersion": 1,
   "serviceWorkerForcedUpdateVersion": 1,
-  "runtimeBuildId": "99.4.65-ap22f11b-k4",
+  "runtimeBuildId": "99.4.66-wohnflaechen",
   "uiConsolidationVersion": 1,
   "individualValuesPageVersion": 5,
   "navigationTerminologyVersion": 1,
@@ -112,5 +112,6 @@
   "analysisNavigationVersion": 1,
   "analysisOverviewVersion": 1,
   "qualityFinalizationPageVersion": 2,
-  "ruleInventoryPageVersion": 2
+  "ruleInventoryPageVersion": 2,
+  "apartmentAreaCorrectionVersion": 1
 }

@@ -6,11 +6,12 @@ const crypto = require("crypto");
 const { chromium } = require("playwright");
 
 const ROOT = path.resolve(__dirname, "..");
-const INPUT = "/mnt/data/ap22f11b_k4_work/input/nk-pro-gesamtbestand-2025-V99.4.64-AP22F11B-Korrektur3-getestet.json";
+const INPUT = path.join(ROOT, "nk-pro-gesamtbestand-2025-V99.4.66-2026-07-21-Wohnflaechen-korrigiert.json");
 const OUTPUT_DIR = "/mnt/data/AP22F11B_K4_Ergebnis";
-const OUTPUT = path.join(OUTPUT_DIR, "nk-pro-gesamtbestand-2025-V99.4.65-AP22F11B-Korrektur4-getestet.json");
-const ORIGIN = "http://nkpro-ap22f11b-k4-roundtrip.test";
+const OUTPUT = path.join(OUTPUT_DIR, "nk-pro-gesamtbestand-2025-V99.4.66-AP22F11B-Korrektur4-getestet.json");
+const ORIGIN = "http://nkpro-v99-4-66-roundtrip.test";
 const source = JSON.parse(fs.readFileSync(INPUT, "utf8"));
+const EXPECTED_METER_VALUES = source.zaehlerDaten.messwerte.length;
 const hash = value => crypto.createHash("sha256").update(JSON.stringify(value)).digest("hex");
 const meteringSnapshot = value => {
   const data = value && typeof value === "object" ? value : {};
@@ -60,7 +61,7 @@ async function mount(browser) {
 
 async function importFile(page,file) {
   await page.setInputFiles("#jsonImport",file);
-  await page.waitForFunction(() => state?.meta?.abrechnungsjahr === "2025" && state?.zaehlerDaten?.messwerte?.length === 769);
+  await page.waitForFunction(expected => state?.meta?.abrechnungsjahr === "2025" && state?.zaehlerDaten?.messwerte?.length === expected && state?.wohnungen?.reduce((sum,row)=>sum+Number(row.wohnflaeche||0),0) === 391.5, EXPECTED_METER_VALUES);
   await page.waitForTimeout(500);
 }
 
@@ -84,11 +85,11 @@ async function importFile(page,file) {
     await download.saveAs(OUTPUT);
     const exported=JSON.parse(fs.readFileSync(OUTPUT,"utf8"));
     assert.strictEqual(exported.meta.dataSchemaVersion,5);
-    assert.strictEqual(exported.meta.exportedWithAppVersion,"V99.4.65");
+    assert.strictEqual(exported.meta.exportedWithAppVersion,"V99.4.66");
     assert.strictEqual(hash(protectedSnapshot(exported)),hash(protectedSnapshot(source)),"protected business data changed during export");
-    assert.strictEqual(exported.zaehlerDaten.messwerte.length,769);
+    assert.strictEqual(exported.zaehlerDaten.messwerte.length,EXPECTED_METER_VALUES);
     assert.strictEqual(exported.jahresArchiv.length,4);
-    assert.strictEqual(Object.keys(exported.abrechnungsPruefungen?.records||{}).length,0);
+    assert.strictEqual(Object.keys(exported.abrechnungsPruefungen?.records||{}).length,Object.keys(source.abrechnungsPruefungen?.records||{}).length);
     assert.strictEqual(exported.prepaymentAdjustmentSettings.priceForecastEnabled,"Nein");
 
     second=await mount(browser);
@@ -101,7 +102,7 @@ async function importFile(page,file) {
       snapshot:{wohnungen:state.wohnungen,mieter:state.mieter,kostenarten:state.kostenarten,vorauszahlungen:state.vorauszahlungen,waterMeters:state.waterMeters,umlageInputs:state.umlageInputs,jahresArchiv:state.jahresArchiv,waterMeterHistory:state.waterMeterHistory,kostenartenMieterUmlage:state.kostenartenMieterUmlage,abrechnungsEinzelwerte:state.abrechnungsEinzelwerte,zaehlerDaten:(() => { const {updatedAt,updatedWithAppVersion,...business}=state.zaehlerDaten||{}; return business; })()}
     }));
     assert.strictEqual(reimport.schema,5);
-    assert.strictEqual(reimport.meters,769);
+    assert.strictEqual(reimport.meters,EXPECTED_METER_VALUES);
     assert.strictEqual(reimport.archives,4);
     assert.strictEqual(reimport.settings.priceForecastEnabled,"Nein");
     assert.strictEqual(hash(reimport.snapshot),hash(protectedSnapshot(source)),"protected data changed after clean reimport");

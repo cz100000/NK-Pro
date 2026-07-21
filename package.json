@@ -1,14 +1,14 @@
 {
-  "name": "nk-pro-v99-4-65",
-  "version": "99.4.65",
+  "name": "nk-pro-v99-4-66",
+  "version": "99.4.66",
   "private": true,
-  "description": "AP22F11B Korrektur 4 – konsolidiertes Prüf- und Regelsystem",
+  "description": "Wohnflächenkorrektur – bestätigte Flächen für sieben Wohnungen",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
     "test:fixtures": "node tools/check-fixtures.cjs",
     "fixtures:materialize": "node tools/materialize-fixtures.cjs",
-    "test:browser": "node tests/ap22f11b-korrektur4-browser.test.cjs",
-    "test": "npm run test:syntax && npm run test:fixtures && npm run test:metering && npm run test:architecture && npm run test:contents && npm run test:release && npm run test:browser && npm run test:ap22f11b:k4:data",
+    "test:browser": "node tests/apartment-area-correction-browser.test.cjs",
+    "test": "npm run test:syntax && npm run test:fixtures && npm run test:wohnflaechen && npm run test:metering && npm run test:architecture && npm run test:contents && npm run test:release",
     "test:report": "playwright show-report",
     "test:release": "npm run test:ap22f11b:k4:static",
     "test:metering": "node tests/metering-domain.test.cjs && node tests/ap20-meter-start-regression.test.cjs && node tests/ap20-meter-calculation-regression.test.cjs && node tests/ap20-asset-refresh-regression.test.cjs",
@@ -18,7 +18,7 @@
     "test:ap14": "node tests/ap14-ui-navigation.test.cjs && playwright test --project=ap14-ui-navigation --workers=1",
     "test:contents": "node tests/ap22f11b-korrektur4.test.cjs",
     "test:ap15": "node tests/ap15-integration-release.test.cjs && playwright test --project=ap15-integration-release --workers=1",
-    "release:check": "npm run test:syntax && npm run test:fixtures && npm run test:ap22f11b:k4:static && node tools/check-release-contents.cjs --ignore-node-modules --strict",
+    "release:check": "npm run test:syntax && npm run test:fixtures && npm run test:wohnflaechen && node tools/check-release-contents.cjs --ignore-node-modules --strict",
     "test:ap17": "node tests/ap17-area-dashboards.test.cjs && playwright test --project=ap17-area-dashboards --workers=1",
     "test:ap18": "node tests/ap18-ui-ux-polish.test.cjs && playwright test --project=ap18-ui-ux-polish --workers=1",
     "test:ap19": "node tests/ap19-billing-context-dashboards.test.cjs && playwright test --project=ap19-billing-context-dashboards --workers=1",
@@ -128,7 +128,9 @@
     "test:ap22f11b:k4:static": "node tests/ap22f11b-korrektur4.test.cjs",
     "test:ap22f11b:k4:browser": "node tests/ap22f11b-korrektur4-browser.test.cjs",
     "test:ap22f11b:k4:data": "node tests/ap22f11b-korrektur4-data-roundtrip.test.cjs",
-    "test:ap22f11b:k4": "npm run test:ap22f11b:k4:static && npm run test:ap22f11b:k4:browser && npm run test:ap22f11b:k4:data"
+    "test:ap22f11b:k4": "npm run test:ap22f11b:k4:static && npm run test:ap22f11b:k4:browser && npm run test:ap22f11b:k4:data",
+    "test:wohnflaechen": "node tests/apartment-area-correction.test.cjs",
+    "test:browser:k4": "node tests/ap22f11b-korrektur4-browser.test.cjs"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1"
