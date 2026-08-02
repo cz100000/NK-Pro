@@ -1,5 +1,26 @@
 # Changelog
 
+## V99.4.69 – 02.08.2026
+
+### Oberfläche
+- „Kosten- und Umlagenabgleich“ in eine klare, responsive Karten-, Tabellen-, Kontroll- und Statusstruktur überführt.
+- Ergebnis- und Statusbereich auf breiten Ansichten rechts und auf schmaleren Ansichten unterhalb der Hauptinhalte angeordnet.
+- Tabellenköpfe, Summenzeilen, Warnzeilen, Zahlen-/Euroausrichtung und interner Tabellenüberlauf an den NK-Pro-Standard angeglichen.
+- Kontrolldifferenz und fachlicher Status sichtbar getrennt; `0,00 €` Kontrolldifferenz bei weiterhin offener fachlicher Differenz abgesichert.
+- Detailansicht nach Kostenarten, tatsächliche Zahlungsflüsse sowie Prüfentscheidungen/Zuordnungen integriert.
+
+### Archivierung
+- Zustandsabhängige Archivtexte eingeführt: `Abrechnung ins Archiv verschieben.` beziehungsweise `Archiv aktualisieren.`
+- Texte in Tooltip, `title`, `aria-label`, Bestätigung und Tests vereinheitlicht.
+- Aktuelle, archivierte und kontrolliert zur Korrektur geöffnete Abrechnungen besitzen getrennte zulässige Aktionsmengen.
+- Snapshot- und Periodenmetadaten werden vor der Prüfsummenbildung vollständig erzeugt; erneute Archivierung einer kontrollierten Korrektur erhält Periodenidentität und Archivanzahl.
+
+### Schutz und Qualität
+- V99.4.68-Teilnehmerlogik vollständig erhalten; keine doppelte Privatanteilssummierung und keine automatische Vermieterkostenkategorie.
+- M000 sowie ein generischer Eigenanteilsfall in Berechnung, Dokument, Export, Snapshot, Wiederöffnung und Jahreswechsel geprüft.
+- Vollständige statische Releaseprüfung und offline Chromium-Browserprüfung ohne JavaScript-Seiten- oder Konsolenfehler bestanden.
+
+
 ## V99.4.68 – 02.08.2026
 
 ### Fachlich korrigiert

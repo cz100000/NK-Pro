@@ -1,5 +1,16 @@
 # Release Notes
 
+## V99.4.69 – UI-, Archiv- und Gesamtkorrekturen
+
+V99.4.69 schließt die visuelle Neugestaltung des Kosten- und Umlagenabgleichs und die zustandsabhängige Archivaktion ab. Die bestehende Fach-, Daten-, Prüf-, Export- und Persistenzarchitektur wird weiterverwendet; es wurde keine Parallelseite und keine zweite Entscheidungslogik aufgebaut.
+
+Der Kosten- und Umlagenabgleich trennt Einnahmen, relevante Kosten, Vergleich, Erklärung der Differenz, Kontrollrechnung, fachlichen Status, Kostenartendetails, Zahlungsflüsse und Prüfentscheidungen. Auf breiten Ansichten steht der kompakte Ergebnis-/Statusbereich rechts; auf schmaleren Ansichten folgt er unterhalb der Hauptinhalte. Tabellen bleiben auf der Seite ohne unkontrollierten horizontalen Überlauf und scrollen nur intern, wenn die Detailbreite dies tatsächlich erfordert.
+
+Die Archivaktion lautet für eine aktuelle Abrechnung `Abrechnung ins Archiv verschieben.` und für eine kontrolliert geöffnete Archivkorrektur `Archiv aktualisieren.`. Die Aktion aktualisiert den zugehörigen Archivstand mit erhaltener Periodenidentität. Der zuvor festgestellte Prüfsummenfehler wurde beseitigt, indem sämtliche Perioden- und Korrekturmetadaten vor der Snapshot-Prüfsummenbildung erzeugt werden.
+
+Die Teilnehmerkorrektur aus V99.4.68 bleibt vollständig bestehen. M000 und generische Privat-/Eigenanteile bleiben reguläre Teilnehmer; ihre Nutzungsart ist nur eine Kennzeichnung. Finalisierte historische Archive werden nicht stillschweigend verändert. Datenschema 5 und Datenebenenvertrag 1 bleiben unverändert.
+
+
 ## V99.4.68 – Systemweite Teilnehmerkorrektur Privatanteil/Eigenanteil
 
 Dieses Release hebt die bisherige systemweite Sonderbehandlung privat oder eigentümerbezogen gekennzeichneter Datensätze auf. Solche Datensätze werden nun vollständig wie reguläre Abrechnungsteilnehmer verarbeitet. Die Kennzeichnung bleibt ausschließlich als Nutzungsart sichtbar.

@@ -138,7 +138,7 @@
       "billingReview.closeDetail":call(handlers, "billingReviewCloseDetail"), "billingReview.reopen":call(handlers, "billingReviewReopen")
     });
     registerController("costReconciliation", "Kosten- und Umlagenabgleich mit getrennten Zahlungs-, Kosten- und Prüfentscheidungsdaten", {
-      "costReconciliation.setFromYear":call(handlers, "costReconciliationSetFromYear"), "costReconciliation.setToYear":call(handlers, "costReconciliationSetToYear"),
+      "costReconciliation.setFromYear":call(handlers, "costReconciliationSetFromYear"), "costReconciliation.setToYear":call(handlers, "costReconciliationSetToYear"), "costReconciliation.toggleDetails":call(handlers, "costReconciliationToggleDetails"),
       "costReconciliation.openPayment":call(handlers, "costReconciliationOpenPayment"), "costReconciliation.closePayment":call(handlers, "costReconciliationClosePayment"),
       "costReconciliation.savePayment":call(handlers, "costReconciliationSavePayment"), "costReconciliation.deletePayment":call(handlers, "costReconciliationDeletePayment"),
       "costReconciliation.openAllocation":call(handlers, "costReconciliationOpenAllocation"), "costReconciliation.closeAllocation":call(handlers, "costReconciliationCloseAllocation"),

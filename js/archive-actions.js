@@ -264,6 +264,62 @@
     return !!(itemMeta.currentBillingArchivedOnly || itemMeta.currentBillingClosedAfterArchive);
   }
 
+  function isArchiveCorrection(data = current()) {
+    const itemMeta = data && data.meta ? data.meta : {};
+    return !itemMeta.archiveViewer && !!(itemMeta.reopenedFromArchiveAt || itemMeta.reopenedFromArchivePeriodId || itemMeta.reopenedFromArchiveSnapshotId);
+  }
+
+  function archiveCorrectionTarget(data = current()) {
+    const itemMeta = data && data.meta ? data.meta : {};
+    const archive = data && Array.isArray(data.jahresArchiv) ? data.jahresArchiv : [];
+    if (!isArchiveCorrection(data) || !archive.length) return Object.freeze({ index:-1, item:null, periodId:"", snapshotId:"", label:"" });
+    const explicitPeriod = String(itemMeta.reopenedFromArchivePeriodId || "").trim();
+    const explicitSnapshot = String(itemMeta.reopenedFromArchiveSnapshotId || "").trim();
+    const explicitIndex = Number(itemMeta.reopenedFromArchiveIndex);
+    const currentPeriod = String(itemMeta.periodId || "").trim();
+    let index = explicitPeriod ? archive.findIndex(item => periodId(item) === explicitPeriod) : -1;
+    if (index < 0 && explicitSnapshot) index = archive.findIndex(item => String(item && item.snapshotId || "") === explicitSnapshot);
+    if (index < 0 && Number.isInteger(explicitIndex) && explicitIndex >= 0 && explicitIndex < archive.length) index = explicitIndex;
+    if (index < 0 && currentPeriod) index = archive.findIndex(item => periodId(item) === currentPeriod);
+    if (index < 0) {
+      const year = String(itemMeta.abrechnungsjahr || "");
+      const start = String(itemMeta.abrechnungsbeginn || "");
+      const end = String(itemMeta.abrechnungsende || "");
+      const candidates = archive.map((item, candidateIndex) => ({ item, candidateIndex, itemMeta:meta(item) })).filter(row =>
+        (!year || String(row.item.year || row.itemMeta.abrechnungsjahr || "") === year) &&
+        (!start || String(row.itemMeta.abrechnungsbeginn || "") === start) &&
+        (!end || String(row.itemMeta.abrechnungsende || "") === end)
+      );
+      if (candidates.length === 1) index = candidates[0].candidateIndex;
+    }
+    const item = index >= 0 ? archive[index] : null;
+    return Object.freeze({
+      index,
+      item,
+      periodId:item ? periodId(item) : explicitPeriod,
+      snapshotId:item ? String(item.snapshotId || "") : explicitSnapshot,
+      label:String(itemMeta.reopenedFromArchiveLabel || (item ? itemLabel(item, index) : explicitPeriod) || "").trim()
+    });
+  }
+
+  function archiveActionDescriptor(data = current()) {
+    const correction = isArchiveCorrection(data);
+    const target = correction ? archiveCorrectionTarget(data) : null;
+    const itemMeta = data && data.meta ? data.meta : {};
+    const sourceLabel = String((target && target.label) || itemMeta.reopenedFromArchiveLabel || itemMeta.reopenedFromArchivePeriodId || "").trim();
+    return Object.freeze({
+      mode:correction ? "archive-correction" : "current-billing",
+      correction,
+      sourceLabel,
+      targetPeriodId:target ? target.periodId : "",
+      targetSnapshotId:target ? target.snapshotId : "",
+      targetIndex:target ? target.index : -1,
+      tooltip:correction ? "Archiv aktualisieren." : "Abrechnung ins Archiv verschieben.",
+      visibleLabel:correction ? "Archiv aktualisieren" : "Ins Archiv verschieben",
+      confirmationTitle:correction ? "Archiv aktualisieren?" : "Abrechnung ins Archiv verschieben?"
+    });
+  }
+
   function clearClosure(data) {
     if (!data.meta) data.meta = {};
     delete data.meta.currentBillingArchivedOnly;
@@ -325,15 +381,50 @@
     if (!hasActiveCurrentBilling(data)) return Object.freeze({ changed:false, reason:"missing-current-billing", message:"Es ist noch keine aktuelle Abrechnung angelegt. Bitte zuerst über „+ Neue Abrechnung“ starten." });
     if (d.isArchiveViewer()) return Object.freeze({ changed:false, reason:"archive-viewer", message:"Dieses Fenster zeigt eine archivierte Abrechnung. Archivieren ist nur im ursprünglichen Arbeitsfenster möglich." });
     const year = d.currentYear();
+    const descriptor = archiveActionDescriptor(data);
     if (options.confirmed !== true) {
+      const source = descriptor.sourceLabel ? " Der zugehörige Archivstand „" + descriptor.sourceLabel + "“ wird nachvollziehbar aktualisiert." : "";
       return Object.freeze({
         changed:false,
         requiresConfirmation:true,
-        confirmationMessage:"Abrechnungsjahr " + year + " jetzt im Archiv speichern? Ein vorhandener Archivstand für dieses Jahr wird ersetzt. Es wird keine neue Folgeabrechnung angelegt."
+        archiveMode:descriptor.mode,
+        confirmationMessage:descriptor.confirmationTitle + "\n\n" + (descriptor.correction
+          ? "Die kontrolliert geöffnete Archivkorrektur wird erneut archiviert." + source + " Der bisherige Archivstand bleibt bis zur bestätigten Aktualisierung unverändert."
+          : "Abrechnungsjahr " + year + " wird in das Archiv verschoben. Ein vorhandener Archivstand mit identischer Perioden-ID wird ersetzt. Es wird keine neue Folgeabrechnung angelegt.")
       });
     }
     return d.stateAccess.transact(next => {
-      const snapshot = d.createSnapshot();
+      const nextDescriptor = archiveActionDescriptor(next);
+      const target = nextDescriptor.correction ? archiveCorrectionTarget(next) : null;
+      if (!next.meta) next.meta = {};
+      if (nextDescriptor.correction) {
+        next.meta.archiveCorrectionCompletedAt = d.nowIso();
+        next.meta.archiveCorrectionCompletedWithAppVersion = d.appVersion;
+        next.meta.archiveCorrectionTargetPeriodId = String(target && target.periodId || next.meta.reopenedFromArchivePeriodId || "");
+        next.meta.archiveCorrectionTargetSnapshotId = String(target && target.snapshotId || next.meta.reopenedFromArchiveSnapshotId || "");
+        next.meta.archiveCorrectionTargetIndex = target ? target.index : -1;
+        if (target && target.periodId) next.meta.reopenedFromArchivePeriodId = target.periodId;
+        if (target && target.snapshotId) next.meta.reopenedFromArchiveSnapshotId = target.snapshotId;
+      }
+      const correctionPeriodId = nextDescriptor.correction && target && target.periodId ? String(target.periodId) : "";
+      const correctionSourceSnapshotId = nextDescriptor.correction
+        ? String(target && target.snapshotId || next.meta.reopenedFromArchiveSnapshotId || "") : "";
+      const correctionOpenedAt = nextDescriptor.correction ? String(next.meta.reopenedFromArchiveAt || "") : "";
+      const correctionCompletedAt = nextDescriptor.correction ? String(next.meta.archiveCorrectionCompletedAt || "") : "";
+      if (correctionPeriodId) next.meta.periodId = correctionPeriodId;
+      if (nextDescriptor.correction) {
+        next.meta.archiveCorrectionSourceSnapshotId = correctionSourceSnapshotId;
+        next.meta.archiveCorrectionOpenedAt = correctionOpenedAt;
+      }
+      const snapshot = d.createSnapshot(nextDescriptor.correction ? {
+        periodId:correctionPeriodId || String(next.meta.periodId || ""),
+        meta:{
+          periodId:correctionPeriodId || String(next.meta.periodId || ""),
+          archiveCorrectionSourceSnapshotId:correctionSourceSnapshotId,
+          archiveCorrectionOpenedAt:correctionOpenedAt,
+          archiveCorrectionCompletedAt:correctionCompletedAt
+        }
+      } : {});
       const result = upsertInto(next, snapshot);
       if (!result.ok) throw new Error(result.error + (result.validation ? " " + validationMessage(result.validation) : ""));
       closeAfterArchive(next, result.item);
@@ -341,10 +432,13 @@
         changed:true,
         year:String(year),
         archiveId:result.id,
+        archiveMode:nextDescriptor.mode,
         targetTab:"archiv",
-        message:"Abrechnungsjahr " + year + " wurde archiviert. Es wurde keine neue Abrechnung angelegt; der Archivdatensatz ist jetzt im Archiv sichtbar."
+        message:nextDescriptor.correction
+          ? "Archivstand wurde aktualisiert: " + (nextDescriptor.sourceLabel || String(year)) + ". Die kontrollierte Archivkorrektur ist abgeschlossen."
+          : "Abrechnungsjahr " + year + " wurde ins Archiv verschoben. Es wurde keine neue Abrechnung angelegt; der Archivdatensatz ist jetzt im Archiv sichtbar."
       });
-    }, { reason:"Archivierung", render:false, allowFinalizationWrite:true });
+    }, { reason:"Archivierung", render:false, allowFinalizationWrite:true, archiveMode:descriptor.mode });
   }
 
   function deleteAt(index, options = {}) {
@@ -430,6 +524,10 @@
       restored.meta.reopenedFromArchiveAt = d.nowIso();
       restored.meta.reopenedFromArchiveWithAppVersion = d.appVersion;
       restored.meta.reopenedFromArchiveLabel = label;
+      restored.meta.reopenedFromArchivePeriodId = periodId(prepared);
+      restored.meta.reopenedFromArchiveSnapshotId = String(prepared.snapshotId || "");
+      restored.meta.reopenedFromArchiveArchivedAt = String(prepared.archivedAt || "");
+      restored.meta.reopenedFromArchiveIndex = numericIndex;
       restored.meta.currentBillingCreatedByUser = true;
       restored.meta.currentBillingCreatedAt = restored.meta.currentBillingCreatedAt || d.nowIso();
       restored.meta.currentBillingCreatedWithAppVersion = d.appVersion;
@@ -535,7 +633,7 @@
     configure, describe, yearNumber, recordType, meta, periodId, sortKey, periodLabel, itemLabel,
     recordCorrections, recordSaldo, normalizeItem, prepareItem, collectIdMigrationWarnings, validateItem,
     recordStatus, recordStatusClass, recordHealth, validationMessage, recordStatusLite,
-    hasNonEmptyAnnualData, isClosedAfterArchive, clearClosure, closeAfterArchive, hasActiveCurrentBilling,
+    hasNonEmptyAnnualData, isClosedAfterArchive, isArchiveCorrection, archiveCorrectionTarget, archiveActionDescriptor, clearClosure, closeAfterArchive, hasActiveCurrentBilling,
     upsertInto, archiveCurrent, deleteAt, importItems, viewerStateFromItem, reopenForRework,
     buildLegacyArchiveState, createLegacyArchiveItem
   });

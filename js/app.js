@@ -24,7 +24,7 @@ function configureCoreOrchestrationModules() {
     clone, num, todayIso, nowIso:() => new Date().toISOString(), archiveOptions:archiveModuleOptions,
     validateBillingSnapshot, canonicalUnitIdFor, hasTenantData, dateDe, archiveDataSource,
     normalizeLegacyData, ensureWaterMeterHistory, defaultWaterMeterHistory:() => DEFAULT_WATER_METER_HISTORY,
-    errorMessage, createSnapshot:() => NK_PRO_MODULES.billingWorkflow.createSnapshot(),
+    errorMessage, createSnapshot:(options = {}) => NK_PRO_MODULES.billingWorkflow.createSnapshot(options),
     currentYear:() => currentAbrechnungsjahr(), isArchiveViewer, seed:() => SEED,
     generatedUnitIdForLabel, appVersion:APP_VERSION, dataSchemaVersion:DATA_SCHEMA_VERSION,
     dataLayerContractVersion:DATA_LAYER_CONTRACT_VERSION, snapshotScope:ARCHIVE_SNAPSHOT_SCOPE,

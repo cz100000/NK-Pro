@@ -50,10 +50,10 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.68";
-const APP_VERSION_NAME = "Systemweite-Korrektur-Privatanteil-Eigenanteil";
+const APP_VERSION = "V99.4.69";
+const APP_VERSION_NAME = "UI-Archiv-und-Gesamtkorrekturen";
 const APP_RELEASE_DATE = "2026-08-02";
-if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – Privatanteil und Eigenanteil";
+if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – UI-, Archiv- und Gesamtkorrekturen";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
 const ARCHIVE_SNAPSHOT_SCOPE = "billingSnapshot";
@@ -120,6 +120,7 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
+  "V99.4.69 gestaltet den Kosten- und Umlagenabgleich im verbindlichen NK-Pro-Design neu, trennt Kontrolldifferenz und fachlichen Status, vereinheitlicht Tabellen, Status, Prüf- und Exportaktionen und führt die zustandsabhängige Archivaktion ein: aktuelle Abrechnungen werden mit ‚Abrechnung ins Archiv verschieben.‘ archiviert, kontrolliert geöffnete Archivkorrekturen mit ‚Archiv aktualisieren.‘ nachvollziehbar zurückgeführt. Die Teilnehmerlogik V99.4.68, Datenschema 5 und unveränderte historische Archive bleiben geschützt.",
   "V99.4.68 vereinheitlicht die Abrechnungsteilnahme systemweit: Privatanteil, Eigenanteil und Eigentümer/Privat sind reguläre Abrechnungsteilnehmer in Berechnung, Vorauszahlungen, Ergebnissen, Prüfungen, Dokumenten, Exporten, Archivierung und Jahreswechsel. Die Nutzungsart bleibt reine Kennzeichnung; M000 wird in den aktiven Datenebenen mit Einzugsdatum 01.01.2010 migriert. Finalisierte Archive bleiben unverändert. Datenschema 5 bleibt erhalten.",
   "V99.4.67 korrigiert die erneute Archivierung historischer Abrechnungen: leere Mieterplatzhalter erzeugen keine Zähler mehr, vorhandene Wasseruhrenhistorien werden für fehlende Messperioden genutzt, Zähler außerhalb des Abrechnungszeitraums blockieren nicht und wiederholte Validierungsmeldungen werden zusammengefasst. Datenschema 5 bleibt unverändert.",
   "V99.4.66 AP22F12A/B integriert den Kosten- und Umlagenabgleich mit getrennten tatsächlichen Zahlungsflüssen, analyserelevanten Kosten, jahresbezogener Differenzerklärung, Kostenartdetail, bestehender Prüfentscheidungsspeicherung, Abschlussstatus sowie Excel-, Druck- und Prüfprotokollexport. Datenschema 5 bleibt durch eine additive rückwärtskompatible Initialisierung erhalten.",

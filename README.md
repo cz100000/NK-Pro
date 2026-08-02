@@ -1,4 +1,22 @@
-# NK-Pro V99.4.64 – AP22F11B Korrektur 3
+# NK-Pro V99.4.69 – UI-, Archiv- und Gesamtkorrekturen
+
+## NK-Pro V99.4.69 – Kosten- und Umlagenabgleich sowie Archivkonsistenz
+
+V99.4.69 führt die offene visuelle und technische Nacharbeit des freigegebenen Stands V99.4.68 zu Ende. Die Seite **Analyse → Kosten- und Umlagenabgleich** besitzt nun eine klare Karten-, Tabellen-, Kontroll- und Statusstruktur mit responsivem Ergebnisbereich. Kontrolldifferenz und fachlicher Status bleiben getrennt; eine rechnerische Kontrolldifferenz von `0,00 €` kann daher weiterhin gemeinsam mit einem fachlich offenen Status angezeigt werden.
+
+Die Archivaktion ist zustandsabhängig und in sichtbarem Tooltip, `title`, `aria-label`, Bestätigung und Aktion konsistent:
+
+- aktuelle Abrechnung: `Abrechnung ins Archiv verschieben.`
+- kontrolliert geöffnete Archivkorrektur: `Archiv aktualisieren.`
+
+Die Snapshot-Prüfsumme wird erst nach vollständiger Bildung der Perioden- und Korrekturmetadaten erzeugt. Dadurch kann ein kontrolliert geöffneter Archivstand sicher aktualisiert werden, ohne seine Periodenidentität zu verlieren. Die Teilnehmerlogik V99.4.68 bleibt unverändert geschützt; Privat- und Eigenanteile sind reguläre Abrechnungsteilnehmer und keine zusätzliche Vermieterkostenkategorie.
+
+- Produktversion: **V99.4.69**
+- Build-/Cachekennung: `99.4.69-ui-archive-consistency`
+- Datenschema: **5** unverändert
+- Datenebenenvertrag: **1** unverändert
+- Browserprüfung: Chromium offline bei 1600, 1366, 1024 und 820 Pixeln
+- Releaseprüfung: `npm run release:check:v99469`
 
 ## NK-Pro V99.4.68 – Systemweite Korrektur Privatanteil und Eigenanteil
 

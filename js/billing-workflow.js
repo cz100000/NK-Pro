@@ -63,7 +63,7 @@
     return Object.freeze({ finalized, meta, report, readiness });
   }
 
-  function createSnapshot() {
+  function createSnapshot(options = {}) {
     const d = requireDeps();
     const data = current();
     d.ensureYearData();
@@ -98,25 +98,38 @@
       saldo:tenantShares - prepayments - corrections
     };
     const readiness = d.validateBillingReadiness(data);
-    const periodId = String(year) + "|" + d.periodStart() + "|" + d.periodEnd() + "|Tool-Abrechnung";
+    const requested = options && typeof options === "object" && !Array.isArray(options) ? options : {};
+    const defaultPeriodId = String(year) + "|" + d.periodStart() + "|" + d.periodEnd() + "|Tool-Abrechnung";
+    const requestedPeriodId = String(requested.periodId || defaultPeriodId);
+    const envelopeOverrides = requested.envelopeFields && typeof requested.envelopeFields === "object" && !Array.isArray(requested.envelopeFields)
+      ? Object.assign({}, requested.envelopeFields) : {};
+    const envelopeMetaOverrides = Object.assign(
+      {},
+      envelopeOverrides.meta && typeof envelopeOverrides.meta === "object" && !Array.isArray(envelopeOverrides.meta) ? envelopeOverrides.meta : {},
+      requested.meta && typeof requested.meta === "object" && !Array.isArray(requested.meta) ? requested.meta : {}
+    );
+    delete envelopeOverrides.meta;
+    delete envelopeOverrides.periodId;
+    const createdAt = new Date().toISOString();
+    const envelopeMeta = Object.assign(d.snapshotMetaFrom(data.meta || {}), {
+      exportScope:"currentBillingOnly",
+      exportScopeLabel:"Unveränderlicher Abrechnungssnapshot der aktuellen Abrechnung",
+      exportedAt:createdAt,
+      exportedWithAppVersion:d.appVersion
+    }, envelopeMetaOverrides, { periodId:requestedPeriodId });
     return d.billingSnapshot.createBillingSnapshot(data, d.billingSnapshotModuleOptions({
       validation:readiness,
       calculation,
       summary,
-      envelopeFields:{
+      envelopeFields:Object.assign({
         year,
-        periodId,
-        archivedAt:new Date().toISOString(),
-        meta:Object.assign(d.snapshotMetaFrom(data.meta || {}), {
-          exportScope:"currentBillingOnly",
-          exportScopeLabel:"Unveränderlicher Abrechnungssnapshot der aktuellen Abrechnung",
-          exportedAt:new Date().toISOString(),
-          exportedWithAppVersion:d.appVersion
-        }),
+        periodId:requestedPeriodId,
+        archivedAt:createdAt,
+        meta:envelopeMeta,
         snapshotScope:d.archiveSnapshotScope,
         snapshotBoundaryVersion:d.dataLayerContractVersion,
         schemaVersion:d.dataSchemaVersion
-      }
+      }, envelopeOverrides, { periodId:requestedPeriodId, meta:envelopeMeta })
     }));
   }
 

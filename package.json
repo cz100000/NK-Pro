@@ -1,8 +1,8 @@
 {
-  "name": "nk-pro-v99-4-68",
-  "version": "99.4.68",
+  "name": "nk-pro-v99-4-69",
+  "version": "99.4.69",
   "private": true,
-  "description": "Systemweite Korrektur Privatanteil und Eigenanteil",
+  "description": "UI-, Archiv- und Gesamtkorrekturen mit geschützter Teilnehmerlogik V99.4.68",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
     "test:fixtures": "node tools/check-fixtures.cjs",
@@ -137,7 +137,9 @@
     "test:v99467": "node tests/v99467-meter-archive-regression.test.cjs",
     "release:check:v99467": "npm run test:syntax && npm run test:fixtures && npm run test:metering && npm run test:architecture && npm run test:ap22f11b:k4:static && npm run test:ap22f12 && npm run test:v99467 && node tools/check-release-contents.cjs --ignore-node-modules --strict",
     "test:v99468": "node tests/v99468-private-participants.test.cjs",
-    "release:check:v99468": "npm run test:syntax && npm run test:fixtures && npm run test:metering && npm run test:architecture && npm run test:ap22f11b:k4:static && npm run test:ap22f12 && npm run test:v99467 && npm run test:v99468 && node tools/check-release-contents.cjs --ignore-node-modules --strict"
+    "release:check:v99468": "npm run test:syntax && npm run test:fixtures && npm run test:metering && npm run test:architecture && npm run test:ap22f11b:k4:static && npm run test:ap22f12 && npm run test:v99467 && npm run test:v99468 && node tools/check-release-contents.cjs --ignore-node-modules --strict",
+    "test:v99469": "node tests/v99469-ui-archive-regression.test.cjs",
+    "release:check:v99469": "npm run test:syntax && npm run test:fixtures && npm run test:metering && npm run test:architecture && npm run test:ap22f11b:k4:static && npm run test:ap22f12 && npm run test:v99467 && npm run test:v99468 && npm run test:v99469 && node tools/check-release-contents.cjs --ignore-node-modules --strict"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1"

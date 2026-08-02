@@ -1,5 +1,16 @@
 # NK-Pro Projektstand
 
+# Projektstand V99.4.69 – freigegebener Release-Stand
+
+V99.4.69 ist technisch abgeschlossen. Die visuelle Neustrukturierung des Kosten- und Umlagenabgleichs, die Trennung von Kontrolldifferenz und fachlichem Status, die responsive Darstellung und die zustandsabhängige Archivaktion sind produktiv integriert.
+
+Die kontrollierte Aktualisierung eines Archivstands erzeugt den vollständigen Snapshot einschließlich Perioden- und Korrekturmetadaten vor der Integritätsprüfung. Periodenidentität und Archivanzahl bleiben beim Ersetzen erhalten. Aktuelle Abrechnungen, reine Archivansichten und kontrolliert geöffnete Archivkorrekturen bieten ausschließlich die jeweils zulässigen Aktionen.
+
+Der vollständige statische Release-Lauf `release:check:v99469` ist bestanden. Zusätzlich wurden Offline-Chromium-Browserprüfungen mit dem vollständigen Echtdatenbestand für UI, Archivierung, M000, einen generischen Eigenanteilsfall, Briefe, Sammeldruck, PDF, CSV, Excel-kompatiblen Export, JSON-Roundtrip, Snapshot/Wiederöffnung und Jahreswechsel erfolgreich ausgeführt. JavaScript-Seiten- und Konsolenfehler: 0.
+
+Datenschema 5, Datenebenenvertrag 1 und die systemweite Teilnehmerlogik V99.4.68 bleiben unverändert. Produktive Restpunkte bestehen nicht.
+
+
 # Projektstand V99.4.68 – Privatanteil/Eigenanteil als reguläre Abrechnungsteilnehmer
 
 V99.4.68 ist technisch umgesetzt und anhand des vollständigen Echtdatenbestands 2023 geprüft. Die zentrale Teilnehmerlogik ist rollenunabhängig. Privat- und Eigentümernutzung werden ausschließlich informativ gekennzeichnet; alle finanziellen, prüfenden, dokumentierenden und archivierenden Pfade verwenden die gemeinsame Teilnehmer- und Ergebnisstruktur.

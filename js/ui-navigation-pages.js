@@ -595,11 +595,16 @@ function setBillingContextOpen(open) {
   NK_PRO_MODULES.navigation.updateWorkflowNavigationContext();
 }
 
+function currentArchiveActionDescriptor() {
+  return NK_PRO_MODULES.archiveActions.archiveActionDescriptor(state);
+}
 function currentBillingActionsHtml() {
   const finalized = NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized();
+  const archiveAction = currentArchiveActionDescriptor();
+  const archiveButton = '<button class="secondary compact-action" data-ui-action="archive.currentYear" title="'+escapeHtml(archiveAction.tooltip)+'" aria-label="'+escapeHtml(archiveAction.tooltip)+'">'+escapeHtml(archiveAction.visibleLabel)+'</button>';
   return '<button class="primary compact-action" data-ui-action="billing.openCurrentEdit">Bearbeiten</button> ' +
     '<button class="secondary compact-action" data-ui-action="billing.openCurrentView">Ansehen</button> ' +
-    (finalized ? '<button class="secondary compact-action" data-ui-action="archive.currentYear">Archiv aktualisieren</button>' : '<button class="secondary compact-action" data-ui-action="billing.finalize">Abschließen</button> <button class="secondary compact-action" data-ui-action="archive.currentYear">Archivieren</button>');
+    (!finalized ? '<button class="secondary compact-action" data-ui-action="billing.finalize">Abschließen</button> ' : '') + archiveButton;
 }
 function billingDateTimeLabel(value) {
   if (!value) return "Noch nicht gespeichert";
@@ -607,6 +612,7 @@ function billingDateTimeLabel(value) {
   return Number.isFinite(date.getTime()) ? date.toLocaleString("de-DE",{dateStyle:"short",timeStyle:"short"}) : String(value);
 }
 function currentBillingLifecycleStatus() {
+  if (NK_PRO_MODULES.archiveActions.isArchiveCorrection(state)) return {label:"Archivkorrektur",className:"warn"};
   if (NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized()) return {label:"Abgeschlossen",className:"ok"};
   const meta=state && state.meta ? state.meta : {};
   const hasAmounts=(Array.isArray(state.kostenarten)?state.kostenarten:[]).some(cost=>cost&&cost.inNK==="Ja"&&num(cost.gesamtbetrag)>0) ||
@@ -619,7 +625,11 @@ function currentBillingProgressText() {
   const complete=costs.filter(cost=>typeof dashboardCostStatus==="function"&&dashboardCostStatus(cost)==="Vollständig").length;
   const tenants=safeOverviewCall(()=>billableTenantRows(),[]);
   const units=new Set(tenants.map(tenant=>String(tenant.wohnung||"")).filter(Boolean)).size;
-  return complete+' von '+costs.length+' Kostenarten vollständig · '+units+' Einheiten berechenbar';
+  const base=complete+' von '+costs.length+' Kostenarten vollständig · '+units+' Einheiten berechenbar';
+  if (!NK_PRO_MODULES.archiveActions.isArchiveCorrection(state)) return base;
+  const meta=state&&state.meta?state.meta:{};
+  const source=String(meta.reopenedFromArchiveLabel||meta.reopenedFromArchivePeriodId||"Archivstand");
+  return 'Korrektur von '+source+' · geöffnet '+billingDateTimeLabel(meta.reopenedFromArchiveAt)+' · '+base;
 }
 function archiveProgressText(item) {
   const summary=item&&item.summary&&typeof item.summary==="object"?item.summary:{};
@@ -692,18 +702,21 @@ function billingOverviewIcon(name) {
   };
   return '<svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">' + (paths[name] || paths.view) + '</svg>';
 }
-function billingOverviewActionButton(label, icon, action, args, tone="") {
-  return '<button class="billing-overview-action' + (tone ? ' billing-overview-action--' + tone : '') + '" data-icon-only="true" type="button" title="' + escapeHtml(label) + '" aria-label="' + escapeHtml(label) + '"' + uiActionAttributes(action, args || []) + '>' + billingOverviewIcon(icon) + '<span class="visually-hidden">' + escapeHtml(label) + '</span></button>';
+function billingOverviewActionButton(label, icon, action, args, tone="", visibleLabel="") {
+  const accessible=String(label||visibleLabel||"");
+  return '<button class="billing-overview-action' + (tone ? ' billing-overview-action--' + tone : '') + '" data-icon-only="true" type="button" title="' + escapeHtml(accessible) + '" aria-label="' + escapeHtml(accessible) + '"' + uiActionAttributes(action, args || []) + '>' + billingOverviewIcon(icon) + '<span class="visually-hidden">' + escapeHtml(visibleLabel||accessible) + '</span></button>';
 }
 function billingOverviewCurrentActionsHtml() {
   const finalized = NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized();
+  const archiveAction = currentArchiveActionDescriptor();
+  const correction = archiveAction.correction;
   return '<div class="billing-actions" role="group" aria-label="Aktionen für die aktuelle Abrechnung">' +
-    billingOverviewActionButton("Abrechnung bearbeiten", "edit", "billing.openCurrentEdit") +
-    billingOverviewActionButton("Abrechnungszeitraum ändern", "calendar", "billing.openPeriodEditor") +
-    billingOverviewActionButton("Abrechnung ansehen", "view", "billing.openCurrentView") +
-    (finalized
-      ? billingOverviewActionButton("Archiv aktualisieren", "refresh", "archive.currentYear")
-      : billingOverviewActionButton("Abschließen", "finalize", "billing.finalize") + billingOverviewActionButton("Archivieren", "archive", "archive.currentYear") + billingOverviewActionButton("Abrechnung löschen", "delete", "billing.openDeleteModal", ["current"], "danger")) +
+    billingOverviewActionButton(correction ? "Archivkorrektur bearbeiten" : "Abrechnung bearbeiten", "edit", "billing.openCurrentEdit") +
+    (!correction ? billingOverviewActionButton("Abrechnungszeitraum ändern", "calendar", "billing.openPeriodEditor") : '') +
+    billingOverviewActionButton(correction ? "Archivkorrektur ansehen" : "Abrechnung ansehen", "view", "billing.openCurrentView") +
+    (!finalized ? billingOverviewActionButton("Abrechnung abschließen", "finalize", "billing.finalize") : '') +
+    billingOverviewActionButton(archiveAction.tooltip, correction ? "refresh" : "archive", "archive.currentYear", [], correction ? "warning" : "", archiveAction.visibleLabel) +
+    (!correction && !finalized ? billingOverviewActionButton("Abrechnung löschen", "delete", "billing.openDeleteModal", ["current"], "danger") : '') +
   '</div>';
 }
 function billingOverviewArchiveActionsHtml(index) {
@@ -748,7 +761,10 @@ function billingOverviewCurrentRowHtml() {
   const search=[year,period,object,code,status.label,progress,billingDateTimeLabel(lastEdited),"aktuell"].join(" ");
   const active=NK_PRO_MODULES.billingContext.isOpen()&&!isArchiveViewer();
   const origin=billingOverviewOrigin(state,null);
-  return '<tr class="current-record-row billing-overview-record' + (active ? ' is-open-context' : '') + '" data-billing-record="true" data-record-kind="current" data-origin="'+origin.key+'" data-search="' + escapeHtml(search.toLocaleLowerCase("de-DE")) + '">' +
+  const correction=NK_PRO_MODULES.archiveActions.isArchiveCorrection(state);
+  const correctionMeta=state&&state.meta?state.meta:{};
+  const correctionTitle=correction ? 'Archivkorrektur aus '+String(correctionMeta.reopenedFromArchiveLabel||correctionMeta.reopenedFromArchivePeriodId||'Archivstand')+'; geöffnet '+billingDateTimeLabel(correctionMeta.reopenedFromArchiveAt) : '';
+  return '<tr class="current-record-row billing-overview-record' + (active ? ' is-open-context' : '') + (correction ? ' is-archive-correction' : '') + '" data-billing-record="true" data-record-kind="'+(correction?'archive-correction':'current')+'" data-origin="'+origin.key+'"'+(correctionTitle?' title="'+escapeHtml(correctionTitle)+'"':'')+' data-search="' + escapeHtml((search+' '+correctionTitle).toLocaleLowerCase("de-DE")) + '">' +
     '<td data-label="Abrechnung"><span class="billing-overview-primary-value billing-overview-year">'+escapeHtml(year)+'</span><span class="billing-overview-secondary-value">'+escapeHtml(period)+'</span></td>'+
     '<td data-label="Objekt"><span class="billing-overview-primary-value billing-overview-object-code">'+escapeHtml(code||billingOverviewObjectDisplayLabel(object))+'</span></td>'+
     '<td data-label="Herkunft">'+billingOverviewOriginHtml(origin)+'</td>'+
