@@ -50,6 +50,25 @@
     return { valid:errors.length === 0, errors, warnings, infos, issues };
   }
 
+  function summarizeValidationErrors(errors) {
+    const groups = new Map();
+    (Array.isArray(errors) ? errors : []).forEach(entry => {
+      const message = text(entry && entry.message) || "Unbekannter Validierungsfehler.";
+      const key = text(entry && entry.code) + "|" + message;
+      if (!groups.has(key)) groups.set(key, { message, ids:[], count:0 });
+      const group = groups.get(key);
+      group.count += 1;
+      const id = text(entry && entry.entityId);
+      if (id && !group.ids.includes(id)) group.ids.push(id);
+    });
+    return [...groups.values()].map(group => {
+      if (group.count <= 1) return group.message + (group.ids.length ? " Betroffen: " + group.ids[0] + "." : "");
+      const shown = group.ids.slice(0, 8);
+      const suffix = group.ids.length > shown.length ? ", …" : "";
+      return group.message + " " + group.count + " Fälle" + (shown.length ? " (" + shown.join(", ") + suffix + ")" : "") + ".";
+    });
+  }
+
   function validDate(value) {
     return !!text(value) && Number.isFinite(Date.parse(text(value)));
   }
@@ -168,13 +187,14 @@
       ? meteringContainer.zaehler
       : (standard && Array.isArray(standard.zaehler) ? standard.zaehler : []);
     const meterMasterModule = options.meterMasterModule;
-    const relevantMeters = meterMasterModule && typeof meterMasterModule.billingRelevantMeters === "function"
-      ? meterMasterModule.billingRelevantMeters(meteringContainer || { zaehler:meters })
+    const periodMeters = meters.filter(meter => intervalOverlaps(meter && meter.einbaudatum, meter && meter.ausbaudatum, periodStart, periodEnd));
+    const relevantMeters = (meterMasterModule && typeof meterMasterModule.billingRelevantMeters === "function"
+      ? meterMasterModule.billingRelevantMeters({ zaehler:periodMeters })
       : (objectStandardModule && typeof objectStandardModule.billingRelevantMeters === "function"
-        ? objectStandardModule.billingRelevantMeters({ zaehler:meters })
-        : meters.filter(row => row && row.abrechnungsrelevant !== false));
+        ? objectStandardModule.billingRelevantMeters({ zaehler:periodMeters })
+        : periodMeters.filter(row => row && row.abrechnungsrelevant !== false)));
     const excludedMeterIds = [];
-    meters.forEach((meter, index) => {
+    periodMeters.forEach((meter, index) => {
       const meterId = text(meter && (meter.meterId || meter.zaehlerId || meter.id));
       const dummy = meterMasterModule && typeof meterMasterModule.isElectricityDummyMeter === "function"
         ? meterMasterModule.isElectricityDummyMeter(meter)
@@ -254,7 +274,7 @@
   function createBillingSnapshot(data, options = {}) {
     const readiness = options.validation || validateBillingReadiness(data, options);
     if (!readiness.valid) {
-      const error = new Error("Abrechnungssnapshot kann wegen kritischer Validierungsfehler nicht erstellt werden: " + readiness.errors.map(item => item.message).join(" "));
+      const error = new Error("Abrechnungssnapshot kann wegen kritischer Validierungsfehler nicht erstellt werden: " + summarizeValidationErrors(readiness.errors).join(" "));
       error.validation = readiness;
       throw error;
     }
@@ -383,6 +403,7 @@
     BILLING_SNAPSHOT_STATUS_COMPLETE,
     BILLING_SNAPSHOT_STATUS_LEGACY_PARTIAL,
     validateBillingReadiness,
+    summarizeValidationErrors,
     createBillingSnapshot,
     validateBillingSnapshot,
     markLegacySnapshot,

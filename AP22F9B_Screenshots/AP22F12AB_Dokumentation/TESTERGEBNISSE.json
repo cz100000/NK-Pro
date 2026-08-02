@@ -1,0 +1,32 @@
+{
+  "release": "V99.4.66",
+  "date": "2026-08-02",
+  "overall_static_gate": "passed",
+  "commands": [
+    {
+      "command": "npm run release:check:ap22f12",
+      "status": "passed",
+      "details": [
+        "60 JavaScript-Einheiten",
+        "6 Fixtures",
+        "Metering-Regression",
+        "Architektur-Regression",
+        "AP22F11B K4 static",
+        "AP22F12 domain",
+        "AP22F12 static/integration",
+        "strict release contents"
+      ]
+    },
+    {
+      "command": "npm run test:browser:ap22f12",
+      "status": "not_executed",
+      "reason": "Playwright-Modul fehlt; MODULE_NOT_FOUND"
+    },
+    {
+      "command": "npm run test:ap22f11b:k4:data",
+      "status": "not_executed",
+      "reason": "Playwright-Modul fehlt; MODULE_NOT_FOUND"
+    }
+  ],
+  "browser_claim": "No browser/E2E pass is claimed."
+}

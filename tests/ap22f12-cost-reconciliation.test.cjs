@@ -37,7 +37,7 @@ function loadModules(initialState) {
   context.NKProBillingReview.configure({
     stateAccess,
     calculation,
-    appVersion:"V99.4.66",
+    appVersion:"V99.4.67",
     now:() => `2026-08-02T12:00:${String(counter++).padStart(2,"0")}.000Z`
   });
   context.NKProCostReconciliation.configure({
@@ -56,7 +56,7 @@ function loadModules(initialState) {
       },
       totals:{}
     }),
-    appVersion:"V99.4.66",
+    appVersion:"V99.4.67",
     now:() => `2026-08-02T12:01:${String(counter++).padStart(2,"0")}.000Z`
   });
   return { context, state:() => state, domain:context.NKProCostReconciliation, review:context.NKProBillingReview };

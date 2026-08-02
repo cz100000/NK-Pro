@@ -90,6 +90,7 @@
     (container.zaehler || []).forEach(meter => {
       const activeStart = text(meter.einbaudatum) || billing.start;
       const activeEnd = text(meter.ausbaudatum) || billing.end;
+      if (!overlaps(activeStart, activeEnd, billing.start, billing.end)) return;
       const meterInterval = intersect(activeStart, activeEnd, billing.start, billing.end) || { start:activeStart || billing.start, end:activeEnd || billing.end };
       generated.push(normalizeAssignment({
         sourceKey:"location:" + meter.meterId + ":" + (meter.einheitId || meter.verbrauchsstelleId || meter.gebaeudeId || meter.objektId),

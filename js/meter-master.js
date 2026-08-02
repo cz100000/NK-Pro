@@ -67,8 +67,68 @@
   function actualTenantRows(data) {
     return (Array.isArray(data && data.mieter) ? data.mieter : []).map((row, index) => ({ row:row || {}, index })).filter(item => {
       const row = item.row;
-      return !!(text(row.id) || text(row.wohnung) || text(row.name) || text(row.einzug) || text(row.auszug));
+      return !!(text(row.wohnung) || text(row.name) || text(row.einzug) || text(row.auszug));
     });
+  }
+
+  function placeholderTenantIds(data) {
+    return new Set((Array.isArray(data && data.mieter) ? data.mieter : []).filter(row => {
+      return row && text(row.id) && !text(row.wohnung) && !text(row.name) && !text(row.einzug) && !text(row.auszug);
+    }).map(row => text(row.id)));
+  }
+
+  function isOrphanLegacyPlaceholderMeter(meter, data) {
+    if (!meter || typeof meter !== "object") return false;
+    const type = text(meter.meterType || meter.zaehlerTyp).toLowerCase();
+    if (!["cold-water", "hot-water"].includes(type)) return false;
+    if (text(meter.einheitId || meter.unitId) || text(meter.zaehlernummer)) return false;
+    const id = text(meter.meterId || meter.zaehlerId || meter.id);
+    const source = text(meter.sourcePath);
+    const tenantId = text(meter.nutzerId || meter.tenantId || meter.partnerId);
+    const artifactSignature = /^Z-WASSER-(?:KW|WW)-\d+$/i.test(id) || /^waterMeters\.readings\[\d+\]/.test(source);
+    if (!artifactSignature) return false;
+    const placeholders = placeholderTenantIds(data);
+    return !tenantId || placeholders.has(tenantId);
+  }
+
+  function houseConnectionMeterSources(data, objectId, buildingId) {
+    const history = data && data.waterMeterHistory && data.waterMeterHistory.houseConnection;
+    if (!history || typeof history !== "object" || Array.isArray(history)) return [];
+    const changeDate = text(history.wechselDatum);
+    const hasOld = Number.isFinite(Number(history.wertBeiWechsel));
+    const hasNew = [history.wertEnde2022, history.wertEnde2023, history.wertEnde2024, history.wertEnde2025].some(value => value !== "" && value !== null && value !== undefined && Number.isFinite(Number(value)));
+    const common = {
+      meterType:"house-water-control",
+      zaehlerTyp:"house-water-control",
+      einheit:"m³",
+      objektId:objectId,
+      gebaeudeId:buildingId,
+      einheitId:"",
+      verbrauchsstelleId:"VS-HAUSWASSER",
+      standortbeschreibung:"Hausanschluss Wasser",
+      abrechnungsrelevant:false,
+      billingRole:"excluded",
+      ausschlussgrund:"Hauswasserzähler dient ausschließlich dem Kontrollabgleich und wird nicht direkt auf Mietverhältnisse umgelegt.",
+      status:"aktiv",
+      legacyBindings:[]
+    };
+    const result = [];
+    if (hasOld) result.push(Object.assign({}, common, {
+      legacySourceKey:"house-water:old",
+      canonicalId:"Z-WASSER-HAUSANSCHLUSS-ALT",
+      bezeichnung:"Hauswasserzähler bis Wechsel",
+      status:"ausgebaut",
+      ausbaudatum:changeDate,
+      sourcePath:"waterMeterHistory.houseConnection.wertBeiWechsel"
+    }));
+    if (hasNew) result.push(Object.assign({}, common, {
+      legacySourceKey:"house-water:new",
+      canonicalId:"Z-WASSER-HAUSANSCHLUSS",
+      bezeichnung:"Hauswasserzähler ab Wechsel",
+      einbaudatum:changeDate,
+      sourcePath:"waterMeterHistory.houseConnection"
+    }));
+    return result;
   }
 
   function canonicalLegacyMeterId(type, unitId, costId, fallback) {
@@ -156,6 +216,8 @@
         });
       }
     });
+
+    houseConnectionMeterSources(data, objectId, buildingId).forEach(row => result.push(row));
 
     const generic = data && data.meterReadings && data.meterReadings.readings && typeof data.meterReadings.readings === "object" ? data.meterReadings.readings : {};
     Object.keys(generic).sort().forEach(costId => {
@@ -251,7 +313,7 @@
     const stored = Array.isArray(container.zaehler) ? container.zaehler : [];
     const previousStandard = data && data.objektStandard && Array.isArray(data.objektStandard.zaehler) ? data.objektStandard.zaehler : [];
     const rootMeters = Array.isArray(data && data.zaehler) ? data.zaehler : [];
-    const existing = stored.concat(previousStandard, rootMeters);
+    const existing = stored.concat(previousStandard, rootMeters).filter(meter => !isOrphanLegacyPlaceholderMeter(meter, data));
     const byId = new Map();
     const bySource = new Map();
     existing.forEach((meter, index) => {
@@ -356,6 +418,9 @@
     hash,
     stableId,
     billingPeriod,
+    actualTenantRows,
+    isOrphanLegacyPlaceholderMeter,
+    houseConnectionMeterSources,
     ensureMeteringContainer,
     canonicalLegacyMeterId,
     normalizeMasterRecord,

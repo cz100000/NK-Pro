@@ -1,8 +1,8 @@
 {
-  "name": "nk-pro-v99-4-66",
-  "version": "99.4.66",
+  "name": "nk-pro-v99-4-67",
+  "version": "99.4.67",
   "private": true,
-  "description": "AP22F12A/B – Kosten- und Umlagenabgleich",
+  "description": "Korrektur Archivierung und Wasserzählerhistorie",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
     "test:fixtures": "node tools/check-fixtures.cjs",
@@ -133,7 +133,9 @@
     "test:ap22f12:static": "node tests/ap22f12-integration.test.cjs",
     "test:ap22f12": "npm run test:ap22f12:domain && npm run test:ap22f12:static",
     "release:check:ap22f12": "npm run test:syntax && npm run test:fixtures && npm run test:metering && npm run test:architecture && npm run test:ap22f11b:k4:static && npm run test:ap22f12 && node tools/check-release-contents.cjs --ignore-node-modules --strict",
-    "test:browser:ap22f12": "npm run test:browser && npm run test:ap22f11b:k4:data"
+    "test:browser:ap22f12": "npm run test:browser && npm run test:ap22f11b:k4:data",
+    "test:v99467": "node tests/v99467-meter-archive-regression.test.cjs",
+    "release:check:v99467": "npm run test:syntax && npm run test:fixtures && npm run test:metering && npm run test:architecture && npm run test:ap22f11b:k4:static && npm run test:ap22f12 && npm run test:v99467 && node tools/check-release-contents.cjs --ignore-node-modules --strict"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1"

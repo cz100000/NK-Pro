@@ -1,0 +1,119 @@
+{
+  "workPackage": "AP22F11B Korrektur 2",
+  "sourceFile": "nk-pro-gesamtbestand-2025-V99.4.62-AP22F11B-Korrektur1-getestet.json",
+  "exportFile": "nk-pro-gesamtbestand-2025-V99.4.63-AP22F11B-Korrektur2-getestet.json",
+  "schemaVersion": 5,
+  "exportedWithAppVersion": "V99.4.63",
+  "checks": [
+    {
+      "category": "wohnungen",
+      "inputSha256": "b9b2435de7a643d6d44c6caae0351aaf64a38f69e87b6f380b786386df25f984",
+      "outputSha256": "b9b2435de7a643d6d44c6caae0351aaf64a38f69e87b6f380b786386df25f984",
+      "identical": true
+    },
+    {
+      "category": "mieter",
+      "inputSha256": "004e65bd612999f600c46708549da6a9287bc50aa40cb920dc8fa315e88e2863",
+      "outputSha256": "004e65bd612999f600c46708549da6a9287bc50aa40cb920dc8fa315e88e2863",
+      "identical": true
+    },
+    {
+      "category": "kostenarten",
+      "inputSha256": "feb1d631c691ad05d7fe836f2ce9516f1fac1237133a933c0154f84dd6ac87a6",
+      "outputSha256": "feb1d631c691ad05d7fe836f2ce9516f1fac1237133a933c0154f84dd6ac87a6",
+      "identical": true
+    },
+    {
+      "category": "vorauszahlungen",
+      "inputSha256": "4ec15a3ca7780a58dba44619588f297dcb002f9431a9ac8c79ddf1905fcca45c",
+      "outputSha256": "4ec15a3ca7780a58dba44619588f297dcb002f9431a9ac8c79ddf1905fcca45c",
+      "identical": true
+    },
+    {
+      "category": "waterMeters",
+      "inputSha256": "e32d836786923206d2c7b2c09bf98c966f2f8a295652ac11b9a682148c6a15cd",
+      "outputSha256": "e32d836786923206d2c7b2c09bf98c966f2f8a295652ac11b9a682148c6a15cd",
+      "identical": true
+    },
+    {
+      "category": "umlageInputs",
+      "inputSha256": "6c681a025cf8becc8d97fb5c64ca9d506faa7708c611a459ed481ab6ff822fff",
+      "outputSha256": "6c681a025cf8becc8d97fb5c64ca9d506faa7708c611a459ed481ab6ff822fff",
+      "identical": true
+    },
+    {
+      "category": "jahresArchiv",
+      "inputSha256": "9d67f36902138d37ebb477b8225da723de437325142673736525999afdb80ecb",
+      "outputSha256": "9d67f36902138d37ebb477b8225da723de437325142673736525999afdb80ecb",
+      "identical": true
+    },
+    {
+      "category": "waterMeterHistory",
+      "inputSha256": "a4a2b5405670913e3db6851f7749120b68ec709f48369b552ae2876d5d574add",
+      "outputSha256": "a4a2b5405670913e3db6851f7749120b68ec709f48369b552ae2876d5d574add",
+      "identical": true
+    },
+    {
+      "category": "kostenartenMieterUmlage",
+      "inputSha256": "e174a60337a30d72777aab21e3747f7ec04d30cf04e1a27e6f5e074579513442",
+      "outputSha256": "e174a60337a30d72777aab21e3747f7ec04d30cf04e1a27e6f5e074579513442",
+      "identical": true
+    },
+    {
+      "category": "abrechnungsEinzelwerte",
+      "inputSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "outputSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "identical": true
+    },
+    {
+      "category": "zaehlerDaten_fachlich",
+      "inputSha256": "495c2d1d0cc2eb20df3003556da6a1df7cd181d1a7970cc4cf6a65025c946b19",
+      "outputSha256": "495c2d1d0cc2eb20df3003556da6a1df7cd181d1a7970cc4cf6a65025c946b19",
+      "identical": true
+    }
+  ],
+  "counts": {
+    "wohnungen": [
+      7,
+      7
+    ],
+    "mietverhaeltnisse": [
+      5,
+      5
+    ],
+    "kostenarten": [
+      41,
+      41
+    ],
+    "wasserErfassungszeilen": [
+      20,
+      20
+    ],
+    "zaehler": [
+      44,
+      44
+    ],
+    "messwerte": [
+      769,
+      769
+    ],
+    "messperioden": [
+      10,
+      10
+    ],
+    "jahresarchive": [
+      4,
+      4
+    ],
+    "pruefentscheidungen": [
+      0,
+      0
+    ]
+  },
+  "result": "passed",
+  "technicalDifferences": [
+    "zaehlerDaten.updatedAt",
+    "zaehlerDaten.updatedWithAppVersion",
+    "reguläre Export-/Importmetadaten"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "version": "V99.4.63",
+  "workPackage": "AP22F11B Korrektur 2",
+  "schemaVersion": 5,
+  "results": {
+    "javascriptSyntaxUnits": 56,
+    "javascriptSyntax": "passed",
+    "fixtures": 6,
+    "fixtureCheck": "passed",
+    "ap22f11bStatic": "passed",
+    "ap22f11bK1Static": "passed",
+    "ap22f11bK2Static": "passed",
+    "navigationCentralization": "passed",
+    "letterStructure": "passed",
+    "ap22f11bBrowserGroups": 14,
+    "ap22f11bBrowser": "passed",
+    "ap22f11bK1Browser": "passed",
+    "ap22f11bK2Browser": "passed",
+    "dataRoundtrip": "passed",
+    "browserRuntimeErrorsK2": 0
+  },
+  "viewports": [1440, 1640, 1152, 760],
+  "data": {
+    "apartments": 7,
+    "tenancies": 5,
+    "costTypes": 41,
+    "meters": 44,
+    "meterReadings": 769,
+    "measurementPeriods": 10,
+    "archives": 4,
+    "reviewDecisions": 0
+  }
+}

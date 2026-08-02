@@ -208,8 +208,13 @@
     if (options.billingReadiness !== false) {
       const billing = deps.master.billingPeriod(data);
       const activeCostIds = new Set((Array.isArray(data && data.kostenarten) ? data.kostenarten : []).filter(cost => cost && cost.inNK === "Ja" && text(cost.umlageschluessel) === "Verbrauch" && Math.abs(Number(cost.gesamtbetrag) || 0) > 0.000001).map(cost => text(cost.id)));
-      meters.filter(meter => meter.abrechnungsrelevant !== false && !deps.master.isElectricityDummyMeter(meter) && (activeCostIds.has(text(meter.kostenId)) || (activeCostIds.has("K002") && ["cold-water", "hot-water"].includes(text(meter.meterType))))).forEach(meter => {
-        const relevantPeriods = periods.filter(period => text(period.zaehlerId || period.meterId) === meter.meterId && period.abrechnungsrelevant !== false && deps.periods.overlaps(period.beginn, period.ende, billing.start, billing.end));
+      meters.filter(meter => {
+        if (meter.abrechnungsrelevant === false || deps.master.isElectricityDummyMeter(meter)) return false;
+        const costRelevant = activeCostIds.has(text(meter.kostenId)) || (activeCostIds.has("K002") && ["cold-water", "hot-water"].includes(text(meter.meterType)));
+        if (!costRelevant) return false;
+        return deps.periods.overlaps(text(meter.einbaudatum), text(meter.ausbaudatum), billing.start, billing.end);
+      }).forEach(meter => {
+        const relevantPeriods = periods.filter(period => text(period.zaehlerId || period.meterId) === meter.meterId && period.abrechnungsrelevant !== false && text(period.status) === "valid" && deps.periods.overlaps(period.beginn, period.ende, billing.start, billing.end));
         if (!relevantPeriods.length) issues.push(issue("METER_PERIOD_MISSING", "error", "meter", meter.meterId, "zaehlerDaten.messperioden", "Für den abrechnungsrelevanten Zähler fehlt eine gültige Messperiode.", "Anfangs- und Endstand für den Abrechnungszeitraum erfassen."));
       });
     }
@@ -220,6 +225,18 @@
     const source = cloneWith(options, data);
     try {
       const working = cloneWith(options, data);
+      const deps = modules(options);
+      const beforeContainer = working && working.zaehlerDaten && typeof working.zaehlerDaten === "object" ? working.zaehlerDaten : {};
+      const beforeCounts = {
+        meters:Array.isArray(beforeContainer.zaehler) ? beforeContainer.zaehler.length : 0,
+        readings:Array.isArray(beforeContainer.messwerte) ? beforeContainer.messwerte.length : 0,
+        periods:Array.isArray(beforeContainer.messperioden) ? beforeContainer.messperioden.length : 0,
+        assignments:Array.isArray(beforeContainer.zuordnungen) ? beforeContainer.zuordnungen.length : 0
+      };
+      const orphanPlaceholderMeters = Array.isArray(beforeContainer.zaehler) && typeof deps.master.isOrphanLegacyPlaceholderMeter === "function"
+        ? beforeContainer.zaehler.filter(meter => deps.master.isOrphanLegacyPlaceholderMeter(meter, working)).length
+        : 0;
+      const hasHistoricalWaterData = !!(working && working.waterMeterHistory && Array.isArray(working.waterMeterHistory.units) && working.waterMeterHistory.units.length);
       const required = requiresMeteringMigration(working);
       synchronizeMeteringData(working, options);
       const validation = validateMeteringData(working, { ...options, billingReadiness:false });
@@ -230,8 +247,26 @@
         throw new Error("Zählerstandard-Nachprüfung fehlgeschlagen: " + uniqueMessages.join(" "));
       }
       if (!working.meta || typeof working.meta !== "object") working.meta = {};
+      if (!Array.isArray(working.meta.standardMigrations)) working.meta.standardMigrations = [];
+      const afterContainer = working.zaehlerDaten || {};
+      const afterCounts = {
+        meters:Array.isArray(afterContainer.zaehler) ? afterContainer.zaehler.length : 0,
+        readings:Array.isArray(afterContainer.messwerte) ? afterContainer.messwerte.length : 0,
+        periods:Array.isArray(afterContainer.messperioden) ? afterContainer.messperioden.length : 0,
+        assignments:Array.isArray(afterContainer.zuordnungen) ? afterContainer.zuordnungen.length : 0
+      };
+      const repairApplied = orphanPlaceholderMeters > 0 || (hasHistoricalWaterData && (afterCounts.readings > beforeCounts.readings || afterCounts.periods > beforeCounts.periods));
+      if (repairApplied && !working.meta.standardMigrations.some(item => item && item.id === "metering-repair-v99.4.67")) {
+        working.meta.standardMigrations.push({
+          id:"metering-repair-v99.4.67",
+          completedAt:(options.now || (() => new Date().toISOString()))(),
+          appVersion:text(options.appVersion),
+          dataSchemaVersion:Number(working.meta.dataSchemaVersion || 5),
+          note:"Leere Platzhalterzähler bereinigt und vorhandene Wasseruhrenhistorie für fehlende Messwerte/Messperioden genutzt.",
+          details:{ orphanPlaceholderMeters, before:beforeCounts, after:afterCounts }
+        });
+      }
       if (required) {
-        if (!Array.isArray(working.meta.standardMigrations)) working.meta.standardMigrations = [];
         const exists = working.meta.standardMigrations.some(item => item && item.id === "metering-standard-v1");
         if (!exists) working.meta.standardMigrations.push({
           id:"metering-standard-v1",
@@ -261,7 +296,7 @@
     const container = source.zaehlerDaten;
     const range = period || deps.master.billingPeriod(source);
     const overlaps = (start, end) => deps.periods.overlaps(start, end, range.start, range.end);
-    const meters = cloneWith(options, container.zaehler || []);
+    const meters = cloneWith(options, (container.zaehler || []).filter(row => overlaps(row && row.einbaudatum, row && row.ausbaudatum)));
     const ids = new Set(meters.map(row => text(row.meterId)));
     const readings = cloneWith(options, (container.messwerte || []).filter(row => ids.has(text(row.zaehlerId)) && (overlaps(row.messzeitraumVon || row.ablesedatum, row.messzeitraumBis || row.ablesedatum) || !text(range.start))));
     const periods = cloneWith(options, (container.messperioden || []).filter(row => overlaps(row.beginn, row.ende)));

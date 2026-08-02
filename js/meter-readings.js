@@ -109,7 +109,96 @@
   }
 
   function actualTenants(data) {
-    return (Array.isArray(data && data.mieter) ? data.mieter : []).map((row, index) => ({ row:row || {}, index })).filter(item => !!(text(item.row.id) || text(item.row.wohnung) || text(item.row.name)));
+    return (Array.isArray(data && data.mieter) ? data.mieter : []).map((row, index) => ({ row:row || {}, index })).filter(item => !!(text(item.row.wohnung) || text(item.row.name) || text(item.row.einzug) || text(item.row.auszug)));
+  }
+
+  function billingYear(data, master) {
+    const period = master.billingPeriod(data);
+    const direct = Number(text(data && data.meta && data.meta.abrechnungsjahr));
+    if (Number.isInteger(direct) && direct >= 1900 && direct <= 2200) return direct;
+    const parsed = Number(text(period.start).slice(0, 4));
+    return Number.isInteger(parsed) ? parsed : 0;
+  }
+
+  function historicalWaterReadingSources(data, existingSources, options = {}) {
+    const master = options.master || global.NKProMeterMaster;
+    const container = master.ensureMeteringContainer(data, options);
+    const history = data && data.waterMeterHistory;
+    const units = history && Array.isArray(history.units) ? history.units : [];
+    const year = billingYear(data, master);
+    if (!year) return [];
+    const covered = new Set((Array.isArray(existingSources) ? existingSources : []).map(row => text(row.meterId || row.zaehlerId) + "|" + text(row.rolle)));
+    const result = [];
+    units.forEach((unit, unitIndex) => {
+      const unitId = text(unit && unit.wohnung);
+      const rows = Array.isArray(unit && unit.readings) ? unit.readings : [];
+      const startRow = rows.find(row => Number(row && row.jahr) === year - 1) || null;
+      const endRow = rows.find(row => Number(row && row.jahr) === year) || null;
+      if (!unitId || (!startRow && !endRow)) return;
+      for (const config of [
+        { legacyKey:"water-cold:" + unitId, field:"kw", label:"Kaltwasser" },
+        { legacyKey:"water-hot:" + unitId, field:"ww", label:"Warmwasser" }
+      ]) {
+        const meter = meterByLegacyKey(container, config.legacyKey);
+        if (!meter) continue;
+        for (const role of ["start", "end"]) {
+          const sourceRow = role === "start" ? startRow : endRow;
+          const value = sourceRow && sourceRow[config.field];
+          const signature = meter.meterId + "|" + role;
+          if (covered.has(signature) || !hasValue(value)) continue;
+          covered.add(signature);
+          result.push({
+            meterId:meter.meterId,
+            zaehlerId:meter.meterId,
+            sourceKey:["history-water", meter.meterId, year, role].join(":"),
+            sourcePath:"waterMeterHistory.units[" + unitIndex + "].readings[jahr=" + (role === "start" ? year - 1 : year) + "]." + config.field,
+            ablesedatum:String(role === "start" ? year - 1 : year) + "-12-31",
+            messzeitraumVon:String(year) + "-01-01",
+            messzeitraumBis:String(year) + "-12-31",
+            wert:Number(value),
+            einheit:text(meter.einheit) || "m³",
+            ableseart:role === "start" ? "Historischer Anfangsstand" : "Historischer Endstand",
+            herkunft:"waterMeterHistory",
+            rolle:role,
+            abrechnungszeitraumId:periodId(data, master),
+            plausibilitaetsstatus:"historisch-belegt",
+            assignmentHint:{ unitId, historyYear:role === "start" ? year - 1 : year }
+          });
+        }
+      }
+    });
+    return result;
+  }
+
+  function houseConnectionReadingSources(data, options = {}) {
+    const master = options.master || global.NKProMeterMaster;
+    const container = master.ensureMeteringContainer(data, options);
+    const history = data && data.waterMeterHistory && data.waterMeterHistory.houseConnection;
+    if (!history || typeof history !== "object" || Array.isArray(history)) return [];
+    const result = [];
+    const oldMeter = meterByLegacyKey(container, "house-water:old");
+    if (oldMeter && hasValue(history.wertBeiWechsel) && text(history.wechselDatum)) {
+      result.push({
+        meterId:oldMeter.meterId, zaehlerId:oldMeter.meterId,
+        sourceKey:"history-house-water:old:change", sourcePath:"waterMeterHistory.houseConnection.wertBeiWechsel",
+        ablesedatum:text(history.wechselDatum), wert:Number(history.wertBeiWechsel), einheit:"m³",
+        ableseart:"Ausbauablesung", herkunft:"waterMeterHistory", rolle:"end", plausibilitaetsstatus:"historisch-belegt"
+      });
+    }
+    const newMeter = meterByLegacyKey(container, "house-water:new");
+    if (newMeter) {
+      [2022, 2023, 2024, 2025].forEach(year => {
+        const value = history["wertEnde" + year];
+        if (!hasValue(value)) return;
+        result.push({
+          meterId:newMeter.meterId, zaehlerId:newMeter.meterId,
+          sourceKey:"history-house-water:new:" + year, sourcePath:"waterMeterHistory.houseConnection.wertEnde" + year,
+          ablesedatum:String(year) + "-12-31", wert:Number(value), einheit:"m³",
+          ableseart:"Jahresendablesung", herkunft:"waterMeterHistory", rolle:"end", plausibilitaetsstatus:"historisch-belegt"
+        });
+      });
+    }
+    return result;
   }
 
   function legacyReadingSources(data, options = {}) {
@@ -193,6 +282,8 @@
         }
       });
     });
+    historicalWaterReadingSources(data, result, { ...options, master }).forEach(row => result.push(row));
+    houseConnectionReadingSources(data, { ...options, master }).forEach(row => result.push(row));
     return result;
   }
 
@@ -278,6 +369,8 @@
     markLegacyPlaceholderDuplicates,
     normalizeReading,
     readingEquivalent,
+    historicalWaterReadingSources,
+    houseConnectionReadingSources,
     legacyReadingSources,
     embeddedReadingSources,
     synchronizeReadings

@@ -50,7 +50,7 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.66";
+const APP_VERSION = "V99.4.67";
 const APP_VERSION_NAME = "AP22F12AB-Kosten-und-Umlagenabgleich";
 const APP_RELEASE_DATE = "2026-08-02";
 if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – Kosten- und Umlagenabgleich";
@@ -120,6 +120,7 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
+  "V99.4.67 korrigiert die erneute Archivierung historischer Abrechnungen: leere Mieterplatzhalter erzeugen keine Zähler mehr, vorhandene Wasseruhrenhistorien werden für fehlende Messperioden genutzt, Zähler außerhalb des Abrechnungszeitraums blockieren nicht und wiederholte Validierungsmeldungen werden zusammengefasst. Datenschema 5 bleibt unverändert.",
   "V99.4.66 AP22F12A/B integriert den Kosten- und Umlagenabgleich mit getrennten tatsächlichen Zahlungsflüssen, analyserelevanten Kosten, jahresbezogener Differenzerklärung, Kostenartdetail, bestehender Prüfentscheidungsspeicherung, Abschlussstatus sowie Excel-, Druck- und Prüfprotokollexport. Datenschema 5 bleibt durch eine additive rückwärtskompatible Initialisierung erhalten.",
   "V99.4.65 AP22F11B Korrektur 4 konsolidiert Prüfen und abschließen mit dem bestehenden Differenzentscheidungsspeicher, führt die verbindliche Statusbezeichnung Kritischer Abrechnungsmangel ein, zeigt alle positiven und nicht anwendbaren Prüfergebnisse in zentraler Navigationsreihenfolge und dokumentiert ausschließlich produktive Regeln im Regelinventar. Datenschema 5 bleibt unverändert.",
 
