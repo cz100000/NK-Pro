@@ -349,10 +349,10 @@
       state.kostenarten = [{ id:"K900", kostenart:"Audit Hauskosten", inNK:"Ja", vorauszahlung:"Ja", berechnungsart:"Automatisch", umlageschluessel:"Verteilung nur auf aktive Wohneinheiten", gesamtbetrag:300, preisProEinheit:"", ausschlussBehandlung:COST_EXCLUSION_FULL }];
       const calc = calculateUmlage();
       const totals = umlageTotals(calc);
-      if (!auditApproxEqual(totals.billableShare, 200)) throw new Error("Mieteranteil erwartet 200, ist " + fmtMoney(totals.billableShare));
+      if (!auditApproxEqual(totals.billableShare, 300)) throw new Error("Teilnehmeranteil erwartet 300, ist " + fmtMoney(totals.billableShare));
       if (!auditApproxEqual(totals.privateShare, 100)) throw new Error("Privatanteil erwartet 100, ist " + fmtMoney(totals.privateShare));
       if (!auditApproxEqual(totals.allocationDelta, 0)) throw new Error("Verteilung hat Differenz " + fmtMoney(totals.allocationDelta));
-      return "300 EUR auf drei aktive Einheiten = 200 EUR Mieter, 100 EUR Privat";
+      return "300 EUR auf drei aktive Einheiten = 300 EUR Abrechnungsteilnehmer; davon 100 EUR private Nutzung";
     }));
   
     runCheck("Berechnung", "Referenzsaldo und Summenformel", () => withAuditState(auditBaseState(), () => {
@@ -365,15 +365,15 @@
       const t2 = calc.tenantResults.find(r => r.tenant.id === "T2");
       if (!t1 || !t2) throw new Error("Referenzmieter fehlen");
       if (!auditApproxEqual(totals.totalCosts, 360)) throw new Error("Gesamtkosten erwartet 360, ist " + fmtMoney(totals.totalCosts));
-      if (!auditApproxEqual(totals.billableShare, 240)) throw new Error("Mieteranteil erwartet 240, ist " + fmtMoney(totals.billableShare));
+      if (!auditApproxEqual(totals.billableShare, 360)) throw new Error("Teilnehmeranteil erwartet 360, ist " + fmtMoney(totals.billableShare));
       if (!auditApproxEqual(totals.privateShare, 120)) throw new Error("Privatanteil erwartet 120, ist " + fmtMoney(totals.privateShare));
       if (!auditApproxEqual(totals.prepayments, 180)) throw new Error("Vorauszahlungen erwartet 180, ist " + fmtMoney(totals.prepayments));
       if (!auditApproxEqual(totals.corrections, 12)) throw new Error("Korrekturen erwartet 12, ist " + fmtMoney(totals.corrections));
-      if (!auditApproxEqual(totals.balance, 48)) throw new Error("Saldo erwartet 48, ist " + fmtMoney(totals.balance));
+      if (!auditApproxEqual(totals.balance, 168)) throw new Error("Saldo erwartet 168, ist " + fmtMoney(totals.balance));
       if (!auditApproxEqual(t1.balance, -12)) throw new Error("Saldo T1 erwartet -12, ist " + fmtMoney(t1.balance));
       if (!auditApproxEqual(t2.balance, 60)) throw new Error("Saldo T2 erwartet 60, ist " + fmtMoney(t2.balance));
       if (!auditApproxEqual(totals.allocationDelta, 0)) throw new Error("Verteilung hat Differenz " + fmtMoney(totals.allocationDelta));
-      return "Summenformel stabil: 240 Mieteranteil - 180 Vorauszahlungen - 12 Korrektur = 48 EUR Saldo";
+      return "Summenformel stabil: 360 Teilnehmeranteil - 180 Vorauszahlungen - 12 Korrektur = 168 EUR Saldo";
     }));
   
     runCheck("Berechnung", "Referenzverteilung Wohnfläche", () => withAuditState(auditBaseState(), () => {
@@ -476,12 +476,13 @@
       return "Gemeinsame Dokument-CSS · neun Spalten · vollständige Trennlinien";
     }));
   
-    runCheck("Brief", "Eigentümer-/Privat aus Mieterbriefen ausgeschlossen", () => withAuditState(auditBriefState(), () => {
+    runCheck("Brief", "Private Nutzungsart vollständig in Abrechnungsbriefen", () => withAuditState(auditBriefState(), () => {
       const calc = calculateUmlage();
       const rows = briefResultRows(calc);
-      if (rows.some(r => isPrivateTenant(r.tenant))) throw new Error("Eigentümer-/Privat erscheint noch in der Briefauswahl");
-      if (!calc.privateResults.some(r => isPrivateTenant(r.tenant))) throw new Error("Eigentümer-/Privat fehlt in der Umlageberechnung");
-      return "Eigentümer-/Privat bleibt in der Kostenverteilung, erhält aber keinen Mieterbrief";
+      if (!rows.some(r => isPrivateTenant(r.tenant))) throw new Error("Private Nutzungsart fehlt in der Briefauswahl");
+      const privateResult = rows.find(r => isPrivateTenant(r.tenant));
+      if (!privateResult || !Number.isFinite(Number(privateResult.balance))) throw new Error("Privater Abrechnungsteilnehmer besitzt kein vollständiges Ergebnis");
+      return "Private Nutzungsart erhält reguläres Ergebnis und regulären Abrechnungsbrief";
     }));
   
     runCheck("Brief", "A4-, Footer- und Summenblock-Struktur", () => withAuditState(auditBriefState(), () => {

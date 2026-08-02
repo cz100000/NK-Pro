@@ -1,0 +1,66 @@
+{
+  "version": "V99.4.68",
+  "buildId": "99.4.68-private-participants",
+  "completedAt": "2026-08-02 18:30:00 +02:00",
+  "releaseSuite": {
+    "status": "passed",
+    "command": "npm run release:check:v99468",
+    "filesChecked": 684
+  },
+  "npmTest": {
+    "status": "environment-blocked-at-browser",
+    "reason": "node_modules/playwright not present"
+  },
+  "browser": {
+    "status": "passed",
+    "engine": "/usr/bin/chromium via Python Playwright",
+    "pageErrors": [],
+    "consoleErrors": []
+  },
+  "caseA": {
+    "costShare": 3523.5342,
+    "prepayments": 0,
+    "correction": 0,
+    "balance": 3523.5342
+  },
+  "caseB": {
+    "participant": {
+      "id": "P900",
+      "name": "Testperson Eigenanteil",
+      "unit": "W000.UG",
+      "role": "Eigenanteil",
+      "entryDate": "2010-01-01"
+    },
+    "result": {
+      "costShare": 3523.5342,
+      "prepayments": 240,
+      "correction": 25,
+      "rentCorrection": 10,
+      "balance": 3258.5342
+    },
+    "privateResultSame": true,
+    "letterIncluded": true,
+    "letterHasName": true,
+    "letterHasUnit": true,
+    "collectivePrintIncluded": true,
+    "adjustmentIncluded": true,
+    "snapshotIncluded": true,
+    "reopenIncluded": true,
+    "nextYear": {
+      "exists": true,
+      "role": "Eigenanteil",
+      "entryDate": "2010-01-01",
+      "participant": true
+    },
+    "nextYearIncluded": true,
+    "csvIncluded": true,
+    "jsonRoundtrip": true,
+    "readinessValid": true
+  },
+  "migration": {
+    "sourceSha256": "582032d05bfc8217105f4cb12dbf452945b674c9c09ab3a4fa283f8f1aabe389",
+    "targetSha256": "c1f0a90fd96b465b709b9993299190d93a3f250824cefb047c851ec6a515007b",
+    "archiveSha256": "9d67f36902138d37ebb477b8225da723de437325142673736525999afdb80ecb",
+    "archivesChanged": false
+  }
+}

@@ -12,7 +12,6 @@
     Object.freeze({ value:"correction", label:"Weitere Korrektur / Gutschrift", sign:0 })
   ]);
   const CATEGORIES = Object.freeze([
-    Object.freeze({ value:"private", label:"Privatanteil" }),
     Object.freeze({ value:"vacancy", label:"Leerstandsanteil" }),
     Object.freeze({ value:"non-allocated", label:"Nicht auf Mieter umgelegte Kosten" }),
     Object.freeze({ value:"temporal-accrual", label:"Zeitliche Abgrenzungen" }),
@@ -80,10 +79,14 @@
     container.costOverrides = container.costOverrides.filter(row => row && typeof row === "object").map(row => Object.assign({
       id:id("CST"), year:0, costId:"", actualTotal:"", billingAmount:"", analysisAmount:"", analysisCategory:"", source:"Gesamtkosten", evidenceStatus:"not-linked", note:"", updatedAt:"", updatedBy:""
     }, row));
-    container.allocations = container.allocations.filter(row => row && typeof row === "object").map(row => Object.assign({
-      id:id("ALC"), category:"open", year:0, amount:0, costId:"", tenantId:"", unitId:"", allocationKey:"Manuelle Zuordnung",
-      source:"Manuelle Zuordnung", evidenceStatus:"not-linked", evidenceReference:"", reason:"", status:"open", decisionId:"", createdAt:"", updatedAt:"", updatedBy:""
-    }, row));
+    container.allocations = container.allocations.filter(row => row && typeof row === "object").map(row => {
+      const normalized = Object.assign({
+        id:id("ALC"), category:"open", year:0, amount:0, costId:"", tenantId:"", unitId:"", allocationKey:"Manuelle Zuordnung",
+        source:"Manuelle Zuordnung", evidenceStatus:"not-linked", evidenceReference:"", reason:"", status:"open", decisionId:"", createdAt:"", updatedAt:"", updatedBy:""
+      }, row);
+      if (normalized.category === "private") normalized.category = "non-allocated";
+      return normalized;
+    });
     return container;
   }
   function readData(data) {
@@ -188,8 +191,9 @@
       const override=overrides.get(String(cost.id||""))||null; const base=number(cost.gesamtbetrag); const analysis=override&&hasNumber(override.analysisAmount)?number(override.analysisAmount):base; const row=calcRows.get(String(cost.id||""))||{}; const scale=base?analysis/base:0;
       const privateShare=number(row.privateShare)*scale; const vacancyShare=number(row.vacancyShare)*scale; const tenantShare=number(row.tenantSum)*scale;
       const intentional=text(cost.ausschlussBehandlung)==="Nicht umlagefähig / Eigentümeranteil";
-      const nonAllocated=intentional?Math.max(0,analysis-tenantShare-privateShare-vacancyShare):0;
-      const assigned=tenantShare+privateShare+vacancyShare+nonAllocated; const open=round(analysis-assigned);
+      const nonAllocated=intentional?Math.max(0,analysis-tenantShare-vacancyShare):0;
+      // privateShare ist nur noch eine Informations-Teilmenge von tenantShare und darf nicht doppelt addiert werden.
+      const assigned=tenantShare+vacancyShare+nonAllocated; const open=round(analysis-assigned);
       const analysisCategory=override&&text(override.analysisCategory) ? text(override.analysisCategory) : (intentional?"non-allocated":"allocable");
       return { year,costId:text(cost.id),costName:text(cost.kostenart),total:base,actualTotal:override&&hasNumber(override.actualTotal)?number(override.actualTotal):base,billingAmount:override&&hasNumber(override.billingAmount)?number(override.billingAmount):base,analysisAmount:analysis,tenantShare,privateShare,vacancyShare,nonAllocated,otherOwnerShare:0,open,allocationKey:text(cost.umlageschluessel),source:override?text(override.source):"Gesamtkosten",evidenceStatus:override?text(override.evidenceStatus):"from-source",analysisCategory,overrideId:override&&override.id||"",calculationStatus:text(row.status),calculationError:result.error||""};
     });
@@ -219,7 +223,6 @@
     };
     const costsByYear={}; years.forEach(y=>costsByYear[y]=round(costsByCategory.allocable[y]+costsByCategory.nonAllocated[y]+costsByCategory.other[y]));
     const automatic={
-      private:groupByYear(years,costRows,r=>r.privateShare),
       vacancy:groupByYear(years,costRows,r=>r.vacancyShare),
       "non-allocated":groupByYear(years,costRows,r=>r.nonAllocated)
     };

@@ -1,8 +1,8 @@
 {
-  "name": "nk-pro-v99-4-67",
-  "version": "99.4.67",
+  "name": "nk-pro-v99-4-68",
+  "version": "99.4.68",
   "private": true,
-  "description": "Korrektur Archivierung und Wasserzählerhistorie",
+  "description": "Systemweite Korrektur Privatanteil und Eigenanteil",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
     "test:fixtures": "node tools/check-fixtures.cjs",
@@ -135,7 +135,9 @@
     "release:check:ap22f12": "npm run test:syntax && npm run test:fixtures && npm run test:metering && npm run test:architecture && npm run test:ap22f11b:k4:static && npm run test:ap22f12 && node tools/check-release-contents.cjs --ignore-node-modules --strict",
     "test:browser:ap22f12": "npm run test:browser && npm run test:ap22f11b:k4:data",
     "test:v99467": "node tests/v99467-meter-archive-regression.test.cjs",
-    "release:check:v99467": "npm run test:syntax && npm run test:fixtures && npm run test:metering && npm run test:architecture && npm run test:ap22f11b:k4:static && npm run test:ap22f12 && npm run test:v99467 && node tools/check-release-contents.cjs --ignore-node-modules --strict"
+    "release:check:v99467": "npm run test:syntax && npm run test:fixtures && npm run test:metering && npm run test:architecture && npm run test:ap22f11b:k4:static && npm run test:ap22f12 && npm run test:v99467 && node tools/check-release-contents.cjs --ignore-node-modules --strict",
+    "test:v99468": "node tests/v99468-private-participants.test.cjs",
+    "release:check:v99468": "npm run test:syntax && npm run test:fixtures && npm run test:metering && npm run test:architecture && npm run test:ap22f11b:k4:static && npm run test:ap22f12 && npm run test:v99467 && npm run test:v99468 && node tools/check-release-contents.cjs --ignore-node-modules --strict"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1"

@@ -922,9 +922,7 @@ function normalizeLegacyData(data, options = {}) {
     data.wohnungen.forEach(w => ensureUnitIdentityFields(w));
   }
   if (Array.isArray(data.mieter)) {
-    const hasM000 = data.mieter.some(m => m.id === "M000");
     data.mieter.forEach(m => {
-      if (m.id === "M005" && !hasM000) m.id = "M000";
       if (m.status === "archiviert" || m.status === "Archiv") m.status = "Archiviert";
       if (m.status === "OK") m.status = m.auszug ? "NK offen" : "Aktiv";
       if (m.archivedAt === undefined) m.archivedAt = "";
@@ -939,7 +937,7 @@ function normalizeLegacyData(data, options = {}) {
       }
     });
   }
-  ensureZimmermannTenantForLegacyData(data);
+  normalizeSettlementParticipantsForLegacyData(data);
   applyExcelWaterReadings2024ToData(data);
   if (!snapshotMode) {
     mergePreloadedV41Archives(data);

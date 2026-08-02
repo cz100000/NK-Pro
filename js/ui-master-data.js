@@ -370,6 +370,16 @@ function hasTenantData(m) {
   return !!(m && (m.name || m.wohnung || m.einzug || m.auszug || num(m.kaltSoll) || num(m.kaltErhalten) || num(m.nkVoraus) || num(m.aktiveTage) || num(m.personen)));
 }
 
+function normalizeSettlementRole(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "Mieter";
+  const key = raw.toLocaleLowerCase("de-DE");
+  if (key.includes("eigenanteil") || key.includes("eigennutz")) return "Eigenanteil";
+  if (key.includes("privatanteil")) return "Privatanteil";
+  if (key.includes("eigent") && key.includes("privat")) return "Eigentümer/Privat";
+  return raw;
+}
+
 function ensureTenantContactFields(m) {
   if (!m) return;
   if (m.geschlecht === undefined || m.geschlecht === null || m.geschlecht === "") m.geschlecht = "Frau/Herr";
@@ -379,7 +389,7 @@ function ensureTenantContactFields(m) {
   if (m.ort === undefined || m.ort === null || m.ort === "") m.ort = "Baumholder";
   if (m.telefon === undefined || m.telefon === null) m.telefon = "";
   if (m.email === undefined || m.email === null) m.email = "";
-  if (m.abrechnungRolle === undefined || m.abrechnungRolle === null || m.abrechnungRolle === "") m.abrechnungRolle = (m.id === "M000" || String(m.name || "").includes("Zimmermann")) ? "Eigentümer/Privat" : "Mieter";
+  m.abrechnungRolle = normalizeSettlementRole(m.abrechnungRolle || m.rolle || m.nutzungsart);
   if (m.wasserWeitereVorauszahlung === undefined || m.wasserWeitereVorauszahlung === null || m.wasserWeitereVorauszahlung === "") m.wasserWeitereVorauszahlung = 0;
   if (m.vorjahresKorrektur === undefined || m.vorjahresKorrektur === null || m.vorjahresKorrektur === "") m.vorjahresKorrektur = 0;
   if (m.kaltmietKorrektur === undefined || m.kaltmietKorrektur === null || m.kaltmietKorrektur === "") m.kaltmietKorrektur = 0;
@@ -598,60 +608,29 @@ function renderBillingStammdatenStatus() {
 
 
 
-function ensureZimmermannTenantForLegacyData(data) {
-  if (!data) return;
-  if (!Array.isArray(data.wohnungen)) data.wohnungen = [];
-  let w00 = data.wohnungen.find(w => w.id === "W000.UG");
-  if (!w00) {
-    w00 = {id:"W000.UG", bezeichnung:"UG", lage:"UG", wohnflaeche:55, zimmer:2, status:"aktiv", bemerkung:""};
-    data.wohnungen.push(w00);
-  }
-
-  if (!Array.isArray(data.mieter)) data.mieter = [];
-  let m000 = data.mieter.find(m => m.id === "M000");
-  const shouldFill = !m000 || !hasTenantData(m000) || !m000.name;
-
-  if (!m000) {
-    m000 = {id:"M000"};
-    data.mieter.push(m000);
-  }
-
-  if (shouldFill) {
-    w00.status = "aktiv";
-    Object.assign(m000, {
-      id:"M000",
-      wohnung:"W000.UG",
-      name:"Erik Zimmermann",
-      einzug:"2024-01-01",
-      auszug:"",
-      kaltSoll:0,
-      kaltErhalten:0,
-      nkVoraus:0,
-      einnahmen:0,
-      aktiveTage:365,
-      wohnflaeche:55,
-      bemerkung:"kein Abrechnungsbrief 2024 vorhanden; ab V28 normal abrechnungsrelevant",
-      status:"Aktiv",
-      personen:1,
-      personentage:365,
-      geschlecht:"Herr",
-      standardanrede:"Sehr geehrte(r) Mieter/in,",
-      abrechnungRolle:"Eigentümer/Privat",
-      strasse:"Am Rauhen Biehl 5",
-      plz:"55774",
-      ort:"Baumholder",
-      telefon:"",
-      email:"",
-      wasserWeitereVorauszahlung:0,
-      vorjahresKorrektur:0,
-      archivedAt:"",
-      vzChangeHeizung:"",
-      vzChangeWasser:"",
-      vzChangeAbfall:"",
-      vzChangeAntenne:""
+function normalizeSettlementParticipantsForLegacyData(data) {
+  if (!data || typeof data !== "object") return;
+  const collections = [
+    Array.isArray(data.mieter) ? data.mieter : [],
+    data.objektStandard && Array.isArray(data.objektStandard.partner) ? data.objektStandard.partner : [],
+    data.stammdaten && Array.isArray(data.stammdaten.mieter) ? data.stammdaten.mieter : []
+  ];
+  collections.forEach(rows => rows.forEach(tenant => {
+    if (!tenant || typeof tenant !== "object") return;
+    ensureTenantContactFields(tenant);
+    ensureTenantIdentityFields(tenant);
+  }));
+  if (!data.meta) data.meta = {};
+  if (!Array.isArray(data.meta.standardMigrations)) data.meta.standardMigrations = [];
+  if (!data.meta.standardMigrations.some(item => item && item.id === "settlement-participants-v99.4.68")) {
+    data.meta.standardMigrations.push({
+      id:"settlement-participants-v99.4.68",
+      completedAt:new Date().toISOString(),
+      appVersion:typeof APP_VERSION === "string" ? APP_VERSION : "V99.4.68",
+      dataSchemaVersion:typeof DATA_SCHEMA_VERSION === "number" ? DATA_SCHEMA_VERSION : 5,
+      note:"Private und eigengenutzte Datensätze werden als reguläre Abrechnungsteilnehmer behandelt; Rollen dienen nur der Kennzeichnung."
     });
   }
-  ensureTenantContactFields(m000);
 }
 
 function tenantLastName(tenant) {
@@ -758,7 +737,11 @@ function archivedTenantRows() {
     .filter(m => hasTenantData(m) && isArchivedTenant(m));
 }
 
+function isPrivateUse(...args) { return NK_PRO_MODULES.billingCalculation.isPrivateUse(...args); }
+
 function isPrivateTenant(...args) { return NK_PRO_MODULES.billingCalculation.isPrivateTenant(...args); }
+
+function isSettlementParticipant(...args) { return NK_PRO_MODULES.billingCalculation.isSettlementParticipant(...args); }
 
 function isBillableTenant(...args) { return NK_PRO_MODULES.billingCalculation.isBillableTenant(...args); }
 

@@ -1,5 +1,32 @@
 # Changelog
 
+## V99.4.68 – 02.08.2026
+
+### Fachlich korrigiert
+- Privatanteil, Eigenanteil, Eigentümer/Privat und private Nutzung sind reguläre Abrechnungsteilnehmer.
+- Rollen- und Nutzungsbezeichnungen lösen keine Ausschlüsse aus Berechnung, Eingabe, Prüfung, Dokument, Export, Archiv oder Jahreswechsel mehr aus.
+- `privateResults` ist nur noch eine abgeleitete Informationsmenge; `privateShare` wird nicht mehr automatisch als Vermieterkosten behandelt.
+- Privatanteile erscheinen mit tatsächlichem Namen und tatsächlicher Wohnung in Ergebnissen, individuellen Werten und Dokumenten.
+- Der Kosten- und Umlagenabgleich trennt reguläre Privatnutzung, Leerstand und echte nicht umlagefähige Vermieterkosten.
+
+### Technisch geändert
+- Zentrale Teilnehmerlogik `isSettlementParticipant(record)` und reine Kennzeichnungslogik `isPrivateUse(record)` eingeführt.
+- Kompatibilitätsfunktion `isBillableTenant(record)` auf die zentrale Teilnehmerlogik umgeleitet.
+- Ergebnis-, Vorauszahlungs-, Qualitäts-, Dokument-, Export-, Snapshot-, Archiv- und Jahreswechselpfade vereinheitlicht.
+- Hardcodierte M000-/Zimmermann-Erzeugungs- und Ausschlusslogiken entfernt.
+- Brief-Einheitsbezeichnung korrigiert: tatsächliche Wohnung statt Personenname.
+
+### Datenmigration
+- `M000` in aktueller Abrechnung 2023, Objektstandard und zentralem Stammdatenbestand auf Einzug `01.01.2010` gesetzt.
+- Vier vorhandene finalisierte Archivstände byte-/strukturinhaltlich unverändert gelassen.
+- Stabile IDs, Mengen, Zähler-, Kosten-, Vorauszahlungs- und Archivdaten erhalten.
+
+### Qualität
+- Aktive statische, Syntax-, Architektur-, Zähler-, AP22F11B-, AP22F12-, V99.4.67- und V99.4.68-Tests bestanden.
+- Offline-Chromium-Echtdatentest für M000 und generischen Testfall P900/Eigenanteil bestanden.
+- CSV-, JSON-, Excel-kompatible XML-, Druck- und PDF-Ausgaben geprüft; keine JavaScript-Seiten- oder Konsolenfehler.
+
+
 ## V99.4.65 – 20.07.2026
 
 ### Hinzugefügt

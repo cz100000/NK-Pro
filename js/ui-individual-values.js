@@ -87,7 +87,7 @@
   function statusPill(status, text) {
     return '<span class="individual-values-row-status is-' + esc(status) + '"><span aria-hidden="true">' + (status === "complete" ? "✓" : (status === "error" ? "!" : "○")) + '</span>' + esc(text || rowStatusText(status)) + '</span>';
   }
-  function roleLabel(role) { return role === "private" ? "Eigentümer/Privat" : (role === "vacancy" ? "Leerstand" : "Mieter"); }
+  function roleLabel(role) { return role === "private" ? "Privatanteil" : (role === "vacancy" ? "Leerstand" : "Abrechnungsteilnehmer"); }
   function roleBadge(role) { return '<span class="individual-values-case-badge is-' + esc(role) + '">' + esc(roleLabel(role)) + '</span>'; }
   function caseCell(caseRow, rowspan) {
     const unit = caseRow.unitLabel || caseRow.unitId || "Ohne Wohnung";

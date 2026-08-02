@@ -213,7 +213,7 @@
 
   function briefResultRows(calc) {
     if (!calc || !Array.isArray(calc.tenantResults)) return [];
-    return calc.tenantResults.filter(r => r && r.tenant && isBillableTenant(r.tenant) && tenantRelevantForCurrentBilling(r.tenant));
+    return calc.tenantResults.filter(r => r && r.tenant && isSettlementParticipant(r.tenant));
   }
 
   function selectedBriefTenant(calc) {

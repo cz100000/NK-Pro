@@ -175,7 +175,7 @@ function updateUiArchitectureAudit() {
 
 const COMPATIBILITY_WRAPPERS = Object.freeze({
   billingCalculation:Object.freeze([
-    "costExclusionHandling", "normalizeManualUmlageValue", "isPrivateTenant", "isBillableTenant",
+    "costExclusionHandling", "normalizeManualUmlageValue", "isPrivateUse", "isPrivateTenant", "isSettlementParticipant", "isBillableTenant",
     "billableTenantRows", "privateTenantRows", "prepaymentMatrixSumForCost", "activePrepaymentCostIds",
     "tenantIdForUmlage", "isCostAllowedForTenant", "tenantRowsWithIndex", "normalizeActiveDayValue",
     "tenantDays", "allWohnungen", "activeWohnungen", "formatPlainNumber", "waterConsumption",

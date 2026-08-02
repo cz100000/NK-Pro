@@ -80,11 +80,6 @@ function billingResultLandlordRows(model) {
     const cost=allocation.cost || {};
     const costId=String(cost.id || "");
     const costName=cost.kostenart || "Kostenart";
-    if (Math.abs(num(allocation.privateShare)) > 0.005) rows.push({
-      id:"LANDLORD-PRIVATE-"+costId, kind:"private", area:"Privatanteil", description:costName+" · Eigentümer-/Privatfall",
-      source:"Abrechnungsrolle Eigentümer/Privat", amount:num(allocation.privateShare), treatment:"Vermieter trägt – Privatanteil",
-      status:"Geprüft", statusClass:"ok", targetTab:"mieterverwaltung", costId
-    });
     if (Math.abs(num(allocation.vacancyShare)) > 0.005) rows.push({
       id:"LANDLORD-VACANCY-"+costId, kind:"vacancy", area:"Leerstandskosten", description:costName+" · leerstehende Wohnungen",
       source:"Abrechnungsfälle mit Rolle Leerstand", amount:num(allocation.vacancyShare), treatment:"Vermieter trägt – Leerstand",
@@ -175,12 +170,12 @@ function billingResultReviewGroup(title, tone, rows, readOnly, rowRenderer) {
   return '<tr class="billing-review-group billing-review-group--'+tone+'"><th colspan="8">'+escapeHtml(title)+' <span>'+rows.length+'</span></th></tr>'+rows.map(row => rowRenderer(row,readOnly)).join("");
 }
 function billingResultLandlordBreakdown(model, landlordRows) {
-  const totals={ private:0, vacancy:0, nonallocable:0, other:0 };
-  landlordRows.forEach(row => { totals[row.kind] = num(totals[row.kind]) + num(row.amount); });
-  const categorized=totals.private+totals.vacancy+totals.nonallocable+totals.other;
+  const totals={ legacyOwner:0, vacancy:0, nonallocable:0, other:0 };
+  landlordRows.forEach(row => { const key=row.kind === "private" ? "legacyOwner" : row.kind; totals[key] = num(totals[key]) + num(row.amount); });
+  const categorized=totals.legacyOwner+totals.vacancy+totals.nonallocable+totals.other;
   const residual=num(model.summary.landlordTotal)-categorized;
   if (Math.abs(residual) > 0.005) totals.other += residual;
-  totals.total=totals.private+totals.vacancy+totals.nonallocable+totals.other;
+  totals.total=totals.legacyOwner+totals.vacancy+totals.nonallocable+totals.other;
   return totals;
 }
 function billingResultLandlordSummaryHtml(model, landlordRows) {
@@ -188,7 +183,7 @@ function billingResultLandlordSummaryHtml(model, landlordRows) {
   const open=model.summary.openCount>0;
   const term=(label,value,emphasis=false) => '<div class="billing-landlord-summary__term'+(emphasis?' is-total':'')+'"><span>'+escapeHtml(label)+'</span><strong>'+fmtMoney(value)+'</strong></div>';
   return '<section class="billing-landlord-summary__frame" aria-labelledby="billingLandlordVerifiedTitle"><header><h3 id="billingLandlordVerifiedTitle">Vom Vermieter nach Prüfung tatsächlich zu tragen</h3></header><div class="billing-landlord-summary__equation">'+
-    term("Privatanteil",totals.private)+'<b>+</b>'+term("Leerstand",totals.vacancy)+'<b>+</b>'+term("Nicht umlagefähig",totals.nonallocable)+'<b>+</b>'+term("Sonstige bestätigte Anteile",totals.other)+'<b>=</b>'+term("Vom Vermieter tatsächlich zu tragen",totals.total,true)+
+    term("Nicht umlagefähiger Vermieteranteil (Altbestand)",totals.legacyOwner)+'<b>+</b>'+term("Leerstand",totals.vacancy)+'<b>+</b>'+term("Nicht umlagefähig",totals.nonallocable)+'<b>+</b>'+term("Sonstige bestätigte Anteile",totals.other)+'<b>=</b>'+term("Vom Vermieter tatsächlich zu tragen",totals.total,true)+
     '</div><footer class="billing-landlord-summary__status '+(open?'is-preliminary':'is-final')+'"><span aria-hidden="true">'+(open?'!':'✓')+'</span><strong>'+(open?'Vorläufiger Betrag – noch nicht alle Differenzen sind geprüft.':'Endgültiger Vermieteranteil nach vollständiger Prüfung.')+'</strong></footer></section>';
 }
 function renderUmlage() {
@@ -201,8 +196,8 @@ function renderUmlage() {
   const kpis=document.getElementById("billingResultKpis");
   if (kpis) kpis.innerHTML=
     billingResultKpiHtml("Gesamtkosten",fmtMoney(summary.totalCosts),"costs","blue","Alle aktiven Kostenarten")+
-    billingResultKpiHtml("Auf Mieter umgelegt",fmtMoney(summary.tenantShare),"tenants","green",calc.tenantResults.length+" Mieterabrechnungen")+
-    billingResultKpiHtml("Vom Vermieter zu tragen",fmtMoney(summary.landlordTotal),"landlord","orange","Privat, Leerstand und bestätigte Anteile")+
+    billingResultKpiHtml("Auf Mieter umgelegt",fmtMoney(summary.tenantShare),"tenants","green",calc.tenantResults.length+" Abrechnungsteilnehmer")+
+    billingResultKpiHtml("Vom Vermieter zu tragen",fmtMoney(summary.landlordTotal),"landlord","orange","Leerstand, nicht umlagefähige und bestätigte Anteile")+
     billingResultKpiHtml("Noch zu klären",fmtMoney(summary.openAmount),"review","purple",summary.openCount+" Differenz"+(summary.openCount===1?"":"en")+" offen");
 
   const search=billingResultUiState.tenantSearch.toLocaleLowerCase("de");

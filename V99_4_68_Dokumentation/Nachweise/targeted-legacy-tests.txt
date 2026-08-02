@@ -1,0 +1,631 @@
+=== node tests/ap22f8b-prepayments.test.cjs
+AP22F8B static: PASS
+node:assert:801
+    throw err;
+    ^
+
+AssertionError [ERR_ASSERTION]: The input did not match the regular expression /const APP_VERSION = "V99\.4\.43";/. Input:
+
+'"use strict";\n' +
+  '\n' +
+  '// AP12: Konfiguration, Modulregister und anwendungsweite Laufzeitzustände.\n' +
+  'const NK_PRO_MODULES = (() => {\n' +
+  '  const required = {\n' +
+  '    persistence:globalThis.NKProPersistence,\n' +
+  '    migration:globalThis.NKProMigration,\n' +
+  '    archive:globalThis.NKProArchive,\n' +
+  '    backupRecovery:globalThis.NKProBackupRecovery,\n' +
+  '    meterMaster:globalThis.NKProMeterMaster,\n' +
+  '    meterReadings:globalThis.NKProMeterReadings,\n' +
+  '    meterPeriods:globalThis.NKProMeterPeriods,\n' +
+  '    meterValidation:globalThis.NKProMeterValidation,\n' +
+  '    objectStandard:globalThis.NKProObjectStandard,\n' +
+  '    billingSnapshot:globalThis.NKProBillingSnapshot,\n' +
+  '    billingCalculation:globalThis.NKProBillingCalculation,\n' +
+  '    billingReview:globalThis.NKProBillingReview,\n' +
+  '    costReconciliation:globalThis.NKProCostReconciliation,\n' +
+  '    documentData:globalThis.NKProDocumentData,\n' +
+  '    documentRenderer:globalThis.NKProDocumentRenderer,\n' +
+  '    exportService:globalThis.NKProExportService,\n' +
+  '    uiTableTools:globalThis.NKProUiTableTools,\n' +
+  '    uiDesignSystem:globalThis.NKProUIDesignSystem,\n' +
+  '    appBootstrap:globalThis.NKProAppBootstrap,\n' +
+  '    compatibility:globalThis.NKProCompatibility,\n' +
+  '    uiPreferences:globalThis.NKProUiPreferences,\n' +
+  '    billingContext:globalThis.NKProBillingContext,\n' +
+  '    stateAccess:globalThis.NKProStateAccess,\n' +
+  '    applicationActions:globalThis.NKProApplicationActions,\n' +
+  '    masterDataActions:globalThis.NKProMasterDataActions,\n' +
+  '    costActions:globalThis.NKProCostActions,\n' +
+  '    billingWorkflow:globalThis.NKProBillingWorkflow,\n' +
+  '    archiveActions:globalThis.NKProArchiveActions,\n' +
+  '    yearTransitionActions:globalThis.NKProYearTransitionActions,\n' +
+  '    qualityRules:globalThis.NKProQualityRules,\n' +
+  '    qualityAssurance:globalThis.NKProQualityAssurance,\n' +
+  '    diagnostics:globalThis.NKProDiagnostics,\n' +
+  '    uiController:globalThis.NKProUiController,\n' +
+  '    uiBindings:globalThis.NKProUiBindings,\n' +
+  '    uiEvents:globalThis.NKProUiEvents,\n' +
+  '    navigation:globalThis.NKProNavigation,\n' +
+  '    modalEvents:globalThis.NKProModalEvents,\n' +
+  '    runtimeDiagnostics:globalThis.NKProRuntimeDiagnostics\n' +
+  '  };\n' +
+  '  const missing = Object.entries(required).filter(([, value]) => !value).map(([name]) => name);\n' +
+  '  if (missing.length) throw new Error("NK-Pro-Modulladereihenfolge unvollständig: " + missing.join(", "));\n' +
+  '  return Object.freeze(required);\n' +
+  '})();\n' +
+  '\n' +
+  '// ===== Bereich: Ausgangsdaten und App-Konfiguration =====\n' +
+  'const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";\n' +
+  'const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";\n' +
+  'const APP_VERSION = "V99.4.68";\n' +
+  'const APP_VERSION_NAME = "Systemweite-Korrektur-Privatanteil-Eigenanteil";\n' +
+  'const APP_RELEASE_DATE = "2026-08-02";\n' +
+  'if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – Privatanteil und Eigenanteil";\n' +
+  'const DATA_SCHEMA_VERSION = 5;\n' +
+  'const DATA_LAYER_CONTRACT_VERSION = 1;\n' +
+  'const ARCHIVE_SNAPSHOT_SCOPE = "billingSnapshot";\n' +
+  'const ARCHIVE_SNAPSHOT_DATA_KEYS = [\n' +
+  '  "meta",\n' +
+  '  "wohnungen",\n' +
+  '  "mieter",\n' +
+  '  "kostenarten",\n' +
+  '  "kostenartenMieterUmlage",\n' +
+  '  "vorauszahlungen",\n' +
+  '  "umlageInputs",\n' +
+  '  "waterMeters",\n' +
+  '  "meterReadings",\n' +
+  '  "briefSettings",\n' +
+  '  "abrechnungsEinzelwerte",\n' +
+  '  "legacyEinzelabrechnungen",\n' +
+  '  "prepaymentAdjustmentSettings",\n' +
+  '  "abrechnungsPruefungen",\n' +
+  '  "kostenUmlagenAbgleich",\n' +
+  '  "objektStandard",\n' +
+  '  "zaehlerDaten"\n' +
+  '];\n' +
+  'const SNAPSHOT_TECHNICAL_META_KEYS = new Set([\n' +
+  '  "archiveViewer",\n' +
+  '  "archiveReturnUrl",\n' +
+  '  "backupEvents",\n' +
+  '  "lastArchiveBackupAt",\n' +
+  '  "lastArchiveBackupFile",\n' +
+  '  "lastCurrentBillingBackupAt",\n' +
+  '  "lastCurrentBillingBackupFile",\n' +
+  '  "lastFullBackupAppVersion",\n' +
+  '  "lastFullBackupAt",\n' +
+  '  "lastFullBackupFile",\n' +
+  '  "lastFullBackupType",\n' +
+  '  "lastSaveError",\n' +
+  '  "lastSaveReason",\n' +
+  '  "lastSavedAt",\n' +
+  '  "lastSavedWithAppVersion",\n' +
+  '  "loadedFromIntegrityRecovery",\n' +
+  '  "loadedFromIntegrityRecoveryAt",\n' +
+  '  "recoveryCreatedAt",\n' +
+  '  "recoveryCreatedWithAppVersion",\n' +
+  '  "recoverySourceStorageKey",\n' +
+  '  "snapshotBoundaryMigration",\n' +
+  '  "lastMigrationTransaction",\n' +
+  '  "restoreCheckpointCreatedAt",\n' +
+  '  "restoreCheckpointBackupId",\n' +
+  '  "startupFallback",\n' +
+  '  "startupMeterEndValueRepairAt",\n' +
+  '  "startupMeterEndValueRepairCleared",\n' +
+  '  "startupMeterEndValueRepairWithAppVersion",\n' +
+  '  "storageRole"\n' +
+  ']);\n' +
+  'const COST_EXCLUSION_FULL = "Vollständig umlegen";\n' +
+  'const COST_EXCLUSION_OWNER = "Nicht umlagefähig / Eigentümeranteil";\n' +
+  'const COST_EXCLUSION_OPTIONS = [COST_EXCLUSION_FULL, COST_EXCLUSION_OWNER];\n' +
+  'const MASTER_TENANT_ENTRY_DATE_FIX_ID = "master-tenant-entry-dates-2026-07-08";\n' +
+  'const MASTER_TENANT_ENTRY_DATES = [\n' +
+  '  { name:"gärtner", date:"2016-12-01" },\n' +
+  '  { name:"gaertner", date:"2016-12-01" },\n' +
+  '  { name:"bonesta", date:"2019-12-01" },\n' +
+  '  { name:"melzig", date:"2022-11-15" },\n' +
+  '  { name:"schneider", date:"2013-03-01" }\n' +
+  '];\n' +
+  'const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);\n' +
+  'const APP_CHANGELOG = [\n' +
+  '  "V99.4.68 vereinheitlicht die Abrechnungsteilnahme systemweit: Privatanteil, Eigenanteil und Eigentümer/Privat sind reguläre Abrechnungsteilnehmer in Berechnung, Vorauszahlungen, Ergebnissen, Prüfungen, Dokumenten, Exporten, Archivierung und Jahreswechsel. Die Nutzungsart bleibt reine Kennzeichnung; M000 wird in den aktiven Datenebenen mit Einzugsdatum 01.01.2010 migriert. Finalisierte Archive bleiben unverändert. Datenschema 5 bleibt erhalten.",\n' +
+  '  "V99.4.67 korrigiert die erneute Archivierung historischer Abrechnungen: leere Mieterplatzhalter erzeugen keine Zähler mehr, vorhandene Wasseruhrenhistorien werden für fehlende Messperioden genutzt, Zähler außerhalb des Abrechnungszeitraums blockieren nicht und wiederholte Validierungsmeldungen werden zusammengefasst. Datenschema 5 bleibt unverändert.",\n' +
+  '  "V99.4.66 AP22F12A/B integriert den Kosten- und Umlagenabgleich mit getrennten tatsächlichen Zahlungsflüssen, analyserelevanten Kosten, jahresbezogener Differenzerklärung, Kostenartdetail, bestehender Prüfentscheidungsspeicherung, Abschlussstatus sowie Excel-, Druck- und Prüfprotokollexport. Datenschema 5 bleibt durch eine additive rückwärtskompatible Initialisierung erhalten.",\n' +
+  '  "V99.4.65 AP22F11B Korrektur 4 konsolidiert Prüfen und abschließen mit dem bestehenden Differenzentscheidungsspeicher, führt die verbindliche Statusbezeichnung Kritischer Abrechnungsmangel ein, zeigt alle positiven und nicht anwendbaren Prüfergebnisse in zentraler Navigationsreihenfolge und dokumentiert ausschließlich produktive Regeln im Regelinventar. Datenschema 5 bleibt unverändert.",\n' +
+  '\n' +
+  '  "V99.4.64 AP22F11B Korrektur 3 gestaltet Prüfung & Freigabe als handlungsorientierte Seite Prüfen und abschließen neu, trennt offene und erledigte Prüfpunkte, bündelt den finalen Abschluss in einem klaren Abschlussbereich und verschiebt die vollständige Regelregistry als rein lesendes Regelinventar unter Analyse. Datenschema, Regel-IDs, Prüf- und Finalisierungslogik, Persistenz und Archive bleiben unverändert.",\n' +
+  '  "V99.4.63 AP22F11B Korrektur 2 führt den Navigationseintrag Vorauszahlungen anpassen wieder ein, migriert die Seite auf den verbindlichen NK-Pro-Designstandard, trennt die Anpassung aus aktueller Abrechnung von einer optionalen Preisprognose und ergänzt den neuen Navigationsbereich Analyse mit einer rein lesenden Auswertungsübersicht. Datenschema 5, bestehende Abrechnungswerte, Archive und Schreibschutz bleiben erhalten.",\n' +
+  '  "V99.4.62 AP22F11B Korrektur 1 behebt den responsiven Such- und Filterbereich der Mieterergebnisse, richtet alle tabellarischen Beträge rechtsbündig mit tabellarischen Ziffern aus, führt Vermieterkosten und Differenzprüfungen in einer gemeinsamen Kostenkontrolle zusammen, ergänzt den bestätigten Vermieteranteil nach Prüfung, erhält den vollständigen Gesamtabgleich und verlagert Prüfentscheidungsdetails vollständig in einen eigenen barrierearm bedienbaren Dialog.",\n' +
+  '  "V99.4.62 AP22F11B migriert Ergebnis der Abrechnung auf das freigegebene Zielbild: vier Kennzahlen, Mieterergebnisse, dokumentierte Vermieteranteile, vollständige Differenzprüfung mit Korrekturverweisen und bewusst bestätigten Akzeptanzen sowie dauerhaft nachvollziehbarer Gesamtabgleich. Akzeptanzen sind an Daten- und Berechnungssignaturen gebunden und werden bei Änderungen ungültig. Zusätzlich verhindert die Zählersynchronisierung technisch identische Messwertdubletten.",\n' +
+  '  "V99.4.60 AP22F10G-B Korrektur 2 stellt für Individuelle Werte dieselbe breite Arbeitsfläche wie Gesamtkosten her und passt Verbrauchs- sowie manuelle Tabellen auf Desktop vollständig ohne horizontalen Tabellenlauf ein. Interner Horizontal-Scroll bleibt ausschließlich für schmale Ansichten erhalten; Tabelleninnenabstand, Zählerfarbmarkierung, Vorjahresstandschutz, Fachlogik und Daten bleiben unverändert.",\n' +
+  '  "V99.4.59 AP22F10G-B Korrektur 1 ergänzt Tabelleninnenabstände, blaue und rote Zählerartmarker sowie einen geschützten, nur per Sonderfall freigebbaren Vorjahresanfangsstand. Die in Korrektur 1 zu schmal gesetzte Seitenbreite wird mit V99.4.60 korrigiert.",\n' +
+  '  "V99.4.58 entwickelt die Seite Nebenkosten abrechnen – Individuelle Werte auf Basis von V99.4.52 vollständig neu: dynamische Steuerung ausschließlich über aktive Kostenarten und Umlageschlüssel aus Gesamtkosten, generische Verbrauchs- und manuelle Eingabebereiche, reguläre Abrechnungsfälle für Mietverhältnisse, Leerstand und Privatanteil, sichere Vorjahresübernahme ohne Dubletten sowie Persistenz mit Rückleseprüfung. Die verworfenen Produktstände V99.4.53 bis V99.4.57 wurden nicht übernommen.",\n' +
+  '  "V99.4.52 migriert Nebenkosten abrechnen – Individuelle Werte auf NK-Pro UI Referenz 1.0: genau vier abgeleitete Kennzahlenkacheln, Kalt- und Warmwasser je physischem Zähler, wohnungsbezogene Summen einschließlich Leerstand und Privatanteil, bestätigte Vorjahresübernahme, additive externe Einzelwerte sowie getrennte Mengen- und Kostenabgleiche mit 0,01-Toleranz. Datenschema 5, Persistenz, Migration, Backup, Restore, Archiv, Navigation, Brief und Druck bleiben geschützt.",\n' +
+  '  "V99.4.44 migriert ausschließlich Nebenkosten abrechnen – Gesamtkosten auf NK-Pro UI Referenz 1.0: vier bestandsbasierte Kennzahlenkacheln, drei flache Arbeitsbereiche, lokale Kostenartensuche, vollständige 15-spaltige Haupttabelle, neutraler Summ'... 33583 more characters
+
+    at Object.<anonymous> (/mnt/data/nkpro_v99468_work/src/tests/ap22f8b-prepayments.test.cjs:48:8)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: '"use strict";\n' +
+    '\n' +
+    '// AP12: Konfiguration, Modulregister und anwendungsweite Laufzeitzustände.\n' +
+    'const NK_PRO_MODULES = (() => {\n' +
+    '  const required = {\n' +
+    '    persistence:globalThis.NKProPersistence,\n' +
+    '    migration:globalThis.NKProMigration,\n' +
+    '    archive:globalThis.NKProArchive,\n' +
+    '    backupRecovery:globalThis.NKProBackupRecovery,\n' +
+    '    meterMaster:globalThis.NKProMeterMaster,\n' +
+    '    meterReadings:globalThis.NKProMeterReadings,\n' +
+    '    meterPeriods:globalThis.NKProMeterPeriods,\n' +
+    '    meterValidation:globalThis.NKProMeterValidation,\n' +
+    '    objectStandard:globalThis.NKProObjectStandard,\n' +
+    '    billingSnapshot:globalThis.NKProBillingSnapshot,\n' +
+    '    billingCalculation:globalThis.NKProBillingCalculation,\n' +
+    '    billingReview:globalThis.NKProBillingReview,\n' +
+    '    costReconciliation:globalThis.NKProCostReconciliation,\n' +
+    '    documentData:globalThis.NKProDocumentData,\n' +
+    '    documentRenderer:globalThis.NKProDocumentRenderer,\n' +
+    '    exportService:globalThis.NKProExportService,\n' +
+    '    uiTableTools:globalThis.NKProUiTableTools,\n' +
+    '    uiDesignSystem:globalThis.NKProUIDesignSystem,\n' +
+    '    appBootstrap:globalThis.NKProAppBootstrap,\n' +
+    '    compatibility:globalThis.NKProCompatibility,\n' +
+    '    uiPreferences:globalThis.NKProUiPreferences,\n' +
+    '    billingContext:globalThis.NKProBillingContext,\n' +
+    '    stateAccess:globalThis.NKProStateAccess,\n' +
+    '    applicationActions:globalThis.NKProApplicationActions,\n' +
+    '    masterDataActions:globalThis.NKProMasterDataActions,\n' +
+    '    costActions:globalThis.NKProCostActions,\n' +
+    '    billingWorkflow:globalThis.NKProBillingWorkflow,\n' +
+    '    archiveActions:globalThis.NKProArchiveActions,\n' +
+    '    yearTransitionActions:globalThis.NKProYearTransitionActions,\n' +
+    '    qualityRules:globalThis.NKProQualityRules,\n' +
+    '    qualityAssurance:globalThis.NKProQualityAssurance,\n' +
+    '    diagnostics:globalThis.NKProDiagnostics,\n' +
+    '    uiController:globalThis.NKProUiController,\n' +
+    '    uiBindings:globalThis.NKProUiBindings,\n' +
+    '    uiEvents:globalThis.NKProUiEvents,\n' +
+    '    navigation:globalThis.NKProNavigation,\n' +
+    '    modalEvents:globalThis.NKProModalEvents,\n' +
+    '    runtimeDiagnostics:globalThis.NKProRuntimeDiagnostics\n' +
+    '  };\n' +
+    '  const missing = Object.entries(required).filter(([, value]) => !value).map(([name]) => name);\n' +
+    '  if (missing.length) throw new Error("NK-Pro-Modulladereihenfolge unvollständig: " + missing.join(", "));\n' +
+    '  return Object.freeze(required);\n' +
+    '})();\n' +
+    '\n' +
+    '// ===== Bereich: Ausgangsdaten und App-Konfiguration =====\n' +
+    'const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";\n' +
+    'const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";\n' +
+    'const APP_VERSION = "V99.4.68";\n' +
+    'const APP_VERSION_NAME = "Systemweite-Korrektur-Privatanteil-Eigenanteil";\n' +
+    'const APP_RELEASE_DATE = "2026-08-02";\n' +
+    'if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – Privatanteil und Eigenanteil";\n' +
+    'const DATA_SCHEMA_VERSION = 5;\n' +
+    'const DATA_LAYER_CONTRACT_VERSION = 1;\n' +
+    'const ARCHIVE_SNAPSHOT_SCOPE = "billingSnapshot";\n' +
+    'const ARCHIVE_SNAPSHOT_DATA_KEYS = [\n' +
+    '  "meta",\n' +
+    '  "wohnungen",\n' +
+    '  "mieter",\n' +
+    '  "kostenarten",\n' +
+    '  "kostenartenMieterUmlage",\n' +
+    '  "vorauszahlungen",\n' +
+    '  "umlageInputs",\n' +
+    '  "waterMeters",\n' +
+    '  "meterReadings",\n' +
+    '  "briefSettings",\n' +
+    '  "abrechnungsEinzelwerte",\n' +
+    '  "legacyEinzelabrechnungen",\n' +
+    '  "prepaymentAdjustmentSettings",\n' +
+    '  "abrechnungsPruefungen",\n' +
+    '  "kostenUmlagenAbgleich",\n' +
+    '  "objektStandard",\n' +
+    '  "zaehlerDaten"\n' +
+    '];\n' +
+    'const SNAPSHOT_TECHNICAL_META_KEYS = new Set([\n' +
+    '  "archiveViewer",\n' +
+    '  "archiveReturnUrl",\n' +
+    '  "backupEvents",\n' +
+    '  "lastArchiveBackupAt",\n' +
+    '  "lastArchiveBackupFile",\n' +
+    '  "lastCurrentBillingBackupAt",\n' +
+    '  "lastCurrentBillingBackupFile",\n' +
+    '  "lastFullBackupAppVersion",\n' +
+    '  "lastFullBackupAt",\n' +
+    '  "lastFullBackupFile",\n' +
+    '  "lastFullBackupType",\n' +
+    '  "lastSaveError",\n' +
+    '  "lastSaveReason",\n' +
+    '  "lastSavedAt",\n' +
+    '  "lastSavedWithAppVersion",\n' +
+    '  "loadedFromIntegrityRecovery",\n' +
+    '  "loadedFromIntegrityRecoveryAt",\n' +
+    '  "recoveryCreatedAt",\n' +
+    '  "recoveryCreatedWithAppVersion",\n' +
+    '  "recoverySourceStorageKey",\n' +
+    '  "snapshotBoundaryMigration",\n' +
+    '  "lastMigrationTransaction",\n' +
+    '  "restoreCheckpointCreatedAt",\n' +
+    '  "restoreCheckpointBackupId",\n' +
+    '  "startupFallback",\n' +
+    '  "startupMeterEndValueRepairAt",\n' +
+    '  "startupMeterEndValueRepairCleared",\n' +
+    '  "startupMeterEndValueRepairWithAppVersion",\n' +
+    '  "storageRole"\n' +
+    ']);\n' +
+    'const COST_EXCLUSION_FULL = "Vollständig umlegen";\n' +
+    'const COST_EXCLUSION_OWNER = "Nicht umlagefähig / Eigentümeranteil";\n' +
+    'const COST_EXCLUSION_OPTIONS = [COST_EXCLUSION_FULL, COST_EXCLUSION_OWNER];\n' +
+    'const MASTER_TENANT_ENTRY_DATE_FIX_ID = "master-tenant-entry-dates-2026-07-08";\n' +
+    'const MASTER_TENANT_ENTRY_DATES = [\n' +
+    '  { name:"gärtner", date:"2016-12-01" },\n' +
+    '  { name:"gaertner", date:"2016-12-01" },\n' +
+    '  { name:"bonesta", date:"2019-12-01" },\n' +
+    '  { name:"melzig", date:"2022-11-15" },\n' +
+    '  { name:"schneider", date:"2013-03-01" }\n' +
+    '];\n' +
+    'const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);\n' +
+    'const APP_CHANGELOG = [\n' +
+    '  "V99.4.68 vereinheitlicht die Abrechnungsteilnahme systemweit: Privatanteil, Eigenanteil und Eigentümer/Privat sind reguläre Abrechnungsteilnehmer in Berechnung, Vorauszahlungen, Ergebnissen, Prüfungen, Dokumenten, Exporten, Archivierung und Jahreswechsel. Die Nutzungsart bleibt reine Kennzeichnung; M000 wird in den aktiven Datenebenen mit Einzugsdatum 01.01.2010 migriert. Finalisierte Archive bleiben unverändert. Datenschema 5 bleibt erhalten.",\n' +
+    '  "V99.4.67 korrigiert die erneute Archivierung historischer Abrechnungen: leere Mieterplatzhalter erzeugen keine Zähler mehr, vorhandene Wasseruhrenhistorien werden für fehlende Messperioden genutzt, Zähler außerhalb des Abrechnungszeitraums blockieren nicht und wiederholte Validierungsmeldungen werden zusammengefasst. Datenschema 5 bleibt unverändert.",\n' +
+    '  "V99.4.66 AP22F12A/B integriert den Kosten- und Umlagenabgleich mit getrennten tatsächlichen Zahlungsflüssen, analyserelevanten Kosten, jahresbezogener Differenzerklärung, Kostenartdetail, bestehender Prüfentscheidungsspeicherung, Abschlussstatus sowie Excel-, Druck- und Prüfprotokollexport. Datenschema 5 bleibt durch eine additive rückwärtskompatible Initialisierung erhalten.",\n' +
+    '  "V99.4.65 AP22F11B Korrektur 4 konsolidiert Prüfen und abschließen mit dem bestehenden Differenzentscheidungsspeicher, führt die verbindliche Statusbezeichnung Kritischer Abrechnungsmangel ein, zeigt alle positiven und nicht anwendbaren Prüfergebnisse in zentraler Navigationsreihenfolge und dokumentiert ausschließlich produktive Regeln im Regelinventar. Datenschema 5 bleibt unverändert.",\n' +
+    '\n' +
+    '  "V99.4.64 AP22F11B Korrektur 3 gestaltet Prüfung & Freigabe als handlungsorientierte Seite Prüfen und abschließen neu, trennt offene und erledigte Prüfpunkte, bündelt den finalen Abschluss in einem klaren Abschlussbereich und verschiebt die vollständige Regelregistry als rein lesendes Regelinventar unter Analyse. Datenschema, Regel-IDs, Prüf- und Finalisierungslogik, Persistenz und Archive bleiben unverändert.",\n' +
+    '  "V99.4.63 AP22F11B Korrektur 2 führt den Navigationseintrag Vorauszahlungen anpassen wieder ein, migriert die Seite auf den verbindlichen NK-Pro-Designstandard, trennt die Anpassung aus aktueller Abrechnung von einer optionalen Preisprognose und ergänzt den neuen Navigationsbereich Analyse mit einer rein lesenden Auswertungsübersicht. Datenschema 5, bestehende Abrechnungswerte, Archive und Schreibschutz bleiben erhalten.",\n' +
+    '  "V99.4.62 AP22F11B Korrektur 1 behebt den responsiven Such- und Filterbereich der Mieterergebnisse, richtet alle tabellarischen Beträge rechtsbündig mit tabellarischen Ziffern aus, führt Vermieterkosten und Differenzprüfungen in einer gemeinsamen Kostenkontrolle zusammen, ergänzt den bestätigten Vermieteranteil nach Prüfung, erhält den vollständigen Gesamtabgleich und verlagert Prüfentscheidungsdetails vollständig in einen eigenen barrierearm bedienbaren Dialog.",\n' +
+    '  "V99.4.62 AP22F11B migriert Ergebnis der Abrechnung auf das freigegebene Zielbild: vier Kennzahlen, Mieterergebnisse, dokumentierte Vermieteranteile, vollständige Differenzprüfung mit Korrekturverweisen und bewusst bestätigten Akzeptanzen sowie dauerhaft nachvollziehbarer Gesamtabgleich. Akzeptanzen sind an Daten- und Berechnungssignaturen gebunden und werden bei Änderungen ungültig. Zusätzlich verhindert die Zählersynchronisierung technisch identische Messwertdubletten.",\n' +
+    '  "V99.4.60 AP22F10G-B Korrektur 2 stellt für Individuelle Werte dieselbe breite Arbeitsfläche wie Gesamtkosten her und passt Verbrauchs- sowie manuelle Tabellen auf Desktop vollständig ohne horizontalen Tabellenlauf ein. Interner Horizontal-Scroll bleibt ausschließlich für schmale Ansichten erhalten; Tabelleninnenabstand, Zählerfarbmarkierung, Vorjahresstandschutz, Fachlogik und Daten bleiben unverändert.",\n' +
+    '  "V99.4.59 AP22F10G-B Korrektur 1 ergänzt Tabelleninnenabstände, blaue und rote Zählerartmarker sowie einen geschützten, nur per Sonderfall freigebbaren Vorjahresanfangsstand. Die in Korrektur 1 zu schmal gesetzte Seitenbreite wird mit V99.4.60 korrigiert.",\n' +
+    '  "V99.4.58 entwickelt die Seite Nebenkosten abrechnen – Individuelle Werte auf Basis von V99.4.52 vollständig neu: dynamische Steuerung ausschließlich über aktive Kostenarten und Umlageschlüssel aus Gesamtkosten, generische Verbrauchs- und manuelle Eingabebereiche, reguläre Abrechnungsfälle für Mietverhältnisse, Leerstand und Privatanteil, sichere Vorjahresübernahme ohne Dubletten sowie Persistenz mit Rückleseprüfung. Die verworfenen Produktstände V99.4.53 bis V99.4.57 wurden nicht übernommen.",\n' +
+    '  "V99.4.52 migriert Nebenkosten abrechnen – Individuelle Werte auf NK-Pro UI Referenz 1.0: genau vier abgeleitete Kennzahlenkacheln, Kalt- und Warmwasser je physischem Zähler, wohnungsbezogene Summen einschließlich Leerstand und Privatanteil, bestätigte Vorjahresübernahme, additive externe Einzelwerte sowie getrennte Mengen- und Kostenabgleiche mit 0,01-Toleranz. Datenschema 5, Persistenz, Migration, Backup, Restore, Archiv, Navigation, Brief und Druck bleiben geschützt.",\n' +
+    '  "V99.4.44 migriert ausschließlich Nebenkosten abrechnen – Gesamtkosten auf NK-Pro UI Referenz 1.0: vier bestandsbasierte Kennzahlenkacheln, drei flache Arbeitsbereiche, lokale Kostenartensuche, vollständige 15-spaltige Haupttabelle, neutraler Summ'... 33583 more characters,
+  expected: /const APP_VERSION = "V99\.4\.43";/,
+  operator: 'match'
+}
+
+Node.js v22.16.0
+STATUS:1
+=== node tests/ap22f8b-protected-areas.test.cjs
+node:internal/assert/utils:281
+    throw err;
+    ^
+
+AssertionError [ERR_ASSERTION]: Geschützte Datei fehlt: AP22F3B_Screenshots/01_desktop_vollstaendig.png
+    at Object.<anonymous> (/mnt/data/nkpro_v99468_work/src/tests/ap22f8b-protected-areas.test.cjs:20:10)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '=='
+}
+
+Node.js v22.16.0
+STATUS:1
+=== node tests/ap22f9b-total-costs.test.cjs
+node:internal/assert/utils:281
+    throw err;
+    ^
+
+AssertionError [ERR_ASSERTION]: Nicht seitenbezogener AP22F9B-Selektor: #start .billing-overview-filter-groups{display:flex;align-items:center;justify-content:flex-end;gap:var(--nk-ui-space-sm);flex-wrap:wrap}
+    at Object.<anonymous> (/mnt/data/nkpro_v99468_work/src/tests/ap22f9b-total-costs.test.cjs:62:131)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '=='
+}
+
+Node.js v22.16.0
+STATUS:1
+=== node tests/ap22f10g-individual-values.test.cjs
+node:assert:801
+    throw err;
+    ^
+
+AssertionError [ERR_ASSERTION]: The input did not match the regular expression /99\.4\.60-ap22f10g-b-k2/. Input:
+
+'<!DOCTYPE html>\n' +
+  '\n' +
+  '<html lang="de">\n' +
+  '<head>\n' +
+  '<meta charset="utf-8"/>\n' +
+  '<meta content="99.4.68-private-participants" name="nk-pro-build"/>\n' +
+  '<meta content="width=device-width, initial-scale=1" name="viewport"/>\n' +
+  '<title>NK-Pro V99.4.68 – Privatanteil und Eigenanteil</title>\n' +
+  '<link href="./assets/app.css?v=99.4.68-private-participants" rel="stylesheet"/>\n' +
+  '<meta content="#031d41" name="theme-color"/>\n' +
+  '<meta content="yes" name="mobile-web-app-capable"/>\n' +
+  '<meta content="yes" name="apple-mobile-web-app-capable"/>\n' +
+  '<meta content="default" name="apple-mobile-web-app-status-bar-style"/>\n' +
+  '<meta content="NK-Pro" name="apple-mobile-web-app-title"/>\n' +
+  '<link href="./manifest.webmanifest" rel="manifest"/>\n' +
+  '<link href="./icons/icon-16.png" rel="icon" sizes="16x16" type="image/png"/>\n' +
+  '<link href="./icons/icon-32.png" rel="icon" sizes="32x32" type="image/png"/>\n' +
+  '<link href="./icons/icon-180.png" rel="apple-touch-icon" sizes="180x180"/>\n' +
+  '<link as="image" href="./assets/brand/nk-pro-logo.png" rel="preload"/>\n' +
+  '</head>\n' +
+  '<body>\n' +
+  '<div class="app-shell">\n' +
+  '<aside aria-label="NK-Pro Navigation" class="app-sidebar" id="appSidebar">\n' +
+  '<header class="sidebar-brand">\n' +
+  '<button aria-label="Arbeitsweiche öffnen" class="sidebar-brand-home" data-ui-action="navigation.showLanding" type="button"><img alt="" aria-hidden="true" class="sidebar-brand-mark" height="54" src="./assets/brand/nk-pro-mark-96.png" width="54"/><span class="sidebar-brand-copy"><span class="sidebar-brand-title">NK-PRO</span><span class="sidebar-brand-subtitle">Nebenkostenabrechnung</span></span></button>\n' +
+  '<button aria-label="Zur Arbeitsweiche" class="sidebar-brand-collapse" data-ui-action="navigation.showLanding" id="sidebarCollapseTop" type="button"><svg aria-hidden="true" class="sidebar-control-svg" fill="none" viewbox="0 0 24 24"><path d="M20 12H5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path><path d="m10 6-6 6 6 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></button>\n' +
+  '</header>\n' +
+  '<div class="sidebar-panel">\n' +
+  '<nav aria-label="Hauptnavigation" class="tabs workflow-nav" data-navigation-render-root="" data-workflow-navigation=""></nav>\n' +
+  '<footer class="sidebar-footer-zone">\n' +
+  '<div class="sidebar-user-status"><span aria-hidden="true" class="nav-item-icon"><svg aria-hidden="true" class="nav-icon-svg" fill="none" viewbox="0 0 24 24"><circle cx="12" cy="7.5" r="3.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M5 21a7 7 0 0 1 14 0" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span><span><small>Lokale Anwendung</small><strong data-app-version="">V99.4.68</strong></span></div>\n' +
+  '<button aria-describedby="settingsUnavailableText" aria-disabled="true" class="sidebar-settings-dummy" data-nav-hint="Noch nicht verfügbar" type="button"><span aria-hidden="true" class="nav-item-icon"><svg aria-hidden="true" class="nav-icon-svg" fill="none" viewbox="0 0 24 24"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V2.8h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9A1.7 1.7 0 0 0 21 10h.2v4H21a1.7 1.7 0 0 0-1.6 1z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span><span>Einstellungen</span></button>\n' +
+  '<span class="visually-hidden" id="settingsUnavailableText">Noch nicht verfügbar</span>\n' +
+  '<button aria-label="Navigation einklappen" class="sidebar-bottom-collapse" id="sidebarCollapseBottom" type="button"><svg aria-hidden="true" class="sidebar-control-svg" fill="none" viewbox="0 0 24 24"><path d="M20 12H5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path><path d="m10 6-6 6 6 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg><span>Navigation einklappen</span></button>\n' +
+  '</footer>\n' +
+  '</div>\n' +
+  '</aside>\n' +
+  '<main class="app-main" data-nk-ui-upgrade-root="">\n' +
+  '<header class="workspace-header">\n' +
+  '<button aria-label="Navigation ein- oder ausblenden" class="sidebar-toggle" id="sidebarToggle" type="button"><svg aria-hidden="true" class="workspace-action-icon" fill="none" viewbox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-linecap="round" stroke-width="1.8"></path></svg></button>\n' +
+  '<div class="workspace-heading" aria-label="NK-Pro Anwendung">\n' +
+  '<div class="workspace-kicker">NK-Pro</div>\n' +
+  '</div>\n' +
+  '<div class="workspace-header-tools">\n' +
+  '<div class="workspace-status"><span class="status-dot"></span> Offline · lokal</div>\n' +
+  '<div class="workspace-action-menu">\n' +
+  '<button aria-controls="workspaceHelpPanel" aria-expanded="false" class="workspace-header-action" data-header-panel-target="workspaceHelpPanel" id="workspaceHelpButton" type="button"><svg aria-hidden="true" class="workspace-action-icon" fill="none" viewbox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"></circle><path d="M9.8 9a2.4 2.4 0 1 1 3.4 2.2c-.8.4-1.2 1-1.2 1.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path><circle cx="12" cy="17" fill="currentColor" r=".8"></circle></svg><span>Hilfe</span></button>\n' +
+  `<div class="workspace-header-panel" hidden="" id="workspaceHelpPanel"><strong>Hilfe zu NK-Pro</strong><p>Die Navigation links führt durch Objektvorbereitung, Abrechnung, Archiv und Sicherung. Technische Informationen und Sicherungen stehen im Systembereich bereit.</p><button data-ui-action="navigation.switchTab" data-ui-args='["sicherung"]' type="button">Systeminformationen öffnen</button></div>\n` +
+  '</div>\n' +
+  '<div class="workspace-action-menu">\n' +
+  '<button aria-controls="workspaceMenuPanel" aria-expanded="false" class="workspace-header-action" data-header-panel-target="workspaceMenuPanel" id="workspaceMenuButton" type="button"><svg aria-hidden="true" class="workspace-action-icon" fill="none" viewbox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h14" stroke="currentColor" stroke-linecap="round" stroke-width="1.8"></path></svg><span>Menü</span></button>\n' +
+  `<div class="workspace-header-panel workspace-header-panel--menu" hidden="" id="workspaceMenuPanel"><button data-ui-action="navigation.showLanding" type="button">Startseite</button><button data-ui-action="navigation.switchTab" data-ui-args='["archiv"]' type="button">Abrechnungsarchiv</button><button data-ui-action="navigation.switchTab" data-ui-args='["sicherung"]' type="button">Datensicherung &amp; System</button></div>\n` +
+  '</div>\n' +
+  '</div>\n' +
+  `</header><section aria-label="Abrechnungskontext" class="global-billing-context nk-ui-context-bar" data-global-billing-context="" hidden=""><div class="global-billing-context__lead"><span class="global-billing-context__eyebrow">Abrechnungskontext</span><strong data-global-billing-object="">Keine Abrechnung geöffnet</strong><span class="global-billing-context__code" data-global-billing-code="">–</span></div><div class="global-billing-context__facts"><div class="global-billing-context__fact"><span class="global-billing-context__fact-label">Zeitraum</span><strong data-global-billing-period="">–</strong></div><div class="global-billing-context__fact"><span class="global-billing-context__fact-label">Status</span><span class="global-billing-context__status is-none" data-global-billing-status="">Nicht geöffnet</span></div></div><div class="global-billing-context__actions"><button class="global-billing-context__overview" data-global-billing-overview="" data-ui-action="navigation.switchTab" data-ui-args='["start"]' type="button">Zur Übersicht</button><button class="global-billing-context__close secondary" data-global-billing-close="" data-ui-action="billing.closeContext" type="button">Abrechnung schließen</button></div></section>\n` +
+  '<div class="wrap nk-ui-workspace">\n' +
+  '<section class="tab active landing-tab" id="landing"><div class="landing-page nk-ui-page-shell nk-ui-page-shell--default" data-page-shell="default"><div class="landing-page__intro nk-ui-page-header" data-page-header="landing"><p class="landing-page__kicker">NK-Pro</p><h1 class="page-header__title">Was möchten Sie bearbeiten?</h1><p>Wählen Sie den passenden Einstieg. Alle Bereiche verwenden dieselbe Anwendung und denselben lokalen Datenbestand.</p></div><div class="landing-choices"><button class="landing-choice" data-ui-action="navigation.enterObjectPreparation" type="button"><span class="landing-choice__top"><span aria-hidden="true" class="nav-item-icon"><svg aria-hidden="true" class="nav-icon-svg" fill="none" viewbox="0 0 24 24"><path d="M3.5 10.5 12 3.5l8.5 7" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path><path d="M5.5 9.5V21h13V9.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path><path d="M9.5 21v-6h5v6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span><span class="landing-choice__eyebrow">Stammdaten und Grundlagen</span></span><strong>Objekt vorbereiten</strong><span>Wohnungen und Mieter verwalten sowie die Objektvorbereitung prüfen.</span><span class="landing-choice__action">Bereich öffnen →</span></button><button class="landing-choice" data-ui-action="navigation.enterBillingOverview" type="button"><span class="landing-choice__top"><span aria-hidden="true" class="nav-item-icon"><svg aria-hidden="true" class="nav-icon-svg" fill="none" viewbox="0 0 24 24"><path d="M6 2.8h8l4 4V21H6z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path><path d="M14 2.8v4h4" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path><line stroke="currentColor" stroke-linecap="round" '... 104904 more characters
+
+    at Object.<anonymous> (/mnt/data/nkpro_v99468_work/src/tests/ap22f10g-individual-values.test.cjs:49:8)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: '<!DOCTYPE html>\n' +
+    '\n' +
+    '<html lang="de">\n' +
+    '<head>\n' +
+    '<meta charset="utf-8"/>\n' +
+    '<meta content="99.4.68-private-participants" name="nk-pro-build"/>\n' +
+    '<meta content="width=device-width, initial-scale=1" name="viewport"/>\n' +
+    '<title>NK-Pro V99.4.68 – Privatanteil und Eigenanteil</title>\n' +
+    '<link href="./assets/app.css?v=99.4.68-private-participants" rel="stylesheet"/>\n' +
+    '<meta content="#031d41" name="theme-color"/>\n' +
+    '<meta content="yes" name="mobile-web-app-capable"/>\n' +
+    '<meta content="yes" name="apple-mobile-web-app-capable"/>\n' +
+    '<meta content="default" name="apple-mobile-web-app-status-bar-style"/>\n' +
+    '<meta content="NK-Pro" name="apple-mobile-web-app-title"/>\n' +
+    '<link href="./manifest.webmanifest" rel="manifest"/>\n' +
+    '<link href="./icons/icon-16.png" rel="icon" sizes="16x16" type="image/png"/>\n' +
+    '<link href="./icons/icon-32.png" rel="icon" sizes="32x32" type="image/png"/>\n' +
+    '<link href="./icons/icon-180.png" rel="apple-touch-icon" sizes="180x180"/>\n' +
+    '<link as="image" href="./assets/brand/nk-pro-logo.png" rel="preload"/>\n' +
+    '</head>\n' +
+    '<body>\n' +
+    '<div class="app-shell">\n' +
+    '<aside aria-label="NK-Pro Navigation" class="app-sidebar" id="appSidebar">\n' +
+    '<header class="sidebar-brand">\n' +
+    '<button aria-label="Arbeitsweiche öffnen" class="sidebar-brand-home" data-ui-action="navigation.showLanding" type="button"><img alt="" aria-hidden="true" class="sidebar-brand-mark" height="54" src="./assets/brand/nk-pro-mark-96.png" width="54"/><span class="sidebar-brand-copy"><span class="sidebar-brand-title">NK-PRO</span><span class="sidebar-brand-subtitle">Nebenkostenabrechnung</span></span></button>\n' +
+    '<button aria-label="Zur Arbeitsweiche" class="sidebar-brand-collapse" data-ui-action="navigation.showLanding" id="sidebarCollapseTop" type="button"><svg aria-hidden="true" class="sidebar-control-svg" fill="none" viewbox="0 0 24 24"><path d="M20 12H5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path><path d="m10 6-6 6 6 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></button>\n' +
+    '</header>\n' +
+    '<div class="sidebar-panel">\n' +
+    '<nav aria-label="Hauptnavigation" class="tabs workflow-nav" data-navigation-render-root="" data-workflow-navigation=""></nav>\n' +
+    '<footer class="sidebar-footer-zone">\n' +
+    '<div class="sidebar-user-status"><span aria-hidden="true" class="nav-item-icon"><svg aria-hidden="true" class="nav-icon-svg" fill="none" viewbox="0 0 24 24"><circle cx="12" cy="7.5" r="3.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M5 21a7 7 0 0 1 14 0" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span><span><small>Lokale Anwendung</small><strong data-app-version="">V99.4.68</strong></span></div>\n' +
+    '<button aria-describedby="settingsUnavailableText" aria-disabled="true" class="sidebar-settings-dummy" data-nav-hint="Noch nicht verfügbar" type="button"><span aria-hidden="true" class="nav-item-icon"><svg aria-hidden="true" class="nav-icon-svg" fill="none" viewbox="0 0 24 24"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V2.8h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9A1.7 1.7 0 0 0 21 10h.2v4H21a1.7 1.7 0 0 0-1.6 1z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span><span>Einstellungen</span></button>\n' +
+    '<span class="visually-hidden" id="settingsUnavailableText">Noch nicht verfügbar</span>\n' +
+    '<button aria-label="Navigation einklappen" class="sidebar-bottom-collapse" id="sidebarCollapseBottom" type="button"><svg aria-hidden="true" class="sidebar-control-svg" fill="none" viewbox="0 0 24 24"><path d="M20 12H5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path><path d="m10 6-6 6 6 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg><span>Navigation einklappen</span></button>\n' +
+    '</footer>\n' +
+    '</div>\n' +
+    '</aside>\n' +
+    '<main class="app-main" data-nk-ui-upgrade-root="">\n' +
+    '<header class="workspace-header">\n' +
+    '<button aria-label="Navigation ein- oder ausblenden" class="sidebar-toggle" id="sidebarToggle" type="button"><svg aria-hidden="true" class="workspace-action-icon" fill="none" viewbox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-linecap="round" stroke-width="1.8"></path></svg></button>\n' +
+    '<div class="workspace-heading" aria-label="NK-Pro Anwendung">\n' +
+    '<div class="workspace-kicker">NK-Pro</div>\n' +
+    '</div>\n' +
+    '<div class="workspace-header-tools">\n' +
+    '<div class="workspace-status"><span class="status-dot"></span> Offline · lokal</div>\n' +
+    '<div class="workspace-action-menu">\n' +
+    '<button aria-controls="workspaceHelpPanel" aria-expanded="false" class="workspace-header-action" data-header-panel-target="workspaceHelpPanel" id="workspaceHelpButton" type="button"><svg aria-hidden="true" class="workspace-action-icon" fill="none" viewbox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"></circle><path d="M9.8 9a2.4 2.4 0 1 1 3.4 2.2c-.8.4-1.2 1-1.2 1.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path><circle cx="12" cy="17" fill="currentColor" r=".8"></circle></svg><span>Hilfe</span></button>\n' +
+    `<div class="workspace-header-panel" hidden="" id="workspaceHelpPanel"><strong>Hilfe zu NK-Pro</strong><p>Die Navigation links führt durch Objektvorbereitung, Abrechnung, Archiv und Sicherung. Technische Informationen und Sicherungen stehen im Systembereich bereit.</p><button data-ui-action="navigation.switchTab" data-ui-args='["sicherung"]' type="button">Systeminformationen öffnen</button></div>\n` +
+    '</div>\n' +
+    '<div class="workspace-action-menu">\n' +
+    '<button aria-controls="workspaceMenuPanel" aria-expanded="false" class="workspace-header-action" data-header-panel-target="workspaceMenuPanel" id="workspaceMenuButton" type="button"><svg aria-hidden="true" class="workspace-action-icon" fill="none" viewbox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h14" stroke="currentColor" stroke-linecap="round" stroke-width="1.8"></path></svg><span>Menü</span></button>\n' +
+    `<div class="workspace-header-panel workspace-header-panel--menu" hidden="" id="workspaceMenuPanel"><button data-ui-action="navigation.showLanding" type="button">Startseite</button><button data-ui-action="navigation.switchTab" data-ui-args='["archiv"]' type="button">Abrechnungsarchiv</button><button data-ui-action="navigation.switchTab" data-ui-args='["sicherung"]' type="button">Datensicherung &amp; System</button></div>\n` +
+    '</div>\n' +
+    '</div>\n' +
+    `</header><section aria-label="Abrechnungskontext" class="global-billing-context nk-ui-context-bar" data-global-billing-context="" hidden=""><div class="global-billing-context__lead"><span class="global-billing-context__eyebrow">Abrechnungskontext</span><strong data-global-billing-object="">Keine Abrechnung geöffnet</strong><span class="global-billing-context__code" data-global-billing-code="">–</span></div><div class="global-billing-context__facts"><div class="global-billing-context__fact"><span class="global-billing-context__fact-label">Zeitraum</span><strong data-global-billing-period="">–</strong></div><div class="global-billing-context__fact"><span class="global-billing-context__fact-label">Status</span><span class="global-billing-context__status is-none" data-global-billing-status="">Nicht geöffnet</span></div></div><div class="global-billing-context__actions"><button class="global-billing-context__overview" data-global-billing-overview="" data-ui-action="navigation.switchTab" data-ui-args='["start"]' type="button">Zur Übersicht</button><button class="global-billing-context__close secondary" data-global-billing-close="" data-ui-action="billing.closeContext" type="button">Abrechnung schließen</button></div></section>\n` +
+    '<div class="wrap nk-ui-workspace">\n' +
+    '<section class="tab active landing-tab" id="landing"><div class="landing-page nk-ui-page-shell nk-ui-page-shell--default" data-page-shell="default"><div class="landing-page__intro nk-ui-page-header" data-page-header="landing"><p class="landing-page__kicker">NK-Pro</p><h1 class="page-header__title">Was möchten Sie bearbeiten?</h1><p>Wählen Sie den passenden Einstieg. Alle Bereiche verwenden dieselbe Anwendung und denselben lokalen Datenbestand.</p></div><div class="landing-choices"><button class="landing-choice" data-ui-action="navigation.enterObjectPreparation" type="button"><span class="landing-choice__top"><span aria-hidden="true" class="nav-item-icon"><svg aria-hidden="true" class="nav-icon-svg" fill="none" viewbox="0 0 24 24"><path d="M3.5 10.5 12 3.5l8.5 7" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path><path d="M5.5 9.5V21h13V9.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path><path d="M9.5 21v-6h5v6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span><span class="landing-choice__eyebrow">Stammdaten und Grundlagen</span></span><strong>Objekt vorbereiten</strong><span>Wohnungen und Mieter verwalten sowie die Objektvorbereitung prüfen.</span><span class="landing-choice__action">Bereich öffnen →</span></button><button class="landing-choice" data-ui-action="navigation.enterBillingOverview" type="button"><span class="landing-choice__top"><span aria-hidden="true" class="nav-item-icon"><svg aria-hidden="true" class="nav-icon-svg" fill="none" viewbox="0 0 24 24"><path d="M6 2.8h8l4 4V21H6z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path><path d="M14 2.8v4h4" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path><line stroke="currentColor" stroke-linecap="round" '... 104904 more characters,
+  expected: /99\.4\.60-ap22f10g-b-k2/,
+  operator: 'match'
+}
+
+Node.js v22.16.0
+STATUS:1
+=== node tests/ap22f11b-billing-result.test.cjs
+node:assert:95
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: package version
++ actual - expected
+
++ '99.4.68'
+- '99.4.64'
+         ^
+
+    at Object.<anonymous> (/mnt/data/nkpro_v99468_work/src/tests/ap22f11b-billing-result.test.cjs:16:8)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: '99.4.68',
+  expected: '99.4.64',
+  operator: 'strictEqual'
+}
+
+Node.js v22.16.0
+STATUS:1
+=== node tests/ap22f11b-korrektur1.test.cjs
+node:assert:95
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++ actual - expected
+
++ '99.4.68'
+- '99.4.63'
+         ^
+
+    at Object.<anonymous> (/mnt/data/nkpro_v99468_work/src/tests/ap22f11b-korrektur1.test.cjs:13:8)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: '99.4.68',
+  expected: '99.4.63',
+  operator: 'strictEqual'
+}
+
+Node.js v22.16.0
+STATUS:1
+=== node tests/ap22f11b-korrektur2.test.cjs
+node:assert:95
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++ actual - expected
+
++ '99.4.68'
+- '99.4.63'
+         ^
+
+    at Object.<anonymous> (/mnt/data/nkpro_v99468_work/src/tests/ap22f11b-korrektur2.test.cjs:16:8)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: '99.4.68',
+  expected: '99.4.63',
+  operator: 'strictEqual'
+}
+
+Node.js v22.16.0
+STATUS:1
+=== node tests/ap22f11b-korrektur3.test.cjs
+node:assert:95
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++ actual - expected
+
++ '99.4.68'
+- '99.4.64'
+         ^
+
+    at Object.<anonymous> (/mnt/data/nkpro_v99468_work/src/tests/ap22f11b-korrektur3.test.cjs:19:8)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: '99.4.68',
+  expected: '99.4.64',
+  operator: 'strictEqual'
+}
+
+Node.js v22.16.0
+STATUS:1
+=== node tests/ap22f11b-korrektur4-data-roundtrip.test.cjs
+node:internal/modules/cjs/loader:1404
+  throw err;
+  ^
+
+Error: Cannot find module 'playwright'
+Require stack:
+- /mnt/data/nkpro_v99468_work/src/tests/ap22f11b-korrektur4-data-roundtrip.test.cjs
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.require (node:internal/modules/cjs/loader:1487:12)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (/mnt/data/nkpro_v99468_work/src/tests/ap22f11b-korrektur4-data-roundtrip.test.cjs:6:22)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/mnt/data/nkpro_v99468_work/src/tests/ap22f11b-korrektur4-data-roundtrip.test.cjs'
+  ]
+}
+
+Node.js v22.16.0
+STATUS:1

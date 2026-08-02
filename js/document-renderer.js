@@ -238,7 +238,6 @@
   }
 
   function briefUnitLabel(tenant) {
-    if (tenant && tenant.name) return "Wohnung " + tenant.name;
     const unit = state && Array.isArray(state.wohnungen) && tenant ? state.wohnungen.find(item => item.id === tenant.wohnung) : null;
     return "Wohnung " + String(unit && (unit.bezeichnung || unit.lage) || tenant && tenant.wohnung || "").trim();
   }

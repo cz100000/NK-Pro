@@ -1,5 +1,18 @@
 # NK-Pro V99.4.64 – AP22F11B Korrektur 3
 
+## NK-Pro V99.4.68 – Systemweite Korrektur Privatanteil und Eigenanteil
+
+V99.4.68 behandelt die Nutzungsarten **Privatanteil**, **Eigenanteil**, **Eigentümer/Privat** und private Nutzung als reguläre Abrechnungsteilnehmer. Die Nutzungsart bleibt eine reine Kennzeichnung und löst keine Ausschlüsse oder abweichende Finanzlogik mehr aus.
+
+Die zentrale Teilnahmeentscheidung lautet `isSettlementParticipant(record)`. `isBillableTenant(record)` besteht nur noch als kompatibler Alias. Alle Teilnehmer laufen durch dieselbe Ergebnis-, Prüf-, Dokument-, Export-, Archiv- und Jahreswechselstruktur. Der aktive Echtdatenfall `M000` / Erik Zimmermann / `W000.UG` besitzt in aktueller Abrechnung, Objektstandard und zentralem Stammdatenbestand das Einzugsdatum `01.01.2010`; finalisierte Archive bleiben unverändert.
+
+- Produktversion: **V99.4.68**
+- Build-/Cachekennung: `99.4.68-private-participants`
+- Datenschema: **5** unverändert
+- Datenebenenvertrag: **1** unverändert
+- Vollständige Nachweise: `V99_4_68_Dokumentation/`
+
+
 Die Abschlussseite unter **Nebenkosten abrechnen → Prüfen und abschließen** zeigt ausschließlich handlungsrelevante offene Punkte, erledigte Prüfungen und den finalen Abschlussstatus. Das vollständige Regelinventar ist rein lesend unter **Analyse → Regelinventar** erreichbar.
 
 Datenschema 5, Regel-IDs, Berechnungen, Persistenz, Archive und Schreibschutz bleiben unverändert. Die Cache- und Buildkennung lautet `99.4.64-ap22f11b-k3`.

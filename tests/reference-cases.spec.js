@@ -22,7 +22,7 @@ test("Referenzfall Standard bleibt vollständig und berechenbar", async ({ page 
   expect(result.schema).toBe(5);
   expect(result.counts).toEqual([7, 20, 41]);
   expect(result.privateTenant).toBe("Eigentümer/Privat");
-  expect(result.tenantResults).toBe(4);
+  expect(result.tenantResults).toBe(5);
   expect(result.privateResults).toBe(1);
   expect(result.allCalculationTenants).toBe(5);
   expect(result.audit.errors).toBe(0);
@@ -59,7 +59,7 @@ test("Referenzfall Leerstand erkennt eine aktive Wohnung ohne Mietverhältnis", 
   runtime.assertClean();
 });
 
-test("Referenzfall M000 bleibt in der Umlage und außerhalb der Mieterbriefe", async ({ page }) => {
+test("Referenzfall M000 bleibt in der Umlage und erhält reguläre Abrechnungsdokumente", async ({ page }) => {
   const runtime = attachRuntimeGuards(page);
   await openFreshApp(page);
   await loadFixture(page, "eigentuemer-m000.json");
@@ -75,7 +75,7 @@ test("Referenzfall M000 bleibt in der Umlage und außerhalb der Mieterbriefe", a
       inLetters: letterIds.includes("M000")
     };
   });
-  expect(result).toEqual({ role: "Eigentümer/Privat", inCalculation: true, inPrivateResults: true, inLetters: false });
+  expect(result).toEqual({ role: "Eigentümer/Privat", inCalculation: true, inPrivateResults: true, inLetters: true });
   runtime.assertClean();
 });
 

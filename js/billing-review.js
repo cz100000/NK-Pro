@@ -19,7 +19,7 @@
     [STATUS.INVALID]:"Akzeptanz ungültig – erneut prüfen"
   });
   const TREATMENTS = Object.freeze([
-    Object.freeze({ value:"landlord-private", label:"Vermieter trägt – Privatanteil", group:"landlord" }),
+    Object.freeze({ value:"landlord-private", label:"Nicht umlagefähiger Vermieteranteil (Altbestand)", group:"landlord" }),
     Object.freeze({ value:"landlord-vacancy", label:"Vermieter trägt – Leerstand", group:"landlord" }),
     Object.freeze({ value:"landlord-non-allocable", label:"Vermieter trägt – nicht umlagefähig", group:"landlord" }),
     Object.freeze({ value:"landlord-other", label:"Vermieter trägt – sonstiger Anteil", group:"landlord" }),
@@ -330,7 +330,7 @@
     const acceptedLandlord = rows.filter(row => row.status === STATUS.LANDLORD).reduce((sum,row) => sum + row.monetaryAmount, 0);
     const openAmount = rows.filter(row => [STATUS.OPEN, STATUS.IN_CORRECTION, STATUS.INVALID].includes(row.status)).reduce((sum,row) => sum + row.monetaryAmount, 0);
     const intentionalOwnerShare = (calculation.costResults || []).filter(row => text(row.cost && row.cost.ausschlussBehandlung) === "Nicht umlagefähig / Eigentümeranteil").reduce((sum,row) => sum + Math.max(0, number(row.ownerShare) - number(row.documentedOwnerShare)), 0);
-    const landlordBase = number(totals.privateShare) + number(totals.documentedOwnerShare) + intentionalOwnerShare;
+    const landlordBase = number(totals.documentedOwnerShare) + intentionalOwnerShare;
     const landlordTotal = landlordBase + acceptedLandlord;
     const control = number(totals.billableShare) + landlordTotal + acceptedOther + openAmount;
     return Object.freeze({

@@ -37,7 +37,7 @@ function loadModules(initialState) {
   context.NKProBillingReview.configure({
     stateAccess,
     calculation,
-    appVersion:"V99.4.67",
+    appVersion:"V99.4.68",
     now:() => `2026-08-02T12:00:${String(counter++).padStart(2,"0")}.000Z`
   });
   context.NKProCostReconciliation.configure({
@@ -56,7 +56,7 @@ function loadModules(initialState) {
       },
       totals:{}
     }),
-    appVersion:"V99.4.67",
+    appVersion:"V99.4.68",
     now:() => `2026-08-02T12:01:${String(counter++).padStart(2,"0")}.000Z`
   });
   return { context, state:() => state, domain:context.NKProCostReconciliation, review:context.NKProBillingReview };
@@ -70,7 +70,7 @@ function baseState() {
     kostenarten:[{
       id:"K1", kostenart:"Hausbetrieb", inNK:"Ja", gesamtbetrag:1000,
       umlageschluessel:"Wohnfläche", ausschlussBehandlung:"Vollständig umlegen",
-      __tenantShare:700, __privateShare:100, __vacancyShare:50
+      __tenantShare:800, __privateShare:100, __vacancyShare:50
     }],
     jahresArchiv:[]
   };
@@ -87,9 +87,10 @@ function baseState() {
   assert.equal(model.income.total, 0, "Soll-Vorauszahlungen dürfen nicht als tatsächliche Einnahme erscheinen");
   assert.equal(model.costs.total, 1000);
   assert.equal(model.difference, 1000);
-  assert.equal(model.categories.private.total, 100);
+  assert.equal(model.costRows[0].privateShare, 100, "Private Nutzung bleibt als Informations-Teilmenge sichtbar");
+  assert.equal(model.categories.private, undefined, "Private Nutzung darf keine Differenz-/Vermieterkostenkategorie sein");
   assert.equal(model.categories.vacancy.total, 50);
-  assert.equal(model.control, 850);
+  assert.equal(model.control, 950);
 })();
 
 (function paymentSignsAndYearReferences() {
@@ -116,12 +117,12 @@ function baseState() {
   domain.savePayment({ paymentType:"prepayment", amount:500, paymentYear:2025, billingYear:2025 });
   let model = domain.model(state, { fromYear:2025, toYear:2025 });
   assert.equal(model.difference, 500);
-  assert.equal(model.explanation, 150);
-  assert.equal(model.control, 350);
+  assert.equal(model.explanation, 50);
+  assert.equal(model.control, 450);
   domain.assignRemainingToOpen({ fromYear:2025, toYear:2025, year:2025 });
   model = domain.model(state, { fromYear:2025, toYear:2025 });
   assert.equal(model.control, 0);
-  assert.equal(model.open, 350);
+  assert.equal(model.open, 450);
   assert.equal(model.statusCode, "open-difference");
   assert.equal(model.status, "Offene Differenz vorhanden");
 })();

@@ -37,7 +37,7 @@
   const REGISTRY = Object.freeze([
     rule("NKP-FACH-001","Abrechnungszeitraum ist gültig",CATEGORY.MANDATORY,"object-period",{dataSource:"meta.abrechnungsjahr, meta.abrechnungsbeginn, meta.abrechnungsende",targetTab:"start",targetSelector:"#billingPeriodSettings",solution:"Beginn und Ende als echte Kalenderdaten erfassen und das Abrechnungsjahr mit dem Endjahr der Periode abgleichen."}),
     rule("NKP-FACH-002","Mindestens eine aktive Wohnung ist vorhanden",CATEGORY.MANDATORY,"object-period",{dataSource:"wohnungen",targetTab:"wohnungsverwaltung"}),
-    rule("NKP-FACH-003","Mindestens ein abrechenbares Mietverhältnis ist vorhanden",CATEGORY.MANDATORY,"units-tenancies",{dataSource:"mieter, Abrechnungszeitraum",targetTab:"mieterverwaltung"}),
+    rule("NKP-FACH-003","Mindestens ein Abrechnungsteilnehmer ist vorhanden",CATEGORY.MANDATORY,"units-tenancies",{dataSource:"mieter, Abrechnungszeitraum",targetTab:"mieterverwaltung"}),
     rule("NKP-FACH-004","Mietername ist vorhanden",CATEGORY.MANDATORY,"units-tenancies",{dataSource:"mieter.name",targetTab:"mieterverwaltung",solution:"Den Namen im betroffenen Mietverhältnis ergänzen."}),
     rule("NKP-FACH-005","Wohnungszuordnung ist vorhanden",CATEGORY.MANDATORY,"units-tenancies",{dataSource:"mieter.wohnung, wohnungen.id",targetTab:"mieterverwaltung",solution:"Das Mietverhältnis einer vorhandenen Wohnung zuordnen."}),
     rule("NKP-FACH-006","Mietzeitraum ist logisch",CATEGORY.MANDATORY,"units-tenancies",{dataSource:"mieter.einzug, mieter.auszug",targetTab:"mieterverwaltung",solution:"Einzugs- und Auszugsdatum korrigieren."}),
@@ -46,7 +46,7 @@
     rule("NKP-FACH-008","Personenzahl ist für verwendete Schlüssel vorhanden",CATEGORY.MANDATORY,"units-tenancies",{dataSource:"mieter.personen, verwendete Umlageschlüssel",targetTab:"mieterverwaltung"}),
     rule("NKP-HINW-001","Unterjähriges Mietverhältnis",CATEGORY.HINT,"units-tenancies",{dataSource:"Mietzeitraum",targetTab:"mieterverwaltung",solution:"Sonderfall prüfen; bei korrekten Angaben ist keine Änderung erforderlich."}),
     rule("NKP-HINW-002","Leerstand erkannt",CATEGORY.HINT,"units-tenancies",{dataSource:"Aktive Wohnungen und Mietverhältnisse",targetTab:"mieterverwaltung"}),
-    rule("NKP-HINW-003","Eigentümer- oder Privatanteil erkannt",CATEGORY.HINT,"units-tenancies",{dataSource:"mieter.abrechnungRolle",targetTab:"mieterverwaltung"}),
+    rule("NKP-HINW-003","Nutzungsart Privat- oder Eigenanteil erkannt",CATEGORY.HINT,"units-tenancies",{dataSource:"mieter.abrechnungRolle",targetTab:"mieterverwaltung"}),
     rule("NKP-FACH-009","Aktive Kostenarten sind vorhanden",CATEGORY.MANDATORY,"costs",{dataSource:"kostenarten.inNK",targetTab:"einstellungen"}),
     rule("NKP-FACH-010","Gesamtbetrag der Kostenart ist vorhanden",CATEGORY.MANDATORY,"costs",{dataSource:"kostenarten.gesamtbetrag",targetTab:"einstellungen",solution:"Den Gesamtbetrag der Kostenart erfassen."}),
     rule("NKP-FACH-011","Berechtigte Empfänger der Kostenart sind vorhanden",CATEGORY.MANDATORY,"costs",{dataSource:"kostenartenMieterUmlage, Mietverhältnisse",targetTab:"einstellungen"}),
@@ -167,8 +167,8 @@
 
   function activeCosts(data) { return (Array.isArray(data.kostenarten) ? data.kostenarten : []).filter(cost => cost && text(cost.kostenart) && cost.inNK === "Ja"); }
   function currentTenants() { try { return visibleTenantRows(); } catch (_) { return []; } }
-  function billableTenants() { try { return billableTenantRows(); } catch (_) { return currentTenants().filter(row => row && row.abrechnungRolle !== "Eigentümer/Privat"); } }
-  function privateTenants() { try { return privateTenantRows(); } catch (_) { return currentTenants().filter(row => row && row.abrechnungRolle === "Eigentümer/Privat"); } }
+  function billableTenants() { try { return billableTenantRows(); } catch (_) { return currentTenants().filter(row => row && row.id && row.name && row.wohnung && tenantRelevantForCurrentBilling(row)); } }
+  function privateTenants() { try { return privateTenantRows(); } catch (_) { return currentTenants().filter(row => row && /eigent|privat|eigennutz/i.test(String(row.abrechnungRolle || row.rolle || row.nutzungsart || ""))); } }
   function labelTenant(row) { try { return NK_PRO_MODULES.qualityAssurance && NK_PRO_MODULES.qualityAssurance.tenantQualityLabel(row); } catch (_) { return (row && (row.id || row.name)) || "Mietverhältnis"; } }
   function tenantEntity(row) { return { type:"tenant", id:text(row && row.id) || String(row && row.originalIndex || ""), label:labelTenant(row) }; }
   function unitEntity(row) { return { type:"unit", id:text(row && row.id), label:(typeof unitDisplayId === "function" ? unitDisplayId(row) : text(row && row.id)) }; }
@@ -283,7 +283,7 @@
     const activeUnits=units.filter(row=>text(row.status).toLowerCase()!=="inaktiv");
     results.push(activeUnits.length ? passed("NKP-FACH-002",activeUnits.length+" aktive Wohnungen vorhanden.",{count:activeUnits.length},data) : result("NKP-FACH-002",{details:"Keine aktive Wohnung vorhanden.",values:{count:0}},data));
     const tenants=currentTenants(), billable=billableTenants(), privates=privateTenants();
-    results.push(billable.length ? passed("NKP-FACH-003",billable.length+" abrechenbare Mietverhältnisse vorhanden.",{count:billable.length},data) : result("NKP-FACH-003",{details:"Kein abrechenbares Mietverhältnis vorhanden.",values:{count:0}},data));
+    results.push(billable.length ? passed("NKP-FACH-003",billable.length+" Abrechnungsteilnehmer vorhanden.",{count:billable.length},data) : result("NKP-FACH-003",{details:"Kein Abrechnungsteilnehmer vorhanden.",values:{count:0}},data));
     const unitIds=new Set(units.map(row=>row.id));
     const missingNames=billable.filter(row=>!text(row.name));
     if (missingNames.length) missingNames.forEach(row=>results.push(result("NKP-FACH-004",{entity:tenantEntity(row),details:"Name fehlt.",values:{name:row.name||""},targetSelector:'[data-tenant-id="'+text(row.id)+'"]'},data))); else results.push(passed("NKP-FACH-004","Alle abrechenbaren Mietverhältnisse besitzen einen Namen.",{count:billable.length},data));
@@ -308,7 +308,7 @@
     const occupiedUnitIds=new Set(billable.map(row=>row.wohnung));
     const vacancy=activeUnits.filter(row=>!occupiedUnitIds.has(row.id)&&!privates.some(p=>p.wohnung===row.id));
     if(vacancy.length) vacancy.forEach(row=>results.push(result("NKP-HINW-002",{entity:unitEntity(row),details:"Aktive Wohnung ohne abrechenbares Mietverhältnis.",values:{unit:row.id}},data))); else results.push(passed("NKP-HINW-002","Kein unbelegter aktiver Wohnungsdatensatz erkannt.",{count:0},data));
-    if(privates.length) privates.forEach(row=>results.push(result("NKP-HINW-003",{entity:tenantEntity(row),details:"Datensatz wird als Eigentümer/Privat geführt.",values:{role:row.abrechnungRolle}},data))); else results.push(passed("NKP-HINW-003","Kein Eigentümer-/Privatdatensatz vorhanden.",{count:0},data));
+    if(privates.length) privates.forEach(row=>results.push(result("NKP-HINW-003",{entity:tenantEntity(row),details:"Datensatz ist regulärer Abrechnungsteilnehmer mit privater Nutzungsart.",values:{role:row.abrechnungRolle}},data))); else results.push(passed("NKP-HINW-003","Kein Datensatz mit privater Nutzungsart vorhanden.",{count:0},data));
     return {results, units, activeUnits, tenants, billable, privates, costs, fullDays};
   }
 

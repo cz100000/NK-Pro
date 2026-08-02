@@ -89,7 +89,6 @@
     return rows.reduce((sum, tenant) => {
       if (!tenant || !tenant.id || !tenant.name) return sum;
       if (tenant.status === "Archiviert" || tenant.status === "archiviert" || tenant.status === "Archiv") return sum;
-      if (tenant.abrechnungRolle === "Eigentümer/Privat") return sum;
       return sum + d.num(tenant.vorjahresKorrektur);
     }, 0);
   }

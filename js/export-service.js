@@ -85,10 +85,7 @@
     const rows = [];
     calc.tenantResults.forEach(r => {
       const s = settlementInfoForResult(r, r.tenant);
-      rows.push(["Mieter", r.tenant.id, r.tenant.wohnung, r.tenant.name, r.tenant.abrechnungRolle || "Mieter", r.costShare, r.prepayments, r.correction, r.rentCorrection, s.type, s.amount]);
-    });
-    calc.privateResults.forEach(r => {
-      rows.push(["Eigentümer/Privat", r.tenant.id, r.tenant.wohnung, r.tenant.name, r.tenant.abrechnungRolle || "Eigentümer/Privat", r.costShare, r.prepayments, r.correction, r.rentCorrection, "Privatanteil", r.costShare]);
+      rows.push(["Abrechnungsteilnehmer", r.tenant.id, r.tenant.wohnung, r.tenant.name, r.tenant.abrechnungRolle || "Mieter", r.costShare, r.prepayments, r.correction, r.rentCorrection, s.type, s.amount]);
     });
     download(csvFileName("nk-pro-umlage"), toCsv([header, ...rows]), "text/csv;charset=utf-8");
   }

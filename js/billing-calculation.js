@@ -17,18 +17,27 @@
     return value === UMLAGE_MANUAL_LEGACY ? UMLAGE_MANUAL : value;
   }
 
-  function isPrivateTenant(m) {
-    if (!tenantRelevantForCurrentBilling(m)) return false;
-    const role = String(m && (m.abrechnungRolle || m.rolle || "") || "").toLocaleLowerCase("de-DE");
-    return role.includes("eigent") || role.includes("privat");
+  function isPrivateUse(m) {
+    const role = String(m && (m.abrechnungRolle || m.rolle || m.nutzungsart || "") || "").toLocaleLowerCase("de-DE");
+    return role.includes("eigent") || role.includes("privat") || role.includes("eigenanteil") || role.includes("eigennutz");
   }
 
+  function isPrivateTenant(m) {
+    return tenantRelevantForCurrentBilling(m) && isPrivateUse(m);
+  }
+
+  function isSettlementParticipant(m) {
+    return !!(m && m.id && m.name && m.wohnung && tenantRelevantForCurrentBilling(m));
+  }
+
+  // Kompatibilitätsalias: Seit V99.4.68 bedeutet „billable“ ausschließlich
+  // zeitlich gültiger Abrechnungsteilnehmer. Die Nutzungsart ist kein Ausschlussgrund.
   function isBillableTenant(m) {
-    return tenantRelevantForCurrentBilling(m) && !isPrivateTenant(m);
+    return isSettlementParticipant(m);
   }
 
   function billableTenantRows() {
-    return visibleTenantRows().filter(m => isBillableTenant(m));
+    return visibleTenantRows().filter(m => isSettlementParticipant(m));
   }
 
   function privateTenantRows() {
@@ -340,8 +349,8 @@
           originalIndex:tenant.originalIndex,
           start:item.start,
           end:item.end,
-          label:role === "private" ? "Privatanteil" : (String(tenant.name || tenant.id || "Mietverhältnis")),
-          secondaryLabel:[unitId, item.start + " – " + item.end].filter(Boolean).join(" · ")
+          label:String(tenant.name || tenant.id || "Mietverhältnis"),
+          secondaryLabel:[unitId, role === "private" ? "Privatanteil" : "", item.start + " – " + item.end].filter(Boolean).join(" · ")
         });
       });
       let cursor = period.start;
@@ -770,20 +779,21 @@
     syncUmlageInputs();
     applyWaterMetersToUmlage();
   
-    const tenants = tenantRowsWithIndex(); // vollständige Umlagebasis inkl. Eigentümer/Privat
-    const billableTenants = tenants.filter(t => isBillableTenant(t));
-    const privateTenants = tenants.filter(t => isPrivateTenant(t));
+    const tenants = tenantRowsWithIndex();
+    const settlementTenants = tenants.filter(t => isSettlementParticipant(t));
+    const billableTenants = settlementTenants; // Rückwärtskompatibler Alias
+    const privateTenants = settlementTenants.filter(t => isPrivateUse(t));
     const activeCosts = state.kostenarten.filter(k => k.kostenart && k.inNK === "Ja");
     const costResults = activeCosts.map(k => {
       const result = allocationForCost(k, tenants);
-      const tenantSum = billableTenants.reduce((sum,t) => sum + num(result.allocations[t.originalIndex]), 0);
+      const tenantSum = settlementTenants.reduce((sum,t) => sum + num(result.allocations[t.originalIndex]), 0);
       const privateShare = privateTenants.reduce((sum,t) => sum + num(result.allocations[t.originalIndex]), 0);
-      const allTenantSum = tenants.reduce((sum,t) => sum + num(result.allocations[t.originalIndex]), 0);
-      const prepaySum = billableTenants.reduce((sum,t) => sum + vorauszahlungByCostAndTenant(k.id, t.originalIndex), 0);
+      const allTenantSum = tenantSum;
+      const prepaySum = settlementTenants.reduce((sum,t) => sum + vorauszahlungByCostAndTenant(k.id, t.originalIndex), 0);
       return { cost:k, ...result, tenantSum, privateShare, allTenantSum, prepaySum, totalAllocated:num(result.unitTotal) || (allTenantSum + num(result.ownerShare)) };
     });
   
-    const tenantResults = billableTenants.map(t => {
+    const tenantResults = settlementTenants.map(t => {
       const costShare = costResults.reduce((sum,row) => sum + num(row.allocations[t.originalIndex]), 0);
       const prepayments = totalVorauszahlungForTenant(t.originalIndex);
       const correction = num(t.vorjahresKorrektur);
@@ -798,26 +808,17 @@
       };
     });
   
-    const privateResults = privateTenants.map(t => {
-      const costShare = costResults.reduce((sum,row) => sum + num(row.allocations[t.originalIndex]), 0);
-      return {
-        tenant:t,
-        costShare,
-        prepayments: totalVorauszahlungForTenant(t.originalIndex),
-        correction: num(t.vorjahresKorrektur),
-        rentCorrection: num(t.kaltmietKorrektur),
-        balance: costShare - totalVorauszahlungForTenant(t.originalIndex) - num(t.vorjahresKorrektur)
-      };
-    });
+    // Nur noch abgeleitete Informationsansicht; kein eigener finanzieller Pfad.
+    const privateResults = tenantResults.filter(result => isPrivateUse(result.tenant));
   
-    return { tenants, billableTenants, privateTenants, activeCosts, costResults, tenantResults, privateResults };
+    return { tenants, settlementTenants, billableTenants, privateTenants, activeCosts, costResults, tenantResults, privateResults };
   }
 
   function umlageTotals(calc) {
     const totalCosts = calc.costResults.reduce((s,r) => s + num(r.cost.gesamtbetrag), 0);
     const allTenantShare = calc.costResults.reduce((s,r) => s + num(r.allTenantSum), 0);
     const billableShare = calc.tenantResults.reduce((s,r) => s + num(r.costShare), 0);
-    const privateShare = calc.privateResults.reduce((s,r) => s + num(r.costShare), 0);
+    const privateShare = calc.tenantResults.filter(r => isPrivateUse(r.tenant)).reduce((s,r) => s + num(r.costShare), 0);
     const ownerShare = calc.costResults.reduce((s,r) => s + num(r.ownerShare), 0);
     const documentedOwnerShare = calc.costResults.reduce((s,r) => s + num(r.documentedOwnerShare), 0);
     const vacancyShare = calc.costResults.reduce((s,r) => s + num(r.vacancyShare), 0);
@@ -1014,7 +1015,9 @@
     costExclusionHandling,
     costFullyRedistributes,
     normalizeManualUmlageValue,
+    isPrivateUse,
     isPrivateTenant,
+    isSettlementParticipant,
     isBillableTenant,
     billableTenantRows,
     privateTenantRows,

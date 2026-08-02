@@ -1,5 +1,14 @@
 # NK-Pro Projektstand
 
+# Projektstand V99.4.68 – Privatanteil/Eigenanteil als reguläre Abrechnungsteilnehmer
+
+V99.4.68 ist technisch umgesetzt und anhand des vollständigen Echtdatenbestands 2023 geprüft. Die zentrale Teilnehmerlogik ist rollenunabhängig. Privat- und Eigentümernutzung werden ausschließlich informativ gekennzeichnet; alle finanziellen, prüfenden, dokumentierenden und archivierenden Pfade verwenden die gemeinsame Teilnehmer- und Ergebnisstruktur.
+
+M000 besitzt in aktueller Abrechnung, Objektstandard und Stammdaten das Einzugsdatum 01.01.2010. Finalisierte Archive bleiben unverändert. Der vollständige aktive Release-Testlauf ist bestanden; der im historischen `npm test` eingebundene Node-Playwright-Test kann in dieser Arbeitsumgebung mangels mitgeliefertem `node_modules/playwright` nicht gestartet werden. Derselbe Browserpfad wurde mit vorhandenem Chromium und Python-Playwright offline erfolgreich ausgeführt.
+
+Die verbindlichen Release-, Migrations-, Echtdaten-, Test- und Vergleichsnachweise liegen unter `V99_4_68_Dokumentation/`.
+
+
 ## Aktueller Release-Kandidat
 
 - **V99.4.65 – AP22F11B Korrektur 4 – Prüf- und Regelsystem**

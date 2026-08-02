@@ -1254,7 +1254,7 @@ function renderStartTenantManagement() {
     : html;
   const genderOptions = ["Frau/Herr","Frau","Herr","Firma/Divers"];
   const salutationOptions = ["Automatisch","Sehr geehrte Frau [Nachname],","Sehr geehrter Herr [Nachname],","Sehr geehrte(r) Mieter/in,","Sehr geehrte Damen und Herren,","Guten Tag,"];
-  const roleOptions = ["Mieter","Eigentümer/Privat"];
+  const roleOptions = ["Mieter","Privatanteil","Eigenanteil","Eigentümer/Privat"];
   const visibleRows = NK_PRO_MODULES.masterDataActions.masterVisibleTenantRows();
   const archivedRows = NK_PRO_MODULES.masterDataActions.masterArchivedTenantRows();
   const units = NK_PRO_MODULES.masterDataActions.masterUnits();

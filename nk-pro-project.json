@@ -1,11 +1,11 @@
 {
-  "appVersion": "99.4.67",
-  "displayVersion": "V99.4.67",
-  "versionName": "Korrektur Archivierung und Wasserzählerhistorie",
+  "appVersion": "99.4.68",
+  "displayVersion": "V99.4.68",
+  "versionName": "Systemweite Korrektur Privatanteil und Eigenanteil",
   "schemaVersion": 5,
   "dataLayerContractVersion": 1,
   "snapshotScope": "billingSnapshot",
-  "basedOn": "99.4.66-AP22F12AB",
+  "basedOn": "99.4.67-meter-archive-k1",
   "releaseDate": "2026-08-02",
   "runtime": [
     "HTML",
@@ -33,7 +33,7 @@
   "documentLayoutVersion": 4,
   "uiVisualSystemVersion": 4,
   "meterInventoryDummyVersion": 2,
-  "pwaCacheName": "nk-pro-v99-4-67-meter-archive-k1",
+  "pwaCacheName": "nk-pro-v99-4-68-private-participants",
   "releaseHardeningVersion": 1,
   "releaseContentPolicyVersion": 1,
   "transientUiResetVersion": 1,
@@ -57,7 +57,7 @@
   "meterInputLocaleNumberVersion": 1,
   "assetCacheBustVersion": 1,
   "serviceWorkerForcedUpdateVersion": 1,
-  "runtimeBuildId": "99.4.67-meter-archive-k1",
+  "runtimeBuildId": "99.4.68-private-participants",
   "uiConsolidationVersion": 1,
   "individualValuesPageVersion": 5,
   "navigationTerminologyVersion": 1,
@@ -86,7 +86,7 @@
   "projectWideTableWidthCorrectionVersion": 1,
   "prepaymentPageMigrationVersion": 1,
   "prepaymentPageCorrectionVersion": 1,
-  "description": "Korrektur der historischen Zählermigration, zeitbezogenen Messperiodenprüfung und Archiv-Snapshot-Erstellung ohne Schemaerhöhung",
+  "description": "Systemweite Vereinheitlichung der Abrechnungsteilnahme für Privatanteil, Eigenanteil und Eigentümer/Privat ohne Schemaerhöhung",
   "totalCostsPageMigrationVersion": 1,
   "individualValuesPageMigrationVersion": 1,
   "individualValuesCaseValuesVersion": 1,
@@ -120,5 +120,6 @@
   "meterArchiveRepairVersion": 1,
   "legacyWaterHistoryFallbackVersion": 1,
   "placeholderMeterCleanupVersion": 1,
-  "meterValidationAggregationVersion": 1
+  "meterValidationAggregationVersion": 1,
+  "privateSettlementParticipantVersion": 1
 }

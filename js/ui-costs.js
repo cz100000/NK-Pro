@@ -535,8 +535,9 @@ function prepaymentSearchText(values) { return values.map(prepaymentText).join("
 function prepaymentCompare(a,b) { return String(a ?? "").localeCompare(String(b ?? ""),"de-DE",{numeric:true,sensitivity:"base"}); }
 function prepaymentUnitLabel(unit) { return unit ? (unit.bezeichnung || unit.lage || unit.id || "—") : "Ohne Wohnungszuordnung"; }
 function prepaymentCaseStatus(row) {
+  if (row.billable && row.kind === "private") return "Abrechenbar · Privatanteil";
   if (row.billable) return "Abrechenbar";
-  if (row.kind === "private") return "Eigentümer/Privat";
+  if (row.kind === "private") return "Privatanteil";
   if (row.kind === "vacancy") return "Leerstand";
   return "Nicht abrechenbar";
 }
@@ -698,7 +699,7 @@ function prepaymentRefreshFinancialDisplays(cases) {
   const billable=allCases.filter(row=>row.billable&&row.tenant);
   const totals=prepaymentFinancialTotals(allCases);
   prepaymentUpdateText('prepaymentTileCasesValue',String(allCases.length));
-  prepaymentUpdateText('prepaymentTileCasesDetail',billable.length+' abrechenbar · '+(allCases.length-billable.length)+' nicht abrechenbar');
+  prepaymentUpdateText('prepaymentTileCasesDetail',billable.length+' Abrechnungsteilnehmer · '+(allCases.length-billable.length)+' sonstige Fälle');
   prepaymentUpdateText('prepaymentTileNkValue',fmtMoney(totals.nkNachKorrektur));
   prepaymentUpdateText('prepaymentTileNkDetail','Vor Korrektur '+fmtMoney(totals.nkVoraus));
   prepaymentUpdateText('prepaymentTileRentValue',fmtMoney(totals.kaltNachKorrektur));

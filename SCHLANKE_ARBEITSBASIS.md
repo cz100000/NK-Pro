@@ -1,23 +1,7 @@
-# NK-Pro V99.4.67 – schlanke Arbeitsbasis
+# Schlanke Arbeitsbasis V99.4.68
 
-Diese ZIP ist die für die weitere Entwicklung bestimmte, inhaltlich entschlackte Korrekturversion. Sie basiert auf der schlanken V99.4.66-Arbeitsbasis und enthält zusätzlich die Korrektur der Archivierung und Wasserzählerhistorie.
+Die schlanke Arbeitsbasis enthält die vollständige lauffähige Anwendung, sämtliche Laufzeitmodule, Assets, Testdaten, automatisierten Tests, Werkzeuge, erforderliche historische Baseline-Inventare, aktuelle Architektur-/UI-Dokumente und die vollständige V99.4.68-Abschlussdokumentation.
 
-## Enthalten
+Entfernt wurden ausschließlich ältere AP-Dokumentationsordner, der V99.4.67-Korrekturdokumentationsordner und ein alter eingebetteter Echtdaten-Testbestand. Produktcode, aktive und historische Regressionstests, deren erforderliche Root-Inventare, Fixtures, Zählerdatenmodell, UI-Referenz, Releasewerkzeuge und V99.4.68-Nachweise bleiben enthalten.
 
-- vollständige produktive NK-Pro-Anwendung,
-- HTML-, CSS- und JavaScript-Dateien,
-- PWA- und Offline-Dateien,
-- Fach-, Persistenz-, Migrations-, Sicherungs-, Archiv- und Exportlogik,
-- sämtliche Tests, Testwerkzeuge und Fixtures,
-- Projekt-, Architektur-, Qualitäts-, UI- und Schutzdokumentation,
-- AP22F11B-, AP22F12AB- und V99.4.67-Korrekturdokumentation.
-
-## Weiterhin ausgelagert
-
-Historische beziehungsweise generierte Screenshot- und Bildnachweise sowie Kontaktbögen bleiben ausgelagert. Diese Dateien verändern weder die produktive Anwendung noch deren Datenmodell oder Laufzeitverhalten. Browsertests können ihre Screenshot-Ausgabeverzeichnisse bei Bedarf neu erzeugen.
-
-Die ursprüngliche Liste steht in `SLIM_PACKAGE_REMOVED_FILES.txt`.
-
-## Verwendung
-
-Diese ZIP kann unmittelbar als technische Ausgangsbasis für das nächste NK-Pro-Arbeitspaket verwendet werden. Die vollständige V99.4.66-Release-ZIP und die ursprüngliche Nutzer-Sicherung sind unverändert als Archiv aufzubewahren.
+Die genaue Ausschlussliste steht in `SLIM_PACKAGE_REMOVED_FILES.txt`.

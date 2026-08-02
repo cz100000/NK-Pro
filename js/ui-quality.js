@@ -88,23 +88,23 @@ function finalBillingReportText() {
   lines.push("");
   lines.push("Summen");
   lines.push("- Aktive umlagefähige Kosten: " + fmtMoney(totals.totalCosts));
-  lines.push("- Auf echte Mieter umgelegt: " + fmtMoney(totals.billableShare));
-  lines.push("- Eigentümer-/Privatanteil: " + fmtMoney(totals.privateShare));
-  lines.push("- Nicht auf Mieter umgelegt/offen: " + fmtMoney(totals.ownerShare));
+  lines.push("- Auf Abrechnungsteilnehmer umgelegt: " + fmtMoney(totals.billableShare));
+  lines.push("- davon private Nutzungsart: " + fmtMoney(totals.privateShare));
+  lines.push("- Nicht auf Teilnehmer umgelegt/offen: " + fmtMoney(totals.ownerShare));
   lines.push("- Geleistete Vorauszahlungen: " + fmtMoney(totals.prepayments));
   lines.push("- Einmalige Korrekturen/Gutschriften: " + fmtMoney(totals.corrections));
   lines.push("- Summendifferenz aktive Kosten vs. Verteilung: " + fmtMoney(totals.allocationDelta));
-  lines.push("- Saldo Mieter gesamt: " + fmtMoney(totals.balance));
+  lines.push("- Saldo Abrechnungsteilnehmer gesamt: " + fmtMoney(totals.balance));
   lines.push("");
-  lines.push("Mieter-Ergebnisse");
-  if (!calc.tenantResults.length) lines.push("- Keine abrechenbaren Mieter.");
+  lines.push("Ergebnisse der Abrechnungsteilnehmer");
+  if (!calc.tenantResults.length) lines.push("- Keine Abrechnungsteilnehmer.");
   calc.tenantResults.forEach(result => {
     const s = settlementInfoForResult(result, result.tenant);
     lines.push("- " + NK_PRO_MODULES.qualityAssurance.tenantQualityLabel(result.tenant) + " · " + unitDisplayIdByInternalId(result.tenant.wohnung) + ": " + s.type + " " + fmtMoney(s.amount) + " (Kosten " + fmtMoney(result.costShare) + ", Vorauszahlungen " + fmtMoney(result.prepayments) + ", Korrektur " + fmtMoney(result.correction) + ")");
   });
   if (calc.privateResults && calc.privateResults.length) {
     lines.push("");
-    lines.push("Eigentümer-/Privatanteile");
+    lines.push("Abrechnungsteilnehmer mit privater Nutzungsart");
     calc.privateResults.forEach(result => {
       lines.push("- " + NK_PRO_MODULES.qualityAssurance.tenantQualityLabel(result.tenant) + " · " + unitDisplayIdByInternalId(result.tenant.wohnung) + ": " + fmtMoney(result.costShare));
     });
@@ -122,7 +122,7 @@ function finalBillingReportText() {
   lines.push("Sonderfälle");
   if (special) {
     lines.push("- Status: " + special.label + " · " + special.message);
-    lines.push("- Abrechenbare Mieter: " + special.billableCount + " · Eigentümer/Privat: " + special.privateCount + " · Unterjährig/Wechsel: " + special.underjaehrig + " · Leerstand: " + special.leerstand);
+    lines.push("- Abrechnungsteilnehmer: " + special.billableCount + " · davon private Nutzungsart: " + special.privateCount + " · Unterjährig/Wechsel: " + special.underjaehrig + " · Leerstand: " + special.leerstand);
     special.rows.filter(r => r.severity !== "Info").forEach(r => lines.push("- " + r.severity + " · " + r.type + " · " + r.subject + (r.detail ? ": " + r.detail : "")));
   } else {
     lines.push("- Kein Sonderfallbericht verfügbar.");
@@ -148,8 +148,8 @@ function acceptanceProtocolRowsHtml(data) {
   const tenantRows = calc.tenantResults.length ? calc.tenantResults.map(result => {
     const s = settlementInfoForResult(result, result.tenant);
     return '<tr><td>' + escapeHtml(NK_PRO_MODULES.qualityAssurance.tenantQualityLabel(result.tenant)) + '</td><td>' + escapeHtml(unitDisplayIdByInternalId(result.tenant.wohnung)) + '</td><td>' + escapeHtml(s.type) + '</td><td class="money">' + escapeHtml(fmtMoney(s.amount)) + '</td><td class="money">' + escapeHtml(fmtMoney(result.costShare)) + '</td><td class="money">' + escapeHtml(fmtMoney(result.prepayments)) + '</td><td class="money">' + escapeHtml(fmtMoney(result.correction)) + '</td></tr>';
-  }).join("") : '<tr><td colspan="7">Keine abrechenbaren Mieter.</td></tr>';
-  const privateRows = calc.privateResults && calc.privateResults.length ? calc.privateResults.map(result => '<tr><td>' + escapeHtml(NK_PRO_MODULES.qualityAssurance.tenantQualityLabel(result.tenant)) + '</td><td>' + escapeHtml(unitDisplayIdByInternalId(result.tenant.wohnung)) + '</td><td class="money">' + escapeHtml(fmtMoney(result.costShare)) + '</td></tr>').join("") : '<tr><td colspan="3">Keine Eigentümer-/Privatanteile.</td></tr>';
+  }).join("") : '<tr><td colspan="7">Keine Abrechnungsteilnehmer.</td></tr>';
+  const privateRows = calc.privateResults && calc.privateResults.length ? calc.privateResults.map(result => '<tr><td>' + escapeHtml(NK_PRO_MODULES.qualityAssurance.tenantQualityLabel(result.tenant)) + '</td><td>' + escapeHtml(unitDisplayIdByInternalId(result.tenant.wohnung)) + '</td><td class="money">' + escapeHtml(fmtMoney(result.costShare)) + '</td></tr>').join("") : '<tr><td colspan="3">Keine Abrechnungsteilnehmer mit privater Nutzungsart.</td></tr>';
   const issueRows = data.quality.issues.length ? data.quality.issues.map(item => '<tr><td>' + escapeHtml(item.severity) + '</td><td>' + escapeHtml(item.area) + '</td><td>' + escapeHtml(item.point) + '</td><td>' + escapeHtml(item.detail || "") + '</td></tr>').join("") : '<tr><td colspan="4">Keine auffälligen Punkte.</td></tr>';
   const specialVisible = data.special && data.special.rows ? data.special.rows.filter(r => r.severity !== "Info") : [];
   const specialRows = specialVisible.length ? specialVisible.map(r => '<tr><td>' + escapeHtml(r.severity) + '</td><td>' + escapeHtml(r.type) + '</td><td>' + escapeHtml(r.subject) + '</td><td>' + escapeHtml(r.detail || "") + '</td></tr>').join("") : '<tr><td colspan="4">Keine prüfpflichtigen Sonderfälle.</td></tr>';
@@ -171,16 +171,16 @@ function acceptanceProtocolHtml() {
     '<div class="grid"><div class="box"><div class="label">Finalisierung</div><div class="value">' + escapeHtml(data.finalization && data.finalization.finalized ? "finalisiert" : "bearbeitbar") + '</div><div>' + escapeHtml(finalizedAt) + '</div></div><div class="box"><div class="label">Finaler Check</div><div class="value">' + escapeHtml(data.readiness.label) + '</div><div>' + escapeHtml(data.readiness.message) + '</div></div><div class="box"><div class="label">Backup</div><div class="value">' + escapeHtml(data.backup ? data.backup.message : "unbekannt") + '</div><div>' + escapeHtml(backupLast) + '</div></div></div>' +
     '<h2>Summen</h2><table><tbody>' +
     '<tr><th>Aktive umlagefähige Kosten</th><td class="money">' + escapeHtml(fmtMoney(totals.totalCosts)) + '</td></tr>' +
-    '<tr><th>Auf echte Mieter umgelegt</th><td class="money">' + escapeHtml(fmtMoney(totals.billableShare)) + '</td></tr>' +
-    '<tr><th>Eigentümer-/Privatanteil</th><td class="money">' + escapeHtml(fmtMoney(totals.privateShare)) + '</td></tr>' +
-    '<tr><th>Nicht auf Mieter umgelegt/offen</th><td class="money">' + escapeHtml(fmtMoney(totals.ownerShare)) + '</td></tr>' +
+    '<tr><th>Auf Abrechnungsteilnehmer umgelegt</th><td class="money">' + escapeHtml(fmtMoney(totals.billableShare)) + '</td></tr>' +
+    '<tr><th>davon private Nutzungsart</th><td class="money">' + escapeHtml(fmtMoney(totals.privateShare)) + '</td></tr>' +
+    '<tr><th>Nicht auf Teilnehmer umgelegt/offen</th><td class="money">' + escapeHtml(fmtMoney(totals.ownerShare)) + '</td></tr>' +
     '<tr><th>Geleistete Vorauszahlungen</th><td class="money">' + escapeHtml(fmtMoney(totals.prepayments)) + '</td></tr>' +
     '<tr><th>Einmalige Korrekturen/Gutschriften</th><td class="money">' + escapeHtml(fmtMoney(totals.corrections)) + '</td></tr>' +
     '<tr><th>Summendifferenz aktive Kosten vs. Verteilung</th><td class="money">' + escapeHtml(fmtMoney(totals.allocationDelta)) + '</td></tr>' +
-    '<tr><th>Saldo Mieter gesamt</th><td class="money">' + escapeHtml(fmtMoney(totals.balance)) + '</td></tr>' +
+    '<tr><th>Saldo Abrechnungsteilnehmer gesamt</th><td class="money">' + escapeHtml(fmtMoney(totals.balance)) + '</td></tr>' +
     '</tbody></table>' +
-    '<h2>Mieter-Ergebnisse</h2><table><thead><tr><th>Mieter</th><th>Wohnung</th><th>Ergebnis</th><th>Betrag</th><th>Kosten</th><th>Vorauszahlungen</th><th>Korrektur</th></tr></thead><tbody>' + rows.tenantRows + '</tbody></table>' +
-    '<h2>Eigentümer-/Privatanteile</h2><table><thead><tr><th>Name</th><th>Wohnung</th><th>Anteil</th></tr></thead><tbody>' + rows.privateRows + '</tbody></table>' +
+    '<h2>Ergebnisse der Abrechnungsteilnehmer</h2><table><thead><tr><th>Name</th><th>Wohnung</th><th>Ergebnis</th><th>Betrag</th><th>Kosten</th><th>Vorauszahlungen</th><th>Korrektur</th></tr></thead><tbody>' + rows.tenantRows + '</tbody></table>' +
+    '<h2>Abrechnungsteilnehmer mit privater Nutzungsart</h2><table><thead><tr><th>Name</th><th>Wohnung</th><th>Anteil</th></tr></thead><tbody>' + rows.privateRows + '</tbody></table>' +
     '<h2>Brief-Preflight</h2><p><strong>' + escapeHtml(data.brief ? data.brief.label : "nicht verfügbar") + '</strong> · ' + escapeHtml(data.brief ? data.brief.message : "") + '</p><table><thead><tr><th>Status</th><th>Prüfpunkt</th><th>Details</th></tr></thead><tbody>' + rows.briefRows + '</tbody></table>' +
     '<h2>Sonderfälle</h2><p>' + escapeHtml(data.special ? data.special.message : "Kein Sonderfallbericht verfügbar.") + '</p><table><thead><tr><th>Status</th><th>Typ</th><th>Betreff</th><th>Details</th></tr></thead><tbody>' + rows.specialRows + '</tbody></table>' +
     '<h2>Offene Prüfpunkte</h2><table><thead><tr><th>Status</th><th>Bereich</th><th>Prüfpunkt</th><th>Details</th></tr></thead><tbody>' + rows.issueRows + '</tbody></table>' +
@@ -448,7 +448,7 @@ function renderQuality(filterMode) {
   }
   if (sumsEl) {
     let totals={}; try { totals=umlageTotals(calculateUmlage()); } catch(error) { totals={}; }
-    const values=[["Aktive umlagefähige Kosten",totals.totalCosts],["Auf Mieter umgelegt",totals.billableShare],["Eigentümer-/Privatanteil",totals.privateShare],["Offener Restanteil",totals.ownerShare],["Vorauszahlungen",totals.prepayments],["Korrekturen",totals.corrections],["Summendifferenz",totals.allocationDelta],["Saldo Mieter gesamt",totals.balance]];
+    const values=[["Aktive umlagefähige Kosten",totals.totalCosts],["Auf Abrechnungsteilnehmer umgelegt",totals.billableShare],["davon private Nutzungsart",totals.privateShare],["Offener Restanteil",totals.ownerShare],["Vorauszahlungen",totals.prepayments],["Korrekturen",totals.corrections],["Summendifferenz",totals.allocationDelta],["Saldo Abrechnungsteilnehmer gesamt",totals.balance]];
     sumsEl.innerHTML='<thead><tr><th>Wert</th><th>Betrag</th></tr></thead><tbody>'+values.map(([label,value])=>'<tr><td>'+escapeHtml(label)+'</td><td class="money">'+escapeHtml(fmtMoney(value||0))+'</td></tr>').join('')+'</tbody>';
   }
   renderQualityRegistry();
