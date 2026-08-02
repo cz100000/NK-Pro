@@ -29,6 +29,7 @@ function prepareStateForPersistence(reason = "manual") {
       ["Zählerstammdaten und Messperioden", () => synchronizeMeteringData(state)],
       ["Wasserzähler", () => applyWaterMetersToUmlage()],
       ["Differenzentscheidungen", () => NK_PRO_MODULES.billingReview.reconcile(state)],
+      ["Kosten- und Umlagenabgleich", () => NK_PRO_MODULES.costReconciliation.ensureData(state)],
       ["Kostenstatus", () => state.kostenarten.forEach(k => k.status = NK_PRO_MODULES.costActions.kostenStatus(k))],
       ["Datenebenen und Snapshot-Grenzen", () => enforceWorkingStateDataContract(state)]
     ];
@@ -121,7 +122,8 @@ const TAB_DEFINITIONS = {
   vorauszahlungsanpassung:{title:"Vorauszahlungen anpassen",kicker:"Nebenkosten abrechnen",firstSection:"prepaymentRulesSection",nextTab:"qualitaet",renderContent:()=>renderPrepaymentAdjustment()},
   qualitaet:{title:"Prüfen und abschließen",kicker:"Nebenkosten abrechnen",firstSection:null,nextTab:"briefe",renderContent:()=>renderQuality()},
   briefe:{title:"Abrechnungsbriefe erstellen",kicker:"Nebenkosten abrechnen",firstSection:"lettersEditorSection",nextTab:"export",renderContent:()=>renderBrief()},
-  auswertungen:{title:"Auswertungen",kicker:"Analyse",firstSection:null,nextTab:"regelinventar",renderContent:()=>renderAnalyticsOverview()},
+  auswertungen:{title:"Auswertungen",kicker:"Analyse",firstSection:null,nextTab:"kostenumlagenabgleich",renderContent:()=>renderAnalyticsOverview()},
+  kostenumlagenabgleich:{title:"Kosten- und Umlagenabgleich",kicker:"Analyse",firstSection:null,nextTab:"regelinventar",renderContent:()=>renderCostReconciliation()},
   regelinventar:{title:"Regelinventar",kicker:"Analyse",firstSection:null,nextTab:"archiv",renderContent:()=>renderRuleInventory()},
   export:{title:"Abrechnung exportieren",kicker:"Sicherung",firstSection:"exportActionsSection",nextTab:"qualitaet",renderContent:null}
 };
@@ -401,7 +403,7 @@ const AP22F1A_PAGE_SHELL_VARIANTS = Object.freeze({
   objektuebersicht:"default", objekt:"default", wasser:"default",
   archiv:"wide", start:"wide", mieterverwaltung:"wide", wohnungsverwaltung:"wide", sicherung:"wide",
   qualitaet:"wide", einstellungen:"wide", mieter:"wide", einnahmen:"wide", manuellewerte:"wide",
-  umlage:"wide", vorauszahlungsanpassung:"wide", briefe:"wide", export:"wide", auswertungen:"wide", regelinventar:"wide"
+  umlage:"wide", vorauszahlungsanpassung:"wide", briefe:"wide", export:"wide", auswertungen:"wide", kostenumlagenabgleich:"wide", regelinventar:"wide"
 });
 function ensureGlobalPageShellsAndHeaders() {
   const landing=document.querySelector("#landing > .landing-page");

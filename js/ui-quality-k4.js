@@ -106,6 +106,24 @@ function qualityK4GroupedBody(report, filter) {
   return sections.length?sections.join(''):'<tr><td colspan="6"><div class="quality-empty-state"><strong>Keine Ergebnisse für diesen Filter.</strong><span>Eine andere Kennzahlenkarte oder einen Filterchip wählen.</span></div></td></tr>';
 }
 
+function renderQualityCostReconciliationCard(){
+  const el=document.getElementById("qualityCostReconciliationStatus");
+  if(!el)return;
+  if(!NK_PRO_MODULES.costReconciliation){el.innerHTML="";return;}
+  const year=Number(state&&state.meta&&state.meta.abrechnungsjahr)||new Date().getFullYear();
+  let model;
+  try{
+    model=NK_PRO_MODULES.costReconciliation.model(state,{fromYear:year,toYear:year});
+  }catch(error){
+    el.innerHTML='<div class="nk-ui-notice nk-ui-notice--warning">Kosten- und Umlagenabgleich konnte nicht ausgewertet werden.</div>';
+    return;
+  }
+  const statusClass=["checked","released"].includes(model.statusCode)?"kua-status--success":(model.statusCode==="balanced"?"kua-status--info":"kua-status--warning");
+  const control=Number(model.control||0).toLocaleString("de-DE",{style:"currency",currency:"EUR"});
+  const open=Number(model.open||0).toLocaleString("de-DE",{style:"currency",currency:"EUR"});
+  el.innerHTML=`<div><h3>Kosten- und Umlagenabgleich</h3><p>Zusätzlicher Analyse- und Prüfstatus ohne pauschale Sperrwirkung für den fachlichen Abrechnungsabschluss.</p><div class="quality-cost-reconciliation-card__facts"><span>Kontrolldifferenz<strong>${control}</strong></span><span>Offene Differenz<strong>${open}</strong></span><span>Offene Prüfentscheidungen<strong>${escapeHtml(String(model.uncheckedDecisions||0))}</strong></span></div></div><div class="quality-cost-reconciliation-card__actions"><span class="kua-status ${statusClass}">${escapeHtml(model.status)}</span><button class="secondary" data-ui-action="navigation.switchTab" data-ui-args='["kostenumlagenabgleich"]' type="button">Analyseseite öffnen</button></div>`;
+}
+
 function renderQualityStatusCards(report) {
   const el=document.getElementById("qualityStatusCards");
   if(!el)return;
@@ -152,6 +170,7 @@ function qualitySetFilter(mode) {
 function renderQuality(filterMode) {
   qualityCurrentFilter=(filterMode&&filterMode!=="open")?filterMode:(qualityCurrentFilter&&qualityCurrentFilter!=="open"?qualityCurrentFilter:"all");
   const report=qualityK4Report();
+  renderQualityCostReconciliationCard();
   renderQualityStatusCards(report);
   const table=document.getElementById("qualityResultsTable")||document.getElementById("qualityOpenTasksTable");
   if(table)table.innerHTML='<thead><tr><th>Prüfung</th><th>Konkretes aktuelles Ergebnis</th><th>Status</th><th>Vorhandene Entscheidung</th><th>Konsequenz</th><th>Aktionen</th></tr></thead><tbody>'+qualityK4GroupedBody(report,qualityCurrentFilter)+'</tbody>';

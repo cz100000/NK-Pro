@@ -269,6 +269,7 @@
       const record = container.records[id];
       const difference = current.get(id);
       if (!record || typeof record !== "object") { delete container.records[id]; return; }
+      if (record.decisionScope && record.decisionScope !== "billing-difference") return;
       if ((record.status === STATUS.ACCEPTED || record.status === STATUS.LANDLORD) && (!difference || record.dataSignature !== difference.dataSignature || record.calculationSignature !== difference.calculationSignature)) {
         pushHistory(container, record, STATUS.INVALID, "Zugrunde liegende Daten oder Berechnung haben sich geändert.");
         if (!difference) {
@@ -356,7 +357,7 @@
       if (container.records[id]) pushHistory(container, container.records[id], container.records[id].status, "Korrektur wurde neu begonnen.");
       target = difference.targetTab || "umlage";
       container.records[id] = {
-        recordId:"REV-" + hash(id + "|" + d.now()), differenceId:id, type:difference.type, costId:difference.costId, area:difference.area,
+        recordId:"REV-" + hash(id + "|" + d.now()), differenceId:id, decisionScope:"billing-difference", type:difference.type, costId:difference.costId, area:difference.area,
         originalDifference:difference.difference, unit:difference.unit, originalMonetaryAmount:difference.monetaryAmount,
         status:STATUS.IN_CORRECTION, statusLabel:statusLabel(STATUS.IN_CORRECTION), startedAt:d.now(), appVersion:d.appVersion,
         dataSignature:difference.dataSignature, calculationSignature:difference.calculationSignature, targetTab:target, targetSelector:difference.targetSelector || ""
@@ -385,7 +386,7 @@
       const now = d.now();
       container.records[id] = {
         recordId:"REV-" + hash(id + "|" + now + "|" + difference.dataSignature),
-        differenceId:id, type:difference.type, costId:difference.costId, area:difference.area, costName:difference.costName,
+        differenceId:id, decisionScope:"billing-difference", type:difference.type, costId:difference.costId, area:difference.area, costName:difference.costName,
         originalDifference:difference.difference, unit:difference.unit, originalMonetaryAmount:difference.monetaryAmount,
         treatment:selectedTreatment.value, treatmentLabel:selectedTreatment.label, reason, status, statusLabel:statusLabel(status),
         acceptedBy, acceptedAt:now, confirmed:true, appVersion:d.appVersion,

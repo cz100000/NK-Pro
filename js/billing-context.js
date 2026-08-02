@@ -6,7 +6,7 @@
 
   const MODES = Object.freeze({ CLOSED:"closed", EDIT:"edit", VIEW:"view" });
   const LAST_STEP_STORAGE_KEY = "nkpro.billingLastSteps.v1";
-  const VALID_STEPS = Object.freeze(["mieter","einnahmen","einstellungen","manuellewerte","umlage","vorauszahlungsanpassung","qualitaet","briefe","export","auswertungen","regelinventar"]);
+  const VALID_STEPS = Object.freeze(["mieter","einnahmen","einstellungen","manuellewerte","umlage","vorauszahlungsanpassung","qualitaet","briefe","export","auswertungen","kostenumlagenabgleich","regelinventar"]);
   const WRITE_ACTIONS = Object.freeze([
     "application.save","application.reset","state.setNested",
     "object.addMasterTenancy","object.applyMasterDataToBilling","object.archiveMasterTenancy","object.restoreMasterTenancy","object.setBillingUnitStatus","object.setMasterNested",
@@ -14,6 +14,7 @@
     "billing.createFromModal","billing.confirmDelete","billing.finalize","billing.unlock","billing.setYear","billing.setPeriod","billing.syncPeriodYear","billing.resetAllocationInputs","billing.setManualInputMode","billing.setManualExternalValue","billing.setIndividualValuesImport","billing.resetIndividualValues","billing.setPrepaymentValue","billing.setPrepaymentAdjustmentSetting","billing.setPrepaymentCostForecastSetting",
     "meter.setWaterValue","meter.setGenericValue","meter.setWaterSetting",
     "review.markCorrection","review.accept","review.reopen",
+    "costReconciliation.savePayment","costReconciliation.deletePayment","costReconciliation.saveAllocation","costReconciliation.deleteAllocation","costReconciliation.saveCost","costReconciliation.assignOpen","costReconciliation.markChecked","costReconciliation.release","costReconciliation.revokeRelease",
     "document.setBriefSetting","document.refreshBrief",
     "archive.reopenForRework","archive.currentYear","archive.deleteAt","archive.importItems",
     "yearTransition.createBilling","yearTransition.prepareNextYear",

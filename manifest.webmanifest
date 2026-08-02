@@ -1,7 +1,7 @@
 {
   "name": "NK-Pro V99.4.66",
   "short_name": "NK-Pro",
-  "description": "Lokale Nebenkostenabrechnung mit bestätigten Wohnflächen der sieben Wohnungen und unveränderten Jahresarchiven.",
+  "description": "Lokale Nebenkostenabrechnung mit integriertem Kosten- und Umlagenabgleich, Prüfentscheidungen und Finanzamtübersicht.",
   "lang": "de-DE",
   "id": "./",
   "start_url": "./",
@@ -42,5 +42,5 @@
       "purpose": "maskable"
     }
   ],
-  "buildId": "99.4.66-wohnflaechen"
+  "buildId": "99.4.66-ap22f12ab"
 }

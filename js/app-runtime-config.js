@@ -5,7 +5,6 @@ const NK_PRO_MODULES = (() => {
   const required = {
     persistence:globalThis.NKProPersistence,
     migration:globalThis.NKProMigration,
-    apartmentAreaCorrection:globalThis.NKProApartmentAreaCorrection,
     archive:globalThis.NKProArchive,
     backupRecovery:globalThis.NKProBackupRecovery,
     meterMaster:globalThis.NKProMeterMaster,
@@ -16,6 +15,7 @@ const NK_PRO_MODULES = (() => {
     billingSnapshot:globalThis.NKProBillingSnapshot,
     billingCalculation:globalThis.NKProBillingCalculation,
     billingReview:globalThis.NKProBillingReview,
+    costReconciliation:globalThis.NKProCostReconciliation,
     documentData:globalThis.NKProDocumentData,
     documentRenderer:globalThis.NKProDocumentRenderer,
     exportService:globalThis.NKProExportService,
@@ -51,9 +51,9 @@ const NK_PRO_MODULES = (() => {
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
 const APP_VERSION = "V99.4.66";
-const APP_VERSION_NAME = "Wohnflaechenkorrektur-Objekt-001";
-const APP_RELEASE_DATE = "2026-07-21";
-if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – Prüfen und abschließen";
+const APP_VERSION_NAME = "AP22F12AB-Kosten-und-Umlagenabgleich";
+const APP_RELEASE_DATE = "2026-08-02";
+if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – Kosten- und Umlagenabgleich";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
 const ARCHIVE_SNAPSHOT_SCOPE = "billingSnapshot";
@@ -72,6 +72,7 @@ const ARCHIVE_SNAPSHOT_DATA_KEYS = [
   "legacyEinzelabrechnungen",
   "prepaymentAdjustmentSettings",
   "abrechnungsPruefungen",
+  "kostenUmlagenAbgleich",
   "objektStandard",
   "zaehlerDaten"
 ];
@@ -104,8 +105,6 @@ const SNAPSHOT_TECHNICAL_META_KEYS = new Set([
   "startupMeterEndValueRepairAt",
   "startupMeterEndValueRepairCleared",
   "startupMeterEndValueRepairWithAppVersion",
-  "apartmentAreaCorrection20260721",
-  "wohnflaechenKorrekturHinweis",
   "storageRole"
 ]);
 const COST_EXCLUSION_FULL = "Vollständig umlegen";
@@ -121,7 +120,7 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
-  "V99.4.66 hinterlegt die bestätigten Wohnflächen der sieben Wohnungen dauerhaft im Ausgangsbestand und korrigiert einmalig die Stammdaten- und aktuelle Abrechnungskopie anhand stabiler Wohnungs-IDs. Historische Abrechnungssnapshots und Archive bleiben unverändert. Datenschema 5 bleibt bestehen.",
+  "V99.4.66 AP22F12A/B integriert den Kosten- und Umlagenabgleich mit getrennten tatsächlichen Zahlungsflüssen, analyserelevanten Kosten, jahresbezogener Differenzerklärung, Kostenartdetail, bestehender Prüfentscheidungsspeicherung, Abschlussstatus sowie Excel-, Druck- und Prüfprotokollexport. Datenschema 5 bleibt durch eine additive rückwärtskompatible Initialisierung erhalten.",
   "V99.4.65 AP22F11B Korrektur 4 konsolidiert Prüfen und abschließen mit dem bestehenden Differenzentscheidungsspeicher, führt die verbindliche Statusbezeichnung Kritischer Abrechnungsmangel ein, zeigt alle positiven und nicht anwendbaren Prüfergebnisse in zentraler Navigationsreihenfolge und dokumentiert ausschließlich produktive Regeln im Regelinventar. Datenschema 5 bleibt unverändert.",
 
   "V99.4.64 AP22F11B Korrektur 3 gestaltet Prüfung & Freigabe als handlungsorientierte Seite Prüfen und abschließen neu, trennt offene und erledigte Prüfpunkte, bündelt den finalen Abschluss in einem klaren Abschlussbereich und verschiebt die vollständige Regelregistry als rein lesendes Regelinventar unter Analyse. Datenschema, Regel-IDs, Prüf- und Finalisierungslogik, Persistenz und Archive bleiben unverändert.",

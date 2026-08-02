@@ -3,10 +3,10 @@
 <html lang="de">
 <head>
 <meta charset="utf-8"/>
-<meta content="99.4.66-wohnflaechen" name="nk-pro-build"/>
+<meta content="99.4.66-ap22f12ab" name="nk-pro-build"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>NK-Pro V99.4.63 – Vorauszahlungen anpassen</title>
-<link href="./assets/app.css?v=99.4.66-wohnflaechen" rel="stylesheet"/>
+<title>NK-Pro V99.4.66 – Kosten- und Umlagenabgleich</title>
+<link href="./assets/app.css?v=99.4.66-ap22f12ab" rel="stylesheet"/>
 <meta content="#031d41" name="theme-color"/>
 <meta content="yes" name="mobile-web-app-capable"/>
 <meta content="yes" name="apple-mobile-web-app-capable"/>
@@ -28,7 +28,7 @@
 <div class="sidebar-panel">
 <nav aria-label="Hauptnavigation" class="tabs workflow-nav" data-navigation-render-root="" data-workflow-navigation=""></nav>
 <footer class="sidebar-footer-zone">
-<div class="sidebar-user-status"><span aria-hidden="true" class="nav-item-icon"><svg aria-hidden="true" class="nav-icon-svg" fill="none" viewbox="0 0 24 24"><circle cx="12" cy="7.5" r="3.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M5 21a7 7 0 0 1 14 0" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span><span><small>Lokale Anwendung</small><strong data-app-version="">V99.4.63</strong></span></div>
+<div class="sidebar-user-status"><span aria-hidden="true" class="nav-item-icon"><svg aria-hidden="true" class="nav-icon-svg" fill="none" viewbox="0 0 24 24"><circle cx="12" cy="7.5" r="3.5" stroke="currentColor" stroke-width="1.8"></circle><path d="M5 21a7 7 0 0 1 14 0" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span><span><small>Lokale Anwendung</small><strong data-app-version="">V99.4.66</strong></span></div>
 <button aria-describedby="settingsUnavailableText" aria-disabled="true" class="sidebar-settings-dummy" data-nav-hint="Noch nicht verfügbar" type="button"><span aria-hidden="true" class="nav-item-icon"><svg aria-hidden="true" class="nav-icon-svg" fill="none" viewbox="0 0 24 24"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V2.8h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9A1.7 1.7 0 0 0 21 10h.2v4H21a1.7 1.7 0 0 0-1.6 1z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span><span>Einstellungen</span></button>
 <span class="visually-hidden" id="settingsUnavailableText">Noch nicht verfügbar</span>
 <button aria-label="Navigation einklappen" class="sidebar-bottom-collapse" id="sidebarCollapseBottom" type="button"><svg aria-hidden="true" class="sidebar-control-svg" fill="none" viewbox="0 0 24 24"><path d="M20 12H5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path><path d="m10 6-6 6 6 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg><span>Navigation einklappen</span></button>
@@ -64,6 +64,13 @@
   <section class="analytics-card nk-ui-card"><header class="analytics-card__header"><div><h2>Ergebnisse je Mietverhältnis</h2><p>Kostenanteile, Vorauszahlungen, Korrekturen und Salden in einer gemeinsamen Übersicht.</p></div></header><div class="nk-ui-table-wrap analytics-table-wrap" tabindex="0"><table class="nk-ui-table nk-ui-table--compact" id="analyticsTenantTable" data-nk-ui-sortable="false"></table></div></section>
   <div class="nk-ui-notice nk-ui-notice--info" id="analyticsOverviewNote" role="note"></div>
 </div>
+</div>
+</section>
+
+<section class="tab cost-reconciliation-page" id="kostenumlagenabgleich" data-release="NK-Pro V99.4.66">
+<div class="app-page nk-ui-page-shell nk-ui-page-shell--wide" data-page-tab="kostenumlagenabgleich" data-page-shell="wide">
+<header class="page-header nk-ui-page-header" data-page-header="kostenumlagenabgleich"><div class="page-header__identity"><p class="page-header__kicker">Analyse</p><h1 class="page-header__title">Kosten- und Umlagenabgleich</h1><p class="page-header__description">Überblick über Einnahmen, Kosten und die Erklärung der Differenz.</p></div><div class="page-header__actions"><button class="secondary" data-ui-action="costReconciliation.exportExcel" type="button">Export</button></div></header>
+<div class="cost-reconciliation-content" id="costReconciliationRoot" aria-live="polite"></div>
 </div>
 </section>
 
@@ -148,6 +155,7 @@
 </header>
 <div class="quality-finalization-content quality-finalization-content--k4">
   <div class="quality-legacy-compat" aria-hidden="true"><div id="workflowDashboardBox"></div><div id="finalizationStatusBox"></div><div id="qualitySummary"></div><div id="qualityFilterBar"></div><div id="qualityGroupedChecks"></div><div id="qualitySumsTable"></div><div id="acceptanceProtocolBox"></div><table id="qualityOpenTasksTable"></table><table id="qualityAcknowledgedTable"></table><span id="qualityOpenTaskCount"></span><span id="qualityCompletedCount"></span><button id="qualityOpenOnlyToggle"></button><button id="qualityCompletedToggle"></button></div>
+  <section class="quality-cost-reconciliation-card nk-ui-card" id="qualityCostReconciliationStatus" aria-label="Prüfstatus Kosten- und Umlagenabgleich"></section>
   <section class="quality-finalization-kpis" id="qualityStatusCards" aria-label="Statusfilter der Abschlussprüfung"></section>
   <section class="quality-finalization-card quality-results-card nk-ui-card" aria-labelledby="qualityResultsTitle">
     <header class="quality-finalization-card__header quality-results-card__header"><div><p class="quality-results-eyebrow">Aktuelle Abrechnung</p><h2 id="qualityResultsTitle">Alle fachlichen Prüfergebnisse</h2><p>Auch bestandene, nicht anwendbare, noch nicht ausgeführte und bereits entschiedene Ergebnisse bleiben sichtbar.</p></div><div class="quality-run-summary" id="qualityRunSummary" role="status"></div></header>
@@ -367,6 +375,10 @@
 </div>
 </main>
 </div>
+<dialog aria-labelledby="kuaPaymentTitle" aria-modal="true" class="kua-dialog nk-ui-dialog nk-ui-dialog--wide" data-nk-ui-backdrop-close="false" data-nk-ui-escape="true" id="kuaPaymentDialog"><form class="kua-dialog__shell" method="dialog" data-ui-submit="costReconciliation.savePayment"><header><div><p class="page-header__kicker">Tatsächlicher Zahlungsfluss</p><h2 id="kuaPaymentTitle">Zahlung erfassen</h2></div><button aria-label="Dialog schließen" class="ui-button nk-ui-button ui-button--icon" data-ui-action="costReconciliation.closePayment" type="button">×</button></header><div class="kua-form-grid"><input id="kuaPaymentId" type="hidden"><label><span>Zahlungsart</span><select id="kuaPaymentType" required><option value="prepayment">Nebenkostenvorauszahlung</option><option value="additional-payment">Vereinnahmte Nachzahlung</option><option value="refund">Ausgezahlte Erstattung</option><option value="correction">Weitere Korrektur / Gutschrift</option></select></label><label><span>Betrag</span><input id="kuaPaymentAmount" inputmode="decimal" required></label><label><span>Zahlungsdatum</span><input id="kuaPaymentDate" type="date"></label><label><span>Zahlungsjahr</span><input id="kuaPaymentYear" inputmode="numeric" required type="number" min="1900" max="2200"></label><label><span>Zugehöriges Abrechnungsjahr</span><input id="kuaPaymentBillingYear" inputmode="numeric" required type="number" min="1900" max="2200"></label><label><span>Mietverhältnis-ID</span><input id="kuaPaymentTenant"></label><label><span>Wohnungs-ID</span><input id="kuaPaymentUnit"></label><label><span>Herkunft</span><input id="kuaPaymentSource" required></label><label><span>Ursprung</span><select id="kuaPaymentOrigin"><option>NK-Pro</option><option>Importiert</option><option>Manuelle Erfassung</option></select></label><label><span>Bearbeitungsstatus</span><select id="kuaPaymentStatus"><option value="booked">Gebucht</option><option value="open">Offen</option><option value="review">Zu prüfen</option></select></label><label><span>Bearbeiter</span><input id="kuaPaymentUser"></label><label class="kua-form-grid__wide"><span>Bemerkung</span><textarea id="kuaPaymentNote" rows="3"></textarea></label></div><footer><button class="secondary" data-ui-action="costReconciliation.closePayment" type="button">Abbrechen</button><button class="primary" type="submit">Zahlung speichern</button></footer></form></dialog>
+<dialog aria-labelledby="kuaAllocationTitle" aria-modal="true" class="kua-dialog nk-ui-dialog nk-ui-dialog--wide" data-nk-ui-backdrop-close="false" data-nk-ui-escape="true" id="kuaAllocationDialog"><form class="kua-dialog__shell" method="dialog" data-ui-submit="costReconciliation.saveAllocation"><header><div><p class="page-header__kicker">Differenzerklärung</p><h2 id="kuaAllocationTitle">Zuordnung bearbeiten</h2></div><button aria-label="Dialog schließen" class="ui-button nk-ui-button ui-button--icon" data-ui-action="costReconciliation.closeAllocation" type="button">×</button></header><div class="kua-form-grid"><input id="kuaAllocationId" type="hidden"><label><span>Ursache / Kategorie</span><select id="kuaAllocationCategory" required><option value="private">Privatanteil</option><option value="vacancy">Leerstandsanteil</option><option value="non-allocated">Nicht auf Mieter umgelegte Kosten</option><option value="temporal-accrual">Zeitliche Abgrenzungen</option><option value="uncollected">Nicht vereinnahmte Forderungen</option><option value="accepted-other">Akzeptierte sonstige Differenzen</option><option value="open">Offene Differenz</option></select></label><label><span>Jahr</span><input id="kuaAllocationYear" type="number" min="1900" max="2200" required></label><label><span>Betrag</span><input id="kuaAllocationAmount" inputmode="decimal" required></label><label><span>Kostenart-ID</span><input id="kuaAllocationCost"></label><label><span>Mietverhältnis-ID</span><input id="kuaAllocationTenant"></label><label><span>Wohnungs-ID</span><input id="kuaAllocationUnit"></label><label><span>Verwendeter Schlüssel</span><select id="kuaAllocationKey"><option>Verbrauch</option><option>Wohnfläche</option><option>Einheiten</option><option>Personenzahl</option><option>Zeitanteil</option><option>Direkter Betrag</option><option selected>Manuelle Zuordnung</option></select></label><label><span>Herkunft</span><input id="kuaAllocationSource"></label><label><span>Nachweisstatus</span><select id="kuaAllocationEvidenceStatus"><option value="not-linked">Nicht verknüpft</option><option value="linked">Nachweis verknüpft</option><option value="verified">Nachweis geprüft</option><option value="not-required">Nicht erforderlich</option></select></label><label><span>Nachweis / Referenz</span><input id="kuaAllocationEvidence"></label><label><span>Bearbeiter</span><input id="kuaAllocationUser"></label><label class="kua-form-grid__wide"><span>Begründung</span><textarea id="kuaAllocationReason" rows="4" placeholder="Fachliche Ursache und Entscheidung nachvollziehbar dokumentieren …"></textarea></label><label class="kua-form-grid__wide kua-check"><input id="kuaAllocationChecked" type="checkbox"><span>Als fachlich geprüft markieren und im bestehenden Prüfentscheidungsspeicher dokumentieren</span></label></div><footer><button class="secondary" data-ui-action="costReconciliation.closeAllocation" type="button">Abbrechen</button><button class="primary" type="submit">Zuordnung speichern</button></footer></form></dialog>
+<dialog aria-labelledby="kuaCostTitle" aria-modal="true" class="kua-dialog nk-ui-dialog nk-ui-dialog--wide" data-nk-ui-backdrop-close="false" data-nk-ui-escape="true" id="kuaCostDialog"><form class="kua-dialog__shell" method="dialog" data-ui-submit="costReconciliation.saveCost"><header><div><p class="page-header__kicker">Kostenartdetail</p><h2 id="kuaCostTitle">Analyserelevanten Betrag bearbeiten</h2><p id="kuaCostName"></p></div><button aria-label="Dialog schließen" class="ui-button nk-ui-button ui-button--icon" data-ui-action="costReconciliation.closeCost" type="button">×</button></header><div class="kua-form-grid"><input id="kuaCostOverrideId" type="hidden"><input id="kuaCostYear" type="hidden"><input id="kuaCostId" type="hidden"><label><span>Tatsächlich angefallene Gesamtkosten</span><input id="kuaCostActual" inputmode="decimal"></label><label><span>In der Abrechnung berücksichtigt</span><input id="kuaCostBilling" inputmode="decimal"></label><label><span>Für Analyse angesetzter Betrag</span><input id="kuaCostAnalysis" inputmode="decimal" required></label><label><span>Darstellung</span><select id="kuaCostCategory"><option value="allocable">Umlagebezogene Betriebskosten</option><option value="non-allocated">Nicht umgelegte Betriebskosten</option><option value="other">Sonstige relevante Kosten</option></select></label><label><span>Herkunft</span><input id="kuaCostSource"></label><label><span>Nachweisstatus</span><select id="kuaCostEvidenceStatus"><option value="from-source">Aus Gesamtkosten übernommen</option><option value="not-linked">Nicht verknüpft</option><option value="linked">Nachweis verknüpft</option><option value="verified">Nachweis geprüft</option></select></label><label><span>Bearbeiter</span><input id="kuaCostUser"></label><label class="kua-form-grid__wide"><span>Erläuterung</span><textarea id="kuaCostNote" rows="3"></textarea></label></div><footer><button class="secondary" data-ui-action="costReconciliation.closeCost" type="button">Abbrechen</button><button class="primary" type="submit">Kostenbetrag speichern</button></footer></form></dialog>
+
 <dialog aria-labelledby="billingReviewDetailTitle" aria-modal="true" class="billing-review-dialog billing-review-detail-dialog nk-ui-dialog nk-ui-dialog--compact" data-nk-ui-backdrop-close="false" data-nk-ui-dialog-size="compact" data-nk-ui-escape="true" id="billingReviewDetailDialog">
 <div class="billing-review-dialog__shell">
   <header class="billing-review-dialog__header"><div><p class="page-header__kicker">Fachliche Prüfentscheidung</p><h2 id="billingReviewDetailTitle">Prüfentscheidung – Details</h2></div><button type="button" class="ui-button nk-ui-button ui-button--icon" aria-label="Dialog schließen" data-ui-action="billingReview.closeDetail">×</button></header>
@@ -395,13 +407,12 @@
 <script defer="" src="./js/cost-actions.js"></script>
 <script defer="" src="./js/billing-workflow.js"></script>
 <script defer="" src="./js/ui-controller.js"></script>
-<script defer="" src="./js/ui-bindings.js?v=99.4.66-wohnflaechen"></script>
-<script defer="" src="./js/ui-events.js?v=99.4.66-wohnflaechen"></script>
+<script defer="" src="./js/ui-bindings.js?v=99.4.66-ap22f12ab"></script>
+<script defer="" src="./js/ui-events.js?v=99.4.66-ap22f12ab"></script>
 <script defer="" src="./js/navigation.js"></script>
 <script defer="" src="./js/modal-events.js"></script>
 <script defer="" src="./js/persistence.js"></script>
 <script defer="" src="./js/migration.js"></script>
-<script defer="" src="./js/apartment-area-correction.js?v=99.4.66-wohnflaechen"></script>
 <script defer="" src="./js/backup-recovery.js"></script>
 <script defer="" src="./js/meter-master.js"></script>
 <script defer="" src="./js/meter-readings.js"></script>
@@ -417,12 +428,13 @@
 <script defer="" src="./js/diagnostics.js"></script>
 <script defer="" src="./js/billing-calculation.js"></script>
 <script defer="" src="./js/billing-review.js"></script>
-<script defer="" src="./js/quality-system-k4.js?v=99.4.66-wohnflaechen"></script>
+<script defer="" src="./js/quality-system-k4.js?v=99.4.66-ap22f12ab"></script>
+<script defer="" src="./js/cost-reconciliation.js?v=99.4.66-ap22f12ab"></script>
 <script defer="" src="./js/document-data.js"></script>
 <script defer="" src="./js/document-renderer.js"></script>
 <script defer="" src="./js/export-service.js"></script>
 <script defer="" src="./js/ui-table-tools.js"></script>
-<script defer="" src="./js/ui-design-system.js?v=99.4.66-wohnflaechen"></script>
+<script defer="" src="./js/ui-design-system.js?v=99.4.66-ap22f12ab"></script>
 <script defer="" src="./js/app-bootstrap.js"></script>
 <script defer="" src="./js/compatibility.js"></script>
 <script defer="" src="./js/default-seed.js"></script>
@@ -435,14 +447,15 @@
 <script defer="" src="./js/ui-navigation-pages.js"></script>
 <script defer="" src="./js/ui-archive-pages.js"></script>
 <script defer="" src="./js/browser-io.js"></script>
-<script defer="" src="./js/ui-metering.js?v=99.4.66-wohnflaechen"></script>
-<script defer="" src="./js/ui-billing-allocation.js?v=99.4.66-wohnflaechen"></script><script defer="" src="./js/ui-individual-values.js?v=99.4.66-wohnflaechen"></script>
-<script defer="" src="./js/ui-quality-k4.js?v=99.4.66-wohnflaechen"></script>
+<script defer="" src="./js/ui-metering.js?v=99.4.66-ap22f12ab"></script>
+<script defer="" src="./js/ui-billing-allocation.js?v=99.4.66-ap22f12ab"></script><script defer="" src="./js/ui-individual-values.js?v=99.4.66-ap22f12ab"></script>
+<script defer="" src="./js/ui-quality-k4.js?v=99.4.66-ap22f12ab"></script>
+<script defer="" src="./js/ui-cost-reconciliation.js?v=99.4.66-ap22f12ab"></script>
 <script defer="" src="./js/ui-documents.js"></script>
 <script defer="" src="./js/ui-table-actions.js"></script>
 <script defer="" src="./js/ui-diagnostics.js"></script>
 <script defer="" src="./js/ui-page-controller.js"></script>
 <script defer="" src="./js/app.js"></script>
-<script defer="" src="./js/service-worker-register.js?v=99.4.66-wohnflaechen"></script>
+<script defer="" src="./js/service-worker-register.js?v=99.4.66-ap22f12ab"></script>
 </body>
 </html>

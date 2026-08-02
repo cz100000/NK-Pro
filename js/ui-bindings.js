@@ -137,6 +137,18 @@
       "billingReview.saveAcceptance":call(handlers, "billingReviewSaveAcceptance"), "billingReview.openDetail":call(handlers, "billingReviewOpenDetail"),
       "billingReview.closeDetail":call(handlers, "billingReviewCloseDetail"), "billingReview.reopen":call(handlers, "billingReviewReopen")
     });
+    registerController("costReconciliation", "Kosten- und Umlagenabgleich mit getrennten Zahlungs-, Kosten- und Prüfentscheidungsdaten", {
+      "costReconciliation.setFromYear":call(handlers, "costReconciliationSetFromYear"), "costReconciliation.setToYear":call(handlers, "costReconciliationSetToYear"),
+      "costReconciliation.openPayment":call(handlers, "costReconciliationOpenPayment"), "costReconciliation.closePayment":call(handlers, "costReconciliationClosePayment"),
+      "costReconciliation.savePayment":call(handlers, "costReconciliationSavePayment"), "costReconciliation.deletePayment":call(handlers, "costReconciliationDeletePayment"),
+      "costReconciliation.openAllocation":call(handlers, "costReconciliationOpenAllocation"), "costReconciliation.closeAllocation":call(handlers, "costReconciliationCloseAllocation"),
+      "costReconciliation.saveAllocation":call(handlers, "costReconciliationSaveAllocation"), "costReconciliation.deleteAllocation":call(handlers, "costReconciliationDeleteAllocation"),
+      "costReconciliation.assignOpen":call(handlers, "costReconciliationAssignOpen"), "costReconciliation.markChecked":call(handlers, "costReconciliationMarkChecked"),
+      "costReconciliation.release":call(handlers, "costReconciliationRelease"), "costReconciliation.revokeRelease":call(handlers, "costReconciliationRevokeRelease"),
+      "costReconciliation.openCost":call(handlers, "costReconciliationOpenCost"), "costReconciliation.closeCost":call(handlers, "costReconciliationCloseCost"),
+      "costReconciliation.saveCost":call(handlers, "costReconciliationSaveCost"), "costReconciliation.exportExcel":call(handlers, "costReconciliationExportExcel"),
+      "costReconciliation.printPdf":call(handlers, "costReconciliationPrintPdf"), "costReconciliation.exportProtocol":call(handlers, "costReconciliationExportProtocol")
+    });
     registerController("quality", "Zentrale Prüfinteraktion ohne parallele Abrechnungsberechnung", {
       "quality.jumpToIssue":call(handlers, "jumpToQualityIssue"), "quality.reopenIssue":call(handlers, "reopenQualityIssue"),
       "quality.acknowledgeIssue":call(handlers, "acknowledgeQualityIssue"), "quality.jumpFirstOpen":call(handlers, "jumpToFirstOpenQualityIssue"),

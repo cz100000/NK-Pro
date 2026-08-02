@@ -2,15 +2,15 @@
   "name": "nk-pro-v99-4-66",
   "version": "99.4.66",
   "private": true,
-  "description": "Wohnflächenkorrektur – bestätigte Flächen für sieben Wohnungen",
+  "description": "AP22F12A/B – Kosten- und Umlagenabgleich",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
     "test:fixtures": "node tools/check-fixtures.cjs",
     "fixtures:materialize": "node tools/materialize-fixtures.cjs",
-    "test:browser": "node tests/apartment-area-correction-browser.test.cjs",
-    "test": "npm run test:syntax && npm run test:fixtures && npm run test:wohnflaechen && npm run test:metering && npm run test:architecture && npm run test:contents && npm run test:release",
+    "test:browser": "node tests/ap22f11b-korrektur4-browser.test.cjs",
+    "test": "npm run test:syntax && npm run test:fixtures && npm run test:metering && npm run test:architecture && npm run test:contents && npm run test:release && npm run test:ap22f12:domain && npm run test:browser && npm run test:ap22f11b:k4:data",
     "test:report": "playwright show-report",
-    "test:release": "npm run test:ap22f11b:k4:static",
+    "test:release": "npm run test:ap22f11b:k4:static && npm run test:ap22f12:static",
     "test:metering": "node tests/metering-domain.test.cjs && node tests/ap20-meter-start-regression.test.cjs && node tests/ap20-meter-calculation-regression.test.cjs && node tests/ap20-asset-refresh-regression.test.cjs",
     "test:architecture": "node tests/ap6-modularization.test.cjs && node tests/ap7-ui-integration.test.cjs && node tests/ap8-application-actions.test.cjs && node tests/ap9-core-orchestration.test.cjs && node tests/ap10-archive-year-quality-diagnostics.test.cjs && node tests/ap13-letter-layout.test.cjs && node tests/ap21-rule-audit.test.cjs && node tests/ap21b2-navigation-centralization.test.cjs",
     "test:visual": "playwright test --project=ap11-navigation --grep \"Visuelle AP11-Referenzen\" --workers=1",
@@ -18,7 +18,7 @@
     "test:ap14": "node tests/ap14-ui-navigation.test.cjs && playwright test --project=ap14-ui-navigation --workers=1",
     "test:contents": "node tests/ap22f11b-korrektur4.test.cjs",
     "test:ap15": "node tests/ap15-integration-release.test.cjs && playwright test --project=ap15-integration-release --workers=1",
-    "release:check": "npm run test:syntax && npm run test:fixtures && npm run test:wohnflaechen && node tools/check-release-contents.cjs --ignore-node-modules --strict",
+    "release:check": "npm run test:syntax && npm run test:fixtures && npm run test:ap22f11b:k4:static && node tools/check-release-contents.cjs --ignore-node-modules --strict",
     "test:ap17": "node tests/ap17-area-dashboards.test.cjs && playwright test --project=ap17-area-dashboards --workers=1",
     "test:ap18": "node tests/ap18-ui-ux-polish.test.cjs && playwright test --project=ap18-ui-ux-polish --workers=1",
     "test:ap19": "node tests/ap19-billing-context-dashboards.test.cjs && playwright test --project=ap19-billing-context-dashboards --workers=1",
@@ -129,8 +129,11 @@
     "test:ap22f11b:k4:browser": "node tests/ap22f11b-korrektur4-browser.test.cjs",
     "test:ap22f11b:k4:data": "node tests/ap22f11b-korrektur4-data-roundtrip.test.cjs",
     "test:ap22f11b:k4": "npm run test:ap22f11b:k4:static && npm run test:ap22f11b:k4:browser && npm run test:ap22f11b:k4:data",
-    "test:wohnflaechen": "node tests/apartment-area-correction.test.cjs",
-    "test:browser:k4": "node tests/ap22f11b-korrektur4-browser.test.cjs"
+    "test:ap22f12:domain": "node tests/ap22f12-cost-reconciliation.test.cjs",
+    "test:ap22f12:static": "node tests/ap22f12-integration.test.cjs",
+    "test:ap22f12": "npm run test:ap22f12:domain && npm run test:ap22f12:static",
+    "release:check:ap22f12": "npm run test:syntax && npm run test:fixtures && npm run test:metering && npm run test:architecture && npm run test:ap22f11b:k4:static && npm run test:ap22f12 && node tools/check-release-contents.cjs --ignore-node-modules --strict",
+    "test:browser:ap22f12": "npm run test:browser && npm run test:ap22f11b:k4:data"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1"

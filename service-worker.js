@@ -1,5 +1,5 @@
-const CACHE_NAME = "nk-pro-v99-4-66-wohnflaechen";
-const BUILD_ID = "99.4.66-wohnflaechen";
+const CACHE_NAME = "nk-pro-v99-4-66-ap22f12ab";
+const BUILD_ID = "99.4.66-ap22f12ab";
 const CACHE_PREFIX = "nk-pro-";
 const APP_SHELL = [
   "./",
@@ -27,7 +27,6 @@ const APP_SHELL = [
   "./js/modal-events.js",
   "./js/persistence.js",
   "./js/migration.js",
-  "./js/apartment-area-correction.js?v=" + BUILD_ID,
   "./js/backup-recovery.js",
   "./js/meter-master.js",
   "./js/meter-readings.js",
@@ -43,6 +42,8 @@ const APP_SHELL = [
   "./js/diagnostics.js",
   "./js/billing-calculation.js",
   "./js/billing-review.js",
+  "./js/cost-reconciliation.js",
+  "./js/cost-reconciliation.js?v=" + BUILD_ID,
   "./js/quality-system-k4.js?v=" + BUILD_ID,
   "./js/document-data.js",
   "./js/document-renderer.js",
@@ -59,6 +60,8 @@ const APP_SHELL = [
   "./js/ui-master-data.js",
   "./js/ui-quality.js",
   "./js/ui-quality-k4.js?v=" + BUILD_ID,
+  "./js/ui-cost-reconciliation.js",
+  "./js/ui-cost-reconciliation.js?v=" + BUILD_ID,
   "./js/ui-costs.js",
   "./js/ui-navigation-pages.js",
   "./js/ui-archive-pages.js",

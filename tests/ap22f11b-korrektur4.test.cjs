@@ -25,9 +25,9 @@ assert.strictEqual(project.appVersion,"99.4.66");
 assert.strictEqual(project.schemaVersion,5,"Datenschema muss 5 bleiben");
 assert.strictEqual(project.basedOn,"99.4.65-AP22F11B-Korrektur4");
 assert.match(manifest.name,/V99\.4\.66/);
-assert.strictEqual(manifest.buildId,"99.4.66-wohnflaechen");
+assert.strictEqual(manifest.buildId,"99.4.66-ap22f12ab");
 assert.match(runtime,/APP_VERSION\s*=\s*"V99\.4\.66"/);
-assert.match(serviceWorker,/99\.4\.66-wohnflaechen/);
+assert.match(serviceWorker,/99\.4\.66-ap22f12ab/);
 assert.match(serviceWorker,/quality-system-k4\.js/);
 assert.match(serviceWorker,/ui-quality-k4\.js/);
 
