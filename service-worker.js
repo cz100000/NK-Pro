@@ -1,5 +1,5 @@
-const CACHE_NAME = "nk-pro-v99-4-71-professional-analysis-center";
-const BUILD_ID = "99.4.71-professional-analysis-center";
+const CACHE_NAME = "nk-pro-v99-4-72-analysis-navigator";
+const BUILD_ID = "99.4.72-analysis-navigator";
 const CACHE_PREFIX = "nk-pro-";
 const APP_SHELL = [
   "./",

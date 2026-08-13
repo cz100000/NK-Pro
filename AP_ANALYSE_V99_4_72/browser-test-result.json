@@ -1,0 +1,282 @@
+{
+  "version": "V99.4.72",
+  "engineVersion": 2,
+  "inputDataSha256": "99cd28ca9a02eea675aa9f71118e25a7e298eda1326fa1920e205cf835cc3c87",
+  "at": "2026-08-13T19:59:45.017Z",
+  "checks": [
+    {
+      "name": "version-and-engine",
+      "ok": true,
+      "detail": "{\"configured\":true,\"version\":2,\"cacheEntries\":4,\"readOnly\":true,\"comparisonModel\":\"metric-aware-v2\"}"
+    },
+    {
+      "name": "analysis-without-billing-context",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "global-analysis-pages",
+      "ok": true,
+      "detail": "{\"auswertungen\":{\"active\":\"auswertungen\",\"requires\":\"\"},\"kostenumlagenabgleich\":{\"active\":\"kostenumlagenabgleich\",\"requires\":\"\"},\"regelinventar\":{\"active\":\"regelinventar\",\"requires\":\"\"},\"guard\":\"start\"}"
+    },
+    {
+      "name": "billing-guard",
+      "ok": true,
+      "detail": "start"
+    },
+    {
+      "name": "archive-snapshot-priority",
+      "ok": true,
+      "detail": "{\"origin\":\"archive\",\"periods\":4}"
+    },
+    {
+      "name": "four-periods",
+      "ok": true,
+      "detail": "2021/2022 | 2022 | 2023 | 2024"
+    },
+    {
+      "name": "legacy-period",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "master-area-overrides-legacy",
+      "ok": true,
+      "detail": "391.5"
+    },
+    {
+      "name": "cashflow-not-invented",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "tax-not-invented",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "private-participant",
+      "ok": true,
+      "detail": "[{\"name\":\"Erik Zimmermann\",\"id\":\"M000\",\"unit\":\"W000.UG\"}]"
+    },
+    {
+      "name": "header",
+      "ok": true,
+      "detail": "Entwicklungen, Vergleiche und wirtschaftliche Auswertungen des Objekts."
+    },
+    {
+      "name": "three-perspectives",
+      "ok": true,
+      "detail": "Nebenkosten & Abrechnung | Finanzen | Steuerliche Auswertung"
+    },
+    {
+      "name": "view-switch",
+      "ok": true,
+      "detail": "Übersicht | Details | Tabelle"
+    },
+    {
+      "name": "four-hero-kpis",
+      "ok": true,
+      "detail": "4"
+    },
+    {
+      "name": "max-three-overview-insights",
+      "ok": true,
+      "detail": "3"
+    },
+    {
+      "name": "no-quality-score",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no-inline-handlers",
+      "ok": true,
+      "detail": "0"
+    },
+    {
+      "name": "overview-question-value",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "quick-analysis-menu",
+      "ok": true,
+      "detail": "{\"exists\":true,\"items\":4,\"title\":\"Schnellanalyse\",\"oldQuestions\":0}"
+    },
+    {
+      "name": "deep-water",
+      "ok": true,
+      "detail": "Nebenkosten & Abrechnung\nFinanzen\nSteuerliche Auswertung\nZEITRAUM\n2021/2022 · historisch\n2022 · historisch\n2023 · historisch\n2024 · historisch\n–\n2021/2022 · historisch\n2022 · historisch\n2023 · historisch\n2024 · historisch\nVERGLEICH\nVorperiode\nVorjahr\nErste Periode\nFreie Referenz\nKein Vergleich\nFilter 0\nSchnellanalyse\nExport\nNebenkosten & Abrechnung\n2021/2022 – 2024\nÜbersicht\nDetails\nTabelle\nKOSTEN & VERBRAUCH\nKosten\nVerbrauch & Zähler\nOBJEKT & NUTZUNG\nTeilnehmer\nWohnungen\nVorauszahlungen & Salde"
+    },
+    {
+      "name": "nk-analysis-navigator",
+      "ok": true,
+      "detail": "{\"workspace\":true,\"desktop\":true,\"mobile\":true,\"oldButtons\":0,\"active\":\"Verbrauch & Zähler\",\"groups\":[\"Kosten & Verbrauch\",\"Objekt & Nutzung\",\"Abweichungen & Qualität\"],\"quick\":true}"
+    },
+    {
+      "name": "finance-boundary",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "finance-analysis-navigator",
+      "ok": true,
+      "detail": "{\"active\":\"Wirtschaftlichkeit\",\"groups\":[\"Wirtschaftlichkeit\",\"Eigentümersicht\",\"Liquidität & Prüfung\"],\"items\":[\"Wirtschaftlichkeit\",\"Einnahmen\",\"Ausgaben\",\"Eigentümerbelastung\",\"Cashflow\",\"Datenqualität\"]}"
+    },
+    {
+      "name": "cashflow-gap-ui",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "tax-boundary",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "tax-analysis-navigator",
+      "ok": true,
+      "detail": "{\"active\":\"Steuerliche Überleitung\",\"groups\":[\"Überleitung\",\"Nutzungszuordnung\",\"Klassifikation & Prüfung\"],\"items\":[\"Steuerliche Überleitung\",\"Privatanteil\",\"Leerstand\",\"Klassifikation\",\"Datenqualität\"]}"
+    },
+    {
+      "name": "table-tools",
+      "ok": true,
+      "detail": "{\"text\":\"Nebenkosten & Abrechnung\\nFinanzen\\nSteuerliche Auswertung\\nZEITRAUM\\n2021/2022 · historisch\\n2022 · historisch\\n2023 · historisch\\n2024 · historisch\\n–\\n2021/2022 · historisch\\n2022 · historisch\\n2023 · historisch\\n2024 · historisch\\nVERGLEICH\\nVorperiode\\nVorjahr\\nErste Periode\\nFreie Referenz\\nKein Vergleich\\nFilter 0\\nSchnellanalyse\\nExport\\nSteuerliche Auswertung\\n2021/2022 – 2024\\nÜbersicht\\nDetails\\nTabelle\\nTabellenansicht\\n\\nPräzise Werte aus derselben Analyseengine wie Dashboard, Tooltip und Export.\\n\\nSuche\\nSortierung\\nPeriode\\nKostenart\\nGesamt\\nVermietet\\nPrivat\\nLeerstand\\nSonstige\\nSteuerliche Zuordnung\\nSteuerjahr\\nStatus\\nGruppierung\\nKeine Gruppierung\\nNach Periode\\nNach Kostenbereich\\nAufsteigend ↑\\nSpalten\\nExport\\nPeriode\\tKostenart\\tGesamt\\tVermietet\\tPrivat\\tLeerstand\\tSonstige\\tSteuerliche Zuordnung\\tSteuerjahr\\tStatus\\n2021/2022\\tWasserversorgung\\t1.673,59 €\\t1.673,59 €\\t0,00 €\\t0,00 €\\t0,00 €\\tSteuerliche Zuordnung offen\\toffen\\tSteuerliche Zuordnung offen\\n\\nDetailzeile öffnen\\n\\n2021/2022\\tHeiz- und Warmwasserkosten\\t6.077,39 €\\t6.077,39 €\\t0,00 €\\t0,00 €\\t0,00 €\\tSteuerliche Zuordnung offen\\toffen\\tSteuerliche Zuordnung offen\\n\\nDetailzeile öffnen\\n\\n2021/2022\\tMüllbeseitigung\\t1.288,26 €\\t1.288,26 €\\t0,00 €\\t0,00 €\\t0,00 €\\tSteuerliche Zuordnung offen\\toffen\\tSteuerliche Zuordnung offen\\n\\nDetailzeile öffnen\\n\\n2021/2022\\tRundung 2021/2022\\t0,06 €\\t0,06 €\\t0,00 €\\t0,00 €\\t0,00 €\\tSteuerliche Zuordnung offen\\toffen\\tSteuerliche Zuordnung offen\\n\\nDetailzeile öffnen\\n\\n2022\\tWasserversorgung\\t1.820,79 €\\t1.820,79 €\\t0,00 €\\t0,00 €\\t0,00 €\\tSteuerliche Zuordnung offen\\toffen\\tSteuerliche Zuordnung offen\\n\\nDetailzeile öffnen\\n\\n2022\\tHeiz- und Warmwasserkosten\\t3.234,64 €\\t3.234,64 €\\t0,00 €\\t0,00 €\\t0,00 €\\tSteuerliche Zuordnung offen\\toffen\\tSteuerliche Zuordnung offen\\n\\nDetailzeile öffnen\\n\\n2022\\tMüllbeseitigung\\t1.288,27 €\\t1.288,27 €\\t0,00 €\\t0,00 €\\t0,00 €\\tSteuerliche Zuordnung offen\\toffen\\tSteuerliche Zuordnung offen\\n\\nDetailzeile öffnen\\n\\n2022\\tRundung 2022\\t0,01 €\\t0,01 €\\t0,00 €\\t0,00 €\\t0,00 €\\tSteuerliche Zuordnung offen\\toffen\\tSteuerliche Zuordnung offen\\n\\nDetailzeile öffnen\\n\\n2023\\tWasserversorgung\\t1.833,47 €\\t1.140,89 €\\t598,35 €\\t0,00 €\\t94,22 €\\tSteuerliche Zuordnung offen\\toffen\\tSteuerliche Zuordnung offen\\n\\nDetailzeile öffnen\\n\\n2023\\tHeiz- und Warmwasserkosten\\t9.164,89 €\\t5.511,86 €\\t2.624,58 €\\t890,75 €\\t137,70 €\\tSteuerliche Zuordnung offen\\toffen\\tSteuerliche Zuordnung offen\\n\\nDetailzeile öffnen\\n\\n2023\\tMüllbeseitigung\\t1.503,00 €\\t1.202,40 €\\t300,60 €\\t0,00 €\\t0,00 €\\tSteuerliche Zuordnung offen\\toffen\\tSteuerliche Zuordnung offen\\n\\nDetailzeile öffnen\\n\\n2023\\tRundungsausgleich 2023\\t0,06 €\\t0,06 €\\t0,00 €\\t0,00 €\\t0,00 €\\tSteuerliche Zuordnung offen\\toffen\\tSteuerliche Zuordnung offen\\n\\nDetailzeile öffnen\\n\\n2024\\tWasserversorgung\\t1.737,89 €\\t1.083,97 €\\t612,68 €\\t0,00 €\\t41,24 €\\tSteuerliche Zuordnung offen\\toffen\\tSteuerliche Zuordnung offen\\n\\nDetailzeile öffnen\\n\\n2024\\tHeiz- und Warmwasserkosten\\t10.013,48 €\\t6.345,19 €\\t0,00 €\\t0,00 €\\t3.668,29 €\\tSteuerliche Zuordnung offen\\toffen\\tSteuerliche Zuordnung offen\\n\\nDetailzeile öffnen\\n\\n2024\\tMüllbeseitigung\\t1.503,00 €\\t1.202,40 €\\t300,60 €\\t0,00 €\\t0,00 €\\tSteuerliche Zuordnung offen\\toffen\\tSteuerliche Zuordnung offen\\n\\nDetailzeile öffnen\",\"group\":true,\"cols\":true,\"search\":true,\"rows\":30}"
+    },
+    {
+      "name": "no-overflow-tablet",
+      "ok": true,
+      "detail": "{\"width\":820,\"doc\":805,\"client\":805,\"body\":805,\"root\":757,\"scroll\":757}"
+    },
+    {
+      "name": "desktop-right-drill",
+      "ok": true,
+      "detail": "{\"pos\":\"fixed\",\"right\":\"0px\",\"backdrop\":true}"
+    },
+    {
+      "name": "no-overflow-mobile",
+      "ok": true,
+      "detail": "{\"width\":390,\"doc\":390,\"client\":390,\"body\":390,\"root\":358,\"scroll\":358}"
+    },
+    {
+      "name": "mobile-analysis-selector",
+      "ok": true,
+      "detail": "{\"desktop\":\"none\",\"mobile\":\"grid\",\"doc\":390,\"client\":390}"
+    },
+    {
+      "name": "keyboard-drill",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "missing-not-minus-100",
+      "ok": true,
+      "detail": "{\"id\":\"B\",\"label\":\"B\",\"perspective\":\"nk\",\"value\":null,\"unit\":\"EUR\",\"period\":{\"periodId\":\"B\",\"label\":\"B\"},\"comparisonPeriod\":{\"periodId\":\"A\",\"label\":\"A\"},\"comparisonValue\":100,\"absoluteChange\":null,\"percentChange\":null,\"comparability\":{\"status\":\"nicht vergleichbar\",\"reason\":\"Mindestens einer der beiden Werte fehlt oder ist nicht berechenbar.\"},\"dataCoverage\":\"vollständig\",\"dataQuality\":\"vergleichbar\",\"sources\":[],\"calculation\":\"test\",\"interpretation\":\"\",\"anomalies\":[],\"drilldownTargets\":[],\"displayHints\":{},\"status\":\"missing\",\"dataGap\":\"fehlend\"}"
+    },
+    {
+      "name": "real-zero-distinct",
+      "ok": true,
+      "detail": "{\"id\":\"Z\",\"label\":\"Z\",\"perspective\":\"nk\",\"value\":0,\"unit\":\"EUR\",\"period\":{\"periodId\":\"Z\",\"label\":\"Z\"},\"comparisonPeriod\":{\"periodId\":\"A\",\"label\":\"A\"},\"comparisonValue\":100,\"absoluteChange\":-100,\"percentChange\":-100,\"comparability\":{\"status\":\"vergleichbar\",\"reason\":\"Beide Werte besitzen eine belastbare, gleichartige Periodenbasis.\"},\"dataCoverage\":\"vollständig\",\"dataQuality\":\"vergleichbar\",\"sources\":[],\"calculation\":\"test\",\"interpretation\":\"\",\"anomalies\":[],\"drilldownTargets\":[],\"displayHints\":{},\"status\":\"available\",\"dataGap\":null}"
+    },
+    {
+      "name": "full-navigation-smoke",
+      "ok": true,
+      "detail": "[{\"tab\":\"start\",\"active\":\"start\",\"ok\":true},{\"tab\":\"objekt\",\"active\":\"objekt\",\"ok\":true},{\"tab\":\"wohnungsverwaltung\",\"active\":\"wohnungsverwaltung\",\"ok\":true},{\"tab\":\"mieterverwaltung\",\"active\":\"mieterverwaltung\",\"ok\":true},{\"tab\":\"archiv\",\"active\":\"archiv\",\"ok\":true},{\"tab\":\"mieter\",\"active\":\"mieter\",\"ok\":true},{\"tab\":\"einnahmen\",\"active\":\"einnahmen\",\"ok\":true},{\"tab\":\"umlage\",\"active\":\"umlage\",\"ok\":true},{\"tab\":\"manuellewerte\",\"active\":\"manuellewerte\",\"ok\":true},{\"tab\":\"wasser\",\"active\":\"wasser\",\"ok\":true},{\"tab\":\"briefe\",\"active\":\"briefe\",\"ok\":true},{\"tab\":\"vorauszahlungsanpassung\",\"active\":\"vorauszahlungsanpassung\",\"ok\":true},{\"tab\":\"qualitaet\",\"active\":\"qualitaet\",\"ok\":true},{\"tab\":\"kostenumlagenabgleich\",\"active\":\"kostenumlagenabgleich\",\"ok\":true},{\"tab\":\"auswertungen\",\"active\":\"auswertungen\",\"ok\":true},{\"tab\":\"regelinventar\",\"active\":\"regelinventar\",\"ok\":true},{\"tab\":\"einstellungen\",\"active\":\"einstellungen\",\"ok\":true}]"
+    },
+    {
+      "name": "backup-restore-roundtrip",
+      "ok": true,
+      "detail": "{\"valid\":true,\"identical\":true,\"archive\":true}"
+    },
+    {
+      "name": "runtime-errors",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "viewports": {
+    "nkDesktop": {
+      "width": 1440,
+      "doc": 1425,
+      "client": 1425,
+      "body": 1425,
+      "root": 1105,
+      "scroll": 1105
+    },
+    "water": {
+      "width": 1440,
+      "doc": 1425,
+      "client": 1425,
+      "body": 1425,
+      "root": 1105,
+      "scroll": 1105
+    },
+    "finance": {
+      "width": 1440,
+      "doc": 1425,
+      "client": 1425,
+      "body": 1425,
+      "root": 1105,
+      "scroll": 1105
+    },
+    "financeDetail": {
+      "width": 1440,
+      "doc": 1440,
+      "client": 1440,
+      "body": 1440,
+      "root": 1120,
+      "scroll": 1120
+    },
+    "tax": {
+      "width": 1440,
+      "doc": 1425,
+      "client": 1425,
+      "body": 1425,
+      "root": 1105,
+      "scroll": 1105
+    },
+    "taxDetail": {
+      "width": 1440,
+      "doc": 1440,
+      "client": 1440,
+      "body": 1440,
+      "root": 1120,
+      "scroll": 1120
+    },
+    "tablet": {
+      "width": 820,
+      "doc": 805,
+      "client": 805,
+      "body": 805,
+      "root": 757,
+      "scroll": 757
+    },
+    "drill": {
+      "width": 1440,
+      "doc": 1425,
+      "client": 1425,
+      "body": 1425,
+      "root": 1105,
+      "scroll": 1105
+    },
+    "mobile": {
+      "width": 390,
+      "doc": 390,
+      "client": 390,
+      "body": 390,
+      "root": 358,
+      "scroll": 358
+    },
+    "mobileDetail": {
+      "width": 390,
+      "doc": 390,
+      "client": 390,
+      "body": 390,
+      "root": 358,
+      "scroll": 358
+    }
+  },
+  "errorEvents": [],
+  "passed": true
+}
