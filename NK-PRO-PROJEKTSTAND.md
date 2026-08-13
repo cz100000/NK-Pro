@@ -1,5 +1,13 @@
 # NK-Pro Projektstand
 
+# Projektstand V99.4.73 – bestätigte 2025-Echtdaten & externe Abrechnung
+
+V99.4.73 ist als testbarer Release-Stand umgesetzt. Die bestätigten 2025-Werte sind sowohl im Standardbestand als auch über eine einmalige idempotente Migration für ältere 2025-Arbeitsstände abgesichert. Die Techem-Daten sind in normalen editierbaren Feldern verfügbar.
+
+Der finale direkte Chromium/CDP-Test besteht 18/18 Checks bei 0 Runtime-Fehlern. Datenschema 5, Archive, Teilnehmer-/Privatlogik, Zählerstandard, Backup/Restore und Offlinefähigkeit bleiben erhalten.
+
+
+
 # Projektstand V99.4.71 – professionelles Immobilien-Analysezentrum
 
 V99.4.71 ist als testbarer Release-Stand umgesetzt. Die Analysearchitektur verwendet eine kanonische read-only Datenquelle, eine Perioden-/Vergleichbarkeitsschicht und eine gemeinsame Analyseengine für Nebenkosten, Finanzen und steuerliche Auswertung. Eine zweite Analyse-Datenbank oder persistierte Konkurrenzberechnungen wurden nicht eingeführt.

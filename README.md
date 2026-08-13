@@ -1,3 +1,16 @@
+# NK-Pro V99.4.73 – bestätigte 2025-Echtdaten & externe Abrechnung
+
+V99.4.73 baut auf V99.4.72 auf und übernimmt die bestätigten Abrechnungswerte 2025 dauerhaft: Wohnungswasserstände, Wasserwerksrechnung, Hauswasserzählernummer, Müllgebühren sowie die strukturierte Techem-Jahresabrechnung. Die externe Heizkostenabrechnung ist zugleich als normal manuell pflegbarer Eingabebereich ausgebaut.
+
+- Produktversion: **V99.4.73**
+- Build-/Cachekennung: `99.4.73-confirmed-2025-data`
+- Datenschema: **5** unverändert
+- Migrations-ID: `confirmed-2025-operating-data-v99.4.73`
+- Browserprüfung: **18/18**, 0 Runtime-Fehler
+- Detailnachweise: `V99.4.73_RELEASE_NOTES.md`, `V99.4.73_UMSETZUNGSBERICHT.md`, `V99.4.73_TESTBERICHT.md`, `V99.4.73_DATENUEBERNAHME_2025.md`
+
+---
+
 # NK-Pro V99.4.71 – Professionelles Immobilien-Analysezentrum
 
 ## NK-Pro V99.4.71 – Professionelles Immobilien-Analysezentrum

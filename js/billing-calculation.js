@@ -598,11 +598,14 @@
       };
     });
     const actual = rows.reduce((sum,row) => sum + num(row.amount), 0);
+    const externalBilling = input && input.externalBilling && typeof input.externalBilling === "object" && !Array.isArray(input.externalBilling) ? input.externalBilling : {};
+    const includedOwnerShare = num(externalBilling.includedOwnerShare);
+    const reconciledActual = actual + includedOwnerShare;
     const expected = num(cost.gesamtbetrag);
-    const difference = actual - expected;
+    const difference = reconciledActual - expected;
     const tolerance = 0.01;
     return {
-      cost, input, rows, actual, expected, difference, tolerance,
+      cost, input, rows, actual, includedOwnerShare, reconciledActual, expected, difference, tolerance,
       status:rows.length && rows.every(row => row.status === "complete") && Math.abs(difference) <= tolerance ? "complete" : (rows.length && rows.every(row => row.status === "complete") ? "error" : "open")
     };
   }
@@ -702,8 +705,16 @@
       });
       vacancyShare = caseEntries.filter(entry => entry.caseRow.role === "vacancy").reduce((sum,entry) => sum + num(entry.amount), 0);
       inputSum += vacancyShare;
+      const externalOwnerShare = inputMode === "Externe Einzelabrechnung" && inputRecord.externalBilling && typeof inputRecord.externalBilling === "object"
+        ? num(inputRecord.externalBilling.includedOwnerShare)
+        : 0;
       ownerShare = total - basisTenants.reduce((sum,t) => sum + num(allocations[t.originalIndex]), 0);
-      return finalizeCostAllocationResult(k, tenants, allocations, ownerShare, inputSum, inputSum, allocationDistributionStatus(ownerShare), { vacancyShare, documentedOwnerShare:vacancyShare, caseValuesUsed:true });
+      return finalizeCostAllocationResult(k, tenants, allocations, ownerShare, inputSum, inputSum, allocationDistributionStatus(ownerShare), {
+        vacancyShare,
+        externalOwnerShare,
+        documentedOwnerShare:vacancyShare + externalOwnerShare,
+        caseValuesUsed:true
+      });
     }
   
     if (k.umlageschluessel === "Verbrauch") {

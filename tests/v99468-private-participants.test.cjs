@@ -61,10 +61,10 @@ assert.equal(seedM000 && seedM000.einzug, "2010-01-01", "M000 muss im aktiven Ob
 const pkg = JSON.parse(read("package.json"));
 const manifest = JSON.parse(read("manifest.webmanifest"));
 const project = JSON.parse(read("nk-pro-project.json"));
-assert.equal(pkg.version, "99.4.72");
-assert.equal(manifest.version, "99.4.72");
-assert.equal(manifest.buildId, "99.4.72-analysis-navigator");
-assert.equal(project.appVersion, "99.4.72");
-assert.equal(project.runtimeBuildId, "99.4.72-analysis-navigator");
+assert.equal(pkg.version, "99.4.73");
+assert.equal(manifest.version, "99.4.73");
+assert.equal(manifest.buildId, "99.4.73-confirmed-2025-data");
+assert.equal(project.appVersion, "99.4.73");
+assert.equal(project.runtimeBuildId, "99.4.73-confirmed-2025-data");
 
 console.log("V99.4.68 Teilnehmerlogik unter V99.4.70 regressionsfrei bestätigt");

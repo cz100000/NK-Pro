@@ -51,5 +51,5 @@ for(const label of ["Nebenkosten &amp; Abrechnung","Finanzen","Steuerliche Auswe
 assert.doesNotMatch(ui,/onclick=|onchange=/i,"Neue Analyse darf keine Inline-Handler einführen");
 assert.ok(ui.includes("Cashflow derzeit nicht verfügbar")||engineText.includes("Cashflow derzeit nicht verfügbar"));
 for(const sheet of ["Übersicht","Kosten","Privatanteil","Leerstand","Berechnungsnachweise","Datenquellen"]) assert.ok(ui.includes("'"+sheet+"'")||ui.includes('"'+sheet+'"'),"Steuerexport-Blatt fehlt: "+sheet);
-assert.match(sw,/\.\/js\/analytics-engine\.js/);assert.match(sw,/\.\/js\/ui-analytics\.js/);assert.equal(project.runtimeBuildId,"99.4.72-analysis-navigator");assert.equal(project.analyticsEngineVersion,2);
+assert.match(sw,/\.\/js\/analytics-engine\.js/);assert.match(sw,/\.\/js\/ui-analytics\.js/);assert.equal(project.runtimeBuildId,"99.4.73-confirmed-2025-data");assert.equal(project.analyticsEngineVersion,2);
 console.log(`V99.4.70 Analysezentrum: ${periods.length} eindeutige Perioden, Legacy-Perioden erhalten, Read-only-, Privatanteils-, Cashflow- und Steuergrenzen bestätigt.`);

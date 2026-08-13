@@ -1,5 +1,23 @@
 # Changelog
 
+## V99.4.73 – 13.08.2026
+
+### Bestätigte Daten 2025
+- Wasserwerksrechnung, Hauswasserzählernummer und sieben Wohnungs-Wasserendstände übernommen.
+- Müllgebühren K009 auf 1.503,00 € gesetzt.
+- Techem-K006-Gesamtabrechnung und sieben konkrete Fälle strukturiert übernommen.
+- 3,88 € Techem-Sammelposition als eigener dokumentierter Vermieteranteil getrennt von Leerstand geführt.
+
+### Eingabe und Persistenz
+- Externe Heizkostenabrechnung um normale manuell editierbare Detailfelder erweitert.
+- Idempotente V99.4.73-Migration plus materialisierter Standardbestand.
+- CO₂-/HKV-Daten werden als Nachweis gespeichert; keine zusätzliche Umlage und keine Überschreibung produktiver Vorauszahlungen.
+
+### Qualität
+- Chromium/CDP 18/18, 0 Runtime-Fehler.
+- Syntax, Fixtures, Zähler-, Architektur-, Kostenabgleich- und Versionsregressionen bestanden.
+
+
 ## V99.4.71 – 13.08.2026
 
 ### Analysearchitektur

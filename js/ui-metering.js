@@ -303,6 +303,11 @@ function setWaterMeterSetting(key, value) {
   ensureWaterMeterData();
   const numericKeys = ["houseWaterTotal","houseMeterStart","houseMeterEnd"];
   state.waterMeters.settings[key] = numericKeys.includes(key) ? parseMeterNumberInput(value) : value;
+  if (key === "houseMeterNumber") {
+    if (!state.waterMeterHistory || typeof state.waterMeterHistory !== "object" || Array.isArray(state.waterMeterHistory)) state.waterMeterHistory = {};
+    if (!state.waterMeterHistory.houseConnection || typeof state.waterMeterHistory.houseConnection !== "object" || Array.isArray(state.waterMeterHistory.houseConnection)) state.waterMeterHistory.houseConnection = {};
+    state.waterMeterHistory.houseConnection.zaehlernummer = String(value == null ? "" : value);
+  }
   state.waterMeters.settings.enabled = "Ja";
   syncUmlageInputs();
   applyWaterMetersToUmlage();
@@ -633,7 +638,7 @@ function archivedWaterHistoryByUnit() {
 function renderWaterMeterHistory() {
   const hist=state.waterMeterHistory||{}; const legacyUnits=Array.isArray(hist.units)?hist.units:[]; const archived=archivedWaterHistoryByUnit();
   const unitMap=new Map(); legacyUnits.forEach(u=>unitMap.set(String(u.wohnung||""),u)); allWohnungen().forEach(w=>{ if(!unitMap.has(String(w.id||""))) unitMap.set(String(w.id||""),{wohnung:w.id,bezeichnung:w.bezeichnung||w.lage||"",readings:[],deltas:[]}); });
-  const years=new Set([2021,2022,2023,2024]); Object.values(archived).forEach(byYear=>Object.keys(byYear).forEach(y=>years.add(Number(y)))); const sorted=Array.from(years).filter(Number.isFinite).sort((a,b)=>a-b);
+  const years=new Set([2021,2022,2023,2024]); Object.values(archived).forEach(byYear=>Object.keys(byYear).forEach(y=>years.add(Number(y)))); legacyUnits.forEach(unit=>(Array.isArray(unit&&unit.readings)?unit.readings:[]).forEach(row=>years.add(Number(row&&row.jahr)))); const sorted=Array.from(years).filter(Number.isFinite).sort((a,b)=>a-b);
   const header='<thead><tr><th>Wohnung</th><th>Bezeichnung</th><th>Quelle</th>'+sorted.map(y=>'<th>Ende '+y+' KW</th><th>Ende '+y+' WW</th><th>Verbrauch '+y+'</th>').join('')+'</tr></thead>';
   const body=Array.from(unitMap.values()).map(unit=>{ const id=String(unit.wohnung||""); const cells=sorted.map(y=>{ const a=archived[id]&&archived[id][String(y)]; const legacy=meterHistoryReadingFor(unit,y); const delta=meterHistoryDeltaFor(unit,y); const r=a||legacy||{}; const consumption=a?a.verbrauch:delta.gesamt; return '<td class="readonly-cell">'+meterHistoryValue(r.kw)+'</td><td class="readonly-cell">'+meterHistoryValue(r.ww)+'</td><td class="readonly-cell">'+meterHistoryValue(consumption)+'</td>'; }).join(''); const sources=(archived[id]?"NK-Pro-Archiv ":"")+(legacyUnits.includes(unit)?"Excel-Altdaten":""); return '<tr><td>'+escapeHtml(id)+'</td><td>'+escapeHtml(unit.bezeichnung||"")+'</td><td>'+escapeHtml(sources.trim()||"–")+'</td>'+cells+'</tr>'; }).join('');
   return '<div class="table-wrap"><table id="waterMeterHistoryTable">'+header+'<tbody>'+body+'</tbody></table></div><div class="meter-history-source-note"><strong>Historie:</strong> Excel-Altdaten bleiben unverändert; jedes archivierte NK-Pro-Jahr wird automatisch über Wohnungs-ID und Abrechnungsjahr ergänzt.</div>';
@@ -708,6 +713,7 @@ function renderWaterMeters() {
   if (typeof renderOverviewForTab === "function") renderOverviewForTab("verbraeuche");
 
   settingsEl.innerHTML =
+    '<label class="house-meter-field"><span>Hauszählernummer</span><input value="' + escapeHtml(settings.houseMeterNumber || (state.waterMeterHistory && state.waterMeterHistory.houseConnection && state.waterMeterHistory.houseConnection.zaehlernummer) || "") + '" ' + uiActionAttributes("meter.setWaterSetting", ["houseMeterNumber","$value"], "change") + '></label>' +
     '<label class="house-meter-field"><span>Hauszählerstand Beginn</span><input class="number" value="' + escapeHtml(settings.houseMeterStart ?? "") + '" ' + uiActionAttributes("meter.setWaterSetting", ["houseMeterStart","$value"], "change") + '></label>' +
     '<label class="house-meter-field"><span>Ablesedatum Beginn</span><input type="date" value="' + escapeHtml(settings.houseMeterStartDate || "") + '" ' + uiActionAttributes("meter.setWaterSetting", ["houseMeterStartDate","$value"], "change") + '></label>' +
     '<label class="house-meter-field"><span>Hauszählerstand Ende</span><input class="number" value="' + escapeHtml(settings.houseMeterEnd ?? "") + '" ' + uiActionAttributes("meter.setWaterSetting", ["houseMeterEnd","$value"], "change") + '></label>' +
@@ -730,7 +736,9 @@ function renderWaterMeters() {
     houseMeterMetricHtml("Differenz Haus ↔ Wohnungen", tenantDiffText, houseVsTenant, houseVsTenant.percent === null ? houseVsTenant.label : houseVsTenant.label + " · " + houseVsTenant.percent.toLocaleString("de-DE", { maximumFractionDigits:1 }) + " %") +
     '</div>';
 
-  houseHistoryNoteEl.innerHTML = '<p class="meter-house-history-note"><strong>Hausanschluss:</strong> Wasseruhrenwechsel Hausanschluss am 13.04.2022 · Wert bei Wechsel: 1.893 · Ende 2022: 301 · Ende 2023: 615 · Ende 2024: 911</p>';
+  const houseHistory = state.waterMeterHistory && state.waterMeterHistory.houseConnection || {};
+  const houseNumber = settings.houseMeterNumber || houseHistory.zaehlernummer || "";
+  houseHistoryNoteEl.innerHTML = '<p class="meter-house-history-note"><strong>Hausanschluss' + (houseNumber ? ' · Zähler ' + escapeHtml(houseNumber) : '') + ':</strong> Wasseruhrenwechsel Hausanschluss am 13.04.2022 · Wert bei Wechsel: 1.893 · Ende 2022: 301 · Ende 2023: 615 · Ende 2024: 911' + (hasWaterSettingValue(settings.houseMeterEnd) ? ' · Ende 2025: ' + escapeHtml(settings.houseMeterEnd) : '') + '</p>';
 
   carryForwardEl.innerHTML = renderWaterMeterCarryForwardNotice();
   historyEl.innerHTML = renderWaterMeterHistory();

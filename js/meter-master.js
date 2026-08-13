@@ -97,7 +97,9 @@
     const changeDate = text(history.wechselDatum);
     const hasOld = Number.isFinite(Number(history.wertBeiWechsel));
     const hasNew = [history.wertEnde2022, history.wertEnde2023, history.wertEnde2024, history.wertEnde2025].some(value => value !== "" && value !== null && value !== undefined && Number.isFinite(Number(value)));
+    const currentMeterNumber = text(history.zaehlernummer || history.meterNumber);
     const common = {
+      zaehlernummer:"",
       meterType:"house-water-control",
       zaehlerTyp:"house-water-control",
       einheit:"m³",
@@ -122,6 +124,7 @@
       sourcePath:"waterMeterHistory.houseConnection.wertBeiWechsel"
     }));
     if (hasNew) result.push(Object.assign({}, common, {
+      zaehlernummer:currentMeterNumber,
       legacySourceKey:"house-water:new",
       canonicalId:"Z-WASSER-HAUSANSCHLUSS",
       bezeichnung:"Hauswasserzähler ab Wechsel",

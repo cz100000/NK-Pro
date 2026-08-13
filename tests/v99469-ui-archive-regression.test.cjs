@@ -21,14 +21,14 @@ const manifest = JSON.parse(read("manifest.webmanifest"));
 const project = JSON.parse(read("nk-pro-project.json"));
 const pkg = JSON.parse(read("package.json"));
 
-assert.equal(pkg.version, "99.4.72");
-assert.equal(manifest.version, "99.4.72");
-assert.equal(manifest.buildId, "99.4.72-analysis-navigator");
-assert.equal(project.appVersion, "99.4.72");
-assert.equal(project.runtimeBuildId, "99.4.72-analysis-navigator");
-assert.match(runtime, /const APP_VERSION = "V99\.4\.72"/);
-assert.match(sw, /99\.4\.72-analysis-navigator/);
-assert.match(index, /data-release="NK-Pro V99\.4\.72"/);
+assert.equal(pkg.version, "99.4.73");
+assert.equal(manifest.version, "99.4.73");
+assert.equal(manifest.buildId, "99.4.73-confirmed-2025-data");
+assert.equal(project.appVersion, "99.4.73");
+assert.equal(project.runtimeBuildId, "99.4.73-confirmed-2025-data");
+assert.match(runtime, /const APP_VERSION = "V99\.4\.73"/);
+assert.match(sw, /99\.4\.73-confirmed-2025-data/);
+assert.match(index, /data-release="NK-Pro V99\.4\.73"/);
 
 assert.match(archiveSource, /tooltip:correction \? "Archiv aktualisieren\." : "Abrechnung ins Archiv verschieben\."/);
 assert.match(archiveSource, /reopenedFromArchivePeriodId/);

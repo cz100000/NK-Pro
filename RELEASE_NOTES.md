@@ -1,5 +1,16 @@
 # Release Notes
 
+## V99.4.73 – Bestätigte 2025-Echtdaten & externe Abrechnung
+
+- Wasser 2025 dauerhaft: sieben Wohnungsendstände, Hauszähler 22-32-74-51, 911 → 1.186 m³, 275 m³, 1.642,31 €.
+- Müll 2025: K009 = 1.503,00 €.
+- Techem 2025: K006 = 9.965,97 €, sieben konkrete Abrechnungsfälle + 3,88 € separater Vermieter-Sammelanteil.
+- Techem-/HKV-/CO₂-Daten als manuell pflegbare strukturierte Nachweisdaten ergänzt.
+- Techem-Vorauszahlungen überschreiben keine NK-Pro-Vorauszahlungen.
+- Einmalige idempotente Migration für ältere 2025-Arbeitsstände; Standardbestand bereits materialisiert.
+- Datenschema 5 und Archive unverändert.
+
+
 ## V99.4.71 – Professionelles Immobilien-Analysezentrum
 
 - Drei klar getrennte Perspektiven: Nebenkosten & Abrechnung, Finanzen und Steuerliche Auswertung.

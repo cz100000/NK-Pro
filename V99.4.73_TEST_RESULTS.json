@@ -1,0 +1,134 @@
+{
+  "appVersion": "V99.4.73",
+  "buildId": "99.4.73-confirmed-2025-data",
+  "generatedAt": "2026-08-13T23:15:00+02:00",
+  "browser": {
+    "version": "V99.4.73",
+    "at": "2026-08-13T21:11:04.321Z",
+    "checks": [
+      {
+        "name": "version",
+        "ok": true,
+        "detail": "V99.4.73"
+      },
+      {
+        "name": "migration-marker",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "water-invoice",
+        "ok": true,
+        "detail": "{\"id\":\"K002\",\"kostenart\":\"Wasserversorgung\",\"bereich\":\"Wasser\",\"inNK\":\"Ja\",\"vorauszahlung\":\"Ja\",\"berechnungsart\":\"Automatisch\",\"umlageschluessel\":\"Verbrauch\",\"gesamtbetrag\":1642.31,\"preisProEinheit\":5.972,\"bemerkung\":\"Wasserwerksrechnung 2025: Hauszähler 911 → 1.186 m³, Gesamtverbrauch 275 m³, Gesamtjahresgebühren 1.642,31 €. Wohnungsendstände laut Ableseliste vom 30.12.2025.\",\"status\":\"Vollständig\",\"gesamtverbrauch\":275,\"preisProEinheitManuell\":false,\"ausschlussBehandlung\":\"Vollständig umlegen\"}"
+      },
+      {
+        "name": "house-meter-number",
+        "ok": true,
+        "detail": "[{\"id\":\"Z-WASSER-HAUSANSCHLUSS\",\"num\":\"22-32-74-51\"}]"
+      },
+      {
+        "name": "seven-apartment-water-readings",
+        "ok": true,
+        "detail": "{\"W000.UG\":{\"jahr\":2025,\"kw\":564.4,\"ww\":312.42,\"gesamt\":876.82,\"datum\":\"2025-12-30\",\"quelle\":\"Wasserablesung 2025\"},\"W001.EG-L\":{\"jahr\":2025,\"kw\":297.74,\"ww\":119.28,\"gesamt\":417.02,\"datum\":\"2025-12-30\",\"quelle\":\"Wasserablesung 2025\"},\"W002.EG-R\":{\"jahr\":2025,\"kw\":128.06,\"ww\":29.66,\"gesamt\":157.72,\"datum\":\"2025-12-30\",\"quelle\":\"Wasserablesung 2025\"},\"W003.1OG-L\":{\"jahr\":2025,\"kw\":178.34,\"ww\":63.32,\"gesamt\":241.66,\"datum\":\"2025-12-30\",\"quelle\":\"Wasserablesung 2025\"},\"W004.1OG-R\":{\"jahr\":2025,\"kw\":231.28,\"ww\":282.68,\"gesamt\":513.96,\"datum\":\"2025-12-30\",\"quelle\":\"Wasserablesung 2025\"},\"W005.DG-L\":{\"jahr\":2025,\"kw\":123.55,\"ww\":143.58,\"gesamt\":267.13,\"datum\":\"2025-12-30\",\"quelle\":\"Wasserablesung 2025\"},\"W006.DG-R\":{\"jahr\":2025,\"kw\":137.01,\"ww\":110.99,\"gesamt\":248,\"datum\":\"2025-12-30\",\"quelle\":\"Wasserablesung 2025\"}}"
+      },
+      {
+        "name": "waste-2025",
+        "ok": true,
+        "detail": "1503"
+      },
+      {
+        "name": "techem-total",
+        "ok": true,
+        "detail": "9962.09 + 3.88"
+      },
+      {
+        "name": "techem-co2-evidence",
+        "ok": true,
+        "detail": "{\"total\":712.98,\"owner\":356.49,\"tenant\":356.49}"
+      },
+      {
+        "name": "techem-owner-share-separated",
+        "ok": true,
+        "detail": "{\"ownerShare\":1067.449999999999,\"vacancyShare\":1063.57,\"externalOwnerShare\":3.88,\"documentedOwnerShare\":1067.45,\"unexplained\":-1.1368683772161603e-12,\"totals\":{\"totalCosts\":13111.279999999999,\"allTenantShare\":11921.279795726028,\"billableShare\":11921.279795726026,\"privateShare\":3669.2112892054793,\"ownerShare\":1190.0002042739711,\"documentedOwnerShare\":1067.45,\"vacancyShare\":1063.57,\"prepayments\":6285,\"corrections\":0,\"rentCorrections\":0,\"unitTotal\":1503,\"balance\":5636.279795726026,\"allocatedCheck\":13111.279999999999,\"allocationDelta\":0,\"prepaymentMatrixTotal\":6285}}"
+      },
+      {
+        "name": "techem-cases",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "manual-summary-fields",
+        "ok": true,
+        "detail": "{\"provider\":\"Techem Energy Services GmbH\",\"billingUnitNumber\":\"0102/00488\",\"customerNumber\":\"00501933\",\"statementDate\":\"2026-07-07\",\"periodStart\":\"2025-01-01\",\"periodEnd\":\"2025-12-31\",\"totalCost\":\"9965,97\",\"heatingCost\":\"8106,24\",\"warmWaterCost\":\"1859,73\",\"hkvUnits\":\"43957\",\"co2Total\":\"712,98\",\"co2TenantShare\":\"356,49\",\"co2OwnerShare\":\"356,49\",\"includedOwnerShare\":\"3,88\",\"includedOwnerShareLabel\":\"Techem-Sammelposition „Für NE 2–7“\",\"source\":\"Techem Gesamtabrechnung 2025\",\"note\":\"Die Sammelposition 3,88 € wird vollständig vom Vermieter getragen. Der CO₂-Vermieteranteil 356,49 € liegt außerhalb der zu verteilenden 9.965,97 € und darf nicht erneut auf Teilnehmer umgelegt werden.\"}"
+      },
+      {
+        "name": "owner-common-position-visible",
+        "ok": true,
+        "detail": "Gesamtkosten laut „Gesamtkosten“9.965,97 €Summe Einzelwerte9.962,09 €Dokumentierter Vermieteranteil3,88 €Differenz-0,00 €StatusStimmt überein"
+      },
+      {
+        "name": "techem-row-meta",
+        "ok": true,
+        "detail": "\n\n\n\nNebenkosten abrechnen\nIndividuelle Werte\nDie sichtbaren Erfassungsbereiche werden ausschließlich aus den aktiven Kostenarten und Umlageschlüsseln unter „Gesamtkosten“ abgeleitet.\n\n\n\n\nSteuerung über Gesamtkosten„Verbrauch“ erzeugt einen Zählerbereich, manuelle Umlageschlüssel erzeugen Einzelwertbereiche. Automatische Schlüssel wie Wohnfläche, Personen, Miettage oder Einheiten benötigen hier keine Eingabe.\n\nVerbrauchsbereiche114 zugeordnete ZählerErfasste Zähler11 von 14Offene Endstände vorhan"
+      },
+      {
+        "name": "manual-case-fields",
+        "ok": true,
+        "detail": "{\"open\":true,\"vals\":{\"externalUserId\":\"0002/0-18\",\"providerLocation\":\"EGL\",\"heatingCost\":\"1956,3\",\"heatingBaseCost\":\"387,74\",\"heatingConsumptionCost\":\"1568,56\",\"warmWaterCost\":\"296,51\",\"hkvUnits\":\"12151\",\"co2TenantShare\":\"80,41\",\"co2OwnerShare\":\"80,41\",\"externalPrepayment\":\"1221\"},\"title\":\"Techem-Einzelabrechnung\"}"
+      },
+      {
+        "name": "manual-case-edit-persists",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "water-ui-2025",
+        "ok": true,
+        "detail": "[564.4,312.42,297.74,119.28,128.06,29.66,178.34,63.32,231.28,282.68,123.55,143.58,137.01,110.99]"
+      },
+      {
+        "name": "normalization-idempotent",
+        "ok": true,
+        "detail": ""
+      },
+      {
+        "name": "runtime-errors",
+        "ok": true,
+        "detail": ""
+      }
+    ],
+    "errors": [],
+    "passed": true
+  },
+  "static": {
+    "syntax": {
+      "passed": true,
+      "javascriptUnits": 63
+    },
+    "fixtures": {
+      "passed": true,
+      "cases": 6
+    },
+    "metering": {
+      "passed": true
+    },
+    "architecture": {
+      "passed": true
+    },
+    "releaseContracts": {
+      "passed": true
+    },
+    "costReconciliationDomain": {
+      "passed": true
+    },
+    "v99473ConfirmedData": {
+      "passed": true
+    },
+    "versionRegressions": {
+      "passed": true,
+      "from": "V99.4.67",
+      "through": "V99.4.73"
+    }
+  },
+  "note": "Kombinierter release:check:v99473 wurde in der Umgebung beim erneuten Browserstart durch das externe 120-Sekunden-Limit beendet; der identische V99.4.73-Browsertest wurde separat vollständig ausgeführt und bestand."
+}

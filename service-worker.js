@@ -1,5 +1,5 @@
-const CACHE_NAME = "nk-pro-v99-4-72-analysis-navigator";
-const BUILD_ID = "99.4.72-analysis-navigator";
+const CACHE_NAME = "nk-pro-v99-4-73-confirmed-2025-data";
+const BUILD_ID = "99.4.73-confirmed-2025-data";
 const CACHE_PREFIX = "nk-pro-";
 const APP_SHELL = [
   "./",
@@ -58,6 +58,7 @@ const APP_SHELL = [
   "./js/default-seed.js",
   "./js/runtime-diagnostics.js",
   "./js/app-runtime-config.js",
+  "./js/v99473-confirmed-2025-data.js",
   "./js/app-state-persistence.js",
   "./js/ui-master-data.js",
   "./js/ui-quality.js",

@@ -188,16 +188,65 @@
     return '<input class="individual-values-note-input" value="' + esc(value) + '" data-individual-manual-input data-cost-id="' + esc(summary.cost.id) + '" data-case-key="' + esc(row.caseKey) + '" data-field="note" aria-label="Quelle oder Bemerkung ' + esc(row.caseRow.unitLabel || row.caseRow.unitId) + '"' + (isReadOnly() ? " disabled" : "") + '>';
   }
 
+  function externalSummaryRecord(costId) {
+    const input = state.umlageInputs && state.umlageInputs[costId];
+    const raw = input && input.externalBilling;
+    return raw && typeof raw === "object" && !Array.isArray(raw) ? raw : {};
+  }
+  function externalField(summary, field, label, type = "number", options = {}) {
+    const record = externalSummaryRecord(summary.cost.id);
+    const raw = record[field];
+    const value = type === "number" ? displayInput(raw) : String(raw == null ? "" : raw);
+    const numeric = type === "number" ? ' inputmode="decimal"' : '';
+    const inputType = type === "date" ? ' type="date"' : '';
+    const cls = options.wide ? ' is-wide' : '';
+    return '<label class="individual-values-external-field' + cls + '"><span>' + esc(label) + '</span><input' + inputType + numeric + ' value="' + esc(value) + '" data-individual-external-summary-input data-cost-id="' + esc(summary.cost.id) + '" data-field="' + esc(field) + '" data-field-type="' + esc(type) + '"' + (isReadOnly() ? ' disabled' : '') + '></label>';
+  }
+  function externalSummaryEditor(summary) {
+    if (summary.cost.id !== "K006") return "";
+    const ext = externalSummaryRecord(summary.cost.id);
+    const source = ext.source || "Externe Heizkostenabrechnung";
+    return '<details class="individual-values-external-editor" open><summary><span><strong>Externe Abrechnung / Techem</strong><small>Strukturierte Quelldaten – auch künftig vollständig manuell pflegbar.</small></span><span class="individual-values-external-source">' + esc(source) + '</span></summary>' +
+      '<div class="individual-values-external-grid">' +
+        externalField(summary,"provider","Anbieter","text") +
+        externalField(summary,"billingUnitNumber","Abrechnungseinheiten-Nr.","text") +
+        externalField(summary,"customerNumber","Kunden-Nr.","text") +
+        externalField(summary,"statementDate","Abrechnungsdatum","date") +
+        externalField(summary,"periodStart","Zeitraum von","date") +
+        externalField(summary,"periodEnd","Zeitraum bis","date") +
+        externalField(summary,"totalCost","Zu verteilende Gesamtkosten") +
+        externalField(summary,"heatingCost","Heizkosten gesamt") +
+        externalField(summary,"warmWaterCost","Warmwasserkosten gesamt") +
+        externalField(summary,"hkvUnits","HKV-Einheiten gesamt") +
+        externalField(summary,"co2Total","CO₂-Kosten gesamt") +
+        externalField(summary,"co2TenantShare","CO₂-Anteil Mieter") +
+        externalField(summary,"co2OwnerShare","CO₂-Anteil Vermieter") +
+        externalField(summary,"includedOwnerShare","Vermieteranteil innerhalb der Techem-Gesamtkosten") +
+        externalField(summary,"includedOwnerShareLabel","Bezeichnung Vermieteranteil","text",{wide:true}) +
+        externalField(summary,"source","Quelle","text",{wide:true}) +
+        externalField(summary,"note","Bemerkung / fachliche Einordnung","text",{wide:true}) +
+      '</div></details>';
+  }
+  function externalCaseMeta(summary,row) {
+    if (summary.cost.id !== "K006") return "";
+    const record = manualRecord(summary.cost.id,row.caseKey);
+    const parts=[];
+    if (record.externalUserId) parts.push("Techem " + record.externalUserId);
+    if (Number.isFinite(Number(record.hkvUnits))) parts.push(formatNumber(record.hkvUnits,0) + " HKV-Einh.");
+    return parts.length ? '<small class="individual-values-external-row-meta">' + esc(parts.join(" · ")) + '</small>' : "";
+  }
+
   function manualSection(summary) {
     const selected = filters.get(summary.cost.id) || "all";
     const visibleRows = summary.rows.filter(row => selected === "all" || row.status === selected);
     const body = visibleRows.map(row => {
       const c = row.caseRow;
-      return '<tr data-individual-row-status="' + esc(row.status) + '" data-manual-row="' + esc(row.caseKey) + '"><td class="individual-values-case-cell"><strong>' + esc(c.unitLabel || c.unitId) + '</strong><span>' + esc(c.label) + '</span>' + roleBadge(c.role) + '<small>' + esc(formatDate(c.start) + " – " + formatDate(c.end)) + '</small></td><td><strong>' + esc(roleLabel(c.role)) + '</strong><small>' + esc(c.tenantName || c.label) + '</small></td><td>' + manualInput(summary,row,"amount") + '</td><td>' + manualInput(summary,row,"note") + '</td><td>' + statusPill(row.status) + '</td><td class="individual-values-actions-cell"><button type="button" class="individual-values-icon-button" data-individual-special data-kind="manual" data-cost-id="' + esc(summary.cost.id) + '" data-row-id="' + esc(row.caseKey) + '" aria-label="Sonderfall für Abrechnungsfall bearbeiten" title="Sonderfall bearbeiten"' + (isReadOnly() ? " disabled" : "") + '><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5M12 17h.01"></path><path d="M10.3 3.7 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.7a2 2 0 0 0-3.4 0Z"></path></svg></button></td></tr>';
+      return '<tr data-individual-row-status="' + esc(row.status) + '" data-manual-row="' + esc(row.caseKey) + '"><td class="individual-values-case-cell"><strong>' + esc(c.unitLabel || c.unitId) + '</strong><span>' + esc(c.label) + '</span>' + roleBadge(c.role) + '<small>' + esc(formatDate(c.start) + " – " + formatDate(c.end)) + '</small></td><td><strong>' + esc(roleLabel(c.role)) + '</strong><small>' + esc(c.tenantName || c.label) + '</small></td><td>' + manualInput(summary,row,"amount") + externalCaseMeta(summary,row) + '</td><td>' + manualInput(summary,row,"note") + '</td><td>' + statusPill(row.status) + '</td><td class="individual-values-actions-cell"><button type="button" class="individual-values-icon-button" data-individual-special data-kind="manual" data-cost-id="' + esc(summary.cost.id) + '" data-row-id="' + esc(row.caseKey) + '" aria-label="' + esc(summary.cost.id === "K006" ? "Techem-Details bearbeiten" : "Sonderfall für Abrechnungsfall bearbeiten") + '" title="' + esc(summary.cost.id === "K006" ? "Techem-Details bearbeiten" : "Sonderfall bearbeiten") + '"' + (isReadOnly() ? " disabled" : "") + '><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5M12 17h.01"></path><path d="M10.3 3.7 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.7a2 2 0 0 0-3.4 0Z"></path></svg></button></td></tr>';
     }).join("") || '<tr><td colspan="6"><div class="individual-values-table-empty"><strong>Keine passenden Abrechnungsfälle</strong><span>Prüfe den Statusfilter.</span></div></td></tr>';
     return '<section class="individual-values-card" data-individual-section="manual" data-cost-id="' + esc(summary.cost.id) + '"><header class="individual-values-card__header"><div class="individual-values-card__title"><span class="individual-values-section-icon is-manual" aria-hidden="true">' + iconSvg("manual") + '</span><div><p class="individual-values-card__eyebrow">Manuell zuzuordnende Kostenart</p><h2>' + esc(summary.cost.kostenart) + '</h2><p>Umlageschlüssel: ' + esc(summary.cost.umlageschluessel) + '</p></div></div><div class="individual-values-card__tools">' + filterControl(summary.cost.id) + '<span class="individual-values-status is-' + esc(summary.status) + '">' + esc(statusText(summary.status)) + '</span></div></header>' +
+      externalSummaryEditor(summary) +
       '<div class="individual-values-table-wrap" tabindex="0" aria-label="Tabelle manueller Einzelwerte horizontal verschiebbar"><table class="individual-values-table individual-values-manual-table"><thead><tr><th>Wohnung / Abrechnungsfall</th><th>Rolle / Empfänger</th><th>Einzelbetrag / individueller Wert</th><th>Quelle / Bemerkung</th><th>Status</th><th>Sonderfallaktion</th></tr></thead><tbody>' + body + '</tbody></table></div>' +
-      '<div class="individual-values-control is-' + esc(summary.status) + '"><div><span>Gesamtkosten laut „Gesamtkosten“</span><strong>' + formatMoney(summary.expected) + '</strong></div><div><span>Summe der erfassten Einzelwerte</span><strong>' + formatMoney(summary.actual) + '</strong></div><div><span>Differenz</span><strong>' + formatMoney(summary.difference) + '</strong></div><div><span>Status</span><strong>' + esc(statusText(summary.status)) + '</strong></div></div>' +
+      '<div class="individual-values-control is-' + esc(summary.status) + '"><div><span>Gesamtkosten laut „Gesamtkosten“</span><strong>' + formatMoney(summary.expected) + '</strong></div><div><span>Summe Einzelwerte</span><strong>' + formatMoney(summary.actual) + '</strong></div>' + (summary.includedOwnerShare ? '<div><span>Dokumentierter Vermieteranteil</span><strong>' + formatMoney(summary.includedOwnerShare) + '</strong></div>' : '') + '<div><span>Differenz</span><strong>' + formatMoney(summary.difference) + '</strong></div><div><span>Status</span><strong>' + esc(statusText(summary.status)) + '</strong></div></div>' +
       '<footer class="individual-values-card__footer"><span>' + summary.rows.length + ' reguläre Abrechnungsfälle</span><button type="button" class="primary" data-individual-save-section="manual" data-cost-id="' + esc(summary.cost.id) + '"' + (isReadOnly() ? " disabled" : "") + '>Bereich speichern</button></footer></section>';
   }
 
@@ -308,6 +357,21 @@
     return true;
   }
 
+  function applyExternalSummaryInput(element) {
+    const costId = element.dataset.costId;
+    const field = element.dataset.field;
+    const fieldType = element.dataset.fieldType || "text";
+    const input = ensureManualInput(costId);
+    if (!input.externalBilling || typeof input.externalBilling !== "object" || Array.isArray(input.externalBilling)) input.externalBilling = {};
+    if (fieldType === "number") {
+      const parsed = parseLocaleNumber(element.value);
+      if (!parsed.ok) return false;
+      input.externalBilling[field] = parsed.empty ? "" : parsed.value;
+    } else input.externalBilling[field] = element.value;
+    markDirty();
+    return true;
+  }
+
   function applyElement(element) {
     if (element.matches("[data-individual-meter-input]")) return applyMeterInput(element);
     if (element.matches("[data-individual-manual-input]")) return applyManualInput(element);
@@ -341,7 +405,7 @@
     }
     const current = state.umlageInputs && state.umlageInputs[costId] || {};
     const saved = stored.data.umlageInputs && stored.data.umlageInputs[costId] || {};
-    return JSON.stringify(current.caseValues || {}) === JSON.stringify(saved.caseValues || {}) && JSON.stringify(current.values || []) === JSON.stringify(saved.values || []);
+    return JSON.stringify(current.caseValues || {}) === JSON.stringify(saved.caseValues || {}) && JSON.stringify(current.values || []) === JSON.stringify(saved.values || []) && JSON.stringify(current.externalBilling || {}) === JSON.stringify(saved.externalBilling || {});
   }
 
   function saveSection(kind,costId,button) {
@@ -397,6 +461,8 @@
       title.textContent = "Zähler-Sonderfall";
       context.textContent = [meter.zaehlernummer || selectedSpecial.rowId, meter.einheitId || ""].filter(Boolean).join(" · ");
       note.value = String(meter.bemerkung || "");
+      const externalPanel = dialog.querySelector("[data-individual-external-case-panel]");
+      if (externalPanel) externalPanel.hidden = true;
       if (overridePanel) overridePanel.hidden = !transfer;
       if (overrideCheckbox) { overrideCheckbox.checked = overridden; overrideCheckbox.disabled = overridden; }
       if (overrideHelp) overrideHelp.textContent = overridden
@@ -404,9 +470,19 @@
         : "Die Freigabe ist bewusst zu bestätigen. Danach kann der Anfangsstand geändert und mit dem Bereich gespeichert werden.";
     } else {
       const caseRow = calc().individualValueCases(state).find(row => row.caseKey === selectedSpecial.rowId) || {};
-      title.textContent = "Abrechnungsfall-Sonderfall";
+      const record = manualRecord(selectedSpecial.costId,selectedSpecial.rowId);
+      const externalPanel = dialog.querySelector("[data-individual-external-case-panel]");
+      const isExternalHeating = selectedSpecial.costId === "K006";
+      title.textContent = isExternalHeating ? "Techem-Einzelabrechnung" : "Abrechnungsfall-Sonderfall";
       context.textContent = [caseRow.unitLabel || caseRow.unitId,caseRow.label].filter(Boolean).join(" · ");
-      note.value = String(manualRecord(selectedSpecial.costId,selectedSpecial.rowId).note || "");
+      note.value = String(record.note || "");
+      if (externalPanel) externalPanel.hidden = !isExternalHeating;
+      if (isExternalHeating) dialog.querySelectorAll("[data-individual-external-case-field]").forEach(input => {
+        const field = input.dataset.individualExternalCaseField;
+        const raw = record[field];
+        input.value = input.dataset.fieldType === "number" ? displayInput(raw) : String(raw == null ? "" : raw);
+        input.disabled = isReadOnly();
+      });
       if (overridePanel) overridePanel.hidden = true;
       if (overrideCheckbox) { overrideCheckbox.checked = false; overrideCheckbox.disabled = false; }
     }
@@ -422,7 +498,18 @@
     } else {
       const input = ensureManualInput(selectedSpecial.costId);
       const existing = input.caseValues[selectedSpecial.rowId] && typeof input.caseValues[selectedSpecial.rowId] === "object" ? input.caseValues[selectedSpecial.rowId] : {};
-      input.caseValues[selectedSpecial.rowId] = { ...existing, amount:Object.prototype.hasOwnProperty.call(existing,"amount") ? existing.amount : "", value:Object.prototype.hasOwnProperty.call(existing,"value") ? existing.value : "", note, source:existing.source || "manual", updatedAt:new Date().toISOString() };
+      const next = { ...existing, amount:Object.prototype.hasOwnProperty.call(existing,"amount") ? existing.amount : "", value:Object.prototype.hasOwnProperty.call(existing,"value") ? existing.value : "", note, source:existing.source || "manual", updatedAt:new Date().toISOString() };
+      if (selectedSpecial.costId === "K006") {
+        document.querySelectorAll("#individualSpecialDialog [data-individual-external-case-field]").forEach(fieldInput => {
+          const field = fieldInput.dataset.individualExternalCaseField;
+          if (fieldInput.dataset.fieldType === "number") {
+            const parsed = parseLocaleNumber(fieldInput.value);
+            if (parsed.ok) next[field] = parsed.empty ? "" : parsed.value;
+          } else next[field] = fieldInput.value;
+        });
+        next.provider = next.provider || externalSummaryRecord("K006").provider || "Techem Energy Services GmbH";
+      }
+      input.caseValues[selectedSpecial.rowId] = next;
       draftText.set(fieldKey("manual",selectedSpecial.costId,selectedSpecial.rowId,"note"),note);
       markDirty();
     }
@@ -469,8 +556,9 @@
     if (bound) return;
     bound = true;
     document.addEventListener("input", event => {
-      const element = event.target.closest && event.target.closest("#manuellewerte [data-individual-meter-input], #manuellewerte [data-individual-manual-input]");
+      const element = event.target.closest && event.target.closest("#manuellewerte [data-individual-meter-input], #manuellewerte [data-individual-manual-input], #manuellewerte [data-individual-external-summary-input]");
       if (!element) return;
+      if (element.matches("[data-individual-external-summary-input]")) { markDirty(); return; }
       const kind = element.matches("[data-individual-meter-input]") ? "meter" : "manual";
       const key = kind === "meter" ? fieldKey("meter",element.dataset.costId,element.dataset.meterId,element.dataset.field) : fieldKey("manual",element.dataset.costId,element.dataset.caseKey,element.dataset.field);
       draftText.set(key,element.value);
@@ -479,6 +567,8 @@
     document.addEventListener("change", event => {
       const element = event.target.closest && event.target.closest("#manuellewerte [data-individual-meter-input], #manuellewerte [data-individual-manual-input]");
       if (element) { applyElement(element); render(); return; }
+      const external = event.target.closest && event.target.closest("#manuellewerte [data-individual-external-summary-input]");
+      if (external) { applyExternalSummaryInput(external); render(); return; }
       const filter = event.target.closest && event.target.closest("#manuellewerte [data-individual-filter]");
       if (filter) { filters.set(filter.dataset.individualFilter,filter.value); render(); }
     });

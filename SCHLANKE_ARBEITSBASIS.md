@@ -1,9 +1,7 @@
-# Schlanke Arbeitsbasis V99.4.71
+# Schlanke Arbeitsbasis V99.4.73
 
-Die schlanke Arbeitsbasis V99.4.71 enthält die vollständige lauffähige Offline-PWA, Laufzeitmodule, Assets, Testdaten/Fixtures, automatisierte statische und fachliche Regressionstests, den dependency-freien Chromium/CDP-Browsertest sowie die aktuelle V99.4.71-Projekt- und Analysedokumentation.
+Die schlanke Arbeitsbasis V99.4.73 enthält die vollständige lauffähige Offline-PWA, Laufzeitmodule, Assets, Testdaten/Fixtures, automatisierte statische und fachliche Regressionstests sowie den dependency-freien Chromium/CDP-Browsertest.
 
-Technische Ausgangsbasis war ausschließlich V99.4.70 Korrektur 2. Datenschema 5 bleibt unverändert. Die Analyseengine arbeitet read-only auf dem bestehenden kanonischen Arbeits-/Archivbestand; es gibt keine zweite Analyse-Datenbank. Produktive Abrechnungs-, Archiv-, Teilnehmer-, Zähler-, Persistenz-, Dokument- und Backup/Restore-Logiken bleiben geschützt.
+V99.4.73 basiert auf V99.4.72. Datenschema 5 bleibt unverändert. Die bestätigten 2025-Werte sind im Standardbestand enthalten und werden bei älteren 2025-Arbeitsständen zusätzlich durch die idempotente Migration `confirmed-2025-operating-data-v99.4.73` übernommen. Finalisierte Archive werden von dieser Migration nicht verändert.
 
-Für den vollständigen V99.4.71-Echtdatenlauf wird der verbindliche Gesamtbestand extern über `NKPRO_REAL_DATA` angegeben; Echtdaten werden nicht in die schlanke Arbeitsbasis eingebettet. Beispiel: `NKPRO_REAL_DATA=/pfad/zum/gesamtbestand.json npm run release:check:v99471`.
-
-Das separat erzeugte schlanke ZIP lässt die Vorher-/Nachher-Screenshotdateien weg; die vollständigen visuellen Nachweise befinden sich im Dokumentationspaket. Die bestehende historische Ausschlussliste `SLIM_PACKAGE_REMOVED_FILES.txt` bleibt als Herkunftsnachweis der übernommenen schlanken Basis erhalten.
+Die schlanke ZIP lässt Screenshot-Nachweise weg. Die V99.4.73-Screenshots und Berichte befinden sich separat im Dokumentationspaket.

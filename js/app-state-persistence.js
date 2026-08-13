@@ -946,6 +946,13 @@ function normalizeLegacyData(data, options = {}) {
   }
   ensureUnifiedBillingFields(data, { includeArchives:false });
   migrateDataSchema(data, { includeArchives:false });
+  if (!snapshotMode && globalThis.NKProConfirmed2025Data && typeof globalThis.NKProConfirmed2025Data.apply === "function") {
+    globalThis.NKProConfirmed2025Data.apply(data, { appVersion:typeof APP_VERSION === "string" ? APP_VERSION : "V99.4.73" });
+    if (Array.isArray(data.kostenarten)) data.kostenarten.forEach(row => {
+      NK_PRO_MODULES.costActions.normalizeCostSettings(row);
+      row.status = NK_PRO_MODULES.costActions.kostenStatus(row);
+    });
+  }
   if (!snapshotMode) NK_PRO_MODULES.masterDataActions.ensureStammdatenData(data);
   if (!data.objektStandard || typeof data.objektStandard !== "object") normalizeObjectStandard(data, { legacySnapshot:snapshotMode });
   const meteringMigration = migrateMeteringData(data, { legacySnapshot:snapshotMode });

@@ -51,10 +51,10 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.72";
-const APP_VERSION_NAME = "Analyse-Navigator & Detailarchitektur";
+const APP_VERSION = "V99.4.73";
+const APP_VERSION_NAME = "Bestätigte 2025-Echtdaten & externe Abrechnung";
 const APP_RELEASE_DATE = "2026-08-13";
-if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – Analyse-Navigator & Detailarchitektur";
+if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – Bestätigte 2025-Echtdaten & externe Abrechnung";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
 const ARCHIVE_SNAPSHOT_SCOPE = "billingSnapshot";
@@ -121,6 +121,7 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
+  "V99.4.73 übernimmt die bestätigten Echtdaten der Abrechnung 2025 dauerhaft in den kanonischen Datenbestand: Wohnungs-Wasserendstände, Wasserwerksrechnung einschließlich Hauswasserzählernummer, Müllgebühren sowie die strukturierte Techem-Heiz-/Warmwasserabrechnung. Externe Techem-Quelldaten sind künftig als normale manuell pflegbare Felder verfügbar; die 3,88-EUR-Sammelposition bleibt Vermieteranteil und CO₂-Nachweisdaten werden nicht erneut auf Teilnehmer umgelegt. Datenschema 5, Archive und bestehende Fachlogik bleiben erhalten.",
   "V99.4.72 ersetzt die bisherigen Detail-Buttonreihen im gesamten Analysezentrum durch einen gruppierten Analyse-Navigator, bündelt Analysefragen als Schnellanalyse-Menü und führt für Desktop, Tablet und Smartphone eine gemeinsame responsive Detailarchitektur ein. Fachberechnung, Vergleichbarkeit, Archive, Datenschema und read-only Analyseprinzip bleiben unverändert.",
   "V99.4.71 baut das Analysezentrum zu einer zentralen read-only Fachanalyse mit kennzahlenbezogener Vergleichbarkeit, klar getrennten Perspektiven für Nebenkosten, Finanzen und steuerliche Auswertung, tiefem Wasser-/Zähler-Drill-down, kompakter Informationshierarchie und einheitlichen Exporten aus.",
   "V99.4.70 Korrektur 2 entkoppelt Analysezentrum, Kosten- und Umlagenabgleich und Regelinventar vom geöffneten Abrechnungskontext, vereinheitlicht die Seitenklassifikation und stellt für Mehrjahresauswertungen auch nach Archivierung sowie aus Archivansichten den vollständigen kanonischen Datenbestand bereit. Fachberechnung, Archive und Datenschema 5 bleiben unverändert.",

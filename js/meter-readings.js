@@ -152,7 +152,7 @@
             zaehlerId:meter.meterId,
             sourceKey:["history-water", meter.meterId, year, role].join(":"),
             sourcePath:"waterMeterHistory.units[" + unitIndex + "].readings[jahr=" + (role === "start" ? year - 1 : year) + "]." + config.field,
-            ablesedatum:String(role === "start" ? year - 1 : year) + "-12-31",
+            ablesedatum:text(sourceRow && (sourceRow.datum || sourceRow.ablesedatum)) || (String(role === "start" ? year - 1 : year) + "-12-31"),
             messzeitraumVon:String(year) + "-01-01",
             messzeitraumBis:String(year) + "-12-31",
             wert:Number(value),
