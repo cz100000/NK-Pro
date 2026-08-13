@@ -20,14 +20,14 @@ const pkg=JSON.parse(read("package.json"));
 const project=JSON.parse(read("nk-pro-project.json"));
 const manifest=JSON.parse(read("manifest.webmanifest"));
 
-assert.strictEqual(pkg.version,"99.4.69");
-assert.strictEqual(project.appVersion,"99.4.69");
+assert.strictEqual(pkg.version,"99.4.70");
+assert.strictEqual(project.appVersion,"99.4.70");
 assert.strictEqual(project.schemaVersion,5,"Datenschema muss 5 bleiben");
-assert.strictEqual(project.basedOn,"99.4.68-private-participants");
-assert.match(manifest.name,/V99\.4\.69/);
-assert.strictEqual(manifest.buildId,"99.4.69-ui-archive-consistency");
-assert.match(runtime,/APP_VERSION\s*=\s*"V99\.4\.69"/);
-assert.match(serviceWorker,/99\.4\.69-ui-archive-consistency/);
+assert.strictEqual(project.basedOn,"99.4.69-ui-archive-consistency");
+assert.match(manifest.name,/V99\.4\.70/);
+assert.strictEqual(manifest.buildId,"99.4.70-analysis-center");
+assert.match(runtime,/APP_VERSION\s*=\s*"V99\.4\.70"/);
+assert.match(serviceWorker,/99\.4\.70-analysis-center/);
 assert.match(serviceWorker,/quality-system-k4\.js/);
 assert.match(serviceWorker,/ui-quality-k4\.js/);
 

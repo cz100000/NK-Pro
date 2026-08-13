@@ -124,8 +124,8 @@
     "items": [
       {
         "tab": "auswertungen",
-        "label": "Auswertungen",
-        "ariaLabel": "Auswertungen",
+        "label": "Analysezentrum",
+        "ariaLabel": "Mehrjahres-Analysezentrum",
         "requiresBilling": true,
         "icon": '<span aria-hidden="true" class="nav-item-icon"><svg aria-hidden="true" class="nav-icon-svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path><path d="m4 8 6-5 6 7 5-4"></path></svg></span>'
       },

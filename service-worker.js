@@ -1,5 +1,5 @@
-const CACHE_NAME = "nk-pro-v99-4-69-ui-archive-consistency";
-const BUILD_ID = "99.4.69-ui-archive-consistency";
+const CACHE_NAME = "nk-pro-v99-4-70-analysis-center";
+const BUILD_ID = "99.4.70-analysis-center";
 const CACHE_PREFIX = "nk-pro-";
 const APP_SHELL = [
   "./",
@@ -43,6 +43,8 @@ const APP_SHELL = [
   "./js/billing-calculation.js",
   "./js/billing-review.js",
   "./js/cost-reconciliation.js",
+  "./js/analytics-engine.js",
+  "./js/analytics-engine.js?v=" + BUILD_ID,
   "./js/cost-reconciliation.js?v=" + BUILD_ID,
   "./js/quality-system-k4.js?v=" + BUILD_ID,
   "./js/document-data.js",
@@ -72,6 +74,8 @@ const APP_SHELL = [
   "./js/ui-billing-allocation.js?v=" + BUILD_ID,
   "./js/ui-individual-values.js",
   "./js/ui-documents.js",
+  "./js/ui-analytics.js",
+  "./js/ui-analytics.js?v=" + BUILD_ID,
   "./js/ui-table-actions.js",
   "./js/ui-diagnostics.js",
   "./js/ui-page-controller.js",

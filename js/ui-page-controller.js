@@ -122,7 +122,7 @@ const TAB_DEFINITIONS = {
   vorauszahlungsanpassung:{title:"Vorauszahlungen anpassen",kicker:"Nebenkosten abrechnen",firstSection:"prepaymentRulesSection",nextTab:"qualitaet",renderContent:()=>renderPrepaymentAdjustment()},
   qualitaet:{title:"Prüfen und abschließen",kicker:"Nebenkosten abrechnen",firstSection:null,nextTab:"briefe",renderContent:()=>renderQuality()},
   briefe:{title:"Abrechnungsbriefe erstellen",kicker:"Nebenkosten abrechnen",firstSection:"lettersEditorSection",nextTab:"export",renderContent:()=>renderBrief()},
-  auswertungen:{title:"Auswertungen",kicker:"Analyse",firstSection:null,nextTab:"kostenumlagenabgleich",renderContent:()=>renderAnalyticsOverview()},
+  auswertungen:{title:"Mehrjahres-Analysezentrum",kicker:"Analyse",firstSection:null,nextTab:"kostenumlagenabgleich",renderContent:()=>renderAnalyticsCenter()},
   kostenumlagenabgleich:{title:"Kosten- und Umlagenabgleich",kicker:"Analyse",firstSection:null,nextTab:"regelinventar",renderContent:()=>renderCostReconciliation()},
   regelinventar:{title:"Regelinventar",kicker:"Analyse",firstSection:null,nextTab:"archiv",renderContent:()=>renderRuleInventory()},
   export:{title:"Abrechnung exportieren",kicker:"Sicherung",firstSection:"exportActionsSection",nextTab:"qualitaet",renderContent:null}

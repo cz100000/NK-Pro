@@ -21,14 +21,14 @@ const manifest = JSON.parse(read("manifest.webmanifest"));
 const project = JSON.parse(read("nk-pro-project.json"));
 const pkg = JSON.parse(read("package.json"));
 
-assert.equal(pkg.version, "99.4.69");
-assert.equal(manifest.version, "99.4.69");
-assert.equal(manifest.buildId, "99.4.69-ui-archive-consistency");
-assert.equal(project.appVersion, "99.4.69");
-assert.equal(project.runtimeBuildId, "99.4.69-ui-archive-consistency");
-assert.match(runtime, /const APP_VERSION = "V99\.4\.69"/);
-assert.match(sw, /99\.4\.69-ui-archive-consistency/);
-assert.match(index, /data-release="NK-Pro V99\.4\.69"/);
+assert.equal(pkg.version, "99.4.70");
+assert.equal(manifest.version, "99.4.70");
+assert.equal(manifest.buildId, "99.4.70-analysis-center");
+assert.equal(project.appVersion, "99.4.70");
+assert.equal(project.runtimeBuildId, "99.4.70-analysis-center");
+assert.match(runtime, /const APP_VERSION = "V99\.4\.70"/);
+assert.match(sw, /99\.4\.70-analysis-center/);
+assert.match(index, /data-release="NK-Pro V99\.4\.70"/);
 
 assert.match(archiveSource, /tooltip:correction \? "Archiv aktualisieren\." : "Abrechnung ins Archiv verschieben\."/);
 assert.match(archiveSource, /reopenedFromArchivePeriodId/);
@@ -85,4 +85,4 @@ assert.match(calculation, /function isPrivateUse\(m\)/);
 assert.doesNotMatch(archiveSource, /M000|Erik Zimmermann|W000\.UG/);
 assert.doesNotMatch(ui, /M000|Erik Zimmermann|W000\.UG/);
 
-console.log("V99.4.69 UI-, Archiv- und Teilnehmerregressionstests bestanden");
+console.log("V99.4.70 UI-, Archiv- und Teilnehmerregressionstests bestanden");

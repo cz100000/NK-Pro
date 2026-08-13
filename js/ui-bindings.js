@@ -149,6 +149,19 @@
       "costReconciliation.saveCost":call(handlers, "costReconciliationSaveCost"), "costReconciliation.exportExcel":call(handlers, "costReconciliationExportExcel"),
       "costReconciliation.printPdf":call(handlers, "costReconciliationPrintPdf"), "costReconciliation.exportProtocol":call(handlers, "costReconciliationExportProtocol")
     });
+    registerController("analytics", "Rein lesende Mehrjahresanalyse mit gemeinsamen Filtern, Drill-down und Export", {
+      "analytics.setPerspective":call(handlers, "analyticsSetPerspective"), "analytics.setLevel":call(handlers, "analyticsSetLevel"),
+      "analytics.setFromPeriod":call(handlers, "analyticsSetFromPeriod"), "analytics.setToPeriod":call(handlers, "analyticsSetToPeriod"),
+      "analytics.setComparison":call(handlers, "analyticsSetComparison"), "analytics.setReferencePeriod":call(handlers, "analyticsSetReferencePeriod"),
+      "analytics.setCost":call(handlers, "analyticsSetCost"), "analytics.setTenant":call(handlers, "analyticsSetTenant"),
+      "analytics.setUnit":call(handlers, "analyticsSetUnit"), "analytics.setUsage":call(handlers, "analyticsSetUsage"),
+      "analytics.setCostArea":call(handlers, "analyticsSetCostArea"), "analytics.setAllocationKey":call(handlers, "analyticsSetAllocationKey"),
+      "analytics.setStatus":call(handlers, "analyticsSetStatus"), "analytics.setDataQuality":call(handlers, "analyticsSetDataQuality"),
+      "analytics.toggleOpenChecks":call(handlers, "analyticsToggleOpenChecks"), "analytics.setDisplayMode":call(handlers, "analyticsSetDisplayMode"), "analytics.toggleAnomalies":call(handlers, "analyticsToggleAnomalies"),
+      "analytics.quickRange":call(handlers, "analyticsQuickRange"), "analytics.openDrill":call(handlers, "analyticsOpenDrill"),
+      "analytics.closeDrill":call(handlers, "analyticsCloseDrill"), "analytics.exportCsv":call(handlers, "analyticsExportCsv"),
+      "analytics.exportExcel":call(handlers, "analyticsExportExcel"), "analytics.print":call(handlers, "analyticsPrint")
+    });
     registerController("quality", "Zentrale Prüfinteraktion ohne parallele Abrechnungsberechnung", {
       "quality.jumpToIssue":call(handlers, "jumpToQualityIssue"), "quality.reopenIssue":call(handlers, "reopenQualityIssue"),
       "quality.acknowledgeIssue":call(handlers, "acknowledgeQualityIssue"), "quality.jumpFirstOpen":call(handlers, "jumpToFirstOpenQualityIssue"),

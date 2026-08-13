@@ -47,6 +47,18 @@ function configureCoreOrchestrationModules() {
     stateAccess:NK_PRO_MODULES.stateAccess, clone, withIsolatedState,
     archiveActions:NK_PRO_MODULES.archiveActions, documentData:NK_PRO_MODULES.documentData, qualityRules:NK_PRO_MODULES.qualityRules
   });
+  NK_PRO_MODULES.analyticsEngine.configure({
+    stateAccess:NK_PRO_MODULES.stateAccess,
+    calculateDataset:dataset => withIsolatedState(clone(dataset), () => {
+      const calculation = NK_PRO_MODULES.billingCalculation.calculateUmlage();
+      return { calculation, totals:NK_PRO_MODULES.billingCalculation.umlageTotals(calculation) };
+    }),
+    inspectDataset:dataset => withIsolatedState(clone(dataset), () => NK_PRO_MODULES.qualityAssurance.inspect()),
+    isPrivateUse:NK_PRO_MODULES.billingCalculation.isPrivateUse,
+    isSettlementParticipant:NK_PRO_MODULES.billingCalculation.isSettlementParticipant,
+    reconciliation:NK_PRO_MODULES.costReconciliation,
+    appVersion:APP_VERSION
+  });
   NK_PRO_MODULES.billingWorkflow.configure({
     stateAccess:NK_PRO_MODULES.stateAccess,
     appVersion:APP_VERSION, umlageManual:UMLAGE_MANUAL, num,
@@ -82,7 +94,7 @@ function configureCoreOrchestrationModules() {
     masterData:NK_PRO_MODULES.masterDataActions.describe(), cost:NK_PRO_MODULES.costActions.describe(),
     billing:NK_PRO_MODULES.billingWorkflow.describe(), archive:NK_PRO_MODULES.archiveActions.describe(),
     yearTransition:NK_PRO_MODULES.yearTransitionActions.describe(), quality:NK_PRO_MODULES.qualityAssurance.describe(),
-    diagnostics:NK_PRO_MODULES.diagnostics.describe(), review:NK_PRO_MODULES.billingReview.describe(), reconciliation:NK_PRO_MODULES.costReconciliation.describe()
+    diagnostics:NK_PRO_MODULES.diagnostics.describe(), review:NK_PRO_MODULES.billingReview.describe(), reconciliation:NK_PRO_MODULES.costReconciliation.describe(), analytics:NK_PRO_MODULES.analyticsEngine.describe()
   });
 }
 
@@ -169,7 +181,7 @@ function startUiEvents() {
   return NK_PRO_MODULES.uiEvents.start({ root:document, onError(error, context) { setActionMessage("UI-Aktion fehlgeschlagen: " + errorMessage(error), "err"); renderActionFeedback(); if (typeof console !== "undefined" && console.error) console.error("NK-Pro UI-Controllerfehler", context, error); } });
 }
 function updateUiArchitectureAudit() {
-  const report = Object.freeze({ controllers:NK_PRO_MODULES.uiController.describe(), events:NK_PRO_MODULES.uiEvents.describe(), stateAccess:NK_PRO_MODULES.stateAccess.describe(), applicationActions:NK_PRO_MODULES.applicationActions.describe(), masterDataActions:NK_PRO_MODULES.masterDataActions.describe(), costActions:NK_PRO_MODULES.costActions.describe(), billingWorkflow:NK_PRO_MODULES.billingWorkflow.describe(), archiveActions:NK_PRO_MODULES.archiveActions.describe(), yearTransitionActions:NK_PRO_MODULES.yearTransitionActions.describe(), qualityAssurance:NK_PRO_MODULES.qualityAssurance.describe(), billingReview:NK_PRO_MODULES.billingReview.describe(), costReconciliation:NK_PRO_MODULES.costReconciliation.describe(), diagnostics:NK_PRO_MODULES.diagnostics.describe(), navigation:NK_PRO_MODULES.navigation.describe(), compatibility:NK_PRO_MODULES.compatibility.describe() });
+  const report = Object.freeze({ controllers:NK_PRO_MODULES.uiController.describe(), events:NK_PRO_MODULES.uiEvents.describe(), stateAccess:NK_PRO_MODULES.stateAccess.describe(), applicationActions:NK_PRO_MODULES.applicationActions.describe(), masterDataActions:NK_PRO_MODULES.masterDataActions.describe(), costActions:NK_PRO_MODULES.costActions.describe(), billingWorkflow:NK_PRO_MODULES.billingWorkflow.describe(), archiveActions:NK_PRO_MODULES.archiveActions.describe(), yearTransitionActions:NK_PRO_MODULES.yearTransitionActions.describe(), qualityAssurance:NK_PRO_MODULES.qualityAssurance.describe(), billingReview:NK_PRO_MODULES.billingReview.describe(), costReconciliation:NK_PRO_MODULES.costReconciliation.describe(), analytics:NK_PRO_MODULES.analyticsEngine.describe(), diagnostics:NK_PRO_MODULES.diagnostics.describe(), navigation:NK_PRO_MODULES.navigation.describe(), compatibility:NK_PRO_MODULES.compatibility.describe() });
   NK_PRO_MODULES.runtimeDiagnostics.setUiArchitecture(report); return report;
 }
 

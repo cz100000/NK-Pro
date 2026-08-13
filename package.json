@@ -1,14 +1,14 @@
 {
-  "name": "nk-pro-v99-4-69",
-  "version": "99.4.69",
+  "name": "nk-pro-v99-4-70",
+  "version": "99.4.70",
   "private": true,
-  "description": "UI-, Archiv- und Gesamtkorrekturen mit geschützter Teilnehmerlogik V99.4.68",
+  "description": "Mehrjahres-Analysezentrum für Nebenkosten, Finanzen und steuerliche Aufbereitung auf gemeinsamer Read-only-Datenbasis.",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
     "test:fixtures": "node tools/check-fixtures.cjs",
     "fixtures:materialize": "node tools/materialize-fixtures.cjs",
     "test:browser": "node tests/ap22f11b-korrektur4-browser.test.cjs",
-    "test": "npm run test:syntax && npm run test:fixtures && npm run test:metering && npm run test:architecture && npm run test:contents && npm run test:release && npm run test:ap22f12:domain && npm run test:browser && npm run test:ap22f11b:k4:data",
+    "test": "npm run test:syntax && npm run test:fixtures && npm run test:metering && npm run test:architecture && npm run test:contents && npm run test:release && npm run test:ap22f12:domain && npm run test:v99467 && npm run test:v99468 && npm run test:v99469 && npm run test:v99470 && npm run test:browser && npm run test:ap22f11b:k4:data",
     "test:report": "playwright show-report",
     "test:release": "npm run test:ap22f11b:k4:static && npm run test:ap22f12:static",
     "test:metering": "node tests/metering-domain.test.cjs && node tests/ap20-meter-start-regression.test.cjs && node tests/ap20-meter-calculation-regression.test.cjs && node tests/ap20-asset-refresh-regression.test.cjs",
@@ -139,7 +139,10 @@
     "test:v99468": "node tests/v99468-private-participants.test.cjs",
     "release:check:v99468": "npm run test:syntax && npm run test:fixtures && npm run test:metering && npm run test:architecture && npm run test:ap22f11b:k4:static && npm run test:ap22f12 && npm run test:v99467 && npm run test:v99468 && node tools/check-release-contents.cjs --ignore-node-modules --strict",
     "test:v99469": "node tests/v99469-ui-archive-regression.test.cjs",
-    "release:check:v99469": "npm run test:syntax && npm run test:fixtures && npm run test:metering && npm run test:architecture && npm run test:ap22f11b:k4:static && npm run test:ap22f12 && npm run test:v99467 && npm run test:v99468 && npm run test:v99469 && node tools/check-release-contents.cjs --ignore-node-modules --strict"
+    "release:check:v99469": "npm run test:syntax && npm run test:fixtures && npm run test:metering && npm run test:architecture && npm run test:ap22f11b:k4:static && npm run test:ap22f12 && npm run test:v99467 && npm run test:v99468 && npm run test:v99469 && node tools/check-release-contents.cjs --ignore-node-modules --strict",
+    "test:v99470": "node tests/v99470-analysis-center.test.cjs",
+    "release:check:v99470": "npm run test:syntax && npm run test:fixtures && npm run test:metering && npm run test:architecture && npm run test:contents && npm run test:release && npm run test:ap22f12:domain && npm run test:v99467 && npm run test:v99468 && npm run test:v99469 && npm run test:v99470 && node tools/check-release-contents.cjs --ignore-node-modules --strict",
+    "test:browser:v99470": "node tools/v99470-browser-runner.cjs"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1"

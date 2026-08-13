@@ -16,6 +16,7 @@ const NK_PRO_MODULES = (() => {
     billingCalculation:globalThis.NKProBillingCalculation,
     billingReview:globalThis.NKProBillingReview,
     costReconciliation:globalThis.NKProCostReconciliation,
+    analyticsEngine:globalThis.NKProAnalyticsEngine,
     documentData:globalThis.NKProDocumentData,
     documentRenderer:globalThis.NKProDocumentRenderer,
     exportService:globalThis.NKProExportService,
@@ -50,10 +51,10 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.69";
-const APP_VERSION_NAME = "UI-Archiv-und-Gesamtkorrekturen";
-const APP_RELEASE_DATE = "2026-08-02";
-if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – UI-, Archiv- und Gesamtkorrekturen";
+const APP_VERSION = "V99.4.70";
+const APP_VERSION_NAME = "Mehrjahres-Analysezentrum";
+const APP_RELEASE_DATE = "2026-08-13";
+if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – Mehrjahres-Analysezentrum";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
 const ARCHIVE_SNAPSHOT_SCOPE = "billingSnapshot";

@@ -1,0 +1,67 @@
+"use strict";
+const fs=require("fs"),path=require("path");
+const ROOT=path.resolve(__dirname,"..");
+const SHOTS=path.join(ROOT,"AP_ANALYSE_V99_4_70","screenshots","after");
+const REPORT=path.join(ROOT,"AP_ANALYSE_V99_4_70","browser-test-result.json");
+fs.mkdirSync(SHOTS,{recursive:true});
+const PORT=Number(process.env.NKPRO_CDP_PORT||9222);
+const INDEX=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');
+const SCRIPT_RE=/<script[^>]+src=[\"']([^\"']+)[\"'][^>]*><\/script>/gi;
+const scripts=[];let sm;while((sm=SCRIPT_RE.exec(INDEX)))scripts.push(sm[1].split('?')[0].replace(/^\.\//,''));
+const CSS=fs.readFileSync(path.join(ROOT,'assets/app.css'),'utf8');
+const DATA=JSON.parse(fs.readFileSync(path.join(ROOT,'AP_ANALYSE_V99_4_70','echtdaten','source-v99.4.69.json'),'utf8'));
+function documentHtml(){let html=INDEX.replace(/<script[^>]+src=[\"']([^\"']+)[\"'][^>]*><\/script>/gi,'').replace(/<link[^>]+href=[\"']\.\/assets\/app\.css[^\"']*[\"'][^>]*>/i,'<style>'+CSS+'</style>').replace(/<link[^>]+rel=[\"']manifest[\"'][^>]*>/gi,'').replace(/<link[^>]+rel=[\"']preload[\"'][^>]*>/gi,'');html=html.replace(/src=[\"']\.\/([^\"']+\.png)[\"']/gi,(m,rel)=>{const file=path.join(ROOT,rel);if(!fs.existsSync(file))return m;return 'src=\"data:image/png;base64,'+fs.readFileSync(file).toString('base64')+'\"';});return html;}
+const delay=ms=>new Promise(r=>setTimeout(r,ms));
+async function target(){const xs=await fetch(`http://127.0.0.1:${PORT}/json`).then(r=>r.json());return xs.find(x=>x.type==='page');}
+class CDP{
+  constructor(url){this.url=url;this.id=0;this.pending=new Map();this.events=[];}
+  async open(){this.ws=new WebSocket(this.url);await new Promise((res,rej)=>{this.ws.onopen=res;this.ws.onerror=rej;});this.ws.onmessage=e=>{const m=JSON.parse(e.data);if(m.id&&this.pending.has(m.id)){const {res,rej}=this.pending.get(m.id);this.pending.delete(m.id);m.error?rej(new Error(m.error.message)):res(m.result);}else this.events.push(m);};}
+  send(method,params={}){const id=++this.id;return new Promise((res,rej)=>{this.pending.set(id,{res,rej});this.ws.send(JSON.stringify({id,method,params}));});}
+  async eval(expr){const r=await this.send('Runtime.evaluate',{expression:expr,awaitPromise:true,returnByValue:true,userGesture:true});if(r.exceptionDetails)throw new Error(r.exceptionDetails.text||'Runtime exception');return r.result&&r.result.value;}
+  async wait(expr,timeout=20000){const end=Date.now()+timeout;while(Date.now()<end){try{if(await this.eval(`Boolean(${expr})`))return true;}catch{}await delay(100);}throw new Error('Timeout waiting: '+expr);}
+  close(){this.ws&&this.ws.close();}
+}
+(async()=>{
+  const t=await target();if(!t)throw new Error('No page target');const c=new CDP(t.webSocketDebuggerUrl);await c.open();
+  await c.send('Runtime.enable');await c.send('Log.enable');await c.send('Page.enable');
+  const tree=await c.send('Page.getFrameTree');const frameId=tree.frameTree.frame.id;
+  await c.send('Page.setDocumentContent',{frameId,html:documentHtml()});
+  await c.eval(`(()=>{const store=new Map();const mock={get length(){return store.size},key(i){return [...store.keys()][i]??null},getItem(k){return store.get(String(k))??null},setItem(k,v){store.set(String(k),String(v))},removeItem(k){store.delete(String(k))},clear(){store.clear()}};Object.defineProperty(window,'localStorage',{value:mock,configurable:true});Object.defineProperty(window,'sessionStorage',{value:mock,configurable:true});window.alert=()=>{};window.confirm=()=>true;window.prompt=()=>'';return true})()`);
+  for(const rel of scripts){const code=fs.readFileSync(path.join(ROOT,rel),'utf8')+`\n//# sourceURL=${rel}`;try{await c.eval(code)}catch(e){throw new Error(`Script ${rel}: ${e.message}`)}}
+  await c.wait(`typeof renderAnalyticsCenter==='function' && typeof replaceApplicationState==='function'`);
+  const load=await c.eval(`(()=>{const d=${JSON.stringify(DATA)};replaceApplicationState(d);if(typeof resetTransientUiState==='function')resetTransientUiState({resetPageState:true});if(typeof renderAll==='function')renderAll({forceAll:true,reason:'V99.4.70 Echtdatentest'});if(typeof openCurrentBillingForEdit==='function')openCurrentBillingForEdit();switchToTab('auswertungen');renderAnalyticsCenter();return {version:APP_VERSION,periods:NK_PRO_MODULES.analyticsEngine.listPeriods(state).map(p=>({id:p.periodId,label:p.label,quality:p.quality})),m000:state.mieter.find(x=>x.id==='M000')};})()`);
+  await c.wait(`document.querySelector('#auswertungen.active') && document.querySelector('#analyticsCenterRoot .analytics-center-kpis')`);
+  async function viewport(width,height,name){await c.send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});await delay(250);const metrics=await c.eval(`({width:innerWidth,doc:document.documentElement.scrollWidth,client:document.documentElement.clientWidth,body:document.body.scrollWidth,analytics:document.querySelector('#analyticsCenterRoot')?.scrollWidth||0,root:document.querySelector('#analyticsCenterRoot')?.clientWidth||0})`);const shot=await c.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});fs.writeFileSync(path.join(SHOTS,name),Buffer.from(shot.data,'base64'));return metrics;}
+  const checks=[];const viewports={};
+  checks.push({name:'periods',ok:load.periods.length===4,detail:load.periods.map(p=>p.label).join(', ')});
+  checks.push({name:'legacy-period',ok:load.periods.some(p=>p.label==='2021/2022'&&!p.quality.calendar),detail:'2021/2022 bleibt nicht-kalendarisch'});
+  checks.push({name:'m000',ok:load.m000&&load.m000.name==='Erik Zimmermann'&&load.m000.wohnung==='W000.UG',detail:load.m000&&load.m000.abrechnungRolle});
+  const domBase=await c.eval(`({perspectives:[...document.querySelectorAll('.analytics-perspective-tabs button')].map(x=>x.textContent.trim()),levels:[...document.querySelectorAll('.analytics-level-tabs button')].map(x=>x.textContent.trim()),periodOptions:[...document.querySelectorAll('.analytics-filter-primary select:first-of-type option')].map(x=>x.textContent.trim()),filterLabels:[...document.querySelectorAll('.analytics-filter-field>span')].map(x=>x.textContent.trim()),kpis:document.querySelectorAll('.analytics-center-kpi').length,charts:document.querySelectorAll('.analytics-svg').length,inlineHandlers:document.querySelectorAll('[onclick],[onchange]').length})`);
+  checks.push({name:'three-perspectives',ok:domBase.perspectives.length===3,detail:domBase.perspectives.join(' | ')});
+  checks.push({name:'three-levels',ok:domBase.levels.length===3,detail:domBase.levels.join(' | ')});
+  checks.push({name:'legacy-visible',ok:domBase.periodOptions.some(x=>x.includes('2021/2022')),detail:domBase.periodOptions.join(' | ')});
+  checks.push({name:'filter-set',ok:['Kostenbereich','Umlageschlüssel','Status','Datenvollständigkeit'].every(x=>domBase.filterLabels.includes(x)),detail:domBase.filterLabels.join(' | ')});
+  checks.push({name:'no-new-inline-handlers',ok:domBase.inlineHandlers===0,detail:String(domBase.inlineHandlers)});
+  viewports.desktop=await viewport(1440,1000,'01-nk-dashboard-desktop.png');
+  await c.eval(`analyticsSetLevel('detail')`);await c.wait(`document.body.innerText.includes('Warum haben sich die Kosten verändert?')`);viewports.detail=await viewport(1440,1000,'02-nk-detail-desktop.png');
+  const detail=await c.eval(`({water:document.body.innerText.includes('Wasser nach Wohnung'),meters:document.body.innerText.includes('Zähler- und Messanalyse'),waterfall:document.body.innerText.includes('Warum haben sich die Kosten verändert?'),saldo:document.body.innerText.includes('Teilnehmer-Salden'),housing:document.body.innerText.includes('Wohnungsanalyse'),prepayments:document.body.innerText.includes('Vorauszahlungsanalyse'),vacancy:document.body.innerText.includes('Leerstandsanalyse'),unallocated:document.body.innerText.includes('Nicht umlagefähig versus nicht umgelegt'),waterEffects:document.body.innerText.includes('Wasser: Preis- und Verbrauchseffekt')})`);checks.push({name:'nk-detail',ok:Object.values(detail).every(Boolean),detail:JSON.stringify(detail)});
+  await c.eval(`analyticsSetTenant('M000')`);await delay(150);const m000ui=await c.eval(`document.querySelector('#analyticsCenterRoot').innerText.includes('Erik Zimmermann')`);checks.push({name:'m000-ui',ok:m000ui,detail:'Teilnehmerfilter M000'});
+  await c.eval(`analyticsSetTenant('all');analyticsSetLevel('table')`);await delay(120);viewports.table=await viewport(1180,850,'03-nk-table-laptop.png');
+  await c.eval(`analyticsSetPerspective('finance');analyticsSetLevel('dashboard')`);await c.wait(`document.body.innerText.includes('Cashflow-Datenlage')`);const fin=await c.eval(`({cashGap:document.body.innerText.includes('Daten fehlen'),fictive:!document.body.innerText.includes('fiktiver Zahlungszeitpunkt'),bars:document.querySelectorAll('.analytics-svg').length})`);checks.push({name:'finance-data-gap',ok:fin.cashGap&&fin.bars>=2,detail:JSON.stringify(fin)});viewports.finance=await viewport(1440,1000,'04-finance-dashboard-desktop.png');
+  await c.eval(`analyticsSetPerspective('tax');analyticsSetLevel('dashboard')`);await c.wait(`document.body.innerText.includes('Steuerliche Kostenüberleitung')`);const tax=await c.eval(`({notice:document.body.innerText.includes('keine Steuerberatung'),unclassified:document.body.innerText.includes('noch nicht steuerlich klassifiziert'),private:document.body.innerText.includes('Privatanteil'),vacancy:document.body.innerText.includes('Leerstandsanteil')})`);checks.push({name:'tax-boundaries',ok:Object.values(tax).every(Boolean),detail:JSON.stringify(tax)});viewports.tax=await viewport(1440,1000,'05-tax-dashboard-desktop.png');
+  const firstTax=await c.eval(`(()=>{const b=document.querySelector('.analytics-tax-unclassified');const btn=document.querySelector('.analytics-cell-link');if(btn){btn.click();return true}return false})()`);await delay(100);const drill=await c.eval(`Boolean(document.querySelector('.analytics-drill-panel'))`);checks.push({name:'drill-down',ok:firstTax&&drill,detail:'Steuer-Kostenart öffnet Detailbereich'});
+  viewports.tablet=await viewport(820,1000,'06-tax-tablet.png');
+  viewports.narrow=await viewport(480,900,'07-tax-narrow.png');
+  checks.push({name:'no-page-overflow-tablet',ok:viewports.tablet.doc<=viewports.tablet.client+1,detail:JSON.stringify(viewports.tablet)});
+  checks.push({name:'no-page-overflow-narrow',ok:viewports.narrow.doc<=viewports.narrow.client+1,detail:JSON.stringify(viewports.narrow)});
+  // keyboard drill on KPI/interactive chart
+  await c.eval(`analyticsSetPerspective('nk');analyticsSetLevel('dashboard')`);await delay(100);
+  const keyboard=await c.eval(`(()=>{analyticsCloseDrill();const el=document.querySelector('.analytics-center-kpi[tabindex="0"]');if(!el)return false;el.focus();el.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true}));return true})()`);await delay(100);const keyboardOpened=await c.eval(`Boolean(document.querySelector('.analytics-drill-panel'))`);checks.push({name:'keyboard-drill',ok:keyboard&&keyboardOpened,detail:'Enter öffnet Drill-down'});
+  const exportModel=await c.eval(`(()=>{const v=analyticsView(),rows=analyticsExportRows(v);return {rows:rows.length,meta:rows.slice(0,15),taxStatus:(v.models.at(-1)?.tax||[]).every(r=>r.taxValue===null&&r.taxStatus==='noch nicht steuerlich klassifiziert')}})()`);
+  checks.push({name:'export-model',ok:exportModel.rows>5,detail:String(exportModel.rows)});
+  const backupRoundtrip=await c.eval(`(()=>{const before=JSON.stringify(state);const mod=NK_PRO_MODULES.backupRecovery;const env=mod.createBackupEnvelope(state,{backupType:'v99470-test',sourceAppVersion:APP_VERSION,sourceSchemaVersion:DATA_SCHEMA_VERSION,targetSchemaVersion:DATA_SCHEMA_VERSION,dataLayerContractVersion:DATA_LAYER_CONTRACT_VERSION});const validation=mod.validateBackupEnvelope(env);const restored=mod.restoreBackupEnvelope(env);return {valid:validation.valid,identical:JSON.stringify(restored)===before,archiveIdentical:JSON.stringify(restored.jahresArchiv)===JSON.stringify(state.jahresArchiv)}})()`);
+  checks.push({name:'backup-restore-roundtrip',ok:backupRoundtrip.valid&&backupRoundtrip.identical&&backupRoundtrip.archiveIdentical,detail:JSON.stringify(backupRoundtrip)});
+  const errorEvents=c.events.filter(e=>e.method==='Runtime.exceptionThrown'||(e.method==='Log.entryAdded'&&e.params?.entry?.level==='error')).map(e=>e.params?.exceptionDetails?.text||e.params?.entry?.text||e.method);
+  checks.push({name:'runtime-errors',ok:errorEvents.length===0,detail:errorEvents.join(' | ')});
+  const report={version:load.version,at:new Date().toISOString(),checks,viewports,errorEvents,passed:checks.every(x=>x.ok)};fs.mkdirSync(path.dirname(REPORT),{recursive:true});fs.writeFileSync(REPORT,JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));c.close();if(!report.passed)process.exitCode=1;
+})().catch(e=>{console.error(e);process.exitCode=1});

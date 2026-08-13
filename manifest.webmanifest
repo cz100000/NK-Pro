@@ -1,7 +1,7 @@
 {
-  "name": "NK-Pro V99.4.69",
+  "name": "NK-Pro V99.4.70",
   "short_name": "NK-Pro",
-  "description": "Lokale Nebenkostenabrechnung mit integriertem Kosten- und Umlagenabgleich, Prüfentscheidungen und Finanzamtübersicht.",
+  "description": "Lokale Offline-Nebenkostenabrechnung mit Mehrjahresanalyse, Finanzanalyse und steuerlicher Aufbereitung.",
   "lang": "de-DE",
   "id": "./",
   "start_url": "./",
@@ -9,7 +9,7 @@
   "display": "standalone",
   "background_color": "#f4f6f9",
   "theme_color": "#031d41",
-  "version": "99.4.69",
+  "version": "99.4.70",
   "icons": [
     {
       "src": "./icons/icon-180.png",
@@ -42,5 +42,5 @@
       "purpose": "maskable"
     }
   ],
-  "buildId": "99.4.69-ui-archive-consistency"
+  "buildId": "99.4.70-analysis-center"
 }

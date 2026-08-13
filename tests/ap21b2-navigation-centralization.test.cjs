@@ -17,6 +17,6 @@ assert(JSON.stringify(labels)===JSON.stringify([
   "Objekt vorbereiten","Objektdaten","Wohnungen","Zähler","Mietverhältnisse",
   "Nebenkosten abrechnen","Übersicht","Mietverhältnisse","Vorauszahlungen","Gesamtkosten",
   "Individuelle Werte","Abrechnungsergebnis","Vorauszahlungen anpassen","Prüfen und abschließen","Briefe",
-  "Analyse","Auswertungen","Kosten- und Umlagenabgleich","Regelinventar","Archiv","Archivübersicht"
+  "Analyse","Analysezentrum","Kosten- und Umlagenabgleich","Regelinventar","Archiv","Archivübersicht"
 ]),"Zentrale Gruppen- und Eintragsreihenfolge ist falsch.");
 process.stdout.write("AP21B2-Strukturprüfung bestanden: Navigation, Reihenfolge, Direkteinstiege und Diagnose besitzen eine zentrale Quelle.\n");
