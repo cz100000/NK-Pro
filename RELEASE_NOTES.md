@@ -1,5 +1,19 @@
 # Release Notes
 
+## V99.4.71 – Professionelles Immobilien-Analysezentrum
+
+- Drei klar getrennte Perspektiven: Nebenkosten & Abrechnung, Finanzen und Steuerliche Auswertung.
+- Zentrale read-only Analyseengine V2 als gemeinsame Wahrheit für Dashboard, Details, Tabellen, Tooltips/Drill-down und Exporte.
+- Kennzahlenbezogene Vergleichbarkeitsprüfung; `0`, fehlend, noch nicht erfasst, nicht berechenbar und nicht vergleichbar bleiben getrennte Zustände.
+- Vier dominante KPIs pro Übersicht, große Hauptentwicklung, direkte Veränderungserklärung und maximal drei priorisierte Auffälligkeiten.
+- Tiefenanalyse für Kosten, Wasser/Zähler, Teilnehmer, Wohnungen, Vorauszahlungen/Salden, Leerstand sowie getrennt nicht umlagefähige und tatsächlich nicht umgelegte Kosten.
+- Symmetrische Preis-/Mengenzerlegung für geeignete Verbrauchskostenarten.
+- Finanzperspektive mit Objektbetriebsergebnis und Eigentümerbelastung; Cashflow nur bei vollständigen tatsächlich datierten Zahlungen.
+- Steuerliche Überleitung mit separatem Privat-/Leerstandsanteil; keine automatische Steuerklassifikation oder Gleichsetzung von Abrechnungsperiode und Steuerjahr.
+- Rechter Desktop-Drill-down, responsive Vollbreitenansicht auf kleinen Geräten, Tastaturbedienung und erweiterter Tabellenmodus.
+- Datenschema 5 unverändert; Korrektur-2-Kontextschutz, Archive, Zähler, Persistenz, Backup/Restore und Offlinefähigkeit geschützt.
+
+
 ## V99.4.69 – UI-, Archiv- und Gesamtkorrekturen
 
 V99.4.69 schließt die visuelle Neugestaltung des Kosten- und Umlagenabgleichs und die zustandsabhängige Archivaktion ab. Die bestehende Fach-, Daten-, Prüf-, Export- und Persistenzarchitektur wird weiterverwendet; es wurde keine Parallelseite und keine zweite Entscheidungslogik aufgebaut.

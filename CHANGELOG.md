@@ -1,5 +1,26 @@
 # Changelog
 
+## V99.4.71 – 13.08.2026
+
+### Analysearchitektur
+- Analyseengine auf kennzahlenbezogenes Ergebnis- und Vergleichbarkeitsmodell umgestellt.
+- Kanonische read-only Periodenmodelle für aktuelle und archivierte Bestände vereinheitlicht; keine parallele Analysedatenbank.
+- Fehlende Werte strikt von echten Nullwerten getrennt; neue Kostenarten und unvollständige Perioden ohne irreführende Prozentwerte.
+- Aktuelle Objektstammdaten erhalten Vorrang bei heutigen Wohnflächen, historische Werte bleiben für Nachweiszwecke verfügbar.
+
+### Fachperspektiven
+- Nebenkostenanalyse um Kostenstruktur, Wasser/Zähler, Preis-/Verbrauchseffekt, Teilnehmer, Wohnungen, Salden, Leerstand und getrennte Nicht-Umlage-Kategorien vertieft.
+- Finanzanalyse mit Mietsoll/-ist, laufenden Objektkosten, Objektbetriebsergebnis, Kostenweitergabe/Eigentümerbelastung und strikter Cashflow-Datengrenze ergänzt.
+- Steuerliche Auswertung als nachvollziehbare Überleitung mit Vermietet/Privat/Leerstand/sonstiger Zuordnung aufgebaut; Steuerkategorie und Steuerjahr bleiben ohne Regel offen.
+
+### UI, Export und Qualität
+- Drei Hauptperspektiven, vier Hero-KPIs, kompakte Filter, Übersicht/Details/Tabelle und kontextueller Drill-down eingeführt.
+- Tabellenmodus um Suche, Sortierung, Gruppierung, Spaltensteuerung und Detailzeilen erweitert.
+- Responsive Desktop/Tablet/Smartphone-Darstellung ohne horizontale Seitenüberbreite; große Diagramme mit ausreichend breiter Y-Achsenbeschriftung.
+- V99.4.71 Chromium/CDP-Echtdatentest: 33/33 Checks bestanden, 0 Runtime-Fehler.
+- Release-Inhaltsprüfung: 652 Dateien bestanden.
+
+
 ## V99.4.69 – 02.08.2026
 
 ### Oberfläche

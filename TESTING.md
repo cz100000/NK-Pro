@@ -1,5 +1,10 @@
 # Teststand V99.4.37 / AP22F2B
 
+## V99.4.71 – Releaseprüfung
+
+Der aktuelle Releasepfad lautet `NKPRO_REAL_DATA=/pfad/zum/gesamtbestand.json npm run release:check:v99471`. Zusätzlich ist der dependency-freie Browserlauf über `npm run test:browser:v99471` verfügbar und benötigt dieselbe Umgebungsvariable. Der finale Echtdatenlauf umfasst 33 Browserchecks; die schlanke Basis installiert dafür bewusst keine Playwright-Abhängigkeit nach.
+
+
 Neue separate Tests:
 
 ```text

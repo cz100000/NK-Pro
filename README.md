@@ -1,4 +1,18 @@
-# NK-Pro V99.4.69 – UI-, Archiv- und Gesamtkorrekturen
+# NK-Pro V99.4.71 – Professionelles Immobilien-Analysezentrum
+
+## NK-Pro V99.4.71 – Professionelles Immobilien-Analysezentrum
+
+V99.4.71 baut das Analysezentrum auf einer gemeinsamen read-only Analyseengine mit kennzahlenbezogener Vergleichbarkeit neu auf. Die drei fachlich getrennten Perspektiven **Nebenkosten & Abrechnung**, **Finanzen** und **Steuerliche Auswertung** verwenden dieselben zentral berechneten Werte für Übersicht, Details, Tabelle, Drill-down und Export.
+
+Die Übersicht priorisiert vier Haupt-KPIs, große Entwicklung und unmittelbare Veränderungserklärung. Fehlende Werte bleiben von echten Nullwerten getrennt; unvollständige bzw. fachlich ungeeignete Perioden erzeugen keine irreführenden Änderungsprozente. Wasser/Zähler, Teilnehmer, Wohnungen, Vorauszahlungen/Salden, Leerstand und Eigentümerbelastung sind vertiefbar. Cashflow wird nur bei vollständigen datierten Zahlungsbewegungen berechnet; steuerliche Klassifikation bleibt ohne definierte Regel offen.
+
+- Produktversion: **V99.4.71**
+- Build-/Cachekennung: `99.4.71-professional-analysis-center`
+- Datenschema: **5** unverändert
+- Analyseengine: **2**, `metric-aware-v2`
+- Releaseprüfung: `NKPRO_REAL_DATA=/pfad/zum/gesamtbestand.json npm run release:check:v99471`
+- Vollständige V99.4.71-Nachweise: `AP_ANALYSE_V99_4_71/`
+
 
 ## NK-Pro V99.4.69 – Kosten- und Umlagenabgleich sowie Archivkonsistenz
 

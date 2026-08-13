@@ -1,8 +1,8 @@
 {
-  "name": "nk-pro-v99-4-70",
-  "version": "99.4.70",
+  "name": "nk-pro-v99-4-71",
+  "version": "99.4.71",
   "private": true,
-  "description": "Mehrjahres-Analysezentrum für Nebenkosten, Finanzen und steuerliche Aufbereitung auf gemeinsamer Read-only-Datenbasis.",
+  "description": "Professionelles Immobilien-Analysezentrum mit kennzahlenbezogener Vergleichbarkeit für Nebenkosten, Finanzen und steuerliche Auswertung auf gemeinsamer Read-only-Datenbasis.",
   "scripts": {
     "test:syntax": "node tools/check-js-syntax.cjs",
     "test:fixtures": "node tools/check-fixtures.cjs",
@@ -143,7 +143,10 @@
     "test:v99470": "node tests/v99470-analysis-center.test.cjs",
     "release:check:v99470": "npm run test:syntax && npm run test:fixtures && npm run test:metering && npm run test:architecture && npm run test:contents && npm run test:release && npm run test:ap22f12:domain && npm run test:v99467 && npm run test:v99468 && npm run test:v99469 && npm run test:v99470 && npm run test:v99470:k2 && node tools/check-release-contents.cjs --ignore-node-modules --strict",
     "test:browser:v99470": "node tools/v99470-browser-runner.cjs",
-    "test:v99470:k2": "node tests/v99470-korrektur2-context-navigation.test.cjs"
+    "test:v99470:k2": "node tests/v99470-korrektur2-context-navigation.test.cjs",
+    "test:v99471": "node tests/v99471-professional-analysis.test.cjs",
+    "test:browser:v99471": "node tools/v99471-browser-runner.cjs",
+    "release:check:v99471": "npm run test:syntax && npm run test:fixtures && npm run test:metering && npm run test:architecture && npm run test:contents && npm run test:release && npm run test:ap22f12:domain && npm run test:v99467 && npm run test:v99468 && npm run test:v99469 && npm run test:v99470 && npm run test:v99470:k2 && npm run test:v99471 && npm run test:browser:v99471 && node tools/check-release-contents.cjs --ignore-node-modules --strict"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1"

@@ -51,10 +51,10 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.70";
-const APP_VERSION_NAME = "Mehrjahres-Analysezentrum";
+const APP_VERSION = "V99.4.71";
+const APP_VERSION_NAME = "Professionelles Immobilien-Analysezentrum";
 const APP_RELEASE_DATE = "2026-08-13";
-if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – Mehrjahres-Analysezentrum";
+if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – Professionelles Immobilien-Analysezentrum";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
 const ARCHIVE_SNAPSHOT_SCOPE = "billingSnapshot";
@@ -121,6 +121,7 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
+  "V99.4.71 baut das Analysezentrum zu einer zentralen read-only Fachanalyse mit kennzahlenbezogener Vergleichbarkeit, klar getrennten Perspektiven für Nebenkosten, Finanzen und steuerliche Auswertung, tiefem Wasser-/Zähler-Drill-down, kompakter Informationshierarchie und einheitlichen Exporten aus.",
   "V99.4.70 Korrektur 2 entkoppelt Analysezentrum, Kosten- und Umlagenabgleich und Regelinventar vom geöffneten Abrechnungskontext, vereinheitlicht die Seitenklassifikation und stellt für Mehrjahresauswertungen auch nach Archivierung sowie aus Archivansichten den vollständigen kanonischen Datenbestand bereit. Fachberechnung, Archive und Datenschema 5 bleiben unverändert.",
   "V99.4.69 gestaltet den Kosten- und Umlagenabgleich im verbindlichen NK-Pro-Design neu, trennt Kontrolldifferenz und fachlichen Status, vereinheitlicht Tabellen, Status, Prüf- und Exportaktionen und führt die zustandsabhängige Archivaktion ein: aktuelle Abrechnungen werden mit ‚Abrechnung ins Archiv verschieben.‘ archiviert, kontrolliert geöffnete Archivkorrekturen mit ‚Archiv aktualisieren.‘ nachvollziehbar zurückgeführt. Die Teilnehmerlogik V99.4.68, Datenschema 5 und unveränderte historische Archive bleiben geschützt.",
   "V99.4.68 vereinheitlicht die Abrechnungsteilnahme systemweit: Privatanteil, Eigenanteil und Eigentümer/Privat sind reguläre Abrechnungsteilnehmer in Berechnung, Vorauszahlungen, Ergebnissen, Prüfungen, Dokumenten, Exporten, Archivierung und Jahreswechsel. Die Nutzungsart bleibt reine Kennzeichnung; M000 wird in den aktiven Datenebenen mit Einzugsdatum 01.01.2010 migriert. Finalisierte Archive bleiben unverändert. Datenschema 5 bleibt erhalten.",

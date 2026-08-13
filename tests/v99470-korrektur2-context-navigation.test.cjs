@@ -61,7 +61,7 @@ engine.configure({
   inspectDataset:()=>({results:[]}),
   isPrivateUse:()=>false,
   isSettlementParticipant:()=>false,
-  appVersion:"V99.4.70"
+  appVersion:"V99.4.71"
 });
 const snapshot={
   year:"2023",

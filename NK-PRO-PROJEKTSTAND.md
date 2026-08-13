@@ -1,5 +1,14 @@
 # NK-Pro Projektstand
 
+# Projektstand V99.4.71 – professionelles Immobilien-Analysezentrum
+
+V99.4.71 ist als testbarer Release-Stand umgesetzt. Die Analysearchitektur verwendet eine kanonische read-only Datenquelle, eine Perioden-/Vergleichbarkeitsschicht und eine gemeinsame Analyseengine für Nebenkosten, Finanzen und steuerliche Auswertung. Eine zweite Analyse-Datenbank oder persistierte Konkurrenzberechnungen wurden nicht eingeführt.
+
+Die Echtdaten-Browserprüfung umfasst 33/33 bestandene Checks, darunter Korrektur-2-Kontextschutz, Archiv-Snapshot-Priorität, vier Analyseperioden, regulären Privatteilnehmer, aktuelle Objektwohnflächen, Wasser/Zähler, Cashflow-/Steuerdatenlücken, Tabellen-/Drill-down-Funktionen, Tablet/Smartphone ohne horizontale Seitenüberbreite, Backup/Restore sowie einen Smoke-Test der 17 zentralen Navigationsseiten. Runtime-Fehler: 0.
+
+Datenschema 5, Archive, Teilnehmer-/Privatlogik, Zählerstandard, Persistenz und Offline-PWA bleiben geschützt. Produktive blockierende Restpunkte im beauftragten Umfang sind nicht bekannt. Datenabhängig offen bleiben nur Kennzahlen, für die die erforderlichen Zahlungs-, Finanzierungs-, Investitions- oder Steuerklassifikationsdaten tatsächlich fehlen. Die vollständigen Nachweise liegen unter `AP_ANALYSE_V99_4_71/`.
+
+
 # Projektstand V99.4.69 – freigegebener Release-Stand
 
 V99.4.69 ist technisch abgeschlossen. Die visuelle Neustrukturierung des Kosten- und Umlagenabgleichs, die Trennung von Kontrolldifferenz und fachlichem Status, die responsive Darstellung und die zustandsabhängige Archivaktion sind produktiv integriert.

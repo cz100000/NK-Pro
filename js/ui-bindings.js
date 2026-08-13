@@ -160,7 +160,15 @@
       "analytics.toggleOpenChecks":call(handlers, "analyticsToggleOpenChecks"), "analytics.setDisplayMode":call(handlers, "analyticsSetDisplayMode"), "analytics.toggleAnomalies":call(handlers, "analyticsToggleAnomalies"),
       "analytics.quickRange":call(handlers, "analyticsQuickRange"), "analytics.openDrill":call(handlers, "analyticsOpenDrill"),
       "analytics.closeDrill":call(handlers, "analyticsCloseDrill"), "analytics.exportCsv":call(handlers, "analyticsExportCsv"),
-      "analytics.exportExcel":call(handlers, "analyticsExportExcel"), "analytics.print":call(handlers, "analyticsPrint")
+      "analytics.exportExcel":call(handlers, "analyticsExportExcel"), "analytics.print":call(handlers, "analyticsPrint"),
+      "analytics.resetFilter":call(handlers, "analyticsResetFilter"), "analytics.setDetailSection":call(handlers, "analyticsSetDetailSection"),
+      "analytics.askQuestion":call(handlers, "analyticsAskQuestion"),
+      "analytics.setFinancePaymentStatus":call(handlers, "analyticsSetFinancePaymentStatus"), "analytics.setFinanceCostCategory":call(handlers, "analyticsSetFinanceCostCategory"),
+      "analytics.setFinanceObjectCostType":call(handlers, "analyticsSetFinanceObjectCostType"), "analytics.setFinanceIncomeCategory":call(handlers, "analyticsSetFinanceIncomeCategory"),
+      "analytics.setTaxCategory":call(handlers, "analyticsSetTaxCategory"), "analytics.setTaxClassificationStatus":call(handlers, "analyticsSetTaxClassificationStatus"),
+      "analytics.setTaxYear":call(handlers, "analyticsSetTaxYear"), "analytics.setTableQuery":call(handlers, "analyticsSetTableQuery"),
+      "analytics.setTableSort":call(handlers, "analyticsSetTableSort"), "analytics.toggleTableDirection":call(handlers, "analyticsToggleTableDirection"),
+      "analytics.setTableGroup":call(handlers, "analyticsSetTableGroup"), "analytics.toggleTableColumn":call(handlers, "analyticsToggleTableColumn")
     });
     registerController("quality", "Zentrale Prüfinteraktion ohne parallele Abrechnungsberechnung", {
       "quality.jumpToIssue":call(handlers, "jumpToQualityIssue"), "quality.reopenIssue":call(handlers, "reopenQualityIssue"),
