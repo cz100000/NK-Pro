@@ -31,7 +31,8 @@ function analyticsPercent(value){return value===null||value===undefined||!Number
 function analyticsEsc(value){return typeof escapeHtml==="function"?escapeHtml(value):analyticsText(value).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
 function analyticsId(value){return analyticsText(value).replace(/[^a-zA-Z0-9_-]/g,"_");}
 function analyticsArgs(value){return analyticsEsc(JSON.stringify([value]));}
-function analyticsCurrentRaw(){return NK_PRO_MODULES.analyticsEngine.build(state);}
+function analyticsSourceState(){return typeof canonicalAnalysisState==="function"?canonicalAnalysisState():state;}
+function analyticsCurrentRaw(){return NK_PRO_MODULES.analyticsEngine.build(analyticsSourceState());}
 function analyticsAvailablePeriods(){return analyticsCurrentRaw().periods||[];}
 function analyticsEnsureRange(){
   const periods=analyticsAvailablePeriods();
@@ -49,7 +50,7 @@ function analyticsSelectedPeriodIds(){
   return periods.slice(from,to+1).map(p=>p.periodId);
 }
 function analyticsView(){
-  const raw=NK_PRO_MODULES.analyticsEngine.build(state,{periodIds:analyticsSelectedPeriodIds()});
+  const raw=NK_PRO_MODULES.analyticsEngine.build(analyticsSourceState(),{periodIds:analyticsSelectedPeriodIds()});
   let models=(raw.models||[]).slice();
   if(analyticsUiState.dataQuality!=="all") models=models.filter(m=>m.period&&m.period.quality&&m.period.quality.status===analyticsUiState.dataQuality);
   if(analyticsUiState.onlyOpenChecks) models=models.filter(m=>analyticsNum(m.quality&&m.quality.summary&&m.quality.summary.open)>0);

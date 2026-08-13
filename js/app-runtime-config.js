@@ -121,6 +121,7 @@ const MASTER_TENANT_ENTRY_DATES = [
 ];
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
+  "V99.4.70 Korrektur 2 entkoppelt Analysezentrum, Kosten- und Umlagenabgleich und Regelinventar vom geöffneten Abrechnungskontext, vereinheitlicht die Seitenklassifikation und stellt für Mehrjahresauswertungen auch nach Archivierung sowie aus Archivansichten den vollständigen kanonischen Datenbestand bereit. Fachberechnung, Archive und Datenschema 5 bleiben unverändert.",
   "V99.4.69 gestaltet den Kosten- und Umlagenabgleich im verbindlichen NK-Pro-Design neu, trennt Kontrolldifferenz und fachlichen Status, vereinheitlicht Tabellen, Status, Prüf- und Exportaktionen und führt die zustandsabhängige Archivaktion ein: aktuelle Abrechnungen werden mit ‚Abrechnung ins Archiv verschieben.‘ archiviert, kontrolliert geöffnete Archivkorrekturen mit ‚Archiv aktualisieren.‘ nachvollziehbar zurückgeführt. Die Teilnehmerlogik V99.4.68, Datenschema 5 und unveränderte historische Archive bleiben geschützt.",
   "V99.4.68 vereinheitlicht die Abrechnungsteilnahme systemweit: Privatanteil, Eigenanteil und Eigentümer/Privat sind reguläre Abrechnungsteilnehmer in Berechnung, Vorauszahlungen, Ergebnissen, Prüfungen, Dokumenten, Exporten, Archivierung und Jahreswechsel. Die Nutzungsart bleibt reine Kennzeichnung; M000 wird in den aktiven Datenebenen mit Einzugsdatum 01.01.2010 migriert. Finalisierte Archive bleiben unverändert. Datenschema 5 bleibt erhalten.",
   "V99.4.67 korrigiert die erneute Archivierung historischer Abrechnungen: leere Mieterplatzhalter erzeugen keine Zähler mehr, vorhandene Wasseruhrenhistorien werden für fehlende Messperioden genutzt, Zähler außerhalb des Abrechnungszeitraums blockieren nicht und wiederholte Validierungsmeldungen werden zusammengefasst. Datenschema 5 bleibt unverändert.",
@@ -349,8 +350,18 @@ const UNIT_ID_ALIASES = {
 
 let state = null;
 let archiveReturnState = null;
-const START_NAV_TABS = ["landing","objektuebersicht","objekt","mieterverwaltung","wohnungsverwaltung","wasser","start","archiv","sicherung"];
-const BILLING_NAV_TABS = ["mieter","einnahmen","einstellungen","manuellewerte","umlage","vorauszahlungsanpassung","qualitaet","briefe","export","auswertungen","regelinventar"];
+// Globale Seiten sind unabhängig davon erreichbar, ob eine Abrechnung geöffnet ist.
+// BILLING_NAV_TABS enthält ausschließlich Seiten, die fachlich einen konkreten Abrechnungskontext benötigen.
+const GLOBAL_NAV_TABS = Object.freeze(["landing","objektuebersicht","objekt","mieterverwaltung","wohnungsverwaltung","wasser","start","archiv","sicherung","auswertungen","kostenumlagenabgleich","regelinventar"]);
+const START_NAV_TABS = GLOBAL_NAV_TABS;
+const BILLING_NAV_TABS = Object.freeze(["mieter","einnahmen","einstellungen","manuellewerte","umlage","vorauszahlungsanpassung","qualitaet","briefe","export"]);
+const GLOBAL_ANALYSIS_TABS = Object.freeze(["auswertungen","kostenumlagenabgleich","regelinventar"]);
+function canonicalAnalysisState() {
+  // In der im Hauptfenster geöffneten Archivansicht liegt der vollständige kanonische Bestand
+  // in archiveReturnState. Ansonsten ist der normale Anwendungszustand maßgeblich.
+  if (archiveReturnState && typeof archiveReturnState === "object") return archiveReturnState;
+  return state;
+}
 let appUiMode = ARCHIVE_VIEW_MODE ? "billing" : "start";
 let billingContextOpen = false;
 let navigationInitialized = false;

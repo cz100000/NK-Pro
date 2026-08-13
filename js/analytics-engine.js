@@ -12,6 +12,7 @@
     if (typeof options.calculateDataset !== "function") throw new Error("Analyseengine benötigt die bestehende Abrechnungsberechnung für isolierte Datensätze.");
     deps = Object.freeze({
       stateAccess:options.stateAccess,
+      rootState:typeof options.rootState === "function" ? options.rootState : null,
       calculateDataset:options.calculateDataset,
       inspectDataset:typeof options.inspectDataset === "function" ? options.inspectDataset : null,
       isPrivateUse:typeof options.isPrivateUse === "function" ? options.isPrivateUse : (()=>false),
@@ -22,6 +23,10 @@
     return describe();
   }
   function requireDeps(){ if(!deps) throw new Error("Analyseengine wurde noch nicht konfiguriert."); return deps; }
+  function canonicalRoot(){ const d=requireDeps(); return d.rootState ? d.rootState() : d.stateAccess.current(); }
+  function currentPeriodAvailable(meta={}) {
+    return !(meta.archiveViewer || meta.currentBillingArchivedOnly || meta.currentBillingClosedAfterArchive);
+  }
   function text(v){ return String(v===undefined||v===null?"":v).trim(); }
   function number(v){
     if(v===null||v===undefined||v==="") return 0;
@@ -81,10 +86,10 @@
     const score=Math.max(0,100-issues.length*14-(legacy?5:0)-(!calendar?8:0));
     return {legacy,calendar,issues,score,status:issues.length===0?"vollständig":(score>=70?"eingeschränkt":"unvollständig")};
   }
-  function listPeriods(data=requireDeps().stateAccess.current()){
+  function listPeriods(data=canonicalRoot()){
     const candidates=[];
     const currentMeta=data&&data.meta||{};
-    if(data&&typeof data==="object"){
+    if(data&&typeof data==="object"&&currentPeriodAvailable(currentMeta)){
       candidates.push({
         periodId:periodKey(currentMeta,currentMeta.abrechnungsjahr,0),
         label:periodDisplayLabel(currentMeta,currentMeta.abrechnungsjahr),
@@ -111,8 +116,9 @@
         quality:basePeriodQuality(dataset,meta,"archive"), alternatives:[]
       });
     });
-    // Gleiche periodId wird für Zeitreihen nur einmal gezählt. Ein aktiver Arbeitsstand hat Vorrang;
-    // die alternative Archivquelle bleibt als Herkunftsnachweis sichtbar.
+    // Gleiche periodId wird für Zeitreihen nur einmal gezählt. Nur ein tatsächlich aktiver
+    // Arbeitsstand hat Vorrang. Ein nach Archivierung geschlossener Restzustand wird oben
+    // gar nicht erst als aktuelle Periode aufgenommen; damit bleibt der Archiv-Snapshot maßgeblich.
     const byId=new Map();
     candidates.forEach(period=>{
       const existing=byId.get(period.periodId);
@@ -391,7 +397,7 @@
     });
     return out;
   }
-  function build(data=requireDeps().stateAccess.current(),options={}){
+  function build(data=canonicalRoot(),options={}){
     const signature=stateSignature(data);
     const cacheKey=signature+"|"+JSON.stringify({periodIds:options.periodIds||[]});
     if(cache.has(cacheKey)) return cache.get(cacheKey);

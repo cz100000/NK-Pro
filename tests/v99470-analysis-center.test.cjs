@@ -7,7 +7,13 @@ const crypto=require("node:crypto");
 const root=path.resolve(__dirname,"..");
 const read=rel=>fs.readFileSync(path.join(root,rel),"utf8");
 const sha=value=>crypto.createHash("sha256").update(typeof value==="string"?value:JSON.stringify(value)).digest("hex");
-const sourcePath=process.env.NKPRO_REAL_DATA || path.join(root,"AP_ANALYSE_V99_4_70","echtdaten","source-v99.4.69.json");
+const explicitSource=process.env.NKPRO_REAL_DATA || "";
+const sourcePath=explicitSource || path.join(root,"AP_ANALYSE_V99_4_70","echtdaten","source-v99.4.69.json");
+if(!fs.existsSync(sourcePath)){
+  if(explicitSource) throw new Error(`NKPRO_REAL_DATA nicht gefunden: ${sourcePath}`);
+  console.log("V99.4.70 Analysezentrum: Echtdaten-Integrationstest in der schlanken Arbeitsbasis übersprungen; für vollständigen Test NKPRO_REAL_DATA auf den separaten Echtdatenbestand setzen.");
+  process.exit(0);
+}
 const data=JSON.parse(fs.readFileSync(sourcePath,"utf8"));
 const before=sha(data), archiveBefore=sha(data.jahresArchiv);
 

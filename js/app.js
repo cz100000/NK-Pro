@@ -49,6 +49,7 @@ function configureCoreOrchestrationModules() {
   });
   NK_PRO_MODULES.analyticsEngine.configure({
     stateAccess:NK_PRO_MODULES.stateAccess,
+    rootState:() => canonicalAnalysisState(),
     calculateDataset:dataset => withIsolatedState(clone(dataset), () => {
       const calculation = NK_PRO_MODULES.billingCalculation.calculateUmlage();
       return { calculation, totals:NK_PRO_MODULES.billingCalculation.umlageTotals(calculation) };

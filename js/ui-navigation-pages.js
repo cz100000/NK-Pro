@@ -147,8 +147,8 @@ function currentAppMode() {
 }
 
 function tabVisibleInMode(tabId, mode = currentAppMode()) {
-  const list = mode === "billing" ? BILLING_NAV_TABS : START_NAV_TABS;
-  return list.includes(tabId);
+  if (GLOBAL_NAV_TABS.includes(tabId)) return true;
+  return mode === "billing" && BILLING_NAV_TABS.includes(tabId);
 }
 
 function setAppMode(mode) {
@@ -233,8 +233,10 @@ function switchToTab(tabId) {
   if (previousTab) closeAllTabAccordions(previousTab);
   const previousMode = currentAppMode();
   if (!isArchiveViewer()) {
-    if (START_NAV_TABS.includes(tabId)) appUiMode = "start";
+    // Globale Seiten ändern einen bereits geöffneten Abrechnungskontext nicht. Ohne offenen
+    // Kontext bleiben sie im Startmodus. Nur echte Abrechnungsseiten wechseln in billing.
     if (BILLING_NAV_TABS.includes(tabId)) appUiMode = "billing";
+    else if (GLOBAL_NAV_TABS.includes(tabId) && !NK_PRO_MODULES.billingContext.isOpen()) appUiMode = "start";
   }
   const mode = currentAppMode();
   if (!tabVisibleInMode(tabId, mode)) tabId = mode === "billing" ? "mieter" : "landing";

@@ -176,7 +176,9 @@
   function datasetsFor(data) {
     const map=new Map();
     (Array.isArray(data && data.jahresArchiv)?data.jahresArchiv:[]).forEach(item=>{const dataset=item&&item.data;const year=Number(item&&item.year)||yearOf(dataset);if(year&&dataset&&!map.has(year))map.set(year,dataset);});
-    const currentYear=yearOf(data); if(currentYear) map.set(currentYear,data);
+    const meta=data&&data.meta||{};
+    const currentAvailable=!(meta.archiveViewer||meta.currentBillingArchivedOnly||meta.currentBillingClosedAfterArchive);
+    const currentYear=yearOf(data); if(currentAvailable&&currentYear) map.set(currentYear,data);
     return map;
   }
   function safeCalculation(dataset) {

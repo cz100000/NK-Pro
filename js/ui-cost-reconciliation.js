@@ -6,13 +6,17 @@ function kuaEscape(value){return String(value??"").replace(/&/g,"&amp;").replace
 function kuaMoney(value){return Number(value||0).toLocaleString("de-DE",{style:"currency",currency:"EUR",minimumFractionDigits:2,maximumFractionDigits:2});}
 function kuaNumberInput(value){return Number(value||0).toLocaleString("de-DE",{minimumFractionDigits:2,maximumFractionDigits:2});}
 function kuaDate(value){const m=String(value||"").match(/^(\d{4})-(\d{2})-(\d{2})/);return m?m[3]+"."+m[2]+"."+m[1]:String(value||"");}
-function kuaCurrentModel(){return kuaDomain().model(state,{fromYear:costReconciliationView.fromYear,toYear:costReconciliationView.toYear});}
+function kuaAnalysisState(){return typeof canonicalAnalysisState==="function"?canonicalAnalysisState():state;}
+function kuaCurrentModel(){return kuaDomain().model(kuaAnalysisState(),{fromYear:costReconciliationView.fromYear,toYear:costReconciliationView.toYear});}
 function kuaYearCells(years,map,className=""){return years.map(year=>'<td class="number '+className+'">'+kuaMoney(map[year]||0)+'</td>').join("");}
 function kuaStatusTone(code){return ({"not-started":"neutral",working:"warning",balanced:"info","open-difference":"warning","review-required":"warning",checked:"success",released:"success"})[code]||"neutral";}
 function kuaStatusBadge(model){return '<span class="kua-status kua-status--'+kuaStatusTone(model.statusCode)+'">'+kuaEscape(model.status)+'</span>';}
 function kuaOption(value,label,current){return '<option value="'+kuaEscape(value)+'"'+(String(value)===String(current)?' selected':'')+'>'+kuaEscape(label)+'</option>';}
 function kuaSelectedYears(){
-  const available=[...new Set([...(state.jahresArchiv||[]).map(row=>Number(row.year)),Number(state.meta&&state.meta.abrechnungsjahr)].filter(Boolean))].sort((a,b)=>a-b);
+  const source=kuaAnalysisState();
+  const currentMeta=source&&source.meta||{};
+  const currentAvailable=!(currentMeta.archiveViewer||currentMeta.currentBillingArchivedOnly||currentMeta.currentBillingClosedAfterArchive);
+  const available=[...new Set([...(source&&source.jahresArchiv||[]).map(row=>Number(row.year)),currentAvailable?Number(currentMeta.abrechnungsjahr):0].filter(Boolean))].sort((a,b)=>a-b);
   if(!costReconciliationView.fromYear) costReconciliationView.fromYear=available[0]||0;
   if(!costReconciliationView.toYear) costReconciliationView.toYear=available.at(-1)||available[0]||0;
   return available;
