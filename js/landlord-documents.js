@@ -98,10 +98,12 @@
     const techem=active.find(x=>x.cost.id==="K006");
     const waterResidual=water ? round(water.ownerShare||0) : 0;
     const techemResidual=techem ? round(numeric(techem.externalOwnerShare)||numeric(techem.cost && data.umlageInputs && data.umlageInputs.K006 && data.umlageInputs.K006.externalBilling && data.umlageInputs.K006.externalBilling.includedOwnerShare)) : 0;
+    const building = data.objektStandard && Array.isArray(data.objektStandard.gebaeude) && data.objektStandard.gebaeude[0] || {};
+    const location = [building.strasse, [building.plz,building.ort].filter(Boolean).join(" ")].filter(Boolean).join(", ");
     return {year,period:period(data),records,regular,privateRecords,vacant,allCosts,regularCosts,privateCosts,vacantCosts,
       rest,waterResidual,techemResidual,totalAdvances:sum(regular,"advanced"),corrections:sum(regular,"correction"),
       totalBalance:round(regular.reduce((s,r)=>s+r.balance,0)),
-      property:(data.objekt && (data.objekt.adresse||data.objekt.strasse)) || "Am Rauhen Biehl 5, 55774 Baumholder",
+      property:location || (data.objektStandard && data.objektStandard.objekt && data.objektStandard.objekt.bezeichnung) || "Objekt gemäß Stammdaten",
       costKinds:active.map(x=>({id:x.cost.id,name:x.cost.kostenart||x.cost.id,total:numeric(x.cost.gesamtbetrag)}))};
   }
 
