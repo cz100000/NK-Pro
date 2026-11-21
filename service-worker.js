@@ -1,5 +1,5 @@
-const CACHE_NAME = "nk-pro-v99-4-76-google-drive-visible-private";
-const BUILD_ID = "99.4.76-google-drive-visible-private";
+const CACHE_NAME = "nk-pro-v99-4-76-1-drive-mobile-status";
+const BUILD_ID = "99.4.76.1-drive-mobile-status";
 const CACHE_PREFIX = "nk-pro-";
 const APP_SHELL = [
   "./",
