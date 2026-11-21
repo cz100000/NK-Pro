@@ -533,6 +533,36 @@ function mountBriefPreview(preview, html) {
     '</style>';
 }
 
+function briefNkCorrectionPrintControlsHtml(result) {
+  if(!result || !result.tenant || Math.abs(num(result.correction)) < 0.005)return "";
+  const meta=NKProNkCorrections.read(result.tenant);
+  const choices=[
+    ["kurz","Kurz (ohne Jahresangabe)"],
+    ["jahr","Mit Bezugsjahr"],
+    ["jahr-text","Mit Bezugsjahr und Zusatztext"],
+    ["frei","Eigene Formulierung"]
+  ];
+  const options=choices.map(([value,label])=>'<option value="'+value+'"'+(meta.briefmodus===value?' selected':'')+'>'+escapeHtml(label)+'</option>').join('');
+  const action=(field)=>uiActionAttributes("document.setBriefNkCorrectionDetail",[field,"$value"],"change");
+  return '<details id="briefNkCorrectionSection" class="nk-brief-correction-editor"><summary>NK-Korrektur im Brief: Aufdruck festlegen</summary>'+
+    '<p class="small">Gilt nur für den ausgewählten Mieter. Betrag und Abrechnungsergebnis bleiben unverändert.</p>'+
+    '<label>Aufdruck</label><select '+action("briefmodus")+'>'+options+'</select>'+
+    '<label>Bezugsjahr (optional)</label><input type="text" inputmode="numeric" maxlength="4" placeholder="z. B. '+escapeHtml(currentAbrechnungsjahr())+'" value="'+escapeHtml(meta.bezugsjahr)+'" '+action("bezugsjahr")+'>'+
+    '<label>Zusatztext / eigene Formulierung</label><input maxlength="140" value="'+escapeHtml(meta.brieftext)+'" '+action("brieftext")+'>'+
+    '<div class="hint">Interner Korrekturgrund: Vorauszahlungen → Korrekturen und Gutschriften → Bezug, Grund und Briefausgabe.</div>'+
+    '</details>';
+}
+function setBriefNkCorrectionDetail(key,value) {
+  const calc=calculateUmlage();
+  const selected=selectedBriefTenant(calc);
+  if(!selected||!selected.tenant||Math.abs(num(selected.correction))<0.005)return;
+  const panel=document.getElementById("briefNkCorrectionSection");
+  const wasOpen=!!(panel&&panel.open);
+  prepaymentSetNkCorrectionDetail(selected.tenant.originalIndex,key,value);
+  renderBrief();
+  const refreshed=document.getElementById("briefNkCorrectionSection");
+  if(refreshed)refreshed.open=wasOpen;
+}
 function renderBrief() {
   const settingsEl = document.getElementById("briefSettings");
   const textsEl = document.getElementById("briefTexts");
@@ -556,6 +586,7 @@ function renderBrief() {
     briefPreflightBoxHtml(briefPreflight) +
     printHardeningBoxHtml(printHardeningReport(calc, selected)) +
     briefSettlementSummaryHtml(selected) +
+    briefNkCorrectionPrintControlsHtml(selected) +
     (billingEntryForTenant(selected && selected.tenant) ? '<div class="hint"><strong>Briefmodus:</strong> Originalnahe Archivansicht aus importierten Abrechnungsdaten. Die Beträge werden aus denselben strukturierten Datenfeldern erzeugt wie die neue Standardabrechnung.</div>' : '<div class="hint"><strong>Briefmodus:</strong> Standardbrief aus den aktuellen Abrechnungsdaten.</div>') +
     '<label>Abrechnungsjahr</label><input value="' + escapeHtml(s.abrechnungsjahr) + '" ' + uiActionAttributes("document.setBriefSetting", ["abrechnungsjahr","$value"], "change") + '>' +
     '<label>Briefdatum</label><input type="date" value="' + escapeHtml(s.briefdatum) + '" ' + uiActionAttributes("document.setBriefSetting", ["briefdatum","$value"], "change") + '>' +
