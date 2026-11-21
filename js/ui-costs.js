@@ -680,6 +680,45 @@ function prepaymentRentAfterCorrection(tenant) { return num(tenant && tenant.kal
 function prepaymentFinancialInput(value,index,key) {
   return '<input class="money" inputmode="decimal" value="'+escapeHtml(value ?? '')+'"'+uiActionAttributes('cost.prepaymentSetTenantValue',[Number(index),String(key),'$value'],'input')+editDisabledAttr()+'>';
 }
+function prepaymentNkCorrectionDetailsHtml(tenant,index) {
+  const meta = NKProNkCorrections.read(tenant);
+  const year = escapeHtml(meta.bezugsjahr);
+  const yearHint = meta.bezugsjahr ? ' · Bezugsjahr '+year : ' · Bezugsjahr noch nicht erfasst';
+  const modes=[
+    ['kurz','Nur Kurztext (ohne Jahr)'],
+    ['jahr','Kurztext + Bezugsjahr'],
+    ['jahr-text','Kurztext + Jahr + Zusatztext'],
+    ['frei','Nur eigener Brieftext']
+  ];
+  const options=modes.map(([value,label])=>'<option value="'+value+'"'+(meta.briefmodus===value?' selected':'')+'>'+escapeHtml(label)+'</option>').join('');
+  const field=(key,html)=>'<label class="nk-correction-field"><span>'+key+'</span>'+html+'</label>';
+  return '<tr class="nk-correction-detail-row"><td colspan="7"><details class="nk-correction-editor"><summary>Bezugsjahr, Grund und Briefausgabe <small>'+yearHint+'</small></summary>'+
+    '<div class="nk-correction-fields">'+
+    field('Bezugsjahr','<input id="nk-correction-year-'+index+'" type="text" inputmode="numeric" maxlength="4" placeholder="z. B. '+escapeHtml(currentAbrechnungsjahr())+'" value="'+year+'" '+uiActionAttributes('cost.prepaymentSetNkCorrectionDetail',[index,'bezugsjahr','$value'],'change')+editDisabledAttr()+'>')+
+    field('Grund (nur intern)','<input type="text" maxlength="400" placeholder="z. B. Korrektur der Vorauszahlung" value="'+escapeHtml(meta.grund)+'" '+uiActionAttributes('cost.prepaymentSetNkCorrectionDetail',[index,'grund','$value'],'change')+editDisabledAttr()+'>')+
+    field('Aufdruck im Mieterbrief','<select '+uiActionAttributes('cost.prepaymentSetNkCorrectionDetail',[index,'briefmodus','$value'],'change')+editDisabledAttr()+'>'+options+'</select>')+
+    field('Zusatztext / eigene Formulierung (optional)','<input type="text" maxlength="140" value="'+escapeHtml(meta.brieftext)+'" placeholder="Nur bei entsprechendem Aufdruck" '+uiActionAttributes('cost.prepaymentSetNkCorrectionDetail',[index,'brieftext','$value'],'change')+editDisabledAttr()+'>')+
+    '</div><p class="nk-correction-help">Die Begründung bleibt intern. Im Mieterbrief wird nur der gewählte Aufdruck gezeigt. Ohne erfasstes Bezugsjahr wird keine Jahreszahl behauptet.</p></details></td></tr>';
+}
+function prepaymentSetNkCorrectionDetail(index,key,value) {
+  const i=Number(index);
+  const tenant=state && Array.isArray(state.mieter) ? state.mieter[i] : null;
+  const permitted=new Set(['bezugsjahr','grund','briefmodus','brieftext']);
+  if(!tenant||!permitted.has(String(key)))return;
+  const meta=NKProNkCorrections.read(tenant);
+  const cleaned=String(value==null?'':value).trim();
+  if(key==='bezugsjahr' && cleaned && !NKProNkCorrections.validYear(cleaned)){
+    alert('Bitte ein vierstelliges Bezugsjahr zwischen 1900 und 2100 eingeben oder das Feld leer lassen.');
+    renderEinnahmen();
+    return;
+  }
+  if(key==='briefmodus' && !NKProNkCorrections.modes.includes(cleaned))return;
+  meta[key] = cleaned.slice(0,key==='grund'?400:key==='brieftext'?140:key==='bezugsjahr'?4:20);
+  tenant.nkKorrekturDetails=meta;
+  commitStateChange({reason:'NK-Korrektur dokumentiert',render:false,tabId:'einnahmen'});
+  // Keep the open <details> section intact while editing all four fields.
+}
+
 function prepaymentFinancialTotals(cases) {
   return (Array.isArray(cases)?cases:prepaymentDisplayCases()).filter(row=>row.billable&&row.tenant).reduce((totals,row)=>{
     const tenant=row.tenant;
@@ -720,9 +759,17 @@ function prepaymentSetTenantValue(index,key,value) {
   const numericIndex=Number(index);
   if(!allowed.has(String(key))||!state.mieter||!state.mieter[numericIndex])return;
   const tenant=state.mieter[numericIndex];
+  const oldCorrection=num(tenant.vorjahresKorrektur);
   tenant[key]=num(value);
   tenant.kaltmietKorrektur=num(tenant.kaltmietKorrektur);
   tenant.vorjahresKorrektur=num(tenant.vorjahresKorrektur);
+  if(key==='vorjahresKorrektur' && Math.abs(oldCorrection)<0.005 &&
+     Math.abs(tenant.vorjahresKorrektur)>=0.005 && !tenant.nkKorrekturDetails){
+    // New corrections refer to the open billing year unless explicitly changed.
+    tenant.nkKorrekturDetails=NKProNkCorrections.forNewCorrection(currentAbrechnungsjahr());
+    const yearInput=document.getElementById('nk-correction-year-'+numericIndex);
+    if(yearInput)yearInput.value=tenant.nkKorrekturDetails.bezugsjahr;
+  }
   tenant.einnahmen=num(tenant.kaltErhalten)+num(tenant.nkVoraus);
   ensureTenantIdentityFields(tenant);
   commitStateChange({reason:'Benutzereingabe',render:false,tabId:'einnahmen'});
@@ -804,7 +851,7 @@ function renderEinnahmen() {
       const tenant=row.tenant; const editable=row.billable&&tenant;
       const nkInput=editable?prepaymentFinancialInput(tenant.vorjahresKorrektur,row.originalIndex,'vorjahresKorrektur'):prepaymentReadonlyMoney(tenant?tenant.vorjahresKorrektur:null,prepaymentCaseStatus(row));
       const rentInput=editable?prepaymentFinancialInput(tenant.kaltmietKorrektur,row.originalIndex,'kaltmietKorrektur'):prepaymentReadonlyMoney(tenant?tenant.kaltmietKorrektur:null,prepaymentCaseStatus(row));
-      return '<tr class="'+(editable?'':'prepayment-nonbillable-row')+'"><td>'+prepaymentIdentityCell(row)+'</td><td>'+prepaymentUnitCell(row)+'</td><td class="'+(editable?'editable':'prepayment-nonbillable')+'">'+nkInput+'</td><td class="money readonly-cell">'+(editable?'<span data-prepayment-nk-after="'+row.originalIndex+'">'+fmtMoney(prepaymentNkAfterCorrection(tenant))+'</span>':'—')+'</td><td class="'+(editable?'editable':'prepayment-nonbillable')+'">'+rentInput+'</td><td class="money readonly-cell">'+(editable?'<span data-prepayment-rent-after="'+row.originalIndex+'">'+fmtMoney(prepaymentRentAfterCorrection(tenant))+'</span>':'—')+'</td><td>'+prepaymentStatusCell(row)+'</td></tr>';
+      return '<tr class="'+(editable?'':'prepayment-nonbillable-row')+'"><td>'+prepaymentIdentityCell(row)+'</td><td>'+prepaymentUnitCell(row)+'</td><td class="'+(editable?'editable':'prepayment-nonbillable')+'">'+nkInput+'</td><td class="money readonly-cell">'+(editable?'<span data-prepayment-nk-after="'+row.originalIndex+'">'+fmtMoney(prepaymentNkAfterCorrection(tenant))+'</span>':'—')+'</td><td class="'+(editable?'editable':'prepayment-nonbillable')+'">'+rentInput+'</td><td class="money readonly-cell">'+(editable?'<span data-prepayment-rent-after="'+row.originalIndex+'">'+fmtMoney(prepaymentRentAfterCorrection(tenant))+'</span>':'—')+'</td><td>'+prepaymentStatusCell(row)+'</td></tr>'+(editable?prepaymentNkCorrectionDetailsHtml(tenant,row.originalIndex):'');
     }).join(''):'<tr><td colspan="7" class="prepayment-empty">Keine Fälle entsprechen der Suche oder dem Filter.</td></tr>';
     const correctionTotal='<tr class="total-row prepayment-total-row"><td colspan="2">Gesamtsummen abrechenbare Fälle<small>'+billableCases.length+' von '+cases.length+' Fällen</small></td><td class="money" id="prepaymentNkCorrectionTotal">'+fmtMoney(totals.nkKorrektur)+'</td><td class="money" id="prepaymentNkAfterTotal">'+fmtMoney(totals.nkNachKorrektur)+'</td><td class="money" id="prepaymentRentCorrectionTotal">'+fmtMoney(totals.kaltKorrektur)+'</td><td class="money" id="prepaymentCorrectionRentAfterTotal">'+fmtMoney(totals.kaltNachKorrektur)+'</td><td></td></tr>';
     correctionTable.innerHTML='<thead><tr><th scope="col">'+prepaymentSortButton('corrections','tenant','Mieter / Fall')+'</th><th scope="col">'+prepaymentSortButton('corrections','unit','Wohnung')+'</th><th scope="col" class="money">'+prepaymentSortButton('corrections','vorjahresKorrektur','NK-Korrektur / Gutschrift')+'</th><th scope="col" class="money">NK nach Korrektur</th><th scope="col" class="money">'+prepaymentSortButton('corrections','kaltmietKorrektur','Kaltmiet-Korrektur / Gutschrift')+'</th><th scope="col" class="money">Kaltmieteinnahmen nach Korrektur</th><th scope="col">'+prepaymentSortButton('corrections','status','Status')+'</th></tr></thead><tbody>'+correctionRows+correctionTotal+'</tbody>';
