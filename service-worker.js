@@ -1,5 +1,5 @@
-const CACHE_NAME = "nk-pro-v99-4-83-personal-salutation";
-const BUILD_ID = "99.4.83-personal-salutation";
+const CACHE_NAME = "nk-pro-v99-4-84-clear-payment-request";
+const BUILD_ID = "99.4.84-clear-payment-request";
 const CACHE_PREFIX = "nk-pro-";
 const APP_SHELL = [
   "./",
@@ -51,6 +51,7 @@ const APP_SHELL = [
   "./js/quality-system-k4.js?v=" + BUILD_ID,
   "./js/document-data.js",
   "./js/document-renderer.js",
+  "./js/document-renderer.js?v=" + BUILD_ID,
   "./js/landlord-documents.js?v=" + BUILD_ID,
   "./js/export-service.js",
   "./js/ui-table-tools.js",
