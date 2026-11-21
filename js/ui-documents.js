@@ -165,6 +165,12 @@ function normalizeBriefDefaultTexts() {
     "Auf Grundlage der vorliegenden Abrechnung wird Ihre monatliche Betriebskostenvorauszahlung ab dem {datum} wie folgt angepasst:"
   ];
   if (legacyIntros.includes(normalizeLegacyProse(state.briefSettings.introText))) state.briefSettings.introText = defaults.introText;
+  // Earlier NK-Pro letters omitted the actual amount in the payment request.
+  // Upgrade only known default/legacy wording; preserve user-edited templates.
+  const formerDefaultPaymentText = "Bitte überweisen Sie den Betrag bis zum {zahlungsziel} auf das Ihnen bekannte Konto.";
+  if (normalizeLegacyProse(state.briefSettings.saldoTextNachzahlung) === formerDefaultPaymentText) {
+    state.briefSettings.saldoTextNachzahlung = defaults.saldoTextNachzahlung;
+  }
   if (legacySaldoTexts.includes(normalizeLegacyProse(state.briefSettings.saldoTextNachzahlung))) state.briefSettings.saldoTextNachzahlung = defaults.saldoTextNachzahlung;
   if (legacySaldoTexts.includes(normalizeLegacyProse(state.briefSettings.saldoTextGuthaben))) state.briefSettings.saldoTextGuthaben = defaults.saldoTextGuthaben;
   if (legacyPrepayTexts.includes(normalizeLegacyProse(state.briefSettings.vorauszahlungIntro))) state.briefSettings.vorauszahlungIntro = defaults.vorauszahlungIntro;
@@ -191,7 +197,7 @@ function defaultBriefSettings() {
     betreff: "Nebenkostenabrechnung",
     anredeModus: "Sehr geehrte(r) Mieter/in,",
     introText: "für die oben bezeichnete Wohnung erhalten Sie hiermit Ihre Nebenkostenabrechnung für den Zeitraum {zeitraum}. Die Kostenverteilung und Ihr Anteil sind nachfolgend dargestellt:",
-    saldoTextNachzahlung: "Bitte überweisen Sie den Betrag bis zum {zahlungsziel} auf das Ihnen bekannte Konto.",
+    saldoTextNachzahlung: "Bitte überweisen Sie den Betrag von {betrag} bis zum {zahlungsziel} auf das Ihnen bekannte Konto.",
     saldoTextGuthaben: "Ihr Guthaben wird Ihnen auf das bekannte Konto überwiesen beziehungsweise mit offenen Abrechnungen verrechnet.",
     outroText: "",
     abschlusstext: "Bei Fragen stehe ich Ihnen selbstverständlich gern zur Verfügung.",
@@ -681,7 +687,7 @@ function renderBrief() {
 
   textsEl.innerHTML =
     '<label>Einleitungstext ({jahr}, {zeitraum}, {zahlungsziel} und {betrag} werden ersetzt)</label>' + textareaHtml(s.introText, "setBriefSetting('introText',this.value)") +
-    '<label>Zahlungstext bei Nachzahlung</label>' + textareaHtml(s.saldoTextNachzahlung, "setBriefSetting('saldoTextNachzahlung',this.value)") +
+    '<label>Zahlungstext bei Nachzahlung ({betrag} = individueller Zahlbetrag, {zahlungsziel} = Fälligkeit)</label>' + textareaHtml(s.saldoTextNachzahlung, "setBriefSetting('saldoTextNachzahlung',this.value)") +
     '<label>Zahlungstext bei Guthaben</label>' + textareaHtml(s.saldoTextGuthaben, "setBriefSetting('saldoTextGuthaben',this.value)") +
     '<label>Allgemeiner Hinweistext unter der Tabelle</label>' + textareaHtml(s.heizkostenFussnote, "setBriefSetting('heizkostenFussnote',this.value)") +
     '<label>Zusätzlicher Hinweistext (erzeugt Seite 2)</label>' + textareaHtml(s.outroText, "setBriefSetting('outroText',this.value)") +
