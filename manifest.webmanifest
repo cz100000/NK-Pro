@@ -1,5 +1,5 @@
 {
-  "name": "NK-Pro V99.4.85",
+  "name": "NK-Pro V99.4.86",
   "short_name": "NK-Pro",
   "description": "Lokale Offline-Nebenkostenabrechnung mit professionellem Mehrjahres-Analysezentrum für Nebenkosten, Finanzen und steuerliche Aufbereitung.",
   "lang": "de-DE",
@@ -9,7 +9,7 @@
   "display": "standalone",
   "background_color": "#f4f6f9",
   "theme_color": "#031d41",
-  "version": "99.4.85",
+  "version": "99.4.86",
   "icons": [
     {
       "src": "./icons/icon-180.png",
@@ -42,5 +42,5 @@
       "purpose": "maskable"
     }
   ],
-  "buildId": "99.4.85-letter-typography"
+  "buildId": "99.4.86-signature-position"
 }

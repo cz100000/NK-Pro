@@ -109,6 +109,7 @@
 .nk-letter-document .notice-title{display:block;margin-bottom:.6mm;color:${AP13_DARK_BLUE};font-size:8pt;font-weight:700}
 .nk-letter-document .payment-text{margin:0;font-size:10pt;line-height:1.3;color:${AP13_TEXT}}
 .nk-letter-document .document-end{display:grid;grid-template-columns:minmax(0,1fr) minmax(62mm,78mm);gap:8mm;align-items:end;margin-top:auto;padding-top:7mm}
+.nk-letter-document .signature-block{position:relative;top:-6mm}
 .nk-letter-document .closing-greeting{margin:0 0 14mm;font-size:10pt;line-height:1.2}
 .nk-letter-document .signature-name{font-size:9.5pt;font-weight:700;line-height:1.15}
 .nk-letter-document .signature-role{color:${AP13_MUTED};font-size:8pt;line-height:1.15}
@@ -387,7 +388,7 @@
     const signature = signatureParts(settings);
     const closingText = includeClosingText ? String(settings.abschlusstext || "").trim() : "";
     return (closingText ? '<p class="supplement-closing-text">' + briefProseHtml(closingText) + '</p>' : '') +
-      '<div class="document-end"><div><p class="closing-greeting">' + briefTextWithLineBreaks(settings.gruss) + '</p><div class="signature-name">' + escapeHtml(signature.name) + '</div><div class="signature-role">' + escapeHtml(signature.role) + '</div></div>' +
+      '<div class="document-end"><div class="signature-block"><p class="closing-greeting">' + briefTextWithLineBreaks(settings.gruss) + '</p><div class="signature-name">' + escapeHtml(signature.name) + '</div><div class="signature-role">' + escapeHtml(signature.role) + '</div></div>' +
       (String(settings.anlagenText || "").trim() ? '<div class="attachment"><span class="attachment-title">Anlage</span>' + briefTextWithLineBreaks(settings.anlagenText) + '</div>' : '<div></div>') + '</div>';
   }
 
