@@ -30,7 +30,7 @@
 
   function printLabel(tenant, correction) {
     const metadata = read(tenant);
-    const base = Number(correction) < -0.004 ? "Korrektur / Nachbelastung Nebenkosten" : "Korrektur / Gutschrift Nebenkosten";
+    const base = Number(correction) < -0.004 ? "Korrektur/Nachbelastung" : "Korrektur/Gutschrift";
     if (metadata.briefmodus === "frei") return metadata.brieftext || base;
     if (metadata.briefmodus === "kurz") return base;
     const year = metadata.bezugsjahr ? " · " + metadata.bezugsjahr : "";

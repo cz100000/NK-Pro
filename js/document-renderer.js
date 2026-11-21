@@ -68,12 +68,12 @@
 .nk-letter-document .letter-intro{margin:0 0 6mm;font-size:10pt;line-height:1.32}
 .nk-letter-document .letter-intro strong{font-weight:700}
 .nk-letter-document .result-strip{display:grid;grid-template-columns:repeat(3,1fr);height:18mm;margin:0 0 6mm;border-top:.3mm solid ${AP13_LINE};border-bottom:.3mm solid ${AP13_LINE}}
-.nk-letter-document .result-cell{display:flex;align-items:center;justify-content:center;flex-direction:column;min-width:0;background:${AP13_LIGHT};border-right:.25mm solid #fff;text-align:center;padding:2mm}
+.nk-letter-document .result-cell{display:grid;grid-template-rows:6.2mm 5.1mm;row-gap:.7mm;align-content:center;justify-items:center;min-width:0;background:${AP13_LIGHT};border-right:.25mm solid #fff;text-align:center;padding:1mm 1.4mm}
 .nk-letter-document .result-cell:last-child{border-right:0}
 .nk-letter-document .result-cell--final.is-due{background:${AP13_RESULT_RED_BG}}
 .nk-letter-document .result-cell--final.is-credit{background:${AP13_RESULT_GREEN_BG}}
-.nk-letter-document .result-label{color:#4D5F6E;font-size:7pt;line-height:1.12;font-weight:700;min-height:7.7mm;display:flex;align-items:center;justify-content:center;text-align:center}
-.nk-letter-document .result-value{margin-top:1mm;color:${AP13_DARK_BLUE};font-size:12pt;line-height:1;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.nk-letter-document .result-label{color:#4D5F6E;font-size:7pt;line-height:1.12;font-weight:700;height:6.2mm;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;text-align:center}
+.nk-letter-document .result-value{margin:0;height:5.1mm;display:flex;align-items:center;justify-content:center;color:${AP13_DARK_BLUE};font-size:12pt;line-height:1;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
 .nk-letter-document .result-cell--middle .result-value{color:${AP13_TEXT}}
 .nk-letter-document .result-cell--final.is-due .result-value{color:${AP13_RESULT_RED}}
 .nk-letter-document .result-cell--final.is-credit .result-value{color:${AP13_RESULT_GREEN}}
@@ -99,10 +99,11 @@
 .nk-letter-document .abrechnung-rounding-note{margin:-4mm 0 4mm;font-size:6.5pt;line-height:1.2;color:${AP13_MUTED}}
 .nk-letter-document .money{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap!important}
 .nk-letter-document .center{text-align:center}
-.nk-letter-document .table-correction-row td{background:#FAFCFD;font-style:italic}
+.nk-letter-document .table-correction-row td{background:${AP13_LIGHT};font-style:normal}
 .nk-letter-document .table-total-row td{height:7.8mm;background:#DCEAF3;border-top:.55mm solid ${AP13_BLUE};border-bottom:.3mm solid ${AP13_BLUE};font-size:8pt;font-weight:700}
 .nk-letter-document .table-total-row td:first-child{color:${AP13_DARK_BLUE}}
-.nk-letter-document .table-total-row .balance-due{color:${AP13_RESULT_RED}}
+.nk-letter-document .table-total-row td.money{font-family:Arial,"Liberation Sans",sans-serif;font-size:8pt;font-weight:700;line-height:1.1;color:${AP13_TEXT};font-variant-numeric:tabular-nums}
+.nk-letter-document .table-total-row .balance-due{color:${AP13_TEXT}}
 .nk-letter-document .notice-box{margin:0 0 3.5mm;padding:2.5mm 2.5mm 2.2mm;border-left:.6mm solid ${AP13_BLUE};background:${AP13_LIGHT};color:#4D5F6E;font-size:7pt;line-height:1.2}
 .nk-letter-document .notice-title{display:block;margin-bottom:.6mm;color:${AP13_DARK_BLUE};font-size:8pt;font-weight:700}
 .nk-letter-document .payment-text{margin:0;font-size:10pt;line-height:1.3;color:${AP13_TEXT}}
@@ -156,7 +157,8 @@
 .nk-letter-document.is-monochrome .prepay-table .prepay-rent td,.nk-letter-document.is-monochrome .abrechnung-table tbody tr:nth-child(even):not(.table-total-row):not(.table-correction-row) td,.nk-letter-document.is-monochrome .prepay-table tbody tr:nth-child(even):not(.prepay-summary):not(.prepay-final) td{background:#f2f2f2}
 .nk-letter-document.is-monochrome .result-cell--final.is-due{background:repeating-linear-gradient(135deg,#d7d7d7 0,#d7d7d7 1.5mm,#eeeeee 1.5mm,#eeeeee 3mm);box-shadow:inset 0 0 0 .35mm #555}
 .nk-letter-document.is-monochrome .result-cell--final.is-credit{background:#f7f7f7;box-shadow:inset 0 0 0 .35mm #777}
-.nk-letter-document.is-monochrome .result-cell--final.is-due .result-value,.nk-letter-document.is-monochrome .result-cell--final.is-credit .result-value,.nk-letter-document.is-monochrome .table-total-row .balance-due{color:#111}
+.nk-letter-document.is-monochrome .result-cell--final.is-due .result-value,.nk-letter-document.is-monochrome .result-cell--final.is-credit .result-value{color:#111}
+.nk-letter-document.is-monochrome .table-total-row td.money{color:#111}
 .nk-letter-document.is-monochrome .notice-box,.nk-letter-document.is-monochrome .additional-note-box,.nk-letter-document.is-monochrome .payment-notice{border-left-color:#444}
 .nk-letter-document table,.nk-letter-document tr,.nk-letter-document .document-end,.nk-letter-document .letter-footer{page-break-inside:avoid;break-inside:avoid}
 @media print{html,body{width:210mm;margin:0!important;padding:0!important;background:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.nk-letter-document{margin:0!important}.nk-letter-document .letter-sheet{margin:0!important;border:0!important;box-shadow:none!important}}
@@ -341,7 +343,7 @@
     // Year is never inferred from the billing period. The saved correction
     // metadata determines whether an optional year or detail appears at all.
     const label = global.NKProNkCorrections.printLabel(tenant, correction);
-    return '<tr class="table-correction-row"><td class="cell-cost" colspan="7">' + escapeHtml(label) + '</td><td class="money">' + prepaymentMoneyHtml(correction) + '</td><td class="money">' + signedMoneyHtml(-num(correction)) + '</td></tr>';
+    return '<tr class="table-correction-row"><td class="cell-cost">' + escapeHtml(label) + '</td>' + '<td></td>'.repeat(6) + '<td class="money">' + prepaymentMoneyHtml(correction) + '</td><td class="money">' + signedMoneyHtml(-num(correction)) + '</td></tr>';
   }
 
   function rentCorrectionNoteHtml(tenant, year) {
