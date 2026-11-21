@@ -113,7 +113,8 @@
       "cost.clearSearch":call(handlers, "clearCostSearch"),
       "cost.prepaymentSetSearch":call(handlers, "prepaymentSetSearch"), "cost.prepaymentSetFilter":call(handlers, "prepaymentSetFilter"),
       "cost.prepaymentReset":call(handlers, "prepaymentReset"), "cost.prepaymentSort":call(handlers, "prepaymentSort"),
-      "cost.prepaymentSetTenantValue":call(handlers, "prepaymentSetTenantValue")
+      "cost.prepaymentSetTenantValue":call(handlers, "prepaymentSetTenantValue"),
+      "cost.prepaymentSetNkCorrectionDetail":call(handlers, "prepaymentSetNkCorrectionDetail")
     });
     registerController("billing", "Abrechnungslebenszyklus, Erfassungsaktionen und zentrale Ergebnisdarstellung", {
       "billing.openCurrent":call(handlers, "openCurrentBilling"), "billing.openCurrentEdit":call(handlers, "openCurrentBillingForEdit"), "billing.openCurrentView":call(handlers, "openCurrentBillingForView"),
