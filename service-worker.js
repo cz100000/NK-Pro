@@ -1,5 +1,5 @@
-const CACHE_NAME = "nk-pro-v99-4-78-letter-bw-economy";
-const BUILD_ID = "99.4.78-letter-bw-economy";
+const CACHE_NAME = "nk-pro-v99-4-79-landlord-8pages";
+const BUILD_ID = "99.4.79-landlord-8pages";
 const CACHE_PREFIX = "nk-pro-";
 const APP_SHELL = [
   "./",
@@ -49,6 +49,7 @@ const APP_SHELL = [
   "./js/quality-system-k4.js?v=" + BUILD_ID,
   "./js/document-data.js",
   "./js/document-renderer.js",
+  "./js/landlord-documents.js?v=" + BUILD_ID,
   "./js/export-service.js",
   "./js/ui-table-tools.js",
   "./js/ui-design-system.js",
