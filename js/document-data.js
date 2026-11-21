@@ -260,6 +260,12 @@
         : 0;
       let basis = num(row.inputSum) || num(row.basisTotal);
       let price = row.cost && row.cost.umlageschluessel === "Verbrauch" ? num(row.cost.preisProEinheit) : (basis ? num(row.cost.gesamtbetrag) / basis : num(row.cost.preisProEinheit));
+      // Match the exact rate used in the live 2025 K002 allocation (not the
+      // 4-decimal value saved for concise display in the cost form).
+      if (row.cost && row.cost.id === "K002" && state.meta && state.meta.abrechnungsjahr === "2025" &&
+          num(row.cost.gesamtverbrauch) > 0 && row.cost.preisProEinheitManuell !== true) {
+        price = num(row.cost.gesamtbetrag) / num(row.cost.gesamtverbrauch);
+      }
       let tenantUnits = input || (price ? amount / price : 0);
       let gesamtbetrag = num(row.cost.gesamtbetrag);
       let period = letterPeriod(state.briefSettings && state.briefSettings.abrechnungsjahr ? state.briefSettings.abrechnungsjahr : currentAbrechnungsjahr());
@@ -279,6 +285,13 @@
         basis = 0;
         price = 0;
         tenantUnits = 0;
+      }
+      // In the 2025 water letter show the invoice's 275 m³ as the building
+      // basis. Only 254 m³ are traceable to apartment meters; the remaining
+      // 21 m³ are kept as an owner-side reconciliation difference.
+      if (!entry && row.cost.id === "K002" && state.meta && state.meta.abrechnungsjahr === "2025" &&
+          num(row.cost.gesamtverbrauch) > 0) {
+        basis = num(row.cost.gesamtverbrauch);
       }
       return {
         id: row.cost.id,
