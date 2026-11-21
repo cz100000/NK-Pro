@@ -1,5 +1,5 @@
-const CACHE_NAME = "nk-pro-v99-4-79-landlord-8pages";
-const BUILD_ID = "99.4.79-landlord-8pages";
+const CACHE_NAME = "nk-pro-v99-4-80-nk-correction-details";
+const BUILD_ID = "99.4.80-nk-correction-details";
 const CACHE_PREFIX = "nk-pro-";
 const APP_SHELL = [
   "./",
@@ -19,6 +19,7 @@ const APP_SHELL = [
   "./js/cost-actions.js",
   "./js/billing-workflow.js",
   "./js/ui-controller.js",
+  "./js/nk-correction-details.js?v=" + BUILD_ID,
   "./js/ui-bindings.js",
   "./js/ui-bindings.js?v=" + BUILD_ID,
   "./js/ui-events.js",
@@ -67,7 +68,7 @@ const APP_SHELL = [
   "./js/ui-quality-k4.js?v=" + BUILD_ID,
   "./js/ui-cost-reconciliation.js",
   "./js/ui-cost-reconciliation.js?v=" + BUILD_ID,
-  "./js/ui-costs.js",
+  "./js/ui-costs.js?v=" + BUILD_ID,
   "./js/ui-navigation-pages.js",
   "./js/ui-archive-pages.js",
   "./js/browser-io.js",
