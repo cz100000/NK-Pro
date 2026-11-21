@@ -299,6 +299,12 @@
   function priceText(row) {
     if (isManualExternalCostDefinition(row)) return "siehe Anlage";
     const suffix = unitSuffix(row);
+    // 43 m³ × a displayed 5,97 € would not equal the true share. Show six
+    // decimals of the exact annual rate so tenant letters are reproducible.
+    if (row.id === "K002" && !row.importedEntry && state.meta && state.meta.abrechnungsjahr === "2025" &&
+        state.meta.confirmed2025Evidence && state.meta.confirmed2025Evidence.water) {
+      return num(row.preis).toLocaleString("de-DE", { minimumFractionDigits:6, maximumFractionDigits:6 }) + " € / m³";
+    }
     return fmtMoney(row.preis) + (suffix ? " / " + suffix : "");
   }
 
