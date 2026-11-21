@@ -196,8 +196,8 @@
   }
 
   function modelLive() {
-    if (typeof global.calculateUmlage !== "function" || !global.state) throw new Error("Die aktuelle Abrechnung ist nicht verfügbar.");
-    return makeModel(global.state,global.calculateUmlage());
+    if (typeof calculateUmlage !== "function" || typeof state === "undefined" || !state) throw new Error("Die aktuelle Abrechnung ist nicht verfügbar.");
+    return makeModel(state,calculateUmlage());
   }
   function currentSheet() {
     const model=modelLive(),sel=document.getElementById("landlordDocType")?.value||"overview";
