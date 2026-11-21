@@ -1,5 +1,5 @@
-const CACHE_NAME = "nk-pro-v99-4-73-confirmed-2025-data";
-const BUILD_ID = "99.4.73-confirmed-2025-data";
+const CACHE_NAME = "nk-pro-v99-4-76-google-drive-visible-private";
+const BUILD_ID = "99.4.76-google-drive-visible-private";
 const CACHE_PREFIX = "nk-pro-";
 const APP_SHELL = [
   "./",
@@ -59,6 +59,7 @@ const APP_SHELL = [
   "./js/runtime-diagnostics.js",
   "./js/app-runtime-config.js",
   "./js/v99473-confirmed-2025-data.js",
+  "./js/v99474-confirmed-areas.js",
   "./js/app-state-persistence.js",
   "./js/ui-master-data.js",
   "./js/ui-quality.js",
@@ -81,6 +82,7 @@ const APP_SHELL = [
   "./js/ui-diagnostics.js",
   "./js/ui-page-controller.js",
   "./js/app.js",
+  "./js/drive-sync.js",
   "./js/service-worker-register.js",
   "./js/service-worker-register.js?v=" + BUILD_ID,
   "./icons/icon-16.png",

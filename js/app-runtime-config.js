@@ -51,10 +51,10 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.73";
-const APP_VERSION_NAME = "Bestätigte 2025-Echtdaten & externe Abrechnung";
-const APP_RELEASE_DATE = "2026-08-13";
-if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – Bestätigte 2025-Echtdaten & externe Abrechnung";
+const APP_VERSION = "V99.4.76";
+const APP_VERSION_NAME = "Private Google-Drive-Synchronisierung";
+const APP_RELEASE_DATE = "2026-11-21";
+if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – Bestätigte Wohnflächen 2025";
 const DATA_SCHEMA_VERSION = 5;
 const DATA_LAYER_CONTRACT_VERSION = 1;
 const ARCHIVE_SNAPSHOT_SCOPE = "billingSnapshot";
@@ -112,13 +112,7 @@ const COST_EXCLUSION_FULL = "Vollständig umlegen";
 const COST_EXCLUSION_OWNER = "Nicht umlagefähig / Eigentümeranteil";
 const COST_EXCLUSION_OPTIONS = [COST_EXCLUSION_FULL, COST_EXCLUSION_OWNER];
 const MASTER_TENANT_ENTRY_DATE_FIX_ID = "master-tenant-entry-dates-2026-07-08";
-const MASTER_TENANT_ENTRY_DATES = [
-  { name:"gärtner", date:"2016-12-01" },
-  { name:"gaertner", date:"2016-12-01" },
-  { name:"bonesta", date:"2019-12-01" },
-  { name:"melzig", date:"2022-11-15" },
-  { name:"schneider", date:"2013-03-01" }
-];
+const MASTER_TENANT_ENTRY_DATES = []; // Private Altmieterdaten nur im verschlüsselbaren Nutzerdatenstand
 const ARCHIVE_VIEW_MODE = !!(SEED && SEED.meta && SEED.meta.archiveViewer);
 const APP_CHANGELOG = [
   "V99.4.73 übernimmt die bestätigten Echtdaten der Abrechnung 2025 dauerhaft in den kanonischen Datenbestand: Wohnungs-Wasserendstände, Wasserwerksrechnung einschließlich Hauswasserzählernummer, Müllgebühren sowie die strukturierte Techem-Heiz-/Warmwasserabrechnung. Externe Techem-Quelldaten sind künftig als normale manuell pflegbare Felder verfügbar; die 3,88-EUR-Sammelposition bleibt Vermieteranteil und CO₂-Nachweisdaten werden nicht erneut auf Teilnehmer umgelegt. Datenschema 5, Archive und bestehende Fachlogik bleiben erhalten.",
@@ -302,7 +296,7 @@ const APP_CHANGELOG = [
   "V61-Daten werden beim ersten Laden über die Legacy-Übernahme berücksichtigt.",
   "V61 aus V60 abgeleitet; Eigentümer-/Privat-Datensätze werden wieder in der Briefauswahl angezeigt.",
   "Briefauswahl nutzt jetzt alle berechneten Empfängerergebnisse inkl. Privatanteil, ohne die Umlage- und Summenlogik zu verändern.",
-  "Release-Audit prüft zusätzlich, dass Erik Zimmermann / Eigentümer-Privat in der Briefauswahl enthalten ist.",
+  "Release-Audit prüft zusätzlich, dass Privatanteil / Eigentümer in der Briefauswahl enthalten ist.",
   "V60 aus V59 abgeleitet; gründlicher Release-Audit, stabilere Speicherdiagnose und automatisierte Prüfszenarien ergänzt.",
   "Speicher-Lesefehler werden jetzt gesammelt gemeldet statt mehrfach bei jedem Legacy-Schlüssel zu erscheinen.",
   "Qualitätsprüfung erhält Release-Audit mit Berechnungs-, Brief-, Export- und Vorauszahlungs-Szenarien.",
