@@ -87,7 +87,8 @@
       const correction=t ? round(rr.correction) : 0;
       return {id:unit.id,unit:unit.bezeichnung||unit.lage||unit.id,name:t ? (t.name||t.id) : "Leerstand",
         role:t ? ((t.id==="M000" || String(t.abrechnungRolle).includes("Privat") || String(t.abrechnungRolle).includes("Eigentümer")) ? "Privatanteil" : "Mieter") : "Leerstand",
-        area:numeric(unit.wohnflaeche),total,advanced,correction,balance:round(total-advanced-correction),costs,meterText: costs.find(c=>c.id==="K002")?.waterUnits || 0};
+        area:numeric(unit.wohnflaeche),total,advanced,correction,balance:round(total-advanced-correction),costs,meterText: costs.find(c=>c.id==="K002")?.waterUnits || 0,
+        correctionMeta:t && global.NKProNkCorrections ? global.NKProNkCorrections.read(t) : null};
     });
     const regular=records.filter(x=>x.role==="Mieter"),privateRecords=records.filter(x=>x.role==="Privatanteil"),vacant=records.filter(x=>x.role==="Leerstand");
     const sum=(rows,k)=>round(rows.reduce((s,x)=>s+numeric(x[k]),0));
@@ -177,6 +178,11 @@
       '<thead><tr><th>Kostenart</th><th class="ni-amt">Berechnungsbasis</th><th class="ni-amt">Kosten</th><th class="ni-amt">Vorauszahl.</th></tr></thead>'+
       '<tbody>'+costRows+'<tr class="ni-subtotal"><td colspan="2">Gesamt</td><td class="ni-amt">'+euro(record.total)+'</td><td class="ni-amt">'+(isTenant?euro(record.advanced):"–")+'</td></tr>'+
       (isTenant?'<tr><td colspan="3">NK-Korrektur / Gutschrift</td><td class="ni-amt">'+euro(record.correction)+'</td></tr>':"")+'</tbody></table>'+
+      (Math.abs(record.correction)>0.004 && record.correctionMeta && (record.correctionMeta.bezugsjahr || record.correctionMeta.grund)
+        ? '<p class="ni-line"><b>Interner Korrekturvermerk:</b> '+
+          (record.correctionMeta.bezugsjahr ? 'Bezugsjahr '+safe(record.correctionMeta.bezugsjahr) : 'Bezugsjahr nicht angegeben')+
+          (record.correctionMeta.grund ? ' · '+safe(record.correctionMeta.grund) : '')+'</p>'
+        : '')+
       '<div class="ni-result"><span>'+safe(resultText(record))+'</span><strong>'+resultDisplay(record)+'</strong></div>'+
       sect("Berechnungsgrundlagen und Hinweise","02","Interne Dokumentation")+
       '<p class="ni-line">Heiz- und Warmwasserkosten: externe Einzelabrechnung gemäß Techem. Wasserkosten: gemessener Verbrauch der Wohneinheit; Zählerstandsrundung gemäß NK-Pro-Abrechnung. Müll: gültiger Umlageschlüssel der Kostenart.</p>'+
