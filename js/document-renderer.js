@@ -336,10 +336,12 @@
     }).join("");
   }
 
-  function correctionRowHtml(correction, year) {
+  function correctionRowHtml(correction, tenant) {
     if (Math.abs(num(correction)) < 0.005) return "";
-    const previousYear = String(global.NKProArchiveActions.yearNumber(year) - 1);
-    return '<tr class="table-correction-row"><td class="cell-cost">Korrektur/Gutschrift NK-Vorauszahlung ' + escapeHtml(previousYear) + '</td><td colspan="6"></td><td class="money">' + prepaymentMoneyHtml(correction) + '</td><td class="money">' + signedMoneyHtml(-num(correction)) + '</td></tr>';
+    // Year is never inferred from the billing period. The saved correction
+    // metadata determines whether an optional year or detail appears at all.
+    const label = global.NKProNkCorrections.printLabel(tenant, correction);
+    return '<tr class="table-correction-row"><td class="cell-cost" colspan="7">' + escapeHtml(label) + '</td><td class="money">' + prepaymentMoneyHtml(correction) + '</td><td class="money">' + signedMoneyHtml(-num(correction)) + '</td></tr>';
   }
 
   function rentCorrectionNoteHtml(tenant, year) {
@@ -351,14 +353,14 @@
     return '<div class="notice-box rent-correction-note"><span class="notice-title">Kaltmietkorrektur / Gutschrift ' + escapeHtml(previousYear) + '</span><p>' + escapeHtml(type) + ': ' + fmtMoney(Math.abs(correction)) + '. Kaltmiete nach Korrektur: ' + fmtMoney(adjusted) + '.</p><p><strong>Hinweis:</strong> Diese Kaltmietkorrektur wird getrennt ausgewiesen und verändert das Ergebnis der Nebenkostenabrechnung nicht.</p></div>';
   }
 
-  function mainTableHtml(costRows, result, correction, settlement, year) {
+  function mainTableHtml(costRows, result, correction, settlement, tenant) {
     const creditTotal = num(result.prepayments) + num(correction);
     const balanceSigned = num(result.costShare) - creditTotal;
     const finalClass = settlement.isNachzahlung ? " balance-due" : "";
     return '<table class="abrechnung-table" aria-label="Abrechnungsübersicht im Detail">' +
       '<colgroup><col class="col-cost"><col class="col-total"><col class="col-distribution"><col class="col-total-units"><col class="col-price"><col class="col-share-units"><col class="col-cost-share"><col class="col-prepayment"><col class="col-balance"></colgroup>' +
       '<thead><tr><th>Kostenart</th><th>Gesamtkosten</th><th>Verteilung</th><th>Gesamt-<br>einheiten</th><th>Preis pro<br>Einheit</th><th>Ihr Anteil</th><th>Ihre Kosten</th><th>Ihre<br>Vorauszahlung</th><th>Ihre<br>Abrechnung</th></tr></thead>' +
-      '<tbody>' + (costSectionRows(costRows) || '<tr><td colspan="9">Keine umlagefähigen Kosten vorhanden.</td></tr>') + correctionRowHtml(correction, year) +
+      '<tbody>' + (costSectionRows(costRows) || '<tr><td colspan="9">Keine umlagefähigen Kosten vorhanden.</td></tr>') + correctionRowHtml(correction, tenant) +
       '<tr class="table-total-row"><td colspan="6">Summen</td><td class="money">' + fmtMoney(result.costShare) + '</td><td class="money">' + prepaymentMoneyHtml(creditTotal) + '</td><td class="money' + finalClass + '">' + signedMoneyHtml(balanceSigned) + '</td></tr>' +
       '</tbody></table>' +
       (costRows.some(row => row.id === "K002" && !row.importedEntry && num(row.preis) > 0 &&
@@ -450,7 +452,7 @@
       '<p class="letter-salutation">' + escapeHtml(salutationForTenant(tenant)) + '</p>' +
       (intro ? '<p class="letter-intro">' + briefProseHtml(intro) + '</p>' : '') +
       resultStripHtml(result, settlement, correction) +
-      '<h2 class="detail-heading">Abrechnungsübersicht im Detail:</h2>' + mainTableHtml(costRows, result, correction, settlement, year) + rentCorrectionNoteHtml(tenant, year) +
+      '<h2 class="detail-heading">Abrechnungsübersicht im Detail:</h2>' + mainTableHtml(costRows, result, correction, settlement, tenant) + rentCorrectionNoteHtml(tenant, year) +
       (String(settings.heizkostenFussnote || "").trim() ? '<div class="notice-box"><span class="notice-title">Hinweise</span>' + briefProseHtml(settings.heizkostenFussnote) + '</div>' : '') +
       (paymentText.trim() ? '<p class="payment-text">' + briefProseHtml(paymentText) + '</p>' : '') +
       (pageCount === 1 ? documentEndHtml(settings, false) : '') + '</main>' +
