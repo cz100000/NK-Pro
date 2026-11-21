@@ -373,7 +373,38 @@
 <div class="brief-preview-stage" id="briefPreviewStage"><div class="brief-preview-host" id="briefPreview"></div></div>
 </div>
 </div>
-</div></div></details><details class="page-section nk-ui-accordion" data-section-role="validation" id="lettersValidationSection"><summary class="page-section__summary"><span class="page-section__number">2.</span><span class="page-section__title">Prüfung und Plausibilität</span><span class="page-section__badge nk-ui-status">Kontrolle</span><span aria-hidden="true" class="page-section__chevron"><svg aria-hidden="true" class="page-section__chevron-svg" fill="none" viewbox="0 0 24 24"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span></summary><div class="page-section__body nk-ui-accordion__body"><div class="validation-placeholder">Empfänger, Umlageergebnis und Druckfreigabe werden vor der Ausgabe geprüft.</div></div></details></div></div></section>
+
+</div></div></details>
+<details class="page-section nk-ui-accordion" id="landlordDocPanel">
+  <summary class="page-section__summary">
+    <span class="page-section__number">2.</span>
+    <span class="page-section__title">Vermieterunterlagen · Objektübersicht und Wohnungsblätter</span>
+    <span class="page-section__badge nk-ui-status">8 A4-Seiten · intern</span>
+    <span aria-hidden="true" class="page-section__chevron">⌄</span>
+  </summary>
+  <div class="page-section__body nk-ui-accordion__body">
+    <p class="hint">Nur für die Vermieterakte: alle sieben Wohnungen einschließlich Privatanteil und Leerstand, mit Heiz-, Wasser- und Müllkosten sowie Vorauszahlungen und Korrekturen. Die Daten stammen unmittelbar aus der aktuellen Abrechnung; keine zweite Eingabe erforderlich.</p>
+    <div class="landlord-doc-controls">
+      <label for="landlordDocType">Dokument
+        <select id="landlordDocType">
+          <option value="overview">Objekt-Gesamtübersicht (1 Seite)</option>
+          <option value="unit">Wohnungs-Kostenblatt (je 1 Seite)</option>
+        </select>
+      </label>
+      <label for="landlordDocUnit">Wohnung
+        <select id="landlordDocUnit" hidden></select>
+      </label>
+      <button id="landlordDocRefresh" type="button" class="ui-button nk-ui-button ui-button--secondary">Aktuelle Werte laden</button>
+      <button id="landlordDocPrint" type="button" class="ui-button nk-ui-button ui-button--secondary">Einzeldokument drucken / PDF</button>
+      <button id="landlordDocPrintAll" type="button" class="ui-button nk-ui-button ui-button--primary">Gesamtausdruck: 7 + 1 Seiten</button>
+    </div>
+    <p class="small" id="landlordDocHint" aria-live="polite">Dokument auswählen und Vorschau öffnen.</p>
+    <div class="landlord-doc-preview-wrap" aria-label="Vorschau der Vermieterunterlagen, DIN A4">
+      <iframe id="landlordDocPreview" title="Vorschau Vermieter-Kostenblatt" loading="eager"></iframe>
+    </div>
+  </div>
+</details>
+<details class="page-section nk-ui-accordion" data-section-role="validation" id="lettersValidationSection"><summary class="page-section__summary"><span class="page-section__number">2.</span><span class="page-section__title">Prüfung und Plausibilität</span><span class="page-section__badge nk-ui-status">Kontrolle</span><span aria-hidden="true" class="page-section__chevron"><svg aria-hidden="true" class="page-section__chevron-svg" fill="none" viewbox="0 0 24 24"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span></summary><div class="page-section__body nk-ui-accordion__body"><div class="validation-placeholder">Empfänger, Umlageergebnis und Druckfreigabe werden vor der Ausgabe geprüft.</div></div></details></div></div></section>
 <section class="tab" id="export"><div class="app-page nk-ui-page-shell nk-ui-page-shell--wide" data-page-tab="export" data-page-shell="wide"><header class="page-header nk-ui-page-header" data-page-header="export"><div class="page-header__identity"><p class="page-header__kicker">Nebenkosten abrechnen</p><h1 class="page-header__title">Abrechnung exportieren</h1><p class="page-header__description">Die geöffnete Abrechnung und ihren Prüfbericht sicher exportieren.</p></div><div class="page-header__actions"></div></header><div class="page-sections"><details class="page-section nk-ui-accordion" id="exportActionsSection"><summary class="page-section__summary"><span class="page-section__number">1.</span><span class="page-section__title">Abrechnung sichern und exportieren</span><span class="page-section__badge nk-ui-status">Export</span><span aria-hidden="true" class="page-section__chevron"><svg aria-hidden="true" class="page-section__chevron-svg" fill="none" viewbox="0 0 24 24"><path d="m9 6 6 6-6 6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg></span></summary><div class="page-section__body nk-ui-accordion__body"><div class="hint"><strong>Abrechnungsbezogener Export:</strong> Diese Seite exportiert nur die aktuell geöffnete Abrechnung mit den abrechnungsbezogenen Wohnungen, Mietverhältnissen, Kostenarten, Zählerständen, Umlagewerten, Brieftexten und Prüfwerten. Objekt-Stammdaten, globale Zählerhistorie, Jahresarchiv und andere Abrechnungen werden bewusst nicht mitgesichert. Die vollständige Gesamtsicherung liegt im Tab „Datensicherung &amp; System“.</div><div class="toolbar">
 <button class="primary" data-ui-action="export.downloadCurrentJson">Diese Abrechnung als JSON herunterladen</button>
 <button data-ui-action="export.downloadCostsCsv">Kostenarten dieser Abrechnung als CSV herunterladen</button>
@@ -472,6 +503,7 @@
 <script defer="" src="./js/ui-page-controller.js"></script>
 <script defer="" src="./js/app.js"></script>
 <script>window.NKPRO_GOOGLE_CLIENT_ID = "603460345425-d6b85th20j9vnvj38lmrr9ndbordguo7.apps.googleusercontent.com"; /* öffentliche OAuth-Client-ID; kein Client Secret */</script>
+<script defer="" src="./js/landlord-documents.js?v=99.4.79-landlord-8pages"></script>
 <script defer="" src="./js/drive-sync.js?v=99.4.78-letter-bw-economy"></script>
 <script defer="" src="./js/service-worker-register.js?v=99.4.78-letter-bw-economy"></script>
 </body>
