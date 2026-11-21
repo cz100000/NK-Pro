@@ -1271,7 +1271,7 @@ function renderStartTenantManagement() {
     ? html.replace(/<(input|select)\b/, match => match + ' disabled aria-disabled="true"')
     : html;
   const genderOptions = ["Frau/Herr","Frau","Herr","Firma/Divers"];
-  const salutationOptions = ["Automatisch","Sehr geehrte Frau [Nachname],","Sehr geehrter Herr [Nachname],","Sehr geehrte(r) Mieter/in,","Sehr geehrte Damen und Herren,","Guten Tag,"];
+  const salutationOptions = ["Automatisch","Sehr geehrte Frau [Nachname],","Sehr geehrter Herr [Nachname],","Guten Tag, [Name],","Individuell","Sehr geehrte Damen und Herren,","Guten Tag,","Sehr geehrte(r) Mieter/in,"];
   const roleOptions = ["Mieter","Privatanteil","Eigenanteil","Eigentümer/Privat"];
   const visibleRows = NK_PRO_MODULES.masterDataActions.masterVisibleTenantRows();
   const archivedRows = NK_PRO_MODULES.masterDataActions.masterArchivedTenantRows();
@@ -1343,6 +1343,7 @@ function renderStartTenantManagement() {
           field('Rolle', readOnlyControl(selectHtml(row.abrechnungRolle || "Mieter", roleOptions, "setMasterNested(\'mieter\'," + index + ",\'abrechnungRolle\',this.value)"))) +
           field('Anrede', readOnlyControl(selectHtml(row.geschlecht, genderOptions, "setMasterNested(\'mieter\'," + index + ",\'geschlecht\',this.value)"))) +
           field('Briefanrede', readOnlyControl(selectHtml(row.standardanrede, salutationOptions, "setMasterNested(\'mieter\'," + index + ",\'standardanrede\',this.value)"))) +
+          (row.standardanrede === "Individuell" ? field('Individuelle Briefanrede', readOnlyControl(inputHtml(row.briefAnredeFreitext || "", "setMasterNested(\'mieter\'," + index + ",\'briefAnredeFreitext\',this.value)", "tenant-management-input"))) : '') +
         '</section>' +
       '</div></div></td></tr>';
   };
