@@ -1,7 +1,7 @@
 (function() {
   "use strict";
 
-  const BUILD_ID = "99.4.76.1-drive-mobile-status";
+  const BUILD_ID = "99.4.77-water-meter-allocation";
   const RELOAD_KEY = "nkpro_service_worker_reload_" + BUILD_ID;
 
   if (!("serviceWorker" in navigator) || location.protocol === "file:") return;
