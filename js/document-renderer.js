@@ -449,7 +449,9 @@
     // The template remains plain text. Escape it first, then emphasize the inserted
     // amount only when the user has deliberately included the {betrag} placeholder.
     const safePaymentText = briefProseHtml(paymentText);
-    const dueAmountText = escapeHtml(fmtMoney(settlement.amount));
+    // briefProseHtml normalizes NBSP emitted by Intl currency formatting into
+    // an ordinary space; use the same representation for an exact safe match.
+    const dueAmountText = briefProseHtml(fmtMoney(settlement.amount));
     const paymentHtml = settlement.isNachzahlung && String(paymentSource || "").includes("{betrag}")
       ? safePaymentText.replace(dueAmountText, '<strong class="payment-due-amount">' + dueAmountText + '</strong>')
       : safePaymentText;
