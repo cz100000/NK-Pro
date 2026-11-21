@@ -96,6 +96,7 @@
 .nk-letter-document .abrechnung-table tbody tr:nth-child(even):not(.table-total-row):not(.table-correction-row) td{background:${AP13_LIGHT}}
 .nk-letter-document .abrechnung-table tbody td:last-child{border-right:0}
 .nk-letter-document .abrechnung-table .cell-cost{font-weight:700}
+.nk-letter-document .abrechnung-rounding-note{margin:-4mm 0 4mm;font-size:6.5pt;line-height:1.2;color:${AP13_MUTED}}
 .nk-letter-document .money{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap!important}
 .nk-letter-document .center{text-align:center}
 .nk-letter-document .table-correction-row td{background:#FAFCFD;font-style:italic}
@@ -150,7 +151,7 @@
 .nk-letter-document.is-monochrome .letter-brand-owner,.nk-letter-document.is-monochrome .detail-heading,.nk-letter-document.is-monochrome .supplement-heading,.nk-letter-document.is-monochrome .notice-title,.nk-letter-document.is-monochrome .payment-notice-title,.nk-letter-document.is-monochrome .attachment-title{color:#222}
 .nk-letter-document.is-monochrome .letter-brand-separator,.nk-letter-document.is-monochrome .letter-brand-role,.nk-letter-document.is-monochrome .letter-contact,.nk-letter-document.is-monochrome .letter-return-address,.nk-letter-document.is-monochrome .letter-footer,.nk-letter-document.is-monochrome .attachment,.nk-letter-document.is-monochrome .signature-role,.nk-letter-document.is-monochrome .continuation-hint{color:#555}
 .nk-letter-document.is-monochrome .letter-info th,.nk-letter-document.is-monochrome .result-cell,.nk-letter-document.is-monochrome .notice-box,.nk-letter-document.is-monochrome .additional-note-box,.nk-letter-document.is-monochrome .payment-notice{background:#f0f0f0;color:#333}
-.nk-letter-document.is-monochrome .abrechnung-table thead th,.nk-letter-document.is-monochrome .prepay-table thead th{background:#3a3a3a;color:#fff;border-color:#fff}
+.nk-letter-document.is-monochrome .abrechnung-table thead th,.nk-letter-document.is-monochrome .prepay-table thead th{background:#f0f0f0;color:#1d1d1d;border-color:#b9b9b9;border-bottom:.4mm solid #666}
 .nk-letter-document.is-monochrome .table-total-row td,.nk-letter-document.is-monochrome .prepay-table .prepay-summary td,.nk-letter-document.is-monochrome .prepay-table .prepay-final td{background:#d9d9d9;border-color:#555}
 .nk-letter-document.is-monochrome .prepay-table .prepay-rent td,.nk-letter-document.is-monochrome .abrechnung-table tbody tr:nth-child(even):not(.table-total-row):not(.table-correction-row) td,.nk-letter-document.is-monochrome .prepay-table tbody tr:nth-child(even):not(.prepay-summary):not(.prepay-final) td{background:#f2f2f2}
 .nk-letter-document.is-monochrome .result-cell--final.is-due{background:repeating-linear-gradient(135deg,#d7d7d7 0,#d7d7d7 1.5mm,#eeeeee 1.5mm,#eeeeee 3mm);box-shadow:inset 0 0 0 .35mm #555}
@@ -299,12 +300,7 @@
   function priceText(row) {
     if (isManualExternalCostDefinition(row)) return "siehe Anlage";
     const suffix = unitSuffix(row);
-    // 43 m³ × a displayed 5,97 € would not equal the true share. Show six
-    // decimals of the exact annual rate so tenant letters are reproducible.
-    if (row.id === "K002" && !row.importedEntry && state.meta && state.meta.abrechnungsjahr === "2025" &&
-        state.meta.confirmed2025Evidence && state.meta.confirmed2025Evidence.water) {
-      return num(row.preis).toLocaleString("de-DE", { minimumFractionDigits:6, maximumFractionDigits:6 }) + " € / m³";
-    }
+    // Only display two decimals. The unrounded rate remains the basis of the allocation.
     return fmtMoney(row.preis) + (suffix ? " / " + suffix : "");
   }
 
@@ -364,14 +360,18 @@
       '<thead><tr><th>Kostenart</th><th>Gesamtkosten</th><th>Verteilung</th><th>Gesamt-<br>einheiten</th><th>Preis pro<br>Einheit</th><th>Ihr Anteil</th><th>Ihre Kosten</th><th>Ihre<br>Vorauszahlung</th><th>Ihre<br>Abrechnung</th></tr></thead>' +
       '<tbody>' + (costSectionRows(costRows) || '<tr><td colspan="9">Keine umlagefähigen Kosten vorhanden.</td></tr>') + correctionRowHtml(correction, year) +
       '<tr class="table-total-row"><td colspan="6">Summen</td><td class="money">' + fmtMoney(result.costShare) + '</td><td class="money">' + prepaymentMoneyHtml(creditTotal) + '</td><td class="money' + finalClass + '">' + signedMoneyHtml(balanceSigned) + '</td></tr>' +
-      '</tbody></table>';
+      '</tbody></table>' +
+      (costRows.some(row => row.id === "K002" && !row.importedEntry && num(row.preis) > 0 &&
+        Math.abs(num(row.preis) * 100 - Math.round(num(row.preis) * 100)) > 0.00001)
+        ? '<p class="abrechnung-rounding-note">Hinweis: Einheitspreis auf zwei Nachkommastellen gerundet; Kostenanteile mit ungerundetem Satz berechnet.</p>'
+        : '');
   }
 
   function resultStripHtml(result, settlement, correction) {
     const finalLabel = settlement.isBalanced ? "Ausgeglichen" : (settlement.isNachzahlung ? "Ihre Nachzahlung an die Vermieterin" : "Ihr Guthaben");
     return '<div class="result-strip" aria-label="Abrechnungsergebnis">' +
       '<div class="result-cell"><span class="result-label">Ihr Kostenanteil</span><span class="result-value">' + fmtMoney(result.costShare) + '</span></div>' +
-      '<div class="result-cell result-cell--middle"><span class="result-label">Vorauszahlungen inkl. NK-Korrektur</span><span class="result-value">' + fmtMoney(num(result.prepayments) + num(correction)) + '</span></div>' +
+      '<div class="result-cell result-cell--middle"><span class="result-label">Ihre Vorauszahlung inklusive Nebenkostenkorrektur</span><span class="result-value">' + fmtMoney(num(result.prepayments) + num(correction)) + '</span></div>' +
       '<div class="result-cell result-cell--final ' + (settlement.isNachzahlung ? "is-due" : "is-credit") + '"><span class="result-label">' + escapeHtml(finalLabel) + '</span><span class="result-value">' + fmtMoney(settlement.amount) + '</span></div>' +
       '</div>';
   }
