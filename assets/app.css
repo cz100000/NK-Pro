@@ -8215,3 +8215,11 @@ body:not(.document-print-window) #auswertungen .analytics-detail-nav-item.is-act
 .nk-correction-help{padding:0 12px 9px;margin:0!important;color:#62788b;font-size:11px;line-height:1.45}
 @media(max-width:930px){.nk-correction-fields{grid-template-columns:repeat(2,minmax(160px,1fr))}}
 @media(max-width:530px){.nk-correction-fields{grid-template-columns:1fr}}
+
+/* Optional print detail inside the existing tenant-letter settings */
+.nk-brief-correction-editor{border:1px solid #cddce9;background:#f7fafc;border-radius:6px;padding:10px 12px;margin:12px 0}
+.nk-brief-correction-editor>summary{color:#214461;font-size:12px;font-weight:700;cursor:pointer;line-height:1.4}
+.nk-brief-correction-editor[open]>summary{margin-bottom:8px}
+.nk-brief-correction-editor label{margin-top:8px}
+.nk-brief-correction-editor input,.nk-brief-correction-editor select{width:100%;box-sizing:border-box}
+.nk-brief-correction-editor .hint{margin-top:8px}
