@@ -315,6 +315,31 @@
   function injectUi() {
     const style = document.createElement("style");
     style.textContent = `#nk-drive-panel{position:fixed;top:12px;right:12px;z-index:11000;width:min(365px,calc(100vw - 24px));font:14px/1.45 system-ui,sans-serif;color:#21384f;filter:drop-shadow(0 3px 12px #12243b2b)}#nk-drive-panel>summary{cursor:pointer;border-radius:12px;padding:8px 13px;background:#fff;border:1px solid #cbd8e4;font-weight:700;list-style:none}#nk-drive-panel>summary::-webkit-details-marker{display:none}#nk-drive-indicator[data-status="ready"]{color:#087042}#nk-drive-indicator[data-status="error"],#nk-drive-indicator[data-status="conflict"]{color:#b22922}#nk-drive-panel .nk-drive-body{border:1px solid #cbd8e4;border-radius:12px;background:#fff;padding:14px;box-shadow:0 9px 26px #12243b22}#nk-drive-panel .nk-drive-body p{margin:8px 0}#nk-drive-panel label{display:block;font-size:12px;font-weight:700;margin:10px 0 4px}#nk-drive-panel input{width:100%;box-sizing:border-box;padding:8px;border:1px solid #adc0d5;border-radius:6px;font-size:12px}#nk-drive-panel .nk-drive-row{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}#nk-drive-panel button{border:1px solid #a7bbcd;border-radius:7px;background:#f3f7fc;color:#173b62;padding:8px 10px;cursor:pointer;font-size:12px;font-weight:700;flex:1 1 auto}#nk-drive-panel button:disabled{opacity:.45;cursor:not-allowed}#nk-drive-message{font-size:12px;min-height:36px;overflow-wrap:anywhere}#nk-drive-panel small{color:#425e74}#nk-drive-panel a{color:#0756a3}`;
+    // V99.4.76.1: On narrow screens the old fixed top-right badge covered the header menu.
+    // Keep a compact, touch-sized badge in the lower right; the details open upward.
+    style.textContent += `
+      @media (max-width: 980px) {
+        #nk-drive-panel {
+          top:auto; right:10px;
+          bottom:calc(10px + env(safe-area-inset-bottom, 0px));
+          width:max-content; max-width:calc(100vw - 20px);
+        }
+        #nk-drive-panel > summary {
+          display:flex; align-items:center; justify-content:center;
+          min-height:44px; padding:8px 12px;
+          max-width:100%; white-space:nowrap; font-size:12px;
+        }
+        #nk-drive-panel .nk-drive-body {
+          position:absolute; right:0; bottom:calc(100% + 8px);
+          width:min(365px,calc(100vw - 20px));
+          max-height:70vh; max-height:min(70vh,calc(100dvh - 110px));
+          overflow-y:auto; overscroll-behavior:contain;
+          -webkit-overflow-scrolling:touch;
+        }
+        body.sidebar-open #nk-drive-panel { visibility:hidden; pointer-events:none; }
+      }
+      @media print { #nk-drive-panel { display:none !important; } }
+    `;
     document.head.appendChild(style);
     node = document.createElement("details"); node.id = "nk-drive-panel";
     node.innerHTML = `<summary id="nk-drive-indicator" role="button">Drive einrichten</summary><div class="nk-drive-body"><strong>Private Google-Drive-Synchronisierung</strong><p id="nk-drive-message" role="status" aria-live="polite"></p><label for="nk-drive-client">OAuth-Web-Client-ID (Google Cloud Console)</label><input id="nk-drive-client" spellcheck="false" autocomplete="off" placeholder="123456789-…apps.googleusercontent.com"/><div class="nk-drive-row"><button type="button" id="nk-drive-save-id">Client-ID speichern</button><button type="button" id="nk-drive-auth">Mit Google verbinden</button></div><div class="nk-drive-row"><button type="button" id="nk-drive-check">Drive prüfen</button><button type="button" id="nk-drive-pull">Drive → Lokal laden</button><button type="button" id="nk-drive-push">Lokal → Drive sichern</button></div><small>Daten bleiben zunächst im Browser. Die erste Cloud-Übernahme erfolgt bewusst per Schaltfläche. Bei Änderungen an zwei Geräten gleichzeitig wird nicht automatisch überschrieben. <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer">Google-Cloud-OAuth einrichten</a>. Speicherort: „Meine Ablage / NK-Pro – Privatdaten“, nur für dein Google-Konto. Dateien sind über die ChatGPT-Google-Drive-Verbindung lesbar. Zugangstoken werden nicht dauerhaft gespeichert.</small></div>`;
