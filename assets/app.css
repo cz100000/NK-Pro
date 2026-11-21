@@ -8223,3 +8223,9 @@ body:not(.document-print-window) #auswertungen .analytics-detail-nav-item.is-act
 .nk-brief-correction-editor label{margin-top:8px}
 .nk-brief-correction-editor input,.nk-brief-correction-editor select{width:100%;box-sizing:border-box}
 .nk-brief-correction-editor .hint{margin-top:8px}
+
+/* NK-Pro V99.4.83 – one personal salutation per letter recipient */
+.brief-personal-salutation{display:flex;flex-direction:column;gap:7px;margin:12px 0;padding:11px 13px;border:1px solid #cedbe6;border-radius:7px;background:#f7fafc;color:#23425d}
+.brief-personal-salutation>label{font-weight:700;font-size:12px;line-height:1.3;margin:0}
+.brief-personal-salutation>select,.brief-personal-salutation>input{min-height:38px;width:100%;padding:7px 9px;border:1px solid #bdcdda;border-radius:5px;color:#1b334a;background:#fff;font-size:13px;box-sizing:border-box}
+.brief-personal-salutation>p.small{margin:2px 0 0;line-height:1.4;font-size:11px;color:#4b6377}
