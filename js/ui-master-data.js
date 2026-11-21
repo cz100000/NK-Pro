@@ -384,6 +384,7 @@ function ensureTenantContactFields(m) {
   if (!m) return;
   if (m.geschlecht === undefined || m.geschlecht === null || m.geschlecht === "") m.geschlecht = "Frau/Herr";
   if (m.standardanrede === undefined || m.standardanrede === null || m.standardanrede === "") m.standardanrede = "Automatisch";
+  if (m.briefAnredeFreitext === undefined || m.briefAnredeFreitext === null) m.briefAnredeFreitext = "";
   if (m.strasse === undefined || m.strasse === null || m.strasse === "") m.strasse = "";
   if (m.plz === undefined || m.plz === null || m.plz === "") m.plz = "";
   if (m.ort === undefined || m.ort === null || m.ort === "") m.ort = "";
@@ -645,7 +646,8 @@ function tenantAddressPrefix(tenant) {
   if (g === "Frau") return "Frau";
   if (g === "Herr") return "Herr";
   if (g === "Firma/Divers") return "";
-  return "Frau/Herr";
+  // Never print a fictitious "Frau/Herr" title on a postal address.
+  return "";
 }
 
 function tenantMailingAddress(tenant) {
@@ -655,10 +657,27 @@ function tenantMailingAddress(tenant) {
   return [prefix, tenant.name || "", tenant.strasse || "", place].filter(Boolean).join("\n");
 }
 
+function tenantFullNameForSalutation(tenant) {
+  const name = String(tenant && tenant.name || "").trim();
+  if (!name) return "";
+  // Support both "Vorname Nachname" and "Nachname, Vorname" source data.
+  if (name.includes(",")) {
+    const parts = name.split(",");
+    if (parts.length === 2 && parts[0].trim() && parts[1].trim()) {
+      return parts[1].trim() + " " + parts[0].trim();
+    }
+  }
+  return name;
+}
+
 function tenantSalutationFromTemplate(tenant, template) {
   const lastName = tenantLastName(tenant);
-  if (template === "Sehr geehrte Frau [Nachname],") return "Sehr geehrte Frau " + (lastName || "") + ",";
-  if (template === "Sehr geehrter Herr [Nachname],") return "Sehr geehrter Herr " + (lastName || "") + ",";
+  const fullName = tenantFullNameForSalutation(tenant);
+  const neutral = fullName ? "Guten Tag, " + fullName + "," : "Guten Tag,";
+  if (template === "Sehr geehrte Frau [Nachname],") return lastName ? "Sehr geehrte Frau " + lastName + "," : neutral;
+  if (template === "Sehr geehrter Herr [Nachname],") return lastName ? "Sehr geehrter Herr " + lastName + "," : neutral;
+  if (template === "Guten Tag, [Name],") return neutral;
+  if (template === "Individuell") return String(tenant && tenant.briefAnredeFreitext || "").trim() || neutral;
   return template;
 }
 
