@@ -292,10 +292,20 @@ function applyWaterMetersToUmlage() {
 
   consumptionCosts().forEach(cost => {
     if (!state.umlageInputs || !state.umlageInputs[cost.id]) return;
+    const input = state.umlageInputs[cost.id];
+    // Repair old 2025 snapshots where K002 had valid meter readings but a
+    // stale "Verbrauchsmenge" mode with all-zero manual inputs. No re-entry
+    // and no modification of the user's original meter readings necessary.
+    if (cost.id === "K002" &&
+        NK_PRO_MODULES.billingCalculation.useWholeCubicMeterWaterReadings(state, cost.id) &&
+        (state.waterMeters.readings || []).some(r => r && r.kwEnd !== "" && r.kwEnd !== undefined && r.wwEnd !== "" && r.wwEnd !== undefined)) {
+      input.mode = "Zählerstände";
+      input.art = "Zählerstände";
+    }
     if (manualInputModeForCost(cost) !== "Zählerstände") return;
-    while (state.umlageInputs[cost.id].values.length < tenantCount) state.umlageInputs[cost.id].values.push(0);
-    for (let i = 0; i < tenantCount; i++) state.umlageInputs[cost.id].values[i] = 0;
-    visibleTenantRows().forEach(t => { state.umlageInputs[cost.id].values[t.originalIndex] = meterTotalForCostAndTenant(cost.id, t.originalIndex); });
+    while (input.values.length < tenantCount) input.values.push(0);
+    for (let i = 0; i < tenantCount; i++) input.values[i] = 0;
+    visibleTenantRows().forEach(t => { input.values[t.originalIndex] = meterTotalForCostAndTenant(cost.id, t.originalIndex); });
   });
 }
 

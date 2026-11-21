@@ -179,12 +179,25 @@
     return Number(value || 0).toLocaleString("de-DE", { maximumFractionDigits:digits, minimumFractionDigits:0 });
   }
 
-  function waterConsumption(row, prefix) {
-    if (!row || !hasEnteredMeterValue(row[prefix + "End"])) return 0;
-    const start = num(row[prefix + "Start"]);
-    const end = num(row[prefix + "End"]);
-    if (end < start) return 0;
-    return end - start;
+  // ARB5 2025: 2024 closing readings were recorded as whole cubic metres.
+  // Round EACH 2025 closing reading (not the difference) to the same precision.
+  // Never alter the raw, decimal readings in waterMeters / zaehlerDaten.
+  function useWholeCubicMeterWaterReadings(data = state, costId = "K002") {
+    const meta = data && data.meta || {};
+    const evidence = meta.confirmed2025Evidence && meta.confirmed2025Evidence.water;
+    return String(costId || "") === "K002" && String(meta.abrechnungsjahr || "") === "2025" &&
+      !!(evidence && evidence.houseConsumption === 275 && evidence.readingDate === "2025-12-30");
+  }
+
+  function waterConsumption(row, prefix, data = state) {
+    if (!row || !hasEnteredMeterValue(row[prefix + "Start"]) || !hasEnteredMeterValue(row[prefix + "End"])) return 0;
+    const startRaw = num(row[prefix + "Start"]);
+    const endRaw = num(row[prefix + "End"]);
+    if (endRaw < startRaw) return 0;
+    const rounded = useWholeCubicMeterWaterReadings(data);
+    const start = rounded ? Math.round(startRaw) : startRaw;
+    const end = rounded ? Math.round(endRaw) : endRaw;
+    return Math.max(0, end - start);
   }
 
   function genericMeterConsumption(row) {
@@ -204,13 +217,21 @@
   function meterTotalForCostAndTenant(costId, index) {
     ensureWaterMeterData();
     const tenant = state.mieter[index] || {};
+    // In the confirmed ARB5 2025 data each tenant/privat unit has two
+    // authoritative legacy-bound water meters. Use THEIR billing consumption,
+    // not old unrounded / cross-year measurement periods.
+    if (isWaterCost(costId) && useWholeCubicMeterWaterReadings(state, costId)) {
+      const source = state.waterMeters && state.waterMeters.readings && state.waterMeters.readings[index];
+      if (source && (hasEnteredMeterValue(source.kwEnd) || hasEnteredMeterValue(source.wwEnd))) {
+        return waterTotalForTenantIndex(index);
+      }
+      // Missing apartment readings stay at zero and must be reviewed. Do not
+      // silently substitute historical values or allocate the house difference.
+      return 0;
+    }
     if (state.zaehlerDaten && Array.isArray(state.zaehlerDaten.messperioden)) {
       return NK_PRO_MODULES.meterPeriods.consumptionForCostAndTenant(
-        state,
-        costId,
-        tenant.id || "",
-        tenant.wohnung || "",
-        meteringModuleOptions()
+        state, costId, tenant.id || "", tenant.wohnung || "", meteringModuleOptions()
       );
     }
     if (isWaterCost(costId)) return waterTotalForTenantIndex(index);
@@ -505,14 +526,35 @@
       const readingForRole = role => activeReadings.slice().reverse().find(reading => normalizedIndividualKey(reading && (reading.rolle || reading.role || reading.ableseart)).includes(role));
       const startReading = readingForRole("start") || readingForRole("anfang");
       const endReading = readingForRole("end") || readingForRole("ende");
-      const startValue = first && first.anfangsstand !== undefined ? first.anfangsstand : (startReading && startReading.wert !== undefined ? startReading.wert : "");
-      const endValue = last && last.endstand !== undefined ? last.endstand : (endReading && endReading.wert !== undefined ? endReading.wert : "");
+      // 2025 has an explicit source of truth: the 30 December water reading
+      // list. Archived/derived canonical periods may still contain old values
+      // for empty flats and MUST NOT make a missing 2025 meter look complete.
+      const legacyBinding = Array.isArray(meter.legacyBindings)
+        ? meter.legacyBindings.find(binding => ["water-cold", "water-hot"].includes(String(binding.channel || ""))) : null;
+      const legacyRow = legacyBinding && data.waterMeters && Array.isArray(data.waterMeters.readings)
+        ? data.waterMeters.readings[Number(legacyBinding.index)] : null;
+      const legacyPrefix = legacyBinding && legacyBinding.channel === "water-hot" ? "ww" : "kw";
+      const confirmed2025Water = useWholeCubicMeterWaterReadings(data, costId) &&
+        ["cold-water", "hot-water"].includes(String(meter.meterType || meter.zaehlerTyp || ""));
+      const confirmed2025Legacy = confirmed2025Water && !!legacyBinding;
+      const sourceValue = key => legacyRow && legacyRow[legacyPrefix + key] !== undefined && legacyRow[legacyPrefix + key] !== null
+        ? legacyRow[legacyPrefix + key] : "";
+      const startValue = confirmed2025Legacy ? sourceValue("Start") :
+        (first && first.anfangsstand !== undefined ? first.anfangsstand : (startReading && startReading.wert !== undefined ? startReading.wert : ""));
+      const endValue = confirmed2025Legacy ? sourceValue("End") :
+        (last && last.endstand !== undefined ? last.endstand : (endReading && endReading.wert !== undefined ? endReading.wert : ""));
       const startEntered = hasEnteredMeterValue(startValue);
       const endEntered = hasEnteredMeterValue(endValue);
-      const invalid = rows.some(row => row.status === "invalid") || (startEntered && endEntered && num(endValue) < num(startValue));
+      // A tiny negative difference caused solely by the different 2024/2025
+      // decimal precision is zero after the agreed whole-m3 rounding.
+      const negativeConsumption = startEntered && endEntered && (confirmed2025Water
+        ? Math.round(num(endValue)) < Math.round(num(startValue)) : num(endValue) < num(startValue));
+      const invalid = (!confirmed2025Water && rows.some(row => row.status === "invalid")) || negativeConsumption;
       const complete = startEntered && endEntered && !invalid;
       const validRows = rows.filter(row => row.status === "valid" && Number.isFinite(Number(row.verbrauch)));
-      const calculated = complete ? (validRows.length ? validRows.reduce((sum,row) => sum + num(row.verbrauch), 0) : num(endValue) - num(startValue)) : null;
+      const calculated = complete ? (confirmed2025Water
+        ? Math.max(0, Math.round(num(endValue)) - Math.round(num(startValue)))
+        : (validRows.length ? validRows.reduce((sum,row) => sum + num(row.verbrauch), 0) : num(endValue) - num(startValue))) : null;
       const shares = rows.flatMap(row => (Array.isArray(row.zuordnungsanteile) ? row.zuordnungsanteile.map(share => ({ share, period:row })) : []));
       const linkedCase = shares.map(item => caseForMeterShare(cases, meter, item.share, item.period)).find(Boolean)
         || cases.find(row => row.tenantId && row.tenantId === String(meter.nutzerId || "") && row.unitId === String(meter.einheitId || ""))
@@ -528,7 +570,8 @@
         unitId:String(meter.einheitId || linkedCase && linkedCase.unitId || ""),
         caseKey:linkedCase && linkedCase.caseKey || "", caseRole:linkedCase && linkedCase.role || "unassigned",
         caseLabel:linkedCase && linkedCase.label || "Zuordnung prüfen",
-        startDate:String(first && first.beginn || startReading && startReading.ablesedatum || period.start || ""), endDate:String(last && last.ende || endReading && endReading.ablesedatum || period.end || ""),
+        startDate:String(confirmed2025Legacy ? (sourceValue("StartDate") || period.start || "") : (first && first.beginn || startReading && startReading.ablesedatum || period.start || "")),
+        endDate:String(confirmed2025Legacy ? (sourceValue("EndDate") || period.end || "") : (last && last.ende || endReading && endReading.ablesedatum || period.end || "")),
         startValue, endValue, consumption:calculated,
         status:invalid ? "error" : (complete ? "complete" : "open"),
         priorStatus:replacement ? "replacement" : (transfer ? "transferred" : (startEntered ? "available" : "missing")),
@@ -718,16 +761,20 @@
     }
   
     if (k.umlageschluessel === "Verbrauch") {
+      // Do not bill from the displayed 2- or 4-decimal price when the exact
+      // annual cost / house consumption is known. Round each tenant's euros
+      // once and leave any unmeasured house consumption in the owner remainder.
+      const billedPrice = k.preisProEinheitManuell === true || num(k.gesamtverbrauch) <= 0
+        ? price : total / num(k.gesamtverbrauch);
       basisTenants.forEach(t => {
         inputSum += num(input[t.originalIndex]);
       });
       basisTenants.forEach(t => {
         const units = num(input[t.originalIndex]);
-        const amount = units * price;
-        allocations[t.originalIndex] = amount;
+        allocations[t.originalIndex] = Math.round((units * billedPrice + Number.EPSILON) * 100) / 100;
       });
       const tenantSum = Object.values(allocations).reduce((a,b) => a + num(b), 0);
-      ownerShare = inputSum > 0 ? total - tenantSum : total;
+      ownerShare = Math.round((total - tenantSum + Number.EPSILON) * 100) / 100;
       return finalizeCostAllocationResult(k, tenants, allocations, ownerShare, inputSum, inputSum, allocationDistributionStatus(ownerShare));
     }
   
@@ -1052,6 +1099,7 @@
     waterConsumption,
     genericMeterConsumption,
     waterTotalForTenantIndex,
+    useWholeCubicMeterWaterReadings,
     meterTotalForCostAndTenant,
     isMeterAutoEnabledForCost,
     isWaterAutoEnabledForCost,

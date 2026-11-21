@@ -1,5 +1,5 @@
-const CACHE_NAME = "nk-pro-v99-4-76-1-drive-mobile-status";
-const BUILD_ID = "99.4.76.1-drive-mobile-status";
+const CACHE_NAME = "nk-pro-v99-4-77-water-meter-allocation";
+const BUILD_ID = "99.4.77-water-meter-allocation";
 const CACHE_PREFIX = "nk-pro-";
 const APP_SHELL = [
   "./",
