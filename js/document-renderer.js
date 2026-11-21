@@ -76,7 +76,7 @@
 .nk-letter-document .result-value{margin:0;height:5.1mm;display:flex;align-items:center;justify-content:center;color:${AP13_DARK_BLUE};font-size:12pt;line-height:1;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
 .nk-letter-document .result-cell--middle .result-value{color:${AP13_TEXT}}
 .nk-letter-document .result-cell--final .result-label{font-size:7.5pt;font-weight:800;color:${AP13_DARK_BLUE}}
-.nk-letter-document .result-cell--final .result-value{font-size:14pt;font-weight:800}
+.nk-letter-document .result-cell--final .result-value{font-size:13pt;font-weight:700}
 .nk-letter-document .result-cell--final.is-due .result-value{color:${AP13_RESULT_RED}}
 .nk-letter-document .result-cell--final.is-credit .result-value{color:${AP13_RESULT_GREEN}}
 .nk-letter-document .detail-heading,.nk-letter-document .supplement-heading{margin:0;color:${AP13_DARK_BLUE};font-size:10.5pt;line-height:1.15;font-weight:700}
@@ -108,7 +108,6 @@
 .nk-letter-document .notice-box{margin:0 0 3.5mm;padding:2.5mm 2.5mm 2.2mm;border-left:.6mm solid ${AP13_BLUE};background:${AP13_LIGHT};color:#4D5F6E;font-size:7pt;line-height:1.2}
 .nk-letter-document .notice-title{display:block;margin-bottom:.6mm;color:${AP13_DARK_BLUE};font-size:8pt;font-weight:700}
 .nk-letter-document .payment-text{margin:0;font-size:10pt;line-height:1.3;color:${AP13_TEXT}}
-.nk-letter-document .payment-due-amount{font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
 .nk-letter-document .document-end{display:grid;grid-template-columns:minmax(0,1fr) minmax(62mm,78mm);gap:8mm;align-items:end;margin-top:auto;padding-top:7mm}
 .nk-letter-document .closing-greeting{margin:0 0 14mm;font-size:10pt;line-height:1.2}
 .nk-letter-document .signature-name{font-size:9.5pt;font-weight:700;line-height:1.15}
@@ -446,15 +445,8 @@
     const intro = replaceDocumentPlaceholders(settings.introText, { jahr:year, zeitraum:period, zahlungsziel:briefDate(settings.zahlungsziel) });
     const paymentSource = settlement.isNachzahlung ? settings.saldoTextNachzahlung : settings.saldoTextGuthaben;
     const paymentText = replaceDocumentPlaceholders(paymentSource, { jahr:year, zeitraum:period, zahlungsziel:briefDate(settings.zahlungsziel), betrag:fmtMoney(settlement.amount) });
-    // The template remains plain text. Escape it first, then emphasize the inserted
-    // amount only when the user has deliberately included the {betrag} placeholder.
-    const safePaymentText = briefProseHtml(paymentText);
-    // briefProseHtml normalizes NBSP emitted by Intl currency formatting into
-    // an ordinary space; use the same representation for an exact safe match.
-    const dueAmountText = briefProseHtml(fmtMoney(settlement.amount));
-    const paymentHtml = settlement.isNachzahlung && String(paymentSource || "").includes("{betrag}")
-      ? safePaymentText.replace(dueAmountText, '<strong class="payment-due-amount">' + dueAmountText + '</strong>')
-      : safePaymentText;
+    // Display the dynamic payment amount as ordinary body text in preview and print.
+    const paymentHtml = briefProseHtml(paymentText);
     return '<section class="letter-sheet letter-main-sheet" data-page="1" data-page-count="' + pageCount + '">' +
       briefHeaderHtml(settings) + briefInfoHtml(settings, tenant) +
       '<div class="letter-address-window"><div class="letter-return-address">' + escapeHtml(senderLine) + '</div><div class="letter-address">' + briefTextWithLineBreaks(address) + '</div></div>' +
