@@ -343,7 +343,7 @@
     // Year is never inferred from the billing period. The saved correction
     // metadata determines whether an optional year or detail appears at all.
     const label = global.NKProNkCorrections.printLabel(tenant, correction);
-    return '<tr class="table-correction-row"><td class="cell-cost">' + escapeHtml(label) + '</td><td colspan="6"></td><td class="money">' + prepaymentMoneyHtml(correction) + '</td><td class="money">' + signedMoneyHtml(-num(correction)) + '</td></tr>';
+    return '<tr class="table-correction-row"><td class="cell-cost">' + escapeHtml(label) + '</td>' + '<td></td>'.repeat(6) + '<td class="money">' + prepaymentMoneyHtml(correction) + '</td><td class="money">' + signedMoneyHtml(-num(correction)) + '</td></tr>';
   }
 
   function rentCorrectionNoteHtml(tenant, year) {
