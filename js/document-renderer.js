@@ -96,7 +96,6 @@
 .nk-letter-document .abrechnung-table tbody tr:nth-child(even):not(.table-total-row):not(.table-correction-row) td{background:${AP13_LIGHT}}
 .nk-letter-document .abrechnung-table tbody td:last-child{border-right:0}
 .nk-letter-document .abrechnung-table .cell-cost{font-weight:700}
-.nk-letter-document .abrechnung-rounding-note{margin:-4mm 0 4mm;font-size:6.5pt;line-height:1.2;color:${AP13_MUTED}}
 .nk-letter-document .money{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap!important}
 .nk-letter-document .center{text-align:center}
 .nk-letter-document .table-correction-row td{background:${AP13_LIGHT};font-style:normal}
@@ -364,11 +363,7 @@
       '<thead><tr><th>Kostenart</th><th>Gesamtkosten</th><th>Verteilung</th><th>Gesamt-<br>einheiten</th><th>Preis pro<br>Einheit</th><th>Ihr Anteil</th><th>Ihre Kosten</th><th>Ihre<br>Vorauszahlung</th><th>Ihre<br>Abrechnung</th></tr></thead>' +
       '<tbody>' + (costSectionRows(costRows) || '<tr><td colspan="9">Keine umlagefähigen Kosten vorhanden.</td></tr>') + correctionRowHtml(correction, tenant) +
       '<tr class="table-total-row"><td colspan="6">Summen</td><td class="money">' + fmtMoney(result.costShare) + '</td><td class="money">' + prepaymentMoneyHtml(creditTotal) + '</td><td class="money' + finalClass + '">' + signedMoneyHtml(balanceSigned) + '</td></tr>' +
-      '</tbody></table>' +
-      (costRows.some(row => row.id === "K002" && !row.importedEntry && num(row.preis) > 0 &&
-        Math.abs(num(row.preis) * 100 - Math.round(num(row.preis) * 100)) > 0.00001)
-        ? '<p class="abrechnung-rounding-note">Hinweis: Einheitspreis auf zwei Nachkommastellen gerundet; Kostenanteile mit ungerundetem Satz berechnet.</p>'
-        : '');
+      '</tbody></table>';
   }
 
   function resultStripHtml(result, settlement, correction) {
