@@ -187,7 +187,9 @@
       "meter.setWaterSetting":appCall(applicationActions, "meter", "setWaterSetting")
     });
     registerController("document", "Briefdaten, Dokumentrendering und Druckaktionen aus AP6", {
-      "document.setBriefSetting":call(handlers, "setBriefSetting"), "document.setBriefNkCorrectionDetail":call(handlers, "setBriefNkCorrectionDetail"), "document.printCurrentBrief":call(handlers, "printCurrentBrief"),
+      "document.setBriefSetting":call(handlers, "setBriefSetting"), "document.setBriefNkCorrectionDetail":call(handlers, "setBriefNkCorrectionDetail"),
+      "document.setPersonalSalutationMode":call(handlers, "setPersonalSalutationMode"), "document.setPersonalSalutationText":call(handlers, "setPersonalSalutationText"),
+      "document.printCurrentBrief":call(handlers, "printCurrentBrief"),
       "document.showPrintModeCheck":call(handlers, "showPrintModeCheck"), "document.showAllPrintReady":call(handlers, "showAllLettersPrintReady"),
       "document.copyCurrentBriefText":call(handlers, "copyCurrentBriefText"), "document.previewZoomIn":call(handlers, "previewZoomIn"),
       "document.previewZoomOut":call(handlers, "previewZoomOut"), "document.previewFitPage":call(handlers, "previewFitPage"),

@@ -1,5 +1,5 @@
-const CACHE_NAME = "nk-pro-v99-4-82-no-rounding-note";
-const BUILD_ID = "99.4.82-no-rounding-note";
+const CACHE_NAME = "nk-pro-v99-4-83-personal-salutation";
+const BUILD_ID = "99.4.83-personal-salutation";
 const CACHE_PREFIX = "nk-pro-";
 const APP_SHELL = [
   "./",
@@ -16,6 +16,7 @@ const APP_SHELL = [
   "./js/state-access.js",
   "./js/application-actions.js",
   "./js/master-data-actions.js",
+  "./js/master-data-actions.js?v=" + BUILD_ID,
   "./js/cost-actions.js",
   "./js/billing-workflow.js",
   "./js/ui-controller.js",
@@ -64,12 +65,14 @@ const APP_SHELL = [
   "./js/v99474-confirmed-areas.js",
   "./js/app-state-persistence.js",
   "./js/ui-master-data.js",
+  "./js/ui-master-data.js?v=" + BUILD_ID,
   "./js/ui-quality.js",
   "./js/ui-quality-k4.js?v=" + BUILD_ID,
   "./js/ui-cost-reconciliation.js",
   "./js/ui-cost-reconciliation.js?v=" + BUILD_ID,
   "./js/ui-costs.js?v=" + BUILD_ID,
   "./js/ui-navigation-pages.js",
+  "./js/ui-navigation-pages.js?v=" + BUILD_ID,
   "./js/ui-archive-pages.js",
   "./js/browser-io.js",
   "./js/ui-metering.js",
@@ -78,6 +81,7 @@ const APP_SHELL = [
   "./js/ui-billing-allocation.js?v=" + BUILD_ID,
   "./js/ui-individual-values.js",
   "./js/ui-documents.js",
+  "./js/ui-documents.js?v=" + BUILD_ID,
   "./js/ui-analytics.js",
   "./js/ui-analytics.js?v=" + BUILD_ID,
   "./js/ui-table-actions.js",

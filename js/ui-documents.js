@@ -261,15 +261,18 @@ function getBriefTenantAddress(tenant) {
 
 
 function salutationForTenant(tenant) {
+  if (!tenant) return "Guten Tag,";
   ensureTenantContactFields(tenant);
-  const template = tenant && tenant.standardanrede ? tenant.standardanrede : "Automatisch";
-  if (template && template !== "Automatisch") return tenantSalutationFromTemplate(tenant, template);
+  const template = tenant.standardanrede || "Automatisch";
+  // Historical generic templates do not override the new personal greeting.
+  if (template && template !== "Automatisch" && template !== "Sehr geehrte(r) Mieter/in,") {
+    return tenantSalutationFromTemplate(tenant, template);
+  }
 
   const lastName = tenantLastName(tenant);
-  if (tenant && tenant.geschlecht === "Frau") return "Sehr geehrte Frau " + (lastName || "") + ",";
-  if (tenant && tenant.geschlecht === "Herr") return "Sehr geehrter Herr " + (lastName || "") + ",";
-  if (tenant && tenant.geschlecht === "Firma/Divers") return "Sehr geehrte Damen und Herren,";
-  return "Sehr geehrte(r) Mieter/in,";
+  if (lastName && tenant.geschlecht === "Frau") return "Sehr geehrte Frau " + lastName + ",";
+  if (lastName && tenant.geschlecht === "Herr") return "Sehr geehrter Herr " + lastName + ",";
+  return tenantSalutationFromTemplate(tenant, "Guten Tag, [Name],");
 }
 
 function textareaHtml(value, onChange) {
@@ -533,6 +536,73 @@ function mountBriefPreview(preview, html) {
     '</style>';
 }
 
+function briefPersonalSalutationControlsHtml(result) {
+  const tenant = result && result.tenant;
+  if (!tenant) return "";
+  const chosen = tenant.standardanrede || "Automatisch";
+  const selectedMode = chosen === "Sehr geehrte(r) Mieter/in," ? "Automatisch" : chosen;
+  const choices = [
+    ["Automatisch","Automatisch (Anrede aus Mietverhältnis)"],
+    ["Sehr geehrte Frau [Nachname],","Frau – Sehr geehrte Frau …"],
+    ["Sehr geehrter Herr [Nachname],","Herr – Sehr geehrter Herr …"],
+    ["Guten Tag, [Name],","Neutral – Guten Tag, Vorname Nachname,"],
+    ["Individuell","Individuelle Formulierung"],
+    ["Sehr geehrte Damen und Herren,","Firma – Sehr geehrte Damen und Herren,"]
+  ];
+  if (!choices.some(([mode])=>mode===selectedMode)) choices.push([selectedMode,selectedMode]);
+  const options=choices.map(([mode,label])=>
+    '<option value="'+escapeHtml(mode)+'"'+(mode===selectedMode?' selected':'')+'>'+escapeHtml(label)+'</option>'
+  ).join("");
+  const action=key=>uiActionAttributes(key,["$value"],"change");
+  const custom = selectedMode === "Individuell"
+    ? '<label for="briefPersonalSalutationText">Individuelle Briefanrede</label>'+
+      '<input id="briefPersonalSalutationText" type="text" maxlength="160" placeholder="z. B. Guten Tag, …" value="'+escapeHtml(tenant.briefAnredeFreitext || "")+'" '+action("document.setPersonalSalutationText")+'>' : "";
+  return '<div class="brief-personal-salutation">'+
+    '<label for="briefPersonalSalutationMode"><strong>Persönliche Briefanrede</strong></label>'+
+    '<select id="briefPersonalSalutationMode" '+action("document.setPersonalSalutationMode")+'>'+options+'</select>'+
+    custom+
+    '<p class="small">Im Brief: <strong>'+escapeHtml(salutationForTenant(tenant))+'</strong></p>'+
+    '</div>';
+}
+function setBriefPersonalSalutation(modeOrText,isCustomText=false) {
+  const calc=calculateUmlage();
+  const selected=selectedBriefTenant(calc);
+  if (!selected || !selected.tenant) return;
+  if (NK_PRO_MODULES.billingContext.isReadOnly() || NK_PRO_MODULES.billingWorkflow.isCurrentBillingFinalized()) {
+    alert("Die Abrechnung ist schreibgeschützt. Bitte zunächst zur Bearbeitung öffnen.");
+    return;
+  }
+  const selectedTenant=selected.tenant;
+  const tenant=(Array.isArray(state.mieter)?state.mieter:[]).find(t=>t && String(t.id)===String(selectedTenant.id));
+  if(!tenant)return;
+  const allowedModes=[
+    "Automatisch","Sehr geehrte Frau [Nachname],","Sehr geehrter Herr [Nachname],",
+    "Guten Tag, [Name],","Individuell","Sehr geehrte Damen und Herren,"
+  ];
+  if (isCustomText) {
+    if (tenant.standardanrede !== "Individuell") return;
+    tenant.briefAnredeFreitext=String(modeOrText||"").trim().slice(0,160);
+  } else {
+    if (!allowedModes.includes(modeOrText)) return;
+    tenant.standardanrede=modeOrText;
+    // Gender is changed only after an explicit Frau/Herr choice, never inferred from a name.
+    if(modeOrText==="Sehr geehrte Frau [Nachname],")tenant.geschlecht="Frau";
+    if(modeOrText==="Sehr geehrter Herr [Nachname],")tenant.geschlecht="Herr";
+  }
+  // Persist in the central tenant record too, so subsequent years inherit the choice.
+  // Match stable tenant ID rather than array position; no financial fields are copied.
+  const master=NK_PRO_MODULES.masterDataActions.masterTenants(state)
+    .find(t=>t && String(t.id)===String(tenant.id));
+  if(master){
+    master.standardanrede=tenant.standardanrede;
+    master.geschlecht=tenant.geschlecht;
+    master.briefAnredeFreitext=tenant.briefAnredeFreitext || "";
+  }
+  commitStateChange({reason:"Persönliche Briefanrede",tabId:"briefe",
+    includeCommon:false,includeNavigation:false,includeTableTools:false});
+}
+function setPersonalSalutationMode(mode) {setBriefPersonalSalutation(mode,false);}
+function setPersonalSalutationText(value) {setBriefPersonalSalutation(value,true);}
 function briefNkCorrectionPrintControlsHtml(result) {
   if(!result || !result.tenant || Math.abs(num(result.correction)) < 0.005)return "";
   const meta=NKProNkCorrections.read(result.tenant);
@@ -582,7 +652,8 @@ function renderBrief() {
 
   settingsEl.innerHTML =
     '<label>Mieter auswählen</label><select ' + uiActionAttributes("document.setBriefSetting", ["tenantId","$value"], "change") + '>' + tenantOptions + '</select>' +
-    '<div class="hint"><strong>Empfängeradresse und Anrede</strong> werden im Tab „Mietverhältnisse“ beim jeweiligen Mietverhältnis gepflegt.</div>' +
+    briefPersonalSalutationControlsHtml(selected) +
+    '<div class="hint"><strong>Empfängeradresse</strong> und weitere Mieterdaten werden unter „Mietverhältnisse“ gepflegt. Die gewählte Briefanrede wird zugleich in den zentralen Stammdaten gespeichert.</div>' +
     briefPreflightBoxHtml(briefPreflight) +
     printHardeningBoxHtml(printHardeningReport(calc, selected)) +
     briefSettlementSummaryHtml(selected) +
