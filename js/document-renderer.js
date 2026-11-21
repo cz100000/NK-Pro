@@ -72,7 +72,7 @@
 .nk-letter-document .result-cell:last-child{border-right:0}
 .nk-letter-document .result-cell--final.is-due{background:${AP13_RESULT_RED_BG}}
 .nk-letter-document .result-cell--final.is-credit{background:${AP13_RESULT_GREEN_BG}}
-.nk-letter-document .result-label{color:#4D5F6E;font-size:7pt;line-height:1.12;font-weight:700}
+.nk-letter-document .result-label{color:#4D5F6E;font-size:7pt;line-height:1.12;font-weight:700;min-height:7.7mm;display:flex;align-items:center;justify-content:center;text-align:center}
 .nk-letter-document .result-value{margin-top:1mm;color:${AP13_DARK_BLUE};font-size:12pt;line-height:1;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
 .nk-letter-document .result-cell--middle .result-value{color:${AP13_TEXT}}
 .nk-letter-document .result-cell--final.is-due .result-value{color:${AP13_RESULT_RED}}
@@ -371,7 +371,7 @@
     const finalLabel = settlement.isBalanced ? "Ausgeglichen" : (settlement.isNachzahlung ? "Ihre Nachzahlung an die Vermieterin" : "Ihr Guthaben");
     return '<div class="result-strip" aria-label="Abrechnungsergebnis">' +
       '<div class="result-cell"><span class="result-label">Ihr Kostenanteil</span><span class="result-value">' + fmtMoney(result.costShare) + '</span></div>' +
-      '<div class="result-cell result-cell--middle"><span class="result-label">Ihre Vorauszahlung inklusive Nebenkostenkorrektur</span><span class="result-value">' + fmtMoney(num(result.prepayments) + num(correction)) + '</span></div>' +
+      '<div class="result-cell result-cell--middle"><span class="result-label">Ihre Vorauszahlung inkl. NK-Korrektur</span><span class="result-value">' + fmtMoney(num(result.prepayments) + num(correction)) + '</span></div>' +
       '<div class="result-cell result-cell--final ' + (settlement.isNachzahlung ? "is-due" : "is-credit") + '"><span class="result-label">' + escapeHtml(finalLabel) + '</span><span class="result-value">' + fmtMoney(settlement.amount) + '</span></div>' +
       '</div>';
   }
