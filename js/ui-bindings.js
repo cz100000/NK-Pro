@@ -113,7 +113,8 @@
       "cost.clearSearch":call(handlers, "clearCostSearch"),
       "cost.prepaymentSetSearch":call(handlers, "prepaymentSetSearch"), "cost.prepaymentSetFilter":call(handlers, "prepaymentSetFilter"),
       "cost.prepaymentReset":call(handlers, "prepaymentReset"), "cost.prepaymentSort":call(handlers, "prepaymentSort"),
-      "cost.prepaymentSetTenantValue":call(handlers, "prepaymentSetTenantValue")
+      "cost.prepaymentSetTenantValue":call(handlers, "prepaymentSetTenantValue"),
+      "cost.prepaymentSetNkCorrectionDetail":call(handlers, "prepaymentSetNkCorrectionDetail")
     });
     registerController("billing", "Abrechnungslebenszyklus, Erfassungsaktionen und zentrale Ergebnisdarstellung", {
       "billing.openCurrent":call(handlers, "openCurrentBilling"), "billing.openCurrentEdit":call(handlers, "openCurrentBillingForEdit"), "billing.openCurrentView":call(handlers, "openCurrentBillingForView"),
@@ -186,7 +187,7 @@
       "meter.setWaterSetting":appCall(applicationActions, "meter", "setWaterSetting")
     });
     registerController("document", "Briefdaten, Dokumentrendering und Druckaktionen aus AP6", {
-      "document.setBriefSetting":call(handlers, "setBriefSetting"), "document.printCurrentBrief":call(handlers, "printCurrentBrief"),
+      "document.setBriefSetting":call(handlers, "setBriefSetting"), "document.setBriefNkCorrectionDetail":call(handlers, "setBriefNkCorrectionDetail"), "document.printCurrentBrief":call(handlers, "printCurrentBrief"),
       "document.showPrintModeCheck":call(handlers, "showPrintModeCheck"), "document.showAllPrintReady":call(handlers, "showAllLettersPrintReady"),
       "document.copyCurrentBriefText":call(handlers, "copyCurrentBriefText"), "document.previewZoomIn":call(handlers, "previewZoomIn"),
       "document.previewZoomOut":call(handlers, "previewZoomOut"), "document.previewFitPage":call(handlers, "previewFitPage"),
