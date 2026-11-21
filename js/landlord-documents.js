@@ -121,8 +121,8 @@
     return r.balance<0 ? "−"+euro(Math.abs(r.balance)) : "+"+euro(r.balance);
   }
   const smallCost=r=>r.costs.map(c=>c.label+" <b>"+euro(c.amount)+"</b>"+(c.id==="K002"?" ("+units(c.waterUnits)+" m³)":"")).join(" &nbsp; · &nbsp; ");
-  function overviewPage(model) {
-    const count=8;
+  function overviewPage(model,totalPages=1) {
+    const count=totalPages;
     const regular=model.regular;
     const kpi=(label,value,sub)=>'<div class="ni-kpi"><span>'+label+'</span><strong>'+euro(value)+'</strong><small>'+safe(sub)+'</small></div>';
     const rows=model.records.map(r=>
@@ -160,7 +160,7 @@
       (Math.abs(round(model.rest-model.waterResidual-model.techemResidual))>.01 ? '<p class="ni-line">Sonstige Restbeträge: '+euro(round(model.rest-model.waterResidual-model.techemResidual))+'</p>' : '')+
       foot(model,1,count)+'</article>';
   }
-  function unitPage(model,record,index) {
+  function unitPage(model,record,index=1,totalPages=1) {
     const isTenant=record.role==="Mieter";
     const heading=record.role==="Leerstand"?"Leerstands- und Kostenblatt":"Wohnungs-Abrechnungsblatt";
     const costRows=record.costs.map(c=>'<tr><td>'+c.label+'</td><td class="ni-amt">'+(c.id==="K002"?units(c.waterUnits)+" m³":"gemäß Umlage")+'</td>'+
@@ -184,11 +184,11 @@
        record.role==="Leerstand"?'<p class="ni-note">Leerstand: Kosten gehören zum Eigentümeranteil und sind keine Mieternachforderung.</p>':
        '<p class="ni-note">Die NK-Korrektur ist in den angerechneten Beträgen berücksichtigt. Dieses Blatt ist ausschließlich für die Vermieterakte bestimmt.</p>')+
       '<div class="ni-empty-line"></div><div class="ni-empty-line"></div>'+
-      foot(model,index,8)+'</article>';
+      foot(model,index,totalPages)+'</article>';
   }
 
   function allSheets(model) {
-    return overviewPage(model)+model.records.map((r,i)=>unitPage(model,r,i+2)).join("");
+    return overviewPage(model,8)+model.records.map((r,i)=>unitPage(model,r,i+2,8)).join("");
   }
   function markup(body,guide) {
     return '<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'+
@@ -206,7 +206,7 @@
     if(sel==="overview")return {model,body:overviewPage(model),scope:"Objekt-Gesamtübersicht"};
     const id=document.getElementById("landlordDocUnit")?.value||model.records[0]?.id;
     const record=model.records.find(r=>r.id===id)||model.records[0];
-    return {model,body:unitPage(model,record,model.records.indexOf(record)+2),scope:"Wohnungsblatt "+record.unit};
+    return {model,body:unitPage(model,record),scope:"Wohnungsblatt "+record.unit};
   }
   function updateUI() {
     const panel=document.getElementById("landlordDocPanel");
@@ -218,7 +218,7 @@
       unit.innerHTML=model.records.map(r=>'<option value="'+safe(r.id)+'">'+safe(r.unit+" · "+r.name+" · "+r.role)+'</option>').join("");
       if(model.records.some(r=>r.id===prevId))unit.value=prevId;
       unit.hidden=type.value==="overview";
-      const selected=type.value==="overview" ? overviewPage(model) : unitPage(model,model.records.find(r=>r.id===unit.value)||model.records[0],2+model.records.findIndex(r=>r.id===unit.value));
+      const selected=type.value==="overview" ? overviewPage(model) : unitPage(model,model.records.find(r=>r.id===unit.value)||model.records[0]);
       const frame=document.getElementById("landlordDocPreview");
       frame.srcdoc=markup(selected,false);
       document.getElementById("landlordDocHint").textContent=type.value==="overview" ? "Objektübersicht mit allen sieben Wohnungen auf einer A4-Seite." : "Ein separates DIN-A4-Kostenblatt für die ausgewählte Wohnung.";
