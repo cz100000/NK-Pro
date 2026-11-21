@@ -51,8 +51,8 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.78";
-const APP_VERSION_NAME = "Druckoptimierte Abrechnungsbriefe";
+const APP_VERSION = "V99.4.79";
+const APP_VERSION_NAME = "Vermieterunterlagen · 7+1 Druckseiten";
 const APP_RELEASE_DATE = "2026-11-21";
 if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – Bestätigte Wohnflächen 2025";
 const DATA_SCHEMA_VERSION = 5;
