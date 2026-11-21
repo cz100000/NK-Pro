@@ -2,3 +2,13 @@ node_modules/
 test-results/
 playwright-report/
 *.log
+# Niemals personenbezogene Abrechnungs-/Backupdaten ins Repository:
+nk-pro-gesamtbestand-*.json
+*ECHTDATEN*.json
+*echtdaten*.json
+private-data/
+private-backups/
+*_PRIVAT*.json
+*.secrets.json
+.env
+.env.*

@@ -421,9 +421,9 @@ function parseLegacyPeriodAfter(text, label) {
 
 function nameFromLegacyFilename(filename) {
   const base = String(filename || "").replace(/\.[^.]+$/, "");
-  const m = base.match(/\b(Montoya|Melzig|Schneider|Gärtner|Gaertner|Bonesta|Udroiu|Kerner|Lang)\b/i);
+  const m = null; // Keine fest kodierten Echtnamen in der Web-App
   if (!m) return "";
-  const map = {montoya:"Janina Montoya", lang:"Janina Montoya", melzig:"Cynthia Melzig", schneider:"Jutta Schneider", "gärtner":"Inna Gärtner", gaertner:"Inna Gärtner", bonesta:"Hatixe Bonesta", udroiu:"Ion Udroiu", kerner:"Waldemar Kerner"};
+  const map = {}; // Mieterreferenzen ausschließlich aus privatem Datenstand
   return map[m[1].toLowerCase()] || m[1];
 }
 

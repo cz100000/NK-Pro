@@ -384,9 +384,9 @@ function ensureTenantContactFields(m) {
   if (!m) return;
   if (m.geschlecht === undefined || m.geschlecht === null || m.geschlecht === "") m.geschlecht = "Frau/Herr";
   if (m.standardanrede === undefined || m.standardanrede === null || m.standardanrede === "") m.standardanrede = "Automatisch";
-  if (m.strasse === undefined || m.strasse === null || m.strasse === "") m.strasse = "Am Rauhen Biehl 5";
-  if (m.plz === undefined || m.plz === null || m.plz === "") m.plz = "55774";
-  if (m.ort === undefined || m.ort === null || m.ort === "") m.ort = "Baumholder";
+  if (m.strasse === undefined || m.strasse === null || m.strasse === "") m.strasse = "";
+  if (m.plz === undefined || m.plz === null || m.plz === "") m.plz = "";
+  if (m.ort === undefined || m.ort === null || m.ort === "") m.ort = "";
   if (m.telefon === undefined || m.telefon === null) m.telefon = "";
   if (m.email === undefined || m.email === null) m.email = "";
   m.abrechnungRolle = normalizeSettlementRole(m.abrechnungRolle || m.rolle || m.nutzungsart);
@@ -778,9 +778,9 @@ function addMietverhaeltnis() {
     personentage:365,
     geschlecht:"Frau/Herr",
     standardanrede:"Automatisch",
-    strasse:"Am Rauhen Biehl 5",
-    plz:"55774",
-    ort:"Baumholder",
+    strasse:"",
+    plz:"",
+    ort:"",
     telefon:"",
     email:"",
     abrechnungRolle:"Mieter",

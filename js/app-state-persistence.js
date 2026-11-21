@@ -953,6 +953,9 @@ function normalizeLegacyData(data, options = {}) {
       row.status = NK_PRO_MODULES.costActions.kostenStatus(row);
     });
   }
+  if (!snapshotMode && globalThis.NKProConfirmedAreas2025 && typeof globalThis.NKProConfirmedAreas2025.apply === "function") {
+    globalThis.NKProConfirmedAreas2025.apply(data);
+  }
   if (!snapshotMode) NK_PRO_MODULES.masterDataActions.ensureStammdatenData(data);
   if (!data.objektStandard || typeof data.objektStandard !== "object") normalizeObjectStandard(data, { legacySnapshot:snapshotMode });
   const meteringMigration = migrateMeteringData(data, { legacySnapshot:snapshotMode });
