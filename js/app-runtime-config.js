@@ -51,8 +51,8 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.77";
-const APP_VERSION_NAME = "Wasserkostenabrechnung 2025 korrigiert";
+const APP_VERSION = "V99.4.77.1";
+const APP_VERSION_NAME = "Wasserkostenabrechnung und Korrekturbriefvorschau";
 const APP_RELEASE_DATE = "2026-11-21";
 if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – Bestätigte Wohnflächen 2025";
 const DATA_SCHEMA_VERSION = 5;

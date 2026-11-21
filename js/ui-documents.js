@@ -639,6 +639,9 @@ function applyBriefPreviewScale() {
   syncBriefPreviewControls(scale, briefPreviewView.mode);
 }
 function currentBriefPreviewOrWarn() {
+  // Vorauszahlungs-/Korrektureingaben werden bewusst ohne komplettes UI-Rendering gespeichert.
+  // Vor Druck/PDF und Kopieren die Vorschau stets aus dem aktuellen Abrechnungsstand neu aufbauen.
+  renderBrief();
   const preview = document.getElementById("briefPreview");
   if (!preview) {
     alert("Die Briefvorschau wurde nicht gefunden. Bitte den Tab Abrechnungsbriefe neu öffnen.");
