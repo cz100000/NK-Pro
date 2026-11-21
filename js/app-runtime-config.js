@@ -51,8 +51,8 @@ const NK_PRO_MODULES = (() => {
 // ===== Bereich: Ausgangsdaten und App-Konfiguration =====
 const UMLAGE_MANUAL = "Manuelle Eingabe je Mieter/Wohneinheit";
 const UMLAGE_MANUAL_LEGACY = "Einzel" + "beträge je Mieter";
-const APP_VERSION = "V99.4.83";
-const APP_VERSION_NAME = "Persönliche Mieterbrief-Anreden";
+const APP_VERSION = "V99.4.84";
+const APP_VERSION_NAME = "Deutlich hervorgehobene Nachzahlung und Überweisungsbetrag";
 const APP_RELEASE_DATE = "2026-11-21";
 if (typeof document !== "undefined") document.title = "NK-Pro " + APP_VERSION + " – Bestätigte Wohnflächen 2025";
 const DATA_SCHEMA_VERSION = 5;
